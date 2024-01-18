@@ -13,8 +13,10 @@ import {
   TranslateModule,
   TranslateModuleConfig
 } from '@ngx-translate/core';
+import { first } from 'rxjs';
 
 import { ConfigService } from '../../config';
+import { LanguageLoaderBase } from './language.interface';
 import { LanguageLoader } from './language.loader';
 import { LanguageService } from './language.service';
 import { IgoMissingTranslationHandler } from './missing-translation.guard';
@@ -29,7 +31,11 @@ export function provideRootTranslation(
     importProvidersFrom(TranslateModule.forRoot(setTranslationConfig(loader))),
     {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {},
+      useFactory: (languageService: LanguageService) => () => {
+        return (
+          languageService.translate.currentLoader as LanguageLoaderBase
+        ).isLoaded$?.pipe(first((isLoaded) => isLoaded === true));
+      },
       deps: [LanguageService],
       multi: true
     }
@@ -39,7 +45,7 @@ export function provideRootTranslation(
 export const setTranslationConfig = (
   loader?: Provider
 ): TranslateModuleConfig => ({
-  defaultLanguage: 'en',
+  defaultLanguage: 'fr',
   loader: loader ?? DEFAULT_LANGUAGE_LOADER,
   missingTranslationHandler: {
     provide: MissingTranslationHandler,
@@ -54,5 +60,5 @@ export const DEFAULT_LANGUAGE_LOADER: Provider = {
 };
 
 function defaultLanguageLoader(http: HttpBackend, config?: ConfigService) {
-  return new LanguageLoader(http, undefined, undefined, config);
+  return new LanguageLoader(http, config, undefined, undefined);
 }
