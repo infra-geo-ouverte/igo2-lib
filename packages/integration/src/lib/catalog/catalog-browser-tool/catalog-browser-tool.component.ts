@@ -16,8 +16,8 @@ import {
   IgoMap
 } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription, concat } from 'rxjs';
-import { first, take } from 'rxjs/operators';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
 import { CatalogState } from '../catalog.state';
@@ -78,17 +78,17 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const catalogStore = this.catalogState.catalogStore;
 
-    const catalog = catalogStore.stateView.firstBy$(
+    const catalog$ = catalogStore.stateView.firstBy$(
       (record: EntityRecord<Catalog>) => record.state.selected === true
     );
-    const authenticate = this.authService.authenticate$;
-    this.catalog$$ = concat(catalog, authenticate)
-      .pipe(first())
-      .subscribe((record) => {
-        const catalog = (record as EntityRecord<Catalog>).entity;
+    const authenticate$ = this.authService.authenticate$;
+    this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
+      (result) => {
+        const catalog = result[0].entity;
         this.catalog = catalog;
         this.loadCatalogItems(this.catalog);
-      });
+      }
+    );
   }
 
   /**
