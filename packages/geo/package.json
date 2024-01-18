@@ -36,7 +36,6 @@
     }
   },
   "dependencies": {
-    "@angular/material-moment-adapter": "^17.1.0",
     "@turf/helpers": "^6.5.0",
     "@turf/line-intersect": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
@@ -52,6 +51,7 @@
     "@angular/core": "^17.0.6",
     "@angular/forms": "^17.0.6",
     "@angular/material": "^17.0.3",
+    "@angular/material-moment-adapter": "^17.1.0",
     "@angular/platform-browser": "^17.0.6",
     "@igo2/common": "*",
     "@igo2/core": "*",
