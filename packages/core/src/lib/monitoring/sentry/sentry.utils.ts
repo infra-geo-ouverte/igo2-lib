@@ -1,9 +1,12 @@
 import { setUser } from '@sentry/angular-ivy';
-import { SentryMonitoringOptions } from './sentry.interface';
+
 import { BaseUser } from '../../user';
+import { SentryMonitoringOptions } from './sentry.interface';
 
 export const isTracingEnabled = (options: SentryMonitoringOptions): boolean =>
-  options.enableTracing || !!options.tracesSampleRate || !!options.tracesSampler;
+  options.enableTracing ||
+  !!options.tracesSampleRate ||
+  !!options.tracesSampler;
 
 export const identifySentryUser = (user: BaseUser | null): void => {
   setUser(

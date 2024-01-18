@@ -2,6 +2,9 @@ export * from './shared';
 
 export * from './map-browser';
 export * from './zoom-button';
+export * from './record-button';
+export * from './record-button/record-parameters';
+export * from './record-button/gpx-selection';
 export * from './menu-button';
 export * from './geolocate-button';
 export * from './home-extent-button';
