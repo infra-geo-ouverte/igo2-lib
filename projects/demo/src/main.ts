@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { provideHttpClient, withJsonpSupport } from '@angular/common/http';
 import {
   APP_INITIALIZER,
   ApplicationRef,
@@ -71,6 +71,7 @@ bootstrapApplication(AppComponent, {
       IgoGeoWorkspaceModule,
       IgoDirectionsModule
     ),
+    provideHttpClient(withJsonpSupport()),
     provideConfigOptions({
       default: environment.igo
     }),
@@ -86,7 +87,6 @@ bootstrapApplication(AppComponent, {
       multi: true
     },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
-    DatePipe,
     provideAnimations(),
     provideOsrmDirectionsSource(),
     provideIChercheSearchSource(),

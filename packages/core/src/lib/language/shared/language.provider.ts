@@ -1,5 +1,11 @@
 import { HttpBackend } from '@angular/common/http';
-import { ImportProvidersSource, Provider } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  EnvironmentProviders,
+  Provider,
+  importProvidersFrom,
+  makeEnvironmentProviders
+} from '@angular/core';
 
 import {
   MissingTranslationHandler,
@@ -10,6 +16,7 @@ import {
 
 import { ConfigService } from '../../config';
 import { LanguageLoader } from './language.loader';
+import { LanguageService } from './language.service';
 import { IgoMissingTranslationHandler } from './missing-translation.guard';
 
 /**
@@ -17,8 +24,16 @@ import { IgoMissingTranslationHandler } from './missing-translation.guard';
  */
 export function provideRootTranslation(
   loader?: Provider
-): ImportProvidersSource {
-  return TranslateModule.forRoot(setTranslationConfig(loader));
+): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    importProvidersFrom(TranslateModule.forRoot(setTranslationConfig(loader))),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [LanguageService],
+      multi: true
+    }
+  ]);
 }
 
 export const setTranslationConfig = (

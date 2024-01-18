@@ -1,11 +1,4 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
-import { IgoConfirmDialogModule } from '@igo2/common';
-import { IgoLanguageModule } from '@igo2/core';
 
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
@@ -24,50 +17,30 @@ import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
+const DIRECTIVES = [
+  MapBrowserComponent,
+  ZoomButtonComponent,
+  GeolocateButtonComponent,
+  HomeExtentButtonComponent,
+  RotationButtonComponent,
+  InfoSectionComponent,
+  BaseLayersSwitcherComponent,
+  MiniBaseMapComponent,
+  MapOfflineDirective,
+  OfflineButtonComponent,
+  WakeLockButtonComponent,
+  PointerPositionDirective,
+  HoverFeatureDirective,
+  SwipeControlComponent,
+  MapCenterComponent,
+  MenuButtonComponent
+];
+
+/**
+ * @deprecated import the components directly or the MAP_DIRECTIVES for the set
+ */
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoLanguageModule,
-    IgoConfirmDialogModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule
-  ],
-  exports: [
-    MapBrowserComponent,
-    ZoomButtonComponent,
-    GeolocateButtonComponent,
-    HomeExtentButtonComponent,
-    RotationButtonComponent,
-    InfoSectionComponent,
-    BaseLayersSwitcherComponent,
-    MiniBaseMapComponent,
-    MapOfflineDirective,
-    OfflineButtonComponent,
-    WakeLockButtonComponent,
-    PointerPositionDirective,
-    HoverFeatureDirective,
-    SwipeControlComponent,
-    MapCenterComponent,
-    MenuButtonComponent
-  ],
-  declarations: [
-    MapBrowserComponent,
-    ZoomButtonComponent,
-    GeolocateButtonComponent,
-    HomeExtentButtonComponent,
-    RotationButtonComponent,
-    InfoSectionComponent,
-    BaseLayersSwitcherComponent,
-    MiniBaseMapComponent,
-    MapOfflineDirective,
-    OfflineButtonComponent,
-    WakeLockButtonComponent,
-    PointerPositionDirective,
-    HoverFeatureDirective,
-    SwipeControlComponent,
-    MapCenterComponent,
-    MenuButtonComponent
-  ]
+  imports: DIRECTIVES,
+  exports: DIRECTIVES
 })
 export class IgoMapModule {}

@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 
 import {
   DataSourceService,
+  DrawComponent,
   FeatureStore,
   FeatureWithDraw,
-  IgoDrawModule,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MapBrowserComponent,
   MapService,
   MapViewOptions,
   OSMDataSource,
-  OSMDataSourceOptions
+  OSMDataSourceOptions,
+  ZoomButtonComponent
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -24,8 +25,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   styleUrls: ['./draw.component.scss'],
   standalone: true,
   imports: [
-    IgoMapModule,
-    IgoDrawModule,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    DrawComponent,
     DocViewerComponent,
     ExampleViewerComponent
   ]

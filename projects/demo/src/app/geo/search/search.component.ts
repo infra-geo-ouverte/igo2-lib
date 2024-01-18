@@ -7,31 +7,32 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { ActionStore, EntityStore } from '@igo2/common';
 import {
-  IgoActionbarModule,
-  IgoContextMenuModule,
-  IgoPanelModule
+  ActionStore,
+  ActionbarComponent,
+  CONTEXT_MENU_DIRECTIVES,
+  EntityStore,
+  PanelComponent
 } from '@igo2/common';
 import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   GoogleLinks,
-  IgoFeatureDetailsModule,
   IgoMap,
-  IgoMapModule,
-  IgoSearchBarModule,
   IgoSearchModule,
-  IgoSearchResultsModule,
   LayerOptions,
   LayerService,
+  MapBrowserComponent,
   MapService,
   MapViewOptions,
   Research,
+  SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
   SearchService,
+  ZoomButtonComponent,
   provideDefaultCoordinatesSearchResultFormatter,
   provideDefaultIChercheSearchResultFormatter,
   provideILayerSearchResultFormatter,
@@ -57,14 +58,14 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     NgIf,
-    IgoMapModule,
-    IgoContextMenuModule,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    CONTEXT_MENU_DIRECTIVES,
     IgoSearchModule,
-    IgoPanelModule,
-    IgoSearchBarModule,
-    IgoSearchResultsModule,
-    IgoFeatureDetailsModule,
-    IgoActionbarModule
+    PanelComponent,
+    SEARCH_RESULTS_DIRECTIVES,
+    ActionbarComponent,
+    FeatureDetailsComponent
   ],
   providers: [
     SearchService,

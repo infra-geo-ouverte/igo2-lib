@@ -12,7 +12,6 @@ import {
   IgoQueryModule
 } from '@igo2/geo';
 
-
 import { AppContextRoutingModule } from './context-routing.module';
 import { AppContextComponent } from './context.component';
 
@@ -29,7 +28,7 @@ import { AppContextComponent } from './context.component';
     IgoFeatureModule,
     IgoContextModule,
     AppContextComponent
-],
+  ],
   exports: [AppContextComponent]
 })
 export class AppContextModule {}

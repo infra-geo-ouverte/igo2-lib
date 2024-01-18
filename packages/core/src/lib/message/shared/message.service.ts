@@ -131,9 +131,8 @@ export class MessageService {
       currentDate < message.options.to
     ) {
       if (message.showIcon === false) {
-        this.toastr.toastrConfig.iconClasses[
-          messageType
-        ] = `toast-${messageType} toast-no-icon`;
+        this.toastr.toastrConfig.iconClasses[messageType] =
+          `toast-${messageType} toast-no-icon`;
       }
       message = this.handleTemplate(message);
 

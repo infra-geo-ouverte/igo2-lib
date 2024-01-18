@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoClickout]'
+  selector: '[igoClickout]',
+  standalone: true
 })
 export class ClickoutDirective {
   @Output() clickout = new EventEmitter<MouseEvent>();

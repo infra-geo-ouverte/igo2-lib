@@ -1,15 +1,40 @@
+import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MessageService } from '@igo2/core';
 import { Clipboard, ObjectUtils } from '@igo2/utils';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Context } from '../shared/context.interface';
 
 @Component({
   selector: 'igo-context-form',
   templateUrl: './context-form.component.html',
-  styleUrls: ['./context-form.component.scss']
+  styleUrls: ['./context-form.component.scss'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class ContextFormComponent implements OnInit {
   public form: UntypedFormGroup;

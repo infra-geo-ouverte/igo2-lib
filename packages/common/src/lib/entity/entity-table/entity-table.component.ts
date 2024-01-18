@@ -1,4 +1,5 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -17,22 +18,48 @@ import {
 } from '@angular/core';
 import {
   FormControlName,
+  FormsModule,
   NgControl,
   NgForm,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup
 } from '@angular/forms';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  DateAdapter,
+  ErrorStateMatcher,
+  MatNativeDateModule,
+  MatOptionModule
+} from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  MatFormFieldControl,
+  MatFormFieldModule
+} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { StringUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { default as moment } from 'moment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
+import { SanitizeHtmlPipe } from '../../custom-html/custom-html.pipe';
+import { ImageErrorDirective } from '../../image/image-error.directive';
+import { SecureImagePipe } from '../../image/secure-image.pipe';
+import { StopPropagationDirective } from '../../stop-propagation/stop-propagation.directive';
+import { EntityTablePaginatorComponent } from '../entity-table-paginator/entity-table-paginator.component';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import {
   EntityKey,
@@ -45,6 +72,7 @@ import {
   EntityTableSelectionState,
   EntityTableTemplate
 } from '../shared';
+import { EntityTableRowDirective } from './entity-table-row.directive';
 
 interface CellData {
   [key: string]: {
@@ -66,7 +94,38 @@ interface RowData {
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: MatFormFieldControl, useExisting: EntityTableComponent }
+    { provide: MatFormFieldControl, useExisting: EntityTableComponent },
+    provideMomentDateAdapter()
+  ],
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    EntityTablePaginatorComponent,
+    EntityTableRowDirective,
+    FormsModule,
+    ImageErrorDirective,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatNativeDateModule, // For the DateAdapter provider
+    MatOptionModule,
+    MatSelectModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
+    ReactiveFormsModule,
+    SanitizeHtmlPipe,
+    SecureImagePipe,
+    StopPropagationDirective,
+    TranslateModule
   ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {

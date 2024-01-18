@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { IgoDynamicOutletModule } from './dynamic-outlet/dynamic-outlet.module';
-import { DynamicComponentService } from './shared/dynamic-component.service';
+import { DynamicOutletComponent } from './dynamic-outlet/dynamic-outlet.component';
 
+/**
+ * @deprecated import the DynamicOutletComponent directly
+ */
 @NgModule({
-  imports: [CommonModule, IgoDynamicOutletModule],
-  exports: [IgoDynamicOutletModule],
-  providers: [DynamicComponentService]
+  imports: [DynamicOutletComponent],
+  exports: [DynamicOutletComponent]
 })
 export class IgoDynamicComponentModule {}

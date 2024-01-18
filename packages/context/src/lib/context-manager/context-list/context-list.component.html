@@ -140,7 +140,11 @@
     </div>
   </div>
 
-  <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
+  <ng-template
+    ngFor
+    let-groupContexts
+    [ngForOf]="$any(contexts$ | async) | keyvalue"
+  >
     <igo-collapsible
       *ngIf="groupContexts.value.length && auth.authenticated"
       [title]="titleMapping[groupContexts.key] | translate"

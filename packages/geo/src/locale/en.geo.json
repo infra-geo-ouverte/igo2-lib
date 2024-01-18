@@ -511,7 +511,7 @@
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites":"Unit number"
+            "unites": "Unit number"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -675,7 +675,7 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites":"Unit number"
+        "unites": "Unit number"
       },
       "measure": {
         "dialog": {

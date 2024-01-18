@@ -1,4 +1,5 @@
 import { BrowserOptions, ErrorHandlerOptions } from '@sentry/angular-ivy';
+
 import { MonitoringOptions } from '../shared/monitoring.interface';
 
 export type SentryMonitoringOptions = BrowserOptions &

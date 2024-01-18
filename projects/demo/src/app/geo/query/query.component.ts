@@ -1,26 +1,26 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { IgoPanelModule, getEntityTitle } from '@igo2/common';
+import { PanelComponent, getEntityTitle } from '@igo2/common';
 import {
   DataSource,
   DataSourceService,
+  FEATURE_DETAILS_DIRECTIVES,
   Feature,
   FeatureDataSource,
   FeatureDataSourceOptions,
   FeatureMotion,
-  IgoFeatureDetailsModule,
   IgoMap,
-  IgoMapModule,
-  IgoOverlayModule,
   IgoQueryModule,
   ImageLayer,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
+  OverlayDirective,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
@@ -49,13 +49,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoOverlayModule,
+    MAP_DIRECTIVES,
+    OverlayDirective,
     IgoQueryModule,
-    IgoPanelModule,
+    PanelComponent,
     NgIf,
     NgFor,
-    IgoFeatureDetailsModule,
+    FEATURE_DETAILS_DIRECTIVES,
     AsyncPipe
   ]
 })

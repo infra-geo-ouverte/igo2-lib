@@ -3,12 +3,12 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
   IgoMap,
-  IgoMapModule,
-  IgoPrintModule,
   ImageLayer,
   ImageLayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
+  PrintComponent,
   TileLayer,
   TileLayerOptions
 } from '@igo2/geo';
@@ -25,8 +25,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoPrintModule
+    MAP_DIRECTIVES,
+    PrintComponent
   ]
 })
 export class AppPrintComponent {

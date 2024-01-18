@@ -4,8 +4,6 @@
 
 export * from './lib/integration.module';
 export * from './lib/about/about.module';
-export * from './lib/analytics/analytics.module';
-export * from './lib/storage/storage.module';
 export * from './lib/context/context.module';
 export * from './lib/catalog/catalog.module';
 
@@ -18,7 +16,6 @@ export * from './lib/map/map.module';
 export * from './lib/measure/measure.module';
 export * from './lib/print/print.module';
 export * from './lib/search/search.module';
-export * from './lib/tool/tool.module';
 
 export * from './lib/about';
 export * from './lib/analytics';

@@ -1,19 +1,34 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common';
 import {
+  ContextListBindingDirective,
+  ContextListComponent
+} from '@igo2/context';
+import {
+  ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
+  LayerListBindingDirective,
+  LayerListComponent,
   LayerListControlsEnum,
-  LayerListControlsOptions
+  LayerListControlsOptions,
+  MetadataButtonComponent,
+  OgcFilterButtonComponent,
+  TimeFilterButtonComponent,
+  TrackFeatureButtonComponent
 } from '@igo2/geo';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
+import { WorkspaceButtonComponent } from '../../workspace/workspace-button/workspace-button.component';
 import { MapState } from './../map.state';
 
 /**
@@ -28,7 +43,22 @@ import { MapState } from './../map.state';
   selector: 'igo-map-tool',
   templateUrl: './map-tool.component.html',
   styleUrls: ['./map-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatTabsModule,
+    LayerListComponent,
+    LayerListBindingDirective,
+    WorkspaceButtonComponent,
+    ExportButtonComponent,
+    OgcFilterButtonComponent,
+    TimeFilterButtonComponent,
+    TrackFeatureButtonComponent,
+    MetadataButtonComponent,
+    ContextListComponent,
+    ContextListBindingDirective,
+    TranslateModule
+  ]
 })
 export class MapToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;

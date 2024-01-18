@@ -1,23 +1,61 @@
+import { AsyncPipe, NgFor } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 
+import { ListComponent, ListItemDirective } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 import { Layer } from '../../layer/shared';
 import { SearchResult } from '../shared';
+import { SearchResultsItemComponent } from './search-results-item.component';
 
 @Component({
   selector: 'igo-save-feature-dialog',
   templateUrl: './save-feature-dialog.component.html',
-  styleUrls: ['./save-feature-dialog.component.scss']
+  styleUrls: ['./save-feature-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    ListComponent,
+    SearchResultsItemComponent,
+    ListItemDirective,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgFor,
+    MatOptionModule,
+    MatListModule,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SaveFeatureDialogComponent implements OnInit {
   public form: UntypedFormGroup;

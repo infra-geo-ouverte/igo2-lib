@@ -17,6 +17,7 @@ import {
   NavigationEnd,
   Router,
   RouterLink,
+  RouterLinkActive,
   RouterOutlet
 } from '@angular/router';
 
@@ -42,6 +43,7 @@ import { ROUTES_CONFIG } from './app.routing';
     MatSidenavModule,
     MatListModule,
     RouterLink,
+    RouterLinkActive,
     RouterOutlet
   ]
 })

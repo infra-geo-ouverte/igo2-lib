@@ -60,9 +60,9 @@ describe('SearchSettingsComponent', () => {
         MatCheckboxModule,
         MatDividerModule,
         MatSlideToggleModule,
-        MatIconTestingModule
+        MatIconTestingModule,
+        SearchSettingsComponent
       ],
-      declarations: [SearchSettingsComponent],
       providers: [
         { provide: SearchSourceService, useValue: spy },
         provideDefaultIChercheSearchResultFormatter(),

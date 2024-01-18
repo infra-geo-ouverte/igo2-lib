@@ -1,8 +1,13 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
+import { ListItemDirective } from '@igo2/common';
+
 import { IgoMap } from '../../map/shared/map';
+import { OgcFilterFormComponent } from '../ogc-filter-form/ogc-filter-form.component';
+import { OgcFilterSelectionComponent } from '../ogc-filter-selection/ogc-filter-selection.component';
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 
 @Component({
@@ -18,6 +23,14 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
     }
+  ],
+  standalone: true,
+  imports: [
+    NgIf,
+    OgcFilterSelectionComponent,
+    ListItemDirective,
+    NgFor,
+    OgcFilterFormComponent
   ]
 })
 export class OgcFilterableFormComponent {

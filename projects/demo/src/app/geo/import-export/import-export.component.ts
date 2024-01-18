@@ -3,11 +3,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common';
 import {
-  IgoImportExportModule,
+  IMPORT_EXPORT_DIRECTIVES,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   TileLayer
 } from '@igo2/geo';
@@ -24,8 +24,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoImportExportModule
+    MAP_DIRECTIVES,
+    IMPORT_EXPORT_DIRECTIVES
   ]
 })
 export class AppImportExportComponent {

@@ -4,10 +4,10 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import {
   IgoDirectionsModule,
   IgoMap,
-  IgoMapModule,
   IgoSearchModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapService,
   MapViewOptions,
   RoutesFeatureStore,
@@ -31,7 +31,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
+    MAP_DIRECTIVES,
     IgoDirectionsModule,
     IgoSearchModule
   ]

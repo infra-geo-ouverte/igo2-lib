@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import {
   AnyBaseOgcFilterOptions,
   DataSourceService,
-  IgoFilterModule,
+  FILTER_DIRECTIVES,
   IgoMap,
-  IgoMapModule,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -41,9 +41,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoPanelModule,
-    IgoFilterModule
+    MAP_DIRECTIVES,
+    PanelComponent,
+    FILTER_DIRECTIVES
   ]
 })
 export class AppOgcFilterComponent {

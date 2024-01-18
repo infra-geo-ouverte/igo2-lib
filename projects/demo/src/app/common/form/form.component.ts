@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 
 import {
   Form,
+  FormComponent,
   FormField,
   FormFieldConfig,
-  FormService,
-  IgoFormFormModule,
-  IgoFormGroupModule
+  FormGroupComponent,
+  FormService
 } from '@igo2/common';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -26,8 +26,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     NgIf,
-    IgoFormFormModule,
-    IgoFormGroupModule,
+    FormComponent,
+    FormGroupComponent,
     MatButtonModule,
     AsyncPipe
   ]

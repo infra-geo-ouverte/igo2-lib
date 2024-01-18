@@ -39,7 +39,7 @@ export const routes: Routes = [
 ];
 
 export const ROUTES_CONFIG: Routes = [
-  { title: 'Home', path: '', redirectTo: '/home', pathMatch: 'full' },
+  { title: 'Home', path: 'home', redirectTo: '/home', pathMatch: 'full' },
   {
     title: 'Core',
     path: 'core',

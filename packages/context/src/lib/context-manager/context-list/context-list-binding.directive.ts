@@ -25,7 +25,9 @@ import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';
 
 @Directive({
-  selector: '[igoContextListBinding]'
+  selector: '[igoContextListBinding]',
+  standalone: true,
+  providers: [ConfirmDialogService]
 })
 export class ContextListBindingDirective implements OnInit, OnDestroy {
   private component: ContextListComponent;

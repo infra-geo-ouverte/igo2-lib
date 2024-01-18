@@ -31,9 +31,7 @@ import { ProtectedDirective } from './shared/protected.directive';
     MatIconModule,
     MatButtonModule,
     IgoLanguageModule,
-    MsalModule
-  ],
-  declarations: [
+    MsalModule,
     AuthFormComponent,
     AuthGoogleComponent,
     AuthInternComponent,

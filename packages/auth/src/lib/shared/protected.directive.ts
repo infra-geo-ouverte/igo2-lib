@@ -3,7 +3,8 @@ import { Directive, ElementRef } from '@angular/core';
 import { AuthService } from './auth.service';
 
 @Directive({
-  selector: '[igoProtected]'
+  selector: '[igoProtected]',
+  standalone: true
 })
 export class ProtectedDirective {
   constructor(authentication: AuthService, el: ElementRef) {

@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import {
-  ContextService,
-  IgoContextImportExportModule,
-  IgoContextManagerModule
+  CONTEXT_MANAGER_DIRECTIVES,
+  ContextImportExportComponent,
+  ContextService
 } from '@igo2/context';
 import {
-  IgoLayerModule,
   IgoMap,
-  IgoMapModule,
-  IgoMetadataModule,
+  LAYER_DIRECTIVES,
+  MAP_DIRECTIVES,
+  METADATA_DIRECTIVES,
   MapService,
   MapViewOptions
 } from '@igo2/geo';
@@ -28,12 +28,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoContextManagerModule,
-    IgoPanelModule,
-    IgoLayerModule,
-    IgoMetadataModule,
-    IgoContextImportExportModule
+    MAP_DIRECTIVES,
+    CONTEXT_MANAGER_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES,
+    METADATA_DIRECTIVES,
+    ContextImportExportComponent
   ]
 })
 export class AppContextComponent {

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntityTableTemplate, IgoEntityTableModule } from '@igo2/common';
+import { EntityTableComponent, EntityTableTemplate } from '@igo2/common';
 import {
   DataSourceService,
   FeatureDataSource,
@@ -10,9 +10,9 @@ import {
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -30,8 +30,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoEntityTableModule
+    MAP_DIRECTIVES,
+    EntityTableComponent
   ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {

@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import {
   DataSourceService,
+  DownloadButtonComponent,
+  FILTER_DIRECTIVES,
   FeatureDataSource,
-  IgoDownloadModule,
-  IgoFilterModule,
-  IgoLayerModule,
   IgoMap,
-  IgoMapModule,
-  IgoMetadataModule,
   ImageLayer,
   ImageLayerOptions,
+  LAYER_DIRECTIVES,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
+  METADATA_DIRECTIVES,
   MapViewOptions,
   MetadataLayerOptions,
   OSMDataSource,
@@ -38,12 +38,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoPanelModule,
-    IgoLayerModule,
-    IgoMetadataModule,
-    IgoDownloadModule,
-    IgoFilterModule
+    MAP_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES,
+    METADATA_DIRECTIVES,
+    DownloadButtonComponent,
+    FILTER_DIRECTIVES
   ]
 })
 export class AppLayerComponent {

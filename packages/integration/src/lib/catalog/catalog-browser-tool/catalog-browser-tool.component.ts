@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,6 +11,7 @@ import { AuthService } from '@igo2/auth';
 import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 import {
   Catalog,
+  CatalogBrowserComponent,
   CatalogItem,
   CatalogItemState,
   CatalogService,
@@ -34,7 +36,9 @@ import { CatalogState } from '../catalog.state';
 @Component({
   selector: 'igo-catalog-browser-tool',
   templateUrl: './catalog-browser-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   catalog: Catalog;

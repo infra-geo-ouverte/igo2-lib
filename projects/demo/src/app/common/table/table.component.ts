@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
-  IgoTableModule,
   TableActionColor,
+  TableComponent,
   TableDatabase,
   TableModel
 } from '@igo2/common';
@@ -15,7 +15,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoTableModule]
+  imports: [DocViewerComponent, ExampleViewerComponent, TableComponent]
 })
 export class AppTableComponent implements OnInit {
   public database: TableDatabase;

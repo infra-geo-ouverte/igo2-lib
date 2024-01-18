@@ -5,9 +5,9 @@ import { Media, MediaService } from '@igo2/core';
 import {
   DataSourceService,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions
@@ -21,7 +21,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './simple-map.component.html',
   styleUrls: ['./simple-map.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule, NgIf]
+  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
 })
 export class AppSimpleMapComponent {
   public pointerCoord: string;

@@ -1,3 +1,4 @@
+import { AsyncPipe, KeyValuePipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,18 +9,35 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ActionStore, ActionbarMode } from '@igo2/common';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode,
+  CollapsibleComponent,
+  ListComponent,
+  ListItemDirective
+} from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
+import { ContextItemComponent } from '../context-item/context-item.component';
 import {
   ContextProfils,
   ContextServiceOptions,
@@ -33,7 +51,28 @@ import { ContextListControlsEnum } from './context-list.enum';
   selector: 'igo-context-list',
   templateUrl: './context-list.component.html',
   styleUrls: ['./context-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    ActionbarComponent,
+    MatMenuModule,
+    NgFor,
+    MatCheckboxModule,
+    CollapsibleComponent,
+    ContextItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    KeyValuePipe,
+    TranslateModule
+  ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;

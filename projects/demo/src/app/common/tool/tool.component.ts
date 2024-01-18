@@ -11,13 +11,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import {
-  IgoPanelModule,
-  IgoToolboxModule,
   OnUpdateInputs,
+  PanelComponent,
   Tool,
   ToolComponent,
   ToolService,
-  Toolbox
+  Toolbox,
+  ToolboxComponent
 } from '@igo2/common';
 
 import { BehaviorSubject } from 'rxjs';
@@ -68,11 +68,11 @@ export class AppAboutToolComponent {}
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoPanelModule,
+    PanelComponent,
     NgIf,
     MatButtonModule,
     MatIconModule,
-    IgoToolboxModule,
+    ToolboxComponent,
     AsyncPipe
   ]
 })
@@ -87,9 +87,7 @@ export class AppToolComponent implements OnInit, OnDestroy {
     return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
   }
 
-  constructor(
-    private toolService: ToolService
-  ) {}
+  constructor(private toolService: ToolService) {}
 
   ngOnInit(): void {
     this.toolbox.setToolbar(['demo-salutation', 'demo-about']);

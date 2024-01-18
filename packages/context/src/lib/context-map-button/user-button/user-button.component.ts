@@ -1,10 +1,17 @@
+import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
+
+import { PoiButtonComponent } from '../poi-button/poi-button.component';
 import { userButtonSlideInOut } from './user-button.animation';
 import { UserDialogComponent } from './user-dialog.component';
 
@@ -12,7 +19,16 @@ import { UserDialogComponent } from './user-dialog.component';
   selector: 'igo-user-button',
   templateUrl: './user-button.component.html',
   styleUrls: ['./user-button.component.scss'],
-  animations: [userButtonSlideInOut()]
+  animations: [userButtonSlideInOut()],
+  standalone: true,
+  imports: [
+    NgIf,
+    PoiButtonComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class UserButtonComponent {
   @Input()

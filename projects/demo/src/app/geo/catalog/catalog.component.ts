@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EntityRecord, EntityStore, IgoPanelModule } from '@igo2/common';
+import { EntityRecord, EntityStore, PanelComponent } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import {
   Catalog,
+  CatalogBrowserComponent,
   CatalogItem,
+  CatalogLibaryComponent,
   CatalogService,
-  IgoCatalogBrowserModule,
-  IgoCatalogLibraryModule,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapService,
   MapViewOptions,
   TileLayer
@@ -28,10 +28,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoPanelModule,
-    IgoCatalogLibraryModule,
-    IgoCatalogBrowserModule
+    MAP_DIRECTIVES,
+    PanelComponent,
+    CatalogLibaryComponent,
+    CatalogBrowserComponent
   ]
 })
 export class AppCatalogComponent implements OnInit {

@@ -5,18 +5,18 @@ import { MatButtonModule } from '@angular/material/button';
 
 import {
   Form,
+  FormComponent,
   FormField,
   FormFieldConfig,
-  FormService,
-  IgoFormFormModule,
-  IgoFormGroupModule
+  FormGroupComponent,
+  FormService
 } from '@igo2/common';
 import {
   DataSourceService,
   IgoMap,
-  IgoMapModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions
@@ -37,10 +37,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
+    MAP_DIRECTIVES,
     NgIf,
-    IgoFormFormModule,
-    IgoFormGroupModule,
+    FormComponent,
+    FormGroupComponent,
     MatButtonModule,
     AsyncPipe
   ]

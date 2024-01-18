@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import {
   DataSourceService,
-  IgoLayerModule,
   IgoMap,
-  IgoMapModule,
   ImageLayer,
   ImageLayerOptions,
+  LAYER_DIRECTIVES,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   MetadataLayerOptions,
   OSMDataSource,
@@ -29,9 +29,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoPanelModule,
-    IgoLayerModule
+    MAP_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES
   ]
 })
 export class AppLegendComponent {

@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core';
 
 import { IgoDrawModule } from './draw/draw.module';
 
+/**
+ * @deprecated import the DrawComponent directly
+ */
 @NgModule({
-  imports: [],
-  declarations: [],
   exports: [IgoDrawModule]
 })
 export class IgoDrawingToolModule {}

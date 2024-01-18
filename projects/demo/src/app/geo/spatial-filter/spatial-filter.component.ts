@@ -14,22 +14,22 @@ import {
   EntityKey,
   EntityStore,
   EntityStoreWithStrategy,
-  IgoPanelModule
+  PanelComponent
 } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
   DataSourceService,
+  FEATURE_DETAILS_DIRECTIVES,
+  FILTER_DIRECTIVES,
   Feature,
   FeatureMotion,
-  IgoFeatureDetailsModule,
-  IgoFilterModule,
   IgoMap,
-  IgoMapModule,
   IgoQueryModule,
   Layer,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   MeasureLengthUnit,
   OSMDataSource,
@@ -74,12 +74,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
+    MAP_DIRECTIVES,
     IgoQueryModule,
-    IgoPanelModule,
-    IgoFilterModule,
+    PanelComponent,
+    FILTER_DIRECTIVES,
     NgIf,
-    IgoFeatureDetailsModule,
+    FEATURE_DETAILS_DIRECTIVES,
     AsyncPipe
   ]
 })
