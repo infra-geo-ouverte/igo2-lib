@@ -1,6 +1,6 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss'],
   standalone: true,
-  imports: [NgClass, MatProgressSpinnerModule, AsyncPipe]
+  imports: [NgClass, MatProgressSpinner, AsyncPipe]
 })
 export class SpinnerComponent {
   public shown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
