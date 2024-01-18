@@ -140,7 +140,16 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result);
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.focus);
+    this.selectedFeature = (result satisfies SearchResult<Feature>).data;
+  }
+  /**
+   * Try to add a feature to the map when it's being selected
+   * @internal
+   * @param result A search result that could be a feature
+   */
+  onResultSelect(result: SearchResult<Feature>): void {
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
     this.selectedFeature = (result satisfies SearchResult<Feature>).data;
   }
 
@@ -148,7 +157,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(layer: SearchResult<Feature>): void | undefined {
+  private tryAddFeatureToMap(
+    layer: SearchResult<Feature>,
+    motion: FeatureMotion = FeatureMotion.Default
+  ): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -160,7 +172,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
     this.map.searchResultsOverlay.setFeatures(
       [layer.data] satisfies Feature[],
-      FeatureMotion.Default
+      motion
     );
   }
 
