@@ -4,14 +4,17 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import {
   IgoDirectionsModule,
   IgoMap,
-  IgoMapModule,
   IgoSearchModule,
+  LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapService,
+  MapViewOptions,
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
-  StopsStore
+  StopsStore,
+  TileLayer
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -28,13 +31,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
+    MAP_DIRECTIVES,
     IgoDirectionsModule,
     IgoSearchModule
   ]
 })
 export class AppDirectionsComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -42,7 +45,7 @@ export class AppDirectionsComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9,
     geolocate: false
@@ -68,10 +71,12 @@ export class AppDirectionsComponent {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies LayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }

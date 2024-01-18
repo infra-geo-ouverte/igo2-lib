@@ -9,10 +9,10 @@
     >
     </igo-entity-selector>
 
-    <div *ngIf="selected$ | async as selected">
-      <p>ID: {{ selected.id }}</p>
-      <p>Name: {{ selected.name }}</p>
-      <p>Description: <span [innerHtml]="selected.description"></span></p>
+    <div *ngIf="entityIsSelected">
+      <p>ID: {{ (selectedEntity$ | async).id }}</p>
+      <p>Name: {{ (selectedEntity$ | async).name }}</p>
+      <p>Description: <span [innerHtml]="(selectedEntity$ | async).description"></span></p>
     </div>
   </app-example-viewer>
 </app-doc-viewer>

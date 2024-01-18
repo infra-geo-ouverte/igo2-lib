@@ -19,7 +19,6 @@ import {
   Toolbox,
   ToolboxComponent
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -78,7 +77,7 @@ export class AppAboutToolComponent {}
   ]
 })
 export class AppToolComponent implements OnInit, OnDestroy {
-  toolbox = new Toolbox();
+  toolbox: Toolbox = new Toolbox();
 
   get activeTool$(): BehaviorSubject<Tool> {
     return this.toolbox.activeTool$;
@@ -88,21 +87,18 @@ export class AppToolComponent implements OnInit, OnDestroy {
     return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
   }
 
-  constructor(
-    private toolService: ToolService,
-    private languageService: LanguageService
-  ) {}
+  constructor(private toolService: ToolService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.toolbox.setToolbar(['demo-salutation', 'demo-about']);
     this.toolbox.setTools(this.toolService.getTools());
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.toolbox.destroy();
   }
 
-  activateSalutationTool() {
+  activateSalutationTool(): void {
     this.toolbox.activateTool('demo-salutation', { name: 'Bob' });
   }
 }

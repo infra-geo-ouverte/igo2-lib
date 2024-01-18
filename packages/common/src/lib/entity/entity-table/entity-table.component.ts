@@ -25,6 +25,7 @@ import {
   UntypedFormBuilder,
   UntypedFormGroup
 } from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -93,7 +94,8 @@ interface RowData {
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: MatFormFieldControl, useExisting: EntityTableComponent }
+    { provide: MatFormFieldControl, useExisting: EntityTableComponent },
+    provideMomentDateAdapter()
   ],
   standalone: true,
   imports: [

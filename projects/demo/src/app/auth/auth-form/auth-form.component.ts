@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 
 import { IgoAuthModule } from '@igo2/auth';
-import { LanguageService } from '@igo2/core';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -14,7 +13,5 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoAuthModule]
 })
 export class AppAuthFormComponent {
-  private idsActivity: string[] = [];
-
-  constructor(private languageService: LanguageService) {}
+  constructor() {}
 }

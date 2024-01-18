@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AppCatalogComponent } from './catalog/catalog.component';
 import { AppDirectionsComponent } from './directions/directions.component';
+import { AppDrawComponent } from './draw/draw.component';
 import { AppFeatureComponent } from './feature/feature.component';
 import { AppGeometryComponent } from './geometry/geometry.component';
 import { AppHoverComponent } from './hover/hover.component';
@@ -64,8 +65,7 @@ export const routes: Routes = [
   {
     title: 'Draw',
     path: 'draw',
-    loadChildren: () =>
-      import('./draw/draw.module').then((m) => m.AppDrawModule)
+    component: AppDrawComponent
   },
   {
     title: 'Query',

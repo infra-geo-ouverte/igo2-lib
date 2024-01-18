@@ -30,7 +30,7 @@ export interface WFSWriteGetFeatureOptions {
 }
 
 export type AnyBaseOgcFilterOptions =
-  | OgcFilterCondionsArrayOptions
+  | OgcFilterConditionsArrayOptions
   | OgcFilterSpatialOptions
   | OgcFilterDuringOptions
   | OgcFilterIsBetweenOptions
@@ -153,7 +153,7 @@ export interface IgoDomSelector {
   domValue: DOMValue[];
 }
 
-export interface OgcFilterCondionsArrayOptions {
+export interface OgcFilterConditionsArrayOptions {
   conditions: OgcFilter[];
 }
 

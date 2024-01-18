@@ -3,10 +3,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common';
 import {
-  IgoImportExportModule,
+  IMPORT_EXPORT_DIRECTIVES,
   IgoMap,
-  IgoMapModule,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MAP_DIRECTIVES,
+  MapViewOptions,
+  TileLayer
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -21,12 +24,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoImportExportModule
+    MAP_DIRECTIVES,
+    IMPORT_EXPORT_DIRECTIVES
   ]
 })
 export class AppImportExportComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -34,21 +37,23 @@ export class AppImportExportComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9
   };
 
-  public store = new WorkspaceStore([]);
+  public store: WorkspaceStore = new WorkspaceStore([]);
 
   constructor(private layerService: LayerService) {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies LayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }

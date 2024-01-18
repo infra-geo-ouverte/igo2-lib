@@ -64,11 +64,11 @@ export class AppWidgetComponent {
     this.widget = this.widgetService.create(AppSalutationWidgetComponent);
   }
 
-  onWidgetComplete(name: string) {
+  onWidgetComplete(name: string): void {
     alert(`${name} emitted event 'complete' then got automatically destroyed.`);
   }
 
-  onWidgetCancel() {
+  onWidgetCancel(): void {
     alert(`Widget emitted event 'cancel' then got automatically destroyed.`);
   }
 }

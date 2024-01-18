@@ -1,12 +1,16 @@
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { LanguageService, MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core';
 import {
   DataSourceService,
   IgoMap,
-  IgoMapModule,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MAP_DIRECTIVES,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -17,12 +21,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './simple-map.component.html',
   styleUrls: ['./simple-map.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule, NgIf]
+  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
 })
 export class AppSimpleMapComponent {
-  public pointerCoord;
+  public pointerCoord: string;
   public pointerCoordDelay: number = 0;
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -31,22 +35,21 @@ export class AppSimpleMapComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6,
     rotation: 0.75
   };
 
-  get media() {
+  get media(): Media {
     return this.mediaService.getMedia();
   }
 
-  get isTouchScreen() {
+  get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mediaService: MediaService
@@ -54,18 +57,20 @@ export class AppSimpleMapComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            visible: true,
+            baseLayer: true
+          } satisfies LayerOptions)
         );
       });
   }
 
-  onPointerMove(event) {
+  onPointerMove(event: string): void {
     this.pointerCoord = event;
   }
 }

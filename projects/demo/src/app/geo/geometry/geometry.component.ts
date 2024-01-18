@@ -6,15 +6,20 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   Form,
   FormComponent,
+  FormField,
+  FormFieldConfig,
   FormGroupComponent,
   FormService
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
   IgoMap,
-  IgoMapModule,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MAP_DIRECTIVES,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 import * as olstyle from 'ol/style';
@@ -32,7 +37,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
+    MAP_DIRECTIVES,
     NgIf,
     FormComponent,
     FormGroupComponent,
@@ -41,7 +46,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
-  map = new IgoMap({
+  map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -50,41 +55,42 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     }
   });
 
-  view = {
+  view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 15
   };
 
-  form$ = new BehaviorSubject<Form>(undefined);
+  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
   data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
 
-  submitDisabled = true;
+  submitDisabled: boolean = true;
 
   private valueChanges$$: Subscription;
 
   constructor(
-    private languageService: LanguageService,
     private formService: FormService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
 
-    const fieldConfigs = [
+    const fieldConfigs: FormFieldConfig[] = [
       {
         name: 'geometry',
         title: 'Geometry',
@@ -128,8 +134,10 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       }
     ];
 
-    const fields = fieldConfigs.map((config) => this.formService.field(config));
-    const form = this.formService.form(
+    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) =>
+      this.formService.field(config)
+    );
+    const form: Form = this.formService.form(
       [],
       [this.formService.group({ name: 'info' }, fields)]
     );
@@ -141,11 +149,11 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.form$.next(form);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.valueChanges$$.unsubscribe();
   }
 
-  fillForm() {
+  fillForm(): void {
     this.data$.next({
       name: 'Place',
       geometry: JSON.stringify({
@@ -163,11 +171,11 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     });
   }
 
-  clearForm() {
+  clearForm(): void {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }) {
+  onSubmit(data: { [key: string]: any }): void {
     alert(JSON.stringify(data));
   }
 }

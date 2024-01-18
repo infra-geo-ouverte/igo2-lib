@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { Media, MediaOrientation, MediaService } from '@igo2/core';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -15,15 +15,15 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppMediaComponent {
   constructor(private mediaService: MediaService) {}
 
-  get media() {
+  get media(): Media {
     return this.mediaService.getMedia();
   }
 
-  get orientation() {
+  get orientation(): MediaOrientation {
     return this.mediaService.getOrientation();
   }
 
-  get isTouchScreen() {
+  get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
 }

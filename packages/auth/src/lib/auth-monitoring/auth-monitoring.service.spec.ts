@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import {
   AnyMonitoringOptions,
   ConfigService,
-  IgoLanguageModule,
   MONITORING_OPTIONS,
   MessageService,
   provideMockRootTranslation
@@ -25,7 +24,6 @@ const initialize = (
       HttpClientModule,
       provideMockRootTranslation(),
       IgoAuthModule,
-      IgoLanguageModule,
       ToastrModule
     ],
     providers: [
