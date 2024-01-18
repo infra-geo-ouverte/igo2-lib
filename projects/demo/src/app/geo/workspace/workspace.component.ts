@@ -29,7 +29,8 @@ import {
   OSMDataSourceOptions,
   VectorLayerOptions,
   WFSDataSource,
-  WFSDataSourceOptions
+  WFSDataSourceOptions,
+  WorkspaceSelectorDirective
 } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
 
@@ -54,6 +55,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     IgoGeoWorkspaceModule,
     MAP_DIRECTIVES,
     WorkspaceSelectorComponent,
+    WorkspaceSelectorDirective,
     WorkspaceWidgetOutletComponent,
     MatCardModule,
     NgIf
