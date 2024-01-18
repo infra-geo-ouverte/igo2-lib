@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityKey, EntityStore, EntityStoreWithStrategy } from '@igo2/common';
+import { EntityKey, EntityStore } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
@@ -35,8 +35,8 @@ import {
   featureToOl,
   moveToOlFeatures
 } from '@igo2/geo';
-import { Coordinate } from 'ol/coordinate';
 
+import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceCluster from 'ol/source/Cluster';
@@ -91,7 +91,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 
-  public store: EntityStoreWithStrategy = new EntityStoreWithStrategy<Feature>([]); // Store to print results at the end
+  public store: EntityStore = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -502,19 +502,21 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private createSvgIcon(icon: string): olstyle.Style {
     let style: olstyle.Style;
-    this.matIconRegistry.getNamedSvgIcon(icon).subscribe((svgObj: SVGElement) => {
-      const xmlSerializer: XMLSerializer = new XMLSerializer();
-      svgObj.setAttribute('width', '30');
-      svgObj.setAttribute('height', '30');
-      svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
-      svgObj.setAttribute('stroke', 'white');
-      const svg: string = xmlSerializer.serializeToString(svgObj);
-      style = new olstyle.Style({
-        image: new olstyle.Icon({
-          src: 'data:image/svg+xml;utf8,' + svg
-        })
+    this.matIconRegistry
+      .getNamedSvgIcon(icon)
+      .subscribe((svgObj: SVGElement) => {
+        const xmlSerializer: XMLSerializer = new XMLSerializer();
+        svgObj.setAttribute('width', '30');
+        svgObj.setAttribute('height', '30');
+        svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
+        svgObj.setAttribute('stroke', 'white');
+        const svg: string = xmlSerializer.serializeToString(svgObj);
+        style = new olstyle.Style({
+          image: new olstyle.Icon({
+            src: 'data:image/svg+xml;utf8,' + svg
+          })
+        });
       });
-    });
     return style;
   }
   /**

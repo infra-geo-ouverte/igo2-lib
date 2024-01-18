@@ -1,6 +1,7 @@
 {
-  "excludeRegExp": [
-    "^.*geo/src/lib/map.*$",
-    "^.*geo/src/lib/layer.*$"
-  ]
+  "detectiveOptions": {
+    "ts": {
+      "skipTypeImports": true
+    }
+  }
 }
