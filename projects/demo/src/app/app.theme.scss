@@ -1,0 +1,9 @@
+@use './components/components.theme' as components;
+
+@mixin themes($theme) {
+  @include components.themes($theme);
+}
+
+@mixin colors($theme) {
+  @include components.colors($theme);
+}

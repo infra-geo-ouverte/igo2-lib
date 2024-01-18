@@ -27,6 +27,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 import { AppActionModule } from './common/action/action.module';
+import { AppDialogModule } from './common/dialog/dialog.module';
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
 import { AppEntitySelectorModule } from './common/entity-selector/entity-selector.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
@@ -43,6 +44,7 @@ import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
 import { MonitoringModule } from './core/monitoring/monitoring.module';
 import { AppRequestModule } from './core/request/request.module';
+import { AppThemeModule } from './core/theme/theme.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppDrawModule } from './geo/draw/draw.module';
@@ -89,8 +91,10 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppMediaModule,
     AppMessageModule,
     AppRequestModule,
+    AppThemeModule,
 
     AppActionModule,
+    AppDialogModule,
     AppDynamicComponentModule,
     AppEntityTableModule,
     AppEntitySelectorModule,

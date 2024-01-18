@@ -1,14 +1,21 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
+  FeatureDataSource,
   IgoMap,
+  ImageLayer,
+  ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   MetadataLayerOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
   OgcFilterableDataSourceOptions,
+  VectorLayerOptions,
   WFSDataSourceOptions,
+  WMSDataSource,
   WMSDataSourceOptions
 } from '@igo2/geo';
 
@@ -18,7 +25,7 @@ import {
   styleUrls: ['./layer.component.scss']
 })
 export class AppLayerComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -26,78 +33,43 @@ export class AppLayerComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     maxLayerZoomExtent: [-11000000, 4500000, -4500000, 10000000],
     zoom: 7
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            visible: true,
             baseLayer: true,
+            visible: true,
             source: dataSource
-          })
+          } satisfies LayerOptions)
         );
       });
-
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-    const wfsDatasource: WFSoptions = {
+    const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
         outputFormat: 'geojson',
-        outputFormatDownload: 'shp'
-      },
-      ogcFilters: {
-        enabled: true,
-        editable: false,
-        filters: {
-          operator: 'PropertyIsEqualTo',
-          propertyName: 'code_municipalite',
-          expression: '10043'
-        }
-      }
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wfsDatasource)
-      .subscribe((dataSource) => {
-        const layer: LayerOptions = {
-          title: 'WFS ',
-          visible: true,
-          source: dataSource
-        };
-        this.map.addLayer(this.layerService.createLayer(layer));
-      });
-
-    const wfsDatasourceCustomEPSG: WFSoptions = {
-      type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-      params: {
-        featureTypes: 'vg_observation_v_autre_wmst',
-        fieldNameGeometry: 'geometry',
-        maxFeatures: 10000,
-        version: '2.0.0',
-        outputFormat: 'geojson_utf8',
         srsName: 'EPSG:32198',
         outputFormatDownload: 'shp'
       },
@@ -117,29 +89,29 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourceCustomEPSG)
-      .subscribe((dataSource) => {
-        const layer: LayerOptions = {
+      .subscribe((dataSource: FeatureDataSource) => {
+        const layerOptions: VectorLayerOptions = {
           title: 'WFS (Custom EPSG)',
           visible: true,
           source: dataSource,
           removable: false
         };
-        this.map.addLayer(this.layerService.createLayer(layer));
+        this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
 
     this.layerService
       .createAsyncLayer({
+        title: 'Parcs routiers',
         sourceOptions: {
           type: 'wms',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'parc_routier',
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -153,69 +125,65 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
       .createAsyncLayer({
-        title: 'lieu habité',
+        title: 'Lieux habités',
         visible: false,
         sourceOptions: {
           type: 'wms',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'lieuhabite',
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
       .createAsyncLayer({
-        title: 'sh_dis_eco',
+        title: 'Direction du vent',
+        visible: false,
+        legendOptions: {
+          stylesAvailable: [
+            {name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR'},
+            {name: 'WDIR6', title: 'WDIR6'},
+            {name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR'},
+            {name: 'WDIR3', title: 'WDIR3'}
+          ]
+        },
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://geo.weather.gc.ca/geomet?lang=fr',
+          params: {
+            LAYERS: 'HRDPS.CONTINENTAL_WD',
+            VERSION: '1.3.0'
+          }
+        }
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'District écologique',
         visible: false,
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/mffpecofor.fcgi',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'sh_dis_eco',
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
       .createAsyncLayer({
-        title: 'nurc:Arc_Sample_Parent',
-        visible: false,
-        legendOptions: {
-          // collapsed: false,
-          display: true,
-          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
-          stylesAvailable: [
-            { name: 'rain', title: 'Pluie' },
-            { name: 'raster', title: 'Défaut' }
-          ] //
-        },
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://demo.geo-solutions.it/geoserver/ows',
-          optionsFromCapabilities: true,
-          params: {
-            LAYERS: 'nurc:Arc_Sample', // , test:Linea_costa
-            VERSION: '1.3.0'
-          }
-        }
-      })
-      .subscribe((l) => this.map.addLayer(l));
-
-    this.layerService
-      .createAsyncLayer({
-        title: 'Avertissements routier',
+        title: 'Avertissements routiers',
         visible: false,
         sourceOptions: {
           type: 'wms',
@@ -225,12 +193,12 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       refreshIntervalSec: 15,
       params: {
         LAYERS: 'vg_observation_v_inondation_embacle_wmst',
@@ -244,16 +212,16 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource) => {
-        const layer: LayerOptionsWithMetadata = {
-          title: 'Embâcle',
+      .subscribe((dataSource: WMSDataSource) => {
+        const layerOptions: LayerOptionsWithMetadata = {
+          title: 'Embâcles',
           source: dataSource,
           metadata: {
             url: 'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
             extern: true
           }
         };
-        this.map.addLayer(this.layerService.createLayer(layer));
+        this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
   }
 }

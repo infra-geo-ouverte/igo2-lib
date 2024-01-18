@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '../../config/config.service';
-import { AnalyticsOptions } from './analytics.interface';
+import { AnalyticsBaseUser, AnalyticsOptions } from './analytics.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -45,15 +45,10 @@ export class AnalyticsService {
     })();
   }
 
-  public setUser(
-    user?: {
-      id: number;
-      sourceId?: string;
-      firstName?: string;
-      lastName?: string;
-    },
-    profils?: string[]
-  ) {
+  /**
+   * Pass `null` to unset the user.
+   */
+  public setUser(user: AnalyticsBaseUser | null, profils?: string[]) {
     if (this.options.provider === 'matomo') {
       if (!user) {
         this.paq.push(['resetUserId']);

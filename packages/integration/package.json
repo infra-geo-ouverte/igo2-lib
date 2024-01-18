@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "16.0.2",
+  "version": "16.1.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -18,7 +18,6 @@
   "scripts": {
     "build": "ng build integration --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
-    "publish": "npm publish ../../dist/integration",
     "test": "",
     "watch": "ng build integration --watch"
   },

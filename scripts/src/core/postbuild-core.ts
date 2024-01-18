@@ -1,14 +1,15 @@
-import { join } from 'path';
-import { copyFile, pathExist } from '../utils/file-system.utils';
-import { compileStyle } from '../utils/style.utils';
 import { readdir } from 'fs/promises';
+import { join } from 'path';
 import { performance } from 'perf_hooks';
-import { getDuration } from '../utils/performance.utils';
-import { resolveDist, resolvePackage } from '../config/paths';
+
 import { PackageName } from '../config/packages';
+import { resolveDist, resolvePackage } from '../config/paths';
+import { copyFile, pathExist } from '../utils/file-system.utils';
 import * as log from '../utils/log';
-import { bundleLocalization } from './utils/localization';
+import { getDuration } from '../utils/performance.utils';
+import { compileStyle } from '../utils/style.utils';
 import { copyAssets, copyExternalAssets } from './utils/assets';
+import { bundleLocalization } from './utils/localization';
 
 const packageName: PackageName = 'core';
 const distPath = resolveDist(packageName);

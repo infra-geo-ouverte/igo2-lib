@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "16.0.2",
+  "version": "16.1.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -16,11 +16,10 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "prestart": "ts-node ../../scripts/src/core/prestart-core.ts",
+    "prestart": "npm run postbuild",
     "build": "ng build core --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
-    "publish": "npm publish ../../dist/core --dry-run",
     "test": "ng test core --watch=false",
     "watch": "ng build core --watch && npm run postbuild"
   },
@@ -40,7 +39,7 @@
       "sass": "./src/style/partial/*.scss"
     },
     "./theming": {
-      "sass": "./core-theme.scss"
+      "sass": "./src/core-theme.scss"
     },
     "./prebuilt-themes/*": {
       "style": "./theming/prebuilt-themes/*.css"

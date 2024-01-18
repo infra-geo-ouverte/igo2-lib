@@ -5,7 +5,9 @@
 >
   <app-example-viewer codeFolder="geo/draw">
     <igo-map-browser [map]="map" [view]="view">
-      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+      </div>
     </igo-map-browser>
 
     <igo-draw [stores]="stores" [map]="map"></igo-draw>

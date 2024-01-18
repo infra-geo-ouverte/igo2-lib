@@ -24,7 +24,8 @@ export function formControlIsRequired(control: AbstractControl): boolean {
 
 export function getDefaultErrorMessages(): { [key: string]: string } {
   return {
-    required: 'igo.common.form.errors.required'
+    required: 'igo.common.form.errors.required',
+    email: 'igo.common.form.errors.email'
   };
 }
 
