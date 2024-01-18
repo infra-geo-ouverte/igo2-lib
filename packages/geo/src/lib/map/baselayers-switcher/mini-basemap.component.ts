@@ -7,12 +7,17 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
-import { Layer, LayerOptions } from '../../layer/shared';
-import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../shared';
-
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
+
+import {
+  Layer,
+  LayerOptions,
+  LayersLink,
+  LayersLinkProperties
+} from '../../layer/shared';
+import { LayerService } from '../../layer/shared/layer.service';
+import { IgoMap } from '../shared/map';
 
 @Component({
   selector: 'igo-mini-basemap',
@@ -108,27 +113,29 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     this.handleLinkedBaseLayer(layer);
   }
 
-  private handleLinkedBaseLayer(baselayer: Layer) {
-    const linkedLayers = baselayer.options.linkedLayers;
+  private handleLinkedBaseLayer(baselayer: Layer): void {
+    const linkedLayers: LayersLink = baselayer.options.linkedLayers;
     if (!linkedLayers) {
       return;
     }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-    if (isParentLayer && currentLinkedId === baselayer.options.linkedLayers.linkId) {
+    const links: LayersLinkProperties[] = linkedLayers.links;
+    const isParentLayer: boolean = links ? true : false;
+    if (isParentLayer) {
       // search for child layers
-      currentLinks.map(link => {
-        link.linkedIds.map(linkedId => {
-          const layerToApply = this.map.layers.find(l => l.options.linkedLayers?.linkId === linkedId);
+      links.map((link: LayersLinkProperties) => {
+        link.linkedIds.map((linkedId: string) => {
+          const layerToApply: Layer = this.map.layers.find(
+            (layer: Layer) => layer.options.linkedLayers?.linkId === linkedId
+          );
           if (layerToApply) {
-            const linkedLayerOptions: any = Object.assign(
+            const linkedLayerOptions: LayerOptions = Object.assign(
               Object.create(layerToApply.options),
               layerToApply.options,
               {
                 zIndex: 9000,
-                visible: true,
-                baseLayer: false,
+                visible:
+                  layerToApply.options.linkedLayers?.showInMiniBaseMap ?? true,
+                baseLayer: false
               } as LayerOptions
             );
             this.basemap.addLayer(this.layerService.createLayer(linkedLayerOptions));
