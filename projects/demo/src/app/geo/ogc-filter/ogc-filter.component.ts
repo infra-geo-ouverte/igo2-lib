@@ -502,7 +502,7 @@ export class AppOgcFilterComponent {
     const wmsOgcFilterOptions: WMSOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
-      optionsFromCapabilities: true,
+      optionsFromCapabilities: false,
       params: {
         LAYERS: 'vg_observation_v_autre_wmst',
         VERSION: '1.3.0'
