@@ -69,7 +69,7 @@ export class AppOgcFilterComponent {
 
     const datasource: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -142,7 +142,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilter: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -193,7 +193,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTime: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -217,7 +217,7 @@ export class AppOgcFilterComponent {
           operator: 'During',
           propertyName: 'date_observation',
           begin: '2016-01-01T04:00:00-05:00',
-          end: '2016-01-12T16:00:00-05:00',
+          end: '2016-01-12T16:00:00-05:00'
         } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
@@ -251,7 +251,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeMonth: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -310,7 +310,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeYear: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -369,7 +369,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeInterval: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -427,7 +427,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeRestrictedToStep: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -485,7 +485,8 @@ export class AppOgcFilterComponent {
 
     const wmsOgcFilterOptions: WMSOptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      optionsFromCapabilities: false,
       params: {
         LAYERS: 'vg_observation_v_autre_wmst',
         VERSION: '1.3.0'
@@ -504,7 +505,7 @@ export class AppOgcFilterComponent {
           operator: 'During',
           propertyName: 'date_observation',
           begin: '2016-01-01 00:00:00',
-          end: '2020-01-01 00:00:00',
+          end: '2020-01-01 00:00:00'
         } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions,
         allowedOperatorsType: OgcFilterOperatorType.Time
       }

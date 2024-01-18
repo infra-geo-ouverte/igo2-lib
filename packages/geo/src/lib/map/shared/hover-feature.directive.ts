@@ -104,15 +104,14 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.listenToMapPointerMove();
-    this.subscribeToPointerStore();
-    this.listenToMapClick();
-
     this.map.status$
       .pipe(first((status) => status === SubjectStatus.Done))
       .subscribe(() => {
         this.store = new FeatureStore<Feature>([], { map: this.map });
         this.initStore();
+        this.listenToMapPointerMove();
+        this.subscribeToPointerStore();
+        this.listenToMapClick();
       });
 
     // To handle context change without using the contextService.

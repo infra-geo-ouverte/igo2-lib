@@ -38,7 +38,7 @@ export const environment: EnvironmentOptions = {
         {
           id: 'Gououvert',
           title: 'Gouvouvert',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi'
         },
         {
           id: 'DefiningInfoFormat',
@@ -60,7 +60,7 @@ export const environment: EnvironmentOptions = {
         {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
           tooltipType: TooltipType.ABSTRACT
         },
         {
@@ -217,7 +217,7 @@ export const environment: EnvironmentOptions = {
             },
             {
               id: 'Gououvert',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
               regFilters: ['zpegt'],
               groupImpose: { id: 'zpegt', title: 'zpegt' }
             },
@@ -267,7 +267,7 @@ export const environment: EnvironmentOptions = {
             },
             {
               id: 'Gououvert',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
               regFilters: ['limtn_charg'],
               groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' }
             }

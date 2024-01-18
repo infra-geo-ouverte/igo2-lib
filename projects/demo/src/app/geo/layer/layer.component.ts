@@ -63,13 +63,13 @@ export class AppLayerComponent {
 
     const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson_utf8',
+        outputFormat: 'geojson',
         srsName: 'EPSG:32198',
         outputFormatDownload: 'shp'
       },
@@ -145,6 +145,29 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
+        title: 'Direction du vent',
+        visible: false,
+        legendOptions: {
+          stylesAvailable: [
+            {name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR'},
+            {name: 'WDIR6', title: 'WDIR6'},
+            {name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR'},
+            {name: 'WDIR3', title: 'WDIR3'}
+          ]
+        },
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://geo.weather.gc.ca/geomet?lang=fr',
+          params: {
+            LAYERS: 'HRDPS.CONTINENTAL_WD',
+            VERSION: '1.3.0'
+          }
+        }
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+
+    this.layerService
+      .createAsyncLayer({
         title: 'District écologique',
         visible: false,
         sourceOptions: {
@@ -175,7 +198,7 @@ export class AppLayerComponent {
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       refreshIntervalSec: 15,
       params: {
         LAYERS: 'vg_observation_v_inondation_embacle_wmst',

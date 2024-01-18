@@ -106,13 +106,13 @@ export class SearchPointerSummaryDirective
    */
   ngOnInit() {
     this.listenToMapPointerMove();
-    this.subscribeToPointerStore();
 
     this.map.status$
       .pipe(first((status) => status === SubjectStatus.Done))
       .subscribe(() => {
         this.store = new FeatureStore<Feature>([], { map: this.map });
         this.initStore();
+        this.subscribeToPointerStore();
       });
 
     // To handle context change without using the contextService.
