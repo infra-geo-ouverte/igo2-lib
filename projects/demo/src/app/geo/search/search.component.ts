@@ -135,12 +135,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * event to select element when the use of glass 
+   * event to select element when the use of glass
    */
-  onSelectElement(event){
-  console.log('onSelectelement event', event);
-  this.onResultFocus(event);
- }
+  onSelectElement(event) {
+    console.log('onSelectelement event recu', event);
+    this.onResultFocus(event);
+    console.log('onresultfocus  to send dans la carte', event);
+  }
 
   /**
    * Try to add a feature to the map when it's being focused

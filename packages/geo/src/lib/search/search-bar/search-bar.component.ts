@@ -486,10 +486,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
-   /**
+  /**
    * Event emitted when the search settings changes
    */
-   @Output() selectElement = new EventEmitter();
+  @Output() selectElement = new EventEmitter();
 
   /**
    * When the user clicks on the magnifying glass and
@@ -497,28 +497,36 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * coordinate it will be the second option to be focused in the map
    */
 
+  selectFirstElement() {
+    //Find the max value of scores
+    const maxScore = Math.max(
+      ...this.store.all().map((result) => result.meta.score)
+    );
 
- selectFirstElement(){
+    //Filter values who have the maxScore
+    const result = this.store
+      .all()
+      .find((result) => result.meta.score === maxScore);
+    //If the value has not a first maxScore it has to take the title
+    const coordInv = this.store.all().find((result) => result.meta.title);
 
-  //Find the max value of scores
-   const maxScore = Math.max(...this.store.all().map(result => result.meta.score));
-
-   //Filter values who have the maxScore
-   const result = this.store.all().find(result => result.meta.score === maxScore);
-   //If the value has not a first maxScore it has to take the title
-   const coordInv=this.store.all().find(result => result.meta.title);
-
-   //Function to reverse the value of the parameter
-   function reverseString(coordReInv) {
-     return coordReInv;
+    //Function to reverse the value of the parameter
+    function reverseString(coordReInv) {
+      return coordReInv;
     }
     //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
-    if(result){
-      this.selectElement.emit(result);
-      this.store.state.update(result,{focused:true,selected:true},true);
-    }else{
+    if (result) {
+      console.log('result dans la condition', result);
+      this.store.state.update(result, { focused: true, selected: true }, true);
+    } else {
       reverseString(coordInv);
-      this.store.state.update(coordInv,{focused:true,selected:true},true);
-      }
+      this.store.state.update(
+        coordInv,
+        { focused: true, selected: true },
+        true
+      );
+    }
+    this.selectElement.emit(result);
+    console.log('result dans selectElement', result);
   }
 }
