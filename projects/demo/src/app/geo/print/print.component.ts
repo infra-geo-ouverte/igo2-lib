@@ -77,7 +77,7 @@ export class AppPrintComponent {
         title: 'Radar météo',
         sourceOptions: {
           type: 'wms',
-          url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
+          url: 'https://geo.meteo.gc.ca/geomet?lang=fr', // https://geo.meteo.gc.ca/geomet?lang=fr
           params: {
             LAYERS: 'RADAR_1KM_RRAI',
             VERSION: '1.3.0'
