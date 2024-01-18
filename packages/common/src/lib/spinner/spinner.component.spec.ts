@@ -9,7 +9,8 @@ describe('SpinnerComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [MatProgressSpinner, SpinnerComponent]
+      imports: [MatProgressSpinner],
+      declarations: [SpinnerComponent]
     }).compileComponents();
   }));
 
