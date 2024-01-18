@@ -3,16 +3,17 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common';
 import {
-  ContextService,
-  IgoContextImportExportModule,
-  IgoContextManagerModule
+  CONTEXT_MANAGER_DIRECTIVES,
+  ContextImportExportComponent,
+  ContextService
 } from '@igo2/context';
 import {
-  IgoLayerModule,
   IgoMap,
-  IgoMapModule,
-  IgoMetadataModule,
-  MapService
+  LAYER_DIRECTIVES,
+  MAP_DIRECTIVES,
+  METADATA_DIRECTIVES,
+  MapService,
+  MapViewOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -27,16 +28,16 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatGridListModule,
-    IgoMapModule,
-    IgoContextManagerModule,
+    MAP_DIRECTIVES,
+    CONTEXT_MANAGER_DIRECTIVES,
     PanelComponent,
-    IgoLayerModule,
-    IgoMetadataModule,
-    IgoContextImportExportModule
+    LAYER_DIRECTIVES,
+    METADATA_DIRECTIVES,
+    ContextImportExportComponent
   ]
 })
 export class AppContextComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -44,7 +45,7 @@ export class AppContextComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };

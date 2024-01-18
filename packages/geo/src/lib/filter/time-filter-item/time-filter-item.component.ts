@@ -34,7 +34,8 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
     TimeFilterFormComponent,
     AsyncPipe,
     TranslateModule
-  ]
+  ],
+  providers: [TimeFilterService]
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';

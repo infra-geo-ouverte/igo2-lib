@@ -6,9 +6,13 @@ import {
   FeatureStore,
   FeatureWithDraw,
   IgoMap,
+  LayerOptions,
   LayerService,
   MapBrowserComponent,
   MapService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
   ZoomButtonComponent
 } from '@igo2/geo';
 
@@ -29,7 +33,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppDrawComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -38,7 +42,7 @@ export class AppDrawComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6,
     projection: 'EPSG:3857'
@@ -55,13 +59,15 @@ export class AppDrawComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
   }

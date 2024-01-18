@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   UntypedFormControl
 } from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -56,7 +57,8 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
     NgFor,
     MatOptionModule,
     TranslateModule
-  ]
+  ],
+  providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
   @Input() datasource: OgcFilterableDataSource;

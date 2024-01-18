@@ -20,7 +20,8 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
   templateUrl: './ogc-filter-time-slider.component.html',
   styleUrls: ['./ogc-filter-time-slider.component.scss'],
   standalone: true,
-  imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule]
+  imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule],
+  providers: [OGCFilterTimeService]
 })
 export class OgcFilterTimeSliderComponent implements OnInit {
   @Input() currentFilter: any;

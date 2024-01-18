@@ -34,7 +34,7 @@ export const environment: EnvironmentOptions = {
         {
           id: 'Gououvert',
           title: 'Gouvouvert',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi'
         },
         {
           id: 'DefiningInfoFormat',
@@ -56,7 +56,7 @@ export const environment: EnvironmentOptions = {
         {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
           tooltipType: TooltipType.ABSTRACT
         }
       ]

@@ -49,7 +49,8 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     FormsModule,
     AsyncPipe,
     TranslateModule
-  ]
+  ],
+  providers: [OGCFilterService]
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public color = 'primary';

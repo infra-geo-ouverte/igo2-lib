@@ -2,12 +2,7 @@ import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ActionStore, ActionbarComponent, ActionbarMode } from '@igo2/common';
-import {
-  LanguageService,
-  Media,
-  MediaOrientation,
-  MediaService
-} from '@igo2/core';
+import { Media, MediaOrientation, MediaService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -22,13 +17,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, ActionbarComponent]
 })
 export class AppActionComponent implements OnInit, OnDestroy {
-  public store = new ActionStore([]);
+  public store: ActionStore = new ActionStore([]);
 
-  private added$ = new BehaviorSubject(false);
+  private added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   get actionbarMode(): ActionbarMode {
-    const media = this.mediaService.media$.value;
-    const orientation = this.mediaService.orientation$.value;
+    const media: Media = this.mediaService.media$.value;
+    const orientation: MediaOrientation = this.mediaService.orientation$.value;
     if (media === Media.Desktop && orientation === MediaOrientation.Landscape) {
       return ActionbarMode.Dock;
     }
@@ -37,11 +32,10 @@ export class AppActionComponent implements OnInit, OnDestroy {
 
   constructor(
     public overlay: Overlay,
-    private mediaService: MediaService,
-    private languageService: LanguageService
+    private mediaService: MediaService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.store.load([
       {
         id: 'add',
@@ -78,7 +72,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 }
