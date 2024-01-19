@@ -6,7 +6,7 @@
         "contexts": "Contexts",
         "directions": "Directions",
         "draw": "Draw",
-        "geometryForm": "Report a data inconsistency",
+        "dataIssueReporter": "Report a data inconsistency",
         "importExport": "Import & Export",
         "ogcFilter": "Filter by",
         "map": "Map",
@@ -22,10 +22,11 @@
         "advancedMap": "Advanced map tools",
         "closestFeature": "Closest feature tool"
       },
-      "geometryFormTool": {
+      "dataIssueReporterTool": {
         "submit": {
           "title": "Submit a data inconsistency",
-          "message": "--TEST-- Please configure a server component to submit an inconsistency",
+          "message": "Your data inconsistency has been sucessfully reported.",
+          "testMessage": "--TEST-- Please configure a server component to submit an inconsistency",
           "button": "Submit location"
         },
         "reset": {

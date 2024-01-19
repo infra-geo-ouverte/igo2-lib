@@ -6,7 +6,7 @@
         "contexts": "Contextes",
         "directions": "Itinéraire",
         "draw": "Dessin",
-        "geometryForm": "Soumettre une incohérence de donnée",
+        "dataIssueReporter": "Soumettre une incohérence de donnée",
         "importExport": "Importer et exporter",
         "ogcFilter": "Filtrer par",
         "map": "Carte",
@@ -22,10 +22,11 @@
         "advancedMap": "Outils avancés",
         "closestFeature": "Entités à proximité"
       },
-      "geometryFormTool": {
+      "dataIssueReporterTool": {
         "submit": {
           "title": "Soumettre une incohérence de donnée",
-          "message": "--TEST-- Veuillez configurer une composante serveur pour soumettre une incohérence",
+          "message": "Votre incohérence de donnée a été soumise.",
+          "testMessage": "--TEST-- Veuillez configurer une composante serveur pour soumettre une incohérence",
           "button": "Soumettre la localisation"
         },
         "reset": {

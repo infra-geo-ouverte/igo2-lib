@@ -10,7 +10,7 @@ import { IgoFormModule } from '@igo2/common';
 import { IgoLanguageModule, IgoMessageModule } from '@igo2/core';
 import { IgoGeometryModule, IgoMapModule } from '@igo2/geo';
 
-import { GeometryFormToolComponent } from './geometry-form-tool/geometry-form-tool.component';
+import { DataIssueReporterToolComponent } from './data-issue-reporter-tool/data-issue-reporter-tool.component';
 
 @NgModule({
   imports: [
@@ -22,8 +22,8 @@ import { GeometryFormToolComponent } from './geometry-form-tool/geometry-form-to
     IgoMapModule,
     IgoMessageModule
   ],
-  declarations: [GeometryFormToolComponent],
-  exports: [GeometryFormToolComponent],
+  declarations: [DataIssueReporterToolComponent],
+  exports: [DataIssueReporterToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppGeometryFormModule {

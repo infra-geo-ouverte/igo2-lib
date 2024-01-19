@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { Form, FormService, ToolComponent } from '@igo2/common';
@@ -12,17 +13,29 @@ import type { Subscription } from 'rxjs';
 
 import { MapState } from '../../map/map.state';
 
+interface DataIssueReporterData {
+  geometry: object;
+  layer: string;
+  desc: string;
+  email: string;
+}
+
 @ToolComponent({
-  name: 'geometry-form',
-  title: 'igo.integration.tools.geometryForm',
-  icon: 'map-marker-radius'
+  name: 'dataIssueReporter',
+  title: 'igo.integration.tools.dataIssueReporter',
+  icon: 'message-alert'
 })
 @Component({
-  selector: 'igo-geometry-form-tool',
-  templateUrl: './geometry-form-tool.component.html',
-  styleUrls: ['./geometry-form-tool.component.scss']
+  selector: 'igo-issue-reporter-tool',
+  templateUrl: './data-issue-reporter-tool.component.html',
+  styleUrls: ['./data-issue-reporter-tool.component.scss']
 })
-export class GeometryFormToolComponent implements OnInit, OnDestroy {
+export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
+  /**
+   * Url to report the data issue. Use the Post protocol to send the form.
+   */
+  @Input() url: string;
+
   /**
    * Map to link to the form
    * @internal
@@ -43,7 +56,8 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
     private mapState: MapState,
     private formService: FormService,
     private languageService: LanguageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private httpClient: HttpClient
   ) {}
 
   ngOnInit() {
@@ -58,11 +72,8 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
           {
             name: 'geometry',
             title: this.languageService.translate.instant(
-              'igo.integration.geometryFormTool.geometry'
+              'igo.integration.dataIssueReporterTool.geometry'
             ),
-            options: {
-              validator: Validators.required
-            },
             type: 'geometry',
             inputs: {
               map: this.map,
@@ -71,7 +82,7 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
               drawGuideField: false,
               drawGuide: 0,
               drawGuidePlaceholder: this.languageService.translate.instant(
-                'igo.integration.geometryFormTool.drawGuidePlaceholder'
+                'igo.integration.dataIssueReporterTool.drawGuidePlaceholder'
               ),
               drawStyle: new olstyle.Style({
                 stroke: new olstyle.Stroke({
@@ -112,9 +123,9 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
             }
           },
           {
-            name: 'layers',
+            name: 'layer',
             title: this.languageService.translate.instant(
-              'igo.integration.geometryFormTool.layer'
+              'igo.integration.dataIssueReporterTool.layer'
             ),
             type: 'select',
             options: {
@@ -127,7 +138,7 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
           {
             name: 'desc',
             title: this.languageService.translate.instant(
-              'igo.integration.geometryFormTool.description'
+              'igo.integration.dataIssueReporterTool.description'
             ),
             type: 'textarea',
             options: {
@@ -137,7 +148,7 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
           {
             name: 'email',
             title: this.languageService.translate.instant(
-              'igo.integration.geometryFormTool.email'
+              'igo.integration.dataIssueReporterTool.email'
             ),
             options: {
               validator: Validators.email
@@ -167,12 +178,24 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }) {
-    this.messageService.alert(
-      'igo.integration.geometryFormTool.submit.message',
-      'igo.integration.geometryFormTool.submit.title'
-    );
+  onSubmit(data: DataIssueReporterData) {
+    const submitTitle = 'igo.integration.dataIssueReporterTool.submit.title';
+    if (!this.url) {
+      this.messageService.alert(
+        'igo.integration.dataIssueReporterTool.submit.testMessage',
+        submitTitle
+      );
+      alert(JSON.stringify(data));
+    } else {
+      this.httpClient
+        .post<DataIssueReporterData>(this.url, data)
+        .subscribe(() => {
+          this.messageService.success(
+            'igo.integration.dataIssueReporterTool.submit.message',
+            submitTitle
+          );
+        });
+    }
     this.clearForm();
-    alert(JSON.stringify(data));
   }
 }
