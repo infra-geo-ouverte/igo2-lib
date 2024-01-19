@@ -82,7 +82,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * Add a feature to the  overlay and, optionally, move to it
    * @param feature Feature
-   * @param motion Optional: Apply this motion to the map view
+   * @param motion Optional: Apply this motion to the map view (default on FeatureMotion.Default)
    */
   addFeature(feature: Feature, motion: FeatureMotion = FeatureMotion.Default) {
     this.addFeatures([feature], motion);
