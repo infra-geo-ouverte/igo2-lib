@@ -6,7 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Action, ActionStore, EntityStore } from '@igo2/common';
+import { ActionStore, EntityStore } from '@igo2/common';
 import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
@@ -141,7 +141,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   onResultFocus(result: SearchResult<Feature>): void {
     this.tryAddFeatureToMap(result, this.searchState.featureMotion.focus);
-    this.selectedFeature = (result satisfies SearchResult<Feature>).data;
+    this.selectedFeature = result.data;
   }
   /**
    * Try to add a feature to the map when it's being selected
@@ -150,7 +150,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   onResultSelect(result: SearchResult<Feature>): void {
     this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
-    this.selectedFeature = (result satisfies SearchResult<Feature>).data;
+    this.selectedFeature = result.data;
   }
 
   /**
@@ -170,10 +170,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.map.searchResultsOverlay.setFeatures(
-      [layer.data] satisfies Feature[],
-      motion
-    );
+    this.map.searchResultsOverlay.setFeatures([layer.data], motion);
   }
 
   ngOnInit(): void {
@@ -193,7 +190,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         title: 'googleStreetView',
         handler: () => this.openGoogleStreetView(this.lonlat)
       }
-    ] satisfies Action[]);
+    ]);
   }
 
   ngOnDestroy(): void {
