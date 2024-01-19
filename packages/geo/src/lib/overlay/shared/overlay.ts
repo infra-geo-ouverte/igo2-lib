@@ -9,7 +9,7 @@ import {
   moveToOlFeatures
 } from '../../feature/shared';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { MapBase } from '../../map/shared/map.abstract';
+import type { MapBase } from '../../map/shared/map.abstract';
 import { createOverlayLayer } from './overlay.utils';
 
 /**

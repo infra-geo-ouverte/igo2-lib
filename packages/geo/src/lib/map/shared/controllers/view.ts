@@ -147,6 +147,7 @@ export class MapViewController extends MapController {
         this.rotation$.next(evt.target.getRotation());
       }) as EventsKey
     );
+    this.rotation$.next(this.getRotation());
   }
 
   /**

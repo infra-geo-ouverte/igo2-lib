@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { EntityStoreWithStrategy } from '@igo2/common';
+import { EntityStore } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
@@ -23,7 +23,7 @@ export class QueryState {
   /**
    * Store that holds the query results
    */
-  public store = new EntityStoreWithStrategy<SearchResult>([]);
+  public store = new EntityStore<SearchResult>([]);
   public queryOverlayStyle: CommonVectorStyleOptions = {};
   public queryOverlayStyleSelection: CommonVectorStyleOptions = {};
   public queryOverlayStyleFocus: CommonVectorStyleOptions = {};
