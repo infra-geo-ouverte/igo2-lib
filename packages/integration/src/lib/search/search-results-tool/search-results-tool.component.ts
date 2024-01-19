@@ -510,7 +510,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    */
   onResultSelect(result: SearchResult) {
     this.map.searchResultsOverlay.dataSource.ol.clear();
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion?.selected);
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
     this.searchState.setSelectedResult(result);
 
     if (this.topPanelState === 'initial') {
