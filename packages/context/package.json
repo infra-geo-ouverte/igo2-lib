@@ -25,7 +25,7 @@
     ".": {
       "import": "./src/public_api.ts"
     },
-    "./theming": {
+    "./theme": {
       "sass": "./src/context-theme.scss"
     }
   },

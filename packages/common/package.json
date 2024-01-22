@@ -29,7 +29,7 @@
     "./style": {
       "style": "./style/style.css"
     },
-    "./theming": {
+    "./theme": {
       "sass": "./src/common-theme.scss"
     },
     "./partial/*": {
