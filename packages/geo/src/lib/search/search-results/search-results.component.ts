@@ -16,9 +16,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import {
   CollapsibleComponent,
   EntityState,
+  EntityStore,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreWatcher,
-  EntityStoreWithStrategy,
   ListComponent,
   ListItemDirective
 } from '@igo2/common';
@@ -88,7 +88,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * Search results store
    */
-  @Input() store: EntityStoreWithStrategy<SearchResult>;
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * to show hide results icons

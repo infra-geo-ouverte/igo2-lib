@@ -9,12 +9,7 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import {
-  EntityStore,
-  EntityStoreWithStrategy,
-  PanelComponent,
-  ToolComponent
-} from '@igo2/common';
+import { EntityStore, PanelComponent, ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
@@ -113,8 +108,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
-  public store: EntityStoreWithStrategy<Feature> =
-    new EntityStoreWithStrategy<Feature>([]); // Store to print results at the end
+  public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 

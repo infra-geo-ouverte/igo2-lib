@@ -10,12 +10,7 @@ import {
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import {
-  EntityKey,
-  EntityStore,
-  EntityStoreWithStrategy,
-  PanelComponent
-} from '@igo2/common';
+import { EntityKey, EntityStore, PanelComponent } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
@@ -118,9 +113,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 
-  public store: EntityStoreWithStrategy = new EntityStoreWithStrategy<Feature>(
-    []
-  ); // Store to print results at the end
+  public store: EntityStore = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 

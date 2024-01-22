@@ -9,7 +9,7 @@ import {
   moveToOlFeatures
 } from '../../feature/shared';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { MapBase } from '../../map/shared/map.abstract';
+import type { MapBase } from '../../map/shared/map.abstract';
 import { createOverlayLayer } from './overlay.utils';
 
 /**
@@ -82,7 +82,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * Add a feature to the  overlay and, optionally, move to it
    * @param feature Feature
-   * @param motion Optional: Apply this motion to the map view
+   * @param motion Optional: Apply this motion to the map view (default on FeatureMotion.Default)
    */
   addFeature(feature: Feature, motion: FeatureMotion = FeatureMotion.Default) {
     this.addFeatures([feature], motion);

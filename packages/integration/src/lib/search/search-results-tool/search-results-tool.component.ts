@@ -421,7 +421,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       abstractResult.meta.style.setZIndex(2000 + zIndexOffset);
       this.map.searchResultsOverlay.addFeature(
         abstractResult,
-        FeatureMotion.None
+        this.searchState.featureMotion.focus
       );
       if (trigger === 'focused') {
         this.abstractFocusedResult = abstractResult;
@@ -498,7 +498,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       }
       this.map.searchResultsOverlay.addFeature(
         result.data as Feature,
-        FeatureMotion.None
+        this.searchState.featureMotion.focus
       );
     }
   }
@@ -537,7 +537,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    */
   onResultSelect(result: SearchResult) {
     this.map.searchResultsOverlay.dataSource.ol.clear();
-    this.tryAddFeatureToMap(result);
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
     this.searchState.setSelectedResult(result);
 
     if (this.topPanelState === 'initial') {
@@ -657,8 +657,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * Try to add a feature to the map overlay
    * @param result A search result that could be a feature
+   * @param motion A FeatureMotion to trigger when adding the searchresult to the map search overlay
    */
-  private tryAddFeatureToMap(result: SearchResult) {
+  private tryAddFeatureToMap(
+    result: SearchResult,
+    motion: FeatureMotion = FeatureMotion.Default
+  ) {
     if (result.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -678,7 +682,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       )
     );
 
-    this.map.searchResultsOverlay.addFeature(feature);
+    this.map.searchResultsOverlay.addFeature(feature, motion);
   }
 
   isScrolledIntoView(elemSource, elem) {

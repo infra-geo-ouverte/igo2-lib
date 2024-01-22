@@ -29,7 +29,7 @@ import {
   handleLayerPropertyChange,
   initLayerSyncFromRootParentLayers
 } from './linkedLayers.utils';
-import { MapBase } from './map.abstract';
+import type { MapBase } from './map.abstract';
 import {
   MapAttributionOptions,
   MapControlsOptions,

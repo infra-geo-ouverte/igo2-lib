@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "16.1.1",
+  "version": "16.2.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -28,7 +28,7 @@
   "exports": {
     ".": {
       "import": "./src/public_api.ts",
-      "sass": "./index.scss"
+      "sass": "./src/index.scss"
     },
     "./style": {
       "style": "./style/style.css"
@@ -40,8 +40,11 @@
     "./partial/*": {
       "sass": "./src/style/partial/*.scss"
     },
-    "./theming": {
+    "./theme": {
       "sass": "./src/core-theme.scss"
+    },
+    "./theming/*": {
+      "sass": "./src/theming/*.scss"
     },
     "./prebuilt-themes/*": {
       "style": "./theming/prebuilt-themes/*.css"

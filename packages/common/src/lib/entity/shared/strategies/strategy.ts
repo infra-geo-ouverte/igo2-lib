@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 
 import { EntityStoreStrategyOptions } from '../entity.interfaces';
-import { EntityStore } from '../store';
+import type { EntityStore } from '../store';
 
 /**
  * Entity store strategies. They can do pretty much anything during a store's

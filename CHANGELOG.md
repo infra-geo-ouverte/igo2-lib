@@ -1,3 +1,28 @@
+# [16.2.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.1...v16.2.0) (2024-01-19)
+
+
+### Bug Fixes
+
+* **demo:** Repoint web services in assembly demo ([#1557](https://github.com/infra-geo-ouverte/igo2-lib/issues/1557)) ([b714937](https://github.com/infra-geo-ouverte/igo2-lib/commit/b714937e771f15aa51d71c26b8ee1210467e3b5f))
+* **demo:** update layers option in print and ogc filter ([#1571](https://github.com/infra-geo-ouverte/igo2-lib/issues/1571)) ([f5a0186](https://github.com/infra-geo-ouverte/igo2-lib/commit/f5a018642ee739e3631f6ca19ffd582446b7f823))
+* **geo/search-pointer&hover:** init the store before subscription ([#1569](https://github.com/infra-geo-ouverte/igo2-lib/issues/1569)) ([773695a](https://github.com/infra-geo-ouverte/igo2-lib/commit/773695a26e793ea246430a9fa5d3b55bd98e5beb))
+* **geo:** Baselayer Switcher stay open without useStaticIcon ([#1548](https://github.com/infra-geo-ouverte/igo2-lib/issues/1548)) ([4c6cebd](https://github.com/infra-geo-ouverte/igo2-lib/commit/4c6cebd35a2af39795057055e135011b9146a7f4))
+* **geo:** check catalog not undefined before loading items ([#1583](https://github.com/infra-geo-ouverte/igo2-lib/issues/1583)) ([1efb4a6](https://github.com/infra-geo-ouverte/igo2-lib/commit/1efb4a6de3fad6652e862bd1773b37e1a20d760c))
+* **geo:** initial rotation is not supplied to viewcontroller ([#1586](https://github.com/infra-geo-ouverte/igo2-lib/issues/1586)) ([edb29c3](https://github.com/infra-geo-ouverte/igo2-lib/commit/edb29c33d681f5977365af2f6f6cd997aebe74fe))
+
+
+### Features
+
+* **demo:** add layer showcase for multiple styles ([#1581](https://github.com/infra-geo-ouverte/igo2-lib/issues/1581)) ([a00975e](https://github.com/infra-geo-ouverte/igo2-lib/commit/a00975e58c9d458d508532830fcb12e71af59753))
+* **linked-layers:** Added new config for visibility in Base Layer Switcher ([#1560](https://github.com/infra-geo-ouverte/igo2-lib/issues/1560)) ([0c35c3d](https://github.com/infra-geo-ouverte/igo2-lib/commit/0c35c3d338692866776f84ed5f67ab225330c619))
+
+
+### Reverts
+
+* **common/store:** remove EntityStoreWithStrategy0 ([297f96e](https://github.com/infra-geo-ouverte/igo2-lib/commit/297f96e7535bc0507547e5f9be81889a82ea5a7d))
+
+
+
 ## [16.1.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.0...v16.1.1) (2023-12-14)
 
 

@@ -6,6 +6,7 @@ import { IgoAppContextModule } from './context/context.module';
 import { IgoAppDirectionsModule } from './directions/directions.module';
 import { IgoAppDrawModule } from './draw/draw.module';
 import { IgoAppFilterModule } from './filter/filter.module';
+import { IgoAppGeometryFormModule } from './geometry-form/geometry-form.module';
 import { IgoAppImportExportModule } from './import-export/import-export.module';
 import { IgoAppMapModule } from './map/map.module';
 import { IgoAppMeasureModule } from './measure/measure.module';
@@ -31,7 +32,8 @@ import { IgoAppWorkspaceModule } from './workspace/workspace.module';
     IgoAppPrintModule,
     IgoAppSearchModule,
     IgoAppFilterModule,
-    IgoAppAboutModule
+    IgoAppAboutModule,
+    IgoAppGeometryFormModule
   ]
 })
 export class IgoIntegrationModule {}

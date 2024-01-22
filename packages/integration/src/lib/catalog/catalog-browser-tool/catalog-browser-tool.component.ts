@@ -18,7 +18,7 @@ import {
   IgoMap
 } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
@@ -57,11 +57,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private catalog$$: Subscription;
 
   /**
-   * Subscription for authentication
-   */
-  private authenticate$$: Subscription;
-
-  /**
    * Whether a group can be toggled when it's collapsed
    */
   @Input() toggleCollapsedGroup: boolean = true;
@@ -86,20 +81,18 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     const catalogStore = this.catalogState.catalogStore;
-    this.catalog$$ = catalogStore.stateView
-      .firstBy$(
-        (record: EntityRecord<Catalog>) => record.state.selected === true
-      )
-      .subscribe((record: EntityRecord<Catalog>) => {
-        if (record && record.entity) {
-          const catalog = record.entity;
-          this.catalog = catalog;
-        }
-      });
 
-    this.authenticate$$ = this.authService.authenticate$.subscribe(() => {
-      this.loadCatalogItems(this.catalog);
-    });
+    const catalog$ = catalogStore.stateView.firstBy$(
+      (record: EntityRecord<Catalog>) => record.state.selected === true
+    );
+    const authenticate$ = this.authService.authenticate$;
+    this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
+      ([record, authenticate]) => {
+        const catalog = record.entity;
+        this.catalog = catalog;
+        this.loadCatalogItems(this.catalog);
+      }
+    );
   }
 
   /**
@@ -107,7 +100,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
-    this.authenticate$$.unsubscribe();
   }
 
   /**
