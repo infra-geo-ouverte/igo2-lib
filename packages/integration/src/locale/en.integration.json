@@ -26,7 +26,7 @@
         "submit": {
           "title": "Submit a data inconsistency",
           "message": "Your data inconsistency has been sucessfully reported.",
-          "testMessage": "--TEST-- Please configure a server component to submit an inconsistency",
+          "setupMessage": "Please configure a server component to submit an inconsistency",
           "button": "Submit location"
         },
         "reset": {

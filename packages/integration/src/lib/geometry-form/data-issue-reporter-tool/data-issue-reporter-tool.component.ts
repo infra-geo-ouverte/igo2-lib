@@ -182,7 +182,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
     const submitTitle = 'igo.integration.dataIssueReporterTool.submit.title';
     if (!this.url) {
       this.messageService.alert(
-        'igo.integration.dataIssueReporterTool.submit.testMessage',
+        'igo.integration.dataIssueReporterTool.submit.setupMessage',
         submitTitle
       );
       alert(JSON.stringify(data));
@@ -195,7 +195,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
             submitTitle
           );
         });
+      this.clearForm();
     }
-    this.clearForm();
   }
 }

@@ -25,8 +25,8 @@
       "dataIssueReporterTool": {
         "submit": {
           "title": "Soumettre une incohérence de donnée",
-          "message": "Votre incohérence de donnée a été soumise.",
-          "testMessage": "--TEST-- Veuillez configurer une composante serveur pour soumettre une incohérence",
+          "message": "L'incohérence de donnée a été soumise.",
+          "setupMessage": "Veuillez configurer une composante serveur pour soumettre une incohérence",
           "button": "Soumettre la localisation"
         },
         "reset": {
