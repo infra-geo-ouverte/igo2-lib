@@ -5,7 +5,8 @@ export enum SubjectStatus {
   Error = 0,
   Done = 1,
   Working = 2,
-  Waiting = 3
+  Waiting = 3,
+  legendHeightError = 4
 }
 
 export abstract class Watcher {

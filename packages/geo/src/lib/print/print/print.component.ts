@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 
+import { SubjectStatus } from '@igo2/utils';
+
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -21,6 +23,7 @@ import {
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);
+  public legendHeightError$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -94,7 +97,10 @@ export class PrintComponent {
       this.printService
         .print(this.map, data)
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: SubjectStatus) => {
+          if (res === SubjectStatus.legendHeightError) {
+            this.legendHeightError$.next(true);
+          }
           this.disabled$.next(false);
         });
     } else {
@@ -127,7 +133,10 @@ export class PrintComponent {
           data.legendPosition
         )
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: SubjectStatus) => {
+          if (res === SubjectStatus.legendHeightError) {
+            this.legendHeightError$.next(true);
+          }
           this.disabled$.next(false);
         });
     }

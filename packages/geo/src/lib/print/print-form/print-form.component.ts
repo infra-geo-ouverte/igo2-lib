@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormControl,
@@ -8,7 +15,7 @@ import {
 
 import { MediaService } from '@igo2/core';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
 import {
@@ -25,7 +32,7 @@ import {
   templateUrl: './print-form.component.html',
   styleUrls: ['./print-form.component.scss']
 })
-export class PrintFormComponent implements OnInit {
+export class PrintFormComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
@@ -36,6 +43,8 @@ export class PrintFormComponent implements OnInit {
   public isPrintService = true;
 
   @Input() disabled$: BehaviorSubject<boolean>;
+  @Input() legendHeightError$: BehaviorSubject<boolean>;
+  private legendHeightError$$: Subscription;
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
@@ -230,6 +239,9 @@ export class PrintFormComponent implements OnInit {
 
   ngOnInit() {
     this.doZipFileField.setValue(false);
+    this.legendHeightError$.subscribe((res) => {
+      this.legendPositionField.setErrors({ legendHeightError: res });
+    });
     if (this.mediaService.isMobile()) {
       this.resolutions = this.resolutions.filter(
         (resolution) => resolution !== '300'
@@ -300,5 +312,11 @@ export class PrintFormComponent implements OnInit {
 
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
     this.commentField.updateValueAndValidity();
+  }
+
+  ngOnDestroy() {
+    if (this.legendHeightError$$) {
+      this.legendHeightError$$.unsubscribe();
+    }
   }
 }

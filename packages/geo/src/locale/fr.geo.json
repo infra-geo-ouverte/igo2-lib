@@ -310,6 +310,8 @@
       "printForm": {
         "corsErrorMessageBody": "Impossible d'imprimer dû à des droits d'accès non détenus",
         "corsErrorMessageHeader": "Impression",
+        "heighImageLegendtErrorMessageBody": "L’espace dédié à la légende dans le format image choisi est insuffisant pour contenir tous les éléments visibles sur la carte. Pour de meilleurs résultats, veuillez choisir l’option de légende « Sur une nouvelle image »",
+        "heighPdfLegendtErrorMessageBody": "L’espace dédié à la légende dans le format de papier choisi est insuffisant pour contenir tous les éléments visibles sur la carte. Pour de meilleurs résultats, veuillez utiliser un format de papier plus grand ou choisir l’option de légende « Sur une nouvelle page »",
         "comment": "Commentaire",
         "doZipFile": "Compresser le fichier",
         "outputFormat": "Format de sortie",
