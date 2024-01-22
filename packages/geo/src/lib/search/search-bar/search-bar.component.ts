@@ -24,6 +24,9 @@ import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
+import { IgoMap } from '../../map';
+import { FEATURE, Feature, FeatureMotion } from '../../feature';
+import { LayerService } from '../../layer';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -119,7 +122,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the coords format setting is changed
    */
   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
-
+     /**
+   * test
+   */
+  @Input() map : IgoMap ;
   /**
    * Search term
    */
@@ -253,7 +259,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(
     private configService: ConfigService,
     private searchService: SearchService,
-    private searchSourceService: SearchSourceService
+    private searchSourceService: SearchSourceService,
+    private layerService:LayerService
   ) {}
 
   /**
@@ -498,35 +505,28 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
 
   selectFirstElement() {
-    //Find the max value of scores
-    const maxScore = Math.max(
-      ...this.store.all().map((result) => result.meta.score)
-    );
 
-    //Filter values who have the maxScore
-    const result = this.store
-      .all()
-      .find((result) => result.meta.score === maxScore);
-    //If the value has not a first maxScore it has to take the title
-    const coordInv = this.store.all().find((result) => result.meta.title);
+      // sort group of results by score (desc)
+      const results = this.store.all().sort((res1, res2) => {
+        return (res1.meta.score - res2.meta.score) * -1;
+      });
 
-    //Function to reverse the value of the parameter
-    function reverseString(coordReInv) {
-      return coordReInv;
-    }
     //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
-    if (result) {
-      console.log('result dans la condition', result);
+    if (results) {
+      const result=results[0];
+      //this.selectElement.emit(result[0]);
       this.store.state.update(result, { focused: true, selected: true }, true);
-    } else {
-      reverseString(coordInv);
-      this.store.state.update(
-        coordInv,
-        { focused: true, selected: true },
-        true
-      );
+     
+    if (result.meta.dataType === FEATURE) {
+      
+    this.map.searchResultsOverlay.setFeatures(
+      [result.data as Feature] satisfies Feature[],
+      FeatureMotion.Default
+     )}else {
+      this.layerService.createAsyncLayer(result.data).subscribe((layer) => {
+        this.map.addLayer(layer);
+      })
+     }
     }
-    this.selectElement.emit(result);
-    console.log('result dans selectElement', result);
-  }
+}
 }
