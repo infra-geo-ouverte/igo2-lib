@@ -6,7 +6,12 @@ import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { EMPTY, Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { Md5 } from 'ts-md5';
 
+import {
+  ArcGISRestCapabilitiesLayer,
+  ArcGISRestCapabilitiesLayerTypes
+} from '../../datasource/shared/capabilities.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import {
   ArcGISRestDataSourceOptions,
@@ -146,7 +151,7 @@ export class CatalogService {
   loadCatalogWMSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
-        const items = [];
+        const items: CatalogItem[] = [];
         if (!capabilities) {
           return items;
         }
@@ -742,16 +747,23 @@ export class CatalogService {
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }
 
-  /// ERSI
-
-  private getArcGISRESTItems(catalog, capabilities): CatalogItemLayer[] {
+  private getArcGISRESTItems(
+    catalog: Catalog,
+    capabilities
+  ): CatalogItemLayer[] {
     if (!capabilities) {
       return [];
     }
-    const layers = !capabilities.layers
+    const groups: ArcGISRestCapabilitiesLayer[] = !capabilities.layers
+      ? []
+      : capabilities.layers.filter((layer) => layer.subLayerIds);
+    const layers: ArcGISRestCapabilitiesLayer[] = !capabilities.layers
       ? []
       : capabilities.layers.filter(
-          (layer) => !layer.type || layer.type === 'Feature Layer'
+          (layer) =>
+            !layer.type ||
+            layer.type === ArcGISRestCapabilitiesLayerTypes.FeatureLayer ||
+            layer.type === ArcGISRestCapabilitiesLayerTypes.RasterLayer
         );
     if (!capabilities.layers) {
       this.messageService.error(
@@ -773,19 +785,14 @@ export class CatalogService {
       abstract = capabilities.serviceDescription.replace(regex, '');
     }
 
-    return layers
-      .map((layer: any) => {
+    const items: CatalogItemLayer[] = layers
+      .map((layer: ArcGISRestCapabilitiesLayer) => {
         const propertiesToForce = this.computeForcedProperties(
           layer.name,
           catalog.forcedProperties
         );
-        let baseAbstract;
+        let baseAbstract = catalog.abstract;
         let extern = true;
-        if (layer.Abstract) {
-          baseAbstract = layer.Abstract;
-        } else if (!layer.Abstract && catalog.abstract) {
-          baseAbstract = catalog.abstract;
-        }
 
         let metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
@@ -809,16 +816,18 @@ export class CatalogService {
           extern = false;
         }
 
-        if (this.testLayerRegexes(layer.id, regexes) === false) {
+        if (
+          this.testLayerRegexes(layer.id.toLocaleString(), regexes) === false
+        ) {
           return undefined;
         }
         const baseSourceOptions = {
-          type: TypeCatalog[catalog.type],
+          type: TypeCatalog[catalog.type] as unknown,
           url: catalog.url,
           crossOrigin: catalog.setCrossOriginAnonymous
             ? 'anonymous'
             : undefined,
-          layer: layer.id as string,
+          layer: layer.id.toLocaleString(),
           queryable: true,
           queryFormat: 'esrijson',
           matrixSet: catalog.matrixSet,
@@ -852,6 +861,35 @@ export class CatalogService {
         } as CatalogItem);
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+
+    const groupedItems: CatalogItemLayer[] = groups
+      .map((group) => {
+        const md5 = Md5.hashStr(`catalog.group.${group.name}`) as string;
+        return {
+          options: undefined,
+          address: `catalog.group.${md5}`,
+          id: `catalog.group.${md5}`,
+          type: CatalogItemType.Group,
+          externalProvider: catalog.externalProvider,
+          sortDirection: catalog.sortDirection,
+          title: group.name,
+          items: items
+            .filter((i) => {
+              const subLayerIdsStr = group.subLayerIds.map((r) => r.toString());
+              return subLayerIdsStr.includes(
+                (i.options.sourceOptions as ArcGISRestDataSourceOptions).layer
+              );
+            })
+            .map((i) =>
+              Object.assign({}, i, {
+                address: `catalog.group.${group.name}`
+              })
+            )
+        };
+      })
+      .filter((g) => g.items.length);
+
+    return groups ? groupedItems : items;
   }
 
   private testLayerRegexes(layerName: string, regexes: RegExp[]): boolean {
