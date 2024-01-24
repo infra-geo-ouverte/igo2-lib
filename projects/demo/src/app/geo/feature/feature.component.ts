@@ -1,14 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EntityTableTemplate } from '@igo2/common';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
+  FeatureDataSource,
+  FeatureDataSourceOptions,
   FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
+  LayerOptions,
   LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
   VectorLayer
 } from '@igo2/geo';
 
@@ -18,7 +24,7 @@ import {
   styleUrls: ['./feature.component.scss']
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -26,12 +32,12 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
 
-  public tableTemplate = {
+  public tableTemplate: EntityTableTemplate = {
     selection: true,
     selectMany: true,
     sort: true,
@@ -51,19 +57,18 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     ]
   };
 
-  public store = new FeatureStore([], { map: this.map });
+  public store: FeatureStore = new FeatureStore([], { map: this.map });
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
-    const loadingStrategy = new FeatureStoreLoadingStrategy({});
+  ngOnInit(): void {
+    const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({});
     this.store.addStrategy(loadingStrategy);
 
-    const selectionStrategy = new FeatureStoreSelectionStrategy({
+    const selectionStrategy: FeatureStoreSelectionStrategy = new FeatureStoreSelectionStrategy({
       map: this.map,
       motion: FeatureMotion.Default
     });
@@ -152,29 +157,26 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       }
     ]);
 
-    this.layerService
-      .createAsyncLayer({
-        title: 'MVT test',
-        visible: true,
-        sourceOptions: {
-          type: 'mvt',
-          url: 'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
-          queryable: true
-        },
-        igoStyle: {
-          mapboxStyle: {
-            url: 'assets/mapboxStyleExample-vectortile.json',
-            source: 'ahocevar'
-          }
-        }
-      } as any)
-      .subscribe((l) => this.map.addLayer(l));
+    this.dataSourceService
+      .createAsyncDataSource({
+        type: 'osm'
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'OSM',
+            baseLayer: true,
+            visible: true,
+            source: dataSource
+          } satisfies LayerOptions)
+        );
+      });
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
-      })
-      .subscribe((dataSource) => {
+      } satisfies FeatureDataSourceOptions)
+      .subscribe((dataSource: FeatureDataSource) => {
         const layer = this.layerService.createLayer({
           title: 'Vector Layer',
           source: dataSource,
@@ -195,7 +197,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 }

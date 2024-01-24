@@ -20,7 +20,6 @@ export class AppThemeComponent {
     { value: 'deeppurple', title: 'Purple' },
     { value: 'indigo', title: 'Indigo' },
     { value: 'orange', title: 'Orange' },
-    { value: 'qcca', title: 'Québec.ca' },
     { value: 'teal', title: 'Teal' }
   ];
 
@@ -29,7 +28,7 @@ export class AppThemeComponent {
     private renderer: Renderer2
   ) {}
 
-  loadTheme(matSelectChange: MatSelectChange) {
+  loadTheme(matSelectChange: MatSelectChange): void {
     if (matSelectChange.value === 'dark-demo-test') {
       this.isDark = true;
       this.renderer.addClass(document.body, 'dark-theme');

@@ -16,7 +16,7 @@ import { map } from 'rxjs/operators';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
-import { MapBase } from '../../../map/shared/map.abstract';
+import type { MapBase } from '../../../map/shared/map.abstract';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
