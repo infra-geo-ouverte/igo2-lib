@@ -6,7 +6,6 @@ import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { EMPTY, Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Md5 } from 'ts-md5';
 
 import {
   ArcGISRestCapabilitiesLayer,
@@ -839,7 +838,6 @@ export class CatalogService {
             ? propertiesToForce.title
             : layer.name,
           externalProvider: catalog.externalProvider,
-          address: catalog.id,
           options: {
             sourceOptions,
             minResolution: getResolutionFromScale(layer.maxScale),
@@ -857,11 +855,10 @@ export class CatalogService {
 
     const groupedItems: CatalogItemLayer[] = groups
       .map((group) => {
-        const md5 = Md5.hashStr(group.name);
         return {
           options: undefined,
-          address: `catalog.group.${md5}`,
-          id: `catalog.group.${md5}`,
+          address: `catalog.group.${group.name}`,
+          id: `catalog.group.${group.name}`,
           type: CatalogItemType.Group,
           externalProvider: catalog.externalProvider,
           sortDirection: catalog.sortDirection,
