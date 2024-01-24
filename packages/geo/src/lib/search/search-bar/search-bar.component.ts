@@ -20,13 +20,13 @@ import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { FEATURE, Feature, FeatureMotion } from '../../feature';
+import { LAYER, LayerOptions, LayerService } from '../../layer';
+import { IgoMap } from '../../map';
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
-import { IgoMap } from '../../map';
-import { FEATURE, Feature, FeatureMotion } from '../../feature';
-import { LayerService } from '../../layer';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -85,7 +85,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = true;
+  public showSearchButton: boolean = false;
 
   /**
    * List of available search types
@@ -122,10 +122,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the coords format setting is changed
    */
   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
-     /**
+  /**
    * test
    */
-  @Input() map : IgoMap ;
+  @Input() map: IgoMap;
   /**
    * Search term
    */
@@ -260,7 +260,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private searchService: SearchService,
     private searchSourceService: SearchSourceService,
-    private layerService:LayerService
+    private layerService: LayerService
   ) {}
 
   /**
@@ -285,7 +285,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     const configValue = this.configService.getConfig(
       'searchBar.showSearchButton'
     );
-    this.showSearchButton = configValue !== undefined ? configValue : true;
+    this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
   /**
@@ -493,40 +493,39 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Event emitted when the search settings changes
-   */
-  @Output() selectElement = new EventEmitter();
 
   /**
    * When the user clicks on the magnifying glass and
-   * this find the first object on the map otherwise the
-   * coordinate it will be the second option to be focused in the map
+   * this find the first object on the map
    */
 
   selectFirstElement() {
+    // look for the two highest score results
+    const results = this.store.all().sort((res1, res2) => {
+      return (res1.meta.score - res2.meta.score) * -1;
+    });
 
-      // sort group of results by score (desc)
-      const results = this.store.all().sort((res1, res2) => {
-        return (res1.meta.score - res2.meta.score) * -1;
-      });
-
-    //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
+    //Condition to discriminate whether the search value corresponds to a feature or a layer,
+    // it is necessary to focus and display the layer on the map
     if (results) {
-      const result=results[0];
-      //this.selectElement.emit(result[0]);
+      const result = results[0];
       this.store.state.update(result, { focused: true, selected: true }, true);
-     
-    if (result.meta.dataType === FEATURE) {
-      
-    this.map.searchResultsOverlay.setFeatures(
-      [result.data as Feature] satisfies Feature[],
-      FeatureMotion.Default
-     )}else {
-      this.layerService.createAsyncLayer(result.data).subscribe((layer) => {
-        this.map.addLayer(layer);
-      })
-     }
+
+      if (result.meta.dataType === FEATURE) {
+        const feature = (result as SearchResult<Feature>).data;
+        this.map.searchResultsOverlay.setFeatures(
+          [feature] satisfies Feature[],
+          FeatureMotion.Default
+        );
+      } else if (result.meta.dataType === LAYER) {
+        const layerOptions = (result as SearchResult<LayerOptions>).data;
+        if (layerOptions.sourceOptions.optionsFromApi === undefined) {
+          layerOptions.sourceOptions.optionsFromApi = true;
+        }
+        this.layerService.createAsyncLayer(result.data).subscribe((layer) => {
+          this.map.addLayer(layer);
+        });
+      }
     }
-}
+  }
 }

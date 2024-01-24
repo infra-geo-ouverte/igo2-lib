@@ -125,13 +125,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         this.isMobile = true;
       }
     });
-    if (this.layer.meta.dataType === 'Layer') {
-      this.added =
-        this.map.layers.findIndex(
-          (lay) => lay.id === this.layer.data.sourceOptions.id
-        ) !== -1;
-    }
     this.layers$$ = this.map.layers$.subscribe(() => {
+      if (this.layer.meta.dataType === 'Layer') {
+        this.added =
+          this.map.layers.findIndex(
+            (lay) => lay.id === this.layer.data.sourceOptions.id
+          ) !== -1;
+      }
       this.isVisible();
     });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(
