@@ -22,6 +22,7 @@ import {
 import { ImageLayerOptions, LayerOptions } from '../../layer/shared';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { QueryFormat } from '../../query/shared/query.enums';
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
@@ -751,7 +752,11 @@ export class CatalogService {
     catalog: Catalog,
     capabilities
   ): CatalogItemLayer[] {
-    if (!capabilities) {
+    if (!capabilities || !capabilities.layers) {
+      this.messageService.error(
+        'igo.geo.catalog.someUnavailable',
+        'igo.geo.catalog.unavailableTitle'
+      );
       return [];
     }
     const groups: ArcGISRestCapabilitiesLayer[] = !capabilities.layers
@@ -765,12 +770,6 @@ export class CatalogService {
             layer.type === ArcGISRestCapabilitiesLayerTypes.FeatureLayer ||
             layer.type === ArcGISRestCapabilitiesLayerTypes.RasterLayer
         );
-    if (!capabilities.layers) {
-      this.messageService.error(
-        'igo.geo.catalog.someUnavailable',
-        'igo.geo.catalog.unavailableTitle'
-      );
-    }
 
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -816,29 +815,23 @@ export class CatalogService {
           extern = false;
         }
 
-        if (
-          this.testLayerRegexes(layer.id.toLocaleString(), regexes) === false
-        ) {
+        if (this.testLayerRegexes(layer.id.toString(), regexes) === false) {
           return undefined;
         }
-        const baseSourceOptions = {
-          type: TypeCatalog[catalog.type] as unknown,
+        const baseSourceOptions: ArcGISRestDataSourceOptions &
+          QueryableDataSourceOptions = {
+          type: TypeCatalog[catalog.type] as any,
           url: catalog.url,
-          crossOrigin: catalog.setCrossOriginAnonymous
-            ? 'anonymous'
-            : undefined,
-          layer: layer.id.toLocaleString(),
+          layer: layer.id.toString(),
           queryable: true,
-          queryFormat: 'esrijson',
-          matrixSet: catalog.matrixSet,
-          optionsFromCapabilities: true,
-          style: 'default'
-        } as ArcGISRestDataSourceOptions;
-        const sourceOptions = Object.assign(
+          queryFormat: QueryFormat.ESRIJSON,
+          optionsFromCapabilities: true
+        };
+        const sourceOptions: ArcGISRestDataSourceOptions = Object.assign(
           {},
           baseSourceOptions,
           catalog.sourceOptions
-        ) as ArcGISRestDataSourceOptions;
+        );
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
@@ -855,7 +848,7 @@ export class CatalogService {
               url: metadataUrl,
               extern,
               abstract: metadataAbstract,
-              type: baseSourceOptions.type
+              type: catalog.type
             }
           }
         } as CatalogItem);
@@ -864,7 +857,7 @@ export class CatalogService {
 
     const groupedItems: CatalogItemLayer[] = groups
       .map((group) => {
-        const md5 = Md5.hashStr(`catalog.group.${group.name}`) as string;
+        const md5 = Md5.hashStr(group.name);
         return {
           options: undefined,
           address: `catalog.group.${md5}`,
