@@ -3,7 +3,7 @@ import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
 import olSourceImage from 'ol/source/Image';
 
-import { ImageLayer } from '../shared/layers/image-layer';
+import type { ImageLayer } from '../shared/layers/image-layer';
 
 export class ImageWatcher extends Watcher {
   protected id: string;

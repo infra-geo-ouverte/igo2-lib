@@ -1,7 +1,7 @@
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 import { ActionStore } from '../../action';
-import { EntityStoreWithStrategy } from '../../entity';
+import { EntityStore } from '../../entity';
 import { Widget } from '../../widget';
 import { WorkspaceOptions } from './workspace.interfaces';
 
@@ -67,8 +67,8 @@ export class Workspace<E extends object = object> {
   /**
    * Entities store
    */
-  get entityStore(): EntityStoreWithStrategy<E> {
-    return this.options.entityStore as EntityStoreWithStrategy<E>;
+  get entityStore(): EntityStore<E> {
+    return this.options.entityStore as EntityStore<E>;
   }
 
   /**

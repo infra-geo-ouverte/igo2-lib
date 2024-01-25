@@ -22,7 +22,7 @@ import {
   moveToOlFeatures
 } from '../../../feature/shared/feature.utils';
 import { Overlay } from '../../../overlay/shared/overlay';
-import { MapBase } from '../map.abstract';
+import type { MapBase } from '../map.abstract';
 import { MapViewOptions } from '../map.interface';
 import { MapController } from './controller';
 import {

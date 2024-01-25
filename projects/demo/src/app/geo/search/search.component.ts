@@ -6,7 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Action, ActionStore, EntityStore } from '@igo2/common';
+import { ActionStore, EntityStore } from '@igo2/common';
 import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
@@ -140,15 +140,27 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result);
-    this.selectedFeature = (result satisfies SearchResult<Feature>).data;
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.focus);
+    this.selectedFeature = result.data;
+  }
+  /**
+   * Try to add a feature to the map when it's being selected
+   * @internal
+   * @param result A search result that could be a feature
+   */
+  onResultSelect(result: SearchResult<Feature>): void {
+    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
+    this.selectedFeature = result.data;
   }
 
   /**
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(layer: SearchResult<Feature>): void | undefined {
+  private tryAddFeatureToMap(
+    layer: SearchResult<Feature>,
+    motion: FeatureMotion = FeatureMotion.Default
+  ): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -158,10 +170,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.map.searchResultsOverlay.setFeatures(
-      [layer.data] satisfies Feature[],
-      FeatureMotion.Default
-    );
+    this.map.searchResultsOverlay.setFeatures([layer.data], motion);
   }
 
   ngOnInit(): void {
@@ -181,7 +190,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         title: 'googleStreetView',
         handler: () => this.openGoogleStreetView(this.lonlat)
       }
-    ] satisfies Action[]);
+    ]);
   }
 
   ngOnDestroy(): void {
