@@ -6,6 +6,6 @@ export interface Version {
 }
 
 export const version: Version = {
-  lib: '16.2.0',
-  releaseDate: 1705673778574
+  lib: '16.3.0',
+  releaseDate: 1706198187286
 };
