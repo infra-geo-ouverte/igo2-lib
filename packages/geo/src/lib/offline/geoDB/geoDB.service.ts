@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { CompressionService } from '@igo2/core';
 
+import { IDBPDatabase } from 'idb';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, Subject, of } from 'rxjs';
-import { concatMap, first, map, take } from 'rxjs/operators';
+import { Observable, Subject, from, of } from 'rxjs';
+import { concatMap, first, map, switchMap, take } from 'rxjs/operators';
 
+import { Igo2DBSchema } from '../shared/db.interface';
+import { createDb } from '../shared/db.utils';
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
 import { GeoDBData } from './geoDB.interface';
 
@@ -14,13 +17,23 @@ import { GeoDBData } from './geoDB.interface';
 })
 export class GeoDBService {
   readonly dbName: string = 'geoData';
+  db: IDBPDatabase<Igo2DBSchema>;
   public collisionsMap: Map<number, string[]> = new Map();
   public _newData: number = 0;
 
   constructor(
     private ngxIndexedDBService: NgxIndexedDBService,
     private compression: CompressionService
-  ) {}
+  ) {
+    this.waitForDb().then();
+  }
+
+  private async waitForDb() {
+    if (!this.db) {
+      this.db = await createDb();
+    }
+    return;
+  }
 
   /**
    * Only blob can be compressed
@@ -158,22 +171,39 @@ export class GeoDBService {
     return dbRequest;
   }
 
-  deleteByRegionID(id: number): Observable<any> {
+  deleteByRegionID(id: number): Observable<boolean> {
     if (!id) {
       return;
     }
-
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
-    const dbRequest = this.ngxIndexedDBService.getAllByIndex(
-      this.dbName,
-      'regionID',
-      IDBKey
-    );
-    dbRequest.subscribe((datas: GeoDBData[]) => {
-      datas.forEach((data) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
-      });
-    });
+    const dbRequest = from(
+      Promise.all([
+        this.waitForDb(),
+        this.db
+          .getAllFromIndex('geoData', 'regionIDIdx', IDBKey)
+          .then((geoDatas: GeoDBData[]) => {
+            const tx = this.db.transaction('geoData', 'readwrite');
+            const promises = geoDatas.map((geoData) =>
+              tx.store.delete(geoData.url)
+            );
+            promises.push(tx.done);
+            return Promise.all([promises]);
+          })
+      ])
+    ).pipe(switchMap((r) => of(r[1].every((r) => r))));
+    /*.pipe(
+      mergeMap((geoDatas: GeoDBData[]) => geoDatas),
+      map((geoData: GeoDBData) => {
+        const tx = this.db.transaction('geoData', 'readwrite');
+        return from(
+          Promise.all([
+            this.waitForDb(),
+            tx.store.delete(geoData.url),
+            tx.done.then(() => true).catch(() => false)
+          ])
+        ).pipe(switchMap((r) => of(r[2])));
+      })
+    );*/
     return dbRequest;
   }
 
