@@ -852,7 +852,7 @@ export class CatalogService {
         } as CatalogItem);
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
-
+    const groupHandledLayersIds: string[] = [];
     const groupedItems: CatalogItemLayer[] = groups
       .map((group) => {
         return {
@@ -870,14 +870,39 @@ export class CatalogService {
                 (i.options.sourceOptions as ArcGISRestDataSourceOptions).layer
               );
             })
-            .map((i) =>
-              Object.assign({}, i, {
+            .map((i) => {
+              groupHandledLayersIds.push(i.id);
+              return Object.assign({}, i, {
                 address: `catalog.group.${group.name}`
-              })
-            )
+              });
+            })
         };
       })
       .filter((g) => g.items.length);
+
+    if (groups) {
+      const TitleOrId = catalog.title || catalog.id;
+      const nonHandledLayers = items
+        .filter((i) => !groupHandledLayersIds.includes(i.id))
+        .map((i) =>
+          Object.assign({}, i, {
+            address: `catalog.group.${TitleOrId}`
+          })
+        );
+      if (nonHandledLayers.length) {
+        const nonHandledGroup = {
+          options: undefined,
+          address: `catalog.group.${TitleOrId}`,
+          id: `catalog.group.${TitleOrId}`,
+          type: CatalogItemType.Group,
+          externalProvider: catalog.externalProvider,
+          sortDirection: catalog.sortDirection,
+          title: TitleOrId,
+          items: nonHandledLayers
+        };
+        groupedItems.push(nonHandledGroup);
+      }
+    }
 
     return groups ? groupedItems : items;
   }
