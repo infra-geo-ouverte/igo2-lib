@@ -24,7 +24,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
 })
 export class AppSimpleMapComponent {
-  public pointerCoord: string;
+  public pointerCoord: [number, number];
   public pointerCoordDelay: number = 0;
   public map: IgoMap = new IgoMap({
     controls: {
@@ -70,7 +70,7 @@ export class AppSimpleMapComponent {
       });
   }
 
-  onPointerMove(event: string): void {
+  onPointerMove(event: [number, number]): void {
     this.pointerCoord = event;
   }
 }

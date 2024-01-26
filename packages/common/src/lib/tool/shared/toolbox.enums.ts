@@ -1,5 +1,1 @@
-export enum ToolboxColor {
-  White = 'white',
-  Grey = 'grey',
-  Primary = 'primary'
-}
+export type ToolboxColor = 'white' | 'grey' | 'primary';

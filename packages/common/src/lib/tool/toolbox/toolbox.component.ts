@@ -101,14 +101,14 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Color of Toolbox
    */
-  @Input() color: ToolboxColor = ToolboxColor.White;
+  @Input() color: ToolboxColor = 'white';
 
   /**
    * @ignore
    */
   @HostBinding('class.color-grey')
   get classColorGrey() {
-    return this.color === ToolboxColor.Grey;
+    return this.color === 'grey';
   }
 
   /**
@@ -116,7 +116,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   @HostBinding('class.color-primary')
   get classColorPrimary() {
-    return this.color === ToolboxColor.Primary;
+    return this.color === 'primary';
   }
 
   /**
