@@ -7,7 +7,10 @@ import {
 } from '@angular/core';
 
 import { getEntityTitle } from '../../entity';
-import { EntitySelectorComponent } from '../../entity/entity-selector/entity-selector.component';
+import {
+  EntitySelectorChange,
+  EntitySelectorComponent
+} from '../../entity/entity-selector/entity-selector.component';
 import { WorkspaceStore } from '../shared/store';
 import { Workspace } from '../shared/workspace';
 
@@ -54,7 +57,7 @@ export class WorkspaceSelectorComponent {
    * @internal
    * @param event The selection change event
    */
-  onSelectedChange(event: { value: Workspace }) {
+  onSelectedChange(event: EntitySelectorChange<Workspace>) {
     const workspace = event.value;
     this.store.activateWorkspace(workspace);
     this.selectedChange.emit({ selected: true, value: workspace });

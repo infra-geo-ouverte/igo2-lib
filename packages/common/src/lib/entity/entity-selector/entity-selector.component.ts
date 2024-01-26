@@ -20,6 +20,10 @@ import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
 
+export interface EntitySelectorChange<T = any> {
+  selected: boolean;
+  value: T;
+}
 @Component({
   selector: 'igo-entity-selector',
   templateUrl: './entity-selector.component.html',
@@ -105,10 +109,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the selection changes
    */
-  @Output() selectedChange = new EventEmitter<{
-    selected: boolean;
-    value: object | object[];
-  }>();
+  @Output() selectedChange = new EventEmitter<EntitySelectorChange>();
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
