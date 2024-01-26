@@ -146,12 +146,12 @@
     [ngForOf]="$any(contexts$ | async) | keyvalue"
   >
     <igo-collapsible
-      *ngIf="groupContexts.value.length && auth.authenticated"
-      [title]="titleMapping[groupContexts.key] | translate"
-      [collapsed]="collapsed[titleMapping[groupContexts.key]]"
-      (toggle)="collapsed[titleMapping[groupContexts.key]] = $event"
+      *ngIf="$any(groupContexts).value.length && auth.authenticated"
+      [title]="titleMapping[$any(groupContexts).key] | translate"
+      [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
+      (toggle)="collapsed[titleMapping[$any(groupContexts).key]] = $any($event)"
     >
-      <ng-template ngFor let-context [ngForOf]="groupContexts.value">
+      <ng-template ngFor let-context [ngForOf]="$any(groupContexts).value">
         <igo-context-item
           igoListItem
           color="accent"
@@ -178,12 +178,10 @@
       </ng-template>
     </igo-collapsible>
 
-    <ng-template
-      *ngIf="groupContexts.value.length && !auth.authenticated"
-      ngFor
-      let-context
-      [ngForOf]="groupContexts.value"
-    >
+    <ng-container
+      *ngIf="$any(groupContexts).value.length && !auth.authenticated"
+    ></ng-container>
+    <ng-template ngFor let-context [ngForOf]="$any(groupContexts).value">
       <igo-context-item
         igoListItem
         color="accent"
