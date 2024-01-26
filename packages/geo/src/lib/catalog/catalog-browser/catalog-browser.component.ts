@@ -100,7 +100,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watcher.destroy();
+    if (this.watcher) {
+      this.watcher.destroy();
+    }
   }
 
   /**
