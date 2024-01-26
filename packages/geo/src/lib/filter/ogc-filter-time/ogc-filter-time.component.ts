@@ -356,7 +356,7 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  calendarView() {
+  calendarView(): 'month' | 'year' | 'multi-year' {
     const test = this.stepMilliseconds;
     const diff = Math.abs(
       this.parseFilter(this.currentFilter.end).getTime() -
@@ -367,7 +367,7 @@ export class OgcFilterTimeComponent implements OnInit {
     } else if (this.ogcFilterTimeService.stepIsMonthDuration(this.step)) {
       return 'year';
     } else if (test < 86400000 && diff < 86400000) {
-      return 'clock';
+      return 'clock' as any;
     } else {
       return 'month';
     }

@@ -15,7 +15,7 @@ import { ListItemDirective } from '@igo2/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
 import {
   IgoOgcSelector,
@@ -168,7 +168,7 @@ export class OgcFilterButtonComponent implements OnInit {
   }
   private _layer;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() color: string = 'primary';
 

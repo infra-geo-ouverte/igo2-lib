@@ -39,7 +39,6 @@ import {
 import { LanguageService, MessageService } from '@igo2/core';
 
 import OlFeature from 'ol/Feature';
-import type { Type } from 'ol/geom/Geometry';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
@@ -50,6 +49,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../../datasource/shared';
+import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
@@ -106,7 +106,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   set type(type: SpatialFilterType) {
     this._type = type;
-    const index = this.geometryTypes.findIndex((geom) => geom === this.type);
+    const index = this.geometryTypes.findIndex(
+      (geom) => geom === (this.type as any)
+    );
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
     this.radius = undefined;
@@ -298,9 +300,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private bufferChanges$$: Subscription;
 
   public formControl = new UntypedFormControl();
-  public geometryType: Type | string;
+  public geometryType: GeometryType;
   public geometryTypeField = false;
-  public geometryTypes: string[] = ['Point', 'Polygon'];
+  public geometryTypes: GeometryType[] = [
+    GeometryType.Point,
+    GeometryType.Polygon
+  ];
   public drawGuideField = false;
   public drawGuide: number = null;
   public drawGuidePlaceholder = '';

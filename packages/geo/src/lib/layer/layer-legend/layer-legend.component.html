@@ -41,7 +41,7 @@
               <img
                 igoImageError
                 *ngIf="item.imgGraphValue"
-                hideError="true"
+                [hideError]="true"
                 #renderedLegend
                 id="{{ item.title }}"
                 (load)="onLoadImage(item.title)"

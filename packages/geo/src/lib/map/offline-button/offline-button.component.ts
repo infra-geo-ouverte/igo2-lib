@@ -25,7 +25,7 @@ export class OfflineButtonComponent implements OnInit {
   btnStyle: string = 'onlineStyle';
 
   @Input() map: IgoMap;
-  @Input() color: IgoMap;
+  @Input() color: string;
   @Input() enabled: boolean = false;
 
   constructor() {}

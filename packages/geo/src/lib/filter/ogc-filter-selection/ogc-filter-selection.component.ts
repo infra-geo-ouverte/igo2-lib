@@ -41,7 +41,7 @@ import {
   OgcSelectorBundle,
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
@@ -81,7 +81,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() checkboxesIndex = 5;
   @Input() radioButtonsIndex = 5;

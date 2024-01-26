@@ -28,7 +28,7 @@
       >
       </mat-icon>
     </button>
-    <igo-metadata-button [layer]="layer"></igo-metadata-button>
+    <igo-metadata-button [layer]="$any(layer)"></igo-metadata-button>
 
     <button
       (mouseenter)="onMouseEvent($event)"
@@ -46,7 +46,7 @@
         [igoMatBadgeIcon]="getBadgeIcon()"
         igoMatBadgeColor="rgba(0,0,0,0.87)"
         igoMatBadgeBackgroundColor="none"
-        igoMatBadgeInverseColor="true"
+        [igoMatBadgeInverseColor]="true"
         [matBadgeHidden]="
           ((inRange$ | async) && (isVisible$ | async) === true) ||
           ((inRange$ | async) && !added) ||

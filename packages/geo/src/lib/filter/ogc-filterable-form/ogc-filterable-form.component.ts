@@ -5,7 +5,7 @@ import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
 import { ListItemDirective } from '@igo2/common';
 
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { OgcFilterFormComponent } from '../ogc-filter-form/ogc-filter-form.component';
 import { OgcFilterSelectionComponent } from '../ogc-filter-selection/ogc-filter-selection.component';
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
@@ -36,7 +36,7 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 export class OgcFilterableFormComponent {
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() refreshFilters: () => void;
 

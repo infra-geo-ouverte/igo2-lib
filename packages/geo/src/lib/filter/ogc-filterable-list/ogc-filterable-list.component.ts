@@ -6,7 +6,7 @@ import { ListComponent, ListItemDirective } from '@igo2/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map/shared/map.abstract';
 import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 
@@ -29,7 +29,7 @@ import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 export class OgcFilterableListComponent {
   @Input() layers: Layer[];
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   constructor() {}
 }
