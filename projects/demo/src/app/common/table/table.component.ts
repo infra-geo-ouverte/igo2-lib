@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TableActionColor, TableDatabase } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { TableActionColor, TableDatabase, TableModel } from '@igo2/common';
 
 @Component({
   selector: 'app-table',
@@ -11,7 +10,7 @@ import { LanguageService } from '@igo2/core';
 export class AppTableComponent implements OnInit {
   public database: TableDatabase;
 
-  public model = {
+  public model: TableModel = {
     columns: [
       {
         name: 'id',
@@ -42,7 +41,7 @@ export class AppTableComponent implements OnInit {
     selectionCheckbox: true
   };
 
-  constructor(private languageService: LanguageService) {}
+  constructor() {}
 
   ngOnInit() {
     this.database = new TableDatabase([
@@ -52,11 +51,11 @@ export class AppTableComponent implements OnInit {
     ]);
   }
 
-  showName(name) {
+  showName(name: string): void {
     alert(name);
   }
 
-  handleSelect(rows) {
+  handleSelect(rows: any): void {
     console.log(rows);
   }
 }

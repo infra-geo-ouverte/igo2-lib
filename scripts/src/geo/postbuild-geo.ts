@@ -1,9 +1,10 @@
 import { join } from 'path';
-import { compileStyle } from '../utils/style.utils';
-import { resolveDist, resolvePackage } from '../config/paths';
+
 import { PackageName } from '../config/packages';
+import { resolveDist, resolvePackage } from '../config/paths';
 import * as log from '../utils/log';
 import { getDuration } from '../utils/performance.utils';
+import { compileStyle } from '../utils/style.utils';
 
 const packageName: PackageName = 'geo';
 const baseCmdName = `Postbuild @igo2/${packageName}`;

@@ -1,0 +1,9 @@
+@use './doc-viewer/doc-viewer.theme' as doc-viewer;
+
+@mixin themes($theme) {
+  @include doc-viewer.theme($theme);
+}
+
+@mixin colors($theme) {
+  @include doc-viewer.color($theme);
+}

@@ -2,12 +2,12 @@ import { readdir } from 'fs/promises';
 import { merge } from 'lodash';
 import { join } from 'path';
 
+import { PATHS } from '../../config/paths';
 import {
   createFile,
   pathExist,
   readFileContent
 } from '../../utils/file-system.utils';
-import { PATHS } from '../../config/paths';
 import * as log from '../../utils/log';
 import { getDuration } from '../../utils/performance.utils';
 

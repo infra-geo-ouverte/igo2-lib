@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "16.0.2",
+  "version": "16.3.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -19,7 +19,6 @@
     "build": "ng build common --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
-    "publish": "npm publish ../../dist/common",
     "test": "ng test common --watch=false",
     "watch": "ng build common --watch"
   },
@@ -30,8 +29,8 @@
     "./style": {
       "style": "./style/style.css"
     },
-    "./theming": {
-      "sass": "./common-theme.scss"
+    "./theme": {
+      "sass": "./src/common-theme.scss"
     },
     "./partial/*": {
       "sass": "./src/style/partial/*.scss"

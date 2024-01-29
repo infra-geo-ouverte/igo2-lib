@@ -13,9 +13,9 @@ import type { TemplateRef } from '@angular/core';
 
 import {
   EntityState,
+  EntityStore,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreWatcher,
-  EntityStoreWithStrategy
+  EntityStoreWatcher
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 
@@ -68,7 +68,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * Search results store
    */
-  @Input() store: EntityStoreWithStrategy<SearchResult>;
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * to show hide results icons

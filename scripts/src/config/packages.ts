@@ -1,6 +1,7 @@
-import { BehaviorSubject, combineLatest, first, firstValueFrom } from 'rxjs';
-import { PATHS, getPackageJson } from './paths';
 import { readdirSync } from 'fs';
+import { BehaviorSubject, combineLatest, first, firstValueFrom } from 'rxjs';
+
+import { PATHS, getPackageJson } from './paths';
 
 export type PackageName =
   | 'auth'
@@ -27,7 +28,10 @@ function getPackagesRelations(): Map<PackageName, PackageOptions> {
       continue;
     }
     const file = getPackageJson('packages', folder);
-    const igoDependencies = Object.keys({...file.peerDependencies, ...file.dependencies})
+    const igoDependencies = Object.keys({
+      ...file.peerDependencies,
+      ...file.dependencies
+    })
       .filter((key) => key.includes('@igo2'))
       .map((key) => key.split('/')[1]) as PackageName[];
     packageRelations.set(folder, {

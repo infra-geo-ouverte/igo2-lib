@@ -1,14 +1,14 @@
-import { join } from 'path';
-import { copyFile, pathExist } from '../utils/file-system.utils';
-import { compileStyle } from '../utils/style.utils';
 import { readdir } from 'fs/promises';
+import { join } from 'path';
 import { performance } from 'perf_hooks';
-import { getDuration } from '../utils/performance.utils';
-import { resolveDist, resolvePackage } from '../config/paths';
+
 import { PackageName } from '../config/packages';
+import { resolveDist, resolvePackage } from '../config/paths';
 import * as log from '../utils/log';
-import { bundleLocalization } from './utils/localization';
+import { getDuration } from '../utils/performance.utils';
+import { compileStyle } from '../utils/style.utils';
 import { copyAssets, copyExternalAssets } from './utils/assets';
+import { bundleLocalization } from './utils/localization';
 
 const packageName: PackageName = 'core';
 const distPath = resolveDist(packageName);
@@ -20,8 +20,6 @@ const baseCmdName = `Postbuild @igo2/${packageName}`;
 (async () => {
   const startTime = performance.now();
   log.startMsg(baseCmdName);
-
-  await copyProdImportationFile();
 
   await prebuiltThemes();
 
@@ -37,29 +35,6 @@ const baseCmdName = `Postbuild @igo2/${packageName}`;
   const duration = getDuration(startTime);
   log.info(`${baseCmdName} excuted in ${duration}`);
 })();
-
-/**
- * We got two files for packages style importation. One for local development and one for production.
- * We need to provide the good file for production.
- */
-async function copyProdImportationFile(): Promise<void> {
-  const startTime = performance.now();
-
-  const importationFile = join(distPath, 'packages.import.scss');
-  const prodImport = join(srcPath, 'packages-prod.import.scss');
-
-  if (pathExist(importationFile)) {
-    return;
-  }
-
-  // Replace the theme-import file by theme-import.prod
-  await copyFile(prodImport, importationFile);
-
-  const duration = getDuration(startTime);
-  log.success(
-    `✔ Provide packages style importation for production in ${duration}`
-  );
-}
 
 async function compileBaseStyle(): Promise<void> {
   const startTime = performance.now();

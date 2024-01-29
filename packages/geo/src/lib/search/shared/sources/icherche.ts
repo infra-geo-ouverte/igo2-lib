@@ -275,6 +275,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'culture',
               enabled: types.indexOf('culture') !== -1,
               hashtags: ['grille', 'culture']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.unites',
+              value: 'unites',
+              enabled: types.indexOf('unites') !== -1,
+              hashtags: ['unites', 'adresse']
             }
           ]
         } satisfies SearchSourceSettings,
@@ -754,6 +760,11 @@ export class IChercheReverseSearchSource
               title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
               enabled: types.indexOf('regadmin') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.unites',
+              value: 'unites',
+              enabled: types.indexOf('unites') !== -1
             }
           ]
         },

@@ -44,6 +44,7 @@ import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
 import { MonitoringModule } from './core/monitoring/monitoring.module';
 import { AppRequestModule } from './core/request/request.module';
+import { AppThemeModule } from './core/theme/theme.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppDrawModule } from './geo/draw/draw.module';
@@ -90,6 +91,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppMediaModule,
     AppMessageModule,
     AppRequestModule,
+    AppThemeModule,
 
     AppActionModule,
     AppDialogModule,
