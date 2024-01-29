@@ -29,11 +29,11 @@
           "layerGroup": "Nom du groupe de couches",
           "catalog": "Catalogue",
           "externalProvider": "Fournisseur",
-          "url": "URL (Intranet/Internet)",
+          "url": "URL",
           "fileName": "Nom du fichier - Service Web",
           "context": "Contexte/Thématique",
           "dataDescription": "Description de la donnée",
-          "documentName": "listeCatalogue.csv"
+          "documentName": "ListeCouchesInformation"
         }
       },
       "searchResultsTool": {

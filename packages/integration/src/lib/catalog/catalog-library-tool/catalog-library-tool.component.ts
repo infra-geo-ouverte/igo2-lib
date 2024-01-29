@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 
@@ -9,9 +10,9 @@ import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { ContextService } from '@igo2/context';
 import { LanguageService, StorageService } from '@igo2/core';
-import { Catalog, CatalogService } from '@igo2/geo';
+import { Catalog, CatalogItemLayer, CatalogService } from '@igo2/geo';
 
-import { forkJoin, zip } from 'rxjs';
+import { Subscription, forkJoin, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
@@ -31,7 +32,8 @@ import { CatalogState } from '../catalog.state';
   styleUrls: ['./catalog-library-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogLibraryToolComponent implements OnInit {
+export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
+  private generatelist$$: Subscription;
   /**
    * Store that contains the catalogs
    * @internal
@@ -68,6 +70,12 @@ export class CatalogLibraryToolComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.generatelist$$) {
+      this.generatelist$$.unsubscribe();
+    }
+  }
+
   /**
    * When the selected catalog changes, toggle the the CatalogBrowser tool.
    * @internal
@@ -101,7 +109,7 @@ export class CatalogLibraryToolComponent implements OnInit {
   /**
    * Get the item description for getCatalogList
    */
-  private getDescription(item: any) {
+  private getDescription(item: CatalogItemLayer) {
     if (item.options.metadata.abstract) {
       if (item.options.metadata.abstract.includes('\n')) {
         return item.options.metadata.abstract.replaceAll('\n', '');
@@ -147,7 +155,7 @@ export class CatalogLibraryToolComponent implements OnInit {
       ]
     ];
     var dataArray = [];
-    zip([
+    this.generatelist$$ = zip([
       this.store.entities$.pipe(
         switchMap((catalogs) => {
           return forkJoin(
@@ -251,6 +259,7 @@ export class CatalogLibraryToolComponent implements OnInit {
       let csvContent = bufferArray.map((e) => e.join(';')).join('\n');
       var encodedUri = encodeURI(csvContent);
       var exportDocument = document.createElement('a');
+      var date = new Date();
       exportDocument.setAttribute(
         'href',
         'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
@@ -259,11 +268,21 @@ export class CatalogLibraryToolComponent implements OnInit {
         'download',
         this.languageService.translate.instant(
           'igo.integration.catalog.csv.documentName'
-        )
+        ) +
+          '_' +
+          this.getFormatedDate(date)
       );
       document.body.appendChild(exportDocument);
       exportDocument.click();
       document.body.removeChild(exportDocument);
     });
+  }
+  private getFormatedDate(date: Date) {
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+    var day = date.getDate().toString();
+    var hours = date.getHours().toString();
+    var minutes = date.getMinutes().toString();
+    return `${year}-${month}-${day}:${hours}h${minutes}`;
   }
 }
