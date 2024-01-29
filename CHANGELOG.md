@@ -1,3 +1,45 @@
+# [16.3.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.2.0...v16.3.0) (2024-01-25)
+
+
+### Bug Fixes
+
+* **geo:** check legend before loop ([#1591](https://github.com/infra-geo-ouverte/igo2-lib/issues/1591)) ([e7ad0bb](https://github.com/infra-geo-ouverte/igo2-lib/commit/e7ad0bb605ab75097051540a93aa545280c63965))
+* sass exports for themes and utils ([#1589](https://github.com/infra-geo-ouverte/igo2-lib/issues/1589)) ([643d6fc](https://github.com/infra-geo-ouverte/igo2-lib/commit/643d6fcd7feedbe72e5cda50f13521fe285aa69b))
+
+
+### Features
+
+* **geo:** add a sub level to arcgisrest  catalogs ([#1592](https://github.com/infra-geo-ouverte/igo2-lib/issues/1592)) ([e3b5246](https://github.com/infra-geo-ouverte/igo2-lib/commit/e3b52463ce21f7858dfa1e5994194c9c7980e113))
+* **geo:** provide a method to select the featuremotion when adding searchresult as overlay ([#1587](https://github.com/infra-geo-ouverte/igo2-lib/issues/1587)) ([afe56d5](https://github.com/infra-geo-ouverte/igo2-lib/commit/afe56d5aa6330062eef881a977d33bce21b9d7d3))
+* **integration:** add a new tool to report data issues ([#1524](https://github.com/infra-geo-ouverte/igo2-lib/issues/1524)) ([1b6b5c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/1b6b5c6d3daace6fde4c22a6aaafe8b3afc3ccdc))
+
+
+
+# [16.2.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.1...v16.2.0) (2024-01-19)
+
+
+### Bug Fixes
+
+* **demo:** Repoint web services in assembly demo ([#1557](https://github.com/infra-geo-ouverte/igo2-lib/issues/1557)) ([b714937](https://github.com/infra-geo-ouverte/igo2-lib/commit/b714937e771f15aa51d71c26b8ee1210467e3b5f))
+* **demo:** update layers option in print and ogc filter ([#1571](https://github.com/infra-geo-ouverte/igo2-lib/issues/1571)) ([f5a0186](https://github.com/infra-geo-ouverte/igo2-lib/commit/f5a018642ee739e3631f6ca19ffd582446b7f823))
+* **geo/search-pointer&hover:** init the store before subscription ([#1569](https://github.com/infra-geo-ouverte/igo2-lib/issues/1569)) ([773695a](https://github.com/infra-geo-ouverte/igo2-lib/commit/773695a26e793ea246430a9fa5d3b55bd98e5beb))
+* **geo:** Baselayer Switcher stay open without useStaticIcon ([#1548](https://github.com/infra-geo-ouverte/igo2-lib/issues/1548)) ([4c6cebd](https://github.com/infra-geo-ouverte/igo2-lib/commit/4c6cebd35a2af39795057055e135011b9146a7f4))
+* **geo:** check catalog not undefined before loading items ([#1583](https://github.com/infra-geo-ouverte/igo2-lib/issues/1583)) ([1efb4a6](https://github.com/infra-geo-ouverte/igo2-lib/commit/1efb4a6de3fad6652e862bd1773b37e1a20d760c))
+* **geo:** initial rotation is not supplied to viewcontroller ([#1586](https://github.com/infra-geo-ouverte/igo2-lib/issues/1586)) ([edb29c3](https://github.com/infra-geo-ouverte/igo2-lib/commit/edb29c33d681f5977365af2f6f6cd997aebe74fe))
+
+
+### Features
+
+* **demo:** add layer showcase for multiple styles ([#1581](https://github.com/infra-geo-ouverte/igo2-lib/issues/1581)) ([a00975e](https://github.com/infra-geo-ouverte/igo2-lib/commit/a00975e58c9d458d508532830fcb12e71af59753))
+* **linked-layers:** Added new config for visibility in Base Layer Switcher ([#1560](https://github.com/infra-geo-ouverte/igo2-lib/issues/1560)) ([0c35c3d](https://github.com/infra-geo-ouverte/igo2-lib/commit/0c35c3d338692866776f84ed5f67ab225330c619))
+
+
+### Reverts
+
+* **common/store:** remove EntityStoreWithStrategy0 ([297f96e](https://github.com/infra-geo-ouverte/igo2-lib/commit/297f96e7535bc0507547e5f9be81889a82ea5a7d))
+
+
+
 ## [16.1.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.0...v16.1.1) (2023-12-14)
 
 

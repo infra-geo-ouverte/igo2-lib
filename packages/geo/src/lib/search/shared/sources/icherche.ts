@@ -280,7 +280,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: 'igo.geo.search.icherche.type.unites',
               value: 'unites',
               enabled: types.indexOf('unites') !== -1,
-              hashtags: ['unites']
+              hashtags: ['unites', 'adresse']
             }
           ]
         } satisfies SearchSourceSettings,

@@ -26,15 +26,6 @@
 }
 
 @mixin density($theme) {
-  $density: mat.get-density-config($theme);
-
-  $theme: map.merge(
-    $theme,
-    (
-      density: $density - 2
-    )
-  );
-
   igo-search-bar {
     @include mat.form-field-density($theme);
     @include mat.icon-button-density($theme);

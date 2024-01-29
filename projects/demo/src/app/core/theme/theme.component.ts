@@ -20,7 +20,6 @@ export class AppThemeComponent {
     { value: 'deeppurple', title: 'Purple' },
     { value: 'indigo', title: 'Indigo' },
     { value: 'orange', title: 'Orange' },
-    { value: 'qcca', title: 'Québec.ca' },
     { value: 'teal', title: 'Teal' }
   ];
 
