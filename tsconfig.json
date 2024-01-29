@@ -27,6 +27,8 @@
   },
   "exclude": ["dist", "scripts", "projects/**/e2e/**/*"],
   "angularCompilerOptions": {
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
