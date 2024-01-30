@@ -181,12 +181,10 @@ export class CatalogService {
       }),
       catchError(() => {
         this.messageService.error(
-          catalog.title
-            ? 'igo.geo.catalog.unavailable'
-            : 'igo.geo.catalog.someUnavailable',
+          'igo.geo.catalog.unavailable',
           'igo.geo.catalog.unavailableTitle',
           undefined,
-          catalog.title ? { value: catalog.title } : undefined
+          { value: catalog.title }
         );
         return EMPTY;
       })
