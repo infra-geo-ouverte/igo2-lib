@@ -9,18 +9,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthInterceptor } from '@igo2/auth';
+import { AuthFacebookComponent } from '@igo2/auth/facebook';
+import { AuthGoogleComponent } from '@igo2/auth/google';
+import { AuthInternComponent } from '@igo2/auth/internal';
+import {
+  AuthMicrosoftComponent,
+  AuthMicrosoftb2cComponent,
+  provideAuthMicrosoft
+} from '@igo2/auth/microsoft';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
 import { MsalModule } from '@azure/msal-angular';
 
-import { AuthFacebookComponent } from './auth-facebook/auth-facebook.component';
 import { AuthFormComponent } from './auth-form/auth-form.component';
-import { AuthGoogleComponent } from './auth-google/auth-google.component';
-import { AuthInternComponent } from './auth-intern/auth-intern.component';
-import { AuthMicrosoftComponent } from './auth-microsoft/auth-microsoft.component';
-import { provideAuthMicrosoft } from './auth-microsoftb2c/auth-microsoft.provider';
-import { AuthMicrosoftb2cComponent } from './auth-microsoftb2c/auth-microsoftb2c.component';
 import { AuthStorageService } from './shared/auth-storage.service';
 
 @NgModule({

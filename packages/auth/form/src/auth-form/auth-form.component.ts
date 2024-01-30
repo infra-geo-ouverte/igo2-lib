@@ -12,16 +12,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
 import { AuthOptions, AuthService } from '@igo2/auth';
+import { AuthFacebookComponent } from '@igo2/auth/facebook';
+import { AuthGoogleComponent } from '@igo2/auth/google';
+import { AuthInternComponent } from '@igo2/auth/internal';
+import {
+  AuthMicrosoftComponent,
+  AuthMicrosoftb2cComponent
+} from '@igo2/auth/microsoft';
 import { ConfigService } from '@igo2/core/config';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
-import { AuthFacebookComponent } from '../auth-facebook/auth-facebook.component';
-import { AuthGoogleComponent } from '../auth-google/auth-google.component';
-import { AuthInternComponent } from '../auth-intern/auth-intern.component';
-import { AuthMicrosoftComponent } from '../auth-microsoft/auth-microsoft.component';
-import { AuthMicrosoftb2cComponent } from '../auth-microsoftb2c/auth-microsoftb2c.component';
 import { AuthFormOptions } from '../shared';
 
 @Component({

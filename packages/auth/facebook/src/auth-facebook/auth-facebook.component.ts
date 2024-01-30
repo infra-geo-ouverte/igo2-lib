@@ -9,7 +9,7 @@ import {
 import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
-import { AuthFacebookOptions } from '../shared/auth-form.interface';
+import { AuthFacebookOptions } from '../shared/auth-facebook.interface';
 
 @Component({
   selector: 'igo-auth-facebook',

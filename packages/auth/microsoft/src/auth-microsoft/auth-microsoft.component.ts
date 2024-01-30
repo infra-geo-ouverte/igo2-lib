@@ -12,7 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
-import { MSAL_GUARD_CONFIG } from '@azure/msal-angular';
+import {
+  MSAL_GUARD_CONFIG,
+  MsalBroadcastService,
+  MsalService
+} from '@azure/msal-angular';
 import {
   AuthenticationResult,
   InteractionRequiredAuthError,
@@ -26,50 +30,47 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import {
-  AuthMicrosoftb2cOptions,
+  AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
-} from '../shared/auth-form.interface';
-import { MsalBroadcastServiceb2c } from './auth-msalBroadcastServiceb2c.service';
-import { MsalServiceb2c } from './auth-msalServiceb2c.service';
+} from '../shared/auth-microsoft.interface';
 
 @Component({
-  selector: 'igo-auth-microsoftb2c',
-  templateUrl: './auth-microsoftb2c.component.html',
-  styleUrls: ['./auth-microsoftb2c.component.scss'],
+  selector: 'igo-auth-microsoft',
+  templateUrl: './auth-microsoft.component.html',
+  styleUrls: ['./auth-microsoft.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslateModule],
-  providers: [MsalServiceb2c]
+  imports: [MatButtonModule, MatIconModule, TranslateModule]
 })
-export class AuthMicrosoftb2cComponent {
-  private options: AuthMicrosoftb2cOptions;
+export class AuthMicrosoftComponent {
+  private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
-  private broadcastService: MsalBroadcastServiceb2c;
+  private broadcastService: MsalBroadcastService;
 
   constructor(
     private authService: AuthService,
     private config: ConfigService,
     private appRef: ApplicationRef,
-    private msalService: MsalServiceb2c,
+    private msalService: MsalService,
     @Inject(MSAL_GUARD_CONFIG)
     private msalGuardConfig: MSPMsalGuardConfiguration[]
   ) {
-    this.options = this.config.getConfig('auth.microsoftb2c') || {};
+    this.options = this.config.getConfig('auth.microsoft');
 
     this.msalService.instance = new PublicClientApplication({
-      auth: this.options.browserAuthOptions,
+      auth: this.options,
       cache: {
         cacheLocation: 'sessionStorage'
       }
     });
 
-    this.broadcastService = new MsalBroadcastServiceb2c(
+    this.broadcastService = new MsalBroadcastService(
       this.msalService.instance,
       this.msalService
     );
 
-    if (this.options.browserAuthOptions.clientId) {
+    if (this.options?.clientId) {
       this.broadcastService.inProgress$
         .pipe(
           filter(
@@ -85,7 +86,7 @@ export class AuthMicrosoftb2cComponent {
     }
   }
 
-  public loginMicrosoftb2c() {
+  public loginMicrosoft() {
     this.msalService
       .loginPopup({ ...this.getConf().authRequest } as PopupRequest)
       .subscribe((response: AuthenticationResult) => {
@@ -98,11 +99,14 @@ export class AuthMicrosoftb2cComponent {
     this.msalService.instance
       .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
       .then((response: AuthenticationResult) => {
-        const token = response.idToken;
-        this.authService.loginWithToken(token, 'microsoftb2c').subscribe(() => {
-          this.appRef.tick();
-          this.login.emit(true);
-        });
+        const tokenAccess = response.accessToken;
+        const tokenId = response.idToken;
+        this.authService
+          .loginWithToken(tokenAccess, 'microsoft', { tokenId })
+          .subscribe(() => {
+            this.appRef.tick();
+            this.login.emit(true);
+          });
       })
       .catch(async (error) => {
         if (error instanceof InteractionRequiredAuthError) {
@@ -111,6 +115,7 @@ export class AuthMicrosoftb2cComponent {
             this.getConf().authRequest as SilentRequest
           );
         }
+        console.log(error);
       })
       .catch((error) => {
         console.log('Silent token fails');
@@ -118,6 +123,6 @@ export class AuthMicrosoftb2cComponent {
   }
 
   private getConf(): MSPMsalGuardConfiguration {
-    return this.msalGuardConfig.filter((conf) => conf.type === 'b2c')[0];
+    return this.msalGuardConfig.filter((conf) => conf.type === 'add')[0];
   }
 }

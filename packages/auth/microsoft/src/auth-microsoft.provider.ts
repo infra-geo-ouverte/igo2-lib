@@ -8,11 +8,18 @@ import {
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
+import { AuthMicrosoftComponent } from './auth-microsoft/auth-microsoft.component';
+import { AuthMicrosoftb2cComponent } from './auth-microsoftb2c/auth-microsoftb2c.component';
+import { MsalServiceb2c } from './auth-microsoftb2c/auth-msalServiceb2c.service';
 import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
-} from '../shared/auth-form.interface';
-import { MsalServiceb2c } from './auth-msalServiceb2c.service';
+} from './shared/auth-microsoft.interface';
+
+export const AUTH_MICROSOFT_DIRECTIVES = [
+  AuthMicrosoftComponent,
+  AuthMicrosoftb2cComponent
+] as const;
 
 export function MSALConfigFactory(
   config: ConfigService

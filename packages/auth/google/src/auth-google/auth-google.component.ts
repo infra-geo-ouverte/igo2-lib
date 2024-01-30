@@ -10,7 +10,7 @@ import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 
-import { AuthGoogleOptions } from '../shared/auth-form.interface';
+import { AuthGoogleOptions } from '../shared/auth-google.interface';
 
 @Component({
   selector: 'igo-auth-google',
