@@ -511,7 +511,7 @@
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites": "Numéro d'unite"
+            "unites": "Unités (appartements, bureaux, etc.)"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",

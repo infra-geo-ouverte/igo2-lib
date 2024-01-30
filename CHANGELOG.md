@@ -1,3 +1,20 @@
+# [16.3.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.2.0...v16.3.0) (2024-01-25)
+
+
+### Bug Fixes
+
+* **geo:** check legend before loop ([#1591](https://github.com/infra-geo-ouverte/igo2-lib/issues/1591)) ([e7ad0bb](https://github.com/infra-geo-ouverte/igo2-lib/commit/e7ad0bb605ab75097051540a93aa545280c63965))
+* sass exports for themes and utils ([#1589](https://github.com/infra-geo-ouverte/igo2-lib/issues/1589)) ([643d6fc](https://github.com/infra-geo-ouverte/igo2-lib/commit/643d6fcd7feedbe72e5cda50f13521fe285aa69b))
+
+
+### Features
+
+* **geo:** add a sub level to arcgisrest  catalogs ([#1592](https://github.com/infra-geo-ouverte/igo2-lib/issues/1592)) ([e3b5246](https://github.com/infra-geo-ouverte/igo2-lib/commit/e3b52463ce21f7858dfa1e5994194c9c7980e113))
+* **geo:** provide a method to select the featuremotion when adding searchresult as overlay ([#1587](https://github.com/infra-geo-ouverte/igo2-lib/issues/1587)) ([afe56d5](https://github.com/infra-geo-ouverte/igo2-lib/commit/afe56d5aa6330062eef881a977d33bce21b9d7d3))
+* **integration:** add a new tool to report data issues ([#1524](https://github.com/infra-geo-ouverte/igo2-lib/issues/1524)) ([1b6b5c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/1b6b5c6d3daace6fde4c22a6aaafe8b3afc3ccdc))
+
+
+
 # [16.2.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.1...v16.2.0) (2024-01-19)
 
 
