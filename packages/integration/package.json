@@ -32,6 +32,7 @@
   "peerDependencies": {
     "@angular/common": "^16.2.5",
     "@angular/core": "^16.2.5",
+    "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
     "jspdf": "^2.5.1",
