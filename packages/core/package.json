@@ -17,7 +17,8 @@
   },
   "scripts": {
     "prestart": "npm run postbuild",
-    "build": "ng build core --configuration production",
+    "build": "ng build core --configuration production && npm run clean-exports",
+    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts core",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",

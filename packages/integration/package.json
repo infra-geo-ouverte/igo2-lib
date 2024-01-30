@@ -16,7 +16,8 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "build": "ng build integration --configuration production",
+    "build": "ng build integration --configuration production && npm run clean-exports",
+    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts integration",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint integration",
     "lint.fix": "ng lint integration --fix",
