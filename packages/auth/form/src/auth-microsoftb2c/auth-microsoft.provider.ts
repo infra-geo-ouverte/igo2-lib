@@ -8,11 +8,11 @@ import {
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
-import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
 import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
-} from './auth.interface';
+} from '../shared/auth-form.interface';
+import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 
 export function MSALConfigFactory(
   config: ConfigService
