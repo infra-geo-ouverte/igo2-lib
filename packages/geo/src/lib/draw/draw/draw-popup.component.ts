@@ -292,8 +292,9 @@ export class DrawPopupComponent {
         : (this.labelFlag = undefined);
       checked
         ? (this.labelFlag = labelType)
-        : (this.labelFlag = this.arrayBuiltInType.find((type) => type.checked)
-            ?.value);
+        : (this.labelFlag = this.arrayBuiltInType.find(
+            (type) => type.checked
+          )?.value);
     } else {
       this.labelFlag = labelType;
     }
@@ -410,7 +411,7 @@ export class DrawPopupComponent {
     }
   }
 
-  get allLengthUnits(): string[] {
+  get allLengthUnits(): MeasureLengthUnit[] {
     return Object.values(MeasureLengthUnit);
   }
 
@@ -418,11 +419,11 @@ export class DrawPopupComponent {
     return MeasureLengthUnitAbbreviation[lengthUnit];
   }
 
-  get allAreaUnits(): string[] {
+  get allAreaUnits(): MeasureAreaUnit[] {
     return Object.values(MeasureAreaUnit);
   }
 
-  get allCoordinatesUnits(): string[] {
+  get allCoordinatesUnits(): CoordinatesUnit[] {
     return Object.values(CoordinatesUnit);
   }
 

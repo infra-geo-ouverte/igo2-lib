@@ -18,7 +18,7 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { OgcFilterableFormComponent } from '../ogc-filterable-form/ogc-filterable-form.component';
 import { OgcFilterWriter } from '../shared/ogc-filter';
 import {
@@ -67,7 +67,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
 
   @Input() layer: Layer;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() header: boolean = true;
 

@@ -257,7 +257,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return text;
   }
 
-  filterFeatureProperties(feature) {
+  filterFeatureProperties(feature): { [key: string]: any } {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
     let offlineButtonState;

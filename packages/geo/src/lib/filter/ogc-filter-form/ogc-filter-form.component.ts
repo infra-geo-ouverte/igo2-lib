@@ -23,7 +23,7 @@ import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 
@@ -76,7 +76,7 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() currentFilter: any;
 

@@ -346,8 +346,8 @@
   </h3>
   <h3 *ngIf="currentFilter.title">{{ currentFilter.title }}</h3>
   <igo-ogc-filter-time
-    [(datasource)]="datasource"
-    [(currentFilter)]="currentFilter"
+    [datasource]="datasource"
+    [currentFilter]="currentFilter"
     (changeProperty)="changeProperty($event.value, $event.pos)"
   >
   </igo-ogc-filter-time>

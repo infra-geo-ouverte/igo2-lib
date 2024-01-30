@@ -16,7 +16,6 @@
       "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
-      (touchend)="onKeyup($event)"
     />
     <button
       *ngIf="(empty$ | async) === false"

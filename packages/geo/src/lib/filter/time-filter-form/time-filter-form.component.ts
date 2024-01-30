@@ -12,7 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   DateAdapter,
   MatNativeDateModule,
-  MatOptionModule
+  MatOptionModule,
+  ThemePalette
 } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -60,7 +61,7 @@ export class TimeFilterFormComponent implements OnInit {
 
   @Input() options: TimeFilterOptions;
 
-  public color = 'primary';
+  public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
   public endDate: Date;

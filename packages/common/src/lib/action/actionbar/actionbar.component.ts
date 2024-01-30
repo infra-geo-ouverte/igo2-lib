@@ -15,7 +15,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
+import {
+  MatMenuModule,
+  MenuPositionX,
+  MenuPositionY
+} from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Media, MediaService } from '@igo2/core';
@@ -161,12 +165,12 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Overlay X position
    */
-  @Input() xPosition = 'before';
+  @Input() xPosition: MenuPositionX = 'before';
 
   /**
    * Overlay Y position
    */
-  @Input() yPosition = 'above';
+  @Input() yPosition: MenuPositionY = 'above';
 
   /**
    * Class to add to the actionbar overlay
