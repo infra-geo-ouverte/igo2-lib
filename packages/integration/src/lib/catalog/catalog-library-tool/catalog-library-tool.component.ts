@@ -154,7 +154,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         )
       ]
     ];
-    var dataArray = [];
+    let dataArray = [];
     this.generatelist$$ = zip([
       this.store.entities$.pipe(
         switchMap((catalogs) => {
@@ -178,19 +178,19 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             )
           )
         )
-    ]).subscribe((returnv) => {
+    ]).subscribe((returnv: [CatalogItem[][], DetailedContext[]]) => {
       const res = returnv[0];
       const layersfromContexts = returnv[1];
       res.forEach((catalogs: Object) => {
-        var catalogsList = Object.keys(catalogs[1]).map(
+        const catalogsList = Object.keys(catalogs[1]).map(
           (key) => catalogs[1][key]
         );
-        var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
+        const catalogTitle = catalogs[0].title ? catalogs[0].title : null;
         catalogsList.forEach((catalogItemGroup) => {
           if (catalogItemGroup.items) {
             catalogItemGroup.items.forEach((item: any) => {
               dataArray = [];
-              var administrator = item.externalProvider ? 'Externe' : 'MTQ';
+              const administrator = item.externalProvider ? 'Externe' : 'MTQ';
               const absUrl =
                 item.options.sourceOptions.url.charAt(0) === '/'
                   ? window.location.origin + item.options.sourceOptions.url
@@ -211,7 +211,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
               catalogRank++;
             });
           } else {
-            var itemGroupWMTS: any = catalogItemGroup;
+            const itemGroupWMTS: any = catalogItemGroup;
             if (!itemGroupWMTS.options) {
               dataArray.push(
                 Object.keys(catalogItemGroup).map(
@@ -222,7 +222,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
               dataArray = [];
             } else {
               dataArray = [];
-              var administrator = itemGroupWMTS.externalProvider
+              const administrator = itemGroupWMTS.externalProvider
                 ? 'Externe'
                 : 'MTQ';
               dataArray.push(
@@ -244,7 +244,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         });
       });
       for (var index = 1; index < bufferArray.length; index++) {
-        var contextLayersList = [];
+        const contextLayersList = [];
         for (var layerContextList of layersfromContexts) {
           layerContextList.layers.forEach((layersName) => {
             if (bufferArray[index][6] === layersName.id) {
@@ -257,9 +257,9 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         bufferArray[index][7] = contextLayersList.toString();
       }
       let csvContent = bufferArray.map((e) => e.join(';')).join('\n');
-      var encodedUri = encodeURI(csvContent);
-      var exportDocument = document.createElement('a');
-      var date = new Date();
+      const encodedUri = encodeURI(csvContent);
+      const exportDocument = document.createElement('a');
+      const date = new Date();
       exportDocument.setAttribute(
         'href',
         'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
@@ -278,11 +278,11 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     });
   }
   private getFormatedDate(date: Date) {
-    var year = date.getFullYear();
-    var month = (date.getMonth() + 1).toString().padStart(2, '0');
-    var day = date.getDate().toString();
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString();
+    const hours = date.getHours().toString();
+    const minutes = date.getMinutes().toString();
     return `${year}-${month}-${day}:${hours}h${minutes}`;
   }
 }
