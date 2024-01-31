@@ -176,6 +176,11 @@ export class IgoMap implements MapBase {
         }
       });
       this.viewController.monitorRotation();
+      this.viewController.dragging$.subscribe(() => {
+        if (this.geolocationController.followPosition) {
+          this.geolocationController.followPosition = false;
+        }
+      });
     });
     this.propertyChange$
       .pipe(skipWhile((pc) => !pc))
