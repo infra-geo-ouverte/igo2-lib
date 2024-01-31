@@ -15,7 +15,8 @@
         "Maximun logins exceeded": "Maximum logins exceeded",
         "Login lockout": "Maximum number of attempts exceeded. Your account is locked.",
         "Wrong password": "Wrong password",
-        "Invalid username": "Invalid username"
+        "Invalid username": "Invalid username",
+        "Username or password invalid": "Username or password invalid"
       },
       "microsoft": {
         "login": "Sign in with Azure account"
