@@ -18,7 +18,7 @@ export class UserDialogComponent {
     private storageService: StorageService
   ) {
     const decodeToken = this.auth.decodeToken();
-    this.user = decodeToken.user;
+    this.user = decodeToken?.user;
     this.exp = new Date(decodeToken.exp * 1000).toLocaleString();
   }
 

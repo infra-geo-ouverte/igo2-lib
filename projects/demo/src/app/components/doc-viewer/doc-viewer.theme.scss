@@ -1,0 +1,18 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+}
+
+@mixin color($theme) {
+  $foreground: map.get($theme, foreground);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+
+  app-doc-viewer {
+    h6 {
+      color: mat.get-color-from-palette($foreground, secondary-text);
+    }
+  }
+}

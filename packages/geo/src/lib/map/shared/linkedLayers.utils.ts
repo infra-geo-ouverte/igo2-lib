@@ -13,7 +13,7 @@ import {
   OgcFilterableDataSourceOptions
 } from '../../filter/shared/ogc-filter.interface';
 import { Layer, LinkedProperties } from '../../layer/shared/layers';
-import { MapBase } from '../shared/map.abstract';
+import type { MapBase } from '../shared/map.abstract';
 
 export function getLinkedLayersOptions(layer: Layer) {
   return layer.options.linkedLayers;

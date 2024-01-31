@@ -1,4 +1,4 @@
-import { EntityKey, EntityStoreWithStrategy, getEntityId } from '@igo2/common';
+import { EntityKey, EntityStore, getEntityId } from '@igo2/common';
 
 import OlFeature from 'ol/Feature';
 import * as olextent from 'ol/extent';
@@ -24,9 +24,7 @@ import {
  * features and the map layer to display them on. Synchronization
  * between the store and the layer is handled by strategies.
  */
-export class FeatureStore<
-  T extends Feature = Feature
-> extends EntityStoreWithStrategy<T> {
+export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   /**
    * Vector layer to display the features on
    */

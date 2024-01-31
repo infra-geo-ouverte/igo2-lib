@@ -41,6 +41,11 @@ export class FormFieldSelectComponent implements OnInit {
     new BehaviorSubject([]);
 
   /**
+   * If the select allow multiple selections
+   */
+  @Input() multiple: boolean = false;
+
+  /**
    * The field's form control
    */
   @Input() formControl: UntypedFormControl;

@@ -56,24 +56,9 @@ Require:
 | < 1.5.x      | >= 8, <= 11  |
 | 0.x.x        | >= 6, <= 10  |
 
-If you want to concurently develop inside the IGO2 Library AND inside any igo2-lib's based project, here some step to follow:
-This example is based on IGO2 project (https://github.com/infra-geo-ouverte/igo2.git)
+If you want to develop in IGO2 Library, it can be installed by:
 
-1.  Clone current repository using :`git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2.  Navigate to the cloned folder : `cd igo2-lib && git checkout next`
-3.  Navigate to the sub project folder : `cd projects`
-4.  Clone the sub project repository using : `git clone https://github.com/infra-geo-ouverte/igo2.git`
-5. `cd igo2 && git checkout next`
-6.  Navigate to the root folder of igo2-lib
-7.  Run `npm install` to install dependencies
-8.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
-9. Execute `npm run link.start -w igo` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
-10. If you have some issues within VSCode, not recognizing the IGO2 project (or any subproject), open a file within the project (./project/igo2/.*) and press CTRL-Shift-P and activathe this command: Developper: Reload Window.
-
-
-If you strictly want to develop inside IGO2 Library, here some step to follow:
-
-1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+1.  Clone  current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
 2.  Navigate to the folder igo2-lib : `cd igo2-lib/`
 3.  Install dependencies by running `npm install`
 3.  Build librairies: `npm run build.libs`

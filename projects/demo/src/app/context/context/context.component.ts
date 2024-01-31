@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 import { ContextService } from '@igo2/context';
-import { LanguageService } from '@igo2/core';
-import { IgoMap, MapService } from '@igo2/geo';
+import { IgoMap, MapService, MapViewOptions } from '@igo2/geo';
 
 @Component({
   selector: 'app-context',
@@ -10,7 +9,7 @@ import { IgoMap, MapService } from '@igo2/geo';
   styleUrls: ['./context.component.scss']
 })
 export class AppContextComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -18,13 +17,12 @@ export class AppContextComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
 
   constructor(
-    private languageService: LanguageService,
     private mapService: MapService,
     private contextService: ContextService
   ) {
