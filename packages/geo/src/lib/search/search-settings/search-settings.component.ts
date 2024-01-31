@@ -217,19 +217,13 @@ export class SearchSettingsComponent implements OnInit {
     event.stopPropagation();
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
-    for (var settingsIndex in source.getDefaultOptions().settings) {
-      if (
-        source.getDefaultOptions().settings[settingsIndex].title ===
-        setting.title
-      ) {
-        for (var index in setting.values) {
-          setting.values[index].enabled =
-            source.getDefaultOptions().settings[settingsIndex].values[
-              index
-            ].enabled;
-        }
+    source.getDefaultOptions().settings.map((defaultSetting) => {
+      if (defaultSetting.title === setting.title) {
+        setting.values.map((value, index) => {
+          value.enabled = defaultSetting.values[index].enabled;
+        });
       }
-    }
+    });
     this.searchSourceChange.emit(source);
   }
 
@@ -239,17 +233,17 @@ export class SearchSettingsComponent implements OnInit {
    */
   checkMenuDefaultOptions(event, source: SearchSource) {
     event.stopPropagation();
-    for (var index in source.settings) {
-      source.settings[index].allEnabled = true;
-      this.checkUncheckAll(event, source, source.settings[index]);
+    source.settings.map((setting, index) => {
+      setting.allEnabled = true;
+      this.checkUncheckAll(event, source, setting);
 
-      for (var settingsIndex in source.settings[index].values) {
-        source.settings[index].values[settingsIndex].enabled =
+      setting.values.map((value, settingsIndex) => {
+        value.enabled =
           source.getDefaultOptions(true).settings[index].values[
             settingsIndex
           ].enabled;
-      }
-    }
+      });
+    });
     this.searchSourceChange.emit(source);
   }
 
