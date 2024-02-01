@@ -103,10 +103,14 @@ export class MapGeolocationController extends MapController {
   private geolocation: olGeolocation;
 
   /**
-   * Observable of the current emission interval of the position. In seconds
+   * Observable of the current emission interval to update the view
    */
-  public readonly emissionIntervalSeconds$: BehaviorSubject<number> =
-    new BehaviorSubject(5);
+
+  public readonly viewUpdatePositionDebounceTime$: BehaviorSubject<number> =
+    new BehaviorSubject(5000);
+
+  private firstGeolocationEvent$: BehaviorSubject<boolean> =
+    new BehaviorSubject(true);
 
   /**
    * Observable of the current position
@@ -172,6 +176,16 @@ export class MapGeolocationController extends MapController {
     }
   }
 
+  private set firstGeolocationEvent(value: boolean) {
+    this._firstGeolocationEvent = value;
+    this.firstGeolocationEvent$.next(value);
+  }
+
+  private get firstGeolocationEvent() {
+    return this._firstGeolocationEvent;
+  }
+
+  private _firstGeolocationEvent: boolean = true;
   /**
    * Whether the activate the view tracking of the current position
    */
@@ -234,7 +248,7 @@ export class MapGeolocationController extends MapController {
   setupObservers() {
     this.tracking$.subscribe((tracking) => {
       if (tracking) {
-        this.onPositionChange(true, true);
+        this.handleViewFromFeatures(this.position$.getValue(), true);
       } else {
         this.deleteGeolocationFeatures();
       }
@@ -249,22 +263,20 @@ export class MapGeolocationController extends MapController {
       },
       projection: this.options.projection
     });
-    let tracking = false;
     this.subscriptions$$.push(
-      this.emissionIntervalSeconds$
-        .pipe(switchMap((value) => interval(value * 1000)))
+      this.viewUpdatePositionDebounceTime$
+        .pipe(switchMap((value) => interval(value)))
         .subscribe(() => {
-          if (tracking === this.tracking) {
-            this.onPositionChange(true);
-          } else {
-            tracking = this.tracking;
-            this.onPositionChange(true, true);
+          const pos = this.position$.getValue();
+          if (pos && pos.position) {
+            this.handleViewFromFeatures(pos, this.firstGeolocationEvent);
+            this.firstGeolocationEvent = false;
           }
         })
     );
 
     this.geolocation.on('change', (evt) => {
-      this.onPositionChange(false, false);
+      this.onPositionChange();
     });
   }
 
@@ -366,10 +378,7 @@ export class MapGeolocationController extends MapController {
    * On position change, get the position, show it on the map and record it.
    * @param emitEvent Map event
    */
-  private onPositionChange(
-    emitEvent: boolean = false,
-    zoomTo: boolean = false
-  ) {
+  private onPositionChange() {
     if (!this.tracking) {
       return;
     }
@@ -396,13 +405,12 @@ export class MapGeolocationController extends MapController {
       timestamp: new Date()
     };
     this.handleFeatureCreation(position);
-    this.handleViewFromFeatures(position, zoomTo);
     const different = this.positionsAreDifferent(
       position,
       this.position$.getValue()
     );
 
-    if (emitEvent && different) {
+    if (different) {
       this.position$.next(position);
     }
   }
@@ -533,6 +541,9 @@ export class MapGeolocationController extends MapController {
     position: MapGeolocationState,
     zoomTo: boolean = false
   ) {
+    if (!position || !position.position) {
+      return;
+    }
     let positionFeature = this.getFeatureByType(
       GeolocationOverlayType.Position
     );
