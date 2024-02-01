@@ -397,8 +397,40 @@ export class MapGeolocationController extends MapController {
     };
     this.handleFeatureCreation(position);
     this.handleViewFromFeatures(position, zoomTo);
-    if (emitEvent) {
+    const different = this.positionsAreDifferent(
+      position,
+      this.position$.getValue()
+    );
+
+    if (emitEvent && different) {
       this.position$.next(position);
+    }
+  }
+
+  /**
+   *
+   * @param positionFrom  MapGeolocationState  to compare with
+   * @param positionTo MapGeolocationState to compare with
+   * @returns
+   */
+  private positionsAreDifferent(
+    positionFrom: MapGeolocationState,
+    positionTo: MapGeolocationState
+  ): boolean {
+    let different = true;
+    if (
+      !positionFrom ||
+      !positionFrom.position ||
+      !positionTo ||
+      !positionTo.position
+    ) {
+      return different;
+    } else {
+      const identical = Object.keys(positionFrom)
+        .filter((k) => k !== 'timestamp')
+        .every((k) => positionFrom[k] === positionTo[k]);
+      different = !identical;
+      return different;
     }
   }
 
