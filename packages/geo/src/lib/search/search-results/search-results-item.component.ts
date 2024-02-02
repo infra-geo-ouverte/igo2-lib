@@ -89,6 +89,7 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
+    this.map.geolocationController.temporaryDisablePollowPosition = true;
     moveToOlFeatures(
       this.map.viewController,
       [olFeature],

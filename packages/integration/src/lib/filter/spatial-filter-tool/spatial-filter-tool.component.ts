@@ -651,6 +651,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
+      this.map.geolocationController.temporaryDisablePollowPosition = true;
       moveToOlFeatures(
         this.map.viewController,
         [olFeature],

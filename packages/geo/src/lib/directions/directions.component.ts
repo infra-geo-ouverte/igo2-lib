@@ -154,6 +154,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         if (activeRoute) {
           activeRoute.ol.getGeometry();
           const routeExtent = activeRoute.ol.getGeometry().getExtent();
+
+          this.routesFeatureStore.layer.map.geolocationController.temporaryDisablePollowPosition =
+            true;
           this.routesFeatureStore.layer.map.viewController.zoomToExtent(
             routeExtent as [number, number, number, number]
           );

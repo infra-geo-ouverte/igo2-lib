@@ -153,6 +153,8 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     };
     this.stepFeatureStore.update(stepFeature);
     if (zoomToExtent) {
+      this.stepFeatureStore.layer.map.geolocationController.temporaryDisablePollowPosition =
+        true;
       this.stepFeatureStore.layer.map.viewController.zoomToExtent(
         feature.getGeometry().getExtent() as [number, number, number, number]
       );

@@ -343,6 +343,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   zoomLayerExtents(layer: Layer) {
+    this.map.geolocationController.temporaryDisablePollowPosition = true;
     this.map.viewController.zoomToExtent(layer.options.extent);
   }
 
@@ -361,6 +362,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
         olextent.extend(layersExtent, layerExtent);
       }
     }
+    this.map.geolocationController.temporaryDisablePollowPosition = true;
     this.map.viewController.zoomToExtent(layersExtent);
   }
 

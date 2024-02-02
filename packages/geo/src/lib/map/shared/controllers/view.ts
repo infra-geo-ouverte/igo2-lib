@@ -128,13 +128,11 @@ export class MapViewController extends MapController {
    * Observe move moveend and subscribe to the extent stream
    */
   setupObservers() {
-    if (this.stateHistory === true) {
-      this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) =>
-          this.onMoveEnd(event)
-        ) as EventsKey
-      );
-    }
+    this.observerKeys.push(
+      this.olMap.on('moveend', (event: OlMapEvent) =>
+        this.onMoveEnd(event)
+      ) as EventsKey
+    );
     this.observerKeys.push(
       this.olMap.on('pointerdrag', (event: OlMapEvent) =>
         this.dragging$.next()

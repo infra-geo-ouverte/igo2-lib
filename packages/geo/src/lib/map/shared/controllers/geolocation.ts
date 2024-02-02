@@ -11,8 +11,14 @@ import * as olproj from 'ol/proj';
 import * as olSphere from 'ol/sphere';
 import * as olstyle from 'ol/style';
 
-import { BehaviorSubject, Subscription, interval } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  Subscription,
+  first,
+  interval,
+  skipWhile,
+  switchMap
+} from 'rxjs';
 
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import {
@@ -109,9 +115,6 @@ export class MapGeolocationController extends MapController {
   public readonly viewUpdatePositionDebounceTime$: BehaviorSubject<number> =
     new BehaviorSubject(5000);
 
-  private firstGeolocationEvent$: BehaviorSubject<boolean> =
-    new BehaviorSubject(true);
-
   /**
    * Observable of the current position
    */
@@ -176,16 +179,6 @@ export class MapGeolocationController extends MapController {
     }
   }
 
-  private set firstGeolocationEvent(value: boolean) {
-    this._firstGeolocationEvent = value;
-    this.firstGeolocationEvent$.next(value);
-  }
-
-  private get firstGeolocationEvent() {
-    return this._firstGeolocationEvent;
-  }
-
-  private _firstGeolocationEvent: boolean = true;
   /**
    * Whether the activate the view tracking of the current position
    */
@@ -207,6 +200,22 @@ export class MapGeolocationController extends MapController {
   }
 
   private _followPosition;
+
+  /**
+   * Indicate if the follow position need to be temporary disabled.
+   */
+  set temporaryDisablePollowPosition(value: boolean) {
+    this._temporaryDisablePollowPosition = value;
+    this.followPosition = !value;
+    this.temporaryDisablePollowPosition$.next(value);
+  }
+
+  get temporaryDisablePollowPosition(): boolean {
+    return this._temporaryDisablePollowPosition;
+  }
+  private _temporaryDisablePollowPosition: boolean;
+  private temporaryDisablePollowPosition$: BehaviorSubject<boolean> =
+    new BehaviorSubject(false);
 
   constructor(
     private map: MapBase,
@@ -269,12 +278,29 @@ export class MapGeolocationController extends MapController {
         .subscribe(() => {
           const pos = this.position$.getValue();
           if (pos && pos.position) {
-            this.handleViewFromFeatures(pos, this.firstGeolocationEvent);
-            this.firstGeolocationEvent = false;
+            this.handleViewFromFeatures(pos);
           }
         })
     );
-
+    this.subscriptions$$.push(
+      this.position$
+        .pipe(
+          skipWhile((pos) => !pos || !pos.position),
+          first()
+        )
+        .subscribe((pos) => {
+          if (this.tracking) {
+            this.handleViewFromFeatures(pos, true);
+          }
+        })
+    );
+    this.subscriptions$$.push(
+      this.map.viewController.dragging$.subscribe(() => {
+        if (this.followPosition) {
+          this.temporaryDisablePollowPosition = true;
+        }
+      })
+    );
     this.geolocation.on('change', (evt) => {
       this.onPositionChange();
     });
