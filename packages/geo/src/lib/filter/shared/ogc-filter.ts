@@ -136,7 +136,6 @@ export class OgcFilterWriter {
         fieldNameGeometry,
         proj
       );
-      console.log('if filters', filters);
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
           ourBboxFilter,
@@ -144,7 +143,6 @@ export class OgcFilterWriter {
         );
       } else {
         filterAssembly = this.bundleFilter(filters, options);
-        console.log('filterAssembly 2', filterAssembly);
       }
     } else {
       return 'bbox=' + extent.join(',') + ',' + proj.getCode();
@@ -172,8 +170,6 @@ export class OgcFilterWriter {
     filterObject: any,
     options?: OgcFilterableDataSourceOptions
   ) {
-    console.log('bundleFilter', filterObject);
-
     if (filterObject instanceof Array) {
       const logicalArray = [];
       filterObject.forEach((element) => {
@@ -181,8 +177,6 @@ export class OgcFilterWriter {
       });
       return logicalArray;
     } else {
-      console.log('222');
-
       if (filterObject.hasOwnProperty('logical')) {
         return this.createFilter(
           {
@@ -204,7 +198,6 @@ export class OgcFilterWriter {
     filterOptions,
     options?: OgcFilterableDataSourceOptions
   ): OgcFilter {
-    console.log('createFilter filterOptions', filterOptions);
     const operator = filterOptions.operator;
     const logicalArray = filterOptions.logicalArray;
 
@@ -240,8 +233,6 @@ export class OgcFilterWriter {
       options ? options.maxDate : undefined
     );
 
-    console.log('wfsBegin', wfsBegin);
-    console.log('wfsEnd', wfsEnd);
     const wfsExpression = filterOptions.expression;
 
     let geometry: olGeometry;
