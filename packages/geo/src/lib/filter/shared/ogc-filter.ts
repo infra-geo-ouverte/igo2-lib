@@ -913,12 +913,56 @@ export class OgcFilterWriter {
   public parseFilterOptionDate(value: string, defaultValue?: string): string {
     if (!value) {
       return defaultValue;
-    } else if (value === 'today' || value === 'now') {
-      return moment().endOf('day').format();
+    } else if (
+      value.toLowerCase().includes('now') ||
+      value.toLowerCase().includes('today')
+    ) {
+      return this.parseStringDate(value);
     } else if (moment(value).isValid()) {
       return value;
     } else {
       return undefined;
+    }
+  }
+  /**
+   * this function to parse date with specific format
+   * exemple 'today + 1 days' or 'now + 1 years'
+   * @param value string
+   * @returns date
+   */
+  private parseStringDate(value: string): string {
+    const sValue = value.toLowerCase().split(' ');
+    const time = sValue[0];
+    const operators = ['+', '-'].includes(sValue[1]) ? sValue[1] : undefined;
+    const numberOfunits = /^[0-9]*$/.test(sValue[2]) ? sValue[2] : undefined;
+    const unit: any = [
+      'years',
+      'months',
+      'weeks',
+      'days',
+      'hours',
+      'seconds'
+    ].includes(sValue[3])
+      ? sValue[3]
+      : undefined;
+
+    if (!operators || !unit || !numberOfunits) {
+      return time === 'now'
+        ? moment().format()
+        : moment().endOf('day').format();
+    }
+
+    if (operators === '+') {
+      return time === 'now'
+        ? moment().add(parseInt(numberOfunits, 10), unit).format()
+        : moment().endOf('day').add(parseInt(numberOfunits, 10), unit).format();
+    } else {
+      return time === 'now'
+        ? moment().subtract(parseInt(numberOfunits, 10), unit).format()
+        : moment()
+            .endOf('day')
+            .subtract(parseInt(numberOfunits, 10), unit)
+            .format();
     }
   }
 }

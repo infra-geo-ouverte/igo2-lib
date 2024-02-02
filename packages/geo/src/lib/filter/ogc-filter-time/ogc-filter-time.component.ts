@@ -143,14 +143,14 @@ export class OgcFilterTimeComponent implements OnInit {
         const interval = filter.match(/years|months|weeks|days|hours|seconds/);
         if (filter.match(/\+/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('+') + 1, interval.index),
+            filter.substring(filter.indexOf('+') + 1, interval.index),
             10
           );
           return moment().add(intervalInt, interval[0]).toDate();
         }
         if (filter.match(/\-/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('-') + 1, interval.index),
+            filter.substring(filter.indexOf('-') + 1, interval.index),
             10
           );
           return moment().subtract(intervalInt, interval[0]).toDate();
@@ -162,14 +162,14 @@ export class OgcFilterTimeComponent implements OnInit {
         const interval = filter.match(/years|months|weeks|days|hours|seconds/);
         if (filter.match(/\+/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('+') + 1, interval.index),
+            filter.substring(filter.indexOf('+') + 1, interval.index),
             10
           );
           return moment(_now).add(intervalInt, interval[0]).toDate();
         }
         if (filter.match(/\-/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('-') + 1, interval.index),
+            filter.substring(filter.indexOf('-') + 1, interval.index),
             10
           );
           return moment(_now).subtract(intervalInt, interval[0]).toDate();
@@ -631,16 +631,16 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.begin
       ? this.currentFilter.begin
       : this.datasource.options.minDate
-      ? this.datasource.options.minDate
-      : this._defaultMin;
+        ? this.datasource.options.minDate
+        : this._defaultMin;
   }
 
   public handleMax() {
     return this.currentFilter.end
       ? this.currentFilter.end
       : this.datasource.options.maxDate
-      ? this.datasource.options.maxDate
-      : this._defaultMax;
+        ? this.datasource.options.maxDate
+        : this._defaultMax;
   }
 
   changePropertyByPass(event) {
