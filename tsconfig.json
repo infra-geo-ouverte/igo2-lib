@@ -18,6 +18,7 @@
     "paths": {
       "@igo2/utils": ["packages/utils/src/public_api"],
       "@igo2/core": ["packages/core/src/public_api"],
+      "@igo2/core/*": ["packages/core/*"],
       "@igo2/common": ["packages/common/src/public_api"],
       "@igo2/auth": ["packages/auth/src/public_api"],
       "@igo2/geo": ["packages/geo/src/public_api"],
