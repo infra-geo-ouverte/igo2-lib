@@ -46,11 +46,11 @@ export class PrintService {
   mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
-    titleFont: 'Times',
+    titleFont: 'Sans Serif',
     titleFontStyle: 'bold',
-    subtitleFont: 'Times',
+    subtitleFont: 'Sans Serif',
     subtitleFontStyle: 'bold',
-    commentFont: 'Times',
+    commentFont: 'Sans Serif',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
