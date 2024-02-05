@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import * as olproj from 'ol/proj';
 import olProjection from 'ol/proj/Projection';

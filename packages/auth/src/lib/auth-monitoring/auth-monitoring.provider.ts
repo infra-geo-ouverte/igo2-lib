@@ -1,10 +1,10 @@
 import { APP_INITIALIZER, Injector, Provider } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import {
   AnyMonitoringOptions,
-  ConfigService,
   MONITORING_OPTIONS
-} from '@igo2/core';
+} from '@igo2/core/monitoring';
 
 import { AuthMonitoringService } from './auth-monitoring.service';
 

@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 
 import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
-import { ConfigService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { concatMap, first, skipWhile } from 'rxjs/operators';

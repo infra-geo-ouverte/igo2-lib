@@ -22,7 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';

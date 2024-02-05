@@ -1,11 +1,11 @@
 import { Inject, Injectable, Injector, Optional } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import {
   AnyMonitoringOptions,
-  ConfigService,
   MONITORING_OPTIONS,
   identifySentryUser
-} from '@igo2/core';
+} from '@igo2/core/monitoring';
 
 import { first, switchMap } from 'rxjs';
 

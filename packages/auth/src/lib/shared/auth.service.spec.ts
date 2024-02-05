@@ -3,9 +3,9 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import {
   IgoLanguageModule,
-  IgoMessageModule,
   provideMockRootTranslation
-} from '@igo2/core';
+} from '@igo2/core/language';
+import { IgoMessageModule } from '@igo2/core/message';
 
 import { AuthService } from './auth.service';
 

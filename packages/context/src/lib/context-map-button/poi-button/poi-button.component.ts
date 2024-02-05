@@ -9,7 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
 import { ConfirmDialogService, StopPropagationDirective } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 
 import * as oleasing from 'ol/easing';

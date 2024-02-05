@@ -21,7 +21,7 @@ import {
   RouterOutlet
 } from '@angular/router';
 
-import { version } from '@igo2/core';
+import { version } from '@igo2/core/config';
 import { DomUtils, userAgent } from '@igo2/utils';
 
 import { delay, first } from 'rxjs';

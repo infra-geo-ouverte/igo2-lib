@@ -7,7 +7,7 @@ import {
   AnyMonitoringOptions,
   MONITORING_OPTIONS,
   provideMonitoring
-} from '@igo2/core';
+} from '@igo2/core/monitoring';
 
 import { environment } from 'projects/demo/src/environments/environment';
 
@@ -45,7 +45,7 @@ export class AppMonitoringComponent {
       2
     )}}}`;
     return this.json.transform(JSON.parse(codeExample));
-  };
+  }
 }
 
 const EXAMPLE_MODULE_PROVIDER = `@NgModule({

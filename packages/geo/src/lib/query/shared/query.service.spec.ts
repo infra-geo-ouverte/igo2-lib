@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { IgoMessageModule } from '@igo2/core';
+import { IgoMessageModule } from '@igo2/core/message';
 
 import { TranslateModule } from '@ngx-translate/core';
 

@@ -43,7 +43,7 @@ import {
   EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';

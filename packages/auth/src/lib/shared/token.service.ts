@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { jwtDecode } from 'jwt-decode';
 

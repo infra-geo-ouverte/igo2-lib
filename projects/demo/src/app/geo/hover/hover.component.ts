@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Media, MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core/media';
 import {
   DataSourceService,
   IgoMap,

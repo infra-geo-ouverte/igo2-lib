@@ -4,7 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { LanguageService, MessageService, RouteService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
 import { Clipboard } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';

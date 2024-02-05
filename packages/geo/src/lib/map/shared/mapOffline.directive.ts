@@ -1,6 +1,7 @@
 import { AfterViewInit, Directive } from '@angular/core';
 
-import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { combineLatest } from 'rxjs';
 

@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 
-import { RouteService } from '@igo2/core';
+import { RouteService } from '@igo2/core/route';
 import { Layer, WMSDataSourceOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 

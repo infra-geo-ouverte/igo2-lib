@@ -22,7 +22,7 @@ import {
 } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Media, MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core/media';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';

@@ -22,7 +22,7 @@ import {
   ToolComponent,
   getEntityTitle
 } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import {
   FEATURE,
   Feature,

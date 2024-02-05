@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, of } from 'rxjs';

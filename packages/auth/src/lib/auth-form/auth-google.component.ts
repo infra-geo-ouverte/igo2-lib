@@ -6,7 +6,8 @@ import {
   Output
 } from '@angular/core';
 
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 
 import { AuthGoogleOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';

@@ -12,7 +12,8 @@ import {
   EntityTableTemplate,
   ToolComponent
 } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Clipboard, NumberUtils } from '@igo2/utils';
 

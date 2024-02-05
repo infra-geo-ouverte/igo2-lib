@@ -22,7 +22,7 @@ import {
   ListComponent,
   ListItemDirective
 } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';

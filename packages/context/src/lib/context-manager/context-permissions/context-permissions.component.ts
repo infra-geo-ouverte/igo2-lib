@@ -31,7 +31,7 @@ import {
   ListComponent,
   StopPropagationDirective
 } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';

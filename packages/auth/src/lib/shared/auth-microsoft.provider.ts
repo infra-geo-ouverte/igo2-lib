@@ -1,4 +1,4 @@
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import {
   MSAL_GUARD_CONFIG,
