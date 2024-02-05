@@ -917,7 +917,6 @@ export class OgcFilterWriter {
       value.toLowerCase().includes('now') ||
       value.toLowerCase().includes('today')
     ) {
-      console.log('this.parseStringDate(value)', this.parseStringDate(value));
       return this.parseStringDate(value);
     } else if (moment(value).isValid()) {
       return value;
