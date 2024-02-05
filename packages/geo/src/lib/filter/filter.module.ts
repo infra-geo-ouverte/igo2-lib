@@ -1,3 +1,4 @@
+import { MatChipsModule } from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -62,6 +63,8 @@ import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.com
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
 import { TimeFilterListComponent } from './time-filter-list/time-filter-list.component';
 
+import { OgcFilterChipsComponent } from './ogc-filter-chips/ogc-filter-chips.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -97,6 +100,7 @@ import { TimeFilterListComponent } from './time-filter-list/time-filter-list.com
     IgoDOMModule,
     IgoKeyValueModule,
     IgoGeometryModule,
+    MatChipsModule,
     MatBadgeModule
   ],
   exports: [
@@ -137,7 +141,8 @@ import { TimeFilterListComponent } from './time-filter-list/time-filter-list.com
     SpatialFilterListComponent,
     SpatialFilterItemComponent,
     OgcFilterTimeComponent,
-    OgcFilterTimeSliderComponent
+    OgcFilterTimeSliderComponent,
+    OgcFilterChipsComponent
   ],
   providers: [
     TimeFilterService,
