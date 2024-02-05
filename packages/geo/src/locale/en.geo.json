@@ -511,7 +511,7 @@
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites":"Units (apartments, offices, etc.)"
+            "unites": "Units (apartments, offices, etc.)"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -675,7 +675,7 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites":"Unit number"
+        "unites": "Unit number"
       },
       "measure": {
         "dialog": {
@@ -792,8 +792,20 @@
         "addError": "An error has occured. Entity could not be added.",
         "modifyError": "An error has occured. Entity could not be modified.",
         "cancel": "Cancel",
-        "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+        "inMapExtent.active.tooltip": "Show only features contained in the map",
+        "inMapExtent.inactive.tooltip": "Show all features",
+        "widget": {
+          "interactiveSelection": {
+            "selection.add": "Add to the current selection",
+            "selection.new": "Select",
+            "selection.remove": "Remove from the current selection",
+            "reset": {
+              "button": "Reset"
+            },
+            "action.title": "How to handle results",
+            "buffer.title": "Buffer size (meters)"
+          }
+        }
       },
       "formValidation": {
         "mandatory": "{{column}} is mandatory",
