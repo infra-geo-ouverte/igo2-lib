@@ -493,7 +493,7 @@ export class PrintService {
       const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
-    doc.setFont('courier');
+    doc.setFont(this.TEXTPDFFONT.commentFont);
     doc.setFontSize(projScaleSize);
     doc.text(textProjScale, projScaleMarginLeft, heightPixels);
   }
