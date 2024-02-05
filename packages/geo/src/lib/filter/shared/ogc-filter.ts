@@ -917,6 +917,7 @@ export class OgcFilterWriter {
       value.toLowerCase().includes('now') ||
       value.toLowerCase().includes('today')
     ) {
+      console.log('this.parseStringDate(value)', this.parseStringDate(value));
       return this.parseStringDate(value);
     } else if (moment(value).isValid()) {
       return value;
@@ -927,24 +928,19 @@ export class OgcFilterWriter {
   /**
    * this function to parse date with specific format
    * exemple 'today + 1 days' or 'now + 1 years'
-   * @param value string
+   * @param value string date
    * @returns date
    */
   private parseStringDate(value: string): string {
-    const sValue = value.toLowerCase().split(' ');
-    const time = sValue[0];
-    const operators = ['+', '-'].includes(sValue[1]) ? sValue[1] : undefined;
-    const numberOfunits = /^[0-9]*$/.test(sValue[2]) ? sValue[2] : undefined;
-    const unit: any = [
-      'years',
-      'months',
-      'weeks',
-      'days',
-      'hours',
-      'seconds'
-    ].includes(sValue[3])
-      ? sValue[3]
-      : undefined;
+    const date = value.toLowerCase().split(' ');
+    const time = date[0];
+    const operators = ['+', '-'].includes(date[1]) ? date[1] : undefined;
+    const numberOfunits = /^[0-9]*$/.test(date[2]) ? date[2] : undefined;
+    const unit = (
+      ['years', 'months', 'weeks', 'days', 'hours', 'seconds'].includes(date[3])
+        ? date[3]
+        : undefined
+    ) as moment.DurationInputArg2;
 
     if (!operators || !unit || !numberOfunits) {
       return time === 'now'
