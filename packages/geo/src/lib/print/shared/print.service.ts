@@ -50,7 +50,7 @@ export class PrintService {
     titleFontStyle: 'bold',
     subtitleFont: 'Times',
     subtitleFontStyle: 'bold',
-    commentFont: 'courier',
+    commentFont: 'Times',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
