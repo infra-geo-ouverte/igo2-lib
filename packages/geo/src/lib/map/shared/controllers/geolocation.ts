@@ -224,6 +224,7 @@ export class MapGeolocationController extends MapController {
     private configService?: ConfigService
   ) {
     super();
+    this.temporaryDisableFollowPosition = false;
     this.geolocationOverlay = new Overlay(this.map);
     this._followPosition =
       this.options && this.options.followPosition
