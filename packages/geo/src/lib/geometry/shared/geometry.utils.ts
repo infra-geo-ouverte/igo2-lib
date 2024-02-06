@@ -13,7 +13,7 @@ import buffer from '@turf/buffer';
 import { Units, lineString } from '@turf/helpers';
 import lineIntersect from '@turf/line-intersect';
 
-import { FeatureGeometry } from '../../feature';
+import { Feature, FeatureGeometry } from '../../feature';
 import {
   GeometrySliceLineStringError,
   GeometrySliceMultiPolygonError,
@@ -169,7 +169,10 @@ export function doesOlGeometryIntersects(
   const olGeoJSON = new OlGeoJSON();
   const firstGeom = olGeoJSON.writeGeometryObject(olGeometry1);
   const secondGeom = olGeoJSON.writeGeometryObject(olGeometry2);
-  return booleanIntersects(firstGeom as any, secondGeom as any);
+  return booleanIntersects(
+    firstGeom as FeatureGeometry,
+    secondGeom as FeatureGeometry
+  );
 }
 
 export function bufferOlGeometry(
@@ -178,7 +181,9 @@ export function bufferOlGeometry(
   units: Units = 'meters'
 ): FeatureGeometry {
   const olGeoJSON = new OlGeoJSON();
-  const bufferedGeom = olGeoJSON.writeGeometryObject(olGeometry) as any;
+  const bufferedGeom = olGeoJSON.writeGeometryObject(
+    olGeometry
+  ) as FeatureGeometry;
 
   var buffered = buffer(bufferedGeom, dist, { units });
   return buffered.geometry;
