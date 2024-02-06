@@ -13,7 +13,7 @@ import buffer from '@turf/buffer';
 import { Units, lineString } from '@turf/helpers';
 import lineIntersect from '@turf/line-intersect';
 
-import { Feature, FeatureGeometry } from '../../feature';
+import { FeatureGeometry } from '../../feature';
 import {
   GeometrySliceLineStringError,
   GeometrySliceMultiPolygonError,
