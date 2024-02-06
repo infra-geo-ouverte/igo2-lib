@@ -25,31 +25,30 @@ export function getInfoFromSourceOptions(
     sourceOptions: undefined,
     context
   };
-  const so = sourceOptions;
 
-  switch (so.type) {
+  switch (sourceOptions.type) {
     case 'imagearcgisrest':
     case 'arcgisrest':
     case 'tilearcgisrest':
-      const argisSo = so as ArcGISRestDataSourceOptions;
+      const argisSo = sourceOptions as ArcGISRestDataSourceOptions;
       infoFromSourceOptions.layerName = argisSo.layer;
       infoFromSourceOptions.url = argisSo.url;
       infoFromSourceOptions.sourceOptions = argisSo;
       break;
     case 'wmts':
-      const wmtsSo = so as WMTSDataSourceOptions;
+      const wmtsSo = sourceOptions as WMTSDataSourceOptions;
       infoFromSourceOptions.layerName = wmtsSo.layer;
       infoFromSourceOptions.url = wmtsSo.url;
       infoFromSourceOptions.sourceOptions = wmtsSo;
       break;
     case 'xyz':
-      const xyzSo = so as XYZDataSourceOptions;
+      const xyzSo = sourceOptions as XYZDataSourceOptions;
       infoFromSourceOptions.layerName = '';
       infoFromSourceOptions.url = xyzSo.url;
       infoFromSourceOptions.sourceOptions = xyzSo;
       break;
     case 'wms':
-      const wmsSo = so as WMSDataSourceOptions;
+      const wmsSo = sourceOptions as WMSDataSourceOptions;
       wmsSo.params.LAYERS = wmsSo.params.LAYERS ?? (wmsSo.params as any).layers;
       infoFromSourceOptions.layerName = wmsSo.params.LAYERS;
 
@@ -57,7 +56,7 @@ export function getInfoFromSourceOptions(
       infoFromSourceOptions.sourceOptions = wmsSo;
       break;
     case 'osm':
-      const osmSo = so as OSMDataSourceOptions;
+      const osmSo = sourceOptions as OSMDataSourceOptions;
       infoFromSourceOptions.layerName = '';
       infoFromSourceOptions.url = osmSo.url
         ? osmSo.url
@@ -65,31 +64,31 @@ export function getInfoFromSourceOptions(
       infoFromSourceOptions.sourceOptions = osmSo;
       break;
     case 'wfs':
-      const wfsSo = so as WFSDataSourceOptions;
+      const wfsSo = sourceOptions as WFSDataSourceOptions;
       infoFromSourceOptions.layerName = wfsSo.params.featureTypes;
       infoFromSourceOptions.url = wfsSo.url;
       infoFromSourceOptions.sourceOptions = wfsSo;
       break;
     case 'vector':
-      const featureSo = so as FeatureDataSourceOptions;
+      const featureSo = sourceOptions as FeatureDataSourceOptions;
       infoFromSourceOptions.layerName = '';
       infoFromSourceOptions.url = featureSo.url;
       infoFromSourceOptions.sourceOptions = featureSo;
       break;
     case 'cluster':
-      const clusterSo = so as ClusterDataSourceOptions;
+      const clusterSo = sourceOptions as ClusterDataSourceOptions;
       infoFromSourceOptions.layerName = '';
       infoFromSourceOptions.url = clusterSo.url;
       infoFromSourceOptions.sourceOptions = clusterSo;
       break;
     case 'mvt':
-      const mvtSo = so as MVTDataSourceOptions;
+      const mvtSo = sourceOptions as MVTDataSourceOptions;
       infoFromSourceOptions.layerName = '';
       infoFromSourceOptions.url = mvtSo.url;
       infoFromSourceOptions.sourceOptions = mvtSo;
       break;
     case 'carto':
-      const cartoSo = so as CartoDataSourceOptions;
+      const cartoSo = sourceOptions as CartoDataSourceOptions;
       infoFromSourceOptions.layerName = cartoSo.config.layers
         .map((layer) => layer.options.sql)
         .join(' ');
