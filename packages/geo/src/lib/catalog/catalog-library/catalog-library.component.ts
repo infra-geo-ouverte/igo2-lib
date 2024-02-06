@@ -21,7 +21,6 @@ import { CapabilitiesService } from '../../datasource/shared/capabilities.servic
 import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
-import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 
 /**
@@ -76,8 +75,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog,
-    private catalogService: CatalogService
+    private dialog: MatDialog
   ) {}
 
   /**

@@ -10,11 +10,3 @@ export interface CsvOutput {
   context: string;
   dataDescription: string;
 }
-
-export interface InfoFromSourceOptions {
-  id: string;
-  layerName: string;
-  url: string;
-  so: unknown;
-  context: string;
-}

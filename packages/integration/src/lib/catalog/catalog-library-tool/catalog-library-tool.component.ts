@@ -12,35 +12,22 @@ import { EntityStore } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { LanguageService, StorageService } from '@igo2/core';
 import {
-  AnyDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  CartoDataSourceOptions,
   Catalog,
   CatalogItem,
   CatalogItemGroup,
   CatalogItemLayer,
   CatalogItemType,
   CatalogService,
-  ClusterDataSourceOptions,
-  FeatureDataSourceOptions,
-  MVTDataSourceOptions,
-  OSMDataSourceOptions,
-  WFSDataSourceOptions,
-  WMSDataSourceOptions,
-  WMTSDataSourceOptions,
-  XYZDataSourceOptions,
-  generateIdFromSourceOptions
+  InfoFromSourceOptions,
+  getInfoFromSourceOptions
 } from '@igo2/geo';
 
-import { Subscription, forkJoin, zip } from 'rxjs';
+import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import {
-  CsvOutput,
-  InfoFromSourceOptions
-} from './catalog-library-tool.interface';
+import { CsvOutput } from './catalog-library-tool.interface';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -96,9 +83,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.generatelist$$) {
-      this.generatelist$$.unsubscribe();
-    }
+    this.generatelist$$?.unsubscribe();
   }
 
   /**
@@ -134,133 +119,20 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   /**
    * Get the item description for getCatalogList
    */
-  private getDescription(item: CatalogItemLayer) {
-    if (item.options.metadata.abstract) {
-      if (item.options.metadata.abstract.includes('\n')) {
-        return item.options.metadata.abstract.replaceAll('\n', '');
-      } else {
-        return item.options.metadata.abstract;
-      }
-    } else {
-      return '';
-    }
+  private getDescription(item: CatalogItemLayer): string {
+    return item.options.metadata.abstract?.replaceAll('\n', '') ?? '';
   }
 
-  private getLayerInfosFromSourceOptions(
-    so: AnyDataSourceOptions,
-    context?: string
-  ): InfoFromSourceOptions {
-    const rv: InfoFromSourceOptions = {
-      id: undefined,
-      layerName: undefined,
-      url: undefined,
-      so: undefined,
-      context
-    };
-
-    switch (so.type) {
-      case 'imagearcgisrest':
-      case 'arcgisrest':
-      case 'tilearcgisrest':
-        const argisSo = so as ArcGISRestDataSourceOptions;
-        rv.layerName = argisSo.layer;
-        rv.url = argisSo.url;
-        rv.so = argisSo;
-        break;
-      case 'wmts':
-        const wmtsSo = so as WMTSDataSourceOptions;
-        rv.layerName = wmtsSo.layer;
-        rv.url = wmtsSo.url;
-        rv.so = wmtsSo;
-        break;
-      case 'xyz':
-        const xyzSo = so as XYZDataSourceOptions;
-        rv.layerName = '';
-        rv.url = xyzSo.url;
-        rv.so = xyzSo;
-        break;
-      case 'wms':
-        const wmsSo = so as WMSDataSourceOptions;
-        wmsSo.params.LAYERS =
-          wmsSo.params.LAYERS ?? (wmsSo.params as any).layers;
-        rv.layerName = wmsSo.params.LAYERS;
-
-        rv.url = wmsSo.url;
-        rv.so = wmsSo;
-        break;
-      case 'osm':
-        const osmSo = so as OSMDataSourceOptions;
-        rv.layerName = '';
-        rv.url = osmSo.url
-          ? osmSo.url
-          : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-        rv.so = osmSo;
-        break;
-      case 'wfs':
-        const wfsSo = so as WFSDataSourceOptions;
-        rv.layerName = wfsSo.params.featureTypes;
-        rv.url = wfsSo.url;
-        rv.so = wfsSo;
-        break;
-      case 'vector':
-        const featureSo = so as FeatureDataSourceOptions;
-        rv.layerName = '';
-        rv.url = featureSo.url;
-        rv.so = featureSo;
-        break;
-      case 'cluster':
-        const clusterSo = so as ClusterDataSourceOptions;
-        rv.layerName = '';
-        rv.url = clusterSo.url;
-        rv.so = clusterSo;
-        break;
-      case 'mvt':
-        const mvtSo = so as MVTDataSourceOptions;
-        rv.layerName = '';
-        rv.url = mvtSo.url;
-        rv.so = mvtSo;
-        break;
-      case 'carto':
-        const cartoSo = so as CartoDataSourceOptions;
-        rv.layerName = cartoSo.config.layers
-          .map((layer) => layer.options.sql)
-          .join(' ');
-        rv.url = `https://${cartoSo.account}.carto.com/api/v1/map`;
-        rv.so = cartoSo;
-        break;
-      default:
-        break;
-    }
-    if (rv.so) {
-      rv.id = generateIdFromSourceOptions(rv.so);
-      rv.url = rv.url?.startsWith('/')
-        ? window.location.origin + rv.url
-        : rv.url;
-    }
-
-    return rv;
-  }
-
-  getCatalogList(): void {
-    var catalogRank = 1;
-    const t = this.languageService.translate;
-    let bufferArray: CsvOutput[] = [
+  private getCatalogsAndItemsAndDetailedContexts(): Observable<
+    [
       {
-        id: 'csvHeader',
-        rank: t.instant('igo.integration.catalog.csv.rank'),
-        layerTitle: t.instant('igo.integration.catalog.csv.layerTitle'),
-        layerGroup: t.instant('igo.integration.catalog.csv.layerGroup'),
-        catalog: t.instant('igo.integration.catalog.csv.catalog'),
-        provider: t.instant('igo.integration.catalog.csv.externalProvider'),
-        url: t.instant('igo.integration.catalog.csv.url'),
-        layerName: t.instant('igo.integration.catalog.csv.layerName'),
-        context: t.instant('igo.integration.catalog.csv.context'),
-        dataDescription: t.instant(
-          'igo.integration.catalog.csv.dataDescription'
-        )
-      }
-    ];
-    this.generatelist$$ = zip([
+        catalog: Catalog;
+        loadedCatalogItems: CatalogItem[];
+      }[],
+      DetailedContext[]
+    ]
+  > {
+    return combineLatest([
       this.store.entities$.pipe(
         switchMap((catalogs) => {
           return forkJoin(
@@ -285,113 +157,151 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             )
           )
         )
-    ]).subscribe(
-      (
-        returnv: [
-          {
-            catalog: Catalog;
-            loadedCatalogItems: CatalogItem[];
-          }[],
-          DetailedContext[]
-        ]
-      ) => {
-        const catalogsAndItems = returnv[0];
-        const detailedContexts = returnv[1];
+    ]);
+  }
 
-        const layerInfosFromDetailedContexts: InfoFromSourceOptions[] = [];
-        detailedContexts.map((detailedContext) =>
-          detailedContext.layers.map((layer) =>
-            layerInfosFromDetailedContexts.push(
-              this.getLayerInfosFromSourceOptions(
-                layer.sourceOptions,
-                detailedContext.title ?? detailedContext.uri
+  getCatalogList(): void {
+    var catalogRank = 1;
+    const t = this.languageService.translate;
+    let csvOutputs: CsvOutput[] = [
+      {
+        id: 'csvHeader',
+        rank: t.instant('igo.integration.catalog.csv.rank'),
+        layerTitle: t.instant('igo.integration.catalog.csv.layerTitle'),
+        layerGroup: t.instant('igo.integration.catalog.csv.layerGroup'),
+        catalog: t.instant('igo.integration.catalog.csv.catalog'),
+        provider: t.instant('igo.integration.catalog.csv.externalProvider'),
+        url: t.instant('igo.integration.catalog.csv.url'),
+        layerName: t.instant('igo.integration.catalog.csv.layerName'),
+        context: t.instant('igo.integration.catalog.csv.context'),
+        dataDescription: t.instant(
+          'igo.integration.catalog.csv.dataDescription'
+        )
+      }
+    ];
+    this.generatelist$$ =
+      this.getCatalogsAndItemsAndDetailedContexts().subscribe(
+        (catalogsAndItemsAndDetailedContexts) => {
+          const catalogsAndItems = catalogsAndItemsAndDetailedContexts[0];
+          const detailedContexts = catalogsAndItemsAndDetailedContexts[1];
+          const layerInfosFromDetailedContexts: InfoFromSourceOptions[] = [];
+          detailedContexts.forEach((detailedContext) =>
+            detailedContext.layers.forEach((layer) =>
+              layerInfosFromDetailedContexts.push(
+                getInfoFromSourceOptions(
+                  layer.sourceOptions,
+                  detailedContext.title ?? detailedContext.uri
+                )
               )
             )
-          )
-        );
-        console.log(layerInfosFromDetailedContexts);
-
-        catalogsAndItems.map((catalogAndItems) => {
-          const catalog = catalogAndItems.catalog;
-          const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
-
-          let groups = loadedCatalogItems.filter(
-            (i) => i.type === CatalogItemType.Group
-          );
-          let layers = loadedCatalogItems.filter(
-            (i) => i.type === CatalogItemType.Layer
           );
 
-          let layersToProcess: CatalogItemLayer[];
-          let groupsToProcess: CatalogItemGroup[];
+          catalogsAndItems.forEach((catalogAndItems) => {
+            const catalog = catalogAndItems.catalog;
+            const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
 
-          layersToProcess = layers.map((layer) => layer as CatalogItemLayer);
-          groupsToProcess = groups.map((group) => group as CatalogItemGroup);
-
-          layersToProcess.map((layer) => {
-            const infos = this.getLayerInfosFromSourceOptions(
-              layer.options.sourceOptions
+            let groups = loadedCatalogItems.filter(
+              (i) => i.type === CatalogItemType.Group
             );
-            bufferArray.push({
-              id: infos.id,
-              rank: catalogRank.toString(),
-              layerTitle: layer.title,
-              layerGroup: '',
-              catalog: catalog.title,
-              provider:
-                layer.externalProvider ?? catalog.externalProvider
-                  ? t.instant('igo.integration.catalog.csv.external')
-                  : t.instant('igo.integration.catalog.csv.internal'),
-              url: infos.url,
-              layerName: infos.layerName,
-              context: '',
-              dataDescription: this.getDescription(layer)
-            });
-            catalogRank++;
-          });
+            let layers = loadedCatalogItems.filter(
+              (i) => i.type === CatalogItemType.Layer
+            );
 
-          groupsToProcess.map((group) => {
-            group.items.map((layer) => {
-              const layerToProcess = layer as CatalogItemLayer;
-              const infos = this.getLayerInfosFromSourceOptions(
-                layerToProcess.options.sourceOptions,
-                layer.id
+            let layersToProcess: CatalogItemLayer[];
+            let groupsToProcess: CatalogItemGroup[];
+
+            layersToProcess = layers.map((layer) => layer as CatalogItemLayer);
+            groupsToProcess = groups.map((group) => group as CatalogItemGroup);
+
+            layersToProcess.forEach((layer) => {
+              const infos = getInfoFromSourceOptions(
+                layer.options.sourceOptions
               );
-              bufferArray.push({
+              csvOutputs.push({
                 id: infos.id,
                 rank: catalogRank.toString(),
-                layerTitle: layerToProcess.title,
-                layerGroup: group.title,
+                layerTitle: layer.title,
+                layerGroup: '',
                 catalog: catalog.title,
-                provider: layerToProcess.externalProvider
-                  ? t.instant('igo.integration.catalog.csv.external')
-                  : t.instant('igo.integration.catalog.csv.internal'),
+                provider:
+                  layer.externalProvider ?? catalog.externalProvider
+                    ? t.instant('igo.integration.catalog.csv.external')
+                    : t.instant('igo.integration.catalog.csv.internal'),
                 url: infos.url,
                 layerName: infos.layerName,
                 context: '',
-                dataDescription: this.getDescription(layerToProcess)
+                dataDescription: this.getDescription(layer)
               });
               catalogRank++;
             });
-          });
-        });
 
-        const sep = this.languageService.getLanguage() === 'fr' ? ',' : ';';
-        bufferArray
-          .filter((b) => b.id !== 'csvHeader')
-          .map((buff) => {
-            const matchingLayersFromContext = layerInfosFromDetailedContexts
-              .filter((l) => l.id === buff.id)
-              // TODO
-              .map((f) => f.context);
-            buff.context = matchingLayersFromContext.join(sep);
+            groupsToProcess.forEach((group) => {
+              group.items.forEach((layer) => {
+                const layerToProcess = layer as CatalogItemLayer;
+                const infos = getInfoFromSourceOptions(
+                  layerToProcess.options.sourceOptions,
+                  layer.id
+                );
+                csvOutputs.push({
+                  id: infos.id,
+                  rank: catalogRank.toString(),
+                  layerTitle: layerToProcess.title,
+                  layerGroup: group.title,
+                  catalog: catalog.title,
+                  provider: layerToProcess.externalProvider
+                    ? t.instant('igo.integration.catalog.csv.external')
+                    : t.instant('igo.integration.catalog.csv.internal'),
+                  url: infos.url,
+                  layerName: infos.layerName,
+                  context: '',
+                  dataDescription: this.getDescription(layerToProcess)
+                });
+                catalogRank++;
+              });
+            });
           });
 
-        this.downloadCsv(bufferArray);
-      }
-    );
+          csvOutputs = this.matchLayersWithLayersContext(
+            csvOutputs,
+            layerInfosFromDetailedContexts
+          );
+
+          this.downloadCsv(csvOutputs);
+        }
+      );
   }
 
+  /**
+   * Match a list of layer info with an other list derived from contexts
+   * @param csvOutputs The row list to be written into a csv file
+   * @param layerInfosFromDetailedContexts Layers info derived from the context
+   * @returns An altered list, with layer/context association
+   */
+
+  private matchLayersWithLayersContext(
+    csvOutputs: CsvOutput[],
+    layerInfosFromDetailedContexts: InfoFromSourceOptions[]
+  ): CsvOutput[] {
+    const sep = this.languageService.getLanguage() === 'fr' ? ',' : ';';
+    csvOutputs
+      .filter((b) => b.id !== 'csvHeader')
+      .forEach((csvOutput) => {
+        const matchingLayersFromContext = layerInfosFromDetailedContexts
+          .filter(
+            (l) =>
+              l.id === csvOutput.id ||
+              (l.layerName === csvOutput.layerName && l.url === csvOutput.url)
+          )
+          .map((f) => f.context);
+        csvOutput.context = matchingLayersFromContext.join(sep);
+      });
+    return csvOutputs;
+  }
+
+  /**
+   * Write a CSV file, the column separator is based on language.
+   * @param csvOutputs The row list to be written into a csv file
+   */
   private downloadCsv(csvOutput: CsvOutput[]) {
     const sep = this.languageService.getLanguage() === 'fr' ? ';' : ',';
     let csvContent = csvOutput
