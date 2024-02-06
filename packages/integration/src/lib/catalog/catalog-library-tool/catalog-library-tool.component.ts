@@ -123,6 +123,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     return item.options.metadata.abstract?.replaceAll('\n', '') ?? '';
   }
 
+  /**
+   * Prepare the observale to produce the layer list extraction
+   * @returns An array of catalog and items plus detailed contexts info.
+   */
   private getCatalogsAndItemsAndDetailedContexts(): Observable<
     [
       {
