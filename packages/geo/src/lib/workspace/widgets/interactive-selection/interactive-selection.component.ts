@@ -20,7 +20,7 @@ import { LanguageService } from '@igo2/core';
 
 import * as olstyle from 'ol/style';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, pairwise } from 'rxjs';
 
 import { FeatureStore, featureToOl } from '../../../feature';
 import { FEATURE } from '../../../feature/shared/feature.enums';
@@ -188,19 +188,29 @@ export class InteractiveSelectionFormComponent
     const fields = fieldConfigs.map((config) => this.formService.field(config));
     const form = this.formService.form(fields, []);
 
-    this.valueChanges$$ = form.control.valueChanges.subscribe(
-      (vc: DataSelectionData) => {
-        this.data$.next(vc);
+    this.valueChanges$$ = (
+      form.control.valueChanges satisfies Observable<DataSelectionData>
+    )
+      .pipe(pairwise())
+      .subscribe(([previous, current]) => {
+        let currentValues = current;
+        if (previous?.action !== current.action) {
+          currentValues.buffer = undefined;
+        }
+        this.data$.next(currentValues);
         this.submitDisabled = !form.control.valid;
-        if (!vc || !vc.action || vc.action === SelectionAction.Add) {
+        if (
+          !currentValues ||
+          !currentValues.action ||
+          currentValues.action === SelectionAction.Add
+        ) {
           this.setAction(SelectionAction.Add);
-        } else if (vc.action === SelectionAction.New) {
+        } else if (currentValues.action === SelectionAction.New) {
           this.setAction(SelectionAction.New);
-        } else if (vc.action === SelectionAction.Remove) {
+        } else if (currentValues.action === SelectionAction.Remove) {
           this.setAction(SelectionAction.Remove);
         }
-      }
-    );
+      });
 
     this.form$.next(form);
   }
