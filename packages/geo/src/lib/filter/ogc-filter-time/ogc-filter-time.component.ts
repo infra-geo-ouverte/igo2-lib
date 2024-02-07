@@ -187,7 +187,7 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   changeTemporalProperty(value, position?, refreshFilter = true) {
-    if (!this.isValidDate(value)) {
+    if (!moment(value, ['MM/DD/YYYY']).isValid()) {
       return;
     }
     let valueTmp = this.getDateTime(value, position);
@@ -745,9 +745,5 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.setFilterStateDisable();
     this.updateValues();
-  }
-
-  private isValidDate(date: Date) {
-    return date instanceof Date && !isNaN(date.getTime());
   }
 }
