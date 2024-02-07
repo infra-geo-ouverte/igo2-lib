@@ -1,7 +1,7 @@
 {
   "igo": {
     "auth": {
-      "accessAnonymous": "Access as anonymous",
+      "accessAnonymous": "Public access",
       "connection": "Connection",
       "login": "Login",
       "password": "Password",
