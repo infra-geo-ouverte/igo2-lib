@@ -917,7 +917,7 @@ export class OgcFilterWriter {
       value.toLowerCase().includes('now') ||
       value.toLowerCase().includes('today')
     ) {
-      return this.parseStringDate(value);
+      return this.parseDateOperation(value);
     } else if (moment(value).isValid()) {
       return value;
     } else {
@@ -930,13 +930,19 @@ export class OgcFilterWriter {
    * @param value string date
    * @returns date
    */
-  private parseStringDate(value: string): string {
+  private parseDateOperation(value: string): string {
     const operationSplitted = value.toLowerCase().split(' ');
     const leftOperand = operationSplitted[0];
-    const operator = ['+', '-'].includes(operationSplitted[1]) ? operationSplitted[1] : undefined;
-    const rightOperand = /^[0-9]*$/.test(operationSplitted[2]) ? operationSplitted[2] : undefined;
+    const operator = ['+', '-'].includes(operationSplitted[1])
+      ? operationSplitted[1]
+      : undefined;
+    const rightOperand = /^[0-9]*$/.test(operationSplitted[2])
+      ? operationSplitted[2]
+      : undefined;
     const rightUnitOperand = (
-      ['years', 'months', 'weeks', 'days', 'hours', 'seconds'].includes(operationSplitted[3])
+      ['years', 'months', 'weeks', 'days', 'hours', 'seconds'].includes(
+        operationSplitted[3]
+      )
         ? operationSplitted[3]
         : undefined
     ) as moment.DurationInputArg2;
@@ -950,10 +956,15 @@ export class OgcFilterWriter {
     if (operator === '+') {
       return leftOperand === 'now'
         ? moment().add(parseInt(rightOperand, 10), rightUnitOperand).format()
-        : moment().endOf('day').add(parseInt(rightOperand, 10), rightUnitOperand).format();
+        : moment()
+            .endOf('day')
+            .add(parseInt(rightOperand, 10), rightUnitOperand)
+            .format();
     } else {
       return leftOperand === 'now'
-        ? moment().subtract(parseInt(rightOperand, 10), rightUnitOperand).format()
+        ? moment()
+            .subtract(parseInt(rightOperand, 10), rightUnitOperand)
+            .format()
         : moment()
             .endOf('day')
             .subtract(parseInt(rightOperand, 10), rightUnitOperand)
