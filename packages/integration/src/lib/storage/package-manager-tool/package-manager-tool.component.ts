@@ -4,8 +4,8 @@ import { ToolComponent } from '@igo2/common';
 
 @ToolComponent({
   name: 'packageManager',
-  title: 'igo.integration.tools.dataIssueReporter',
-  icon: 'message-alert'
+  title: 'Download regions', // TODO change to igo.integration.tools.packageManager
+  icon: 'cloud-download'
 })
 @Component({
   selector: 'igo-package-manager-tool',
