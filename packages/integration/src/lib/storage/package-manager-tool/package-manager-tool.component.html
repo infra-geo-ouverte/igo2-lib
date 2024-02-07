@@ -1,1 +1,8 @@
 <p>package-maganager-tool works!</p>
+<igo-form
+  *ngIf="form$ | async as form"
+  [form]="form"
+  [formData]="data$ | async"
+  (submitForm)="onSubmit($event)"
+>
+</igo-form>
