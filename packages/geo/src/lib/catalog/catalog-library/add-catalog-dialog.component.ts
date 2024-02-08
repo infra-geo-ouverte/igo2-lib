@@ -19,6 +19,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
   predefinedForm$ = new BehaviorSubject<Form>(undefined);
   customForm$ = new BehaviorSubject<Form>(undefined);
   data$ = new BehaviorSubject<Catalog>(undefined);
+  customData$ = new BehaviorSubject<Catalog>(undefined);
   emailAddress: string;
   private storeViewAll$$: Subscription;
   constructor(
@@ -38,7 +39,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.data.addedCatalog) {
-      this.data$.next(this.data.addedCatalog);
+      this.customData$.next(this.data.addedCatalog);
     }
     const types = Object.keys(TypeCapabilities).map((t) => {
       return { value: t, title: t };
@@ -100,7 +101,8 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
         title: 'Type',
         type: 'select',
         options: {
-          cols: 2
+          cols: 1,
+          validator: Validators.required
         },
         inputs: {
           choices: types
