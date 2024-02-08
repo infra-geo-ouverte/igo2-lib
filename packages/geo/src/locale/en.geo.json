@@ -19,14 +19,16 @@
           "layer": "This layer comes from an external organization.",
           "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
         },
+        "library.predefined.select": "Select a catalog",
+        "library.custom.title": "Title",
         "library.add": "Add this catalog to the list",
-        "library.cancel": "Cancel",
+        "library.predefined": "Predefined list",
+        "library.custom": "Custom service",
         "library.remove": "Remove this catalog from the list",
         "library.inlist": {
           "title": "Catalog already contained",
           "message": "The catalog is already contained in the list."
         },
-        "library.addTitle": "Adding a catalog",
         "library.addBtn": "Add a catalog"
       },
       "clickOnMap": {
@@ -511,7 +513,7 @@
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites":"Units (apartments, offices, etc.)"
+            "unites": "Unit number"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -675,7 +677,7 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites":"Unit number"
+        "unites": "Unit number"
       },
       "measure": {
         "dialog": {

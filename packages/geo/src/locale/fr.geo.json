@@ -19,14 +19,16 @@
           "layer": "Cette couche provient d'une organisation externe.",
           "unavailableWithEmail": "Le catalogue '{{value}}' est indisponible pour le moment. Pour ajouter un service externe à la liste prédéfinie, veuillez contacter {{email}}. Des délais peuvent s'appliquer si problème il y a avec le fournisseur externe."
         },
+        "library.predefined.select": "Sélectionner un catalogue",
+        "library.custom.title": "Titre",
         "library.add": "Ajouter ce catalogue",
-        "library.cancel": "Annuler",
+        "library.predefined": "Liste prédéfinie",
+        "library.custom": "Saisir vos propres informations",
         "library.remove": "Retirer ce catalogue de la liste",
         "library.inlist": {
           "title": "Catalogue déjà contenu",
           "message": "Le catalogue à ajouter est déjà dans la liste"
         },
-        "library.addTitle": "Ajout d'un catalogue",
         "library.addBtn": "Ajouter un catalogue"
       },
       "clickOnMap": {
@@ -511,7 +513,7 @@
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites":"Unités (appartements, bureaux, etc.)"
+            "unites": "Numéro d'unite"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -676,7 +678,7 @@
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
         "polices": "Poste de police",
-        "unites":"Numéro d'unite"
+        "unites": "Numéro d'unite"
       },
       "measure": {
         "dialog": {
