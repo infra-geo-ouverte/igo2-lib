@@ -3,7 +3,7 @@
     "auth": {
       "accessAnonymous": "Accès public",
       "connection": "Connexion",
-      "login": "Connecter",
+      "login": "Se connecter",
       "password": "Mot de passe",
       "signOut": "Se déconnecter",
       "user": "Utilisateur",
