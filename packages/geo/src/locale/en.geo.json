@@ -294,6 +294,7 @@
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Show geolocation",
         "geolocateInactive": "Hide geolocation",
+        "geolocateFollowPositionInactive": "Reactivate position tracking",
         "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",
@@ -511,7 +512,7 @@
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites":"Units (apartments, offices, etc.)"
+            "unites": "Units (apartments, offices, etc.)"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -675,7 +676,7 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites":"Unit number"
+        "unites": "Unit number"
       },
       "measure": {
         "dialog": {

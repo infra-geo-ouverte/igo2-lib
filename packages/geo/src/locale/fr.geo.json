@@ -294,6 +294,7 @@
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
         "geolocateInactive": "Masquer votre position",
+        "geolocateFollowPositionInactive": "Réactiver le suivi de position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
@@ -511,7 +512,7 @@
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites":"Unités (appartements, bureaux, etc.)"
+            "unites": "Unités (appartements, bureaux, etc.)"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -676,7 +677,7 @@
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
         "polices": "Poste de police",
-        "unites":"Numéro d'unite"
+        "unites": "Numéro d'unite"
       },
       "measure": {
         "dialog": {

@@ -50,13 +50,12 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
               ? this.icon$.next('crosshairs-gps')
               : this.icon$.next('crosshairs');
           }
-          //}
         }
       );
       this.map.geolocationController.temporaryDisableFollowPosition$.subscribe(
         (r) => {
           if (r) {
-            this.color = 'warn';
+            this.color = 'accent';
           }
         }
       );

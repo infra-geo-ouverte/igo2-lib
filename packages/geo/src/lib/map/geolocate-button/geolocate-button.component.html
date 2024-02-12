@@ -3,7 +3,9 @@
     mat-icon-button
     [matTooltip]="
       map.geolocationController.tracking
-        ? ('igo.geo.mapButtons.geolocateInactive' | translate)
+        ? map.geolocationController.followPosition
+          ? ('igo.geo.mapButtons.geolocateInactive' | translate)
+          : ('igo.geo.mapButtons.geolocateFollowPositionInactive' | translate)
         : ('igo.geo.mapButtons.geolocate' | translate)
     "
     matTooltipPosition="left"
