@@ -3,19 +3,21 @@ import { Injectable } from '@angular/core';
 import { GeoDBService, InsertSourceInsertDBEnum } from '@igo2/geo';
 
 import JSZip from 'jszip';
-import { Observable, Subject, from } from 'rxjs';
+import { Observable, Subject, firstValueFrom, from } from 'rxjs';
 
-import { PackageMetadata } from './package-info.interface';
+import { FileMetadata, PackageMetadata } from './package-info.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PackageStoreService {
+  private readonly MAX_WORKERS = 1000;
+
   constructor(private geoDb: GeoDBService) {}
 
   private loadTileIntoGeoDB(tile: Blob, url: string, packageTitle: string) {
     const insertEvent = `${packageTitle} | ${InsertSourceInsertDBEnum.User}`;
-    this.geoDb.update(
+    return this.geoDb.update(
       url,
       packageTitle,
       tile,
@@ -39,12 +41,27 @@ export class PackageStoreService {
       const data = zip.folder('data');
 
       const { files } = metadata;
-      const filePromises = files.map(async ({ fileName, url }) => {
-        const fileData = await data.file(fileName).async('blob');
-        this.loadTileIntoGeoDB(fileData, url, title);
-      });
 
-      await Promise.all(filePromises);
+      const loadFileIntoDB = async (file: FileMetadata) => {
+        const fileData = await data.file(file.fileName).async('blob');
+        await firstValueFrom(this.loadTileIntoGeoDB(fileData, file.url, title));
+      };
+
+      let activeLoading = [];
+      let i = 0;
+      for (const file of files) {
+        const done = loadFileIntoDB(file);
+        activeLoading.push(done);
+        i++;
+        if (activeLoading.length <= this.MAX_WORKERS) {
+          continue;
+        }
+
+        await Promise.all(activeLoading);
+
+        activeLoading = [];
+        console.log('unpacked', i / files.length);
+      }
 
       console.log('package install done');
 
