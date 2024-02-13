@@ -1,6 +1,11 @@
 import { AfterViewInit, Directive } from '@angular/core';
 
 import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
+import {
+  PackageManagerService,
+  TileLayer,
+  XYZDataSourceOptions
+} from '@igo2/geo';
 
 import { combineLatest } from 'rxjs';
 
@@ -28,7 +33,8 @@ export class MapOfflineDirective implements AfterViewInit {
   constructor(
     component: MapBrowserComponent,
     private networkService: NetworkService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private packageService: PackageManagerService
   ) {
     this.component = component;
   }
@@ -99,6 +105,22 @@ export class MapOfflineDirective implements AfterViewInit {
       ) {
         offlinableByUrlSourceOptions = layer.options.sourceOptions;
       }
+
+      const isPotentialPackage =
+        layer instanceof TileLayer &&
+        layer.options.sourceOptions?.type === 'xyz' &&
+        (layer.options.sourceOptions as XYZDataSourceOptions).url;
+
+      if (isPotentialPackage) {
+        const isPackage = this.packageService.isLayerDownloaded(
+          (layer.options.sourceOptions as XYZDataSourceOptions).url
+        );
+
+        if (isPackage) {
+          return;
+        }
+      }
+
       if (offlinableByUrlSourceOptions) {
         const type = offlinableByUrlSourceOptions.type;
         if (type === 'mvt') {

@@ -38,6 +38,19 @@ export class PackageManagerService {
       });
   }
 
+  private removeTileFromURL(src: string) {
+    const splitted = src.split('/');
+    return splitted.slice(0, splitted.length - 3).join('/');
+  }
+
+  isLayerDownloaded(src: string) {
+    const srcURL = this.removeTileFromURL(src);
+    return (
+      srcURL ===
+      'https://geoegl.msp.gouv.qc.ca/apis/carto/tms/1.0.0/carte_gouv_qc_ro@EPSG_3857'
+    ); // TODO change
+  }
+
   downloadPackage(packageInfo: PackageInfo) {
     const isExistant = this.isPackageExists(packageInfo);
     if (!isExistant) {

@@ -1,5 +1,6 @@
 export interface PackageInfo {
   id: string;
+  url: string;
   title: string;
   expiration: Date;
   size: number;

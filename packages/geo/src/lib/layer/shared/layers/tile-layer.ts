@@ -1,9 +1,13 @@
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
+import { GeoNetworkService, ResponseType } from '@igo2/geo';
 
 import Tile from 'ol/Tile';
+import TileState from 'ol/TileState';
 import olLayerTile from 'ol/layer/Tile';
 import olSourceTile from 'ol/source/Tile';
+
+import { first } from 'rxjs';
 
 import { CartoDataSource } from '../../../datasource/shared/datasources/carto-datasource';
 import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
@@ -31,6 +35,7 @@ export class TileLayer extends Layer {
 
   constructor(
     options: TileLayerOptions,
+    private geoNetwork: GeoNetworkService,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor
   ) {
@@ -60,12 +65,30 @@ export class TileLayer extends Layer {
    * @param url the url string or function to retrieve the data
    */
   customLoader(tile, url: string, interceptor: AuthInterceptor) {
+    console.log('get tile');
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
     }
-    tile.getImage().src = modifiedUrl;
+
+    const request = this.geoNetwork.get(modifiedUrl, {
+      responseType: ResponseType.Blob
+    });
+    request.pipe(first()).subscribe((blob) => {
+      // need error state handler for tile
+      // https://openlayers.org/en/latest/apidoc/module-ol_Tile.html#~LoadFunction
+      if (!blob) {
+        tile.setState(TileState.ERROR);
+        return;
+      }
+      const urlCreator = window.URL;
+      const imageUrl = urlCreator.createObjectURL(blob);
+      tile.getImage().src = imageUrl;
+      tile.getImage().onload = function () {
+        URL.revokeObjectURL(this.src);
+      };
+    });
   }
 
   public setMap(map: IgoMap | undefined) {
