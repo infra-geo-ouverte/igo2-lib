@@ -29,8 +29,38 @@ export class PackageManagerService {
     this.http
       .get<PackageInfo[]>('assets/packages/tile-packages.json')
       .subscribe((newPackages) => {
-        console.log('new packages', newPackages);
         this.packagesSubject.next(newPackages);
       });
+  }
+
+  downloadPackage(packageInfo: PackageInfo) {
+    const isExistant = this.isPackageExists(packageInfo);
+    if (!isExistant) {
+      this.actualizePackages();
+      return;
+    }
+
+    console.log('downloading package', packageInfo);
+
+    const { title } = packageInfo;
+    this.http
+      .get(`assets/packages/${title}.zip`, {
+        responseType: 'arraybuffer'
+      })
+      .subscribe({
+        next: (data) => {
+          const blob = new Blob([data], { type: 'application/zip' });
+          console.log('new blob with size', blob.size);
+        },
+        error: () => {
+          // TODO better error handling
+          this.actualizePackages();
+        }
+      });
+  }
+
+  isPackageExists(packageInfo: PackageInfo) {
+    const { id } = packageInfo;
+    return this.packages.findIndex((p) => p.id === id) !== -1;
   }
 }

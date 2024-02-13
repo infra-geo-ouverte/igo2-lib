@@ -29,9 +29,29 @@ export class PackageManagerToolComponent {
 
   data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
 
+  get packages() {
+    return this.packageManagerService.packages;
+  }
+
+  get packages$() {
+    return this.packageManagerService.packages$;
+  }
+
+  get selectedPackage() {
+    return !this.packages.length ? undefined : this.packages[0];
+  }
+
   constructor(private packageManagerService: PackageManagerService) {}
 
   onSubmit(data: PackageSelectionData): void {
     console.log('onSubmit');
+  }
+
+  downloadSelectedPackage() {
+    if (!this.selectedPackage) {
+      console.log('selected package undefined');
+      return;
+    }
+    this.packageManagerService.downloadPackage(this.selectedPackage);
   }
 }
