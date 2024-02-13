@@ -65,7 +65,6 @@ export class TileLayer extends Layer {
    * @param url the url string or function to retrieve the data
    */
   customLoader(tile, url: string, interceptor: AuthInterceptor) {
-    console.log('get tile');
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
