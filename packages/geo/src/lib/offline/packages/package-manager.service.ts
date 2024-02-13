@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { PackageStoreService } from '@igo2/geo';
+
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { PackageInfo } from './package-info.interface';
@@ -21,7 +23,10 @@ export class PackageManagerService {
     return this.packagesSubject.value;
   }
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private packageStore: PackageStoreService
+  ) {
     this.actualizePackages();
   }
 
@@ -51,6 +56,7 @@ export class PackageManagerService {
         next: (data) => {
           const blob = new Blob([data], { type: 'application/zip' });
           console.log('new blob with size', blob.size);
+          this.packageStore.unpackPackage(blob);
         },
         error: () => {
           // TODO better error handling

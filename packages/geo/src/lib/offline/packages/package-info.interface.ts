@@ -4,3 +4,12 @@ export interface PackageInfo {
   expiration: Date;
   size: number;
 }
+
+export interface PackageMetadata extends PackageInfo {
+  files: FileMetadata[];
+}
+
+export interface FileMetadata {
+  url: string;
+  fileName: string;
+}
