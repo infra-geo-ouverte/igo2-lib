@@ -619,7 +619,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projectionCode
       });
-      this.map.geolocationController.temporaryDisablePollowPosition = true;
+      this.map.geolocationController.temporaryDisableFollowPosition = true;
       moveToOlFeatures(
         this.map.viewController,
         [localOlFeature],

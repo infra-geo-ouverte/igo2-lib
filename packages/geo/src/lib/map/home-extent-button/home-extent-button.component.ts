@@ -50,7 +50,7 @@ export class HomeExtentButtonComponent {
 
   onToggleClick() {
     this.computeHomeExtent();
-    this.map.geolocationController.temporaryDisablePollowPosition = true;
+    this.map.geolocationController.temporaryDisableFollowPosition = true;
     if (this.homeExtentButtonExtent) {
       this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
     } else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {

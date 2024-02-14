@@ -204,17 +204,17 @@ export class MapGeolocationController extends MapController {
   /**
    * Indicate if the follow position need to be temporary disabled.
    */
-  set temporaryDisablePollowPosition(value: boolean) {
-    this._temporaryDisablePollowPosition = value;
+  set temporaryDisableFollowPosition(value: boolean) {
+    this._temporaryDisableFollowPosition = value;
     this.followPosition = !value;
-    this.temporaryDisablePollowPosition$.next(value);
+    this.temporaryDisableFollowPosition$.next(value);
   }
 
-  get temporaryDisablePollowPosition(): boolean {
-    return this._temporaryDisablePollowPosition;
+  get temporaryDisableFollowPosition(): boolean {
+    return this._temporaryDisableFollowPosition;
   }
-  private _temporaryDisablePollowPosition: boolean;
-  private temporaryDisablePollowPosition$: BehaviorSubject<boolean> =
+  private _temporaryDisableFollowPosition: boolean;
+  public temporaryDisableFollowPosition$: BehaviorSubject<boolean> =
     new BehaviorSubject(false);
 
   constructor(
@@ -224,6 +224,7 @@ export class MapGeolocationController extends MapController {
     private configService?: ConfigService
   ) {
     super();
+    this.temporaryDisableFollowPosition = false;
     this.geolocationOverlay = new Overlay(this.map);
     this._followPosition =
       this.options && this.options.followPosition
@@ -297,7 +298,7 @@ export class MapGeolocationController extends MapController {
     this.subscriptions$$.push(
       this.map.viewController.dragging$.subscribe(() => {
         if (this.followPosition) {
-          this.temporaryDisablePollowPosition = true;
+          this.temporaryDisableFollowPosition = true;
         }
       })
     );

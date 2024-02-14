@@ -13,6 +13,7 @@ import { IgoMap } from '../shared/map';
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;
+  private isTemporaryDisableFollowPositionToSwitch: Boolean;
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject(
     'crosshairs-gps'
   );
@@ -35,7 +36,9 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   }
   private _color: string;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.isTemporaryDisableFollowPositionToSwitch = false;
+  }
   ngAfterContentInit(): void {
     this.map.ol.once('rendercomplete', () => {
       this.tracking$$ = this.map.geolocationController.tracking$.subscribe(
@@ -49,6 +52,21 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
           }
         }
       );
+      this.map.geolocationController.temporaryDisableFollowPosition$.subscribe(
+        (r) => {
+          if (r) {
+            this.color = 'accent';
+          }
+        }
+      );
+      this.map.geolocationController.followPosition$.subscribe((follow) => {
+        if (follow) {
+          this.color = 'primary';
+        }
+      });
+      if (this.isTemporaryDisableFollowPositionToSwitch) {
+        this.isTemporaryDisableFollowPositionToSwitch = undefined;
+      }
     });
   }
 
@@ -59,6 +77,19 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   }
 
   onGeolocationClick() {
+    if (
+      this.map.geolocationController.temporaryDisableFollowPosition &&
+      this.map.geolocationController.tracking
+    ) {
+      this.isTemporaryDisableFollowPositionToSwitch = true;
+      this.map.geolocationController.followPosition = true;
+      this.map.geolocationController.tracking = false;
+      this.map.geolocationController.temporaryDisableFollowPosition = undefined;
+
+      this.color = 'primary';
+    } else {
+      this.isTemporaryDisableFollowPositionToSwitch = false;
+    }
     const tracking = this.map.geolocationController.tracking;
     this.map.geolocationController.tracking = tracking ? false : true;
   }

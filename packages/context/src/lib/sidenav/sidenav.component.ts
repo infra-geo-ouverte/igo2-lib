@@ -86,7 +86,7 @@ export class SidenavComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.viewProjection
       });
-      this.map.geolocationController.temporaryDisablePollowPosition = true;
+      this.map.geolocationController.temporaryDisableFollowPosition = true;
       moveToOlFeatures(
         this.map.viewController,
         [olFeature],
