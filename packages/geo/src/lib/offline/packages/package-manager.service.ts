@@ -5,7 +5,7 @@ import { PackageStoreService } from '@igo2/geo';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { PackageInfo } from './package-info.interface';
+import { DownloadedPackage, PackageInfo } from './package-info.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,14 @@ export class PackageManagerService {
 
   get packages() {
     return this.packagesSubject.value;
+  }
+
+  get downloaded() {
+    return this.packageStore.downloaded;
+  }
+
+  get downloaded$() {
+    return this.packageStore.downloaded$;
   }
 
   constructor(
@@ -44,11 +52,8 @@ export class PackageManagerService {
   }
 
   isLayerDownloaded(src: string) {
-    const srcURL = this.removeTileFromURL(src);
-    return (
-      srcURL ===
-      'https://geoegl.msp.gouv.qc.ca/apis/carto/tms/1.0.0/carte_gouv_qc_ro@EPSG_3857'
-    ); // TODO change
+    const index = this.downloaded.findIndex(({ url }) => url === src);
+    return index !== -1;
   }
 
   downloadPackage(packageInfo: PackageInfo) {
@@ -76,6 +81,10 @@ export class PackageManagerService {
           this.actualizePackages();
         }
       });
+  }
+
+  deletePackage(downloadedPackage: DownloadedPackage) {
+    this.packageStore.deletePackage(downloadedPackage.title);
   }
 
   isPackageExists(packageInfo: PackageInfo) {

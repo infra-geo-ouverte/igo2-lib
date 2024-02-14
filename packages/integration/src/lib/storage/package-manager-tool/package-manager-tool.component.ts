@@ -7,6 +7,8 @@ import { PackageManagerService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { DownloadedPackage } from '../../../../../geo/src/lib/offline/packages/package-info.interface';
+
 interface PackageSelectionData {
   name: string;
 }
@@ -53,5 +55,19 @@ export class PackageManagerToolComponent {
       return;
     }
     this.packageManagerService.downloadPackage(this.selectedPackage);
+  }
+
+  deleteSelectedPackage() {
+    if (!this.selectedPackage) {
+      return;
+    }
+
+    console.log('deleting package');
+
+    const downloaded: DownloadedPackage = {
+      ...this.selectedPackage,
+      totalFiles: 10
+    };
+    this.packageManagerService.deletePackage(downloaded);
   }
 }

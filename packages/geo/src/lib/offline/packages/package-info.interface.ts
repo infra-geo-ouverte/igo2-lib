@@ -10,6 +10,18 @@ export interface PackageMetadata extends PackageInfo {
   files: FileMetadata[];
 }
 
+// TODO add to DownloadedPackage
+export enum DownloadedPackageStatus {
+  IN_QUEUE = 'IN_QUEUE',
+  DOWNLOADING = 'DOWNLOADING',
+  INSTALLING = 'INSTALLING',
+  INSTALLED = 'INSTALLED'
+}
+
+export interface DownloadedPackage extends PackageInfo {
+  totalFiles: number;
+}
+
 export interface FileMetadata {
   url: string;
   fileName: string;

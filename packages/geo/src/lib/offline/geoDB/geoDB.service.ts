@@ -135,7 +135,7 @@ export class GeoDBService {
     return this.ngxIndexedDBService.deleteByKey(this.dbName, url);
   }
 
-  getRegionCountByID(id: number): Observable<number> {
+  getRegionCountByID(id: string): Observable<number> {
     const subject: Subject<number> = new Subject();
     const dbRequest = this.getRegionByID(id).subscribe((datas) => {
       subject.next(datas.length);
@@ -144,7 +144,7 @@ export class GeoDBService {
     return subject;
   }
 
-  getRegionByID(id: number): Observable<any[]> {
+  getRegionByID(id: string): Observable<any[]> {
     if (!id) {
       return;
     }
@@ -158,7 +158,7 @@ export class GeoDBService {
     return dbRequest;
   }
 
-  deleteByRegionID(id: number): Observable<any> {
+  deleteByRegionID(id: string): Observable<any> {
     if (!id) {
       return;
     }
@@ -171,7 +171,7 @@ export class GeoDBService {
     );
     dbRequest.subscribe((datas: GeoDBData[]) => {
       datas.forEach((data) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
+        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url).subscribe();
       });
     });
     return dbRequest;

@@ -3,17 +3,86 @@ import { Injectable } from '@angular/core';
 import { GeoDBService, InsertSourceInsertDBEnum } from '@igo2/geo';
 
 import JSZip from 'jszip';
-import { Observable, Subject, firstValueFrom, from } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  firstValueFrom,
+  from
+} from 'rxjs';
 
-import { FileMetadata, PackageMetadata } from './package-info.interface';
+import {
+  DownloadedPackage,
+  FileMetadata,
+  PackageMetadata
+} from './package-info.interface';
+import { packageMetadataToDownloadedPackage } from './package-utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PackageStoreService {
   private readonly MAX_WORKERS = 1000;
+  private readonly DOWNLOADED_PACKAGE_METADATA_STORE =
+    'downloadedPackageMetadata';
 
-  constructor(private geoDb: GeoDBService) {}
+  private downloadedPackagesSub = new BehaviorSubject<DownloadedPackage[]>([]);
+
+  get downloaded$(): Observable<DownloadedPackage[]> {
+    return this.downloadedPackagesSub;
+  }
+
+  get downloaded(): DownloadedPackage[] {
+    return this.downloadedPackagesSub.value;
+  }
+
+  constructor(private geoDb: GeoDBService) {
+    this.actualizedDownloadedPackages();
+  }
+
+  private actualizedDownloadedPackages() {
+    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
+    this.downloadedPackagesSub.next(downloaded);
+  }
+
+  private getDownloadedPackages(): DownloadedPackage[] {
+    return (
+      JSON.parse(
+        localStorage.getItem(this.DOWNLOADED_PACKAGE_METADATA_STORE)
+      ) ?? []
+    );
+  }
+
+  private setDownloadedPackages(downloaded: DownloadedPackage[]) {
+    localStorage.setItem(
+      this.DOWNLOADED_PACKAGE_METADATA_STORE,
+      JSON.stringify(downloaded)
+    );
+  }
+
+  private addDownloadedPackage(metadata: PackageMetadata) {
+    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
+
+    const downloadedPackage = packageMetadataToDownloadedPackage(metadata);
+    downloaded.push(downloadedPackage);
+
+    this.setDownloadedPackages(downloaded);
+
+    this.actualizedDownloadedPackages();
+  }
+
+  private removeDownloadedPackage(packageTitle: string) {
+    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
+    const index = downloaded.findIndex(({ title }) => {
+      title === packageTitle;
+    });
+
+    downloaded.splice(index, 1);
+
+    console.log('downloaded packages', downloaded);
+
+    this.setDownloadedPackages(downloaded);
+  }
 
   private loadTileIntoGeoDB(tile: Blob, url: string, packageTitle: string) {
     const insertEvent = `${packageTitle} | ${InsertSourceInsertDBEnum.User}`;
@@ -65,10 +134,18 @@ export class PackageStoreService {
 
       console.log('package install done');
 
+      this.addDownloadedPackage(metadata);
+
       done$.next();
       done$.complete();
     });
 
     return done$;
+  }
+
+  deletePackage(packageTitle: string): Observable<void> {
+    console.log('removing package');
+    this.removeDownloadedPackage(packageTitle);
+    return this.geoDb.deleteByRegionID(packageTitle);
   }
 }
