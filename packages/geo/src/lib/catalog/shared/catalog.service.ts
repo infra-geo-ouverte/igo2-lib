@@ -178,6 +178,15 @@ export class CatalogService {
         );
         this.includeRecursiveItems(catalog, capabilitiesCapabilityLayer, items);
         return items;
+      }),
+      catchError(() => {
+        this.messageService.error(
+          'igo.geo.catalog.unavailable',
+          'igo.geo.catalog.unavailableTitle',
+          undefined,
+          { value: catalog.title }
+        );
+        return EMPTY;
       })
     );
   }
