@@ -32,7 +32,6 @@
     mat-raised-button
     class="anonymous"
     type="button"
-    [disabled]="loading"
     (click)="loginAnonymous()"
   >
     {{ 'igo.auth.accessAnonymous' | translate }}
@@ -42,3 +41,7 @@
     <font size="3" color="red">{{ error }}</font>
   </div>
 </form>
+
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner [diameter]="40"></mat-spinner>
+</div>
