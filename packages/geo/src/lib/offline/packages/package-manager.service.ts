@@ -51,16 +51,13 @@ export class PackageManagerService {
     return index !== -1;
   }
 
-  downloadPackage(packageInfo: PackageInfo) {
-    const isExistant = this.isPackageExists(packageInfo);
+  downloadPackage(title: string) {
+    const isExistant = this.isPackageExists(title);
     if (!isExistant) {
       this.actualizePackages();
       return;
     }
 
-    console.log('downloading package', packageInfo);
-
-    const { title } = packageInfo;
     this.http
       .get(`assets/packages/${title}.zip`, {
         responseType: 'arraybuffer'
@@ -82,8 +79,7 @@ export class PackageManagerService {
     this.packageStore.deletePackage(downloadedPackage.title);
   }
 
-  isPackageExists(packageInfo: PackageInfo) {
-    const { id } = packageInfo;
-    return this.packages.findIndex((p) => p.id === id) !== -1;
+  isPackageExists(packageTitle: string) {
+    return this.packages.findIndex((p) => p.title === packageTitle) !== -1;
   }
 }
