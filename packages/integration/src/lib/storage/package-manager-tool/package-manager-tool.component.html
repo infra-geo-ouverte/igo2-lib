@@ -1,18 +1,8 @@
-<igo-entity-table
-  [store]="store"
-  [withPaginator]="true"
-  [paginatorOptions]="paginatorOptions"
-  [template]="template"
-  (entitySortChange)="entitySortChange()"
-></igo-entity-table>
-
-<button
-  mat-raised-button
-  color="primary"
-  [disabled]="!selectedPackage"
-  (click)="downloadSelectedPackage()"
->
-  Download
-</button>
-
-<button mat-button (click)="deleteSelectedPackage()">Delete first</button>
+<mat-tab-group>
+  <mat-tab label="Add Regions"
+    ><igo-download-package></igo-download-package
+  ></mat-tab>
+  <mat-tab label="Manage Regions"
+    ><igo-downloaded-packages-manager></igo-downloaded-packages-manager
+  ></mat-tab>
+</mat-tab-group>
