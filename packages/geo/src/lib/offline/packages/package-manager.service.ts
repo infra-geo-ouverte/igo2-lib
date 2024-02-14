@@ -46,11 +46,6 @@ export class PackageManagerService {
       });
   }
 
-  private removeTileFromURL(src: string) {
-    const splitted = src.split('/');
-    return splitted.slice(0, splitted.length - 3).join('/');
-  }
-
   isLayerDownloaded(src: string) {
     const index = this.downloaded.findIndex(({ url }) => url === src);
     return index !== -1;
