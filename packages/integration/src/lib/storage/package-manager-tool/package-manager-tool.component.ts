@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common';
@@ -26,8 +26,9 @@ import { DownloadedPackagesManagerComponent } from './downloaded-packages-manage
   styleUrls: ['./package-manager-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PackageManagerToolComponent {
+export class PackageManagerToolComponent implements OnInit {
   selectedPackage = undefined;
+  selectedTab: number = 0;
 
   get packages() {
     return this.packageManagerService.packages;
@@ -38,6 +39,10 @@ export class PackageManagerToolComponent {
   }
 
   constructor(private packageManagerService: PackageManagerService) {}
+
+  ngOnInit(): void {
+    this.selectedTab = !this.packageManagerService.downloaded.length ? 0 : 1;
+  }
 
   deleteSelectedPackage() {
     if (!this.selectedPackage) {
