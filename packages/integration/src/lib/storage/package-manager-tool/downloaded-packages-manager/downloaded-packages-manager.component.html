@@ -1,1 +1,11 @@
-<button mat-button (click)="deleteSelectedPackage()">Delete first</button>
+<igo-entity-table
+  [store]="store"
+  [withPaginator]="true"
+  [paginatorOptions]="paginatorOptions"
+  [template]="template"
+  (entitySortChange)="entitySortChange()"
+></igo-entity-table>
+
+<button mat-raised-button color="secondary" (click)="deleteSelectedPackage()">
+  Delete
+</button>
