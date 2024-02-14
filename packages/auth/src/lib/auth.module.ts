@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { IgoLanguageModule, StorageService } from '@igo2/core';
 
@@ -29,6 +30,7 @@ import { ProtectedDirective } from './shared/protected.directive';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     MatButtonModule,
     IgoLanguageModule,
     MsalModule

@@ -1,4 +1,5 @@
 @forward './core-theme' show core-component-themes;
+@forward '../../auth/src/auth.theme' as auth-component-*;
 @forward '../../common/src/common-theme' show common-component-themes;
 @forward '../../context/src/context-theme' show context-component-themes;
 @forward '../../geo/src/geo-theme' show geo-component-themes;
