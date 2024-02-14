@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { CompressionService } from '@igo2/core';
 
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
 import { concatMap, first, map, take } from 'rxjs/operators';
 
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
@@ -163,6 +163,7 @@ export class GeoDBService {
       return;
     }
 
+    const done$ = new Subject<void>();
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.ngxIndexedDBService.getAllByIndex(
       this.dbName,
@@ -170,11 +171,16 @@ export class GeoDBService {
       IDBKey
     );
     dbRequest.subscribe((datas: GeoDBData[]) => {
-      datas.forEach((data) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url).subscribe();
+      forkJoin(
+        datas.map((data) => {
+          return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
+        })
+      ).subscribe(() => {
+        done$.next();
+        done$.complete();
       });
     });
-    return dbRequest;
+    return done$;
   }
 
   openCursor(

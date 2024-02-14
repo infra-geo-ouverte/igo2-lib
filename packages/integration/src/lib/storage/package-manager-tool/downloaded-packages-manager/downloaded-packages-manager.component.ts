@@ -106,14 +106,9 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   }
 
   deleteSelectedPackage() {
-    console.log('Deleting package');
-    // if (!this.selectedPackage) {
-    //   return;
-    // }
-    // const downloaded = {
-    //   ...this.selectedPackage,
-    //   totalFiles: 10
-    // };
-    // this.packageManagerService.deletePackage(downloaded);
+    if (!this.selectedPackage) {
+      return;
+    }
+    this.packageManager.deletePackage(this.selectedPackage);
   }
 }

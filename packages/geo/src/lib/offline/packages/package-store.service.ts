@@ -22,7 +22,7 @@ import { packageMetadataToDownloadedPackage } from './package-utils';
   providedIn: 'root'
 })
 export class PackageStoreService {
-  private readonly MAX_WORKERS = 1000;
+  private readonly MAX_WORKERS = 500;
   private readonly DOWNLOADED_PACKAGE_METADATA_STORE =
     'downloadedPackageMetadata';
 
@@ -146,6 +146,8 @@ export class PackageStoreService {
   deletePackage(packageTitle: string): Observable<void> {
     console.log('removing package');
     this.removeDownloadedPackage(packageTitle);
-    return this.geoDb.deleteByRegionID(packageTitle);
+    const done$ = this.geoDb.deleteByRegionID(packageTitle);
+    done$.subscribe(() => this.actualizedDownloadedPackages());
+    return done$;
   }
 }

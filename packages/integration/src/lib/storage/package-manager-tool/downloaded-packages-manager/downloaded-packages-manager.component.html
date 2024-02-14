@@ -6,6 +6,11 @@
   (entitySortChange)="entitySortChange()"
 ></igo-entity-table>
 
-<button mat-raised-button color="secondary" (click)="deleteSelectedPackage()">
+<button
+  mat-raised-button
+  color="warn"
+  [disabled]="!selectedPackage"
+  (click)="deleteSelectedPackage()"
+>
   Delete
 </button>
