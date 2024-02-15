@@ -10,7 +10,7 @@ import {
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import {
   Catalog,
   CatalogItem,
@@ -21,6 +21,7 @@ import {
   InfoFromSourceOptions,
   getInfoFromSourceOptions
 } from '@igo2/geo';
+import { downloadContent } from '@igo2/utils';
 
 import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -44,6 +45,7 @@ import { CsvOutput } from './catalog-library-tool.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
+  public exportAsListButton: boolean;
   private generatelist$$: Subscription;
   /**
    * Store that contains the catalogs
@@ -70,7 +72,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     private storageService: StorageService,
     private languageService: LanguageService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private configService: ConfigService
   ) {}
 
   /**
@@ -80,6 +83,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     if (this.store.count === 0) {
       this.loadCatalogs();
     }
+    this.exportAsListButton = this.configService.getConfig(
+      'catalog.exportAsListButton',
+      true
+    );
   }
 
   ngOnDestroy() {
@@ -314,21 +321,11 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       })
       .join('\n');
 
-    const encodedUri = encodeURI(csvContent);
-    const exportDocument = document.createElement('a');
-    exportDocument.setAttribute(
-      'href',
-      'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
+    const fn = this.languageService.translate.instant(
+      'igo.integration.catalog.csv.documentName',
+      { value: this.datePipe.transform(Date.now(), 'YYYY-MM-dd-H_mm') }
     );
-    exportDocument.setAttribute(
-      'download',
-      this.languageService.translate.instant(
-        'igo.integration.catalog.csv.documentName',
-        { value: this.datePipe.transform(Date.now(), 'YYYY-MM-dd-H_mm') }
-      )
-    );
-    document.body.appendChild(exportDocument);
-    exportDocument.click();
-    document.body.removeChild(exportDocument);
+
+    downloadContent(csvContent, 'text/csv;charset=utf-8', fn);
   }
 }

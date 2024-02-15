@@ -5,7 +5,7 @@
   (catalogSelectChange)="onCatalogSelectChange($event)"
 >
 </igo-catalog-library>
-<div class="get-catalog-list-button">
+<div *ngIf="exportAsListButton" class="get-catalog-list-button">
   <button
     mat-raised-button
     [matTooltip]="'igo.integration.catalog.library.getCatalogList' | translate"
