@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { ProjectionsLimitationsOptions } from './projection.interfaces';
 
 /**
@@ -65,4 +67,62 @@ export function computeProjectionsConstraints(
     }
   };
   return projectionsConstraints;
+}
+
+export function detectFileEPSG(options: {
+  file: File;
+  epsgCode$: BehaviorSubject<string>;
+  nbLines?: number;
+}) {
+  const file = options.file;
+  const epsgCode$ = options.epsgCode$;
+  const nbLines = options.nbLines ?? 500;
+
+  if (
+    !file.name.toLowerCase().endsWith('.geojson') &&
+    !file.name.toLowerCase().endsWith('.json') &&
+    !file.name.toLowerCase().endsWith('.gml')
+  ) {
+    epsgCode$.next('epsgNotDefined');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (
+      file.name.toLowerCase().endsWith('.geojson') ||
+      file.name.toLowerCase().endsWith('.json')
+    ) {
+      const geojson = JSON.parse(reader.result as string);
+      if (geojson.crs?.properties?.name) {
+        const epsg = geojson.crs.properties.name.match(/EPSG:{1,2}\d{0,6}/gm);
+        if (epsg !== null && epsg.length) {
+          epsgCode$.next(epsg[0].replace(/::/g, ':'));
+          return;
+        } else {
+          epsgCode$.next('epsgNotDefined');
+          return;
+        }
+      } else {
+        epsgCode$.next('epsgNotDefined');
+        return;
+      }
+    } else if (file.name.toLowerCase().endsWith('.gml')) {
+      const text = reader.result as string;
+      const lines = (text as string).split('\n');
+      for (let line = 0; line <= nbLines; line++) {
+        const epsg = lines[line].match(/EPSG:\d{0,6}/gm);
+        if (epsg !== null && epsg.length) {
+          epsgCode$.next(epsg[0]);
+          break;
+        } else {
+          epsgCode$.next(undefined);
+          return;
+        }
+      }
+    } else {
+      epsgCode$.next('epsgNotDefined');
+      return;
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
 }
