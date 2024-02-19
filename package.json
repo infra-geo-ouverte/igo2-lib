@@ -17,7 +17,7 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": ">=18.13.0"
   },
   "scripts": {
     "ng": "ng",
