@@ -37,6 +37,9 @@
   },
   "dependencies": {
     "@turf/helpers": "^6.5.0",
+    "@turf/boolean-intersects": "^6.5.0",
+    "@turf/buffer": "^6.5.0",
+    "@turf/intersect": "^6.5.0",
     "@turf/line-intersect": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
     "nosleep.js": "^0.12.0",

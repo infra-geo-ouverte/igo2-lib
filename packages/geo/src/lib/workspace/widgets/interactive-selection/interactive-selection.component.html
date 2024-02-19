@@ -1,0 +1,38 @@
+<button class="close" mat-icon-button color="warn" (click)="onClose()">
+  <mat-icon svgIcon="close"></mat-icon>
+</button>
+
+<igo-form
+  *ngIf="form$ | async as form"
+  [form]="form"
+  [formData]="data$ | async"
+  (submitForm)="onSubmit($event)"
+>
+  <div *ngIf="form.fields.length" class="form-container">
+    <igo-form-field
+      *ngFor="let field of form.fields"
+      [field]="field"
+    ></igo-form-field>
+  </div>
+
+  <div formButtons class="actions-container">
+    <button
+      mat-stroked-button
+      type="button"
+      color="primary"
+      (click)="clearForm()"
+    >
+      {{
+        'igo.geo.workspace.widget.interactiveSelection.reset.button' | translate
+      }}
+    </button>
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      [disabled]="submitDisabled"
+    >
+      {{ submitButtonText$ | async | translate }}
+    </button>
+  </div>
+</igo-form>

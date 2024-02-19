@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 
-import { Action } from '@igo2/common';
+import { Action, Widget } from '@igo2/common';
 import {
   LanguageService,
   MediaService,
@@ -9,7 +9,7 @@ import {
   StorageServiceEvent,
   StorageServiceEventEnum
 } from '@igo2/core';
-import { FeatureWorkspace } from '@igo2/geo';
+import { FeatureWorkspace, InteractiveSelectionFormWidget } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -36,6 +36,8 @@ export class FeatureActionsService implements OnDestroy {
   }
 
   constructor(
+    @Inject(InteractiveSelectionFormWidget)
+    private interactiveSelectionFormWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private toolState: ToolState,
@@ -95,7 +97,8 @@ export class FeatureActionsService implements OnDestroy {
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.datePipe
+      this.datePipe,
+      this.interactiveSelectionFormWidget
     );
   }
 }

@@ -11,6 +11,9 @@
     "ts-cacheable",
     "ts-md5",
     "@turf/helpers",
+    "@turf/boolean-intersects",
+    "@turf/buffer",
+    "@turf/intersect",
     "@turf/line-intersect",
     "@turf/point-on-feature"
   ],

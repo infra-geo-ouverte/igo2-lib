@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { IgoFormModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
-import { IgoFilterModule } from '../../../filter/filter.module';
-import { OgcFilterComponent } from './ogc-filter.component';
+import { InteractiveSelectionFormComponent } from './interactive-selection.component';
 
 /**
  * @ignore
@@ -17,9 +17,9 @@ import { OgcFilterComponent } from './ogc-filter.component';
     MatButtonModule,
     MatIconModule,
     IgoLanguageModule,
-    IgoFilterModule
+    IgoFormModule
   ],
-  exports: [OgcFilterComponent],
-  declarations: [OgcFilterComponent]
+  exports: [InteractiveSelectionFormComponent],
+  declarations: [InteractiveSelectionFormComponent]
 })
-export class IgoOgcFilterModule {}
+export class IgoInteractiveSelectionFormModule {}

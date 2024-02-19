@@ -85,7 +85,9 @@
         "maximize": "Extend",
         "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
-        "standardExtentTooltip": "Reduce panel"
+        "standardExtentTooltip": "Reduce panel",
+        "interactiveSelection.title": "Select features by geometry",
+        "interactiveSelection.tooltip": "Select features by geometry"
       },
       "directions": {
         "warning": {

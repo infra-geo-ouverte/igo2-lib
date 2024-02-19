@@ -6,8 +6,12 @@ import { IgoWidgetModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { IgoConfirmationPopupModule } from './confirmation-popup/confirmation-popup.module';
+import { IgoInteractiveSelectionFormModule } from './widgets/interactive-selection/interactive-selection.module';
 import { IgoOgcFilterModule } from './widgets/ogc-filter/ogc-filter.module';
-import { provideOgcFilterWidget } from './widgets/widgets';
+import {
+  provideInteractiveSelectionFormWidget,
+  provideOgcFilterWidget
+} from './widgets/widgets';
 import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selector.module';
 import { IgoWorkspaceUpdatorModule } from './workspace-updator/workspace-updator.module';
 
@@ -19,6 +23,7 @@ import { IgoWorkspaceUpdatorModule } from './workspace-updator/workspace-updator
     IgoWorkspaceSelectorModule,
     IgoWorkspaceUpdatorModule,
     IgoOgcFilterModule,
+    IgoInteractiveSelectionFormModule,
     MatDialogModule
   ],
   exports: [
@@ -28,6 +33,6 @@ import { IgoWorkspaceUpdatorModule } from './workspace-updator/workspace-updator
     IgoConfirmationPopupModule
   ],
   declarations: [],
-  providers: [provideOgcFilterWidget()]
+  providers: [provideOgcFilterWidget(), provideInteractiveSelectionFormWidget()]
 })
 export class IgoGeoWorkspaceModule {}
