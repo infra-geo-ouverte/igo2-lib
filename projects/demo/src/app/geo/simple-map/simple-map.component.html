@@ -12,7 +12,7 @@
       (pointerPositionCoord)="onPointerMove($event)"
     >
       <igo-info-section
-        [infoContent]="pointerCoord.toString()"
+        [infoContent]="pointerCoord?.toString()"
       ></igo-info-section>
       <div class="map-actions --vertical --top --right">
         <div class="spinner-spacer"></div>
