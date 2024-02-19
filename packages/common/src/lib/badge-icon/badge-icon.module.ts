@@ -1,13 +1,13 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatIconModule } from '@angular/material/icon';
 
 import { IgoBadgeIconDirective } from './badge-icon.directive';
 
+/**
+ * @deprecated import the IgoBadgeIconDirective directly
+ */
 @NgModule({
-  imports: [MatBadgeModule, MatIconModule],
-  declarations: [IgoBadgeIconDirective],
-  exports: [MatBadgeModule, IgoBadgeIconDirective]
+  imports: [IgoBadgeIconDirective],
+  exports: [IgoBadgeIconDirective]
 })
 export class IgoMatBadgeIconModule {
   static forRoot(): ModuleWithProviders<IgoMatBadgeIconModule> {

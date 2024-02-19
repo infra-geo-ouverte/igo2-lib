@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,6 +9,9 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -16,11 +20,24 @@ import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
 
+export interface EntitySelectorChange<T = any> {
+  selected: boolean;
+  value: T;
+}
 @Component({
   selector: 'igo-entity-selector',
   templateUrl: './entity-selector.component.html',
   styleUrls: ['./entity-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    NgIf,
+    MatOptionModule,
+    NgFor,
+    AsyncPipe
+  ]
 })
 export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
@@ -92,10 +109,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the selection changes
    */
-  @Output() selectedChange = new EventEmitter<{
-    selected: boolean;
-    value: object | object[];
-  }>();
+  @Output() selectedChange = new EventEmitter<EntitySelectorChange>();
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

@@ -594,8 +594,8 @@ export class OgcFilterWriter {
     const srsName = igoOgcFilterObject.hasOwnProperty('srsName')
       ? igoOgcFilterObject.srsName
       : proj
-      ? proj.getCode()
-      : 'EPSG:3857';
+        ? proj.getCode()
+        : 'EPSG:3857';
 
     return Object.assign(
       {},

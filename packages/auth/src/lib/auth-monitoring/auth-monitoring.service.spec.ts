@@ -4,9 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import {
   AnyMonitoringOptions,
   ConfigService,
-  IgoLanguageModule,
   MONITORING_OPTIONS,
-  MessageService
+  MessageService,
+  provideMockRootTranslation
 } from '@igo2/core';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -20,11 +20,16 @@ const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
   TestBed.configureTestingModule({
-    imports: [HttpClientModule, IgoAuthModule, IgoLanguageModule, ToastrModule],
+    imports: [
+      HttpClientModule,
+      provideMockRootTranslation(),
+      IgoAuthModule,
+      ToastrModule
+    ],
     providers: [
       { provide: MONITORING_OPTIONS, useValue: options },
-      { provide: ToastrService, useValue: ToastrService },
-      { provide: MessageService, useValue: MessageService }
+      ToastrService,
+      MessageService
     ]
   });
 

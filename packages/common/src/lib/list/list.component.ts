@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -9,15 +10,19 @@ import {
   OnInit
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
+import { MatListModule } from '@angular/material/list';
 
 import { Subscription } from 'rxjs';
 
+import { ClickoutDirective } from '../clickout/clickout.directive';
 import { ListItemDirective } from './list-item.directive';
 
 @Component({
   selector: 'igo-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
+  standalone: true,
+  imports: [MatListModule, ClickoutDirective, NgClass]
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input()

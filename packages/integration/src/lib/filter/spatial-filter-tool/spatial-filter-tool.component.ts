@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityStore, ToolComponent } from '@igo2/common';
+import { EntityStore, PanelComponent, ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
@@ -16,17 +17,20 @@ import {
   DataSourceService,
   ExportOptions,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
   Layer,
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
+  SpatialFilterItemComponent,
   SpatialFilterItemType,
   SpatialFilterQueryType,
   SpatialFilterService,
   SpatialFilterThematic,
   SpatialFilterType,
+  SpatialFilterTypeComponent,
   VectorLayer,
   createOverlayMarkerStyle,
   featureToOl,
@@ -67,7 +71,16 @@ import {
   selector: 'igo-spatial-filter-tool',
   templateUrl: './spatial-filter-tool.component.html',
   styleUrls: ['./spatial-filter-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    SpatialFilterTypeComponent,
+    SpatialFilterItemComponent,
+    PanelComponent,
+    FeatureDetailsComponent,
+    NgIf,
+    AsyncPipe
+  ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {

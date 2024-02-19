@@ -11,12 +11,11 @@
         placeholder
           ? placeholder
           : (placeholder$ | async)
-          ? (placeholder$.value | translate)
-          : undefined
+            ? (placeholder$.value | translate)
+            : undefined
       "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
-      (touchend)="onKeyup($event)"
     />
     <button
       *ngIf="(empty$ | async) === false"

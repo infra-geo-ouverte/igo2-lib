@@ -20,6 +20,8 @@
     "build": "ng build core --configuration production && npm run clean-exports",
     "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts core",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint core",
+    "lint.fix": "ng lint core --fix",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "test": "ng test core --watch=false",
     "watch": "ng build core --watch && npm run postbuild"
@@ -54,15 +56,15 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^16.2.4",
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/platform-browser": "^16.2.5",
-    "@angular/router": "^16.2.5",
+    "@angular/cdk": "^17.0.3",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/platform-browser": "^17.0.6",
+    "@angular/router": "^17.0.6",
     "@igo2/utils": "*",
-    "@sentry/angular-ivy": "^7.61.0",
+    "@sentry/angular-ivy": "^7.87.0",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^17.0.0",
+    "ngx-toastr": "^18.0.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {

@@ -76,7 +76,7 @@
           ? (selectedField$ | async).alias
           : ('igo.geo.sourceFields.selectField' | translate)
       "
-      (input)="updateFieldsList($event.target.value)"
+      (input)="updateFieldsList($any($event.target).value)"
     />
     <mat-autocomplete
       #autoCompleteField="matAutocomplete"
@@ -181,7 +181,7 @@
           ? currentFilter.expression || ''
           : currentFilter.pattern || ''
       "
-      (input)="updateValuesList($event.target.value)"
+      (input)="updateValuesList($any($event.target).value)"
     />
     <mat-autocomplete
       #autoCompleteValues="matAutocomplete"
@@ -243,7 +243,7 @@
       tooltip-position="above"
       matTooltipShowDelay="500"
       [matTooltip]="currentFilter.igoSNRC ? currentFilter.igoSNRC : ''"
-      (input)="changeSNRC($event.target.value)"
+      (input)="changeSNRC($any($event.target).value)"
     />
     <button
       *ngIf="currentFilter.igoSNRC"
@@ -305,7 +305,7 @@
           ? currentFilter.lowerBoundary
           : currentFilter.begin
       "
-      (input)="updateValuesList($event.target.value, 1)"
+      (input)="updateValuesList($any($event.target).value, 1)"
     />
     <mat-autocomplete
       #autoDualValueOperator1="matAutocomplete"
@@ -357,7 +357,7 @@
           ? currentFilter.upperBoundary
           : currentFilter.end
       "
-      (input)="updateValuesList($event.target.value, 2)"
+      (input)="updateValuesList($any($event.target).value, 2)"
     />
     <mat-autocomplete
       #autoDualValueOperator2="matAutocomplete"
@@ -391,8 +391,8 @@
 
 <igo-ogc-filter-time
   *ngIf="isTemporalOperator()"
-  [(datasource)]="datasource"
-  [(currentFilter)]="currentFilter"
+  [datasource]="datasource"
+  [currentFilter]="currentFilter"
   (changeProperty)="changeProperty($event.value, $event.pos)"
 >
 </igo-ogc-filter-time>

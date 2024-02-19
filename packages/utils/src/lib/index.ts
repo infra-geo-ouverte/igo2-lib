@@ -3,6 +3,7 @@ export * from './cache.utils';
 export * from './clipboard';
 export * from './change';
 export * from './change.interface';
+export * from './datetime.utils';
 export * from './dom.utils';
 export * from './file';
 export * from './object-utils';

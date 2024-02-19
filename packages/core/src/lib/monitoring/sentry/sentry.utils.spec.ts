@@ -1,6 +1,6 @@
-import { isTracingEnabled } from './sentry.utils';
-import { SentryMonitoringOptions } from './sentry.interface';
 import { MOCK_SENTRY_OPTIONS } from '../__mocks__/monitoring-mock';
+import { SentryMonitoringOptions } from './sentry.interface';
+import { isTracingEnabled } from './sentry.utils';
 
 const getOptions = (
   options?: Partial<SentryMonitoringOptions>

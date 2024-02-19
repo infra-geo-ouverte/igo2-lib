@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,9 +6,13 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import type { Layer } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
 import { WorkspaceState } from '../workspace.state';
@@ -16,7 +21,16 @@ import { WorkspaceState } from '../workspace.state';
   selector: 'igo-workspace-button',
   templateUrl: './workspace-button.component.html',
   styleUrls: ['./workspace-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);

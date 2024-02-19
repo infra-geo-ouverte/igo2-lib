@@ -27,7 +27,8 @@ import { ImportExportServiceOptions } from './import.interface';
 import { ImportService } from './import.service';
 
 @Directive({
-  selector: '[igoDropGeoFile]'
+  selector: '[igoDropGeoFile]',
+  standalone: true
 })
 export class DropGeoFileDirective
   extends DragAndDropDirective

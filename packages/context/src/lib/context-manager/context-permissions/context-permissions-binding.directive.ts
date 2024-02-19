@@ -20,7 +20,8 @@ import { ContextService } from '../shared/context.service';
 import { ContextPermissionsComponent } from './context-permissions.component';
 
 @Directive({
-  selector: '[igoContextPermissionsBinding]'
+  selector: '[igoContextPermissionsBinding]',
+  standalone: true
 })
 export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
   private component: ContextPermissionsComponent;

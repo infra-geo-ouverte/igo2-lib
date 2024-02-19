@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +9,7 @@ import {
 } from '@angular/core';
 
 import { DynamicComponent } from '../../dynamic-component';
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
 import { WidgetComponent } from '../shared/widget.interfaces';
 
 /**
@@ -19,7 +21,9 @@ import { WidgetComponent } from '../shared/widget.interfaces';
   selector: 'igo-widget-outlet',
   templateUrl: './widget-outlet.component.html',
   styleUrls: ['./widget-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {
   /**

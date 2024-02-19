@@ -19,7 +19,8 @@ import { DynamicComponentService } from '../shared/dynamic-component.service';
   selector: 'igo-dynamic-outlet',
   templateUrl: 'dynamic-outlet.component.html',
   styleUrls: ['dynamic-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**

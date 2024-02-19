@@ -8,7 +8,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
 @Pipe({
-  name: 'secureImage'
+  name: 'secureImage',
+  standalone: true
 })
 export class SecureImagePipe implements PipeTransform {
   constructor(

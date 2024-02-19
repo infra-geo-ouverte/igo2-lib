@@ -15,7 +15,8 @@ import { AuthService } from '../shared/auth.service';
   selector: 'igo-auth-google',
   templateUrl: './auth-google.component.html',
   styleUrls: ['./auth-google.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AuthGoogleComponent {
   private options?: AuthGoogleOptions;

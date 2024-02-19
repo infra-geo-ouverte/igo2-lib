@@ -1,7 +1,12 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ConfigService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
@@ -9,7 +14,16 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-geolocate-button',
   templateUrl: './geolocate-button.component.html',
-  styleUrls: ['./geolocate-button.component.scss']
+  styleUrls: ['./geolocate-button.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;

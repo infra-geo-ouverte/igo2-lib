@@ -1,12 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selector.module';
-import { IgoWorkspaceWidgetOutletModule } from './workspace-widget-outlet/workspace-widget-outlet.module';
+import { WORKSPACE_DIRECTIVES } from '.';
 
+/**
+ * @deprecated import the components directly or WORKSPACE_DIRECTIVES for every components/directives
+ */
 @NgModule({
-  imports: [CommonModule],
-  exports: [IgoWorkspaceSelectorModule, IgoWorkspaceWidgetOutletModule],
+  imports: [...WORKSPACE_DIRECTIVES],
+  exports: [...WORKSPACE_DIRECTIVES],
   declarations: []
 })
 export class IgoWorkspaceModule {}

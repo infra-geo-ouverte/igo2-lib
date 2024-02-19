@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,11 +8,21 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 import { EntityStore } from '@igo2/common';
 import { MessageService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -28,7 +39,20 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   selector: 'igo-spatial-filter-list',
   templateUrl: './spatial-filter-list.component.html',
   styleUrls: ['./spatial-filter-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    MatSelectModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
   @Input()

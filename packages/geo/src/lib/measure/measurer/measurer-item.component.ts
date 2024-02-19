@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +7,12 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
@@ -18,6 +24,7 @@ import {
   computeBestAreaUnit,
   computeBestLengthUnit
 } from '../shared/measure.utils';
+import { MeasureFormatPipe } from './measure-format.pipe';
 
 /**
  * Measurer item
@@ -26,7 +33,18 @@ import {
   selector: 'igo-measurer-item',
   templateUrl: './measurer-item.component.html',
   styleUrls: ['./measurer-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    AsyncPipe,
+    TranslateModule,
+    MeasureFormatPipe
+  ]
 })
 export class MeasurerItemComponent implements OnDestroy {
   /**

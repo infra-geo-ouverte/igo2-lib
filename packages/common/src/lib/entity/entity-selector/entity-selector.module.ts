@@ -1,16 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
 
 import { EntitySelectorComponent } from './entity-selector.component';
 
 /**
- * @ignore
+ * @deprecated import the EntitySelectorComponent directly
  */
 @NgModule({
-  imports: [CommonModule, FormsModule, MatSelectModule],
-  exports: [EntitySelectorComponent],
-  declarations: [EntitySelectorComponent]
+  imports: [EntitySelectorComponent],
+  exports: [EntitySelectorComponent]
 })
 export class IgoEntitySelectorModule {}

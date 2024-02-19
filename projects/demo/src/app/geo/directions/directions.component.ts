@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
+  IgoDirectionsModule,
   IgoMap,
+  IgoSearchModule,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapService,
   MapViewOptions,
   RoutesFeatureStore,
@@ -15,10 +19,22 @@ import {
 
 import { Subject } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-directions',
   templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss']
+  styleUrls: ['./directions.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    IgoDirectionsModule,
+    IgoSearchModule
+  ]
 })
 export class AppDirectionsComponent {
   public map: IgoMap = new IgoMap({

@@ -1,3 +1,4 @@
+import { KeyValuePipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
@@ -8,14 +9,31 @@ import {
   Output
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup
 } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
+import {
+  CollapsibleComponent,
+  ListComponent,
+  StopPropagationDirective
+} from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { TypePermission } from '../shared/context.enum';
@@ -29,7 +47,28 @@ import {
 @Component({
   selector: 'igo-context-permissions',
   templateUrl: './context-permissions.component.html',
-  styleUrls: ['./context-permissions.component.scss']
+  styleUrls: ['./context-permissions.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgFor,
+    MatOptionModule,
+    MatButtonModule,
+    ListComponent,
+    CollapsibleComponent,
+    MatListModule,
+    MatIconModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    KeyValuePipe,
+    TranslateModule
+  ]
 })
 export class ContextPermissionsComponent implements OnInit {
   public form: UntypedFormGroup;

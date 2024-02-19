@@ -1,5 +1,7 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
 import { getDefaultErrorMessages } from '../shared';
 import { FormFieldService } from '../shared/form-field.service';
 import {
@@ -17,7 +19,9 @@ import {
   selector: 'igo-form-field',
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, DynamicOutletComponent]
 })
 export class FormFieldComponent {
   /**

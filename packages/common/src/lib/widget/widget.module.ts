@@ -1,11 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { WidgetService } from './shared/widget.service';
 import { IgoWidgetOutletModule } from './widget-outlet/widget-outlet.module';
 
+/**
+ * @deprecated import the WidgetOutletComponent directly
+ */
 @NgModule({
-  imports: [CommonModule, IgoWidgetOutletModule],
+  imports: [IgoWidgetOutletModule],
   exports: [IgoWidgetOutletModule],
   declarations: [],
   providers: [WidgetService]

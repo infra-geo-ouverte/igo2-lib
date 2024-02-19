@@ -19,6 +19,8 @@
     "build": "ng build common --configuration production && npm run clean-exports",
     "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts common",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint common",
+    "lint.fix": "ng lint common --fix",
     "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
     "test": "ng test common --watch=false",
     "watch": "ng build common --watch"
@@ -41,14 +43,14 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/material": "^16.2.4",
-    "@angular/platform-browser": "^16.2.5",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/material": "^17.0.3",
+    "@angular/platform-browser": "^17.0.6",
     "@floating-ui/utils": "^0.1.4",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "angular-shepherd": "16.0.0",
+    "angular-shepherd": "17.0.0",
     "ngx-color": "^9.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "tinycolor2": "^1.6.0",

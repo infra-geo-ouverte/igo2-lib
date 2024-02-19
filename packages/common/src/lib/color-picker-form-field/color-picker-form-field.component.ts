@@ -1,3 +1,4 @@
+import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
 import {
   Component,
   EventEmitter,
@@ -6,8 +7,13 @@ import {
   forwardRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { ColorEvent } from 'ngx-color';
+import { ColorChromeModule } from 'ngx-color/chrome';
 import tinycolor, { ColorInput } from 'tinycolor2';
 
 type ColorFormat = 'hex' | 'rgba' | 'hsla';
@@ -22,6 +28,16 @@ type ColorFormat = 'hex' | 'rgba' | 'hsla';
       useExisting: forwardRef(() => ColorPickerFormFieldComponent),
       multi: true
     }
+  ],
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    CdkOverlayOrigin,
+    MatInputModule,
+    CdkConnectedOverlay,
+    ColorChromeModule,
+    MatButtonModule,
+    TranslateModule
   ]
 })
 export class ColorPickerFormFieldComponent implements ControlValueAccessor {

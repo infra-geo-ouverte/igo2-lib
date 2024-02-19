@@ -81,7 +81,7 @@
           : 'igo.geo.measure.length'
         ) | translate
       "
-      (measureUnitChange)="onLengthUnitChange($event)"
+      (measureUnitChange)="onLengthUnitChange($any($event))"
     >
     </igo-measurer-item>
 
@@ -92,7 +92,7 @@
       [measure]="measure.area"
       [auto]="measureUnitsAuto"
       [placeholder]="'igo.geo.measure.area' | translate"
-      (measureUnitChange)="onAreaUnitChange($event)"
+      (measureUnitChange)="onAreaUnitChange($any($event))"
     >
     </igo-measurer-item>
   </ng-container>

@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -6,11 +7,17 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
+import { CustomHtmlComponent } from '@igo2/common';
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, combineLatest } from 'rxjs';
 
 import { ShareMapService } from '../shared/share-map.service';
@@ -18,7 +25,17 @@ import { ShareMapService } from '../shared/share-map.service';
 @Component({
   selector: 'igo-share-map-url',
   templateUrl: './share-map-url.component.html',
-  styleUrls: ['./share-map-url.component.scss']
+  styleUrls: ['./share-map-url.component.scss'],
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
+    CustomHtmlComponent,
+    TranslateModule
+  ]
 })
 export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   private mapState$$: Subscription;

@@ -1,13 +1,13 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 
 import { CollapseDirective } from './collapse.directive';
 import { CollapsibleComponent } from './collapsible.component';
 
+/**
+ * @deprecated import the components/directives directly or COLLAPSIBLE_DIRECTIVES for the set
+ */
 @NgModule({
-  imports: [MatIconModule, MatListModule],
-  declarations: [CollapsibleComponent, CollapseDirective],
+  imports: [CollapsibleComponent, CollapseDirective],
   exports: [CollapsibleComponent, CollapseDirective]
 })
 export class IgoCollapsibleModule {
