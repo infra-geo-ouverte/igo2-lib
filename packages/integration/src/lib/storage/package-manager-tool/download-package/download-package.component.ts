@@ -82,7 +82,7 @@ export class DownloadPackageComponent implements OnInit {
     this.nonDownloaded$.subscribe((packages) => {
       const transformed = packages.map((avail) => {
         const { size, ...other } = avail;
-        const sizeInMB = (size / (1024 * 1024)).toFixed(1);
+        const sizeInMB = (size / (1000 * 1000)).toFixed(1);
         return {
           ...other,
           size: sizeInMB

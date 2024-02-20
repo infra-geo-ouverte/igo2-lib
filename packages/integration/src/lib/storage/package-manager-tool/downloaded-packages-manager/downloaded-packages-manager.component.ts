@@ -95,7 +95,7 @@ export class DownloadedPackagesManagerComponent implements OnInit {
 
   private formatPackage(downloaded: DevicePackageInfo) {
     const { size, expiration, ...other } = downloaded;
-    const sizeInMB = (size / (1024 * 1024)).toFixed(1);
+    const sizeInMB = (size / (1000 * 1000)).toFixed(1);
     const formatedExp = this.datePipe.transform(expiration, 'dd-MM-YYYY');
     return {
       ...other,
