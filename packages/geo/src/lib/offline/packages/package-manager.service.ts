@@ -11,6 +11,10 @@ import {
   DownloadedPackage,
   PackageInfo
 } from './package-info.interface';
+import {
+  PackageManagerAction,
+  PackageManagerActionType
+} from './package-manager-action.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +50,18 @@ export class PackageManagerService {
     return this.nonDownloadedPackagesSub.value;
   }
 
+  private actionSub = new BehaviorSubject<PackageManagerAction | undefined>(
+    undefined
+  );
+
+  get action$(): Observable<PackageManagerAction | undefined> {
+    return this.actionSub;
+  }
+
+  get action(): PackageManagerAction | undefined {
+    return this.actionSub.value;
+  }
+
   constructor(
     private http: HttpClient,
     private packageStore: PackageStoreService
@@ -76,6 +92,30 @@ export class PackageManagerService {
     });
   }
 
+  private unpackPackage(data: ArrayBuffer, info: PackageInfo) {
+    const blob = new Blob([data], { type: 'application/zip' });
+    console.log('new blob with size', blob.size);
+
+    this.actionSub.next({
+      type: PackageManagerActionType.INSTALLING,
+      package: info,
+      progress: 0
+    });
+
+    this.packageStore.unpackPackage(blob).subscribe((progress) => {
+      if (progress === 1) {
+        this.actionSub.next(undefined);
+        return;
+      }
+
+      this.actionSub.next({
+        type: PackageManagerActionType.INSTALLING,
+        package: info,
+        progress
+      });
+    });
+  }
+
   actualizePackages() {
     this.http
       .get<PackageInfo[]>('assets/packages/tile-packages.json')
@@ -90,11 +130,20 @@ export class PackageManagerService {
   }
 
   downloadPackage(title: string) {
+    if (!!this.action) {
+      throw Error('PackageManager already doing an action');
+    }
+
     const packageInfo = this.packages.find((p) => p.title === title);
     if (!packageInfo) {
       this.actualizePackages();
       return;
     }
+
+    this.actionSub.next({
+      type: PackageManagerActionType.DOWNLOADING,
+      package: packageInfo
+    });
 
     this.packageStore.updatePackageStatus(
       packageInfo,
@@ -107,9 +156,7 @@ export class PackageManagerService {
       })
       .subscribe({
         next: (data) => {
-          const blob = new Blob([data], { type: 'application/zip' });
-          console.log('new blob with size', blob.size);
-          this.packageStore.unpackPackage(blob);
+          this.unpackPackage(data, packageInfo);
         },
         error: () => {
           // TODO better error handling
@@ -119,7 +166,18 @@ export class PackageManagerService {
   }
 
   deletePackage(downloadedPackage: DownloadedPackage) {
-    this.packageStore.deletePackage(downloadedPackage);
+    if (!!this.action) {
+      throw Error('PackageManager already doing an action');
+    }
+
+    this.actionSub.next({
+      type: PackageManagerActionType.DELETING,
+      package: downloadedPackage
+    });
+
+    this.packageStore.deletePackage(downloadedPackage).subscribe(() => {
+      this.actionSub.next(undefined);
+    });
   }
 
   isPackageExists(packageTitle: string) {

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import { GeoDBService, InsertSourceInsertDBEnum } from '@igo2/geo';
 
-import { Package } from '@sentry/types';
 import JSZip from 'jszip';
 import {
   BehaviorSubject,
@@ -107,8 +106,8 @@ export class PackageStoreService {
     );
   }
 
-  unpackPackage(packageZip: Blob): Observable<void> {
-    const done$ = new Subject<void>();
+  unpackPackage(packageZip: Blob): Observable<number> {
+    const progress$ = new Subject<number>();
 
     const zip$ = from(JSZip.loadAsync(packageZip));
     zip$.subscribe(async (zip) => {
@@ -144,18 +143,19 @@ export class PackageStoreService {
         await Promise.all(activeLoading);
 
         activeLoading = [];
-        console.log('unpacked', i / files.length);
+        const progress = i / files.length;
+        progress$.next(progress);
       }
 
       console.log('package install done');
 
       this.updatePackageStatus(metadata, DevicePackageStatus.INSTALLED);
 
-      done$.next();
-      done$.complete();
+      progress$.next(1.0);
+      progress$.complete();
     });
 
-    return done$;
+    return progress$;
   }
 
   deletePackage(packageInfo: PackageInfo): Observable<void> {
