@@ -68,18 +68,18 @@ export class DownloadPackageComponent implements OnInit {
     this.entitySortChange$.next(true);
   }
 
-  get packages() {
-    return this.packageManagerService.packages;
+  get nonDownloaded() {
+    return this.packageManagerService.nonDownloaded;
   }
 
-  get packages$() {
-    return this.packageManagerService.packages$;
+  get nonDownloaded$() {
+    return this.packageManagerService.nonDownloaded$;
   }
 
   constructor(private packageManagerService: PackageManagerService) {}
 
   ngOnInit(): void {
-    this.packages$.subscribe((packages) => {
+    this.nonDownloaded$.subscribe((packages) => {
       const transformed = packages.map((avail) => {
         const { size, ...other } = avail;
         const sizeInMB = (size / (1024 * 1024)).toFixed(1);

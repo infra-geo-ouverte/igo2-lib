@@ -31,11 +31,44 @@ export class PackageManagerService {
     return this.packageStore.downloaded$;
   }
 
+  private nonDownloadedPackagesSub = new BehaviorSubject<PackageInfo[]>([]);
+
+  get nonDownloaded$(): Observable<PackageInfo[]> {
+    return this.nonDownloadedPackagesSub;
+  }
+
+  get nonDownloaded(): PackageInfo[] {
+    return this.nonDownloadedPackagesSub.value;
+  }
+
   constructor(
     private http: HttpClient,
     private packageStore: PackageStoreService
   ) {
     this.actualizePackages();
+    this.initFilterDownloadedPackages();
+  }
+
+  private initFilterDownloadedPackages() {
+    const filterPackages = (
+      downloaded: DownloadedPackage[],
+      packages: PackageInfo[]
+    ) => {
+      const nonDownloaded = packages.filter(
+        (p) => !downloaded.find((d) => d.id === p.id)
+      );
+      this.nonDownloadedPackagesSub.next(nonDownloaded);
+    };
+
+    this.downloaded$.subscribe((downloaded) => {
+      const packages = this.packages;
+      filterPackages(downloaded, packages);
+    });
+
+    this.packages$.subscribe((packages) => {
+      const downloaded = this.downloaded;
+      filterPackages(downloaded, packages);
+    });
   }
 
   actualizePackages() {
