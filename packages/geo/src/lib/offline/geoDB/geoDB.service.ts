@@ -171,14 +171,17 @@ export class GeoDBService {
       IDBKey
     );
     dbRequest.subscribe((datas: GeoDBData[]) => {
+      if (!datas.length) {
+        done$.next();
+        done$.complete();
+        return;
+      }
+
       forkJoin(
         datas.map((data) => {
           return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
         })
-      ).subscribe(() => {
-        done$.next();
-        done$.complete();
-      });
+      ).subscribe(() => {});
     });
     return done$;
   }
