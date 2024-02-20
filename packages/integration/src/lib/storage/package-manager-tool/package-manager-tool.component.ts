@@ -49,10 +49,6 @@ export class PackageManagerToolComponent implements OnInit {
       return;
     }
 
-    const downloaded = {
-      ...this.selectedPackage,
-      totalFiles: 10
-    };
-    this.packageManagerService.deletePackage(downloaded);
+    this.packageManagerService.deletePackage(this.selectedPackage);
   }
 }

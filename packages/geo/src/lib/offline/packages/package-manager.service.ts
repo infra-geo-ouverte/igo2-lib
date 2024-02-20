@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import {
   DevicePackageInfo,
+  DevicePackageStatus,
   DownloadedPackage,
   PackageInfo
 } from './package-info.interface';
@@ -89,11 +90,16 @@ export class PackageManagerService {
   }
 
   downloadPackage(title: string) {
-    const isExistant = this.isPackageExists(title);
-    if (!isExistant) {
+    const packageInfo = this.packages.find((p) => p.title === title);
+    if (!packageInfo) {
       this.actualizePackages();
       return;
     }
+
+    this.packageStore.updatePackageStatus(
+      packageInfo,
+      DevicePackageStatus.DOWNLOADING
+    );
 
     this.http
       .get(`assets/packages/${title}.zip`, {
@@ -113,10 +119,14 @@ export class PackageManagerService {
   }
 
   deletePackage(downloadedPackage: DownloadedPackage) {
-    this.packageStore.deletePackage(downloadedPackage.title);
+    this.packageStore.deletePackage(downloadedPackage);
   }
 
   isPackageExists(packageTitle: string) {
     return this.packages.findIndex((p) => p.title === packageTitle) !== -1;
+  }
+
+  updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
+    this.packageStore.updatePackageStatus(info, status);
   }
 }

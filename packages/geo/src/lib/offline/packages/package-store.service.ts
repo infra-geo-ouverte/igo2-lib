@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { GeoDBService, InsertSourceInsertDBEnum } from '@igo2/geo';
 
+import { Package } from '@sentry/types';
 import JSZip from 'jszip';
 import {
   BehaviorSubject,
@@ -13,11 +14,12 @@ import {
 
 import {
   DevicePackageInfo,
-  DownloadedPackage,
+  DevicePackageStatus,
+  DownloadingPackage,
   FileMetadata,
+  PackageInfo,
   PackageMetadata
 } from './package-info.interface';
-import { packageMetadataToDownloadedPackage } from './package-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -38,15 +40,15 @@ export class PackageStoreService {
   }
 
   constructor(private geoDb: GeoDBService) {
-    this.actualizedDownloadedPackages();
+    this.actualizedDevicePackages();
   }
 
-  private actualizedDownloadedPackages() {
-    const downloaded: DownloadedPackage[] = this.getDevicePackages();
-    this.devicePackagesSub.next(downloaded);
+  private actualizedDevicePackages() {
+    const devicePackages: DevicePackageInfo[] = this.getDevicePackages();
+    this.devicePackagesSub.next(devicePackages);
   }
 
-  private getDevicePackages(): DownloadedPackage[] {
+  private getDevicePackages(): DevicePackageInfo[] {
     return (
       JSON.parse(
         localStorage.getItem(this.DOWNLOADED_PACKAGE_METADATA_STORE)
@@ -54,35 +56,33 @@ export class PackageStoreService {
     );
   }
 
-  private setDownloadedPackages(downloaded: DownloadedPackage[]) {
+  private setDevicePackages(downloaded: DevicePackageInfo[]) {
     localStorage.setItem(
       this.DOWNLOADED_PACKAGE_METADATA_STORE,
       JSON.stringify(downloaded)
     );
   }
 
-  private addDownloadedPackage(metadata: PackageMetadata) {
-    const downloaded: DownloadedPackage[] = this.getDevicePackages();
+  private addDevicePackage(devicePackage: DevicePackageInfo) {
+    const devicePackages: DevicePackageInfo[] = this.getDevicePackages();
+    devicePackages.push(devicePackage);
 
-    const downloadedPackage = packageMetadataToDownloadedPackage(metadata);
-    downloaded.push(downloadedPackage);
-
-    this.setDownloadedPackages(downloaded);
-
-    this.actualizedDownloadedPackages();
+    this.setDevicePackages(devicePackages);
+    this.actualizedDevicePackages();
   }
 
-  private removeDownloadedPackage(packageTitle: string) {
-    const downloaded: DownloadedPackage[] = this.getDevicePackages();
-    const index = downloaded.findIndex(({ title }) => {
+  private removeDevicePackage(packageTitle: string) {
+    const devicePackages: DevicePackageInfo[] = this.getDevicePackages();
+    const index = devicePackages.findIndex(({ title }) => {
       title === packageTitle;
     });
 
-    downloaded.splice(index, 1);
+    devicePackages.splice(index, 1);
 
-    console.log('downloaded packages', downloaded);
+    console.log('downloaded packages', devicePackages);
 
-    this.setDownloadedPackages(downloaded);
+    this.setDevicePackages(devicePackages);
+    this.actualizedDevicePackages();
   }
 
   private loadTileIntoGeoDB(tile: Blob, url: string, packageTitle: string) {
@@ -104,7 +104,10 @@ export class PackageStoreService {
       const metadata: PackageMetadata = JSON.parse(
         await zip.file('metadata.json').async('string')
       );
+
       console.log('unpacked metadata', metadata);
+
+      this.updatePackageStatus(metadata, DevicePackageStatus.INSTALLING);
 
       const { title } = metadata;
 
@@ -135,7 +138,7 @@ export class PackageStoreService {
 
       console.log('package install done');
 
-      this.addDownloadedPackage(metadata);
+      this.updatePackageStatus(metadata, DevicePackageStatus.INSTALLED);
 
       done$.next();
       done$.complete();
@@ -144,11 +147,33 @@ export class PackageStoreService {
     return done$;
   }
 
-  deletePackage(packageTitle: string): Observable<void> {
-    console.log('removing package');
-    this.removeDownloadedPackage(packageTitle);
-    const done$ = this.geoDb.deleteByRegionID(packageTitle);
-    done$.subscribe(() => this.actualizedDownloadedPackages());
+  deletePackage(packageInfo: PackageInfo): Observable<void> {
+    this.updatePackageStatus(packageInfo, DevicePackageStatus.DELETING);
+
+    const { title } = packageInfo;
+    const done$ = this.geoDb.deleteByRegionID(title);
+    done$.subscribe(() => {
+      this.removeDevicePackage(title);
+    });
     return done$;
+  }
+
+  updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
+    if (status === DevicePackageStatus.DOWNLOADING) {
+      const newDevicePackage: DownloadingPackage = {
+        ...info,
+        status
+      };
+      this.addDevicePackage(newDevicePackage);
+      return;
+    }
+
+    const { id } = info;
+
+    const devicePackages = this.getDevicePackages();
+    const devicePackage = devicePackages.find((p) => p.id === id);
+    devicePackage.status = status;
+
+    this.setDevicePackages(devicePackages);
   }
 }

@@ -11,19 +11,23 @@ export interface PackageMetadata extends PackageInfo {
 }
 
 export interface DownloadingPackage extends PackageInfo {
-  type: DownloadedPackageStatus.DOWNLOADING;
+  status: DevicePackageStatus.DOWNLOADING;
 }
 
 // TODO add to DownloadedPackage
-export enum DownloadedPackageStatus {
-  IN_QUEUE = 'IN_QUEUE',
+export enum DevicePackageStatus {
+  // IN_QUEUE = 'IN_QUEUE',
   DOWNLOADING = 'DOWNLOADING',
   INSTALLING = 'INSTALLING',
-  INSTALLED = 'INSTALLED'
+  INSTALLED = 'INSTALLED',
+  DELETING = 'DELETING'
 }
 
 export interface DownloadedPackage extends PackageInfo {
-  type: DownloadedPackageStatus.INSTALLING | DownloadedPackageStatus.INSTALLED;
+  status:
+    | DevicePackageStatus.INSTALLING
+    | DevicePackageStatus.INSTALLED
+    | DevicePackageStatus.DELETING;
   totalFiles: number;
 }
 
