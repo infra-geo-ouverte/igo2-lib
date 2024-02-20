@@ -10,6 +10,10 @@ export interface PackageMetadata extends PackageInfo {
   files: FileMetadata[];
 }
 
+export interface DownloadingPackage extends PackageInfo {
+  type: DownloadedPackageStatus.DOWNLOADING;
+}
+
 // TODO add to DownloadedPackage
 export enum DownloadedPackageStatus {
   IN_QUEUE = 'IN_QUEUE',
@@ -19,8 +23,11 @@ export enum DownloadedPackageStatus {
 }
 
 export interface DownloadedPackage extends PackageInfo {
+  type: DownloadedPackageStatus.INSTALLING | DownloadedPackageStatus.INSTALLED;
   totalFiles: number;
 }
+
+export type DevicePackageInfo = DownloadedPackage | DownloadingPackage;
 
 export interface FileMetadata {
   url: string;

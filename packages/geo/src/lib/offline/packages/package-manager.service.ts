@@ -5,7 +5,11 @@ import { PackageStoreService } from '@igo2/geo';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { DownloadedPackage, PackageInfo } from './package-info.interface';
+import {
+  DevicePackageInfo,
+  DownloadedPackage,
+  PackageInfo
+} from './package-info.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +28,11 @@ export class PackageManagerService {
   }
 
   get downloaded() {
-    return this.packageStore.downloaded;
+    return this.packageStore.devicePackages;
   }
 
   get downloaded$() {
-    return this.packageStore.downloaded$;
+    return this.packageStore.devicePackages$;
   }
 
   private nonDownloadedPackagesSub = new BehaviorSubject<PackageInfo[]>([]);
@@ -51,7 +55,7 @@ export class PackageManagerService {
 
   private initFilterDownloadedPackages() {
     const filterPackages = (
-      downloaded: DownloadedPackage[],
+      downloaded: DevicePackageInfo[],
       packages: PackageInfo[]
     ) => {
       const nonDownloaded = packages.filter(

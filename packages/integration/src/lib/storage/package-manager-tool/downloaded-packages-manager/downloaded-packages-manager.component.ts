@@ -10,8 +10,7 @@ import {
   IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
-import { PackageManagerService } from '@igo2/geo';
-import { DownloadedPackage } from '@igo2/geo';
+import { DevicePackageInfo, PackageManagerService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -94,7 +93,7 @@ export class DownloadedPackagesManagerComponent implements OnInit {
     });
   }
 
-  private formatPackage(downloaded: DownloadedPackage) {
+  private formatPackage(downloaded: DevicePackageInfo) {
     const { size, expiration, ...other } = downloaded;
     const sizeInMB = (size / (1024 * 1024)).toFixed(1);
     const formatedExp = this.datePipe.transform(expiration, 'dd-MM-YYYY');

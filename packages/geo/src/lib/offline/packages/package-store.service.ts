@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 
 import {
+  DevicePackageInfo,
   DownloadedPackage,
   FileMetadata,
   PackageMetadata
@@ -26,14 +27,14 @@ export class PackageStoreService {
   private readonly DOWNLOADED_PACKAGE_METADATA_STORE =
     'downloadedPackageMetadata';
 
-  private downloadedPackagesSub = new BehaviorSubject<DownloadedPackage[]>([]);
+  private devicePackagesSub = new BehaviorSubject<DevicePackageInfo[]>([]);
 
-  get downloaded$(): Observable<DownloadedPackage[]> {
-    return this.downloadedPackagesSub;
+  get devicePackages$(): Observable<DevicePackageInfo[]> {
+    return this.devicePackagesSub;
   }
 
-  get downloaded(): DownloadedPackage[] {
-    return this.downloadedPackagesSub.value;
+  get devicePackages(): DevicePackageInfo[] {
+    return this.devicePackagesSub.value;
   }
 
   constructor(private geoDb: GeoDBService) {
@@ -41,11 +42,11 @@ export class PackageStoreService {
   }
 
   private actualizedDownloadedPackages() {
-    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
-    this.downloadedPackagesSub.next(downloaded);
+    const downloaded: DownloadedPackage[] = this.getDevicePackages();
+    this.devicePackagesSub.next(downloaded);
   }
 
-  private getDownloadedPackages(): DownloadedPackage[] {
+  private getDevicePackages(): DownloadedPackage[] {
     return (
       JSON.parse(
         localStorage.getItem(this.DOWNLOADED_PACKAGE_METADATA_STORE)
@@ -61,7 +62,7 @@ export class PackageStoreService {
   }
 
   private addDownloadedPackage(metadata: PackageMetadata) {
-    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
+    const downloaded: DownloadedPackage[] = this.getDevicePackages();
 
     const downloadedPackage = packageMetadataToDownloadedPackage(metadata);
     downloaded.push(downloadedPackage);
@@ -72,7 +73,7 @@ export class PackageStoreService {
   }
 
   private removeDownloadedPackage(packageTitle: string) {
-    const downloaded: DownloadedPackage[] = this.getDownloadedPackages();
+    const downloaded: DownloadedPackage[] = this.getDevicePackages();
     const index = downloaded.findIndex(({ title }) => {
       title === packageTitle;
     });
