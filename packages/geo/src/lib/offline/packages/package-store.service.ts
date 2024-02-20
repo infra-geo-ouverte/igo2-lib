@@ -125,17 +125,19 @@ export class PackageStoreService {
 
       const { files } = metadata;
 
+      let nDone = 0;
       const loadFileIntoDB = async (file: FileMetadata) => {
         const fileData = await data.file(file.fileName).async('blob');
         await firstValueFrom(this.loadTileIntoGeoDB(fileData, file.url, title));
+        ++nDone;
+        const progress = nDone / files.length;
+        progress$.next(progress);
       };
 
       let activeLoading = [];
-      let i = 0;
       for (const file of files) {
         const done = loadFileIntoDB(file);
         activeLoading.push(done);
-        i++;
         if (activeLoading.length <= this.MAX_WORKERS) {
           continue;
         }
@@ -143,8 +145,6 @@ export class PackageStoreService {
         await Promise.all(activeLoading);
 
         activeLoading = [];
-        const progress = i / files.length;
-        progress$.next(progress);
       }
 
       console.log('package install done');
