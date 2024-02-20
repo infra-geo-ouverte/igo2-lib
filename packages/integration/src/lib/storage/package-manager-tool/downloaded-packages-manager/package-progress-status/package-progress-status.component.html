@@ -3,5 +3,8 @@
     <b class="action-title">{{ getActionTitle(action) }}</b>
     <small class="package-title">{{ action?.package.title }}</small>
   </div>
-  <mat-progress-bar></mat-progress-bar>
+  <mat-progress-bar
+    [mode]="barMode$ | async"
+    [value]="progress$ | async"
+  ></mat-progress-bar>
 </div>
