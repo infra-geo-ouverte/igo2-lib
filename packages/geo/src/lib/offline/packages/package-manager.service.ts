@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { PackageStoreService } from '@igo2/geo';
@@ -92,10 +92,7 @@ export class PackageManagerService {
     });
   }
 
-  private unpackPackage(data: ArrayBuffer, info: PackageInfo) {
-    const blob = new Blob([data], { type: 'application/zip' });
-    console.log('new blob with size', blob.size);
-
+  private unpackPackage(blob: Blob, info: PackageInfo) {
     this.actionSub.next({
       type: PackageManagerActionType.INSTALLING,
       package: info,
@@ -142,7 +139,8 @@ export class PackageManagerService {
 
     this.actionSub.next({
       type: PackageManagerActionType.DOWNLOADING,
-      package: packageInfo
+      package: packageInfo,
+      progress: 0
     });
 
     this.packageStore.updatePackageStatus(
@@ -152,11 +150,30 @@ export class PackageManagerService {
 
     this.http
       .get(`assets/packages/${title}.zip`, {
-        responseType: 'arraybuffer'
+        responseType: 'blob',
+        reportProgress: true,
+        observe: 'events'
       })
       .subscribe({
-        next: (data) => {
-          this.unpackPackage(data, packageInfo);
+        next: (event) => {
+          const { type } = event;
+          if (type === HttpEventType.Response) {
+            this.unpackPackage(event.body, packageInfo);
+            return;
+          }
+
+          if (type !== HttpEventType.DownloadProgress) {
+            return;
+          }
+
+          const progress =
+            event.total === undefined ? undefined : event.loaded / event.total;
+
+          this.actionSub.next({
+            type: PackageManagerActionType.DOWNLOADING,
+            package: packageInfo,
+            progress
+          });
         },
         error: () => {
           // TODO better error handling

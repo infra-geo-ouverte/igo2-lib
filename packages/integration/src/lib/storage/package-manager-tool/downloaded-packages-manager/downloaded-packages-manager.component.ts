@@ -98,10 +98,6 @@ export class DownloadedPackagesManagerComponent implements OnInit {
       this.store.clear();
       this.store.load(transformed);
     });
-
-    this.packageManager.action$.subscribe((action) => {
-      console.log('new action', action);
-    });
   }
 
   private formatPackage(downloaded: DevicePackageInfo) {

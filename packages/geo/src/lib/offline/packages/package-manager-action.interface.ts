@@ -12,6 +12,7 @@ export interface BaseAction {
 
 export interface DownloadAction extends BaseAction {
   type: PackageManagerActionType.DOWNLOADING;
+  progress?: number;
 }
 
 export interface InstallAction extends BaseAction {

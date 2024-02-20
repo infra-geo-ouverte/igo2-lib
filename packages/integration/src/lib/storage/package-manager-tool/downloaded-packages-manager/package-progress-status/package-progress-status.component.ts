@@ -50,9 +50,19 @@ export class PackageProgressStatusComponent {
   get barMode$() {
     return this.action$.pipe(
       map((action) => {
-        return action?.type === PackageManagerActionType.INSTALLING
-          ? 'determinate'
-          : 'indeterminate';
+        if (!action) {
+          return 'indeterminate';
+        }
+        const { type } = action;
+        if (
+          type !== PackageManagerActionType.INSTALLING &&
+          type !== PackageManagerActionType.DOWNLOADING
+        ) {
+          return 'indeterminate';
+        }
+
+        const { progress } = action;
+        return progress === undefined ? 'indeterminate' : 'determinate';
       })
     );
   }
@@ -60,9 +70,19 @@ export class PackageProgressStatusComponent {
   get progress$(): Observable<number> {
     return this.action$.pipe(
       map((action) => {
-        return action?.type === PackageManagerActionType.INSTALLING
-          ? action.progress * 100
-          : 0;
+        if (!action) {
+          return 0;
+        }
+        const { type } = action;
+        if (
+          type !== PackageManagerActionType.INSTALLING &&
+          type !== PackageManagerActionType.DOWNLOADING
+        ) {
+          return 0;
+        }
+
+        const { progress } = action;
+        return progress === undefined ? 0 : progress * 100;
       })
     );
   }
