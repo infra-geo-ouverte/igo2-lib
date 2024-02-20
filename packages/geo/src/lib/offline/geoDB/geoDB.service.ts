@@ -181,7 +181,10 @@ export class GeoDBService {
         datas.map((data) => {
           return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
         })
-      ).subscribe(() => {});
+      ).subscribe(() => {
+        done$.next();
+        done$.complete();
+      });
     });
     return done$;
   }
