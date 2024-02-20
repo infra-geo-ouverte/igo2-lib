@@ -14,10 +14,17 @@ import { DevicePackageInfo, PackageManagerService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { PackageProgressStatusComponent } from './package-progress-status/package-progress-status.component';
+
 @Component({
   selector: 'igo-downloaded-packages-manager',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, IgoEntityTableModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    IgoEntityTableModule,
+    PackageProgressStatusComponent
+  ],
   templateUrl: './downloaded-packages-manager.component.html',
   styleUrls: ['./downloaded-packages-manager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -90,6 +97,10 @@ export class DownloadedPackagesManagerComponent implements OnInit {
       const transformed = downloaded.map((p) => this.formatPackage(p));
       this.store.clear();
       this.store.load(transformed);
+    });
+
+    this.packageManager.action$.subscribe((action) => {
+      console.log('new action', action);
     });
   }
 

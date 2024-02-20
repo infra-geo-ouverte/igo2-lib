@@ -1,0 +1,7 @@
+<div [ngStyle]="{ visibility: (action$ | async) ? 'visible' : 'hidden' }">
+  <div class="text-info">
+    <b class="action-title">{{ getActionTitle(action) }}</b>
+    <small class="package-title">{{ action?.package.title }}</small>
+  </div>
+  <mat-progress-bar></mat-progress-bar>
+</div>
