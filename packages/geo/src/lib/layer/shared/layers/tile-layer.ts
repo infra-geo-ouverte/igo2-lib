@@ -1,6 +1,5 @@
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
-import { GeoNetworkService, ResponseType } from '@igo2/geo';
 
 import Tile from 'ol/Tile';
 import TileState from 'ol/TileState';
@@ -16,6 +15,7 @@ import { TileDebugDataSource } from '../../../datasource/shared/datasources/tile
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
 import { IgoMap } from '../../../map/shared/map';
+import { GeoNetworkService, ResponseType } from '../../../offline';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';

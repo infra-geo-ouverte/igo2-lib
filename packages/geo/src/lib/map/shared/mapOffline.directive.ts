@@ -1,16 +1,14 @@
 import { AfterViewInit, Directive } from '@angular/core';
 
 import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
-import {
-  PackageManagerService,
-  TileLayer,
-  XYZDataSourceOptions
-} from '@igo2/geo';
 
 import { combineLatest } from 'rxjs';
 
+import { XYZDataSourceOptions } from '../../datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { TileLayer } from '../../layer';
 import { Layer } from '../../layer/shared/layers/layer';
+import { PackageManagerService } from '../../offline';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
 import { IgoMap } from './map';
 
