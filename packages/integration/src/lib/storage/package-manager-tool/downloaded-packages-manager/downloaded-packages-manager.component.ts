@@ -10,9 +10,13 @@ import {
   IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
-import { DevicePackageInfo, PackageManagerService } from '@igo2/geo';
+import {
+  DevicePackageInfo,
+  PackageManagerActionType,
+  PackageManagerService
+} from '@igo2/geo';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 
 import { PackageProgressStatusComponent } from './package-progress-status/package-progress-status.component';
 
@@ -90,6 +94,14 @@ export class DownloadedPackagesManagerComponent implements OnInit {
     return this.packageManager.downloaded$;
   }
 
+  get action() {
+    return this.packageManager.action;
+  }
+
+  get action$() {
+    return this.packageManager.action$;
+  }
+
   constructor(private packageManager: PackageManagerService) {}
 
   ngOnInit(): void {
@@ -98,6 +110,15 @@ export class DownloadedPackagesManagerComponent implements OnInit {
       this.store.clear();
       this.store.load(transformed);
     });
+
+    this.action$.subscribe((action) => {
+      this.setSelection(!action);
+    });
+  }
+
+  private setSelection(value: boolean) {
+    this.template.selection = value;
+    this.template.selectionCheckbox = value;
   }
 
   private formatPackage(downloaded: DevicePackageInfo) {
@@ -111,10 +132,28 @@ export class DownloadedPackagesManagerComponent implements OnInit {
     };
   }
 
+  isActionCancelable() {
+    return this.action$.pipe(
+      map((action) => {
+        if (!action) {
+          return false;
+        }
+        return (
+          action.type === PackageManagerActionType.DOWNLOADING ||
+          action.type === PackageManagerActionType.INSTALLING
+        );
+      })
+    );
+  }
+
   deleteSelectedPackage() {
     if (!this.selectedPackage) {
       return;
     }
     this.packageManager.deletePackage(this.selectedPackage);
+  }
+
+  cancelAction() {
+    this.packageManager.cancelAction();
   }
 }

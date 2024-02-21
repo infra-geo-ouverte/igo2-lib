@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { PackageStoreService } from '@igo2/geo';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import {
   DevicePackageInfo,
@@ -24,6 +24,12 @@ export class PackageManagerService {
     []
   );
 
+  private nonDownloadedPackagesSub = new BehaviorSubject<PackageInfo[]>([]);
+  private actionSub = new BehaviorSubject<PackageManagerAction | undefined>(
+    undefined
+  );
+  private download$$: Subscription | undefined;
+
   get packages$(): Observable<PackageInfo[]> {
     return this.packagesSubject;
   }
@@ -40,8 +46,6 @@ export class PackageManagerService {
     return this.packageStore.devicePackages$;
   }
 
-  private nonDownloadedPackagesSub = new BehaviorSubject<PackageInfo[]>([]);
-
   get nonDownloaded$(): Observable<PackageInfo[]> {
     return this.nonDownloadedPackagesSub;
   }
@@ -49,10 +53,6 @@ export class PackageManagerService {
   get nonDownloaded(): PackageInfo[] {
     return this.nonDownloadedPackagesSub.value;
   }
-
-  private actionSub = new BehaviorSubject<PackageManagerAction | undefined>(
-    undefined
-  );
 
   get action$(): Observable<PackageManagerAction | undefined> {
     return this.actionSub;
@@ -148,7 +148,7 @@ export class PackageManagerService {
       DevicePackageStatus.DOWNLOADING
     );
 
-    this.http
+    this.download$$ = this.http
       .get(`assets/packages/${title}.zip`, {
         responseType: 'blob',
         reportProgress: true,
@@ -183,16 +183,20 @@ export class PackageManagerService {
   }
 
   deletePackage(downloadedPackage: DownloadedPackage) {
-    if (!!this.action) {
+    if (this.action) {
       throw Error('PackageManager already doing an action');
     }
 
+    this.internalDeletePackage(downloadedPackage);
+  }
+
+  private internalDeletePackage(info: PackageInfo) {
     this.actionSub.next({
       type: PackageManagerActionType.DELETING,
-      package: downloadedPackage
+      package: info
     });
 
-    this.packageStore.deletePackage(downloadedPackage).subscribe(() => {
+    this.packageStore.deletePackage(info).subscribe(() => {
       this.actionSub.next(undefined);
     });
   }
@@ -203,5 +207,35 @@ export class PackageManagerService {
 
   updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
     this.packageStore.updatePackageStatus(info, status);
+  }
+
+  cancelAction(): void {
+    const action = this.action;
+    if (!action) {
+      throw Error('No action to cancel in package manager.');
+    }
+    const { type, package: info } = action;
+    switch (type) {
+      case PackageManagerActionType.DOWNLOADING:
+        return this.cancelDownload(info);
+      case PackageManagerActionType.INSTALLING:
+        return this.cancelInstallation(info);
+      case PackageManagerActionType.DELETING:
+        throw Error("Package manager can't cancel a deletion");
+      default:
+        throw Error('Wrong action type');
+    }
+  }
+
+  private cancelDownload(info: PackageInfo): void {
+    this.download$$?.unsubscribe();
+    this.download$$ = undefined;
+    this.internalDeletePackage(info);
+  }
+
+  private cancelInstallation(info: PackageInfo): void {
+    this.packageStore.cancelInstallation().subscribe(() => {
+      this.internalDeletePackage(info);
+    });
   }
 }

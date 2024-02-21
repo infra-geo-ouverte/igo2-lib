@@ -29,6 +29,7 @@ export class PackageStoreService {
     'downloadedPackageMetadata';
 
   private devicePackagesSub = new BehaviorSubject<DevicePackageInfo[]>([]);
+  private cancelDone$: Subject<void> | undefined;
 
   get devicePackages$(): Observable<DevicePackageInfo[]> {
     return this.devicePackagesSub;
@@ -36,6 +37,10 @@ export class PackageStoreService {
 
   get devicePackages(): DevicePackageInfo[] {
     return this.devicePackagesSub.value;
+  }
+
+  private get isCancelingInstallation() {
+    return !!this.cancelDone$;
   }
 
   constructor(private geoDb: GeoDBService) {
@@ -136,6 +141,13 @@ export class PackageStoreService {
 
       let activeLoading = [];
       for (const file of files) {
+        if (this.isCancelingInstallation) {
+          this.cancelDone$.next();
+          this.cancelDone$.complete();
+          progress$.complete();
+          return;
+        }
+
         const done = loadFileIntoDB(file);
         activeLoading.push(done);
         if (activeLoading.length <= this.MAX_WORKERS) {
@@ -186,5 +198,10 @@ export class PackageStoreService {
     devicePackage.status = status;
 
     this.setDevicePackages(devicePackages);
+  }
+
+  cancelInstallation() {
+    this.cancelDone$ = new Subject();
+    return this.cancelDone$;
   }
 }

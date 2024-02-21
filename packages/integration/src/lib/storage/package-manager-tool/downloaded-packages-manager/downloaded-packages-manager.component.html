@@ -8,10 +8,21 @@
 ></igo-entity-table>
 
 <button
+  *ngIf="this.isActionCancelable() | async; else deleteBlock"
   mat-raised-button
   color="warn"
-  [disabled]="!selectedPackage"
-  (click)="deleteSelectedPackage()"
+  (click)="cancelAction()"
 >
-  Delete
+  Cancel
 </button>
+<ng-template #deleteBlock>
+  <button
+    #elseBlock
+    mat-raised-button
+    color="warn"
+    [disabled]="!selectedPackage || action"
+    (click)="deleteSelectedPackage()"
+  >
+    Delete
+  </button>
+</ng-template>
