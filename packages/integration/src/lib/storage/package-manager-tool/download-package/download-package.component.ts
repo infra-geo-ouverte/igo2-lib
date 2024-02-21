@@ -99,6 +99,11 @@ export class DownloadPackageComponent implements OnInit {
       this.store.clear();
       this.store.load(transformed);
     });
+
+    this.packageManagerService.action$.subscribe((action) => {
+      const isSelectionToggled = !action;
+      this.setSelection(isSelectionToggled);
+    });
   }
 
   downloadSelectedPackage() {
@@ -108,5 +113,10 @@ export class DownloadPackageComponent implements OnInit {
     }
     this.download.next(this.selectedPackage);
     this.packageManagerService.downloadPackage(this.selectedPackage.title);
+  }
+
+  private setSelection(value: boolean) {
+    this.template.selection = value;
+    this.template.selectionCheckbox = value;
   }
 }
