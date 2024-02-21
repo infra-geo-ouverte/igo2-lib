@@ -1,8 +1,8 @@
 <mat-tab-group [(selectedIndex)]="selectedTab">
-  <mat-tab label="Add Regions"
-    ><igo-download-package></igo-download-package
-  ></mat-tab>
-  <mat-tab label="Manage Regions"
-    ><igo-downloaded-packages-manager></igo-downloaded-packages-manager
-  ></mat-tab>
+  <mat-tab label="Add Regions">
+    <igo-download-package (download)="onDownload()"></igo-download-package>
+  </mat-tab>
+  <mat-tab label="Manage Regions">
+    <igo-downloaded-packages-manager></igo-downloaded-packages-manager>
+  </mat-tab>
 </mat-tab-group>

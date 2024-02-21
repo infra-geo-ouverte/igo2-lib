@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator } from '@angular/material/paginator';
 
@@ -10,7 +16,7 @@ import {
   IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
-import { PackageManagerService } from '@igo2/geo';
+import { PackageInfo, PackageManagerService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -23,6 +29,8 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DownloadPackageComponent implements OnInit {
+  @Output() download = new EventEmitter<PackageInfo>();
+
   public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -98,6 +106,7 @@ export class DownloadPackageComponent implements OnInit {
       console.log('selected package undefined');
       return;
     }
+    this.download.next(this.selectedPackage);
     this.packageManagerService.downloadPackage(this.selectedPackage.title);
   }
 }

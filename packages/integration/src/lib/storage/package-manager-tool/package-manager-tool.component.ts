@@ -51,4 +51,8 @@ export class PackageManagerToolComponent implements OnInit {
 
     this.packageManagerService.deletePackage(this.selectedPackage);
   }
+
+  onDownload() {
+    this.selectedTab = 1;
+  }
 }
