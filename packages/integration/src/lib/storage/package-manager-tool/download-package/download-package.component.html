@@ -1,3 +1,8 @@
+<div class="action-bar">
+  <button mat-icon-button (click)="refreshPackages()">
+    <mat-icon svgIcon="refresh"></mat-icon>
+  </button>
+</div>
 <igo-entity-table
   [store]="store"
   [withPaginator]="true"

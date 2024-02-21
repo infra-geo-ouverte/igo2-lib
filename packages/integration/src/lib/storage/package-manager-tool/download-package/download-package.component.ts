@@ -7,6 +7,7 @@ import {
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
@@ -23,7 +24,7 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'igo-download-package',
   standalone: true,
-  imports: [CommonModule, IgoEntityTableModule, MatButtonModule],
+  imports: [CommonModule, IgoEntityTableModule, MatButtonModule, MatIconModule],
   templateUrl: './download-package.component.html',
   styleUrls: ['./download-package.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -113,6 +114,10 @@ export class DownloadPackageComponent implements OnInit {
     }
     this.download.next(this.selectedPackage);
     this.packageManagerService.downloadPackage(this.selectedPackage.title);
+  }
+
+  refreshPackages() {
+    this.packageManagerService.actualizePackages();
   }
 
   private setSelection(value: boolean) {
