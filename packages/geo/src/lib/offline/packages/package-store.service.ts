@@ -8,7 +8,8 @@ import {
   Observable,
   Subject,
   firstValueFrom,
-  from
+  from,
+  of
 } from 'rxjs';
 
 import {
@@ -58,6 +59,11 @@ export class PackageStoreService {
     });
   }
 
+  private isPackageOnDevice(packageTitle: string) {
+    const packages = this.getDevicePackages();
+    return !!packages.find((p) => packageTitle === p.title);
+  }
+
   private actualizedDevicePackages() {
     const devicePackages: DevicePackageInfo[] = this.getDevicePackages();
     this.devicePackagesSub.next(devicePackages);
@@ -89,8 +95,13 @@ export class PackageStoreService {
   private removeDevicePackage(packageTitle: string) {
     const devicePackages: DevicePackageInfo[] = this.getDevicePackages();
     const index = devicePackages.findIndex(({ title }) => {
-      title === packageTitle;
+      return title === packageTitle;
     });
+
+    if (index === -1) {
+      this.actualizedDevicePackages();
+      return;
+    }
 
     devicePackages.splice(index, 1);
 
@@ -170,6 +181,10 @@ export class PackageStoreService {
   }
 
   deletePackage(packageInfo: PackageInfo): Observable<void> {
+    if (!this.isPackageOnDevice(packageInfo.title)) {
+      return of();
+    }
+
     this.updatePackageStatus(packageInfo, DevicePackageStatus.DELETING);
 
     const { title } = packageInfo;

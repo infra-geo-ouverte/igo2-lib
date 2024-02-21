@@ -127,7 +127,7 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   private setSelection(value: boolean) {
     this.template.selection = value;
     this.template.selectionCheckbox = value;
-    this.entityTable.refresh();
+    this.entityTable?.refresh();
   }
 
   private formatPackage(downloaded: DevicePackageInfo) {
