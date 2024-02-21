@@ -1,8 +1,6 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { PackageStoreService } from '@igo2/geo';
-
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import {
@@ -15,6 +13,7 @@ import {
   PackageManagerAction,
   PackageManagerActionType
 } from './package-manager-action.interface';
+import { PackageStoreService } from './package-store.service';
 
 @Injectable({
   providedIn: 'root'

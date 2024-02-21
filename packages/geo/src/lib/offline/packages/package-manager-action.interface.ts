@@ -1,4 +1,4 @@
-import { PackageInfo } from '@igo2/geo';
+import { PackageInfo } from './package-info.interface';
 
 export enum PackageManagerActionType {
   DOWNLOADING,

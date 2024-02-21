@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { GeoDBService, InsertSourceInsertDBEnum } from '@igo2/geo';
-
 import JSZip from 'jszip';
 import {
   BehaviorSubject,
@@ -12,6 +10,7 @@ import {
   of
 } from 'rxjs';
 
+import { GeoDBService, InsertSourceInsertDBEnum } from '../geoDB';
 import {
   DevicePackageInfo,
   DevicePackageStatus,
