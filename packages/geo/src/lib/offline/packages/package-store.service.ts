@@ -142,8 +142,7 @@ export class PackageStoreService {
       let activeLoading = [];
       for (const file of files) {
         if (this.isCancelingInstallation) {
-          this.cancelDone$.next();
-          this.cancelDone$.complete();
+          this.afterInstallationCancel();
           progress$.complete();
           return;
         }
@@ -203,5 +202,11 @@ export class PackageStoreService {
   cancelInstallation() {
     this.cancelDone$ = new Subject();
     return this.cancelDone$;
+  }
+
+  private afterInstallationCancel() {
+    this.cancelDone$.next();
+    this.cancelDone$.complete();
+    this.cancelDone$ = undefined;
   }
 }
