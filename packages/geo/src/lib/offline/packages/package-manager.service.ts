@@ -229,7 +229,6 @@ export class PackageManagerService {
 
   private cancelDownload(info: PackageInfo): void {
     this.download$$?.unsubscribe();
-    this.download$$ = undefined;
     this.internalDeletePackage(info);
   }
 
