@@ -4,7 +4,8 @@ import {
   Component,
   EventEmitter,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +13,7 @@ import { MatPaginator } from '@angular/material/paginator';
 
 import {
   EntityStore,
+  EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   IgoEntityTableModule,
@@ -31,6 +33,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class DownloadPackageComponent implements OnInit {
   @Output() download = new EventEmitter<PackageInfo>();
+  @ViewChild('entityTable') entityTable: EntityTableComponent;
 
   public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
@@ -123,5 +126,6 @@ export class DownloadPackageComponent implements OnInit {
   private setSelection(value: boolean) {
     this.template.selection = value;
     this.template.selectionCheckbox = value;
+    this.entityTable.refresh();
   }
 }

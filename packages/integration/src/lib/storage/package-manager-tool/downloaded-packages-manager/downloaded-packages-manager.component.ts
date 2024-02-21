@@ -1,10 +1,16 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
   EntityStore,
+  EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   IgoEntityTableModule,
@@ -34,6 +40,8 @@ import { PackageProgressStatusComponent } from './package-progress-status/packag
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DownloadedPackagesManagerComponent implements OnInit {
+  @ViewChild('entityTable') entityTable: EntityTableComponent;
+
   private datePipe = new DatePipe('en-US');
   public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
@@ -119,6 +127,7 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   private setSelection(value: boolean) {
     this.template.selection = value;
     this.template.selectionCheckbox = value;
+    this.entityTable.refresh();
   }
 
   private formatPackage(downloaded: DevicePackageInfo) {
