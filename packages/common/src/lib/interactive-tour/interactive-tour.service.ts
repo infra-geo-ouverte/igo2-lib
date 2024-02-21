@@ -313,10 +313,10 @@ export class InteractiveTourService {
           i === 0
             ? 'first'
             : i + 1 === tourConfig.steps.length
-            ? 'last'
-            : tourConfig.steps[i].noBackButton
-            ? 'noBackButton'
-            : undefined
+              ? 'last'
+              : tourConfig.steps[i].noBackButton
+                ? 'noBackButton'
+                : undefined
         ),
         classes: step.class,
         highlightClass: step.highlightClass,

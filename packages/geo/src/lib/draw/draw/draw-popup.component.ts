@@ -1,5 +1,20 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core';
 
@@ -8,6 +23,8 @@ import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
 import { getLength } from 'ol/sphere';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap, roundCoordTo } from '../../map/shared';
 import {
@@ -28,7 +45,24 @@ import { DDtoDMS } from '../shared/draw.utils';
 @Component({
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-popup.component.html',
-  styleUrls: ['./draw-popup.component.scss']
+  styleUrls: ['./draw-popup.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    NgIf,
+    MatDialogContent,
+    MatButtonToggleModule,
+    MatRadioModule,
+    NgFor,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDialogActions,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
@@ -258,8 +292,9 @@ export class DrawPopupComponent {
         : (this.labelFlag = undefined);
       checked
         ? (this.labelFlag = labelType)
-        : (this.labelFlag = this.arrayBuiltInType.find((type) => type.checked)
-            ?.value);
+        : (this.labelFlag = this.arrayBuiltInType.find(
+            (type) => type.checked
+          )?.value);
     } else {
       this.labelFlag = labelType;
     }
@@ -376,7 +411,7 @@ export class DrawPopupComponent {
     }
   }
 
-  get allLengthUnits(): string[] {
+  get allLengthUnits(): MeasureLengthUnit[] {
     return Object.values(MeasureLengthUnit);
   }
 
@@ -384,11 +419,11 @@ export class DrawPopupComponent {
     return MeasureLengthUnitAbbreviation[lengthUnit];
   }
 
-  get allAreaUnits(): string[] {
+  get allAreaUnits(): MeasureAreaUnit[] {
     return Object.values(MeasureAreaUnit);
   }
 
-  get allCoordinatesUnits(): string[] {
+  get allCoordinatesUnits(): CoordinatesUnit[] {
     return Object.values(CoordinatesUnit);
   }
 

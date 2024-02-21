@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,20 +8,38 @@ import {
   Optional,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
 import { AuthOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
+import { AuthFacebookComponent } from './auth-facebook.component';
+import { AuthGoogleComponent } from './auth-google.component';
+import { AuthInternComponent } from './auth-intern.component';
+import { AuthMicrosoftComponent } from './auth-microsoft.component';
+import { AuthMicrosoftb2cComponent } from './auth-microsoftb2c.component';
 
 @Component({
   selector: 'igo-auth-form',
   templateUrl: './auth-form.component.html',
   styleUrls: ['./auth-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  standalone: true,
+  imports: [
+    NgIf,
+    AuthGoogleComponent,
+    AuthMicrosoftComponent,
+    AuthMicrosoftb2cComponent,
+    AuthFacebookComponent,
+    AuthInternComponent,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class AuthFormComponent implements OnInit {
   @Input()

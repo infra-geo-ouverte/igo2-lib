@@ -1,3 +1,4 @@
+import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -6,11 +7,26 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { DateAdapter } from '@angular/material/core';
-import { MatSlider } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  DateAdapter,
+  MatNativeDateModule,
+  MatOptionModule,
+  ThemePalette
+} from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
+import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { default as moment } from 'moment';
 
 import { Layer } from '../../layer/shared/layers/layer';
@@ -20,14 +36,32 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
 @Component({
   selector: 'igo-time-filter-form',
   templateUrl: './time-filter-form.component.html',
-  styleUrls: ['./time-filter-form.component.scss']
+  styleUrls: ['./time-filter-form.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatDatetimepickerModule,
+    MatNativeDateModule, // For the DateAdapter provider
+    MatInputModule,
+    FormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class TimeFilterFormComponent implements OnInit {
   @Input() layer: Layer;
 
   @Input() options: TimeFilterOptions;
 
-  public color = 'primary';
+  public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
   public endDate: Date;

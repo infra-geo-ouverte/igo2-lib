@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { EntityStoreWatcher } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
@@ -17,6 +18,7 @@ import { SelectEvent } from 'ol/interaction/Select';
 import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
@@ -26,6 +28,9 @@ import { roundCoordTo, stringToLonLat } from '../map';
 import { QueryService } from '../query/shared/query.service';
 import { Research, SearchResult } from '../search/shared/search.interfaces';
 import { SearchService } from '../search/shared/search.service';
+import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
+import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
+import { DirectionsResultsComponent } from './directions-results/directions-results.component';
 import { DirectionType, ProposalType } from './shared/directions.enum';
 import {
   DirectionOptions,
@@ -52,7 +57,15 @@ import {
 @Component({
   selector: 'igo-directions',
   templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss']
+  styleUrls: ['./directions.component.scss'],
+  standalone: true,
+  imports: [
+    MatSlideToggleModule,
+    DirectionsButtonsComponent,
+    DirectionsInputsComponent,
+    DirectionsResultsComponent,
+    TranslateModule
+  ]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;

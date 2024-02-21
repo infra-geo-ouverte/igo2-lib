@@ -26,9 +26,9 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
         MatIconTestingModule,
-        IgoAuthModule
-      ],
-      declarations: [AppComponent]
+        IgoAuthModule,
+        AppComponent
+      ]
     }).compileComponents();
   }));
   it('should create the app', waitForAsync(() => {

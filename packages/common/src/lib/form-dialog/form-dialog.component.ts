@@ -1,10 +1,22 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
+import { CustomHtmlComponent } from '../custom-html/custom-html.component';
+import { FormFieldComponent } from '../form/form-field/form-field.component';
+import { FormGroupComponent } from '../form/form-group/form-group.component';
+import { FormComponent } from '../form/form/form.component';
 import {
   Form,
   FormField,
@@ -17,7 +29,21 @@ import { FormDialogData } from './form-dialog.interface';
 @Component({
   selector: 'igo-form-dialog',
   templateUrl: './form-dialog.component.html',
-  styleUrls: ['./form-dialog.component.scss']
+  styleUrls: ['./form-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    NgIf,
+    FormComponent,
+    NgFor,
+    FormFieldComponent,
+    FormGroupComponent,
+    MatDialogActions,
+    MatButtonModule,
+    CustomHtmlComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class FormDialogComponent {
   form$ = new BehaviorSubject<Form>(undefined);

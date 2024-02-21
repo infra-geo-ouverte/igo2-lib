@@ -1,6 +1,6 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { Document, DocumentOptions } from 'flexsearch';
+import { DocumentOptions, Document as FlexSearchDocument } from 'flexsearch';
 import { skipWhile } from 'rxjs/operators';
 
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
@@ -59,7 +59,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   private initStoreSearchIndex(store) {
-    store.searchDocument = new Document({ tokenize: 'full' });
+    store.searchDocument = new FlexSearchDocument({ tokenize: 'full' });
   }
 
   /**
@@ -166,7 +166,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     if (toIndex.length === 0) {
       this.initStoreSearchIndex(store);
     } else {
-      store.searchDocument = new Document({
+      store.searchDocument = new FlexSearchDocument({
         document: {
           id: 'igoSearchID',
           index: contentToIndex

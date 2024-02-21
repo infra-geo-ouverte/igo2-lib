@@ -117,11 +117,18 @@ export interface EntityTableColumn {
   ) => {
     [key: string]: boolean;
   };
+  step?: number;
+  icon?: string;
+  onBlur?: (event: Event) => void;
+  onChange?: (event: Event) => void;
+  onClick?: (event: Event) => void;
+  onFocus?: (event: Event) => void;
 }
 
 export interface SelectOption {
   id: number;
   value: string;
+  disabled?: boolean;
 }
 
 export interface EntityTableButton {

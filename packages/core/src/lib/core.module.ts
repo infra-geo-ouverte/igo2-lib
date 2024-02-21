@@ -8,6 +8,7 @@ import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
 
 import { IgoActivityModule } from './activity/activity.module';
 import { IgoConfigModule } from './config/config.module';
+import { provideRootTranslation } from './language';
 import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
@@ -48,10 +49,10 @@ const dbConfig: DBConfig = {
     IgoActivityModule.forRoot(),
     IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
-    IgoLanguageModule.forRoot(),
-    IgoMessageModule.forRoot(),
+    IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
+  providers: [provideRootTranslation()],
   declarations: [],
   exports: [
     IgoActivityModule,

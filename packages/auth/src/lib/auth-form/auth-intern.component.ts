@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,12 +7,20 @@ import {
   Output
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import { LanguageService } from '@igo2/core';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthService } from '../shared/auth.service';
 
@@ -19,7 +28,18 @@ import { AuthService } from '../shared/auth.service';
   selector: 'igo-auth-intern',
   templateUrl: './auth-intern.component.html',
   styleUrls: ['./auth-intern.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinner,
+    NgIf,
+    TranslateModule
+  ]
 })
 export class AuthInternComponent {
   @Input()

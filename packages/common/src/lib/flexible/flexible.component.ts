@@ -16,7 +16,8 @@ import { FlexibleDirection, FlexibleState } from './flexible.type';
 @Component({
   selector: 'igo-flexible',
   templateUrl: './flexible.component.html',
-  styleUrls: ['./flexible.component.scss']
+  styleUrls: ['./flexible.component.scss'],
+  standalone: true
 })
 export class FlexibleComponent implements OnInit, OnDestroy {
   static transitionTime = 250;

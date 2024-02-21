@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,20 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  FloatLabelType,
+  MatFormFieldModule
+} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoBadgeIconDirective } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { LayerListControlsOptions } from './layer-list-tool.interface';
@@ -17,7 +30,20 @@ import { LayerListControlsOptions } from './layer-list-tool.interface';
   selector: 'igo-layer-list-tool',
   templateUrl: './layer-list-tool.component.html',
   styleUrls: ['./layer-list-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    TranslateModule
+  ]
 })
 export class LayerListToolComponent implements OnInit, OnDestroy {
   public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);

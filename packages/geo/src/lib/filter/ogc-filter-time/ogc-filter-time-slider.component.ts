@@ -6,7 +6,10 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { MatSlider } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
 
 import { default as moment } from 'moment';
 
@@ -15,7 +18,10 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 @Component({
   selector: 'igo-ogc-filter-time-slider',
   templateUrl: './ogc-filter-time-slider.component.html',
-  styleUrls: ['./ogc-filter-time-slider.component.scss']
+  styleUrls: ['./ogc-filter-time-slider.component.scss'],
+  standalone: true,
+  imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule],
+  providers: [OGCFilterTimeService]
 })
 export class OgcFilterTimeSliderComponent implements OnInit {
   @Input() currentFilter: any;

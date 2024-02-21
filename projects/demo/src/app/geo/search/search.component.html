@@ -49,8 +49,8 @@
         [termSplitter]="termSplitter"
         placeholder="false"
         [settingsChange$]="settingsChange$"
-        (resultFocus)="onResultFocus($event)"
-        (resultSelect)="onResultSelect($event)"
+        (resultFocus)="onResultFocus($any($event))"
+        (resultSelect)="onResultSelect($any($event))"
         (moreResults)="onSearch($event)"
       >
         <ng-template #igoSearchItemToolbar let-result="result">
@@ -69,7 +69,7 @@
         [store]="store"
         [withIcon]="false"
         [horizontal]="true"
-        [mode]="'context'"
+        [mode]="actionBarMode"
       >
       </igo-actionbar>
     </ng-template>

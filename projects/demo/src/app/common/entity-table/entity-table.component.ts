@@ -5,6 +5,7 @@ import {
   EntityStore,
   EntityTableButton,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
@@ -12,10 +13,15 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-entity-table',
   templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.scss']
+  styleUrls: ['./entity-table.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);
@@ -57,6 +63,11 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         renderer: EntityTableColumnRenderer.HTML
       },
       {
+        name: 'date',
+        title: 'Date',
+        type: 'date'
+      },
+      {
         name: 'url',
         title: 'Hyperlink'
       },
@@ -94,6 +105,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
           id,
           name: `Name ${id}`,
           description: `<b>Description ${id}</b>`,
+          date: new Date(),
           url: 'https://igouverte.org',
           image: 'https://www.igouverte.org/assets/img/NONEXISTINGIMAGE.png'
         };
@@ -102,6 +114,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         id,
         name: `Name ${id}`,
         description: `<b>Description ${id}</b>`,
+        date: new Date(),
         url: 'https://igouverte.org',
         image: 'https://www.igouverte.org/assets/img/Igo_logoavec.png'
       };

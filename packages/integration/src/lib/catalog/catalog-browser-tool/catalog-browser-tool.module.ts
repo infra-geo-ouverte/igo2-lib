@@ -1,17 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-
-import { IgoCatalogBrowserModule } from '@igo2/geo';
+import { NgModule } from '@angular/core';
 
 import { CatalogBrowserToolComponent } from './catalog-browser-tool.component';
 
 /**
- * @ignore
+ * @deprecated import the CatalogBrowserToolComponent directly
  */
 @NgModule({
-  imports: [CommonModule, IgoCatalogBrowserModule],
-  declarations: [CatalogBrowserToolComponent],
-  exports: [CatalogBrowserToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [CatalogBrowserToolComponent],
+  exports: [CatalogBrowserToolComponent]
 })
 export class IgoAppCatalogBrowserToolModule {}

@@ -1,19 +1,33 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
   IgoMap,
   ImageLayer,
   ImageLayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
+  PrintComponent,
   TileLayer,
   TileLayerOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-print',
   templateUrl: './print.component.html',
-  styleUrls: ['./print.component.scss']
+  styleUrls: ['./print.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    PrintComponent
+  ]
 })
 export class AppPrintComponent {
   public map: IgoMap = new IgoMap({

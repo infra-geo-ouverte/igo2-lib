@@ -2,9 +2,11 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { FlexibleComponent } from './flexible.component';
 
+/**
+ * @deprecated import the FlexibleComponent directly
+ */
 @NgModule({
-  imports: [],
-  declarations: [FlexibleComponent],
+  imports: [FlexibleComponent],
   exports: [FlexibleComponent]
 })
 export class IgoFlexibleModule {

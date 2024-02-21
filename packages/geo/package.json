@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "16.3.0",
+  "version": "17.0.0-next.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -19,6 +19,8 @@
     "build": "ng build geo --configuration production && npm run clean-exports",
     "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts geo",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint geo",
+    "lint.fix": "ng lint geo --fix",
     "postbuild": "ts-node ../../scripts/src/geo/postbuild-geo.ts",
     "test": "ng test geo --watch=false",
     "watch": "ng build geo --watch"
@@ -46,17 +48,18 @@
     "windows-1252": "^3.0.4"
   },
   "peerDependencies": {
-    "@angular/animations": "^16.2.5",
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/forms": "^16.2.5",
-    "@angular/material": "^16.2.4",
-    "@angular/platform-browser": "^16.2.5",
+    "@angular/animations": "^17.0.6",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/forms": "^17.0.6",
+    "@angular/material": "^17.0.3",
+    "@angular/material-moment-adapter": "^17.1.0",
+    "@angular/platform-browser": "^17.0.6",
     "@igo2/auth": "*",
     "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "@mat-datetimepicker/core": "~12.0.0",
+    "@mat-datetimepicker/core": "~13.0.0",
     "file-saver": "^2.0.2",
     "flexsearch": "0.7.21",
     "html2canvas": "^1.4.1",
@@ -66,8 +69,8 @@
     "moment": "^2.29.4",
     "ngx-color-picker": "^14.0.0",
     "ngx-indexed-db": "^11.0.2",
-    "ol-mapbox-style": "^12.0.0",
     "ol": "^7.5.2",
+    "ol-mapbox-style": "^12.0.0",
     "proj4": "^2.9.0",
     "rxjs": "^7.8.0",
     "striptags": "^3.2.0"

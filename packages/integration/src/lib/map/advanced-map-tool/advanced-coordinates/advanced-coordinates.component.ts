@@ -1,3 +1,4 @@
+import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -6,10 +7,19 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import {
   ConfigService,
@@ -29,7 +39,8 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../../map.state';
@@ -40,7 +51,24 @@ import { MapState } from '../../map.state';
 @Component({
   selector: 'igo-advanced-coordinates',
   templateUrl: './advanced-coordinates.component.html',
-  styleUrls: ['./advanced-coordinates.component.scss']
+  styleUrls: ['./advanced-coordinates.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatSlideToggleModule,
+    AsyncPipe,
+    DecimalPipe,
+    TranslateModule
+  ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -107,40 +135,39 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Listen a state of the map, a state of a form, update the coordinates
    */
   ngOnInit(): void {
-    this.mapState$$ = combineLatest([
-      this.map.viewController.state$.pipe(debounceTime(50)),
-      this.form.valueChanges
-    ]).subscribe(() => {
-      this.setScaleValue(this.map);
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(
-        this.defaultProj.code
-      );
-      const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-      const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-      if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-        this.back2quebec();
-      }
-      let zoneChange = false;
-      if (currentMtmZone !== this.currentZones.mtm) {
-        this.currentZones.mtm = currentMtmZone;
-        zoneChange = true;
-      }
-      if (currentUtmZone !== this.currentZones.utm) {
-        this.currentZones.utm = currentUtmZone;
-        zoneChange = true;
-      }
-      if (zoneChange) {
-        this.updateProjectionsZoneChange();
-      }
-      this.checkLambert(this.currentCenterDefaultProj);
-      this.coordinates = this.getCoordinates();
-      this.cdRef.detectChanges();
-      this.storageService.set(
-        'currentProjection',
-        this.inputProj,
-        StorageScope.SESSION
-      );
-    });
+    this.mapState$$ = this.map.viewController.state$
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.setScaleValue(this.map);
+        this.currentCenterDefaultProj = this.map.viewController.getCenter(
+          this.defaultProj.code
+        );
+        const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+        const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+        if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+          this.back2quebec();
+        }
+        let zoneChange = false;
+        if (currentMtmZone !== this.currentZones.mtm) {
+          this.currentZones.mtm = currentMtmZone;
+          zoneChange = true;
+        }
+        if (currentUtmZone !== this.currentZones.utm) {
+          this.currentZones.utm = currentUtmZone;
+          zoneChange = true;
+        }
+        if (zoneChange) {
+          this.updateProjectionsZoneChange();
+        }
+        this.checkLambert(this.currentCenterDefaultProj);
+        this.coordinates = this.getCoordinates();
+        this.cdRef.detectChanges();
+        this.storageService.set(
+          'currentProjection',
+          this.inputProj,
+          StorageScope.SESSION
+        );
+      });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'

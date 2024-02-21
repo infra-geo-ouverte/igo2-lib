@@ -73,7 +73,7 @@
     <ng-container *ngIf="isLayer(item)">
       <igo-catalog-browser-layer
         igoListItem
-        [layer]="item"
+        [layer]="$any(item)"
         [resolution]="resolution"
         [map]="map"
         [catalogAllowLegend]="catalogAllowLegend"

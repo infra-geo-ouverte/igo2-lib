@@ -58,7 +58,8 @@ interface HasRadius {
 @Component({
   selector: 'igo-geometry-form-field-input',
   templateUrl: './geometry-form-field-input.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor

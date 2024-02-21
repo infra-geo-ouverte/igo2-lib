@@ -43,7 +43,8 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
  * the layer level.
  */
 @Directive({
-  selector: '[igoSearchPointerSummary]'
+  selector: '[igoSearchPointerSummary]',
+  standalone: true
 })
 export class SearchPointerSummaryDirective
   implements OnInit, OnDestroy, AfterContentChecked

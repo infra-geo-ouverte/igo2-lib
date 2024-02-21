@@ -7,7 +7,6 @@ import { ObjectUtils } from '@igo2/utils';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { ProjectionService } from '../../map/shared/projection.service';
 import { CapabilitiesService } from './capabilities.service';
 import {
   AnyDataSourceOptions,
@@ -55,7 +54,6 @@ export class DataSourceService {
     private wfsDataSourceService: WFSService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private projectionService: ProjectionService,
     private authInterceptor?: AuthInterceptor
   ) {}
 
