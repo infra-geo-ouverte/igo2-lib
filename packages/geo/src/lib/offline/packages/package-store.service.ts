@@ -200,6 +200,9 @@ export class PackageStoreService {
   }
 
   cancelInstallation() {
+    if (this.isCancelingInstallation) {
+      return this.cancelDone$;
+    }
     this.cancelDone$ = new Subject();
     return this.cancelDone$;
   }
