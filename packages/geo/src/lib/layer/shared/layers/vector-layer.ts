@@ -79,14 +79,6 @@ export class VectorLayer extends Layer {
   get exportable(): boolean {
     return this.options.exportable !== false;
   }
-/*
-  get gsStyle() {
-    this.options.igoStyle.geostyler
-  }
-
-  set gsStyle(value: any) {
-    this.ol.setStyle(value)
-  }*/
 
   constructor(
     options: VectorLayerOptions,
