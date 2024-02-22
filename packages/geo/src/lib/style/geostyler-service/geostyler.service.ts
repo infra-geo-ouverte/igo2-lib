@@ -63,7 +63,6 @@ export class GeostylerStyleService {
     width: number = 300,
     height: number = 300
   ): Observable<string> {
-    // todo define height automatically?
     const layerDescriptors: GeoStylerStyle[] =
       this.transferLayersToLegend(styles);
     const renderer = new LegendRenderer({
