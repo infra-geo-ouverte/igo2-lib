@@ -98,10 +98,10 @@ export class GeostylerStyleService {
   private transferLayersToLegend(styles: GeoStylerStyle[]) {
     var stylesCopy = [...styles];
     const layerDescriptorsList: GeoStylerStyle[] = [];
-    for (var index in stylesCopy) {
+    stylesCopy.forEach((stylesCopyItem) => {
       var DescriptorLayerRulesAdapted = [];
-      let descriptorLayerName = stylesCopy[index].name;
-      stylesCopy[index].rules.map((styleRule) => {
+      let descriptorLayerName = stylesCopyItem.name;
+      stylesCopyItem.rules.map((styleRule) => {
         var styleRuleSymbolizersAdapted = [];
         styleRule.symbolizers.map((styleRuleSymbolizer) => {
           switch (styleRuleSymbolizer.kind) {
@@ -128,7 +128,7 @@ export class GeostylerStyleService {
         rules: DescriptorLayerRulesAdapted
       };
       layerDescriptorsList.push(styleNoRadius);
-    }
+    });
     return layerDescriptorsList;
   }
 }

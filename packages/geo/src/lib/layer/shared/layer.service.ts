@@ -12,12 +12,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
-import {
-  catchError,
-  concatMap,
-  map
-  /*, mergeMap*/
-} from 'rxjs/operators';
+import { catchError, concatMap, map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
