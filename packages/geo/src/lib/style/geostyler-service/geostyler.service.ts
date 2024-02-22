@@ -63,7 +63,7 @@ export class GeostylerStyleService {
   }
 
   public getStylerStyleToLegend(
-    type: string, // todo enum a faire
+    type: string,
     styles: GeoStylerStyle[],
     width: number = 300,
     height: number = 300
@@ -131,6 +131,4 @@ export class GeostylerStyleService {
     }
     return layerDescriptorsList;
   }
-
-  private hoverStyleToGeostyler() {}
 }

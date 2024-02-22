@@ -12,7 +12,12 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, concatMap, map, mergeMap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  map
+  /*, mergeMap*/
+} from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
@@ -33,7 +38,6 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { GeostylerStyleService } from '../../style/geostyler-service/geostyler.service';
 import { StyleService } from '../../style/style-service/style.service';
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
@@ -57,7 +61,6 @@ export class LayerService {
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
-    private geostylerService: GeostylerStyleService,
     private dataSourceService: DataSourceService,
     private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
@@ -123,52 +126,16 @@ export class LayerService {
       return new Observable((d) => d.next(this.createLayer(layerOptions)));
     }
 
-    const stylableLayerOptions = layerOptions as
-      | VectorLayerOptions
-      | VectorTileLayerOptions;
-    const geostylerStyleGlobal =
-      stylableLayerOptions.igoStyle?.geoStylerStyle?.global;
-    const geostylerStyleHover =
-      stylableLayerOptions.igoStyle?.geoStylerStyle?.hover;
-    //const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
-
-    // temp, rethink logic for adding a new type (global, hover, etc.)
-    const globalWriteStyleResult$ = geostylerStyleGlobal
-      ? this.geostylerService.geostylerToOl(geostylerStyleGlobal)
-      : geostylerStyleHover
-      ? this.geostylerService.geostylerToOl(geostylerStyleHover)
-      : of(undefined);
-
-    return globalWriteStyleResult$.pipe(
-      mergeMap((writeStyleResult) => {
-        // Check manage cluster directly with geostyler
-        if (writeStyleResult?.warnings) {
-          console.warn(writeStyleResult.warnings);
-          // Present message via message service?
-        }
-        if (writeStyleResult?.errors) {
-          console.error(writeStyleResult.errors);
-        }
-        if (writeStyleResult?.unsupportedProperties) {
-          console.warn(writeStyleResult.unsupportedProperties);
-        }
-
-        if (writeStyleResult?.output) {
-          stylableLayerOptions.style = writeStyleResult.output;
-        }
-
-        return this.dataSourceService
-          .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
-          .pipe(
-            map((source) => {
-              if (source === undefined) {
-                return undefined;
-              }
-              return this.createLayer(Object.assign(layerOptions, { source }));
-            })
-          );
-      })
-    );
+    return this.dataSourceService
+      .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
+      .pipe(
+        map((source) => {
+          if (source === undefined) {
+            return undefined;
+          }
+          return this.createLayer(Object.assign(layerOptions, { source }));
+        })
+      );
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
@@ -217,7 +184,6 @@ export class LayerService {
       layerOptions.igoStyle.igoStyleObject &&
       layerOptions.idbInfo?.storeToIdb
     ) {
-      // temporary fix todo : handle it with geostyler.
       style = this.styleService.parseStyle(
         'style',
         layerOptions.igoStyle.igoStyleObject
