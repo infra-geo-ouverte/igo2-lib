@@ -96,9 +96,9 @@ export class GeostylerStyleService {
     for (var index in stylesCopy) {
       var DescriptorLayerRulesAdapted = [];
       let descriptorLayerName = stylesCopy[index].name;
-      stylesCopy[index].rules.forEach(function (styleRule) {
+      stylesCopy[index].rules.map((styleRule) => {
         var styleRuleSymbolizersAdapted = [];
-        styleRule.symbolizers.forEach(function (styleRuleSymbolizer) {
+        styleRule.symbolizers.map((styleRuleSymbolizer) => {
           switch (styleRuleSymbolizer.kind) {
             case 'Mark':
               (styleRuleSymbolizer as MarkSymbolizer).radius = 10;
