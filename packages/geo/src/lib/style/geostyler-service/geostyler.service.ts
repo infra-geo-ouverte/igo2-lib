@@ -18,7 +18,12 @@ import { StyleSourceType } from '../shared';
 })
 export class GeostylerStyleService {
   /**
-   * Create a style based on a object as
+   * Create a style based on a object as follow.
+   * Due to the legend renderer limitation, the symbolizers have a size limit in the legend.
+   * The legend will not affect the symbolizer size data, only on the display will it hava a limit.
+   *
+   * ## Feature styles
+   *
    * "igoStyle": {
    *       "geoStyler": {
    *         "name": "GeoStyler Test",
