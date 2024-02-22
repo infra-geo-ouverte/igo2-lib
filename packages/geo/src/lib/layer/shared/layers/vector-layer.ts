@@ -100,8 +100,6 @@ export class VectorLayer extends Layer {
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
-    // convertir cet objet this.options.igoStyle.geoStylerStyle en objet ol qui sera appliqué
-    // ex : this.options.style =  this.options.igoStyle.geoStylerStyle
     const initialOpacityValue = this.options.opacity || 1;
     const initialVisibleValue = this.options.visible !== false;
     const initialMinResValue =

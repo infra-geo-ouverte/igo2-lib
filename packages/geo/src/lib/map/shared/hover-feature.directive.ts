@@ -148,7 +148,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       zIndex: 901,
       renderMode: 'vector',
       declutter: true,
-      // style =    geostylerstyle.hover  converti en ol....
       source: new olVectorTileSource({ projection: this.map.projection }),
       style: (feature, resolution) => {
         if (this.mvtStyleOptions && feature.getId() in this.selectionMVT) {
