@@ -51,7 +51,7 @@ export class GeostylerStyleService {
     options: GeoStylerStyle,
     destStyle: StyleSourceType
   ): Observable<WriteStyleResult> {
-    let parser: OpenLayersParser; // Ajouter les autres parser géré OU créer un type
+    let parser: OpenLayersParser;
     if (destStyle === StyleSourceType.OpenLayers) {
       parser = new OpenLayersParser();
     } else if (destStyle === StyleSourceType.HoverStyle) {
@@ -96,10 +96,10 @@ export class GeostylerStyleService {
   }
 
   private transferLayersToLegend(styles: GeoStylerStyle[]) {
-    var stylesCopy = [...styles];
+    const stylesCopy = [...styles];
     const layerDescriptorsList: GeoStylerStyle[] = [];
     stylesCopy.forEach((stylesCopyItem) => {
-      var DescriptorLayerRulesAdapted = [];
+      const DescriptorLayerRulesAdapted = [];
       let descriptorLayerName = stylesCopyItem.name;
       stylesCopyItem.rules.map((styleRule) => {
         var styleRuleSymbolizersAdapted = [];
@@ -123,7 +123,7 @@ export class GeostylerStyleService {
           symbolizers: styleRuleSymbolizersAdapted
         });
       });
-      let styleNoRadius: any = {
+      const styleNoRadius: any = {
         name: descriptorLayerName,
         rules: DescriptorLayerRulesAdapted
       };
