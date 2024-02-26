@@ -1,4 +1,3 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 
@@ -20,7 +19,7 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryLayerFeatures?: boolean;
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
-  ol?: olSourceVector<OlGeometry> | olSource;
+  ol?: olSourceVector | olSource;
   queryFormatAsWms?: boolean;
 }
 

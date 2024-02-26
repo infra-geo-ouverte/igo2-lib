@@ -1,6 +1,5 @@
 import olFeature from 'ol/Feature';
 import olFormatFeature from 'ol/format/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 
@@ -12,7 +11,7 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   formatOptions?: any;
 
   params?: any;
-  features?: olFeature<OlGeometry>[];
+  features?: olFeature[];
   format?: olFormatFeature;
   url?: string;
   pathOffline?: string;
@@ -20,7 +19,7 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   excludeAttribute?: Array<string>;
   excludeAttributeOffline?: Array<string>;
 
-  ol?: olSourceVector<OlGeometry> | olSource;
+  ol?: olSourceVector | olSource;
 }
 
 export interface PreloadOptions {

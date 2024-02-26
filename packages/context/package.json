@@ -44,7 +44,7 @@
     "@igo2/core": "*",
     "@igo2/geo": "*",
     "@igo2/utils": "*",
-    "ol": "^7.5.2",
+    "ol": "^9.0.0",
     "rxjs": "^7.8.0"
   },
   "dependencies": {

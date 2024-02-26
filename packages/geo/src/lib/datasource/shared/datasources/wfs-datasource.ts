@@ -1,6 +1,5 @@
 import { AuthInterceptor } from '@igo2/auth';
 
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
 import olSourceVector from 'ol/source/Vector';
 
@@ -19,7 +18,7 @@ import {
 } from './wms-wfs.utils';
 
 export class WFSDataSource extends DataSource {
-  public declare ol: olSourceVector<OlGeometry>;
+  public declare ol: olSourceVector;
 
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
@@ -75,7 +74,7 @@ export class WFSDataSource extends DataSource {
     );
   }
 
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  protected createOlSource(): olSourceVector {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       strategy: OlLoadingStrategy.bbox

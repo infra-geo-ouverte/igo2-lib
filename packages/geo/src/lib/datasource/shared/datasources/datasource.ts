@@ -1,4 +1,3 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olClusterSource from 'ol/source/Cluster';
 import olSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
@@ -13,7 +12,7 @@ import { DataSourceOptions, Legend } from './datasource.interface';
 
 export abstract class DataSource {
   public id: string;
-  public ol: olSource | olVectorSource<OlGeometry> | olClusterSource;
+  public ol: olSource | olVectorSource | olClusterSource;
   private legend: Legend[];
 
   constructor(
