@@ -64,7 +64,7 @@ interface HasRadius {
 export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
-  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olOverlayLayer: OlVectorLayer<OlVectorSource>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
 
@@ -257,7 +257,7 @@ export class GeometryFormFieldInputComponent
    * The vector source to add the geometry to
    * @internal
    */
-  get olOverlaySource(): OlVectorSource<OlGeometry> {
+  get olOverlaySource(): OlVectorSource {
     return this.olOverlayLayer.getSource();
   }
 

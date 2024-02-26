@@ -1,5 +1,4 @@
 import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceVector from 'ol/source/Vector';
 
 import { FeatureDataSource } from './feature-datasource';
@@ -9,7 +8,7 @@ export class WebSocketDataSource extends FeatureDataSource {
   public ws: WebSocket;
   public declare options: WebSocketDataSourceOptions;
 
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  protected createOlSource(): olSourceVector {
     this.createWebSocket();
     this.options.format = this.getSourceFormatFromOptions(this.options);
     return super.createOlSource();
@@ -35,7 +34,7 @@ export class WebSocketDataSource extends FeatureDataSource {
   onMessage(event) {
     const featureAdded = this.options.format.readFeature(
       event.data
-    ) as olFeature<OlGeometry>;
+    ) as olFeature;
 
     switch (this.options.onmessage) {
       case 'update':

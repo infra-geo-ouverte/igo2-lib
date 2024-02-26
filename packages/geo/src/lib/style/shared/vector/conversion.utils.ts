@@ -1,10 +1,7 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import olSourceVector from 'ol/source/Vector';
 
-export function olStyleToBasicIgoStyle(
-  layer: olLayerVector<olSourceVector<OlGeometry>>
-) {
+export function olStyleToBasicIgoStyle(layer: olLayerVector<olSourceVector>) {
   const layerOlStyle = layer.getStyle();
   if (typeof layerOlStyle === 'function' || layerOlStyle instanceof Array) {
     return;

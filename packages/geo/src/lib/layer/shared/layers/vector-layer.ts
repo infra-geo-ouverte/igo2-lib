@@ -11,7 +11,6 @@ import BaseEvent from 'ol/events/Event';
 import { Extent } from 'ol/extent';
 import { FeatureLoader } from 'ol/featureloader';
 import * as olformat from 'ol/format';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import * as olproj from 'ol/proj';
 import olProjection from 'ol/proj/Projection';
@@ -68,7 +67,7 @@ export class VectorLayer extends Layer {
     | WebSocketDataSource
     | ClusterDataSource;
   public declare options: VectorLayerOptions;
-  public declare ol: olLayerVector<olSourceVector<OlGeometry>>;
+  public declare ol: olLayerVector<olSourceVector>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 
@@ -99,7 +98,7 @@ export class VectorLayer extends Layer {
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
+  protected createOlLayer(): olLayerVector<olSourceVector> {
     const initialOpacityValue = this.options.opacity || 1;
     const initialVisibleValue = this.options.visible !== false;
     const initialMinResValue =
@@ -126,7 +125,7 @@ export class VectorLayer extends Layer {
     }
 
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVector<OlGeometry>,
+      source: this.options.source.ol as olSourceVector,
       sourceOptions: this.options.sourceOptions || this.options.source.options
     });
 
@@ -177,7 +176,7 @@ export class VectorLayer extends Layer {
     }
 
     const vector = new olLayerVector(olOptions);
-    const vectorSource = vector.getSource() as olSourceVector<OlGeometry>;
+    const vectorSource = vector.getSource() as olSourceVector;
     const url = vectorSource.getUrl();
     if (typeof url === 'function') {
       return vector;
@@ -451,13 +450,13 @@ export class VectorLayer extends Layer {
    * @param randomParam random parameter to ensure cache is not causing problems in retrieving new data
    */
   public customWFSLoader(
-    vectorSource: olSourceVector<OlGeometry>,
+    vectorSource: olSourceVector,
     options: WFSDataSourceOptions,
     interceptor: AuthInterceptor,
     extent: Extent,
     resolution: number,
     proj: olProjection,
-    success: (features: olFeature<OlGeometry>[]) => void,
+    success: (features: olFeature[]) => void,
     failure: () => void,
     randomParam?: boolean
   ) {
@@ -548,13 +547,13 @@ export class VectorLayer extends Layer {
    * @param failure failure callback
    */
   private getFeatures(
-    vectorSource: olSourceVector<OlGeometry>,
+    vectorSource: olSourceVector,
     interceptor: AuthInterceptor,
     extent: Extent,
     dataProjection: olProjection,
     featureProjection: olProjection,
     url: string,
-    success: (features: olFeature<OlGeometry>[]) => void,
+    success: (features: olFeature[]) => void,
     failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
@@ -579,7 +578,7 @@ export class VectorLayer extends Layer {
           .readFeatures(xhr.responseText, {
             dataProjection,
             featureProjection
-          }) as olFeature<OlGeometry>[];
+          }) as olFeature[];
         if (features) {
           vectorSource.addFeatures(features);
           success(features);
@@ -605,13 +604,13 @@ export class VectorLayer extends Layer {
    * @param projection the projection to retrieve the data
    */
   private customLoader(
-    vectorSource: olSourceVector<OlGeometry>,
+    vectorSource: olSourceVector,
     url: string,
     interceptor: AuthInterceptor,
     extent: Extent,
     resolution: number,
     projection: olProjection,
-    success: (features: olFeature<OlGeometry>[]) => void,
+    success: (features: olFeature[]) => void,
     failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
@@ -672,7 +671,7 @@ export class VectorLayer extends Layer {
               const features = format.readFeatures(source, {
                 extent,
                 featureProjection: projection
-              }) as OlFeature<OlGeometry>[];
+              }) as OlFeature[];
               vectorSource.addFeatures(features);
               success(features);
             } else {
@@ -717,7 +716,7 @@ export class VectorLayer extends Layer {
             const features = format.readFeatures(source, {
               extent,
               featureProjection: projection
-            }) as OlFeature<OlGeometry>[];
+            }) as OlFeature[];
             vectorSource.addFeatures(features);
             success(features);
           } else {

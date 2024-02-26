@@ -12,7 +12,6 @@ import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import { EventsKey } from 'ol/events';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLayer from 'ol/layer/Layer';
 import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
@@ -197,7 +196,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
+        (featureOL: OlFeature, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
           if (
             (layer.dataSource.options as QueryableDataSourceOptions)
@@ -266,7 +265,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         .filter(layerIsQueryable)
         .filter((layer) => layer instanceof VectorLayer && layer.visible)
         .map((layer) => {
-          const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
+          const featuresOL = layer.dataSource.ol as olVectorSource;
           featuresOL.forEachFeatureIntersectingExtent(
             dragExtent,
             (olFeature: any) => {
