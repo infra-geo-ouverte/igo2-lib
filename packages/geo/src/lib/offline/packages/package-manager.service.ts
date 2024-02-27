@@ -164,6 +164,20 @@ export class PackageManagerService {
       return;
     }
 
+    this.internalDownload(
+      packageInfo,
+      (blob, info) => {
+        this.unpackPackage(blob, info);
+      },
+      () => this.actualizePackages()
+    );
+  }
+
+  private internalDownload(
+    packageInfo: PackageInfo,
+    done: (blob: Blob, info: PackageInfo) => void,
+    onError: () => void
+  ) {
     this.actionSub.next({
       type: PackageManagerActionType.DOWNLOADING,
       package: packageInfo,
@@ -176,7 +190,7 @@ export class PackageManagerService {
     );
 
     this.download$$ = this.http
-      .get(`assets/packages/${title}.zip`, {
+      .get(`assets/packages/${packageInfo.title}.zip`, {
         responseType: 'blob',
         reportProgress: true,
         observe: 'events'
@@ -185,7 +199,7 @@ export class PackageManagerService {
         next: (event) => {
           const { type } = event;
           if (type === HttpEventType.Response) {
-            this.unpackPackage(event.body, packageInfo);
+            done(event.body, packageInfo);
             return;
           }
 
@@ -204,7 +218,7 @@ export class PackageManagerService {
         },
         error: () => {
           // TODO better error handling
-          this.actualizePackages();
+          onError();
         }
       });
   }
