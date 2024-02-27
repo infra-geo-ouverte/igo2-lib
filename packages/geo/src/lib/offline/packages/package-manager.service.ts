@@ -66,7 +66,28 @@ export class PackageManagerService {
     private packageStore: PackageStoreService
   ) {
     this.actualizePackages();
+    this.resumeDeletions();
     this.initFilterDownloadedPackages();
+  }
+
+  private resumeDeletions() {
+    const deletingPackages = this.packageStore.getDeletingPackages();
+    if (!deletingPackages.length) {
+      return;
+    }
+
+    let index = 0;
+    const deleteNextPackage = () => {
+      if (index === deletingPackages.length) {
+        return;
+      }
+      const devicePackage = deletingPackages[index];
+      index++;
+      this.internalDeletePackage(devicePackage).subscribe(() =>
+        deleteNextPackage()
+      );
+    };
+    deleteNextPackage();
   }
 
   private initFilterDownloadedPackages() {
@@ -195,9 +216,12 @@ export class PackageManagerService {
       package: info
     });
 
-    this.packageStore.deletePackage(info).subscribe(() => {
+    const deleted$ = this.packageStore.deletePackage(info);
+    deleted$.subscribe(() => {
       this.actionSub.next(undefined);
     });
+
+    return deleted$;
   }
 
   isPackageExists(packageTitle: string) {

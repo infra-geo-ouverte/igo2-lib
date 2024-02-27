@@ -45,17 +45,14 @@ export class PackageStoreService {
 
   constructor(private geoDb: GeoDBService) {
     this.actualizedDevicePackages();
-    this.resumeDeletions();
   }
 
-  private resumeDeletions() {
+  getDeletingPackages() {
     const packages = this.getDevicePackages();
     const deletingPackages = packages.filter(
       (p) => p.status === DevicePackageStatus.DELETING
     );
-    deletingPackages.forEach((deleting) => {
-      this.deletePackage(deleting);
-    });
+    return deletingPackages;
   }
 
   private isPackageOnDevice(packageTitle: string) {
