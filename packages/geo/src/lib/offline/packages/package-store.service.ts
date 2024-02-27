@@ -14,7 +14,6 @@ import { GeoDBService, InsertSourceInsertDBEnum } from '../geoDB';
 import {
   DevicePackageInfo,
   DevicePackageStatus,
-  DownloadingPackage,
   FileMetadata,
   PackageInfo,
   PackageMetadata
