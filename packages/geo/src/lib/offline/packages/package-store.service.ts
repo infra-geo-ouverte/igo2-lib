@@ -201,22 +201,19 @@ export class PackageStoreService {
   }
 
   updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
-    if (status === DevicePackageStatus.DOWNLOADING) {
-      const newDevicePackage: DownloadingPackage = {
-        ...info,
-        status
-      };
-      this.addDevicePackage(newDevicePackage);
-      return;
-    }
-
     const { id } = info;
 
     const devicePackages = this.getDevicePackages();
     const devicePackage = devicePackages.find((p) => p.id === id);
-    devicePackage.status = status;
+
+    if (!devicePackage && status === DevicePackageStatus.DOWNLOADING) {
+      devicePackages.push({ ...info, status });
+    } else {
+      devicePackage.status = status;
+    }
 
     this.setDevicePackages(devicePackages);
+    this.actualizedDevicePackages();
   }
 
   cancelInstallation() {
