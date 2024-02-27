@@ -70,24 +70,31 @@ export class PackageManagerService {
     this.initFilterDownloadedPackages();
   }
 
-  private resumeDeletions() {
-    const deletingPackages = this.packageStore.getDeletingPackages();
-    if (!deletingPackages.length) {
+  private resumeOperation(
+    packages: DevicePackageInfo[],
+    operation: (info: DevicePackageInfo) => Observable<void>
+  ) {
+    if (!packages.length) {
       return;
     }
 
     let index = 0;
-    const deleteNextPackage = () => {
-      if (index === deletingPackages.length) {
+    const resumeNextOperation = () => {
+      if (index === packages.length) {
         return;
       }
-      const devicePackage = deletingPackages[index];
+      const devicePackage = packages[index];
       index++;
-      this.internalDeletePackage(devicePackage).subscribe(() =>
-        deleteNextPackage()
-      );
+      operation(devicePackage).subscribe(() => resumeNextOperation());
     };
-    deleteNextPackage();
+    resumeNextOperation();
+  }
+
+  private resumeDeletions() {
+    const deletingPackages = this.packageStore.getDeletingPackages();
+    this.resumeOperation(deletingPackages, (info) =>
+      this.internalDeletePackage(info)
+    );
   }
 
   private initFilterDownloadedPackages() {
