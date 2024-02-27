@@ -47,12 +47,21 @@ export class PackageStoreService {
     this.actualizedDevicePackages();
   }
 
-  getDeletingPackages() {
+  private getPackagesByStatus(status: DevicePackageStatus) {
     const packages = this.getDevicePackages();
-    const deletingPackages = packages.filter(
-      (p) => p.status === DevicePackageStatus.DELETING
-    );
-    return deletingPackages;
+    return packages.filter((p) => p.status === status);
+  }
+
+  getDeletingPackages() {
+    return this.getPackagesByStatus(DevicePackageStatus.DELETING);
+  }
+
+  getDownloadingPackages() {
+    return this.getPackagesByStatus(DevicePackageStatus.DOWNLOADING);
+  }
+
+  getInstallingPackages() {
+    return this.getPackagesByStatus(DevicePackageStatus.INSTALLING);
   }
 
   private isPackageOnDevice(packageTitle: string) {

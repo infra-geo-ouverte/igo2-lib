@@ -1,7 +1,15 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  map,
+  of,
+  switchMap
+} from 'rxjs';
 
 import {
   DevicePackageInfo,
@@ -66,21 +74,31 @@ export class PackageManagerService {
     private packageStore: PackageStoreService
   ) {
     this.actualizePackages();
-    this.resumeDeletions();
+    this.resumeOperations();
     this.initFilterDownloadedPackages();
+  }
+
+  private async resumeOperations() {
+    this.resumeDeletions()
+      .pipe(switchMap(() => this.resumeDownloads()))
+      .subscribe();
   }
 
   private resumeOperation(
     packages: DevicePackageInfo[],
     operation: (info: DevicePackageInfo) => Observable<void>
-  ) {
+  ): Observable<void> {
     if (!packages.length) {
-      return;
+      return of(void 0);
     }
+
+    const done$: Subject<void> = new Subject();
 
     let index = 0;
     const resumeNextOperation = () => {
       if (index === packages.length) {
+        done$.next();
+        done$.complete();
         return;
       }
       const devicePackage = packages[index];
@@ -88,12 +106,28 @@ export class PackageManagerService {
       operation(devicePackage).subscribe(() => resumeNextOperation());
     };
     resumeNextOperation();
+    return done$;
   }
 
   private resumeDeletions() {
-    const deletingPackages = this.packageStore.getDeletingPackages();
-    this.resumeOperation(deletingPackages, (info) =>
+    console.log('Resuming deletions');
+    const deleting = this.packageStore.getDeletingPackages();
+    return this.resumeOperation(deleting, (info) =>
       this.internalDeletePackage(info)
+    );
+  }
+
+  private resumeDownloads() {
+    console.log('Resuming download');
+    const downloading = this.packageStore.getDownloadingPackages();
+    return this.resumeOperation(downloading, (info) =>
+      this.internalDownload(
+        info,
+        (blob, info) => {
+          this.unpackPackage(blob, info);
+        },
+        () => this.actualizePackages()
+      )
     );
   }
 
@@ -160,10 +194,12 @@ export class PackageManagerService {
 
     const packageInfo = this.packages.find((p) => p.title === title);
     if (!packageInfo) {
+      // TODO better error handling
       this.actualizePackages();
       return;
     }
 
+    // TODO better error handling
     this.internalDownload(
       packageInfo,
       (blob, info) => {
@@ -177,7 +213,7 @@ export class PackageManagerService {
     packageInfo: PackageInfo,
     done: (blob: Blob, info: PackageInfo) => void,
     onError: () => void
-  ) {
+  ): Observable<void> {
     this.actionSub.next({
       type: PackageManagerActionType.DOWNLOADING,
       package: packageInfo,
@@ -189,38 +225,40 @@ export class PackageManagerService {
       DevicePackageStatus.DOWNLOADING
     );
 
-    this.download$$ = this.http
-      .get(`assets/packages/${packageInfo.title}.zip`, {
+    const download$ = this.http.get(
+      `assets/packages/${packageInfo.title}.zip`,
+      {
         responseType: 'blob',
         reportProgress: true,
         observe: 'events'
-      })
-      .subscribe({
-        next: (event) => {
-          const { type } = event;
-          if (type === HttpEventType.Response) {
-            done(event.body, packageInfo);
-            return;
-          }
-
-          if (type !== HttpEventType.DownloadProgress) {
-            return;
-          }
-
-          const progress =
-            event.total === undefined ? undefined : event.loaded / event.total;
-
-          this.actionSub.next({
-            type: PackageManagerActionType.DOWNLOADING,
-            package: packageInfo,
-            progress
-          });
-        },
-        error: () => {
-          // TODO better error handling
-          onError();
+      }
+    );
+    this.download$$ = download$.subscribe({
+      next: (event) => {
+        const { type } = event;
+        if (type === HttpEventType.Response) {
+          done(event.body, packageInfo);
+          return;
         }
-      });
+
+        if (type !== HttpEventType.DownloadProgress) {
+          return;
+        }
+
+        const progress =
+          event.total === undefined ? undefined : event.loaded / event.total;
+
+        this.actionSub.next({
+          type: PackageManagerActionType.DOWNLOADING,
+          package: packageInfo,
+          progress
+        });
+      },
+      error: () => {
+        onError();
+      }
+    });
+    return download$.pipe(map(() => {}));
   }
 
   deletePackage(downloadedPackage: DownloadedPackage) {
