@@ -150,8 +150,6 @@ export class DownloadedPackagesManagerComponent implements OnInit {
         now.getTime() + N_DAY_PACKAGE_SOON_TO_EXPIRE * 24 * 60 * 60 * 1000
       );
 
-      console.log('soon to expires', soonToExpire);
-
       if (now >= expiration) {
         return 'expired';
       }
