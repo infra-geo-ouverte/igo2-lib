@@ -106,12 +106,11 @@ export class PackageManagerService {
 
     const packageInfo = this.packages.find((p) => p.title === title);
     if (!packageInfo) {
-      // TODO better error handling
+      this.notifier.notifyDownloadError(packageInfo);
       this.actualizePackages();
       return;
     }
 
-    // TODO better error handling
     this.internalDownload(
       packageInfo,
       (blob, info) => {
