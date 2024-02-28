@@ -78,6 +78,152 @@ export class PackageManagerService {
     this.initFilterDownloadedPackages();
   }
 
+  actualizePackages() {
+    this.http
+      .get<PackageInfo[]>('assets/packages/tile-packages.json')
+      .subscribe((newPackages) => {
+        this.packagesSubject.next(newPackages);
+      });
+  }
+
+  isLayerDownloaded(src: string) {
+    const index = this.downloaded.findIndex(({ url }) => url === src);
+    return index !== -1;
+  }
+
+  downloadPackage(title: string) {
+    if (!!this.action) {
+      throw Error('PackageManager already doing an action');
+    }
+
+    const packageInfo = this.packages.find((p) => p.title === title);
+    if (!packageInfo) {
+      // TODO better error handling
+      this.actualizePackages();
+      return;
+    }
+
+    // TODO better error handling
+    this.internalDownload(
+      packageInfo,
+      (blob, info) => {
+        this.unpackPackage(blob, info);
+      },
+      () => this.actualizePackages()
+    );
+  }
+
+  isPackageExists(packageTitle: string) {
+    return this.packages.findIndex((p) => p.title === packageTitle) !== -1;
+  }
+
+  updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
+    this.packageStore.updatePackageStatus(info, status);
+  }
+
+  cancelAction(): void {
+    const action = this.action;
+    if (!action) {
+      throw Error('No action to cancel in package manager.');
+    }
+    const { type, package: info } = action;
+    switch (type) {
+      case PackageManagerActionType.DOWNLOADING:
+        return this.cancelDownload(info);
+      case PackageManagerActionType.INSTALLING:
+        return this.cancelInstallation(info);
+      case PackageManagerActionType.DELETING:
+        throw Error("Package manager can't cancel a deletion");
+      default:
+        throw Error('Wrong action type');
+    }
+  }
+
+  private internalDownload(
+    packageInfo: PackageInfo,
+    done: (blob: Blob, info: PackageInfo) => void,
+    onError: () => void
+  ): Observable<void> {
+    this.actionSub.next({
+      type: PackageManagerActionType.DOWNLOADING,
+      package: packageInfo,
+      progress: 0
+    });
+
+    this.packageStore.updatePackageStatus(
+      packageInfo,
+      DevicePackageStatus.DOWNLOADING
+    );
+
+    const download$ = this.http.get(
+      `assets/packages/${packageInfo.title}.zip`,
+      {
+        responseType: 'blob',
+        reportProgress: true,
+        observe: 'events'
+      }
+    );
+    this.download$$ = download$.subscribe({
+      next: (event) => {
+        const { type } = event;
+        if (type === HttpEventType.Response) {
+          done(event.body, packageInfo);
+          return;
+        }
+
+        if (type !== HttpEventType.DownloadProgress) {
+          return;
+        }
+
+        const progress =
+          event.total === undefined ? undefined : event.loaded / event.total;
+
+        this.actionSub.next({
+          type: PackageManagerActionType.DOWNLOADING,
+          package: packageInfo,
+          progress
+        });
+      },
+      error: () => {
+        onError();
+      }
+    });
+    return download$.pipe(map(() => {}));
+  }
+
+  deletePackage(downloadedPackage: DownloadedPackage) {
+    if (this.action) {
+      throw Error('PackageManager already doing an action');
+    }
+
+    this.internalDeletePackage(downloadedPackage);
+  }
+
+  private internalDeletePackage(info: PackageInfo) {
+    this.actionSub.next({
+      type: PackageManagerActionType.DELETING,
+      package: info
+    });
+
+    const deleted$ = this.packageStore.deletePackage(info);
+    deleted$.subscribe(() => {
+      this.actionSub.next(undefined);
+    });
+
+    return deleted$;
+  }
+
+  private cancelDownload(info: PackageInfo): void {
+    this.download$$?.unsubscribe();
+    this.internalDeletePackage(info);
+  }
+
+  private cancelInstallation(info: PackageInfo): void {
+    this.packageStore.cancelInstallation().subscribe(() => {
+      this.internalDeletePackage(info);
+    });
+  }
+
   private async resumeOperations() {
     this.resumeDeletions()
       .pipe(
@@ -201,152 +347,6 @@ export class PackageManagerService {
         package: info,
         progress
       });
-    });
-  }
-
-  actualizePackages() {
-    this.http
-      .get<PackageInfo[]>('assets/packages/tile-packages.json')
-      .subscribe((newPackages) => {
-        this.packagesSubject.next(newPackages);
-      });
-  }
-
-  isLayerDownloaded(src: string) {
-    const index = this.downloaded.findIndex(({ url }) => url === src);
-    return index !== -1;
-  }
-
-  downloadPackage(title: string) {
-    if (!!this.action) {
-      throw Error('PackageManager already doing an action');
-    }
-
-    const packageInfo = this.packages.find((p) => p.title === title);
-    if (!packageInfo) {
-      // TODO better error handling
-      this.actualizePackages();
-      return;
-    }
-
-    // TODO better error handling
-    this.internalDownload(
-      packageInfo,
-      (blob, info) => {
-        this.unpackPackage(blob, info);
-      },
-      () => this.actualizePackages()
-    );
-  }
-
-  private internalDownload(
-    packageInfo: PackageInfo,
-    done: (blob: Blob, info: PackageInfo) => void,
-    onError: () => void
-  ): Observable<void> {
-    this.actionSub.next({
-      type: PackageManagerActionType.DOWNLOADING,
-      package: packageInfo,
-      progress: 0
-    });
-
-    this.packageStore.updatePackageStatus(
-      packageInfo,
-      DevicePackageStatus.DOWNLOADING
-    );
-
-    const download$ = this.http.get(
-      `assets/packages/${packageInfo.title}.zip`,
-      {
-        responseType: 'blob',
-        reportProgress: true,
-        observe: 'events'
-      }
-    );
-    this.download$$ = download$.subscribe({
-      next: (event) => {
-        const { type } = event;
-        if (type === HttpEventType.Response) {
-          done(event.body, packageInfo);
-          return;
-        }
-
-        if (type !== HttpEventType.DownloadProgress) {
-          return;
-        }
-
-        const progress =
-          event.total === undefined ? undefined : event.loaded / event.total;
-
-        this.actionSub.next({
-          type: PackageManagerActionType.DOWNLOADING,
-          package: packageInfo,
-          progress
-        });
-      },
-      error: () => {
-        onError();
-      }
-    });
-    return download$.pipe(map(() => {}));
-  }
-
-  deletePackage(downloadedPackage: DownloadedPackage) {
-    if (this.action) {
-      throw Error('PackageManager already doing an action');
-    }
-
-    this.internalDeletePackage(downloadedPackage);
-  }
-
-  private internalDeletePackage(info: PackageInfo) {
-    this.actionSub.next({
-      type: PackageManagerActionType.DELETING,
-      package: info
-    });
-
-    const deleted$ = this.packageStore.deletePackage(info);
-    deleted$.subscribe(() => {
-      this.actionSub.next(undefined);
-    });
-
-    return deleted$;
-  }
-
-  isPackageExists(packageTitle: string) {
-    return this.packages.findIndex((p) => p.title === packageTitle) !== -1;
-  }
-
-  updatePackageStatus(info: PackageInfo, status: DevicePackageStatus) {
-    this.packageStore.updatePackageStatus(info, status);
-  }
-
-  cancelAction(): void {
-    const action = this.action;
-    if (!action) {
-      throw Error('No action to cancel in package manager.');
-    }
-    const { type, package: info } = action;
-    switch (type) {
-      case PackageManagerActionType.DOWNLOADING:
-        return this.cancelDownload(info);
-      case PackageManagerActionType.INSTALLING:
-        return this.cancelInstallation(info);
-      case PackageManagerActionType.DELETING:
-        throw Error("Package manager can't cancel a deletion");
-      default:
-        throw Error('Wrong action type');
-    }
-  }
-
-  private cancelDownload(info: PackageInfo): void {
-    this.download$$?.unsubscribe();
-    this.internalDeletePackage(info);
-  }
-
-  private cancelInstallation(info: PackageInfo): void {
-    this.packageStore.cancelInstallation().subscribe(() => {
-      this.internalDeletePackage(info);
     });
   }
 }
