@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { MessageService } from '@igo2/core';
+import { PackageInfo } from '@igo2/geo';
 
 import { N_DAY_PACKAGE_SOON_TO_EXPIRE } from './constants';
 import { PackageStoreService } from './package-store.service';
@@ -13,6 +14,20 @@ export class PackageNotifierService {
     private packageStore: PackageStoreService,
     private messageService: MessageService
   ) {}
+
+  notifyDoneDownloading(info: PackageInfo) {
+    this.messageService.info(
+      `Your package ${info.title} has been installed.`,
+      'Package Installation Done'
+    );
+  }
+
+  notifyDownloadError(info: PackageInfo) {
+    this.messageService.error(
+      `An error occured when downloading the package ${info.title}.`,
+      'Package Download Error'
+    );
+  }
 
   notifyExpired() {
     const now = new Date();

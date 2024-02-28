@@ -73,9 +73,9 @@ export class PackageManagerService {
   constructor(
     private http: HttpClient,
     private packageStore: PackageStoreService,
-    private expirationNotifier: PackageNotifierService
+    private notifier: PackageNotifierService
   ) {
-    this.expirationNotifier.notifySoonToExpire();
+    this.notifier.notifySoonToExpire();
     this.notifyExpirations();
     this.actualizePackages();
     this.resumeOperations();
@@ -83,7 +83,7 @@ export class PackageManagerService {
   }
 
   notifyExpirations() {
-    this.expirationNotifier.notifyExpired();
+    this.notifier.notifyExpired();
   }
 
   actualizePackages() {
@@ -117,7 +117,10 @@ export class PackageManagerService {
       (blob, info) => {
         this.unpackPackage(blob, info);
       },
-      () => this.actualizePackages()
+      () => {
+        this.notifier.notifyDownloadError(packageInfo);
+        this.actualizePackages();
+      }
     );
   }
 
@@ -347,6 +350,7 @@ export class PackageManagerService {
     unpack(blob).subscribe((progress) => {
       if (progress === 1) {
         this.actionSub.next(undefined);
+        this.notifier.notifyDoneDownloading(info);
         return;
       }
 
