@@ -36,7 +36,7 @@ export class PackageExpirationNotifierService {
   notifySoonToExpire() {
     const now = new Date();
     const soonToExpireDate = new Date(
-      now.getDate() + N_DAY_PACKAGE_SOON_TO_EXPIRE
+      now.getTime() + N_DAY_PACKAGE_SOON_TO_EXPIRE * 24 * 60 * 60 * 1000
     );
 
     const soon = this.packageStore.devicePackages.filter(

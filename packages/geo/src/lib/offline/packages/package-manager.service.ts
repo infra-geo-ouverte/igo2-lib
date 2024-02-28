@@ -76,10 +76,14 @@ export class PackageManagerService {
     private expirationNotifier: PackageExpirationNotifierService
   ) {
     this.expirationNotifier.notifySoonToExpire();
-    this.expirationNotifier.notifyExpired();
+    this.notifyExpirations();
     this.actualizePackages();
     this.resumeOperations();
     this.initFilterDownloadedPackages();
+  }
+
+  notifyExpirations() {
+    this.expirationNotifier.notifyExpired();
   }
 
   actualizePackages() {

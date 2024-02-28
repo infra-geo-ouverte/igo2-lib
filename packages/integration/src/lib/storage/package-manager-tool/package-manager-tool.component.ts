@@ -41,6 +41,7 @@ export class PackageManagerToolComponent implements OnInit {
   constructor(private packageManagerService: PackageManagerService) {}
 
   ngOnInit(): void {
+    this.packageManagerService.notifyExpirations();
     this.selectedTab = !this.packageManagerService.downloaded.length ? 0 : 1;
   }
 
