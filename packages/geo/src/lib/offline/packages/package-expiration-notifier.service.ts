@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { MessageService } from '@igo2/core';
-import { PackageStoreService } from '@igo2/geo';
 
 import { N_DAY_PACKAGE_SOON_TO_EXPIRE } from './constants';
+import { PackageStoreService } from './package-store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,14 +34,13 @@ export class PackageExpirationNotifierService {
   }
 
   notifySoonToExpire() {
-    console.log('soon to expire');
-    const soonToExpireDate = new Date();
-    soonToExpireDate.setDate(
-      soonToExpireDate.getDate() + N_DAY_PACKAGE_SOON_TO_EXPIRE
+    const now = new Date();
+    const soonToExpireDate = new Date(
+      now.getDate() + N_DAY_PACKAGE_SOON_TO_EXPIRE
     );
 
     const soon = this.packageStore.devicePackages.filter(
-      ({ expiration }) => expiration <= soonToExpireDate
+      ({ expiration }) => expiration <= soonToExpireDate && expiration > now
     );
     soon.forEach(({ title }) => {
       this.messageService.alert(
