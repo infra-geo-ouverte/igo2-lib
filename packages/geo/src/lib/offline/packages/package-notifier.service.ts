@@ -8,7 +8,7 @@ import { PackageStoreService } from './package-store.service';
 @Injectable({
   providedIn: 'root'
 })
-export class PackageExpirationNotifierService {
+export class PackageNotifierService {
   constructor(
     private packageStore: PackageStoreService,
     private messageService: MessageService

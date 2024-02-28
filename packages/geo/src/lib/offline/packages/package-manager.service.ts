@@ -11,7 +11,6 @@ import {
   switchMap
 } from 'rxjs';
 
-import { PackageExpirationNotifierService } from './package-expiration-notifier.service';
 import {
   DevicePackageInfo,
   DevicePackageStatus,
@@ -22,6 +21,7 @@ import {
   PackageManagerAction,
   PackageManagerActionType
 } from './package-manager-action.interface';
+import { PackageNotifierService } from './package-notifier.service';
 import { PackageStoreService } from './package-store.service';
 
 @Injectable({
@@ -73,7 +73,7 @@ export class PackageManagerService {
   constructor(
     private http: HttpClient,
     private packageStore: PackageStoreService,
-    private expirationNotifier: PackageExpirationNotifierService
+    private expirationNotifier: PackageNotifierService
   ) {
     this.expirationNotifier.notifySoonToExpire();
     this.notifyExpirations();
