@@ -10,14 +10,15 @@ import { MatPaginator } from '@angular/material/paginator';
 
 import {
   EntityStore,
+  EntityTableColumnRenderer,
   EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
-  IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
 import {
   DevicePackageInfo,
+  N_DAY_PACKAGE_SOON_TO_EXPIRE,
   PackageManagerActionType,
   PackageManagerService
 } from '@igo2/geo';
@@ -32,7 +33,7 @@ import { PackageProgressStatusComponent } from './package-progress-status/packag
   imports: [
     CommonModule,
     MatButtonModule,
-    IgoEntityTableModule,
+    EntityTableComponent,
     PackageProgressStatusComponent
   ],
   templateUrl: './downloaded-packages-manager.component.html',
@@ -85,7 +86,8 @@ export class DownloadedPackagesManagerComponent implements OnInit {
       },
       {
         name: 'expiration',
-        title: 'Expiration'
+        title: 'Expiration',
+        renderer: EntityTableColumnRenderer.HTML
       }
     ]
   };
@@ -133,12 +135,35 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   private formatPackage(downloaded: DevicePackageInfo) {
     const { size, expiration, ...other } = downloaded;
     const sizeInMB = (size / (1000 * 1000)).toFixed(1);
-    const formatedExp = this.datePipe.transform(expiration, 'dd-MM-YYYY');
+    const expirationHTML = this.getExpirationHTML(downloaded);
     return {
       ...other,
-      expiration: formatedExp,
+      expiration: expirationHTML,
       size: sizeInMB
     };
+  }
+
+  private getExpirationHTML(downloaded: DevicePackageInfo) {
+    const getCSSClass = (expiration: Date) => {
+      const now = new Date();
+      const soonToExpire = new Date(
+        now.getTime() + N_DAY_PACKAGE_SOON_TO_EXPIRE * 24 * 60 * 60 * 1000
+      );
+
+      console.log('soon to expires', soonToExpire);
+
+      if (now >= expiration) {
+        return 'expired';
+      }
+
+      return soonToExpire >= expiration ? 'expiring-soon' : 'ok';
+    };
+
+    const { expiration } = downloaded;
+    const formatedExp = this.datePipe.transform(expiration, 'dd-MM-YYYY');
+
+    const cssClass = getCSSClass(expiration);
+    return `<div class="${cssClass}">${formatedExp}</div>`;
   }
 
   isActionCancelable() {
