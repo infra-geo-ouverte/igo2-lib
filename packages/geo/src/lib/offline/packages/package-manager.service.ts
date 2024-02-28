@@ -80,7 +80,10 @@ export class PackageManagerService {
 
   private async resumeOperations() {
     this.resumeDeletions()
-      .pipe(switchMap(() => this.resumeDownloads()))
+      .pipe(
+        switchMap(() => this.resumeDownloads()),
+        switchMap(() => this.resumeInstallations())
+      )
       .subscribe();
   }
 
@@ -110,7 +113,6 @@ export class PackageManagerService {
   }
 
   private resumeDeletions() {
-    console.log('Resuming deletions');
     const deleting = this.packageStore.getDeletingPackages();
     return this.resumeOperation(deleting, (info) =>
       this.internalDeletePackage(info)
@@ -118,7 +120,6 @@ export class PackageManagerService {
   }
 
   private resumeDownloads() {
-    console.log('Resuming download');
     const downloading = this.packageStore.getDownloadingPackages();
     return this.resumeOperation(downloading, (info) =>
       this.internalDownload(
@@ -127,6 +128,19 @@ export class PackageManagerService {
           this.unpackPackage(blob, info);
         },
         () => this.actualizePackages()
+      )
+    );
+  }
+
+  private resumeInstallations() {
+    const installing = this.packageStore.getInstallingPackages();
+    return this.resumeOperation(installing, (info) =>
+      this.internalDownload(
+        info,
+        (blob, info) => {
+          this.resumeUnpackingPackage(blob, info);
+        },
+        () => this.internalDeletePackage(info)
       )
     );
   }
@@ -154,13 +168,29 @@ export class PackageManagerService {
   }
 
   private unpackPackage(blob: Blob, info: PackageInfo) {
+    this.unpackInternal(blob, info, (blob) =>
+      this.packageStore.unpackPackage(blob)
+    );
+  }
+
+  private resumeUnpackingPackage(blob: Blob, info: PackageInfo) {
+    this.unpackInternal(blob, info, (blob) => {
+      return this.packageStore.resumeUnpackingPackage(blob);
+    });
+  }
+
+  private unpackInternal(
+    blob: Blob,
+    info: PackageInfo,
+    unpack: (blob: Blob) => Observable<number>
+  ) {
     this.actionSub.next({
       type: PackageManagerActionType.INSTALLING,
       package: info,
       progress: 0
     });
 
-    this.packageStore.unpackPackage(blob).subscribe((progress) => {
+    unpack(blob).subscribe((progress) => {
       if (progress === 1) {
         this.actionSub.next(undefined);
         return;

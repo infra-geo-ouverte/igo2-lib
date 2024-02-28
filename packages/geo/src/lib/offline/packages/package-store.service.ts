@@ -7,7 +7,9 @@ import {
   Subject,
   firstValueFrom,
   from,
-  of
+  map,
+  of,
+  switchMap
 } from 'rxjs';
 
 import { GeoDBService, InsertSourceInsertDBEnum } from '../geoDB';
@@ -109,8 +111,6 @@ export class PackageStoreService {
 
     devicePackages.splice(index, 1);
 
-    console.log('downloaded packages', devicePackages);
-
     this.setDevicePackages(devicePackages);
     this.actualizedDevicePackages();
   }
@@ -126,7 +126,35 @@ export class PackageStoreService {
     );
   }
 
+  resumeUnpackingPackage(packageZip: Blob): Observable<number> {
+    const zip$ = from(JSZip.loadAsync(packageZip));
+    const progress$ = zip$.pipe(
+      switchMap((zip) => {
+        return from(zip.file('metadata.json').async('string')).pipe(
+          map((data) => JSON.parse(data))
+        );
+      }),
+      switchMap((metadata) => {
+        return this.geoDb.getRegionByID(metadata.title);
+      }),
+      map((data) => new Set(data.map(({ url }) => url) as string[])),
+      switchMap((urls) => {
+        return this.internalUnpack(packageZip, ({ url }) => {
+          return !urls.has(url);
+        });
+      })
+    );
+    return progress$;
+  }
+
   unpackPackage(packageZip: Blob): Observable<number> {
+    return this.internalUnpack(packageZip);
+  }
+
+  private internalUnpack(
+    packageZip: Blob,
+    fileFilter = (file: FileMetadata) => true
+  ) {
     const progress$ = new Subject<number>();
 
     const zip$ = from(JSZip.loadAsync(packageZip));
@@ -135,22 +163,20 @@ export class PackageStoreService {
         await zip.file('metadata.json').async('string')
       );
 
-      console.log('unpacked metadata', metadata);
-
       this.updatePackageStatus(metadata, DevicePackageStatus.INSTALLING);
 
       const { title } = metadata;
 
       const data = zip.folder('data');
 
-      const { files } = metadata;
+      const files = metadata.files.filter(fileFilter);
 
-      let nDone = 0;
+      let nDone = metadata.files.length - files.length;
       const loadFileIntoDB = async (file: FileMetadata) => {
         const fileData = await data.file(file.fileName).async('blob');
         await firstValueFrom(this.loadTileIntoGeoDB(fileData, file.url, title));
         ++nDone;
-        const progress = nDone / files.length;
+        const progress = nDone / metadata.files.length;
         progress$.next(progress);
       };
 
@@ -172,8 +198,6 @@ export class PackageStoreService {
 
         activeLoading = [];
       }
-
-      console.log('package install done');
 
       this.updatePackageStatus(metadata, DevicePackageStatus.INSTALLED);
 
