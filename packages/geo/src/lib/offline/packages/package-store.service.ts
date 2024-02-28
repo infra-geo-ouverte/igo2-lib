@@ -76,11 +76,15 @@ export class PackageStoreService {
   }
 
   private getDevicePackages(): DevicePackageInfo[] {
-    return (
+    const packages: DevicePackageInfo[] =
       JSON.parse(
         localStorage.getItem(this.DOWNLOADED_PACKAGE_METADATA_STORE)
-      ) ?? []
-    );
+      ) ?? [];
+
+    packages.forEach((devicePackage) => {
+      devicePackage.expiration = new Date(devicePackage.expiration);
+    });
+    return packages;
   }
 
   private setDevicePackages(downloaded: DevicePackageInfo[]) {

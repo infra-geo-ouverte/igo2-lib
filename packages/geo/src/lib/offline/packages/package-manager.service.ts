@@ -11,6 +11,7 @@ import {
   switchMap
 } from 'rxjs';
 
+import { PackageExpirationNotifierService } from './package-expiration-notifier.service';
 import {
   DevicePackageInfo,
   DevicePackageStatus,
@@ -71,8 +72,11 @@ export class PackageManagerService {
 
   constructor(
     private http: HttpClient,
-    private packageStore: PackageStoreService
+    private packageStore: PackageStoreService,
+    private expirationNotifier: PackageExpirationNotifierService
   ) {
+    this.expirationNotifier.notifySoonToExpire();
+    this.expirationNotifier.notifyExpired();
     this.actualizePackages();
     this.resumeOperations();
     this.initFilterDownloadedPackages();

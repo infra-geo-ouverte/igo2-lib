@@ -1,0 +1,1 @@
+export const N_DAY_PACKAGE_SOON_TO_EXPIRE = 7;
