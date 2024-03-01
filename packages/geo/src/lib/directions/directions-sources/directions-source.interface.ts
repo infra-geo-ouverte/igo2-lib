@@ -6,11 +6,9 @@ export interface DirectionsSourceOptions extends BaseDirectionsSourceOptions {
 export type OsrmDirectionsSourceOptions = BaseDirectionsSourceOptions;
 
 interface BaseDirectionsSourceOptions {
-  distance?: number;
   enabled?: boolean;
-  limit?: number;
-  logo?: string;
-  reverseUrl?: string;
-  type?: string;
+  name?: string;
+  type?: 'public' | 'private';
   url?: string;
+  userVerifUrl?: string;
 }

@@ -26,7 +26,7 @@ export interface EnvironmentOptions {
     defaultContextUri?: string;
   };
   depot?: DepotOptions;
-  directionsSources?: DirectionsSourceOptions;
+  directionsSources?: DirectionsSourceOptions[];
   dom?: DOMOptions[];
   drawingTool?: DrawOptions;
   edition?: unknown;
