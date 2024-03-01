@@ -3,19 +3,36 @@ import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '@igo2/core';
 
 import { DirectionsSource } from './directions-source';
-import { OsrmDirectionsSource } from './osrm-directions-source';
+import { OsrmPrivateDirectionsSource } from './osrm-private-directions-source';
+import { OsrmPublicDirectionsSource } from './osrm-public-directions-source';
 
-export function osrmDirectionsSourcesFactory(
+export function osrmPublicDirectionsSourcesFactory(
   http: HttpClient,
   config: ConfigService
 ) {
-  return new OsrmDirectionsSource(http, config);
+  return new OsrmPublicDirectionsSource(http, config);
 }
 
-export function provideOsrmDirectionsSource() {
+export function providePublicOsrmDirectionsSource() {
   return {
     provide: DirectionsSource,
-    useFactory: osrmDirectionsSourcesFactory,
+    useFactory: osrmPublicDirectionsSourcesFactory,
+    multi: true,
+    deps: [HttpClient, ConfigService]
+  };
+}
+
+export function osrmPrivateDirectionsSourcesFactory(
+  http: HttpClient,
+  config: ConfigService
+) {
+  return new OsrmPrivateDirectionsSource(http, config);
+}
+
+export function providePrivateOsrmDirectionsSource() {
+  return {
+    provide: DirectionsSource,
+    useFactory: osrmPrivateDirectionsSourcesFactory,
     multi: true,
     deps: [HttpClient, ConfigService]
   };

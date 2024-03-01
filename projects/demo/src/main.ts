@@ -36,7 +36,8 @@ import {
   IgoDirectionsModule,
   IgoGeoWorkspaceModule,
   provideIChercheSearchSource,
-  provideOsrmDirectionsSource,
+  providePublicOsrmDirectionsSource,
+  providePrivateOsrmDirectionsSource,
   provideWorkspaceSearchSource
 } from '@igo2/geo';
 
@@ -88,7 +89,8 @@ bootstrapApplication(AppComponent, {
     },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
     provideAnimations(),
-    provideOsrmDirectionsSource(),
+    providePublicOsrmDirectionsSource(),
+    providePrivateOsrmDirectionsSource(),
     provideIChercheSearchSource(),
     provideWorkspaceSearchSource()
   ]
