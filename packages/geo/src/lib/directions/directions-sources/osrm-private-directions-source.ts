@@ -14,36 +14,81 @@ import {
 } from '../shared/directions.enum';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
-import { OsrmDirectionsSourceOptions } from './directions-source.interface';
+import { DirectionsSourceOptions, OsrmDirectionsSourceOptions } from './directions-source.interface';
+import { Position } from 'geojson';
 
 @Injectable()
-export class OsrmDirectionsSource extends DirectionsSource {
+export class OsrmPrivateDirectionsSource extends DirectionsSource {
+  get options(): OsrmDirectionsSourceOptions {
+    return this._options;
+  }
+
+  set options(value: OsrmDirectionsSourceOptions) {
+    this._options = value;
+  }
+
   get enabled(): boolean {
-    return this.options.enabled !== false;
+    return this._options.enabled;
   }
+
   set enabled(value: boolean) {
-    this.options.enabled = value;
+    this._options.enabled = value;
   }
-  static _name = 'OSRM Québec';
-  private directionsUrl =
-    'https://geoegl.msp.gouv.qc.ca/services/itineraire/route/v1/driving/';
-  private options: OsrmDirectionsSourceOptions;
+
+  get name(): string {
+    return this._options.name;
+  }
+
+  set name(value: string) {
+    this._options.name = value;
+  }
+
+  get url(): string {
+    return this._options.url;
+  }
+
+  set url(value: string) {
+    this._options.url = value;
+  }
+
+  get userVerifUrl(): string {
+    return this._options.userVerifUrl;
+  }
+
+  set userVerifUrl(value: string) {
+    this._options.userVerifUrl = value;
+  }
+
+  get type(): 'public' | 'private' {
+    return this._options.type;
+  }
+
+  set type(value: 'public' | 'private') {
+    this._options.type = value;
+  }
+
+  private _options: OsrmDirectionsSourceOptions;
 
   constructor(
-    private http: HttpClient,
-    private config: ConfigService
+    private _http: HttpClient,
+    private _config: ConfigService
   ) {
     super();
-    this.options = this.config.getConfig('directionsSources.osrm') || {};
-    this.directionsUrl = this.options.url || this.directionsUrl;
+    const directionsSources: DirectionsSourceOptions[] = this._config.getConfig('directionsSources');
+    this.options = directionsSources?.find(dS => dS.osrm.type === 'private')?.osrm || {};
+    this.name = this.name ? this.name : undefined;
+    this.url = this.url ? this.url : undefined;
+    this.userVerifUrl = this.userVerifUrl ? this.userVerifUrl : undefined;
+    this.type = this.type ? this.type : undefined;
+    this.enabled = false;
   }
 
   getName(): string {
-    return OsrmDirectionsSource._name;
+    return this.name;
   }
 
   route(
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
   ): Observable<Direction[]> {
     const directionsParams = this.getRouteParams(directionsOptions);
@@ -55,11 +100,11 @@ export class OsrmDirectionsSource extends DirectionsSource {
     cacheHasher: customCacheHasher
   })
   private getRoute(
-    coordinates: [number, number][],
+    coordinates: Position[],
     params: HttpParams
   ): Observable<Direction[]> {
-    return this.http
-      .get<JSON[]>(this.directionsUrl + coordinates.join(';'), {
+    return this._http
+      .get<JSON[]>(this.url + coordinates.join(';'), {
         params
       })
       .pipe(map((res) => this.extractRoutesData(res)));
@@ -118,7 +163,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
     return {
       id: uuid(),
       title: roadNetworkRoute.legs[0].summary,
-      source: OsrmDirectionsSource._name,
+      source: this.name,
       sourceType: SourceDirectionsType.Route,
       order: 1,
       format: DirectionsFormat.GeoJSON,
