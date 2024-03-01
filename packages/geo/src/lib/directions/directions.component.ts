@@ -6,9 +6,10 @@ import {
   OnInit
 } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-
+import { CommonModule } from '@angular/common';
 import { EntityStoreWatcher } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
+import { AuthService } from '@igo2/auth';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
@@ -38,6 +39,7 @@ import {
   Stop
 } from './shared/directions.interface';
 import { DirectionsService } from './shared/directions.service';
+import { DirectionsSourceService } from './shared/directions-source.service';
 import {
   addDirectionToRoutesFeatureStore,
   addStopToStopsFeatureStore,
@@ -53,6 +55,7 @@ import {
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'igo-directions',
@@ -60,6 +63,7 @@ import {
   styleUrls: ['./directions.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     MatSlideToggleModule,
     DirectionsButtonsComponent,
     DirectionsInputsComponent,
@@ -71,6 +75,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;
 
   public projection: string = 'EPSG:4326';
+  public toggleTypeAvailable: boolean = false;
+  public twoSourcesAvailable: boolean = false;
 
   private zoomRoute$$: Subscription;
   private storeEmpty$$: Subscription;
@@ -86,6 +92,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public previousStops: Stop[] = [];
 
   private searchs$$: Subscription[] = [];
+  private authenticated$$: Subscription;
 
   @Input() contextUri: string;
   @Input() stopsStore: StopsStore;
@@ -111,13 +118,33 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdRef: ChangeDetectorRef,
+    private http: HttpClient,
     private languageService: LanguageService,
     private directionsService: DirectionsService,
+    private directionsSourceService: DirectionsSourceService,
     private searchService: SearchService,
-    private queryService: QueryService
+    private queryService: QueryService,
+    private authService: AuthService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
+    this.authenticated$$ = this.authService.authenticate$.subscribe((auth: boolean) => {
+      if (auth) {
+        const userVerifUrl: string = this.directionsSourceService.sources.find(source => source.type === 'private')?.userVerifUrl;
+        this.http.get(userVerifUrl).subscribe((user: any) => {
+          this.toggleTypeAvailable = user.hasOsrmPrivateAccess;
+        });
+      }
+    });
+    for (const source of this.directionsSourceService.sources) {
+      if (source.getName()) {
+        this.twoSourcesAvailable = true;
+      } else {
+        this.twoSourcesAvailable = false;
+        break;
+      }
+    }
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
@@ -134,7 +161,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
     this.zoomRoute$$.unsubscribe();
+    this.authenticated$$.unsubscribe();
     this.freezeStores();
+  }
+
+  get currentSourceIsPrivate() {
+    return this.directionsSourceService.sources.find(source => source.type === 'private')?.enabled;
   }
 
   private freezeStores() {
@@ -465,5 +497,19 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
+  }
+
+  onToggleModeControl(isActive: boolean) {
+    this.directionsSourceService.sources.map(source => source.enabled = false);
+    if (isActive) {
+      this.directionsSourceService.sources.find(source => source.type === 'private').enabled = true;
+      this.messageService
+        .alert(this.languageService.translate
+        .instant('igo.geo.directionsForm.forestRoadsWarning.text'), this.languageService.translate
+        .instant('igo.geo.directionsForm.forestRoadsWarning.title'));
+    } else {
+      this.directionsSourceService.sources.find(source => source.type === 'public').enabled = true;
+    }
+    this.getRoutes();
   }
 }
