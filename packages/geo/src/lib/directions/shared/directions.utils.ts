@@ -432,6 +432,7 @@ export function formatInstruction(
   languageService: LanguageService,
   lastStep = false
 ) {
+  route = route ? route : 'Voie';
   const translate = languageService.translate;
   let directive;
   let image = 'forward';
