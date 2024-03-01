@@ -5,7 +5,6 @@ import {
   IgoDirectionsModule,
   IgoMap,
   IgoSearchModule,
-  LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapService,
@@ -14,7 +13,8 @@ import {
   StepFeatureStore,
   StopsFeatureStore,
   StopsStore,
-  TileLayer
+  TileLayer,
+  TileLayerOptions
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -70,13 +70,15 @@ export class AppDirectionsComponent {
     this.mapService.setMap(this.map);
     this.layerService
       .createAsyncLayer({
-        title: 'OSM',
+        title: 'Quebec Base Map',
         baseLayer: true,
         visible: true,
         sourceOptions: {
-          type: 'osm'
+          type: 'xyz',
+          url: '/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
+          crossOrigin: 'anonymous'
         }
-      } satisfies LayerOptions)
+      } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }
