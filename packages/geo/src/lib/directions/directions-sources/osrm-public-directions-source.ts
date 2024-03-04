@@ -51,12 +51,12 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     this._options.url = value;
   }
 
-  get userVerifUrl(): string {
-    return this._options.userVerifUrl;
+  get authorizationUrl(): string {
+    return this._options.authorizationUrl;
   }
 
-  set userVerifUrl(value: string) {
-    this._options.userVerifUrl = value;
+  set authorizationUrl(value: string) {
+    this._options.authorizationUrl = value;
   }
 
   get type(): 'public' | 'private' {
@@ -78,7 +78,7 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     this.options = directionsSources?.find(dS => dS.osrm.type === 'public')?.osrm || {};
     this.name = this.name ? this.name : 'OSRM Québec (Public)';
     this.url = this.url ? this.url : '/apis/itineraire/route/v1/driving/';
-    this.userVerifUrl = undefined;
+    this.authorizationUrl = undefined;
     this.type = this.type ? this.type : 'public';
     this.enabled = true;
   }

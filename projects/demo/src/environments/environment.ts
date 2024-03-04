@@ -17,7 +17,7 @@ export const environment: EnvironmentOptions = {
           name: 'OSRM Québec (Partenaires)',
           type: 'private',
           url: '/apis/itineraire/route/v1/forestier/',
-          userVerifUrl: '/apis/igo2/user/igo'
+          authorizationUrl: '/apis/igo2/user/igo'
         }
       }
     ],

@@ -5,7 +5,7 @@ import { Direction, DirectionOptions } from '../shared/directions.interface';
 export abstract class DirectionsSource {
   abstract enabled: boolean;
   abstract type: string;
-  abstract userVerifUrl: string;
+  abstract authorizationUrl: string;
   abstract getName(): string;
   abstract route(
     coordinates: [number, number][],

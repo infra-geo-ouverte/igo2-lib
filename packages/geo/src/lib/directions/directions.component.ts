@@ -131,8 +131,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.authenticated$$ = this.authService.authenticate$.subscribe((auth: boolean) => {
       if (auth) {
-        const userVerifUrl: string = this.directionsSourceService.sources.find(source => source.type === 'private')?.userVerifUrl;
-        this.http.get(userVerifUrl).subscribe((user: any) => {
+        const authorizationUrl: string = this.directionsSourceService.sources.find(source => source.type === 'private')?.authorizationUrl;
+        this.http.get(authorizationUrl).subscribe((user: any) => {
           this.hasOsrmPrivateAccess = user.hasOsrmPrivateAccess;
         });
       }

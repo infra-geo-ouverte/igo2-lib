@@ -51,12 +51,12 @@ export class OsrmPrivateDirectionsSource extends DirectionsSource {
     this._options.url = value;
   }
 
-  get userVerifUrl(): string {
-    return this._options.userVerifUrl;
+  get authorizationUrl(): string {
+    return this._options.authorizationUrl;
   }
 
-  set userVerifUrl(value: string) {
-    this._options.userVerifUrl = value;
+  set authorizationUrl(value: string) {
+    this._options.authorizationUrl = value;
   }
 
   get type(): 'public' | 'private' {
@@ -78,7 +78,7 @@ export class OsrmPrivateDirectionsSource extends DirectionsSource {
     this.options = directionsSources?.find(dS => dS.osrm.type === 'private')?.osrm || {};
     this.name = this.name ? this.name : undefined;
     this.url = this.url ? this.url : undefined;
-    this.userVerifUrl = this.userVerifUrl ? this.userVerifUrl : undefined;
+    this.authorizationUrl = this.authorizationUrl ? this.authorizationUrl : undefined;
     this.type = this.type ? this.type : undefined;
     this.enabled = false;
   }

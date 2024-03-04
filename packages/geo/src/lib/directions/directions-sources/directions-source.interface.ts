@@ -10,5 +10,5 @@ interface BaseDirectionsSourceOptions {
   name?: string;
   type?: 'public' | 'private';
   url?: string;
-  userVerifUrl?: string;
+  authorizationUrl?: string;
 }
