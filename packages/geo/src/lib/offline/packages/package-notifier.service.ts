@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { MessageService } from '@igo2/core';
-import { PackageInfo } from '@igo2/geo';
 
 import { N_DAY_PACKAGE_SOON_TO_EXPIRE } from './constants';
+import { PackageInfo } from './package-info.interface';
 import { PackageStoreService } from './package-store.service';
 
 @Injectable({

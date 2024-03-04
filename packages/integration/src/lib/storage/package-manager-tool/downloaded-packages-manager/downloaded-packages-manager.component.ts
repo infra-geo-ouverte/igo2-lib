@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ViewChild
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator } from '@angular/material/paginator';
@@ -38,7 +39,8 @@ import { PackageProgressStatusComponent } from './package-progress-status/packag
   ],
   templateUrl: './downloaded-packages-manager.component.html',
   styleUrls: ['./downloaded-packages-manager.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class DownloadedPackagesManagerComponent implements OnInit {
   @ViewChild('entityTable') entityTable: EntityTableComponent;

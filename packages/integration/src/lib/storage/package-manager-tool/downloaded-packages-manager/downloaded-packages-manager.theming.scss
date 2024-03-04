@@ -1,0 +1,31 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  $accent: map.get($theme, accent);
+  $warn: map.get($theme, warn);
+
+  igo-downloaded-packages-manager {
+    .expired {
+      animation: blinking-red 2s infinite;
+      transform: scale(1);
+    }
+
+    @keyframes blinking-red {
+      0% {
+        transform: scale(0.95);
+      }
+      70% {
+        color: mat.get-color-from-palette($warn);
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(0.95);
+      }
+    }
+
+    .expiring-soon {
+      color: mat.get-color-from-palette($accent, orange);
+    }
+  }
+}

@@ -2,27 +2,10 @@
   display: block;
 }
 
-::ng-deep .expired {
-  animation: blinking-red 2s infinite;
+.expired {
   font-weight: bold;
-
-  transform: scale(1);
 }
 
-@keyframes blinking-red {
-  0% {
-    transform: scale(0.95);
-  }
-  70% {
-    color: red;
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0.95);
-  }
-}
-
-::ng-deep .expiring-soon {
+.expiring-soon {
   font-weight: bold;
-  color: orange !important;
 }
