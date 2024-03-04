@@ -102,7 +102,7 @@
     "@angular-eslint/eslint-plugin-template": "^17.1.0",
     "@angular-eslint/schematics": "^17.1.0",
     "@angular-eslint/template-parser": "^17.1.0",
-    "@angular/cli": "^17.0.6",
+    "@angular/cli": "^17.2.2",
     "@angular/compiler-cli": "^17.0.6",
     "@compodoc/compodoc": "^1.1.15",
     "@cypress/schematic": "^2.5.1",
