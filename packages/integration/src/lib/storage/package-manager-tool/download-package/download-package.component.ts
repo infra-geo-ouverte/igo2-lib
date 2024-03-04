@@ -16,7 +16,6 @@ import {
   EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
-  IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
 import { PackageInfo, PackageManagerService } from '@igo2/geo';
@@ -26,7 +25,7 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'igo-download-package',
   standalone: true,
-  imports: [CommonModule, IgoEntityTableModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, EntityTableComponent, MatButtonModule, MatIconModule],
   templateUrl: './download-package.component.html',
   styleUrls: ['./download-package.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

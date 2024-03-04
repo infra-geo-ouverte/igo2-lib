@@ -3,20 +3,24 @@
     <mat-icon svgIcon="refresh"></mat-icon>
   </button>
 </div>
-<igo-entity-table
-  #entityTable
-  [store]="store"
-  [withPaginator]="true"
-  [paginatorOptions]="paginatorOptions"
-  [template]="template"
-  (entitySortChange)="entitySortChange()"
-></igo-entity-table>
+<div class="table-container">
+  <igo-entity-table
+    #entityTable
+    [store]="store"
+    [withPaginator]="true"
+    [paginatorOptions]="paginatorOptions"
+    [template]="template"
+    (entitySortChange)="entitySortChange()"
+  ></igo-entity-table>
+</div>
 
-<button
-  mat-raised-button
-  color="primary"
-  [disabled]="!selectedPackage"
-  (click)="downloadSelectedPackage()"
->
-  Download
-</button>
+<div class="action-row">
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!selectedPackage"
+    (click)="downloadSelectedPackage()"
+  >
+    Download
+  </button>
+</div>
