@@ -425,14 +425,13 @@ export function formatDuration(duration: number): string {
 export function formatInstruction(
   type,
   modifier,
-  route,
+  route: string = 'Voie',
   direction,
   stepPosition,
   exit,
   languageService: LanguageService,
   lastStep = false
 ) {
-  route = route ? route : 'Voie';
   const translate = languageService.translate;
   let directive;
   let image = 'forward';
