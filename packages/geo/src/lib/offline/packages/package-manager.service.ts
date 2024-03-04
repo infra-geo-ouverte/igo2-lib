@@ -118,6 +118,7 @@ export class PackageManagerService {
       },
       () => {
         this.notifier.notifyDownloadError(packageInfo);
+        this.cancelDownload(packageInfo);
         this.actualizePackages();
       }
     );
@@ -209,7 +210,7 @@ export class PackageManagerService {
     this.internalDeletePackage(downloadedPackage);
   }
 
-  private internalDeletePackage(info: PackageInfo) {
+  private internalDeletePackage(info: PackageInfo, verbose = true) {
     this.actionSub.next({
       type: PackageManagerActionType.DELETING,
       package: info
@@ -217,7 +218,10 @@ export class PackageManagerService {
 
     const deleted$ = this.packageStore.deletePackage(info);
     deleted$.subscribe(() => {
-      this.notifier.notifyDoneDeleting(info);
+      if (verbose) {
+        this.notifier.notifyDoneDeleting(info);
+      }
+
       this.actionSub.next(undefined);
     });
 
@@ -226,7 +230,7 @@ export class PackageManagerService {
 
   private cancelDownload(info: PackageInfo): void {
     this.download$$?.unsubscribe();
-    this.internalDeletePackage(info);
+    this.internalDeletePackage(info, false);
   }
 
   private cancelInstallation(info: PackageInfo): void {

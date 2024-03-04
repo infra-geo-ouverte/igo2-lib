@@ -9,15 +9,11 @@
 </div>
 
 <div class="action-row">
-  <button
-    *ngIf="this.isActionCancelable() | async; else deleteBlock"
-    mat-raised-button
-    color="warn"
-    (click)="cancelAction()"
-  >
-    Cancel
-  </button>
-  <ng-template #deleteBlock>
+  @if (this.isActionCancelable() | async) {
+    <button mat-raised-button color="warn" (click)="cancelAction()">
+      Cancel
+    </button>
+  } @else {
     <button
       #elseBlock
       mat-raised-button
@@ -27,5 +23,5 @@
     >
       Delete
     </button>
-  </ng-template>
+  }
 </div>

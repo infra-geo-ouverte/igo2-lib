@@ -18,14 +18,20 @@ export class PackageNotifierService {
   notifyDoneDownloading(info: PackageInfo) {
     this.messageService.success(
       `Your package ${info.title} has been installed.`,
-      'Package Installation Done'
+      'Package Installation Done',
+      {
+        timeOut: 5000
+      }
     );
   }
 
   notifyDoneDeleting(info: PackageInfo) {
     this.messageService.success(
       `Your package ${info.title} has been deleted.`,
-      'Package Deletion Done'
+      'Package Deletion Done',
+      {
+        timeOut: 5000
+      }
     );
   }
 
