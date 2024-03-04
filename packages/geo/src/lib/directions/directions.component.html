@@ -9,7 +9,7 @@
   <mat-slide-toggle *ngIf="toggleTypeAvailable && twoSourcesAvailable"
     [checked]="currentSourceIsPrivate"
     [labelPosition]="'before'"
-    (change)="onToggleModeControl($event.checked)"
+    (change)="onTogglePrivateModeControl($event.checked)"
   >
   {{ 'igo.geo.directionsForm.toggleType' | translate }}
   </mat-slide-toggle>

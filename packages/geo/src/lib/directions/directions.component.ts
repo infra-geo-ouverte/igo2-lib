@@ -499,7 +499,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onToggleModeControl(isActive: boolean) {
+  onTogglePrivateModeControl(isActive: boolean) {
     this.directionsSourceService.sources.forEach(source => source.enabled = false);
     if (isActive) {
       this.directionsSourceService.sources.find(source => source.type === 'private').enabled = true;
