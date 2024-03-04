@@ -217,6 +217,7 @@ export class PackageManagerService {
 
     const deleted$ = this.packageStore.deletePackage(info);
     deleted$.subscribe(() => {
+      this.notifier.notifyDoneDeleting(info);
       this.actionSub.next(undefined);
     });
 

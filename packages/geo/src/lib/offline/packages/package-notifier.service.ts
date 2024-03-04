@@ -16,9 +16,16 @@ export class PackageNotifierService {
   ) {}
 
   notifyDoneDownloading(info: PackageInfo) {
-    this.messageService.info(
+    this.messageService.success(
       `Your package ${info.title} has been installed.`,
       'Package Installation Done'
+    );
+  }
+
+  notifyDoneDeleting(info: PackageInfo) {
+    this.messageService.success(
+      `Your package ${info.title} has been deleted.`,
+      'Package Deletion Done'
     );
   }
 
