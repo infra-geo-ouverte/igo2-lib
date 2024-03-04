@@ -6,7 +6,7 @@
   >
     {{ 'igo.geo.directionsForm.toggleActive' | translate }}
   </mat-slide-toggle>
-  <mat-slide-toggle *ngIf="toggleTypeAvailable && twoSourcesAvailable"
+  <mat-slide-toggle *ngIf="hasOsrmPrivateAccess && twoSourcesAvailable"
     [checked]="currentSourceIsPrivate"
     [labelPosition]="'before'"
     (change)="onTogglePrivateModeControl($event.checked)"

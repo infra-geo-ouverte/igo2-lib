@@ -75,7 +75,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;
 
   public projection: string = 'EPSG:4326';
-  public toggleTypeAvailable: boolean = false;
+  public hasOsrmPrivateAccess: boolean = false;
   public twoSourcesAvailable: boolean = false;
 
   private zoomRoute$$: Subscription;
@@ -133,7 +133,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       if (auth) {
         const userVerifUrl: string = this.directionsSourceService.sources.find(source => source.type === 'private')?.userVerifUrl;
         this.http.get(userVerifUrl).subscribe((user: any) => {
-          this.toggleTypeAvailable = user.hasOsrmPrivateAccess;
+          this.hasOsrmPrivateAccess = user.hasOsrmPrivateAccess;
         });
       }
     });
