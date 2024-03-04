@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
+import { IgoAuthModule } from '@igo2/auth';
 import { IgoSearchModule } from '../search/search.module';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
@@ -9,6 +10,7 @@ import { provideDirectionsSourceService } from './shared/directions-source.servi
 
 @NgModule({
   imports: [
+    IgoAuthModule.forRoot(),
     IgoSearchModule.forRoot(),
     DirectionsComponent,
     DirectionsInputsComponent,
