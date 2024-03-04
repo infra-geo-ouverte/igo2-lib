@@ -7,8 +7,11 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 import {
   EntityStore,
@@ -23,7 +26,15 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'igo-download-package',
   standalone: true,
-  imports: [CommonModule, EntityTableComponent, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    EntityTableComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule
+  ],
   templateUrl: './download-package.component.html',
   styleUrls: ['./download-package.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -36,6 +47,8 @@ export class DownloadPackageComponent implements OnInit {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   selectedPackage = undefined;
+
+  search: string = '';
 
   public template: EntityTableTemplate = {
     selection: true,
@@ -87,14 +100,7 @@ export class DownloadPackageComponent implements OnInit {
 
   ngOnInit(): void {
     this.nonDownloaded$.subscribe((packages) => {
-      const transformed = packages.map((avail) => {
-        const { size, ...other } = avail;
-        const sizeInMB = (size / (1000 * 1000)).toFixed(1);
-        return {
-          ...other,
-          size: sizeInMB
-        };
-      });
+      const transformed = packages.map((avail) => this.transformPackage(avail));
       this.store.clear();
       this.store.load(transformed);
     });
@@ -103,6 +109,27 @@ export class DownloadPackageComponent implements OnInit {
       const isSelectionToggled = !action;
       this.setSelection(isSelectionToggled);
     });
+  }
+
+  private transformPackage(info: PackageInfo) {
+    const { size, ...other } = info;
+    const sizeInMB = (size / (1000 * 1000)).toFixed(1);
+    return {
+      ...other,
+      size: sizeInMB
+    };
+  }
+
+  filterPackages() {
+    console.log('searching packages');
+
+    const filtered = this.nonDownloaded
+      .filter(({ title }) => title.includes(this.search))
+      .map((info) => this.transformPackage(info));
+
+    console.log('filtered', filtered);
+    this.store.clear();
+    this.store.load(filtered);
   }
 
   downloadSelectedPackage() {

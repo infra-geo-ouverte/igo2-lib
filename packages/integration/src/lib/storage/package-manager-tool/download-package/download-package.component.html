@@ -1,4 +1,27 @@
 <div class="action-bar">
+  <mat-form-field
+    class="example-form-field"
+    appearance="outline"
+    subscriptSizing="dynamic"
+  >
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="search"
+      (input)="filterPackages()"
+    />
+    @if (search) {
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="search = ''; filterPackages()"
+      >
+        <mat-icon svgIcon="close"></mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
   <button mat-icon-button (click)="refreshPackages()">
     <mat-icon svgIcon="refresh"></mat-icon>
   </button>
