@@ -3,17 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ViewChild,
-  ViewEncapsulation
+  ViewChild
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatPaginator } from '@angular/material/paginator';
 
 import {
   EntityStore,
   EntityTableColumnRenderer,
   EntityTableComponent,
-  EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
 } from '@igo2/common';
@@ -47,11 +44,9 @@ export class DownloadedPackagesManagerComponent implements OnInit {
 
   private datePipe = new DatePipe('en-US');
   public store: EntityStore = new EntityStore([]);
-  public paginator: MatPaginator;
   public entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(
     false
   );
-  public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 
   selectedPackage = undefined;
 

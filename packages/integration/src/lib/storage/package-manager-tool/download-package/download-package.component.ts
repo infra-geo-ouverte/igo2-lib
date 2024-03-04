@@ -9,12 +9,10 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginator } from '@angular/material/paginator';
 
 import {
   EntityStore,
   EntityTableComponent,
-  EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
 } from '@igo2/common';
@@ -35,9 +33,7 @@ export class DownloadPackageComponent implements OnInit {
   @ViewChild('entityTable') entityTable: EntityTableComponent;
 
   public store: EntityStore = new EntityStore([]);
-  public paginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 
   selectedPackage = undefined;
 
