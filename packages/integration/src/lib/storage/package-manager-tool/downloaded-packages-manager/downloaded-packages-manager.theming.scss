@@ -9,6 +9,7 @@
     .expired {
       animation: blinking-red 2s infinite;
       transform: scale(1);
+      font-weight: bold;
     }
 
     @keyframes blinking-red {
@@ -25,7 +26,8 @@
     }
 
     .expiring-soon {
-      color: mat.get-color-from-palette($accent, orange);
+      color: mat.get-color-from-palette($accent);
+      font-weight: bold;
     }
   }
 }

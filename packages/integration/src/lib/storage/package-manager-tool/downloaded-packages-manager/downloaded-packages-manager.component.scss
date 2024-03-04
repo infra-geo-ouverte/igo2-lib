@@ -1,11 +1,27 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  // justify-content: flex-start;
 }
 
-.expired {
-  font-weight: bold;
+// .main-container {
+//   height: 100%;
+
+// }
+
+.table-container {
+  flex-grow: 1;
+  flex-basis: 5vh;
+  min-height: 170px;
+  max-height: 170vh;
+  overflow-y: auto;
 }
 
-.expiring-soon {
-  font-weight: bold;
+.action-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 10px 10px 0;
 }

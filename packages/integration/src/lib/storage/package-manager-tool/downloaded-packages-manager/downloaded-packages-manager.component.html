@@ -1,29 +1,33 @@
 <igo-package-progress-status></igo-package-progress-status>
-<igo-entity-table
-  #entityTable
-  [store]="store"
-  [withPaginator]="true"
-  [paginatorOptions]="paginatorOptions"
-  [template]="template"
-  (entitySortChange)="entitySortChange()"
-></igo-entity-table>
+<div class="table-container">
+  <igo-entity-table
+    #entityTable
+    [store]="store"
+    [withPaginator]="true"
+    [paginatorOptions]="paginatorOptions"
+    [template]="template"
+    (entitySortChange)="entitySortChange()"
+  ></igo-entity-table>
+</div>
 
-<button
-  *ngIf="this.isActionCancelable() | async; else deleteBlock"
-  mat-raised-button
-  color="warn"
-  (click)="cancelAction()"
->
-  Cancel
-</button>
-<ng-template #deleteBlock>
+<div class="action-row">
   <button
-    #elseBlock
+    *ngIf="this.isActionCancelable() | async; else deleteBlock"
     mat-raised-button
     color="warn"
-    [disabled]="!selectedPackage || action"
-    (click)="deleteSelectedPackage()"
+    (click)="cancelAction()"
   >
-    Delete
+    Cancel
   </button>
-</ng-template>
+  <ng-template #deleteBlock>
+    <button
+      #elseBlock
+      mat-raised-button
+      color="warn"
+      [disabled]="!selectedPackage || action"
+      (click)="deleteSelectedPackage()"
+    >
+      Delete
+    </button>
+  </ng-template>
+</div>
