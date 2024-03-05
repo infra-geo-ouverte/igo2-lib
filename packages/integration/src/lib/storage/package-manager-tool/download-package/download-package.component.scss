@@ -2,9 +2,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
 }
 
 .table-container {
