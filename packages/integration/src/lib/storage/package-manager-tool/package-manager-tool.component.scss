@@ -2,22 +2,21 @@
   display: block;
 }
 
-@media screen and (-webkit-device-pixel-ratio: 3) {
-  igo-downloaded-packages-manager {
-    height: calc(100vh - 275px);
-  }
-
-  igo-download-package {
-    height: calc(100vh - 275px);
-  }
+igo-downloaded-packages-manager,
+igo-download-package {
+  height: calc(100vh - 125px);
 }
 
 @media screen and (-webkit-device-pixel-ratio: 2) {
-  igo-downloaded-packages-manager {
-    height: calc(100vh - 150px);
-  }
-
+  igo-downloaded-packages-manager,
   igo-download-package {
     height: calc(100vh - 150px);
+  }
+}
+
+@media screen and (-webkit-device-pixel-ratio: 3) {
+  igo-downloaded-packages-manager,
+  igo-download-package {
+    height: calc(100vh - 275px);
   }
 }
