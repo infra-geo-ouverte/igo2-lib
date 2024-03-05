@@ -40,8 +40,6 @@ export class GeoDBService {
       return;
     }
 
-    // console.log('update tile', url);
-
     let compress = false;
 
     const subject: Subject<GeoDBData> = new Subject();
@@ -66,12 +64,14 @@ export class GeoDBService {
           return this.ngxIndexedDBService.getByID(this.dbName, url);
         }),
         concatMap((dbObject: GeoDBData) => {
-          console.log(dbObject);
           if (!dbObject) {
-            // console.log('adding new tile', geoDBData);
             return this.ngxIndexedDBService.add(this.dbName, geoDBData);
           }
-          // console.log('adding region to existing tile');
+
+          if (dbObject.regionID.includes(regionID)) {
+            console.log('region already there');
+            return of(dbObject);
+          }
 
           dbObject.regionID.push(regionID);
           return this.customUpdate(dbObject);
@@ -164,16 +164,26 @@ export class GeoDBService {
       'regionID',
       IDBKey
     );
-    dbRequest.subscribe((datas: GeoDBData[]) => {
-      if (!datas.length) {
+    dbRequest.subscribe((results: GeoDBData[]) => {
+      if (!results.length) {
         done$.next();
         done$.complete();
         return;
       }
 
       forkJoin(
-        datas.map((data) => {
-          return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
+        results.map((data) => {
+          const { regionID: regions } = data;
+          if (regions.length === 1) {
+            return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
+          }
+
+          // Remove region
+          const index = regions.findIndex(({ regionID }) => regionID === id);
+          regions[index] = regions[regions.length - 1];
+          regions.pop();
+
+          return this.customUpdate(data);
         })
       ).subscribe(() => {
         done$.next();
