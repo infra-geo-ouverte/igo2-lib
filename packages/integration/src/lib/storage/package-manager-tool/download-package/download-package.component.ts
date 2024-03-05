@@ -121,8 +121,6 @@ export class DownloadPackageComponent implements OnInit {
   }
 
   filterPackages() {
-    console.log('searching packages');
-
     const filtered = this.internalFilterPackages(this.nonDownloaded);
 
     this.store.clear();
@@ -137,7 +135,6 @@ export class DownloadPackageComponent implements OnInit {
 
   downloadSelectedPackage() {
     if (!this.selectedPackage) {
-      console.log('selected package undefined');
       return;
     }
     this.download.next(this.selectedPackage);
