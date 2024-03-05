@@ -232,6 +232,11 @@ export class PackageStoreService {
 
     const devicePackages = this.getDevicePackages();
     const devicePackage = devicePackages.find((p) => p.id === id);
+    if (devicePackage.title !== info.title) {
+      throw Error(
+        'Package discrepancy: two package has the same id but not the same title'
+      );
+    }
 
     if (!devicePackage && status === DevicePackageStatus.DOWNLOADING) {
       devicePackages.push({ ...info, status });
