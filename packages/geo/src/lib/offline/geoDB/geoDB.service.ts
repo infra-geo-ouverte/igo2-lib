@@ -55,7 +55,7 @@ export class GeoDBService {
         concatMap((object) => {
           geoDBData = {
             url,
-            regionID: [regionID],
+            regionIDs: [regionID],
             object: object,
             compressed: compress,
             insertSource,
@@ -68,12 +68,12 @@ export class GeoDBService {
             return this.ngxIndexedDBService.add(this.dbName, geoDBData);
           }
 
-          if (dbObject.regionID.includes(regionID)) {
+          if (dbObject.regionIDs.includes(regionID)) {
             console.log('region already there');
             return of(dbObject);
           }
 
-          dbObject.regionID.push(regionID);
+          dbObject.regionIDs.push(regionID);
           return this.customUpdate(dbObject);
         })
       )
@@ -146,7 +146,7 @@ export class GeoDBService {
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.ngxIndexedDBService.getAllByIndex(
       this.dbName,
-      'regionID',
+      'regionIDs',
       IDBKey
     );
     return dbRequest;
@@ -161,7 +161,7 @@ export class GeoDBService {
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.ngxIndexedDBService.getAllByIndex(
       this.dbName,
-      'regionID',
+      'regionIDs',
       IDBKey
     );
     dbRequest.subscribe((results: GeoDBData[]) => {
@@ -173,15 +173,15 @@ export class GeoDBService {
 
       forkJoin(
         results.map((data) => {
-          const { regionID: regions } = data;
-          if (regions.length === 1) {
+          const { regionIDs } = data;
+          if (regionIDs.length === 1) {
             return this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
           }
 
           // Remove region
-          const index = regions.findIndex(({ regionID }) => regionID === id);
-          regions[index] = regions[regions.length - 1];
-          regions.pop();
+          const index = regionIDs.findIndex((regionID) => regionID === id);
+          regionIDs[index] = regionIDs[regionIDs.length - 1];
+          regionIDs.pop();
 
           return this.customUpdate(data);
         })
@@ -199,7 +199,7 @@ export class GeoDBService {
   ) {
     const request = this.ngxIndexedDBService.openCursorByIndex(
       this.dbName,
-      'regionID',
+      'regionIDs',
       keyRange,
       mode
     );

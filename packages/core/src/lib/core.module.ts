@@ -22,8 +22,8 @@ const dbConfig: DBConfig = {
       storeConfig: { keyPath: 'url', autoIncrement: false },
       storeSchema: [
         {
-          name: 'regionID',
-          keypath: 'regionID',
+          name: 'regionIDs',
+          keypath: 'regionIDs',
           options: { multiEntry: true, unique: false }
         }
       ]
