@@ -4,7 +4,7 @@ import { CompressionService } from '@igo2/core';
 
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject, forkJoin, of } from 'rxjs';
-import { concatMap, first, map, take } from 'rxjs/operators';
+import { concatMap, first, map } from 'rxjs/operators';
 
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
 import { GeoDBData } from './geoDB.interface';
@@ -14,8 +14,6 @@ import { GeoDBData } from './geoDB.interface';
 })
 export class GeoDBService {
   readonly dbName: string = 'geoData';
-  public collisionsMap: Map<number, string[]> = new Map();
-  public _newData: number = 0;
 
   constructor(
     private ngxIndexedDBService: NgxIndexedDBService,
@@ -41,6 +39,9 @@ export class GeoDBService {
     if (!object) {
       return;
     }
+
+    // console.log('update tile', url);
+
     let compress = false;
 
     const subject: Subject<GeoDBData> = new Subject();
@@ -56,7 +57,7 @@ export class GeoDBService {
         concatMap((object) => {
           geoDBData = {
             url,
-            regionID,
+            regionID: [regionID],
             object: object,
             compressed: compress,
             insertSource,
@@ -65,22 +66,15 @@ export class GeoDBService {
           return this.ngxIndexedDBService.getByID(this.dbName, url);
         }),
         concatMap((dbObject: GeoDBData) => {
+          console.log(dbObject);
           if (!dbObject) {
-            this._newData++;
+            // console.log('adding new tile', geoDBData);
             return this.ngxIndexedDBService.add(this.dbName, geoDBData);
-          } else {
-            const currentRegionID = dbObject.regionID;
-            if (currentRegionID !== regionID) {
-              const collisions = this.collisionsMap.get(currentRegionID);
-              if (collisions !== undefined) {
-                collisions.push(dbObject.url);
-                this.collisionsMap.set(currentRegionID, collisions);
-              } else {
-                this.collisionsMap.set(currentRegionID, [dbObject.url]);
-              }
-            }
-            return this.customUpdate(geoDBData);
           }
+          // console.log('adding region to existing tile');
+
+          dbObject.regionID.push(regionID);
+          return this.customUpdate(dbObject);
         })
       )
       .subscribe((response) => {
@@ -200,33 +194,5 @@ export class GeoDBService {
       mode
     );
     return request;
-  }
-
-  resetCounters() {
-    this.resetCollisionsMap();
-    this._newData = 0;
-  }
-
-  resetCollisionsMap() {
-    this.collisionsMap = new Map();
-  }
-
-  revertCollisions() {
-    for (const [regionID, collisions] of this.collisionsMap) {
-      for (const url of collisions) {
-        this.ngxIndexedDBService
-          .getByKey(this.dbName, url)
-          .pipe(take(1))
-          .subscribe((dbObject: GeoDBData) => {
-            const updatedObject = dbObject;
-            updatedObject.regionID = regionID;
-            this.customUpdate(dbObject);
-          });
-      }
-    }
-  }
-
-  get newData(): number {
-    return this._newData;
   }
 }

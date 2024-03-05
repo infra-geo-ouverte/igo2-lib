@@ -21,7 +21,11 @@ const dbConfig: DBConfig = {
       store: 'geoData',
       storeConfig: { keyPath: 'url', autoIncrement: false },
       storeSchema: [
-        { name: 'regionID', keypath: 'regionID', options: { unique: false } }
+        {
+          name: 'regionID',
+          keypath: 'regionID',
+          options: { multiEntry: true, unique: false }
+        }
       ]
     },
     {
