@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }
 
 .table-container {
@@ -23,7 +26,12 @@
 .action-bar {
   display: flex;
   width: 100%;
-  padding-left: 10px;
+  padding: 8px 0 8px 8px;
   justify-content: space-between;
   align-items: center;
+
+  mat-form-field {
+    flex: 1;
+    height: 50px;
+  }
 }

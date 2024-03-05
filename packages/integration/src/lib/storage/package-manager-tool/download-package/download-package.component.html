@@ -1,14 +1,15 @@
 <div class="action-bar">
   <mat-form-field
     class="example-form-field"
-    appearance="outline"
     subscriptSizing="dynamic"
+    floatLabel="always"
   >
     <input
       matInput
       type="text"
       [(ngModel)]="search"
       (input)="filterPackages()"
+      [placeholder]="'Filter by title'"
     />
     @if (search) {
       <button
