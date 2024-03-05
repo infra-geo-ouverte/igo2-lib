@@ -100,7 +100,7 @@ export class DownloadPackageComponent implements OnInit {
 
   ngOnInit(): void {
     this.nonDownloaded$.subscribe((packages) => {
-      const transformed = packages.map((avail) => this.transformPackage(avail));
+      const transformed = this.internalFilterPackages(packages);
       this.store.clear();
       this.store.load(transformed);
     });
@@ -123,13 +123,16 @@ export class DownloadPackageComponent implements OnInit {
   filterPackages() {
     console.log('searching packages');
 
-    const filtered = this.nonDownloaded
-      .filter(({ title }) => title.includes(this.search))
-      .map((info) => this.transformPackage(info));
+    const filtered = this.internalFilterPackages(this.nonDownloaded);
 
-    console.log('filtered', filtered);
     this.store.clear();
     this.store.load(filtered);
+  }
+
+  private internalFilterPackages(packages: PackageInfo[]) {
+    return packages
+      .filter(({ title }) => title.includes(this.search))
+      .map((info) => this.transformPackage(info));
   }
 
   downloadSelectedPackage() {
