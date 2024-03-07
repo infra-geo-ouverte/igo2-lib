@@ -17,10 +17,11 @@ import {
   TileLayerOptions
 } from '@igo2/geo';
 
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+import { AuthService } from '@igo2/auth';
 
 @Component({
   selector: 'app-directions',
@@ -63,10 +64,14 @@ export class AppDirectionsComponent {
   });
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
+  public authenticated$: BehaviorSubject<boolean>;
+
   constructor(
     private layerService: LayerService,
-    private mapService: MapService
+    private mapService: MapService,
+    private authService: AuthService
   ) {
+    this.authenticated$ = this.authService.authenticate$;
     this.mapService.setMap(this.map);
     this.layerService
       .createAsyncLayer({

@@ -20,7 +20,7 @@ import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
@@ -56,6 +56,7 @@ import {
   StopsStore
 } from './shared/store';
 import { HttpClient } from '@angular/common/http';
+import { BaseDirectionsSourceOptionsProfile } from './directions-sources';
 
 @Component({
   selector: 'igo-directions',
@@ -103,6 +104,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input() authenticated$: BehaviorSubject<boolean>;
 
   /**
    * Wheter one of the direction control is active
@@ -129,22 +131,15 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.authenticated$$ = this.authService.authenticate$.subscribe((auth: boolean) => {
-      if (auth) {
-        const authorizationUrl: string = this.directionsSourceService.sources.find(source => source.type === 'private')?.authorizationUrl;
-        this.http.get(authorizationUrl).subscribe((user: any) => {
-          this.hasOsrmPrivateAccess = user.hasOsrmPrivateAccess;
+    this.authenticated$$ = this.authenticated$.subscribe((authenticated: boolean) => {
+      if (authenticated) {
+        const profileWithAuth: BaseDirectionsSourceOptionsProfile = this.directionsSourceService.sources[0].getProfileWithAuthorization();
+        this.http.get(profileWithAuth.authorization.url).subscribe(user => {
+          this.hasOsrmPrivateAccess = user[profileWithAuth.authorization.property];
         });
       }
     });
-    for (const source of this.directionsSourceService.sources) {
-      if (source.getName()) {
-        this.twoSourcesAvailable = true;
-      } else {
-        this.twoSourcesAvailable = false;
-        break;
-      }
-    }
+    this.twoSourcesAvailable = this.directionsSourceService.sources[0].profiles.length === 2 ? true : false;
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
@@ -165,8 +160,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.freezeStores();
   }
 
-  get currentSourceIsPrivate() {
-    return this.directionsSourceService.sources.find(source => source.type === 'private')?.enabled;
+  get enabledProfileHasAuthorization() {
+    return this.directionsSourceService.sources[0].getEnabledProfile().authorization;
   }
 
   private freezeStores() {
@@ -461,20 +456,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       isOverview ? overviewDirectionsOptions : undefined
     );
     if (routeResponse) {
-      routeResponse.map((res) =>
-        this.routesQueries$$.push(
-          res.subscribe((directions) => {
-            this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
-            directions.map((direction) =>
-              addDirectionToRoutesFeatureStore(
-                this.routesFeatureStore,
-                direction,
-                this.projection,
-                direction === directions[0] ? true : false
-              )
-            );
-          })
-        )
+      this.routesQueries$$.push(
+        routeResponse.subscribe((directions) => {
+          this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+          directions.map((direction) =>
+            addDirectionToRoutesFeatureStore(
+              this.routesFeatureStore,
+              direction,
+              this.projection,
+              direction === directions[0] ? true : false
+            )
+          );
+        })
       );
     }
   }
@@ -500,15 +493,15 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   onTogglePrivateModeControl(isActive: boolean) {
-    this.directionsSourceService.sources.forEach(source => source.enabled = false);
+    this.directionsSourceService.sources[0].profiles.forEach(profile => profile.enabled = false);
     if (isActive) {
-      this.directionsSourceService.sources.find(source => source.type === 'private').enabled = true;
+      this.directionsSourceService.sources[0].profiles.find(profile => profile.authorization).enabled = true;
       this.messageService
         .alert(this.languageService.translate
         .instant('igo.geo.directionsForm.forestRoadsWarning.text'), this.languageService.translate
         .instant('igo.geo.directionsForm.forestRoadsWarning.title'));
     } else {
-      this.directionsSourceService.sources.find(source => source.type === 'public').enabled = true;
+      this.directionsSourceService.sources[0].profiles.find(profile => !profile.authorization).enabled = true;
     }
     this.getRoutes();
   }

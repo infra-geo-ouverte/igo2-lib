@@ -22,6 +22,7 @@ import {
   formatDuration,
   formatInstruction
 } from './directions.utils';
+import { Position } from 'geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -37,22 +38,18 @@ export class DirectionsService {
   ) {}
 
   route(
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]>[] {
+  ): Observable<Direction[]> {
     if (coordinates.length === 0) {
       return;
     }
-    return this.directionsSourceService.sources
-      .filter((source: DirectionsSource) => source.enabled)
-      .map((source: DirectionsSource) =>
-        this.routeSource(source, coordinates, directionsOptions)
-      );
+    return this.routeSource(this.directionsSourceService.sources[0], coordinates, directionsOptions);
   }
 
   routeSource(
     source: DirectionsSource,
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
   ): Observable<Direction[]> {
     const request = source.route(coordinates, directionsOptions);
