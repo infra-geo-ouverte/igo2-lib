@@ -2,11 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
-import { customCacheHasher, uuid } from '@igo2/utils';
+import { uuid } from '@igo2/utils';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Cacheable } from 'ts-cacheable';
 
 import {
   DirectionsFormat,
@@ -14,11 +13,13 @@ import {
 } from '../shared/directions.enum';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
-import { DirectionsSourceOptions, OsrmDirectionsSourceOptions } from './directions-source.interface';
+import {
+  BaseDirectionsSourceOptionsProfile,
+  OsrmDirectionsSourceOptions } from './directions-source.interface';
 import { Position } from 'geojson';
 
 @Injectable()
-export class OsrmPublicDirectionsSource extends DirectionsSource {
+export class OsrmDirectionsSource extends DirectionsSource {
   get options(): OsrmDirectionsSourceOptions {
     return this._options;
   }
@@ -27,44 +28,28 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     this._options = value;
   }
 
-  get enabled(): boolean {
-    return this._options.enabled;
-  }
-
-  set enabled(value: boolean) {
-    this._options.enabled = value;
-  }
-
-  get name(): string {
+  get sourceName(): string {
     return this._options.name;
   }
 
-  set name(value: string) {
+  set sourceName(value: string) {
     this._options.name = value;
   }
 
-  get url(): string {
-    return this._options.url;
+  get baseUrl(): string {
+    return this._options.baseUrl;
   }
 
-  set url(value: string) {
-    this._options.url = value;
+  set baseUrl(value: string) {
+    this._options.baseUrl = value;
   }
 
-  get authorizationUrl(): string {
-    return this._options.authorizationUrl;
+  get profiles(): BaseDirectionsSourceOptionsProfile[] {
+    return this._options.profiles;
   }
 
-  set authorizationUrl(value: string) {
-    this._options.authorizationUrl = value;
-  }
-
-  get type(): 'public' | 'private' {
-    return this._options.type;
-  }
-
-  set type(value: 'public' | 'private') {
-    this._options.type = value;
+  set profiles(value: BaseDirectionsSourceOptionsProfile[]) {
+    this._options.profiles = value;
   }
 
   private _options: OsrmDirectionsSourceOptions;
@@ -74,17 +59,38 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     private _config: ConfigService
   ) {
     super();
-    const directionsSources: DirectionsSourceOptions[] = this._config.getConfig('directionsSources');
-    this.options = directionsSources?.find(dS => dS.osrm.type === 'public')?.osrm || {};
-    this.name = this.name ? this.name : 'OSRM Québec (Public)';
-    this.url = this.url ? this.url : '/apis/itineraire/route/v1/driving/';
-    this.authorizationUrl = undefined;
-    this.type = this.type ? this.type : 'public';
-    this.enabled = true;
+    this._options = this._config.getConfig('directionsSources.osrm');
+    if (!this.baseUrl) {
+      this.baseUrl = '/apis/itineraire/route/v1/';
+    }
+
+    if (!this.sourceName) {
+      this.sourceName = 'OSRM Québec';
+    }
+
+    if (!this.profiles) {
+      const profile: BaseDirectionsSourceOptionsProfile = {
+        enabled: true,
+        name: 'driving',
+      };
+      this.profiles = [profile];
+    } else {
+      if (!this.profiles.find(profile => profile.enabled)) {
+        this.profiles[0].enabled = true;
+      }
+    }
   }
 
-  getName(): string {
-    return this.name;
+  getSourceName(): string {
+    return this.sourceName;
+  }
+
+  getEnabledProfile(): BaseDirectionsSourceOptionsProfile {
+    return this.profiles.find(profile => profile.enabled);
+  }
+
+  getProfileWithAuthorization(): BaseDirectionsSourceOptionsProfile {
+    return this.profiles.find(profile => profile.authorization);
   }
 
   route(
@@ -95,16 +101,13 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     return this.getRoute(coordinates, directionsParams);
   }
 
-  @Cacheable({
-    maxCacheCount: 20,
-    cacheHasher: customCacheHasher
-  })
   private getRoute(
     coordinates: Position[],
     params: HttpParams
   ): Observable<Direction[]> {
+    const url: string = `${this.baseUrl}${this.getEnabledProfile().name}/`;
     return this._http
-      .get<JSON[]>(this.url + coordinates.join(';'), {
+      .get<JSON[]>(url + coordinates.join(';'), {
         params
       })
       .pipe(map((res) => this.extractRoutesData(res)));
@@ -163,7 +166,7 @@ export class OsrmPublicDirectionsSource extends DirectionsSource {
     return {
       id: uuid(),
       title: roadNetworkRoute.legs[0].summary,
-      source: this.name,
+      source: `${this.baseUrl}${this.getEnabledProfile().name}/`,
       sourceType: SourceDirectionsType.Route,
       order: 1,
       format: DirectionsFormat.GeoJSON,
