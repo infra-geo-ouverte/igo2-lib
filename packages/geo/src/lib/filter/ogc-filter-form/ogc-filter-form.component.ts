@@ -148,8 +148,8 @@ export class OgcFilterFormComponent implements OnInit {
       value && value.length > 0
         ? of(this._filterValues(value))
         : this.selectedField$.value
-        ? of(this.selectedField$.value.values)
-        : of([]);
+          ? of(this.selectedField$.value.values)
+          : of([]);
     if (value && value.length >= 1) {
       this.changeProperty(value, pos);
     }
@@ -170,6 +170,7 @@ export class OgcFilterFormComponent implements OnInit {
   private _filterValues(value: string): string[] {
     const keywordRegex = new RegExp(
       value
+        .replace(/[.*+?^${}()|[\]\\]/g, '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''),
@@ -343,14 +344,14 @@ export class OgcFilterFormComponent implements OnInit {
         return pos && pos === 1
           ? 'lowerBoundary'
           : pos && pos === 2
-          ? 'upperBoundary'
-          : undefined;
+            ? 'upperBoundary'
+            : undefined;
       case OgcFilterOperator.During:
         return pos && pos === 1
           ? 'begin'
           : pos && pos === 2
-          ? 'end'
-          : undefined;
+            ? 'end'
+            : undefined;
       default:
         return;
     }
