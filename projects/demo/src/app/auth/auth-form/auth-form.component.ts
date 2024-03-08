@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { IgoAuthModule } from '@igo2/auth';
+import { IgoAuthFormModule } from '@igo2/auth/form';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -10,7 +10,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './auth-form.component.html',
   styleUrls: ['./auth-form.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoAuthModule]
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoAuthFormModule]
 })
 export class AppAuthFormComponent {
   constructor() {}

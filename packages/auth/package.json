@@ -29,11 +29,23 @@
     ".": {
       "import": "./src/public_api.ts"
     },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./facebook": {
+      "import": "./facebook/src/public_api.ts"
+    },
     "./form": {
       "import": "./form/src/public_api.ts"
     },
-    "./environment": {
-      "import": "./environment/src/public_api.ts"
+    "./google": {
+      "import": "./google/src/public_api.ts"
+    },
+    "./internal": {
+      "import": "./internal/src/public_api.ts"
+    },
+    "./microsoft": {
+      "import": "./microsoft/src/public_api.ts"
     }
   },
   "dependencies": {
