@@ -168,11 +168,9 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   private _filterValues(value: string): string[] {
-    if (value.includes('*')) {
-      value = value.replaceAll('*', '\\*');
-    }
     const keywordRegex = new RegExp(
       value
+        .replace(/[.*+?^${}()|[\]\\]/g, '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''),
