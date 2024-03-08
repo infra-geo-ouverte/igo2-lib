@@ -5,5 +5,5 @@
 }
 
 @mixin colors($theme) {
-  @include auth-intern.colors($theme);
+  @include auth-form.colors($theme);
 }
