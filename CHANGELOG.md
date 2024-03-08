@@ -1,3 +1,24 @@
+# [17.0.0-next.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.0...v17.0.0-next.2) (2024-03-08)
+
+
+* Core Refactor - migrate to secondary entrypoints to optimize the bundle size (#1625) ([4aeca83](https://github.com/infra-geo-ouverte/igo2-lib/commit/4aeca83cb64316e9f8ef938ae6e62c2ae87b96f0)), closes [#1625](https://github.com/infra-geo-ouverte/igo2-lib/issues/1625) [#1556](https://github.com/infra-geo-ouverte/igo2-lib/issues/1556)
+
+
+### BREAKING CHANGES
+
+* IgoLanguageModule don't import TranslateModule.forRoot
+defaultLanguageLoader is not exported anymore
+* 'provideDefaultLanguageLoader' and 'provideLanguageLoader' are replaced by 'DEFAULT_LANGUAGE_LOADER' and set directly inside the TranslationConfig
+
+* build(packagr): keep only one config
+
+* feat(core): split in submodule for bundle optimization BREAKING CHANGES
+- refact(compression): convert and move to utils packages BREAKING CHANGE
+
+* build(clean-exports): account all keys in the exports object
+
+
+
 # [17.0.0-next.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.3.0...v17.0.0-next.0) (2024-02-19)
 
 
