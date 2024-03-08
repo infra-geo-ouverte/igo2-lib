@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { CustomHtmlComponent } from '@igo2/common';
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard } from '@igo2/utils';
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { IgoMessageModule } from '@igo2/core';
+import { IgoMessageModule } from '@igo2/core/message';
 
 import { provideQuerySearchSource } from './shared/query-search-source.providers';
 import { QueryDirective } from './shared/query.directive';

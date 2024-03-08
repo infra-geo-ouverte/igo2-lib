@@ -1,4 +1,4 @@
-import { BaseUser } from '@igo2/core';
+import { BaseUser } from '@igo2/core/user';
 
 import { MsalGuardConfiguration } from '@azure/msal-angular';
 import { BrowserAuthOptions } from '@azure/msal-browser';

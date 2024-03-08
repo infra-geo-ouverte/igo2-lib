@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import type { IgoMap } from '@igo2/geo';
 
 import { TranslateModule } from '@ngx-translate/core';

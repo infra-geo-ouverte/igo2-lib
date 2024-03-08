@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { BaseStorage, ConfigService, StorageScope } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { BaseStorage, StorageScope } from '@igo2/core/storage';
 
 import { AuthStorageOptions } from './auth-storage.interface';
 import { AuthService } from './auth.service';

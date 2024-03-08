@@ -17,7 +17,7 @@ import {
   IgoBadgeIconDirective,
   StopPropagationDirective
 } from '@igo2/common';
-import { Media, MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
 import { default as OlGeometry } from 'ol/geom/Geometry';

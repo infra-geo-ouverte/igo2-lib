@@ -21,7 +21,8 @@ import {
   EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
-import { LanguageService, StorageScope, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
