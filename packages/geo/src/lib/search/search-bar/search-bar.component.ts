@@ -20,6 +20,9 @@ import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { FEATURE, Feature, FeatureMotion } from '../../feature';
+import { LayerService } from '../../layer';
+import { IgoMap } from '../../map';
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
@@ -120,6 +123,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
 
+  @Input() map: IgoMap;
   /**
    * Search term
    */
@@ -253,7 +257,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(
     private configService: ConfigService,
     private searchService: SearchService,
-    private searchSourceService: SearchSourceService
+    private searchSourceService: SearchSourceService,
+    private layerService: LayerService
   ) {}
 
   /**
@@ -483,6 +488,35 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .filter((result) => result.source !== research.source)
         .concat(results);
       this.store.updateMany(newResults);
+    }
+  }
+
+  /**
+   * If we click on the magnifying glass it will look for
+   * the best compatible result to show it on the map
+   */
+
+  selectFirstElement() {
+    const results = this.store.all().sort((res1, res2) => {
+      return (res1.meta.score - res2.meta.score) * -1;
+    });
+
+    //Take the first element (feature or layer) to make a focus or view it on the map
+    if (results.length) {
+      const result = results[0];
+      this.store.state.update(result, { focused: true, selected: true }, true);
+
+      if (result.meta.dataType === FEATURE) {
+        const feature = (result as SearchResult<Feature>).data;
+        this.map.searchResultsOverlay.setFeatures(
+          [feature],
+          FeatureMotion.Default
+        );
+      } else {
+        this.layerService.createAsyncLayer(result.data).subscribe((layer) => {
+          this.map.addLayer(layer);
+        });
+      }
     }
   }
 }
