@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import { default as JSZip } from 'jszip';
 import { ActiveToast } from 'ngx-toastr';

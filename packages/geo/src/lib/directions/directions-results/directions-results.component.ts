@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';

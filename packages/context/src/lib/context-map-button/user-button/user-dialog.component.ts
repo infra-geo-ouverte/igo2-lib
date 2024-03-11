@@ -8,7 +8,7 @@ import {
 } from '@angular/material/dialog';
 
 import { AuthService } from '@igo2/auth';
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 
 import { TranslateModule } from '@ngx-translate/core';
 

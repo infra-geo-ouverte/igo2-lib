@@ -6,7 +6,7 @@ import {
   Output
 } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { AuthFacebookOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';

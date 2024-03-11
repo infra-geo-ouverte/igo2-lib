@@ -35,12 +35,10 @@ import {
   Workspace
 } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
-import {
-  ConfigService,
-  LanguageService,
-  MessageService,
-  StorageService
-} from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { strEnum } from '@igo2/utils';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';

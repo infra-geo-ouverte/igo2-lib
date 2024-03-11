@@ -1,5 +1,5 @@
 import { AuthInterceptor } from '@igo2/auth';
-import { Message, MessageService } from '@igo2/core';
+import { Message, MessageService } from '@igo2/core/message';
 import { SubjectStatus } from '@igo2/utils';
 
 import olLayer from 'ol/layer/Layer';

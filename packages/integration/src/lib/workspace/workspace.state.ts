@@ -9,7 +9,7 @@ import {
   Workspace,
   WorkspaceStore
 } from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
 
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';

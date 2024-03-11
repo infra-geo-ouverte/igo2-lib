@@ -1,4 +1,4 @@
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
 import olSourceImage from 'ol/source/Image';

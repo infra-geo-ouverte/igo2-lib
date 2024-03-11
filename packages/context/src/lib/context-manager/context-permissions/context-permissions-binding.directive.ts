@@ -7,7 +7,8 @@ import {
   Self
 } from '@angular/core';
 
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import { Subscription } from 'rxjs';
 

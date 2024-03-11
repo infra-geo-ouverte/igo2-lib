@@ -8,7 +8,7 @@ import {
   Self
 } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import { Subscription } from 'rxjs';
 

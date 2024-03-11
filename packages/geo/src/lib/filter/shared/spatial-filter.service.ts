@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -57,9 +58,9 @@ export class SpatialFilterService {
     const urlPath = type as string;
     if (urlPath) {
       return this.http
-        .get<{ features: Feature[] }>(
-          this.baseUrl + this.urlFilterList[urlPath]
-        )
+        .get<{
+          features: Feature[];
+        }>(this.baseUrl + this.urlFilterList[urlPath])
         .pipe(
           map((featureCollection) =>
             featureCollection.features.map((f) => {

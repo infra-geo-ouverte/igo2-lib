@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { CompressionService } from '@igo2/core';
+import { Compression } from '@igo2/utils';
 
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject, of } from 'rxjs';
@@ -16,11 +16,9 @@ export class GeoDBService {
   readonly dbName: string = 'geoData';
   public collisionsMap: Map<number, string[]> = new Map();
   public _newData: number = 0;
+  private compression = new Compression();
 
-  constructor(
-    private ngxIndexedDBService: NgxIndexedDBService,
-    private compression: CompressionService
-  ) {}
+  constructor(private ngxIndexedDBService: NgxIndexedDBService) {}
 
   /**
    * Only blob can be compressed

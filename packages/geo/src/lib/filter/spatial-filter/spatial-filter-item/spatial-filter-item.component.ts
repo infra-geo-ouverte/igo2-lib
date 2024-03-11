@@ -36,7 +36,8 @@ import {
   EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';

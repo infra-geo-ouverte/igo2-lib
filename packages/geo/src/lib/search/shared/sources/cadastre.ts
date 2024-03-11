@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';

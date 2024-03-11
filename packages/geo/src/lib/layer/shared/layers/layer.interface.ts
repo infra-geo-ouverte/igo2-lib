@@ -1,4 +1,4 @@
-import { Message } from '@igo2/core';
+import { Message } from '@igo2/core/message';
 
 import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';

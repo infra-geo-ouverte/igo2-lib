@@ -14,7 +14,8 @@ import {
   PageEvent
 } from '@angular/material/paginator';
 
-import { LanguageService, MediaService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 

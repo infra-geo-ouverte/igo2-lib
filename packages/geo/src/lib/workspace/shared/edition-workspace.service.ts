@@ -14,7 +14,9 @@ import {
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
-import { ConfigService, MessageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 
 import olFeature from 'ol/Feature';
 import { FeatureLoader } from 'ol/featureloader';

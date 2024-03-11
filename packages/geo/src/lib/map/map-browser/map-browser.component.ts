@@ -6,7 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { ActivityService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
 import { SubjectStatus, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';

@@ -15,10 +15,16 @@ const baseCmdName = 'Clean exports';
 
   // Remove any Typescript references for Distribution
   const packageJSON = getPackageJson('dist', name);
-  const rootExports = packageJSON.exports['.'];
-  if (rootExports && typeof rootExports === 'object' && rootExports?.import) {
-    delete rootExports?.import;
-  }
+  const exports = packageJSON.exports;
+  Object.keys(exports).forEach((key) => {
+    const config = exports[key];
+
+    if (config && typeof config === 'object' && config?.['import']) {
+      delete config.import;
+      exports[key] = config;
+    }
+  });
+
   await writeFile2(resolve(PATHS.dist, name, 'package.json'), packageJSON);
 
   const duration = getDuration(startTime);

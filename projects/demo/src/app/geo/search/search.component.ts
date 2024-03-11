@@ -15,7 +15,8 @@ import {
   EntityStore,
   PanelComponent
 } from '@igo2/common';
-import { MediaService, StorageService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
 import {
   FEATURE,
   Feature,

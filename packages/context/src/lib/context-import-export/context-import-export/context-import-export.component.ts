@@ -16,7 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 import { SpinnerComponent } from '@igo2/common';
-import { ConfigService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 

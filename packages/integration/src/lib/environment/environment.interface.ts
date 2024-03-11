@@ -4,7 +4,7 @@ import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import {
   BaseEnvironmentOptions,
   EnvironmentOptions as CoreEnvironmentOptions
-} from '@igo2/core';
+} from '@igo2/core/environment';
 import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
 
 export type AllEnvironmentOptions = AuthEnvironmentOptions &

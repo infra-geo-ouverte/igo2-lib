@@ -1,4 +1,4 @@
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import {
   ClusterDataSource,
   ClusterDataSourceOptions,

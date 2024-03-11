@@ -4,7 +4,9 @@ import {
   EntityStoreFilterSelectionStrategy,
   Widget
 } from '@igo2/common';
-import { LanguageService, MediaService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
   ExportOptions,

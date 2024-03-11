@@ -2,7 +2,7 @@ import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ActionStore, ActionbarComponent, ActionbarMode } from '@igo2/common';
-import { Media, MediaOrientation, MediaService } from '@igo2/core';
+import { Media, MediaOrientation, MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
 

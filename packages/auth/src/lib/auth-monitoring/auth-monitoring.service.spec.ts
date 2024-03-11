@@ -1,16 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
+import { ConfigService } from '@igo2/core/config';
+import { provideMockRootTranslation } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import {
   AnyMonitoringOptions,
-  ConfigService,
-  MONITORING_OPTIONS,
-  MessageService,
-  provideMockRootTranslation
-} from '@igo2/core';
+  MOCK_MONITORING_OPTIONS,
+  MONITORING_OPTIONS
+} from '@igo2/core/monitoring';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
 
 import { IgoAuthModule } from '../auth.module';
 import { AuthService } from '../shared';

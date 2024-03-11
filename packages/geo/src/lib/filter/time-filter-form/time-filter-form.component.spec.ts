@@ -7,7 +7,7 @@
 //   MatNativeDatetimeModule
 // } from '@mat-datetimepicker/core';
 //
-// import { IgoLanguageModule } from '@igo2/core';
+// import { IgoLanguageModule } from '@igo2/core/language';
 //
 // import { TimeFilterFormComponent } from './time-filter-form.component';
 //

@@ -22,7 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 
 import { ListComponent, ListItemDirective } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -91,8 +91,8 @@ export class SaveFeatureDialogComponent implements OnInit {
     }
     return this.layers
       .map((l) => l)
-      .filter(
-        (layer) => layer?.title?.toLowerCase().includes(val.toLowerCase())
+      .filter((layer) =>
+        layer?.title?.toLowerCase().includes(val.toLowerCase())
       );
   }
 

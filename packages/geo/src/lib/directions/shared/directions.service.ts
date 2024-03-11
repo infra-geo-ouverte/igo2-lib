@@ -1,7 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 
-import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 import { SubjectStatus } from '@igo2/utils';
 
 import html2canvas from 'html2canvas';

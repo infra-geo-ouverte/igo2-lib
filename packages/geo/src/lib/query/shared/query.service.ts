@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';

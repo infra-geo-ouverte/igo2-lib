@@ -1,7 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import { ConfigService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 
 import { Observable } from 'rxjs';
@@ -17,6 +15,7 @@ import {
   BaseDirectionsSourceOptionsProfile,
   OsrmDirectionsSourceOptions } from './directions-source.interface';
 import { Position } from 'geojson';
+import { ConfigService } from '@igo2/core/config';
 
 @Injectable()
 export class OsrmDirectionsSource extends DirectionsSource {

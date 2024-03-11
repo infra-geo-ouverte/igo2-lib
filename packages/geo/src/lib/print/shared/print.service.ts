@@ -2,12 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { SecureImagePipe } from '@igo2/common';
-import {
-  ActivityService,
-  ConfigService,
-  LanguageService,
-  MessageService
-} from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { SubjectStatus } from '@igo2/utils';
 
 import { saveAs } from 'file-saver';

@@ -8,7 +8,7 @@ import {
   Self
 } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';

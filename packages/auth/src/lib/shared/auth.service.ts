@@ -2,7 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ConfigService, LanguageService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';

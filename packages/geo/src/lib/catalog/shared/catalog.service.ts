@@ -1,7 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { ConfigService, LanguageService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { EMPTY, Observable, of, zip } from 'rxjs';

@@ -6,7 +6,8 @@ import {
 import { Inject, Injectable, Injector } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';

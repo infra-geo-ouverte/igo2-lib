@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MONITORING_OPTIONS } from '@igo2/core';
-
-import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
+import {
+  MOCK_MONITORING_OPTIONS,
+  MONITORING_OPTIONS
+} from '@igo2/core/monitoring';
 
 import { AppMonitoringComponent } from './monitoring.component';
 

@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { AuthOptions } from './auth.interface';
 import { AuthService } from './auth.service';

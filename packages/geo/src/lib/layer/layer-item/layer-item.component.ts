@@ -18,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ConnectionState, NetworkService } from '@igo2/core';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';

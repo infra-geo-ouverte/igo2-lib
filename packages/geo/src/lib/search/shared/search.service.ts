@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 
 import { MapService } from '../../map/shared/map.service';
 import { stringToLonLat } from '../../map/shared/map.utils';

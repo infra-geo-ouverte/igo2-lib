@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import type { IgoMap } from '@igo2/geo';
 
 import { TranslateModule } from '@ngx-translate/core';

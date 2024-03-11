@@ -8,8 +8,6 @@ import {
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CommonModule } from '@angular/common';
 import { EntityStoreWatcher } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
-import { AuthService } from '@igo2/auth';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
@@ -57,6 +55,8 @@ import {
 } from './shared/store';
 import { HttpClient } from '@angular/common/http';
 import { BaseDirectionsSourceOptionsProfile } from './directions-sources';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 @Component({
   selector: 'igo-directions',
@@ -126,7 +126,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     private directionsSourceService: DirectionsSourceService,
     private searchService: SearchService,
     private queryService: QueryService,
-    private authService: AuthService,
     private messageService: MessageService
   ) {}
 

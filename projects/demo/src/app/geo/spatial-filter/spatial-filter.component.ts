@@ -11,7 +11,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
 import { EntityKey, EntityStore, PanelComponent } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import {
   ClusterDataSource,
   DataSourceService,

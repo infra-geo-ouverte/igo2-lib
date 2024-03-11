@@ -1,4 +1,5 @@
-import { ConfigService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 
 import olFeature from 'ol/Feature';
 import olGeolocation from 'ol/Geolocation';

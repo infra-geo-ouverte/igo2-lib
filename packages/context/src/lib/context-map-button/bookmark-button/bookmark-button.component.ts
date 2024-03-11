@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 
 import { TranslateModule } from '@ngx-translate/core';

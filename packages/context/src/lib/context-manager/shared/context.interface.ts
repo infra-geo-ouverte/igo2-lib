@@ -1,5 +1,5 @@
 import { Tool } from '@igo2/common';
-import { Message } from '@igo2/core';
+import { Message } from '@igo2/core/message';
 import {
   LayerOptions,
   MapAttributionOptions,

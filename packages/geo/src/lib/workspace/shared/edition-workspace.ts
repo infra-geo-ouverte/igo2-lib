@@ -1,7 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';

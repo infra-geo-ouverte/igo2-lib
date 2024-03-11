@@ -1,4 +1,5 @@
-import { ConfigService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 import { SubjectStatus } from '@igo2/utils';
 
 import olMap from 'ol/Map';
