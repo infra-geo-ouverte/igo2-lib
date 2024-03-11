@@ -6,9 +6,8 @@ import {
   OnInit
 } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-
+import { CommonModule } from '@angular/common';
 import { EntityStoreWatcher } from '@igo2/common';
-import { LanguageService } from '@igo2/core/language';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
@@ -19,7 +18,7 @@ import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
@@ -38,6 +37,7 @@ import {
   Stop
 } from './shared/directions.interface';
 import { DirectionsService } from './shared/directions.service';
+import { DirectionsSourceService } from './shared/directions-source.service';
 import {
   addDirectionToRoutesFeatureStore,
   addStopToStopsFeatureStore,
@@ -53,6 +53,10 @@ import {
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
+import { HttpClient } from '@angular/common/http';
+import { BaseDirectionsSourceOptionsProfile } from './directions-sources';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 @Component({
   selector: 'igo-directions',
@@ -60,6 +64,7 @@ import {
   styleUrls: ['./directions.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     MatSlideToggleModule,
     DirectionsButtonsComponent,
     DirectionsInputsComponent,
@@ -71,6 +76,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;
 
   public projection: string = 'EPSG:4326';
+  public hasOsrmPrivateAccess: boolean = false;
+  public twoSourcesAvailable: boolean = false;
 
   private zoomRoute$$: Subscription;
   private storeEmpty$$: Subscription;
@@ -86,6 +93,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public previousStops: Stop[] = [];
 
   private searchs$$: Subscription[] = [];
+  private authenticated$$: Subscription;
 
   @Input() contextUri: string;
   @Input() stopsStore: StopsStore;
@@ -96,6 +104,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input() authenticated$: BehaviorSubject<boolean>;
 
   /**
    * Wheter one of the direction control is active
@@ -111,13 +120,25 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdRef: ChangeDetectorRef,
+    private http: HttpClient,
     private languageService: LanguageService,
     private directionsService: DirectionsService,
+    private directionsSourceService: DirectionsSourceService,
     private searchService: SearchService,
-    private queryService: QueryService
+    private queryService: QueryService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
+    this.authenticated$$ = this.authenticated$.subscribe((authenticated: boolean) => {
+      if (authenticated) {
+        const profileWithAuth: BaseDirectionsSourceOptionsProfile = this.directionsSourceService.sources[0].getProfileWithAuthorization();
+        this.http.get(profileWithAuth.authorization.url).subscribe(user => {
+          this.hasOsrmPrivateAccess = user[profileWithAuth.authorization.property];
+        });
+      }
+    });
+    this.twoSourcesAvailable = this.directionsSourceService.sources[0].profiles.length === 2 ? true : false;
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
@@ -134,7 +155,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
     this.zoomRoute$$.unsubscribe();
+    this.authenticated$$.unsubscribe();
     this.freezeStores();
+  }
+
+  get enabledProfileHasAuthorization() {
+    return this.directionsSourceService.sources[0].getEnabledProfile().authorization;
   }
 
   private freezeStores() {
@@ -429,20 +455,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       isOverview ? overviewDirectionsOptions : undefined
     );
     if (routeResponse) {
-      routeResponse.map((res) =>
-        this.routesQueries$$.push(
-          res.subscribe((directions) => {
-            this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
-            directions.map((direction) =>
-              addDirectionToRoutesFeatureStore(
-                this.routesFeatureStore,
-                direction,
-                this.projection,
-                direction === directions[0] ? true : false
-              )
-            );
-          })
-        )
+      this.routesQueries$$.push(
+        routeResponse.subscribe((directions) => {
+          this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+          directions.map((direction) =>
+            addDirectionToRoutesFeatureStore(
+              this.routesFeatureStore,
+              direction,
+              this.projection,
+              direction === directions[0] ? true : false
+            )
+          );
+        })
       );
     }
   }
@@ -465,5 +489,19 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
+  }
+
+  onTogglePrivateModeControl(isActive: boolean) {
+    this.directionsSourceService.sources[0].profiles.forEach(profile => profile.enabled = false);
+    if (isActive) {
+      this.directionsSourceService.sources[0].profiles.find(profile => profile.authorization).enabled = true;
+      this.messageService
+        .alert(this.languageService.translate
+        .instant('igo.geo.directionsForm.forestRoadsWarning.text'), this.languageService.translate
+        .instant('igo.geo.directionsForm.forestRoadsWarning.title'));
+    } else {
+      this.directionsSourceService.sources[0].profiles.find(profile => !profile.authorization).enabled = true;
+    }
+    this.getRoutes();
   }
 }

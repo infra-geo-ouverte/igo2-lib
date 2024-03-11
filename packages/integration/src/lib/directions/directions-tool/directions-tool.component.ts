@@ -14,7 +14,7 @@ import {
   StopsStore
 } from '@igo2/geo';
 
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
@@ -75,6 +75,10 @@ export class DirectionsToolComponent implements OnInit {
    */
   get zoomToActiveRoute$(): Subject<void> {
     return this.directionState.zoomToActiveRoute$;
+  }
+
+  get authenticated$(): BehaviorSubject<boolean> {
+    return this.authService.authenticate$;
   }
 
   /**

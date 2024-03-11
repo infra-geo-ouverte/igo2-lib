@@ -425,7 +425,7 @@ export function formatDuration(duration: number): string {
 export function formatInstruction(
   type,
   modifier,
-  route,
+  route: string = 'Voie',
   direction,
   stepPosition,
   exit,
