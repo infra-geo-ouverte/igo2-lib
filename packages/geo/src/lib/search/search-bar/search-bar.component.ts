@@ -493,7 +493,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /**
    * When the user clicks on the magnifying glass and
    * this find the first object on the map
@@ -505,9 +504,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return (res1.meta.score - res2.meta.score) * -1;
     });
 
-    //Condition to discriminate whether the search value corresponds to a feature or a layer,
-    // it is necessary to focus and display the layer on the map
-    if (results) {
+    //Take the first element (feature or layer) to make a focus or view it on the map
+    if (results.length) {
       const result = results[0];
       this.store.state.update(result, { focused: true, selected: true }, true);
 
