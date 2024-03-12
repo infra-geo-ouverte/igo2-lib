@@ -11,18 +11,20 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
+import { AuthOptions, AuthService } from '@igo2/auth';
+import { AuthFacebookComponent } from '@igo2/auth/facebook';
+import { AuthGoogleComponent } from '@igo2/auth/google';
+import { AuthInternComponent } from '@igo2/auth/internal';
+import {
+  AuthMicrosoftComponent,
+  AuthMicrosoftb2cComponent
+} from '@igo2/auth/microsoft';
 import { ConfigService } from '@igo2/core/config';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
-import { AuthOptions } from '../shared/auth.interface';
-import { AuthService } from '../shared/auth.service';
-import { AuthFacebookComponent } from './auth-facebook.component';
-import { AuthGoogleComponent } from './auth-google.component';
-import { AuthInternComponent } from './auth-intern.component';
-import { AuthMicrosoftComponent } from './auth-microsoft.component';
-import { AuthMicrosoftb2cComponent } from './auth-microsoftb2c.component';
+import { AuthFormOptions } from '../shared';
 
 @Component({
   selector: 'igo-auth-form',
@@ -104,12 +106,11 @@ export class AuthFormComponent implements OnInit {
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  public options?: AuthOptions;
+  public options?: AuthOptions & AuthFormOptions;
   public user;
 
   public visible = true;
 
-  private isLoginRoute: boolean;
   private isLogoutRoute: boolean;
 
   constructor(
@@ -171,10 +172,8 @@ export class AuthFormComponent implements OnInit {
         if (changeEvent.url) {
           const currentRoute = changeEvent.url;
           const logoutRoute = this.options?.logoutRoute;
-          const loginRoute = this.options?.loginRoute;
 
           this.isLogoutRoute = currentRoute === logoutRoute;
-          this.isLoginRoute = currentRoute === loginRoute;
 
           if (this.isLogoutRoute) {
             this.auth.logout();

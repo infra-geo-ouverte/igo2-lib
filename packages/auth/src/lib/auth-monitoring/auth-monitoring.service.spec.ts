@@ -12,9 +12,9 @@ import {
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
-import { IgoAuthModule } from '../auth.module';
 import { AuthService } from '../shared';
 import { AuthMonitoringService } from './auth-monitoring.service';
+import { IgoAuthFormModule } from '@igo2/auth/form';
 
 const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
@@ -23,7 +23,7 @@ const initialize = (
     imports: [
       HttpClientModule,
       provideMockRootTranslation(),
-      IgoAuthModule,
+      IgoAuthFormModule,
       ToastrModule
     ],
     providers: [

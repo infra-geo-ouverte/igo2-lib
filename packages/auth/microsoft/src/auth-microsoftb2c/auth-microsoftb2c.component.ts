@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
 import { MSAL_GUARD_CONFIG } from '@azure/msal-angular';
@@ -24,13 +25,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
-import { MsalBroadcastServiceb2c } from '../shared/auth-msalBroadcastServiceb2c.service';
-import { MsalServiceb2c } from '../shared/auth-msalServiceb2c.service.';
 import {
   AuthMicrosoftb2cOptions,
   MSPMsalGuardConfiguration
-} from '../shared/auth.interface';
-import { AuthService } from '../shared/auth.service';
+} from '../shared/auth-microsoft.interface';
+import { MsalBroadcastServiceb2c } from './auth-msalBroadcastServiceb2c.service';
+import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 
 @Component({
   selector: 'igo-auth-microsoftb2c',
@@ -38,7 +38,8 @@ import { AuthService } from '../shared/auth.service';
   styleUrls: ['./auth-microsoftb2c.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, MatIconModule, TranslateModule],
+  providers: [MsalServiceb2c]
 })
 export class AuthMicrosoftb2cComponent {
   private options: AuthMicrosoftb2cOptions;

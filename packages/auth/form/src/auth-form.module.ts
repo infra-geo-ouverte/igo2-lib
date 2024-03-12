@@ -8,21 +8,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { AuthInterceptor } from '@igo2/auth';
+import { AuthFacebookComponent } from '@igo2/auth/facebook';
+import { AuthGoogleComponent } from '@igo2/auth/google';
+import { AuthInternComponent } from '@igo2/auth/internal';
+import {
+  AuthMicrosoftComponent,
+  AuthMicrosoftb2cComponent,
+  provideAuthMicrosoft
+} from '@igo2/auth/microsoft';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
 import { MsalModule } from '@azure/msal-angular';
 
-import { AuthFacebookComponent } from './auth-form/auth-facebook.component';
 import { AuthFormComponent } from './auth-form/auth-form.component';
-import { AuthGoogleComponent } from './auth-form/auth-google.component';
-import { AuthInternComponent } from './auth-form/auth-intern.component';
-import { AuthMicrosoftComponent } from './auth-form/auth-microsoft.component';
-import { AuthMicrosoftb2cComponent } from './auth-form/auth-microsoftb2c.component';
-import { provideAuthMicrosoft } from './shared/auth-microsoft.provider';
 import { AuthStorageService } from './shared/auth-storage.service';
-import { AuthInterceptor } from './shared/auth.interceptor';
-import { ProtectedDirective } from './shared/protected.directive';
 
 @NgModule({
   imports: [
@@ -40,15 +41,14 @@ import { ProtectedDirective } from './shared/protected.directive';
     AuthInternComponent,
     AuthFacebookComponent,
     AuthMicrosoftComponent,
-    AuthMicrosoftb2cComponent,
-    ProtectedDirective
+    AuthMicrosoftb2cComponent
   ],
-  exports: [AuthFormComponent, ProtectedDirective]
+  exports: [AuthFormComponent]
 })
-export class IgoAuthModule {
-  static forRoot(): ModuleWithProviders<IgoAuthModule> {
+export class IgoAuthFormModule {
+  static forRoot(): ModuleWithProviders<IgoAuthFormModule> {
     return {
-      ngModule: IgoAuthModule,
+      ngModule: IgoAuthFormModule,
       providers: [
         {
           provide: HTTP_INTERCEPTORS,

@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
 import {
@@ -31,8 +32,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
-} from '../shared/auth.interface';
-import { AuthService } from '../shared/auth.service';
+} from '../shared/auth-microsoft.interface';
 
 @Component({
   selector: 'igo-auth-microsoft',

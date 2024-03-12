@@ -6,10 +6,10 @@ import {
   Output
 } from '@angular/core';
 
+import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
-import { AuthFacebookOptions } from '../shared/auth.interface';
-import { AuthService } from '../shared/auth.service';
+import { AuthFacebookOptions } from '../shared/auth-facebook.interface';
 
 @Component({
   selector: 'igo-auth-facebook',

@@ -13,7 +13,7 @@ import {
 } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
+import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 
 @Injectable()
 export class MsalBroadcastServiceb2c {
