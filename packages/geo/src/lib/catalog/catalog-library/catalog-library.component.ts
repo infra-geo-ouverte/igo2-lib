@@ -115,7 +115,9 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       const selectedCatalog = this.store
         .all()
         .find((item) => item.id === this.selectedCatalogId);
-      this.onCatalogSelect(selectedCatalog);
+      if (selectedCatalog) {
+        this.onCatalogSelect(selectedCatalog);
+      }
     }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
       c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
