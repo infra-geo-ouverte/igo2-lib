@@ -10,5 +10,3 @@ export * from './lib/shared/auth.interceptor';
 export * from './lib/shared/auth.interface';
 export * from './lib/shared/token.interface';
 export * from './lib/shared/token.service';
-export * from './lib/auth-monitoring/auth-monitoring.provider';
-export * from './lib/auth-monitoring/auth-monitoring.service';
