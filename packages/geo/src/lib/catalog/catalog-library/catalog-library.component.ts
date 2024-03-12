@@ -92,7 +92,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   }
 
   get selectedCatalogId() {
-    return this.storageService.get('selectedCatalogId');
+    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
   }
   set selectedCatalogId(id) {
     this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
