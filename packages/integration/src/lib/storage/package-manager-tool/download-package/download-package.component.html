@@ -37,10 +37,20 @@
 </div>
 
 <div class="action-row">
+  @if (selectedPackage) {
+    <div class="quota">
+      Usage: {{ formatPackageSize(selectedPackage.size) }} /
+      {{ formatQuotaSize(spaceLeft$ | async) }}
+    </div>
+  } @else {
+    <div class="quota">
+      Space Left: {{ formatQuotaSize(spaceLeft$ | async) }}
+    </div>
+  }
   <button
     mat-raised-button
     color="primary"
-    [disabled]="!selectedPackage"
+    [disabled]="!canDownload"
     (click)="downloadSelectedPackage()"
   >
     Download

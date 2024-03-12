@@ -19,9 +19,11 @@ import {
   EntityTableTemplate,
   getEntityProperty
 } from '@igo2/common';
-import { PackageInfo, PackageManagerService } from '@igo2/geo';
+import { PackageInfo, PackageManagerService, QuotaService } from '@igo2/geo';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription, map } from 'rxjs';
+
+import { dynamicFormatSize } from '../utils';
 
 @Component({
   selector: 'igo-download-package',
@@ -60,14 +62,14 @@ export class DownloadPackageComponent implements OnInit {
         this.store.state.get(entity).selected &&
         this.selectedPackage !== entity
       ) {
-        this.selectedPackage = entity;
+        this.onSelectedPackage(entity);
       }
 
       if (
         this.selectedPackage === entity &&
         !this.store.state.get(entity).selected
       ) {
-        this.selectedPackage = undefined;
+        this.onSelectedPackage(undefined);
       }
 
       return getEntityProperty(entity, name);
@@ -96,7 +98,55 @@ export class DownloadPackageComponent implements OnInit {
     return this.packageManagerService.nonDownloaded$;
   }
 
-  constructor(private packageManagerService: PackageManagerService) {}
+  get spaceLeft$() {
+    return this.quotaService.quota$.pipe(
+      map(({ size, usage }) => size - usage)
+    );
+  }
+
+  private spaceLeft$$: Subscription;
+  onSelectedPackage(entity: any | undefined) {
+    this.selectedPackage = entity;
+    this.spaceLeft$$?.unsubscribe();
+
+    if (this.selectedPackage) {
+      this.spaceLeft$$ = this.hasSufficientSpaceForPackage(entity).subscribe(
+        (canDownload) => {
+          this.canDownload = canDownload;
+        }
+      );
+    }
+  }
+
+  getSpaceLeft() {
+    return this.quotaService
+      .getQuota()
+      .pipe(map(({ size, usage }) => size - usage));
+  }
+
+  hasSufficientSpaceForPackage(selectedPackage: PackageInfo) {
+    const packageSize = selectedPackage.size * 1000 * 1000;
+    return this.getSpaceLeft().pipe(
+      map((spaceLeft) => {
+        return packageSize <= spaceLeft;
+      })
+    );
+  }
+
+  formatPackageSize(size: number) {
+    return dynamicFormatSize(size * 1000 * 1000);
+  }
+
+  formatQuotaSize(size: number) {
+    return dynamicFormatSize(size);
+  }
+
+  canDownload = false;
+
+  constructor(
+    private packageManagerService: PackageManagerService,
+    private quotaService: QuotaService
+  ) {}
 
   ngOnInit(): void {
     this.nonDownloaded$.subscribe((packages) => {
