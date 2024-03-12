@@ -91,6 +91,13 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
+  get selectedCatalogId() {
+    return this.storageService.get('selectedCatalogId');
+  }
+  set selectedCatalogId(catalogId) {
+    this.storageService.set('selectedCatalogId', catalogId);
+  }
+
   constructor(
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
@@ -104,6 +111,12 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.state.clear();
 
+    if (this.selectedCatalogId) {
+      const selectedCatalog = this.store
+        .all()
+        .find((item) => item.id === this.selectedCatalogId);
+      this.onCatalogSelect(selectedCatalog);
+    }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
       c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
       c.title = c.title === '' || !c.title ? c.url : c.title;
@@ -129,6 +142,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       },
       true
     );
+    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 

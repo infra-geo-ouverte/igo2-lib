@@ -49,6 +49,13 @@ export class CatalogLibraryToolComponent implements OnInit {
    */
   @Input() predefinedCatalogs: Catalog[] = [];
 
+  private currentTool: string;
+  private lastTool: string;
+
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id);
+  }
+
   constructor(
     private catalogService: CatalogService,
     private catalogState: CatalogState,
@@ -60,6 +67,13 @@ export class CatalogLibraryToolComponent implements OnInit {
    * @internal
    */
   ngOnInit() {
+    this.lastTool = this.toolState.toolbox.getCurrentPreviousToolName()[0];
+    this.currentTool = this.toolState.toolbox.getCurrentPreviousToolName()[1];
+
+    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
+      this.selectedCatalogId = null;
+    }
+
     if (this.store.count === 0) {
       this.loadCatalogs();
     }
