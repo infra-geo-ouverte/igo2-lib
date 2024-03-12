@@ -18,7 +18,9 @@ import {
   DevicePackageInfo,
   N_DAY_PACKAGE_SOON_TO_EXPIRE,
   PackageManagerActionType,
-  PackageManagerService
+  PackageManagerService,
+  Quota,
+  QuotaService
 } from '@igo2/geo';
 
 import { BehaviorSubject, map } from 'rxjs';
@@ -109,7 +111,25 @@ export class DownloadedPackagesManagerComponent implements OnInit {
     return this.packageManager.action$;
   }
 
-  constructor(private packageManager: PackageManagerService) {}
+  get quota$() {
+    return this.quotaService.quota$.pipe(
+      map(({ usage, size }) => {
+        return `${this.formatQuotaSize(usage)} / ${this.formatQuotaSize(size)}`;
+      })
+    );
+  }
+
+  private formatQuotaSize(size: number): string {
+    const formated = size / (1000 * 1000 * 1000);
+    return formated < 1
+      ? (formated * 1000).toFixed(2) + ' MB'
+      : formated.toFixed(2) + ' GB';
+  }
+
+  constructor(
+    private packageManager: PackageManagerService,
+    private quotaService: QuotaService
+  ) {}
 
   ngOnInit(): void {
     this.downloaded$.subscribe((downloaded) => {

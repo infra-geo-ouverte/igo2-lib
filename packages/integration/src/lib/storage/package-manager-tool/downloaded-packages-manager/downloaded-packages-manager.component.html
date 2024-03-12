@@ -9,6 +9,7 @@
 </div>
 
 <div class="action-row">
+  <div class="quota">Space left: {{ this.quota$ | async }}</div>
   @if (this.isActionCancelable() | async) {
     <button mat-raised-button color="warn" (click)="cancelAction()">
       Cancel
