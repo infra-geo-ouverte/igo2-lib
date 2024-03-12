@@ -39,7 +39,11 @@
 <div class="action-row">
   @if (selectedPackage) {
     <div class="quota">
-      Usage: {{ formatPackageSize(selectedPackage.size) }} /
+      Usage:
+      <span [ngClass]="{ 'oversized-package': !canDownload }">
+        {{ formatPackageSize(selectedPackage.size) }}
+      </span>
+      /
       {{ formatQuotaSize(spaceLeft$ | async) }}
     </div>
   } @else {

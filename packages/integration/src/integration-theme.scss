@@ -1,6 +1,10 @@
 @use './lib/storage/package-manager-tool/downloaded-packages-manager/downloaded-packages-manager.theming.scss'
   as downloaded-packages-manager;
 
+@use './lib/storage/package-manager-tool/download-package/download-package.theming.scss'
+  as download-package;
+
 @mixin integration-component-themes($theme) {
   @include downloaded-packages-manager.theme($theme);
+  @include download-package.theme($theme);
 }
