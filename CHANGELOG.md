@@ -1,3 +1,7 @@
+# [17.0.0-next.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.2...v17.0.0-next.3) (2024-03-12)
+
+
+
 # [17.0.0-next.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.0...v17.0.0-next.2) (2024-03-08)
 
 
