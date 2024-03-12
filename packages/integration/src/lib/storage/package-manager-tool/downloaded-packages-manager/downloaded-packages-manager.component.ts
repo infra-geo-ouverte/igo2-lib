@@ -19,12 +19,12 @@ import {
   N_DAY_PACKAGE_SOON_TO_EXPIRE,
   PackageManagerActionType,
   PackageManagerService,
-  Quota,
   QuotaService
 } from '@igo2/geo';
 
 import { BehaviorSubject, map } from 'rxjs';
 
+import { dynamicFormatSize } from '../utils';
 import { PackageProgressStatusComponent } from './package-progress-status/package-progress-status.component';
 
 @Component({
@@ -114,16 +114,9 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   get quota$() {
     return this.quotaService.quota$.pipe(
       map(({ usage, size }) => {
-        return `${this.formatQuotaSize(usage)} / ${this.formatQuotaSize(size)}`;
+        return `${dynamicFormatSize(usage)} / ${dynamicFormatSize(size)}`;
       })
     );
-  }
-
-  private formatQuotaSize(size: number): string {
-    const formated = size / (1000 * 1000 * 1000);
-    return formated < 1
-      ? (formated * 1000).toFixed(2) + ' MB'
-      : formated.toFixed(2) + ' GB';
   }
 
   constructor(
