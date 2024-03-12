@@ -51,14 +51,16 @@ export class QuotaService {
   }
 
   refreshQuota() {
-    this.getQuota().subscribe((quota) => this.quotaSubject.next(quota));
+    this.getQuota();
   }
 
-  private getQuota(): Observable<Quota> {
-    return forkJoin({
+  getQuota(): Observable<Quota> {
+    const quota$ = forkJoin({
       size: this.getSize(),
       usage: this.getUsage()
     });
+    quota$.subscribe((quota) => this.quotaSubject.next(quota));
+    return quota$;
   }
 
   private getUsage(): Observable<number> {
