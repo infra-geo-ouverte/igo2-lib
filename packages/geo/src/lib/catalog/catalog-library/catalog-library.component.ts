@@ -15,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore, ListComponent, ListItemDirective } from '@igo2/common';
 import { MessageService } from '@igo2/core/message';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -94,8 +94,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   get selectedCatalogId() {
     return this.storageService.get('selectedCatalogId');
   }
-  set selectedCatalogId(catalogId) {
-    this.storageService.set('selectedCatalogId', catalogId);
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
   }
 
   constructor(

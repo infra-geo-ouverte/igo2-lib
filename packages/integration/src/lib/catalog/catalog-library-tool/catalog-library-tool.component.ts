@@ -7,7 +7,7 @@ import {
 
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 
 import { take } from 'rxjs/operators';
@@ -50,7 +50,7 @@ export class CatalogLibraryToolComponent implements OnInit {
   @Input() predefinedCatalogs: Catalog[] = [];
 
   set selectedCatalogId(id) {
-    this.storageService.set('selectedCatalogId', id);
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
   }
 
   get currentTool() {
