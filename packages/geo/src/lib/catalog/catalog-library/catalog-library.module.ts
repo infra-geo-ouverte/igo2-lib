@@ -10,9 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoListModule } from '@igo2/common';
+import { IgoFormModule, IgoListModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
@@ -31,13 +32,15 @@ import { CatalogLibaryComponent } from './catalog-library.component';
     MatTooltipModule,
     IgoListModule,
     IgoLanguageModule,
+    MatTabsModule,
     MatButtonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatDialogModule
+    MatDialogModule,
+    IgoFormModule
   ],
   exports: [CatalogLibaryComponent, AddCatalogDialogComponent],
   declarations: [
