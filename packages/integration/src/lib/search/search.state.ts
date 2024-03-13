@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 
 import {
   EntityRecord,
+  EntityStore,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreStrategyFuncOptions,
-  EntityStoreWithStrategy
+  EntityStoreStrategyFuncOptions
 } from '@igo2/common';
 import { ConfigService, StorageService } from '@igo2/core';
 import {
   CommonVectorStyleOptions,
   Feature,
+  FeatureMotion,
   FeatureStore,
   FeatureWorkspace,
   OverlayStyleOptions,
@@ -22,6 +23,14 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MapState } from '../map';
 import { WorkspaceState } from '../workspace/workspace.state';
+
+/**
+ * Define the FeatureMotion to apply when adding the SearchResult to the map as an overlay.
+ */
+export interface SearchFeatureMotion {
+  selected?: FeatureMotion;
+  focus?: FeatureMotion;
+}
 
 /**
  * Service that holds the state of the search module
@@ -37,6 +46,16 @@ export class SearchState {
 
   public focusedOrResolution$$: Subscription;
   public selectedOrResolution$$: Subscription;
+
+  /**
+   * Default feature motion are:
+   * on selection = FeatureMotion.Default and
+   * on focus = FeatureMotion.None
+   */
+  public featureMotion: SearchFeatureMotion = {
+    selected: FeatureMotion.Default,
+    focus: FeatureMotion.None
+  };
 
   readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(
     '|'
@@ -67,7 +86,7 @@ export class SearchState {
   /**
    * Store that holds the search results
    */
-  readonly store = new EntityStoreWithStrategy<SearchResult>([]);
+  readonly store = new EntityStore<SearchResult>([]);
 
   /**
    * Search types currently enabled in the search source service

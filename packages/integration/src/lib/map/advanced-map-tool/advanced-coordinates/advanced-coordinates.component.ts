@@ -29,7 +29,7 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../../map.state';
@@ -107,40 +107,39 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Listen a state of the map, a state of a form, update the coordinates
    */
   ngOnInit(): void {
-    this.mapState$$ = combineLatest([
-      this.map.viewController.state$.pipe(debounceTime(50)),
-      this.form.valueChanges
-    ]).subscribe(() => {
-      this.setScaleValue(this.map);
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(
-        this.defaultProj.code
-      );
-      const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-      const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-      if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-        this.back2quebec();
-      }
-      let zoneChange = false;
-      if (currentMtmZone !== this.currentZones.mtm) {
-        this.currentZones.mtm = currentMtmZone;
-        zoneChange = true;
-      }
-      if (currentUtmZone !== this.currentZones.utm) {
-        this.currentZones.utm = currentUtmZone;
-        zoneChange = true;
-      }
-      if (zoneChange) {
-        this.updateProjectionsZoneChange();
-      }
-      this.checkLambert(this.currentCenterDefaultProj);
-      this.coordinates = this.getCoordinates();
-      this.cdRef.detectChanges();
-      this.storageService.set(
-        'currentProjection',
-        this.inputProj,
-        StorageScope.SESSION
-      );
-    });
+    this.mapState$$ = this.map.viewController.state$
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.setScaleValue(this.map);
+        this.currentCenterDefaultProj = this.map.viewController.getCenter(
+          this.defaultProj.code
+        );
+        const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+        const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+        if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+          this.back2quebec();
+        }
+        let zoneChange = false;
+        if (currentMtmZone !== this.currentZones.mtm) {
+          this.currentZones.mtm = currentMtmZone;
+          zoneChange = true;
+        }
+        if (currentUtmZone !== this.currentZones.utm) {
+          this.currentZones.utm = currentUtmZone;
+          zoneChange = true;
+        }
+        if (zoneChange) {
+          this.updateProjectionsZoneChange();
+        }
+        this.checkLambert(this.currentCenterDefaultProj);
+        this.coordinates = this.getCoordinates();
+        this.cdRef.detectChanges();
+        this.storageService.set(
+          'currentProjection',
+          this.inputProj,
+          StorageScope.SESSION
+        );
+      });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'

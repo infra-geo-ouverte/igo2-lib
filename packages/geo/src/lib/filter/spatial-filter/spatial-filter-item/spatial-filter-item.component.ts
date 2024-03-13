@@ -14,8 +14,8 @@ import { UntypedFormControl } from '@angular/forms';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 
 import {
+  EntityStore,
   EntityStoreFilterSelectionStrategy,
-  EntityStoreWithStrategy,
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
@@ -162,16 +162,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() loading;
 
   @Input()
-  get store(): EntityStoreWithStrategy<Feature> {
+  get store(): EntityStore<Feature> {
     return this._store;
   }
-  set store(store: EntityStoreWithStrategy<Feature>) {
+  set store(store: EntityStore<Feature>) {
     this._store = store;
     this._store.entities$.subscribe(() => {
       this.cdRef.detectChanges();
     });
   }
-  private _store: EntityStoreWithStrategy<Feature>;
+  private _store: EntityStore<Feature>;
 
   /**
    * Available measure units for the measure type given

@@ -18,6 +18,13 @@ export function baseLayersSwitcherSlideInOut(): AnimationTriggerMetadata {
       })
     ),
     state(
+      'collapseMap',
+      style({
+        height: '80px',
+        overflow: 'hidden'
+      })
+    ),
+    state(
       'expand',
       style({
         overflow: 'hidden'
