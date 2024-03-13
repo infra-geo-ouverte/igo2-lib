@@ -10,7 +10,7 @@ import {
 import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
 import { ConfigService, MessageService } from '@igo2/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -36,7 +36,6 @@ export class DropGeoFileDirective
 {
   protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
-  private epsgCode$: BehaviorSubject<string> = new BehaviorSubject(undefined);
   private epsgCode$$: Subscription[] = [];
   private filesDropped$$: Subscription;
 
@@ -86,16 +85,16 @@ export class DropGeoFileDirective
 
   private onFilesDropped(files: File[]) {
     for (const file of files) {
-      detectFileEPSG({ file, epsgCode$: this.epsgCode$ });
       this.epsgCode$$.push(
-        this.epsgCode$
+        detectFileEPSG({ file })
           .pipe(
             skipWhile((code) => !code),
             first(),
             concatMap((epsgCode) => {
-              const epsg = epsgCode === 'epsgNotDefined' ? undefined : epsgCode;
-              this.epsgCode$.next(undefined);
-              return this.importService.import(file, epsg);
+              return this.importService.import(
+                file,
+                epsgCode === 'epsgNotDefined' ? undefined : epsgCode
+              );
             })
           )
           .subscribe(
