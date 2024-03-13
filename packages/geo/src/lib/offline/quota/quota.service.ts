@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
-import { PackageStoreService } from '@igo2/geo';
 
 import {
   BehaviorSubject,
@@ -13,6 +12,7 @@ import {
   timer
 } from 'rxjs';
 
+import { PackageStoreService } from '../packages';
 import { DEFAULT_QUOTA_SIZE, QUOTA_REFRESH_TIME } from './constants';
 import { Quota } from './quota.interface';
 

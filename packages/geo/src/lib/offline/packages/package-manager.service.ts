@@ -1,8 +1,6 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { QuotaService } from '@igo2/geo';
-
 import {
   BehaviorSubject,
   Observable,
@@ -13,6 +11,7 @@ import {
   switchMap
 } from 'rxjs';
 
+import { QuotaService } from '../quota';
 import {
   DevicePackageInfo,
   DevicePackageStatus,
