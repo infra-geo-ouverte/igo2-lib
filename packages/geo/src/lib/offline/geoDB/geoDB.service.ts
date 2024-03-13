@@ -14,11 +14,9 @@ import { GeoDBData } from './geoDB.interface';
 })
 export class GeoDBService {
   readonly dbName: string = 'geoData';
+  private compression = new Compression();
 
-  constructor(
-    private compression: Compression,
-    private ngxIndexedDBService: NgxIndexedDBService
-  ) {}
+  constructor(private ngxIndexedDBService: NgxIndexedDBService) {}
 
   /**
    * Only blob can be compressed
