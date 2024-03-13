@@ -123,16 +123,16 @@ export class SearchState {
     const wksSource = this.searchSourceService
       .getSources()
       .find((source) => source.getId() === 'workspace');
-    this.workspaceState.store.entities$.subscribe((e) => {
-      const searchableWks = e.filter(
-        (fw) =>
-          fw instanceof FeatureWorkspace &&
-          fw.layer.options.workspace.searchIndexEnabled
-      );
-      if (wksSource) {
+    if (wksSource) {
+      this.workspaceState.store.entities$.subscribe((e) => {
+        const searchableWks = e.filter(
+          (fw) =>
+            fw instanceof FeatureWorkspace &&
+            fw.layer.options.workspace.searchIndexEnabled
+        );
         this.searchSourceService.setWorkspaces(wksSource, searchableWks);
-      }
-    });
+      });
+    }
     this.monitorLayerDeletion();
   }
 
