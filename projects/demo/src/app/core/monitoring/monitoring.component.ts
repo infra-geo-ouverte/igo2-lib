@@ -2,12 +2,12 @@ import { JsonPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { provideAuthUserMonitoring } from '@igo2/auth';
+import { provideAuthUserMonitoring } from '@igo2/auth/monitoring';
 import {
   AnyMonitoringOptions,
   MONITORING_OPTIONS,
   provideMonitoring
-} from '@igo2/core';
+} from '@igo2/core/monitoring';
 
 import { environment } from 'projects/demo/src/environments/environment';
 
@@ -27,7 +27,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMonitoringComponent {
-  exampleModuleCode: string = EXAMPLE_MODULE_PROVIDER;
+  exampleProviderCode: string = EXAMPLE_PROVIDER;
   constructor(
     @Inject(MONITORING_OPTIONS)
     public options: AnyMonitoringOptions | null,
@@ -45,12 +45,10 @@ export class AppMonitoringComponent {
       2
     )}}}`;
     return this.json.transform(JSON.parse(codeExample));
-  };
+  }
 }
 
-const EXAMPLE_MODULE_PROVIDER = `@NgModule({
-  declarations: [...],
-  imports: [...],
+const EXAMPLE_PROVIDER = `bootstrapApplication(AppComponent, {
   providers: [
     ...provideMonitoring(environment.igo.monitoring),
 

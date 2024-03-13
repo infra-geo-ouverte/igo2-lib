@@ -27,8 +27,9 @@ import {
   getEntityTitle
 } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
-import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 import { Clipboard } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';

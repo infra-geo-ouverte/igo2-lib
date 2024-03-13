@@ -13,7 +13,7 @@ import {
   Tool,
   getEntityTitle
 } from '@igo2/common';
-import type { Media } from '@igo2/core';
+import type { Media } from '@igo2/core/media';
 import {
   Feature,
   FeatureDetailsComponent,

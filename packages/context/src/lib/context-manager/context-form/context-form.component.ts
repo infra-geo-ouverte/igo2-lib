@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import { Clipboard, ObjectUtils } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';

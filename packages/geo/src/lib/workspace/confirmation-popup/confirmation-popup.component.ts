@@ -7,7 +7,7 @@ import {
   MatDialogRef
 } from '@angular/material/dialog';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 export interface DialogData {
   type: string;

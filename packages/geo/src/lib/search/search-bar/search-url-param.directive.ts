@@ -6,7 +6,7 @@ import {
   Self
 } from '@angular/core';
 
-import { RouteService } from '@igo2/core';
+import { RouteService } from '@igo2/core/route';
 
 import { SearchBarComponent } from './search-bar.component';
 

@@ -1,3 +1,60 @@
+# [17.0.0-next.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.2...v17.0.0-next.3) (2024-03-12)
+
+
+
+# [17.0.0-next.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.0...v17.0.0-next.2) (2024-03-08)
+
+
+* Core Refactor - migrate to secondary entrypoints to optimize the bundle size (#1625) ([4aeca83](https://github.com/infra-geo-ouverte/igo2-lib/commit/4aeca83cb64316e9f8ef938ae6e62c2ae87b96f0)), closes [#1625](https://github.com/infra-geo-ouverte/igo2-lib/issues/1625) [#1556](https://github.com/infra-geo-ouverte/igo2-lib/issues/1556)
+
+
+### BREAKING CHANGES
+
+* IgoLanguageModule don't import TranslateModule.forRoot
+defaultLanguageLoader is not exported anymore
+* 'provideDefaultLanguageLoader' and 'provideLanguageLoader' are replaced by 'DEFAULT_LANGUAGE_LOADER' and set directly inside the TranslationConfig
+
+* build(packagr): keep only one config
+
+* feat(core): split in submodule for bundle optimization BREAKING CHANGES
+- refact(compression): convert and move to utils packages BREAKING CHANGE
+
+* build(clean-exports): account all keys in the exports object
+
+
+
+# [17.0.0-next.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.3.0...v17.0.0-next.0) (2024-02-19)
+
+
+### Bug Fixes
+
+* **build:** clean up exports in the distributed package.json [#1616](https://github.com/infra-geo-ouverte/igo2-lib/issues/1616) ([#1617](https://github.com/infra-geo-ouverte/igo2-lib/issues/1617)) ([ecd7013](https://github.com/infra-geo-ouverte/igo2-lib/commit/ecd7013c1561e8054870b7b48d1a44e5cde73fcf))
+* bump node engine version to a min of 18.13 ([e95a1ca](https://github.com/infra-geo-ouverte/igo2-lib/commit/e95a1cab3b866d3f3549d888552fc6d990b9bb02))
+* **geo:** check Capability contains layers list before loop ([#1570](https://github.com/infra-geo-ouverte/igo2-lib/issues/1570)) ([f4959eb](https://github.com/infra-geo-ouverte/igo2-lib/commit/f4959eb78cc8c6c76c3b77507ea393a0ed7ea502))
+* **geo:** garantine no comma in the beginning and end of search term ([#1608](https://github.com/infra-geo-ouverte/igo2-lib/issues/1608)) ([d5e20f8](https://github.com/infra-geo-ouverte/igo2-lib/commit/d5e20f8fe8d4a91d33dfc4a450743a07c49b0f65))
+* **integration:** fix advanced coordinate error Maximum call stack size exceeded ([#1620](https://github.com/infra-geo-ouverte/igo2-lib/issues/1620)) ([f0c5db6](https://github.com/infra-geo-ouverte/igo2-lib/commit/f0c5db60f1ef57f2720d8853041bf3189704b15c))
+* missing auth dependencies in geo and integration ([5269984](https://github.com/infra-geo-ouverte/igo2-lib/commit/5269984e60a0c491ce1514e9b26cdd4becf1b999))
+
+
+* Release/17.0.0 (#1640) ([0cd2dcf](https://github.com/infra-geo-ouverte/igo2-lib/commit/0cd2dcf83111238405cd243807f07f64d98a3e2f)), closes [#1640](https://github.com/infra-geo-ouverte/igo2-lib/issues/1640) [#1551](https://github.com/infra-geo-ouverte/igo2-lib/issues/1551) [#1543](https://github.com/infra-geo-ouverte/igo2-lib/issues/1543) [#1563](https://github.com/infra-geo-ouverte/igo2-lib/issues/1563) [#1556](https://github.com/infra-geo-ouverte/igo2-lib/issues/1556) [#1610](https://github.com/infra-geo-ouverte/igo2-lib/issues/1610) [#1619](https://github.com/infra-geo-ouverte/igo2-lib/issues/1619)
+
+
+### Features
+
+* **geo:** change printed text to Sans Serif font ([#1626](https://github.com/infra-geo-ouverte/igo2-lib/issues/1626)) ([748099a](https://github.com/infra-geo-ouverte/igo2-lib/commit/748099ab375da70dd1baf5d3cee892765260cd1a))
+
+
+### BREAKING CHANGES
+
+* IgoLanguageModule don't import TranslateModule.forRoot
+defaultLanguageLoader is not exported anymore
+- provideDefaultLanguageLoader and provideLanguageLoader are replaced by DEFAULT_LANGUAGE_LOADER and set directly inside the TranslationConfig
+
+* feat(demo): Convert all components, directives and pipes to standalone
+* ToolboxColor is now a type
+
+
+
 # [16.3.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.2.0...v16.3.0) (2024-01-25)
 
 

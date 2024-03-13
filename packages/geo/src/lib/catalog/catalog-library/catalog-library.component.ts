@@ -14,7 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore, ListComponent, ListItemDirective } from '@igo2/common';
-import { MessageService, StorageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';

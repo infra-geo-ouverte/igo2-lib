@@ -1,13 +1,13 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action, Widget } from '@igo2/common';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
+} from '@igo2/core/storage';
 import { OgcFilterWidget, WfsWorkspace } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';

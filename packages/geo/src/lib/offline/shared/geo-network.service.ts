@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { ConnectionState, NetworkService } from '@igo2/core';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { Type } from 'ol/format/Feature';
 

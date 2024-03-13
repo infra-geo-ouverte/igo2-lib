@@ -1,4 +1,4 @@
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 import { NumberUtils, uuid } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';

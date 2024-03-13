@@ -1,6 +1,6 @@
 import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
 
-import { ActivityService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';

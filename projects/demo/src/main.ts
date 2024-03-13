@@ -27,11 +27,9 @@ import {
   withPreloading
 } from '@angular/router';
 
-import {
-  IgoCoreModule,
-  LanguageService,
-  provideConfigOptions
-} from '@igo2/core';
+import { IgoCoreModule } from '@igo2/core';
+import { provideConfigOptions } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 import {
   IgoDirectionsModule,
   IgoGeoWorkspaceModule,

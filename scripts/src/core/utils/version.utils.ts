@@ -36,7 +36,7 @@ export async function setPackageVersion(
 }
 
 export async function setVersionFile(version: string) {
-  const versionFilePath = resolvePackage('core', 'src/lib/config/version.ts');
+  const versionFilePath = resolvePackage('core', 'config/src/version.ts');
   let body = readFileSync(versionFilePath, BUFFER_ENCODING);
   body = body.replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`);
   body = body.replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`);

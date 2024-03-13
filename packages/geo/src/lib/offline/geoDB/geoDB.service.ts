@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { CompressionService } from '@igo2/core';
+import { Compression } from '@igo2/utils';
 
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject, forkJoin, of } from 'rxjs';
@@ -16,8 +16,8 @@ export class GeoDBService {
   readonly dbName: string = 'geoData';
 
   constructor(
-    private ngxIndexedDBService: NgxIndexedDBService,
-    private compression: CompressionService
+    private compression: Compression,
+    private ngxIndexedDBService: NgxIndexedDBService
   ) {}
 
   /**

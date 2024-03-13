@@ -25,7 +25,8 @@ import {
   SanitizeHtmlPipe,
   SecureImagePipe
 } from '@igo2/common';
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';

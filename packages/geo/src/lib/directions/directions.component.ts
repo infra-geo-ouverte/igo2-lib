@@ -8,7 +8,7 @@ import {
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { EntityStoreWatcher } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
