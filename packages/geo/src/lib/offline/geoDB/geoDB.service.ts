@@ -67,7 +67,6 @@ export class GeoDBService {
           }
 
           if (dbObject.regionIDs.includes(regionID)) {
-            console.log('region already there');
             return of(dbObject);
           }
 
