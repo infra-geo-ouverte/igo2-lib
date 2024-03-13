@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ColorPickerFormFieldModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
+import { GeostylerStyleService } from './geostyler-service/geostyler.service';
 import { IgoStyleListModule } from './style-list/style-list.module';
 import { StyleModalDrawingComponent } from './style-modal/drawing/style-modal-drawing.component';
 import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style-modal-layer-button.component';
@@ -51,7 +52,7 @@ export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {
     return {
       ngModule: IgoStyleModule,
-      providers: [StyleService, DrawStyleService]
+      providers: [StyleService, DrawStyleService, GeostylerStyleService]
     };
   }
 }

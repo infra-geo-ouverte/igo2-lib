@@ -199,7 +199,7 @@
 # [16.0.0-rc.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.0...16.0.0-rc.1) (2023-09-22)
 
 
-### Bug Fixes
+### Reverts
 
 * **InteractiveTour:** add Placement types from [@floating-ui](https://github.com/floating-ui) ([#1407](https://github.com/infra-geo-ouverte/igo2-lib/issues/1407)) ([44b3d4a](https://github.com/infra-geo-ouverte/igo2-lib/commit/44b3d4ac88a23a83bc4704dde03a563230b90c53))
 * **InteractiveTour:** options migration from popperJS to floatingUI ([#1399](https://github.com/infra-geo-ouverte/igo2-lib/issues/1399)) ([fbc4ff7](https://github.com/infra-geo-ouverte/igo2-lib/commit/fbc4ff7a26f501c8d42e28760440d4b45b99cbc6))

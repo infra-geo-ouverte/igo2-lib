@@ -179,7 +179,6 @@ export class LayerService {
       layerOptions.igoStyle.igoStyleObject &&
       layerOptions.idbInfo?.storeToIdb
     ) {
-      // temporary fix todo : handle it with geostyler.
       style = this.styleService.parseStyle(
         'style',
         layerOptions.igoStyle.igoStyleObject
@@ -278,7 +277,7 @@ export class LayerService {
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style[] | Style | OlStyleLike;
+    let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorTileLayer;
 
     if (!layerOptions.igoStyle) {
