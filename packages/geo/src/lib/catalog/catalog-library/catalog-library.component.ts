@@ -84,9 +84,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.store.state.clear();
 
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
-      c.id =
-        c.id ??
-        (Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string);
+      c.id = c.id ?? Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url));
       c.title = c.title === '' || !c.title ? c.url : c.title;
       return c;
     });
@@ -142,10 +140,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     }
     this.unsubscribeAddingCatalog();
     if (predefinedCatalog) {
-      predefinedCatalog.removable =
-        predefinedCatalog.removable === undefined
-          ? true
-          : predefinedCatalog.removable;
+      predefinedCatalog.removable ??= true;
       this.handleAddCatalogToStore(predefinedCatalog);
     } else {
       this.addingCatalog$$ = this.capabilitiesService
@@ -167,10 +162,10 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe((capabilities) => {
-          const catalogToAdd = ObjectUtils.removeUndefined(
+          const catalogToAdd: Catalog = ObjectUtils.removeUndefined(
             Object.assign(
               {},
-              ObjectUtils.removeUndefined({
+              {
                 id,
                 title: addedCatalog.title,
                 url: addedCatalog.url,
@@ -179,8 +174,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
                 removable: true,
                 version:
                   addedCatalog.type === 'wms' ? capabilities.version : '1.3.0'
-              })
-            ) as Catalog
+              }
+            )
           );
           this.handleAddCatalogToStore(catalogToAdd);
         });
@@ -193,9 +188,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   private handleAddCatalogToStore(catalogToAdd: Catalog) {
     this.store.insert(catalogToAdd);
-    const newCatalogs = this.addedCatalogs.slice(0);
-    newCatalogs.push(catalogToAdd);
-    this.addedCatalogs = newCatalogs;
+    this.addedCatalogs = [...this.addedCatalogs, catalogToAdd];
     this.unsubscribeAddingCatalog();
   }
 

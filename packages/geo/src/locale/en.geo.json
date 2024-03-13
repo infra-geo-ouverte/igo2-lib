@@ -23,7 +23,7 @@
         "library.custom.title": "Title",
         "library.add": "Add this catalog to the list",
         "library.predefined": "Predefined list",
-        "library.custom": "Custom service",
+        "library.custom": "Advanced configuration",
         "library.remove": "Remove this catalog from the list",
         "library.inlist": {
           "title": "Catalog already contained",

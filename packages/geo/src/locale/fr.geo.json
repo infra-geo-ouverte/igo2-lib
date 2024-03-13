@@ -23,7 +23,7 @@
         "library.custom.title": "Titre",
         "library.add": "Ajouter ce catalogue",
         "library.predefined": "Liste prédéfinie",
-        "library.custom": "Saisir vos propres informations",
+        "library.custom": "Configuration avancées",
         "library.remove": "Retirer ce catalogue de la liste",
         "library.inlist": {
           "title": "Catalogue déjà contenu",
