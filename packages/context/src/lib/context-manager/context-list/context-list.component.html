@@ -178,10 +178,12 @@
       </ng-template>
     </igo-collapsible>
 
-    <ng-container
+    <ng-template
       *ngIf="$any(groupContexts).value.length && !auth.authenticated"
-    ></ng-container>
-    <ng-template ngFor let-context [ngForOf]="$any(groupContexts).value">
+      ngFor
+      let-context
+      [ngForOf]="$any(groupContexts).value"
+    >
       <igo-context-item
         igoListItem
         color="accent"
