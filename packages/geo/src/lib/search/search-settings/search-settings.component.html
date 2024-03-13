@@ -42,6 +42,14 @@
         </button>
       </span>
       <mat-menu #sub_menu="matMenu">
+        <div class="checkMenuDefaultButton">
+          <button
+            mat-raised-button
+            (click)="checkMenuDefaultOptions($event, source)"
+          >
+            {{ 'igo.geo.search.searchSources.defaultSettings' | translate }}
+          </button>
+        </div>
         <ng-container *ngFor="let setting of source.settings">
           <button mat-menu-item [matMenuTriggerFor]="test_sub_menu">
             {{
@@ -91,6 +99,16 @@
                         | translate)
                       : ('igo.geo.search.searchSources.settings.selectAll'
                         | translate)
+                  }}
+                </button>
+              </div>
+              <div class="checkDefaultButton">
+                <button
+                  mat-raised-button
+                  (click)="checkDefaultOptions($event, source, setting)"
+                >
+                  {{
+                    'igo.geo.search.searchSources.defaultSettings' | translate
                   }}
                 </button>
               </div>

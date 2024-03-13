@@ -547,6 +547,7 @@
         "searchSources": {
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
+          "defaultSettings": "Sélection par défaut",
           "settings": {
             "datasets": "Jeu de données",
             "results type": "Type de résultat",
