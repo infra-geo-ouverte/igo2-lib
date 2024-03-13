@@ -172,9 +172,9 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   getCatalogList(): void {
-    var catalogRank = 1;
+    var rank = 1;
     const t = this.languageService.translate;
-    let csvOutputs: CsvOutput[] = [
+    let wholeCsvOutputs: CsvOutput[] = [
       {
         id: 'csvHeader',
         rank: t.instant('igo.integration.catalog.csv.rank'),
@@ -211,75 +211,78 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             const catalog = catalogAndItems.catalog;
             const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
 
-            let groups = loadedCatalogItems.filter(
-              (i) => i.type === CatalogItemType.Group
+            const catalogCsvOutputs = loadedCatalogItems.reduce(
+              (catalogcsvOutputs, item) => {
+                if (item.type === CatalogItemType.Group) {
+                  const group = item as CatalogItemGroup;
+                  group.items.forEach((layer: CatalogItemLayer) => {
+                    catalogCsvOutputs.push(
+                      this.catalogItemLayerToCsvOutput(
+                        layer,
+                        rank,
+                        group.title,
+                        catalog.title
+                      )
+                    );
+                    rank++;
+                  });
+                } else {
+                  const layer = item as CatalogItemLayer;
+                  catalogCsvOutputs.push(
+                    this.catalogItemLayerToCsvOutput(
+                      layer,
+                      rank,
+                      '',
+                      catalog.title
+                    )
+                  );
+                  rank++;
+                }
+                return catalogCsvOutputs;
+              },
+              [] as CsvOutput[]
             );
-            let layers = loadedCatalogItems.filter(
-              (i) => i.type === CatalogItemType.Layer
-            );
-
-            let layersToProcess: CatalogItemLayer[];
-            let groupsToProcess: CatalogItemGroup[];
-
-            layersToProcess = layers.map((layer) => layer as CatalogItemLayer);
-            groupsToProcess = groups.map((group) => group as CatalogItemGroup);
-
-            layersToProcess.forEach((layer) => {
-              const infos = getInfoFromSourceOptions(
-                layer.options.sourceOptions
-              );
-              csvOutputs.push({
-                id: infos.id,
-                rank: catalogRank.toString(),
-                layerTitle: layer.title,
-                layerGroup: '',
-                catalog: catalog.title,
-                provider:
-                  layer.externalProvider ?? catalog.externalProvider
-                    ? t.instant('igo.integration.catalog.csv.external')
-                    : t.instant('igo.integration.catalog.csv.internal'),
-                url: infos.url,
-                layerName: infos.layerName,
-                context: '',
-                dataDescription: this.getDescription(layer)
-              });
-              catalogRank++;
-            });
-
-            groupsToProcess.forEach((group) => {
-              group.items.forEach((layer) => {
-                const layerToProcess = layer as CatalogItemLayer;
-                const infos = getInfoFromSourceOptions(
-                  layerToProcess.options.sourceOptions,
-                  layer.id
-                );
-                csvOutputs.push({
-                  id: infos.id,
-                  rank: catalogRank.toString(),
-                  layerTitle: layerToProcess.title,
-                  layerGroup: group.title,
-                  catalog: catalog.title,
-                  provider: layerToProcess.externalProvider
-                    ? t.instant('igo.integration.catalog.csv.external')
-                    : t.instant('igo.integration.catalog.csv.internal'),
-                  url: infos.url,
-                  layerName: infos.layerName,
-                  context: '',
-                  dataDescription: this.getDescription(layerToProcess)
-                });
-                catalogRank++;
-              });
-            });
+            wholeCsvOutputs.push(...catalogCsvOutputs);
           });
 
-          csvOutputs = this.matchLayersWithLayersContext(
-            csvOutputs,
+          wholeCsvOutputs = this.matchLayersWithLayersContext(
+            wholeCsvOutputs,
             layerInfosFromDetailedContexts
           );
 
-          this.downloadCsv(csvOutputs);
+          this.downloadCsv(wholeCsvOutputs);
         }
       );
+  }
+
+  private catalogItemLayerToCsvOutput(
+    layer: CatalogItemLayer,
+    rank: number,
+    groupTitle: string,
+    catalogTitle: string
+  ) {
+    const infos = getInfoFromSourceOptions(
+      layer.options.sourceOptions,
+      layer.id
+    );
+    return {
+      id: infos.id,
+      rank: rank.toString(),
+      layerTitle: layer.title,
+      layerGroup: groupTitle,
+      catalog: catalogTitle,
+      provider: layer.externalProvider
+        ? this.languageService.translate.instant(
+            'igo.integration.catalog.csv.external'
+          )
+        : this.languageService.translate.instant(
+            'igo.integration.catalog.csv.internal'
+          ),
+      url: infos.url,
+      layerName: infos.layerName,
+      context: '',
+      dataDescription: this.getDescription(layer)
+    };
   }
 
   /**
