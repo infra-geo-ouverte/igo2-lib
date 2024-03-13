@@ -76,6 +76,10 @@ export class QuotaService {
   }
 
   private getTotalPackageSize() {
+    if (this.packageService.downloaded.length === 0) {
+      return 0;
+    }
+
     return this.packageService.downloaded
       .map(({ size }) => size)
       .reduce((prev, current) => prev + current);
