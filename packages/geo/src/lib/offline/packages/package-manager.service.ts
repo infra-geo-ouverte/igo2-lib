@@ -1,6 +1,8 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { QuotaService } from '@igo2/geo';
+
 import {
   BehaviorSubject,
   Observable,
@@ -73,7 +75,8 @@ export class PackageManagerService {
   constructor(
     private http: HttpClient,
     private packageStore: PackageStoreService,
-    private notifier: PackageNotifierService
+    private notifier: PackageNotifierService,
+    private quotaService: QuotaService
   ) {
     this.notifier.notifySoonToExpire();
     this.notifyExpirations();
@@ -111,17 +114,26 @@ export class PackageManagerService {
       return;
     }
 
-    this.internalDownload(
-      packageInfo,
-      (blob, info) => {
-        this.unpackPackage(blob, info);
-      },
-      () => {
-        this.notifier.notifyDownloadError(packageInfo);
+    this.quotaService.getQuota().subscribe(({ size, usage }) => {
+      const spaceLeft = size - usage;
+      if (spaceLeft < packageInfo.size) {
+        this.notifier.notifyNotEnoughSpaceOnDevice(packageInfo);
         this.cancelDownload(packageInfo);
-        this.actualizePackages();
+        return;
       }
-    );
+
+      this.internalDownload(
+        packageInfo,
+        (blob, info) => {
+          this.unpackPackage(blob, info);
+        },
+        () => {
+          this.notifier.notifyDownloadError(packageInfo);
+          this.cancelDownload(packageInfo);
+          this.actualizePackages();
+        }
+      );
+    });
   }
 
   isPackageExists(packageTitle: string) {
@@ -223,6 +235,7 @@ export class PackageManagerService {
       }
 
       this.actionSub.next(undefined);
+      this.quotaService.refreshQuota();
     });
 
     return deleted$;
@@ -354,6 +367,7 @@ export class PackageManagerService {
     unpack(blob).subscribe((progress) => {
       if (progress === 1) {
         this.actionSub.next(undefined);
+        this.quotaService.refreshQuota();
         this.notifier.notifyDoneDownloading(info);
         return;
       }

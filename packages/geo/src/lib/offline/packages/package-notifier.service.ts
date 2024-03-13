@@ -42,6 +42,13 @@ export class PackageNotifierService {
     );
   }
 
+  notifyNotEnoughSpaceOnDevice(info: PackageInfo) {
+    this.messageService.error(
+      `Not enough space left on device for ${info.title} package.`,
+      'Package Download Error'
+    );
+  }
+
   notifyExpired() {
     const now = new Date();
     const expired = this.packageStore.devicePackages.filter(

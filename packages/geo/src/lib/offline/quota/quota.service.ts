@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+import { PackageStoreService } from '@igo2/geo';
 
 import {
   BehaviorSubject,
@@ -12,7 +13,6 @@ import {
   timer
 } from 'rxjs';
 
-import { PackageManagerService } from '../packages/package-manager.service';
 import { DEFAULT_QUOTA_SIZE, QUOTA_REFRESH_TIME } from './constants';
 import { Quota } from './quota.interface';
 
@@ -22,15 +22,9 @@ import { Quota } from './quota.interface';
 export class QuotaService {
   constructor(
     private config: ConfigService,
-    private packageService: PackageManagerService
+    private packageStore: PackageStoreService
   ) {
     this.refreshQuota();
-
-    this.packageService.action$.subscribe((action) => {
-      if (!action) {
-        return this.refreshQuota();
-      }
-    });
 
     timer(QUOTA_REFRESH_TIME, QUOTA_REFRESH_TIME).subscribe(() =>
       this.refreshQuota()
@@ -76,11 +70,11 @@ export class QuotaService {
   }
 
   private getTotalPackageSize() {
-    if (this.packageService.downloaded.length === 0) {
+    if (this.packageStore.devicePackages.length === 0) {
       return 0;
     }
 
-    return this.packageService.downloaded
+    return this.packageStore.devicePackages
       .map(({ size }) => size)
       .reduce((prev, current) => prev + current);
   }
