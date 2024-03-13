@@ -11,7 +11,7 @@ import {
   switchMap
 } from 'rxjs';
 
-import { QuotaService } from '../quota';
+import { QuotaService } from '../quota/quota.service';
 import {
   DevicePackageInfo,
   DevicePackageStatus,

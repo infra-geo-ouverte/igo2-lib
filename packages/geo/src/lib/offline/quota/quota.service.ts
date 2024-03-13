@@ -12,7 +12,7 @@ import {
   timer
 } from 'rxjs';
 
-import { PackageStoreService } from '../packages';
+import { PackageStoreService } from '../packages/package-store.service';
 import { DEFAULT_QUOTA_SIZE, QUOTA_REFRESH_TIME } from './constants';
 import { Quota } from './quota.interface';
 
