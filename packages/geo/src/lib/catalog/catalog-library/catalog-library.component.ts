@@ -123,9 +123,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     }
     let id =
       addedCatalog.id ??
-      (Md5.hashStr(
-        addedCatalog.type + standardizeUrl(addedCatalog.url)
-      ) as string);
+      Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url));
 
     const predefinedCatalog = this.predefinedCatalogs.find(
       (c) => c.id === addedCatalog.id
