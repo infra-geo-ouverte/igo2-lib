@@ -23,6 +23,8 @@ export interface MapViewControllerOptions {
  * Controller to handle map view interactions
  */
 export class MapViewController extends MapController {
+  readonly dragging$: Subject<void> = new Subject();
+
   /**
    * Observable of the current rotation in radians
    */
@@ -126,13 +128,16 @@ export class MapViewController extends MapController {
    * Observe move moveend and subscribe to the extent stream
    */
   setupObservers() {
-    if (this.stateHistory === true) {
-      this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) =>
-          this.onMoveEnd(event)
-        ) as EventsKey
-      );
-    }
+    this.observerKeys.push(
+      this.olMap.on('moveend', (event: OlMapEvent) =>
+        this.onMoveEnd(event)
+      ) as EventsKey
+    );
+    this.observerKeys.push(
+      this.olMap.on('pointerdrag', (event: OlMapEvent) =>
+        this.dragging$.next()
+      ) as EventsKey
+    );
 
     this.extent$$ = this.extent$
       .pipe(debounceTime(25))
