@@ -13,7 +13,7 @@ import { IgoMap } from '../shared/map';
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;
-  private isTemporaryDisableFollowPositionToSwitch: Boolean;
+  private isTemporaryDisableFollowPositionToSwitch: boolean;
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject(
     'crosshairs-gps'
   );
