@@ -69,7 +69,7 @@ export function computeProjectionsConstraints(
   return projectionsConstraints;
 }
 /**
- * Method allowing to read the file and try to detect projection/Coord systeme.
+ * Method allowing to read the file and try to detect projection/Coord system
  * Only geojson/json/gml could be detected at this moment.
  * @param options A file and an optional number of line to read the EPSG Code. Used only for GML files
  * @returns Observable string, epsgNotDefined if the EPSG is not detected or a EPSG strinf ex: EPSG:3857
