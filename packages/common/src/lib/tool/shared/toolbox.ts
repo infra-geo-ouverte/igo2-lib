@@ -120,9 +120,7 @@ export class Toolbox {
   }
 
   getCurrentPreviousToolName(): [string, string] {
-    const [previous, current] = this.toolHistory.slice(
-      Math.max(this.toolHistory.length - 2, 0)
-    );
+    const [previous, current] = this.toolHistory.slice(-2);
     return [previous, current];
   }
 
