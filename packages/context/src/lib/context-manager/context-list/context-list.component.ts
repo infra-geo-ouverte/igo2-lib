@@ -97,24 +97,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  @Input()
-  get selectedContext(): DetailedContext {
-    return this._selectedContext;
-  }
-  set selectedContext(value: DetailedContext) {
-    this._selectedContext = value;
-    this.cdRef.detectChanges();
-  }
-  private _selectedContext: DetailedContext;
+  @Input() selectedContext: DetailedContext;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Input()
   get defaultContextId(): string {

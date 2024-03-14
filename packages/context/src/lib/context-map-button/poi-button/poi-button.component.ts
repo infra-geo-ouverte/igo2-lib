@@ -39,7 +39,8 @@ import { PoiService } from './shared/poi.service';
     MatDividerModule,
     NgFor,
     TranslateModule
-  ]
+  ],
+  providers: [PoiService]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
   @Input()

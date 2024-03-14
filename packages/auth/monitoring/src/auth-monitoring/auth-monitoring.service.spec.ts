@@ -1,6 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
+import { AuthService } from '@igo2/auth';
+import { IgoAuthFormModule } from '@igo2/auth/form';
 import { ConfigService } from '@igo2/core/config';
 import { provideMockRootTranslation } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -12,9 +14,7 @@ import {
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
-import { AuthService } from '../shared';
 import { AuthMonitoringService } from './auth-monitoring.service';
-import { IgoAuthFormModule } from '@igo2/auth/form';
 
 const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
