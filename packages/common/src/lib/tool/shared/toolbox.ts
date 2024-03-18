@@ -124,10 +124,6 @@ export class Toolbox {
     return [this.previousToolName, this.currentToolName];
   }
 
-  /*getPreviousToolName(): string {
-    return this.previousToolName;
-  }*/
-
   /**
    * Activate the tool below, if any
    */
