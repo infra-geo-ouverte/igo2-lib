@@ -1,8 +1,10 @@
 <mat-tab-group [(selectedIndex)]="selectedTab" dynamicHeight>
-  <mat-tab label="Add Regions">
+  <mat-tab [label]="'igo.integration.package-manager.add-regions' | translate">
     <igo-download-package (download)="onDownload()"></igo-download-package>
   </mat-tab>
-  <mat-tab label="Manage Regions">
+  <mat-tab
+    [label]="'igo.integration.package-manager.manage-regions' | translate"
+  >
     <igo-downloaded-packages-manager></igo-downloaded-packages-manager>
   </mat-tab>
 </mat-tab-group>

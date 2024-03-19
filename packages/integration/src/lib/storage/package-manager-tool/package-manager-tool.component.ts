@@ -5,6 +5,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ToolComponent } from '@igo2/common';
 import { PackageManagerService } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { DownloadPackageComponent } from './download-package';
 import { DownloadedPackagesManagerComponent } from './downloaded-packages-manager';
 
@@ -20,7 +22,8 @@ import { DownloadedPackagesManagerComponent } from './downloaded-packages-manage
     CommonModule,
     MatTabsModule,
     DownloadedPackagesManagerComponent,
-    DownloadPackageComponent
+    DownloadPackageComponent,
+    TranslateModule
   ],
   templateUrl: './package-manager-tool.component.html',
   styleUrls: ['./package-manager-tool.component.scss'],

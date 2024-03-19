@@ -9,7 +9,7 @@
       type="text"
       [(ngModel)]="search"
       (input)="filterPackages()"
-      [placeholder]="'Filter by title'"
+      [placeholder]="'igo.integration.package-manager.filter' | translate"
     />
     @if (search) {
       <button
@@ -39,7 +39,7 @@
 <div class="action-row">
   @if (selectedPackage) {
     <div class="quota">
-      Usage:
+      {{ 'igo.integration.package-manager.usage' | translate }}:
       <span [ngClass]="{ 'oversized-package': !canDownload }">
         {{ formatPackageSize(selectedPackage.size) }}
       </span>
@@ -48,7 +48,8 @@
     </div>
   } @else {
     <div class="quota">
-      Space Left: {{ formatQuotaSize(spaceLeft$ | async) }}
+      {{ 'igo.integration.package-manager.space-left' | translate }}:
+      {{ formatQuotaSize(spaceLeft$ | async) }}
     </div>
   }
   <button
@@ -57,6 +58,6 @@
     [disabled]="!canDownload"
     (click)="downloadSelectedPackage()"
   >
-    Download
+    {{ 'igo.integration.package-manager.download' | translate }}
   </button>
 </div>

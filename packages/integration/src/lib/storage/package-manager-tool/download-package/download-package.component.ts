@@ -19,8 +19,10 @@ import {
   EntityTableTemplate,
   getEntityProperty
 } from '@igo2/common';
+import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 import { PackageInfo, PackageManagerService, QuotaService } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, map } from 'rxjs';
 
 import { dynamicFormatSize } from '../utils';
@@ -35,7 +37,9 @@ import { dynamicFormatSize } from '../utils';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    TranslateModule,
+    IgoLanguageModule
   ],
   templateUrl: './download-package.component.html',
   styleUrls: ['./download-package.component.scss'],
@@ -52,39 +56,17 @@ export class DownloadPackageComponent implements OnInit {
 
   search: string = '';
 
-  public template: EntityTableTemplate = {
-    selection: true,
-    selectionCheckbox: true,
-    // selectMany: true, TODO activate with download queue
-    sort: true,
-    valueAccessor: (entity: object, name: string) => {
-      if (
-        this.store.state.get(entity).selected &&
-        this.selectedPackage !== entity
-      ) {
-        this.onSelectedPackage(entity);
-      }
+  private getSizeEntityTitle() {
+    const size = this.languageService.translate.instant(
+      'igo.integration.package-manager.size'
+    );
+    const MB = this.languageService.translate.instant(
+      'igo.integration.package-manager.mb'
+    );
+    return `${size} (${MB})`;
+  }
 
-      if (
-        this.selectedPackage === entity &&
-        !this.store.state.get(entity).selected
-      ) {
-        this.onSelectedPackage(undefined);
-      }
-
-      return getEntityProperty(entity, name);
-    },
-    columns: [
-      {
-        name: 'title',
-        title: 'Title'
-      },
-      {
-        name: 'size',
-        title: 'Size (MB)'
-      }
-    ]
-  };
+  public template: EntityTableTemplate;
 
   entitySortChange(): void {
     this.entitySortChange$.next(true);
@@ -145,8 +127,45 @@ export class DownloadPackageComponent implements OnInit {
 
   constructor(
     private packageManagerService: PackageManagerService,
-    private quotaService: QuotaService
-  ) {}
+    private quotaService: QuotaService,
+    private languageService: LanguageService
+  ) {
+    this.template = {
+      selection: true,
+      selectionCheckbox: true,
+      // selectMany: true, TODO activate with download queue
+      sort: true,
+      valueAccessor: (entity: object, name: string) => {
+        if (
+          this.store.state.get(entity).selected &&
+          this.selectedPackage !== entity
+        ) {
+          this.onSelectedPackage(entity);
+        }
+
+        if (
+          this.selectedPackage === entity &&
+          !this.store.state.get(entity).selected
+        ) {
+          this.onSelectedPackage(undefined);
+        }
+
+        return getEntityProperty(entity, name);
+      },
+      columns: [
+        {
+          name: 'title',
+          title: this.languageService.translate.instant(
+            'igo.integration.package-manager.title'
+          )
+        },
+        {
+          name: 'size',
+          title: this.getSizeEntityTitle()
+        }
+      ]
+    };
+  }
 
   ngOnInit(): void {
     this.nonDownloaded$.subscribe((packages) => {

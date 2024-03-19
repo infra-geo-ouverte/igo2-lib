@@ -138,6 +138,20 @@
           "scale": "Échelle cartographique: ",
           "resolution": "Résolution cartographique: "
         }
+      },
+      "package-manager": {
+        "add-regions": "Ajouté des régions",
+        "manage-regions": "Gérer les régions",
+        "download": "Télécharger",
+        "delete": "Supprimer",
+        "cancel": "Annuler",
+        "title": "Titre",
+        "size": "Taille",
+        "filter": "Filtrer par titre",
+        "space-left": "Espace restant",
+        "usage": "Utilisation",
+        "gb": "Go",
+        "mb": "Mo"
       }
     }
   }
