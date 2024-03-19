@@ -129,7 +129,9 @@ export class SearchState {
           fw instanceof FeatureWorkspace &&
           fw.layer.options.workspace.searchIndexEnabled
       );
-      this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+      if (wksSource) {
+        this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+      }
     });
     this.monitorLayerDeletion();
   }
