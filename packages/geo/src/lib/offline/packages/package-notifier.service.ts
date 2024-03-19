@@ -15,37 +15,43 @@ export class PackageNotifierService {
     private messageService: MessageService
   ) {}
 
-  notifyDoneDownloading(info: PackageInfo) {
+  notifyDoneInstalling(info: PackageInfo) {
     this.messageService.success(
-      `Your package ${info.title} has been installed.`,
-      'Package Installation Done',
+      'igo.geo.package-manager.installation.message',
+      'igo.geo.package-manager.installation.title',
       {
         timeOut: 5000
-      }
+      },
+      { title: info.title }
     );
   }
 
   notifyDoneDeleting(info: PackageInfo) {
     this.messageService.success(
-      `Your package ${info.title} has been deleted.`,
-      'Package Deletion Done',
+      'igo.geo.package-manager.deletion.message',
+      'igo.geo.package-manager.deletion.title',
       {
         timeOut: 5000
-      }
+      },
+      { title: info.title }
     );
   }
 
   notifyDownloadError(info: PackageInfo) {
     this.messageService.error(
-      `An error occured when downloading the package ${info.title}.`,
-      'Package Download Error'
+      'igo.geo.package-manager.download-error.message',
+      'igo.geo.package-manager.download-error.title',
+      undefined,
+      { title: info.title }
     );
   }
 
   notifyNotEnoughSpaceOnDevice(info: PackageInfo) {
     this.messageService.error(
-      `Not enough space left on device for ${info.title} package.`,
-      'Package Download Error'
+      'igo.geo.package-manager.no-space-left-error.message',
+      'igo.geo.package-manager.no-space-left-error.title',
+      undefined,
+      { title: info.title }
     );
   }
 
@@ -59,11 +65,12 @@ export class PackageNotifierService {
 
     expired.forEach(({ title }) => {
       this.messageService.error(
-        `Please delete the package ${title} as soon as possible.`,
-        'A Package Has Expired',
+        'igo.geo.package-manager.expired.message',
+        'igo.geo.package-manager.expired.title',
         {
-          timeOut: 10000
-        }
+          timeOut: 12000
+        },
+        { title }
       );
     });
   }
@@ -79,11 +86,12 @@ export class PackageNotifierService {
     );
     soon.forEach(({ title }) => {
       this.messageService.alert(
-        `Please update the package ${title} as soon as possible.`,
-        'A Package is Expiring Soon',
+        'igo.geo.package-manager.expiring-soon.message',
+        'igo.geo.package-manager.expiring-soon.title',
         {
-          timeOut: 5000
-        }
+          timeOut: 7000
+        },
+        { title }
       );
     });
   }

@@ -367,7 +367,7 @@ export class PackageManagerService {
       if (progress === 1) {
         this.actionSub.next(undefined);
         this.quotaService.refreshQuota();
-        this.notifier.notifyDoneDownloading(info);
+        this.notifier.notifyDoneInstalling(info);
         return;
       }
 
