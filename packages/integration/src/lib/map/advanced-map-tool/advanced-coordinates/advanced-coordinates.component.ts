@@ -135,36 +135,12 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.mapState$$ = this.map.viewController.state$
       .pipe(debounceTime(50))
       .subscribe(() => {
-        this.setScaleValue(this.map);
-        this.currentCenterDefaultProj = this.map.viewController.getCenter(
-          this.defaultProj.code
-        );
-        const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-        const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-        if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-          this.back2quebec();
-        }
-        let zoneChange = false;
-        if (currentMtmZone !== this.currentZones.mtm) {
-          this.currentZones.mtm = currentMtmZone;
-          zoneChange = true;
-        }
-        if (currentUtmZone !== this.currentZones.utm) {
-          this.currentZones.utm = currentUtmZone;
-          zoneChange = true;
-        }
-        if (zoneChange) {
-          this.updateProjectionsZoneChange();
-        }
-        this.checkLambert(this.currentCenterDefaultProj);
-        this.coordinates = this.getCoordinates();
-        this.cdRef.detectChanges();
-        this.storageService.set(
-          'currentProjection',
-          this.inputProj,
-          StorageScope.SESSION
-        );
+        this.updateCoordinates();
       });
+
+    this.form.valueChanges.subscribe(() => {
+      this.updateCoordinates();
+    });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
@@ -210,6 +186,38 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;
+  }
+
+  updateCoordinates() {
+    this.setScaleValue(this.map);
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(
+      this.defaultProj.code
+    );
+    const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+    const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+    if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+      this.back2quebec();
+    }
+    let zoneChange = false;
+    if (currentMtmZone !== this.currentZones.mtm) {
+      this.currentZones.mtm = currentMtmZone;
+      zoneChange = true;
+    }
+    if (currentUtmZone !== this.currentZones.utm) {
+      this.currentZones.utm = currentUtmZone;
+      zoneChange = true;
+    }
+    if (zoneChange) {
+      this.updateProjectionsZoneChange();
+    }
+    this.checkLambert(this.currentCenterDefaultProj);
+    this.coordinates = this.getCoordinates();
+    this.cdRef.detectChanges();
+    this.storageService.set(
+      'currentProjection',
+      this.inputProj,
+      StorageScope.SESSION
+    );
   }
 
   /**
