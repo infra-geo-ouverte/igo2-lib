@@ -140,18 +140,22 @@
         }
       },
       "package-manager": {
-        "add-regions": "Ajouté des régions",
+        "add-regions": "Ajouter des régions",
         "manage-regions": "Gérer les régions",
         "download": "Télécharger",
         "delete": "Supprimer",
         "cancel": "Annuler",
         "title": "Titre",
         "size": "Taille",
+        "expiration": "Expiration",
         "filter": "Filtrer par titre",
         "space-left": "Espace restant",
         "usage": "Utilisation",
         "gb": "Go",
-        "mb": "Mo"
+        "mb": "Mo",
+        "downloading": "Téléchargement",
+        "installing": "Installation",
+        "deleting": "Suppression"
       }
     }
   }

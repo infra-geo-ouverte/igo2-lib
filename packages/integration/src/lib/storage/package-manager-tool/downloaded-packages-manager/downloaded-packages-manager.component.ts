@@ -14,6 +14,7 @@ import {
   EntityTableTemplate,
   getEntityProperty
 } from '@igo2/common';
+import { LanguageService } from '@igo2/core/language';
 import {
   DevicePackageInfo,
   N_DAY_PACKAGE_SOON_TO_EXPIRE,
@@ -22,6 +23,7 @@ import {
   QuotaService
 } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, map } from 'rxjs';
 
 import { dynamicFormatSize } from '../utils';
@@ -34,12 +36,12 @@ import { PackageProgressStatusComponent } from './package-progress-status/packag
     CommonModule,
     MatButtonModule,
     EntityTableComponent,
-    PackageProgressStatusComponent
+    PackageProgressStatusComponent,
+    TranslateModule
   ],
   templateUrl: './downloaded-packages-manager.component.html',
   styleUrls: ['./downloaded-packages-manager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
-  // encapsulation: ViewEncapsulation.None
 })
 export class DownloadedPackagesManagerComponent implements OnInit {
   @ViewChild('entityTable') entityTable: EntityTableComponent;
@@ -52,44 +54,7 @@ export class DownloadedPackagesManagerComponent implements OnInit {
 
   selectedPackage = undefined;
 
-  public template: EntityTableTemplate = {
-    selection: true,
-    selectionCheckbox: true,
-    // selectMany: true, TODO activate with download queue
-    sort: true,
-    valueAccessor: (entity: object, name: string) => {
-      if (
-        this.store.state.get(entity).selected &&
-        this.selectedPackage !== entity
-      ) {
-        this.selectedPackage = entity;
-      }
-
-      if (
-        this.selectedPackage === entity &&
-        !this.store.state.get(entity).selected
-      ) {
-        this.selectedPackage = undefined;
-      }
-
-      return getEntityProperty(entity, name);
-    },
-    columns: [
-      {
-        name: 'title',
-        title: 'Title'
-      },
-      {
-        name: 'size',
-        title: 'Size (MB)'
-      },
-      {
-        name: 'expiration',
-        title: 'Expiration',
-        renderer: EntityTableColumnRenderer.HTML
-      }
-    ]
-  };
+  public template: EntityTableTemplate;
 
   entitySortChange(): void {
     this.entitySortChange$.next(true);
@@ -114,15 +79,69 @@ export class DownloadedPackagesManagerComponent implements OnInit {
   get quota$() {
     return this.quotaService.quota$.pipe(
       map(({ usage, size }) => {
-        return `${dynamicFormatSize(usage)} / ${dynamicFormatSize(size)}`;
+        return `${dynamicFormatSize(usage, this.languageService)} / ${dynamicFormatSize(size, this.languageService)}`;
       })
     );
   }
 
+  private getSizeEntityTitle() {
+    const size = this.languageService.translate.instant(
+      'igo.integration.package-manager.size'
+    );
+    const MB = this.languageService.translate.instant(
+      'igo.integration.package-manager.mb'
+    );
+    return `${size} (${MB})`;
+  }
+
   constructor(
     private packageManager: PackageManagerService,
-    private quotaService: QuotaService
-  ) {}
+    private quotaService: QuotaService,
+    private languageService: LanguageService
+  ) {
+    this.template = {
+      selection: true,
+      selectionCheckbox: true,
+      // selectMany: true, TODO activate with download queue
+      sort: true,
+      valueAccessor: (entity: object, name: string) => {
+        if (
+          this.store.state.get(entity).selected &&
+          this.selectedPackage !== entity
+        ) {
+          this.selectedPackage = entity;
+        }
+
+        if (
+          this.selectedPackage === entity &&
+          !this.store.state.get(entity).selected
+        ) {
+          this.selectedPackage = undefined;
+        }
+
+        return getEntityProperty(entity, name);
+      },
+      columns: [
+        {
+          name: 'title',
+          title: this.languageService.translate.instant(
+            'igo.integration.package-manager.title'
+          )
+        },
+        {
+          name: 'size',
+          title: this.getSizeEntityTitle()
+        },
+        {
+          name: 'expiration',
+          title: this.languageService.translate.instant(
+            'igo.integration.package-manager.expiration'
+          ),
+          renderer: EntityTableColumnRenderer.HTML
+        }
+      ]
+    };
+  }
 
   ngOnInit(): void {
     this.downloaded$.subscribe((downloaded) => {

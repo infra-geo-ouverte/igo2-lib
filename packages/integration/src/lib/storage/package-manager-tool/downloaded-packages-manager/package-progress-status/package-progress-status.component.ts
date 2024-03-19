@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
+import { LanguageService } from '@igo2/core/language';
 import {
   PackageManagerAction,
   PackageManagerActionType,
@@ -19,7 +20,10 @@ import { Observable, map } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PackageProgressStatusComponent {
-  constructor(private packageManager: PackageManagerService) {}
+  constructor(
+    private packageManager: PackageManagerService,
+    private languageService: LanguageService
+  ) {}
 
   get action$(): Observable<PackageManagerAction> {
     return this.packageManager.action$;
@@ -37,11 +41,17 @@ export class PackageProgressStatusComponent {
     const { type } = action;
     switch (type) {
       case PackageManagerActionType.DELETING:
-        return 'Deleting';
+        return this.languageService.translate.instant(
+          'igo.integration.package-manager.deleting'
+        );
       case PackageManagerActionType.INSTALLING:
-        return 'Installing';
+        return this.languageService.translate.instant(
+          'igo.integration.package-manager.installing'
+        );
       case PackageManagerActionType.DOWNLOADING:
-        return 'Downloading';
+        return this.languageService.translate.instant(
+          'igo.integration.package-manager.downloading'
+        );
       default:
         throw Error(`Get action title not implemented for ${type}`);
     }

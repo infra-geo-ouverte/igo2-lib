@@ -116,11 +116,11 @@ export class DownloadPackageComponent implements OnInit {
   }
 
   formatPackageSize(size: number) {
-    return dynamicFormatSize(size * 1000 * 1000);
+    return dynamicFormatSize(size * 1000 * 1000, this.languageService);
   }
 
   formatQuotaSize(size: number) {
-    return dynamicFormatSize(size);
+    return dynamicFormatSize(size, this.languageService);
   }
 
   canDownload = false;

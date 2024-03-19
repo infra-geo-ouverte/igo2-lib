@@ -147,11 +147,15 @@
         "cancel": "Cancel",
         "title": "Title",
         "size": "Size",
+        "expiration": "Expiration",
         "filter": "Filter by title",
         "space-left": "Space Left",
         "usage": "Usage",
         "gb": "GB",
-        "mb": "MB"
+        "mb": "MB",
+        "downloading": "Downloading",
+        "installing": "Installing",
+        "deleting": "Deleting"
       }
     }
   }
