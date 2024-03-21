@@ -618,12 +618,6 @@ export class PrintService {
         ];
       } else if (legendPosition === 'bottomleft') {
         // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
-        /*const margins = [
-          10, // top
-          10, // left
-          10, //bottom
-          10 // right
-        ];*/
         marginsLegend = [
           doc.internal.pageSize.height - margins[2] - imageSize[1],
           doc.internal.pageSize.width - margins[3] - imageSize[0],
@@ -681,8 +675,6 @@ export class PrintService {
       );
 
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
-
-      // this.imgSizeAdded = imageDimensions; // keep img size for georef later
     }
   }
 
