@@ -20,19 +20,15 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import {
-  ImageErrorDirective,
-  SecureImagePipe,
-  getEntityIcon,
-  getEntityTitle
-} from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
+import type { Toolbox } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 import { Clipboard } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -55,7 +51,7 @@ import { Feature } from '../shared';
     AsyncPipe,
     JsonPipe,
     KeyValuePipe,
-    TranslateModule,
+    IgoLanguageModule,
     SecureImagePipe
   ]
 })

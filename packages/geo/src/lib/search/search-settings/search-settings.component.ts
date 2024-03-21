@@ -20,10 +20,9 @@ import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import {
@@ -64,7 +63,7 @@ import {
     MatRadioModule,
     MatDividerModule,
     MatSlideToggleModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchSettingsComponent implements OnInit {

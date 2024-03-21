@@ -26,11 +26,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olObservable from 'ol/Observable';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -65,7 +65,7 @@ import { StopsFeatureStore, StopsStore } from '../shared/store';
     MatOptionModule,
     CdkDragHandle,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DirectionsInputsComponent implements OnDestroy {

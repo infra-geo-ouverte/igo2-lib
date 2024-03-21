@@ -1,3 +1,5 @@
+import { isValidJSON } from '@igo2/utils';
+
 import olFeature from 'ol/Feature';
 import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -21,7 +23,7 @@ export function featureRandomStyleFunction(): (
   });
   return (olFeature: olFeature<OlGeometry>, resolution: number) => {
     const customStyle = olFeature.get('_style');
-    if (customStyle) {
+    if (customStyle && isValidJSON(customStyle)) {
       if (
         customStyle.circle &&
         olFeature.get('rad') &&

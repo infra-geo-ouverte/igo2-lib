@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { IgoCustomHtmlModule } from '@igo2/common';
+import { IgoCustomHtmlModule } from '@igo2/common/custom-html';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { AboutToolComponent } from './about-tool.component';

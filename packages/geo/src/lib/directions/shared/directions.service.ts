@@ -6,6 +6,7 @@ import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { SubjectStatus } from '@igo2/utils';
 
+import { Position } from 'geojson';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -25,9 +26,7 @@ import {
   formatInstruction
 } from './directions.utils';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class DirectionsService {
   constructor(
     private directionsSourceService: DirectionsSourceService,
@@ -39,22 +38,22 @@ export class DirectionsService {
   ) {}
 
   route(
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]>[] {
+  ): Observable<Direction[]> {
     if (coordinates.length === 0) {
       return;
     }
-    return this.directionsSourceService.sources
-      .filter((source: DirectionsSource) => source.enabled)
-      .map((source: DirectionsSource) =>
-        this.routeSource(source, coordinates, directionsOptions)
-      );
+    return this.routeSource(
+      this.directionsSourceService.sources[0],
+      coordinates,
+      directionsOptions
+    );
   }
 
   routeSource(
     source: DirectionsSource,
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
   ): Observable<Direction[]> {
     const request = source.route(coordinates, directionsOptions);

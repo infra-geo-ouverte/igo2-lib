@@ -10,11 +10,13 @@ import { MatButtonModule } from '@angular/material/button';
 
 import {
   DynamicComponent,
+  OnUpdateInputs
+} from '@igo2/common/dynamic-component';
+import {
   IgoWidgetOutletModule,
-  OnUpdateInputs,
   WidgetComponent,
   WidgetService
-} from '@igo2/common';
+} from '@igo2/common/widget';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';

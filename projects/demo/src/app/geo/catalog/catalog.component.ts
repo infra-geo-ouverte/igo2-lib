@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EntityRecord, EntityStore, PanelComponent } from '@igo2/common';
+import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import { StorageService } from '@igo2/core/storage';
 import {
   Catalog,

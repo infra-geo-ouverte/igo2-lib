@@ -5,7 +5,7 @@ import {
   TableComponent,
   TableDatabase,
   TableModel
-} from '@igo2/common';
+} from '@igo2/common/table';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -43,7 +43,7 @@ export class AppTableComponent implements OnInit {
     ],
     actions: [
       {
-        icon: 'file-document',
+        icon: 'description',
         color: TableActionColor.primary,
         click: (row) => this.showName(row.name)
       }

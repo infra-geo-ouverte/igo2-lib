@@ -6,6 +6,7 @@ import { AppDynamicComponentComponent } from './dynamic-component/dynamic-compon
 import { AppEntitySelectorComponent } from './entity-selector/entity-selector.component';
 import { AppEntityTableComponent } from './entity-table/entity-table.component';
 import { AppFormComponent } from './form/form.component';
+import { AppIconComponent } from './icon/icon.component';
 import { AppTableComponent } from './table/table.component';
 import { AppToolComponent } from './tool/tool.component';
 import { AppWidgetComponent } from './widget/widget.component';
@@ -38,9 +39,14 @@ export const routes: Routes = [
     component: AppEntitySelectorComponent
   },
   {
-    title: 'form',
-    path: 'Form',
+    title: 'Form',
+    path: 'form',
     component: AppFormComponent
+  },
+  {
+    title: 'Icon',
+    path: 'icon',
+    component: AppIconComponent
   },
   {
     title: 'Table',

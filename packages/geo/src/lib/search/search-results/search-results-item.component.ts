@@ -12,11 +12,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
-  StopPropagationDirective,
   getEntityIcon,
   getEntityTitle,
   getEntityTitleHtml
-} from '@igo2/common';
+} from '@igo2/common/entity';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 

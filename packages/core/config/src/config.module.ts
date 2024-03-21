@@ -1,7 +1,10 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { provideConfigLoader, provideConfigOptions } from './config.provider';
+import { provideConfig } from './config.provider';
 
+/**
+ * @deprecated import the provideConfig directly
+ */
 @NgModule({
   imports: [],
   declarations: [],
@@ -11,7 +14,7 @@ export class IgoConfigModule {
   static forRoot(): ModuleWithProviders<IgoConfigModule> {
     return {
       ngModule: IgoConfigModule,
-      providers: [provideConfigOptions({}), provideConfigLoader()]
+      providers: [provideConfig({})]
     };
   }
 }

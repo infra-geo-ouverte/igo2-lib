@@ -5,8 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ConfigService } from '@igo2/core/config';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
   selector: 'igo-menu-button',
@@ -18,7 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     NgClass,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MenuButtonComponent {

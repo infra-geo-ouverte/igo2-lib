@@ -1,4 +1,4 @@
-import { EntityState } from '@igo2/common';
+import { EntityState } from '@igo2/common/entity';
 
 import { TooltipType } from '../../layer/shared/layers/layer.interface';
 import { QueryFormat } from '../../query/shared/query.enums';

@@ -1,8 +1,7 @@
-import { DOMValue } from '@igo2/common';
+import { DOMValue } from '@igo2/common/dom';
 
 import olFormatFilter from 'ol/format/filter/Filter';
 import olGeometry from 'ol/geom/Geometry';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 
@@ -133,7 +132,7 @@ export interface OgcAutocomplete {
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
   ogcFilters?: OgcFiltersOptions;
-  ol?: olSourceVector<OlGeometry> | olSource;
+  ol?: olSourceVector | olSource;
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;

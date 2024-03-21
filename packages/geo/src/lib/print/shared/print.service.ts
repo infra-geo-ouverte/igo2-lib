@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { SecureImagePipe } from '@igo2/common';
+import { SecureImagePipe } from '@igo2/common/image';
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';

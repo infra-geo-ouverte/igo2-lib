@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import { ShareMapComponent } from '@igo2/context';
 import { IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
@@ -10,7 +10,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'shareMap',
   title: 'igo.integration.tools.shareMap',
-  icon: 'share-variant'
+  icon: 'share'
 })
 @Component({
   selector: 'igo-context-share-tool',

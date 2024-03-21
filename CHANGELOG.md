@@ -1,3 +1,46 @@
+# [17.0.0-next.7](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.4...v17.0.0-next.7) (2024-05-16)
+
+
+### Bug Fixes
+
+* **auth:** use IgoAuthModule instead of TranslateModule ([3277105](https://github.com/infra-geo-ouverte/igo2-lib/commit/3277105d19bddc852c1fe8d2c5ccb5d3495e9fd7))
+* **common:** export EntityOperation like it used to ([#1658](https://github.com/infra-geo-ouverte/igo2-lib/issues/1658)) ([32bbddb](https://github.com/infra-geo-ouverte/igo2-lib/commit/32bbddb261a8fbfe076efd3e9e54ed14942fd567))
+* **context:** add workspace option with layers when we export context ([#1660](https://github.com/infra-geo-ouverte/igo2-lib/issues/1660)) ([a904cbd](https://github.com/infra-geo-ouverte/igo2-lib/commit/a904cbd065cbe7c4d9017f45a6d1618e067ba0e7))
+* **core:** remove duplicated load of config BREAKING CHANGE ([ae2dd97](https://github.com/infra-geo-ouverte/igo2-lib/commit/ae2dd976e1ec11bc60010220f2761257e0ff826d))
+* **geo:** ensure ogc filter accept today and now ([#1622](https://github.com/infra-geo-ouverte/igo2-lib/issues/1622)) ([551e258](https://github.com/infra-geo-ouverte/igo2-lib/commit/551e258a91fb3b35c1ede58d5145eaa52b5c70f3))
+* **geo:** import and export shp file ([#1665](https://github.com/infra-geo-ouverte/igo2-lib/issues/1665)) ([67725f7](https://github.com/infra-geo-ouverte/igo2-lib/commit/67725f774f6e8e303577d0e26818a8d177a89669))
+* **geo:** inporting vector (igo2 issues [#1146](https://github.com/infra-geo-ouverte/igo2-lib/issues/1146)) ([fb9d1eb](https://github.com/infra-geo-ouverte/igo2-lib/commit/fb9d1eb641d8bc6e04a75f425f0d6996361a8308))
+* **geo:** Print set the same horizontal margin for the map ([#1662](https://github.com/infra-geo-ouverte/igo2-lib/issues/1662)) ([ca633c1](https://github.com/infra-geo-ouverte/igo2-lib/commit/ca633c1f24cab90e24615609b98e94e9e142f0dd))
+* **geo:** register svg icon for layer-list ([de1fa78](https://github.com/infra-geo-ouverte/igo2-lib/commit/de1fa78ec27deb72829e258cd38cba02b044c0eb))
+* **icon:** revert some icon change ([04fd431](https://github.com/infra-geo-ouverte/igo2-lib/commit/04fd43157210212151781016da06efa8b44ba1a8))
+* **integration:** check if workspace search source is defined ([#1609](https://github.com/infra-geo-ouverte/igo2-lib/issues/1609)) ([0fd5c83](https://github.com/infra-geo-ouverte/igo2-lib/commit/0fd5c8393e63af565e14d28f803cac7443d2f4f4))
+* **integration:** update coordinate if projection system change ([#1661](https://github.com/infra-geo-ouverte/igo2-lib/issues/1661)) ([382f913](https://github.com/infra-geo-ouverte/igo2-lib/commit/382f9137598ca415515f9a56eb65f92c1b5192c9))
+* **search-bar:** trigger search on click ([114f911](https://github.com/infra-geo-ouverte/igo2-lib/commit/114f9114ad2d7c4c7a111f15d11a799b2474dcbb))
+* **utils:** remove moment.js and delete datetime.utils BREAKING CHANGE- This file was added in the v16 but was not documented. Maybe we could mute this one ([c08cdd1](https://github.com/infra-geo-ouverte/igo2-lib/commit/c08cdd1e322a4a342e3bcc98365adf083bd0cf76))
+* **utils:** Vitejs raise an error without the default import ([9354bd3](https://github.com/infra-geo-ouverte/igo2-lib/commit/9354bd3d981869ad6f425e2d34df99737ffa4f6f))
+
+
+### Features
+
+* **auth:** configure auth with provider ([e046947](https://github.com/infra-geo-ouverte/igo2-lib/commit/e046947fbcbe65008227779cd1f2a95d5ae2e061))
+* **auth:** remove auth.module for circular dependency ([2bc4906](https://github.com/infra-geo-ouverte/igo2-lib/commit/2bc4906e5a4004365f15a94d0b82b031075723e4))
+* **directions:** added possibility to toggle between two routing sources ([#1644](https://github.com/infra-geo-ouverte/igo2-lib/issues/1644)) ([ef607e2](https://github.com/infra-geo-ouverte/igo2-lib/commit/ef607e2df80ad53f5b4587413f80f882c0bdb40b))
+* **geo:** add modularity for search and direction ([#1669](https://github.com/infra-geo-ouverte/igo2-lib/issues/1669)) ([cd199eb](https://github.com/infra-geo-ouverte/igo2-lib/commit/cd199ebe69b39d4ca98a0898cb39b3fc211d5469))
+* **geo:** update Openlayers to v9 ([#1642](https://github.com/infra-geo-ouverte/igo2-lib/issues/1642)) ([06ed562](https://github.com/infra-geo-ouverte/igo2-lib/commit/06ed5623dcd65e329aa7d85d76dcd4a6bdcb8a0f))
+* **integration:** catalog keep selection when changing tools ([#1654](https://github.com/infra-geo-ouverte/igo2-lib/issues/1654)) ([946d9f4](https://github.com/infra-geo-ouverte/igo2-lib/commit/946d9f4a7cca13703c87f667b6efb174653da8d6))
+* replace our icon library @mdi/angular-material with the Google Font - Material Symbol ([#1664](https://github.com/infra-geo-ouverte/igo2-lib/issues/1664)) ([f74c495](https://github.com/infra-geo-ouverte/igo2-lib/commit/f74c495db129502af99c8e6a16579b103e97d3a3))
+
+
+### BREAKING CHANGES
+
+* **geo:** - SearchState and SearchService no more provided in root. They depend on the SearchSource who are no more provided in the root.
+- Analytics capability is provided with the SearchService directly.
+- DirectionModule, provideDirectionsSourceService is removed, use the provideDirection.
+* **auth:** Replace by provideAuth and call the component directly
+* **auth:** AuthModule is deprecated and use the provideAuthentification for the configuration
+
+
+
 # [17.0.0-next.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.3...v17.0.0-next.4) (2024-03-13)
 
 

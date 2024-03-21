@@ -23,10 +23,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { default as moment } from 'moment';
 
 import { Layer } from '../../layer/shared/layers/layer';
@@ -53,7 +54,7 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
@@ -94,7 +95,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   public interval: any;
-  public playIcon = 'play-circle';
+  public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
   @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
@@ -375,7 +376,7 @@ export class TimeFilterFormComponent implements OnInit {
     if (this.interval) {
       this.stopFilter();
     } else {
-      this.playIcon = 'pause-circle';
+      this.playIcon = 'pause_circle';
       this.interval = setInterval(
         (that) => {
           let newMinDateNumber;
@@ -409,7 +410,7 @@ export class TimeFilterFormComponent implements OnInit {
     if (this.interval) {
       this.stopFilter();
     } else {
-      this.playIcon = 'pause-circle';
+      this.playIcon = 'pause_circle';
       this.interval = setInterval(
         () => {
           if (this.year + this.mySlider.step > this.max.getFullYear()) {
@@ -430,7 +431,7 @@ export class TimeFilterFormComponent implements OnInit {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playIcon = 'play-circle';
+    this.playIcon = 'play_circle';
   }
 
   handleSliderDateChange(event: any) {
