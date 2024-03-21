@@ -73,14 +73,20 @@ export class DirectionsService {
       format: 'Letter',
       unit: 'mm' // default
     });
-    const dimensions = [
+    const PDFdimensions = [
       doc.internal.pageSize.width,
       doc.internal.pageSize.height
     ];
-    const margins = [10, 10, 10, 10];
-    const width = dimensions[0];
-    const height = dimensions[1] - margins[0] - margins[2];
-    const size: [number, number] = [width, height];
+
+    const margins = [
+      20, // top
+      10, // left
+      20, //bottom
+      10 // right
+    ];
+    const width = PDFdimensions[0] - margins[3] - margins[1];
+    const height = PDFdimensions[1] - margins[0] - margins[2];
+    const imageDimensions: [number, number] = [width, height];
 
     const title = `${direction.title} (${formatDistance(
       direction.distance
@@ -91,10 +97,16 @@ export class DirectionsService {
       align: 'center'
     });
 
-    margins[0] += 20;
     const resolution = 96; // Default is 96
     this.printService
-      .addMap(doc, map, resolution, size, margins, PrintLegendPosition.none)
+      .addMap(
+        doc,
+        map,
+        resolution,
+        imageDimensions,
+        margins,
+        PrintLegendPosition.none
+      )
       .subscribe(async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           await this.addInstructions(doc, direction, title);
