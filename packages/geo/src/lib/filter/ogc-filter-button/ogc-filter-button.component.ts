@@ -1,12 +1,22 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnInit
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { ListItemDirective } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
+import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
 import {
   IgoOgcSelector,
   OgcFilterableDataSourceOptions
@@ -16,7 +26,18 @@ import {
   selector: 'igo-ogc-filter-button',
   templateUrl: './ogc-filter-button.component.html',
   styleUrls: ['./ogc-filter-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    OgcFilterableItemComponent,
+    ListItemDirective,
+    TranslateModule
+  ]
 })
 export class OgcFilterButtonComponent implements OnInit {
   public options: OgcFilterableDataSourceOptions;
@@ -147,7 +168,7 @@ export class OgcFilterButtonComponent implements OnInit {
   }
   private _layer;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() color: string = 'primary';
 

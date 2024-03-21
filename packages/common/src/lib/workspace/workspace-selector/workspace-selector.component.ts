@@ -7,6 +7,10 @@ import {
 } from '@angular/core';
 
 import { getEntityTitle } from '../../entity';
+import {
+  EntitySelectorChange,
+  EntitySelectorComponent
+} from '../../entity/entity-selector/entity-selector.component';
 import { WorkspaceStore } from '../shared/store';
 import { Workspace } from '../shared/workspace';
 
@@ -17,7 +21,9 @@ import { Workspace } from '../shared/workspace';
   selector: 'igo-workspace-selector',
   templateUrl: './workspace-selector.component.html',
   styleUrls: ['./workspace-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [EntitySelectorComponent]
 })
 export class WorkspaceSelectorComponent {
   /**
@@ -51,7 +57,7 @@ export class WorkspaceSelectorComponent {
    * @internal
    * @param event The selection change event
    */
-  onSelectedChange(event: { value: Workspace }) {
+  onSelectedChange(event: EntitySelectorChange<Workspace>) {
     const workspace = event.value;
     this.store.activateWorkspace(workspace);
     this.selectedChange.emit({ selected: true, value: workspace });

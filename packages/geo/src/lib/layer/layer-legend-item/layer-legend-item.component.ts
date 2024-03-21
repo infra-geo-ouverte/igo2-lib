@@ -5,12 +5,15 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ConnectionState, NetworkService } from '@igo2/core';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
+import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
 import { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
 
@@ -18,7 +21,9 @@ import { TooltipType } from '../shared/layers/layer.interface';
   selector: 'igo-layer-legend-item',
   templateUrl: './layer-legend-item.component.html',
   styleUrls: ['./layer-legend-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);

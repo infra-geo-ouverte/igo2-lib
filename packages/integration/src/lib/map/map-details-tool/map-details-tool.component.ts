@@ -1,16 +1,27 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 import { ToolComponent } from '@igo2/common';
 import {
+  ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
+  LayerListBindingDirective,
+  LayerListComponent,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  MetadataButtonComponent,
+  OgcFilterButtonComponent,
   SearchSourceService,
+  TimeFilterButtonComponent,
+  TrackFeatureButtonComponent,
   sourceCanSearch
 } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -18,6 +29,7 @@ import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
+import { WorkspaceButtonComponent } from '../../workspace';
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
 
@@ -29,7 +41,23 @@ import { MapState } from './../map.state';
 @Component({
   selector: 'igo-map-details-tool',
   templateUrl: './map-details-tool.component.html',
-  styleUrls: ['./map-details-tool.component.scss']
+  styleUrls: ['./map-details-tool.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    LayerListComponent,
+    LayerListBindingDirective,
+    WorkspaceButtonComponent,
+    ExportButtonComponent,
+    OgcFilterButtonComponent,
+    TimeFilterButtonComponent,
+    TrackFeatureButtonComponent,
+    MetadataButtonComponent,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class MapDetailsToolComponent implements OnInit {
   public delayedShowEmptyMapContent: boolean = false;

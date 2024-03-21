@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import * as olformat from 'ol/format';
 import OlCircle from 'ol/geom/Circle';

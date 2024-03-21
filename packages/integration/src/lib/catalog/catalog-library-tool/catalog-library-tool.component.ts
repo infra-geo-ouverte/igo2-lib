@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { NgIf, formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,23 +6,29 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import {
   Catalog,
   CatalogItem,
   CatalogItemGroup,
   CatalogItemLayer,
   CatalogItemType,
+  CatalogLibaryComponent,
   CatalogService,
   InfoFromSourceOptions,
   getInfoFromSourceOptions
 } from '@igo2/geo';
 import { downloadContent } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
@@ -42,7 +48,15 @@ import { CsvOutput } from './catalog-library-tool.interface';
   selector: 'igo-catalog-library-tool',
   templateUrl: './catalog-library-tool.component.html',
   styleUrls: ['./catalog-library-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CatalogLibaryComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    NgIf,
+    TranslateModule
+  ]
 })
 export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   public exportAsListButton: boolean;
@@ -72,7 +86,6 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     private storageService: StorageService,
     private languageService: LanguageService,
-    private datePipe: DatePipe,
     private configService: ConfigService
   ) {}
 
@@ -212,7 +225,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
 
             const catalogCsvOutputs = loadedCatalogItems.reduce(
-              (catalogcsvOutputs, item) => {
+              (catalogCsvOutputs, item) => {
                 if (item.type === CatalogItemType.Group) {
                   const group = item as CatalogItemGroup;
                   group.items.forEach((layer: CatalogItemLayer) => {
@@ -326,7 +339,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
     const fn = this.languageService.translate.instant(
       'igo.integration.catalog.csv.documentName',
-      { value: this.datePipe.transform(Date.now(), 'YYYY-MM-dd-H_mm') }
+      { value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US') }
     );
 
     downloadContent(csvContent, 'text/csv;charset=utf-8', fn);

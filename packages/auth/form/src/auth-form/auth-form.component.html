@@ -1,0 +1,63 @@
+<div *ngIf="visible">
+  <div
+    *ngIf="!auth.logged && backgroundDisable"
+    class="backgroundDisable"
+  ></div>
+
+  <div *ngIf="!auth.logged && showLoginDiv" class="login center-block">
+    <h1>{{ 'igo.auth.connection' | translate }}</h1>
+
+    <igo-auth-google
+      *ngIf="options.google && options.google.enabled !== false"
+      (login)="onLogin()"
+    >
+    </igo-auth-google>
+
+    <igo-auth-microsoft
+      *ngIf="options.microsoft && options.microsoft.enabled !== false"
+      (login)="onLogin()"
+    >
+    </igo-auth-microsoft>
+
+    <igo-auth-microsoftb2c
+      *ngIf="options.microsoftb2c && options.microsoftb2c.enabled !== false"
+      (login)="onLogin()"
+    >
+    </igo-auth-microsoftb2c>
+
+    <igo-auth-facebook
+      *ngIf="options.facebook && options.facebook.enabled !== false"
+      (login)="onLogin()"
+    >
+    </igo-auth-facebook>
+
+    <igo-auth-intern
+      *ngIf="!options.intern || options.intern.enabled !== false"
+      [allowAnonymous]="options.allowAnonymous"
+      (login)="onLogin()"
+    >
+    </igo-auth-intern>
+  </div>
+
+  <div
+    *ngIf="auth.logged && showAlreadyConnectedDiv"
+    class="login center-block"
+  >
+    <p>{{ 'igo.auth.welcome' | translate: user }}</p>
+    <button mat-raised-button type="button" (click)="logout()">
+      {{ 'igo.auth.signOut' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="showLogoutDiv" class="login center-block">
+    <p>{{ 'igo.auth.deconnection' | translate }}</p>
+    <button
+      *ngIf="options.homeRoute"
+      mat-raised-button
+      type="button"
+      (click)="home()"
+    >
+      {{ 'igo.auth.home' | translate }}
+    </button>
+  </div>
+</div>

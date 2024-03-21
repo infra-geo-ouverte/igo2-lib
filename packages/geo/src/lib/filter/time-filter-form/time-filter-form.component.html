@@ -8,9 +8,9 @@
       ></mat-datetimepicker-toggle>
       <mat-datetimepicker
         #datetimePicker
-        type="{{ type }}"
-        openOnFocus="true"
-        timeInterval="5"
+        [type]="type"
+        [openOnFocus]="true"
+        [timeInterval]="5"
       ></mat-datetimepicker>
       <input
         matInput
@@ -36,9 +36,9 @@
         ></mat-datetimepicker-toggle>
         <mat-datetimepicker
           #minDatetimePicker
-          type="{{ type }}"
-          openOnFocus="true"
-          timeInterval="5"
+          [type]="type"
+          [openOnFocus]="true"
+          [timeInterval]="5"
         ></mat-datetimepicker>
         <input
           matInput
@@ -64,9 +64,9 @@
         ></mat-datetimepicker-toggle>
         <mat-datetimepicker
           #maxDatetimePicker
-          type="{{ type }}"
-          openOnFocus="true"
-          timeInterval="5"
+          [type]="type"
+          [openOnFocus]="true"
+          [timeInterval]="5"
         ></mat-datetimepicker>
         <input
           matInput

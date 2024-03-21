@@ -3,7 +3,7 @@ import {
   EntityTableColumnRenderer,
   getEntityProperty
 } from '@igo2/common';
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import { downloadContent } from '@igo2/utils';
 
 import { ExportNothingToExportError } from './export.errors';

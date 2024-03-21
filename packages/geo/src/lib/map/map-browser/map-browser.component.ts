@@ -6,7 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { ActivityService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
 import { SubjectStatus, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
@@ -17,7 +17,8 @@ import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 @Component({
   selector: 'igo-map-browser',
   templateUrl: './map-browser.component.html',
-  styleUrls: ['./map-browser.component.scss']
+  styleUrls: ['./map-browser.component.scss'],
+  standalone: true
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityId: string;

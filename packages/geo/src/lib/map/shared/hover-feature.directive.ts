@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 import { SubjectStatus } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -43,7 +43,8 @@ import { StyleService } from '../../style/style-service/style.service';
  * the layer level.
  */
 @Directive({
-  selector: '[igoHoverFeature]'
+  selector: '[igoHoverFeature]',
+  standalone: true
 })
 export class HoverFeatureDirective implements OnInit, OnDestroy {
   public store: FeatureStore<Feature>;

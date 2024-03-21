@@ -2,9 +2,11 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { ClonePipe } from './clone.pipe';
 
+/**
+ * @deprecated import the ClonePipe directly
+ */
 @NgModule({
-  imports: [],
-  declarations: [ClonePipe],
+  imports: [ClonePipe],
   exports: [ClonePipe]
 })
 export class IgoCloneModule {

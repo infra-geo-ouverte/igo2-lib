@@ -10,7 +10,8 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-map-center',
   templateUrl: './map-center.component.html',
-  styleUrls: ['./map-center.component.scss']
+  styleUrls: ['./map-center.component.scss'],
+  standalone: true
 })
 export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**

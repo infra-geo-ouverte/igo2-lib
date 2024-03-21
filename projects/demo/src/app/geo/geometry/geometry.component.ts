@@ -1,17 +1,49 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
-import { Form, FormField, FormFieldConfig, FormService } from '@igo2/common';
-import { DataSourceService, IgoMap, LayerOptions, LayerService, MapViewOptions, OSMDataSource, OSMDataSourceOptions } from '@igo2/geo';
+import {
+  Form,
+  FormComponent,
+  FormField,
+  FormFieldConfig,
+  FormGroupComponent,
+  FormService
+} from '@igo2/common';
+import {
+  DataSourceService,
+  IgoMap,
+  LayerOptions,
+  LayerService,
+  MAP_DIRECTIVES,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
+} from '@igo2/geo';
 
 import * as olstyle from 'ol/style';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-geometry',
   templateUrl: './geometry.component.html',
-  styleUrls: ['./geometry.component.scss']
+  styleUrls: ['./geometry.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MAP_DIRECTIVES,
+    NgIf,
+    FormComponent,
+    FormGroupComponent,
+    MatButtonModule,
+    AsyncPipe
+  ]
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
   map: IgoMap = new IgoMap({
@@ -102,7 +134,9 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       }
     ];
 
-    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) => this.formService.field(config));
+    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) =>
+      this.formService.field(config)
+    );
     const form: Form = this.formService.form(
       [],
       [this.formService.group({ name: 'info' }, fields)]

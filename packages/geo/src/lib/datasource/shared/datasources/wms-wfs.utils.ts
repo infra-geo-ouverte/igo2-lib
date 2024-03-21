@@ -118,8 +118,8 @@ export function formatWFSQueryString(
   let cnt = count
     ? `${paramMaxFeatures}=${effectiveCount}`
     : paramsWFS.maxFeatures
-    ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}`
-    : `${paramMaxFeatures}=${effectiveCount}`;
+      ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}`
+      : `${paramMaxFeatures}=${effectiveCount}`;
   if (forceDefaultOutputFormat) {
     outputFormat = '';
     version = 'version=1.1.0';
@@ -129,8 +129,8 @@ export function formatWFSQueryString(
   const srs = epsg
     ? `srsname=${epsgCode}`
     : paramsWFS.srsName
-    ? 'srsname=' + paramsWFS.srsName
-    : `srsname=${epsgCode}`;
+      ? 'srsname=' + paramsWFS.srsName
+      : `srsname=${epsgCode}`;
 
   let propertyName = '';
   let valueReference = '';

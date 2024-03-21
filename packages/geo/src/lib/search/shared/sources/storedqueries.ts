@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import * as olformat from 'ol/format';
@@ -207,10 +208,10 @@ export class StoredQueriesSearchSource
               a.meta.score > b.meta.score
                 ? 1
                 : a.meta.score === b.meta.score
-                ? a.meta.titleHtml < b.meta.titleHtml
-                  ? 1
+                  ? a.meta.titleHtml < b.meta.titleHtml
+                    ? 1
+                    : -1
                   : -1
-                : -1
             );
             resultArray.reverse();
             if (resultArray.length > Number(this.options.params.limit)) {

@@ -67,7 +67,7 @@
       type="file"
       [style.display]="'none'"
       (click)="fileInput.value = null"
-      (change)="importFiles($event.target.files)"
+      (change)="importFiles($any($event.target).files)"
     />
   </div>
 </form>
@@ -262,8 +262,8 @@
         form.value.format !== 'URL'
           ? ('igo.geo.importExportForm.exportButton' | translate)
           : form.value.layers.length > 1
-          ? ('igo.geo.importExportForm.exportButtonLinks' | translate)
-          : ('igo.geo.importExportForm.exportButtonLink' | translate)
+            ? ('igo.geo.importExportForm.exportButtonLinks' | translate)
+            : ('igo.geo.importExportForm.exportButtonLink' | translate)
       }}
     </button>
     <igo-spinner [shown]="loading$ | async"></igo-spinner>

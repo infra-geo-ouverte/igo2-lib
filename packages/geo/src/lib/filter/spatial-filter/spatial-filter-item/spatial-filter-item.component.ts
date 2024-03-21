@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,29 +11,48 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 
 import {
   EntityStore,
   EntityStoreFilterSelectionStrategy,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import OlFeature from 'ol/Feature';
-import type { Type } from 'ol/geom/Geometry';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 import * as olStyle from 'ol/style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../../datasource/shared';
+import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Layer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
@@ -53,7 +73,30 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
   selector: 'igo-spatial-filter-item',
   templateUrl: './spatial-filter-item.component.html',
   styleUrls: ['./spatial-filter-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    EntityTableComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() map: IgoMap;
@@ -64,7 +107,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   set type(type: SpatialFilterType) {
     this._type = type;
-    const index = this.geometryTypes.findIndex((geom) => geom === this.type);
+    const index = this.geometryTypes.findIndex(
+      (geom) => geom === (this.type as any)
+    );
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
     this.radius = undefined;
@@ -256,9 +301,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private bufferChanges$$: Subscription;
 
   public formControl = new UntypedFormControl();
-  public geometryType: Type | string;
+  public geometryType: GeometryType;
   public geometryTypeField = false;
-  public geometryTypes: string[] = ['Point', 'Polygon'];
+  public geometryTypes: GeometryType[] = [
+    GeometryType.Point,
+    GeometryType.Polygon
+  ];
   public drawGuideField = false;
   public drawGuide: number = null;
   public drawGuidePlaceholder = '';

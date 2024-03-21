@@ -1,6 +1,11 @@
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
+import { TranslateModule } from '@ngx-translate/core';
+
+import { FormFieldComponent } from '../form-field/form-field.component';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
 import { getControlErrorMessage } from '../shared/form.utils';
 
@@ -13,7 +18,16 @@ import { getControlErrorMessage } from '../shared/form.utils';
   selector: 'igo-form-group',
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    FormFieldComponent,
+    MatFormFieldModule,
+    TranslateModule
+  ]
 })
 export class FormGroupComponent {
   /**

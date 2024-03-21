@@ -9,7 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { IgoAuthModule } from '@igo2/auth';
+import { IgoAuthFormModule } from '@igo2/auth/form';
 
 import { AppComponent } from './app.component';
 
@@ -26,9 +26,9 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
         MatIconTestingModule,
-        IgoAuthModule
-      ],
-      declarations: [AppComponent]
+        IgoAuthFormModule,
+        AppComponent
+      ]
     }).compileComponents();
   }));
   it('should create the app', waitForAsync(() => {

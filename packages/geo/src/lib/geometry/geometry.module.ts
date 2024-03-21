@@ -1,12 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { IgoGeometryFormFieldModule } from './geometry-form-field/geometry-form-field.module';
 
+/**
+ * @deprecated import the components directly or the GEOMETRY_FORM_FIELD_DIRECTIVES for the set
+ */
 @NgModule({
-  imports: [CommonModule, IgoGeometryFormFieldModule],
-  exports: [IgoGeometryFormFieldModule],
-  declarations: [],
-  providers: []
+  exports: [IgoGeometryFormFieldModule]
 })
 export class IgoGeometryModule {}

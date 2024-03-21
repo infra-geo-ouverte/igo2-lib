@@ -1,3 +1,4 @@
+import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -7,8 +8,23 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { default as moment } from 'moment';
 
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
@@ -18,11 +34,31 @@ import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
+import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component';
 
 @Component({
   selector: 'igo-ogc-filter-time',
   templateUrl: './ogc-filter-time.component.html',
-  styleUrls: ['./ogc-filter-time.component.scss']
+  styleUrls: ['./ogc-filter-time.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatSlideToggleModule,
+    FormsModule,
+    OgcFilterTimeSliderComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    TranslateModule
+  ],
+  providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
   @Input() datasource: OgcFilterableDataSource;
@@ -320,7 +356,7 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  calendarView() {
+  calendarView(): 'month' | 'year' | 'multi-year' {
     const test = this.stepMilliseconds;
     const diff = Math.abs(
       this.parseFilter(this.currentFilter.end).getTime() -
@@ -331,7 +367,7 @@ export class OgcFilterTimeComponent implements OnInit {
     } else if (this.ogcFilterTimeService.stepIsMonthDuration(this.step)) {
       return 'year';
     } else if (test < 86400000 && diff < 86400000) {
-      return 'clock';
+      return 'clock' as any;
     } else {
       return 'month';
     }
@@ -631,16 +667,16 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.begin
       ? this.currentFilter.begin
       : this.datasource.options.minDate
-      ? this.datasource.options.minDate
-      : this._defaultMin;
+        ? this.datasource.options.minDate
+        : this._defaultMin;
   }
 
   public handleMax() {
     return this.currentFilter.end
       ? this.currentFilter.end
       : this.datasource.options.maxDate
-      ? this.datasource.options.maxDate
-      : this._defaultMax;
+        ? this.datasource.options.maxDate
+        : this._defaultMax;
   }
 
   changePropertyByPass(event) {

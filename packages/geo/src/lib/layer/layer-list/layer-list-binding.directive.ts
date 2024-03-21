@@ -1,6 +1,6 @@
 import { Directive, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 
-import { RouteService } from '@igo2/core';
+import { RouteService } from '@igo2/core/route';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -10,7 +10,8 @@ import { Layer } from '../shared/layers/layer';
 import { LayerListComponent } from './layer-list.component';
 
 @Directive({
-  selector: '[igoLayerListBinding]'
+  selector: '[igoLayerListBinding]',
+  standalone: true
 })
 export class LayerListBindingDirective implements OnInit, OnDestroy {
   private component: LayerListComponent;
