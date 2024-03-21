@@ -40,7 +40,6 @@ export class PrintService {
   zipFile: JSZip;
   nbFileToProcess: number;
   activityId: string;
-  // imgSizeAdded: Array<number>;
   mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
@@ -68,7 +67,7 @@ export class PrintService {
     const orientation = options.orientation;
     const legendPostion = options.legendPosition;
     this.activityId = this.activityService.register();
-    console.log('resolution ddddd', resolution);
+
     GeoPdfPlugin(jsPDF.API);
 
     const doc = new jsPDF({
@@ -166,47 +165,42 @@ export class PrintService {
 
     const width = PDFdimensions[0] - margins[3] - margins[1];
     const height = PDFdimensions[1] - margins[0] - margins[2];
-    const imageDimensions: [number, number] = [width, height];
+    const size: [number, number] = [width, height];
 
-    this.addMap(
-      doc,
-      map,
-      resolution,
-      imageDimensions,
-      margins,
-      legendPostion
-    ).subscribe(async (status: SubjectStatus) => {
-      if (status === SubjectStatus.Done) {
-        await this.handleMeasureLayer(doc, map, margins, imageDimensions);
+    this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
+      async (status: SubjectStatus) => {
+        if (status === SubjectStatus.Done) {
+          await this.handleMeasureLayer(doc, map, margins, size);
 
-        this.addGeoRef(doc, imageDimensions[0], imageDimensions[1], margins);
+          this.addGeoRef(doc, size[0], size[1], margins);
 
-        if (options.legendPosition !== 'none') {
-          if (
-            ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
-              options.legendPosition
-            ) > -1
-          ) {
-            await this.addLegendSamePage(
-              doc,
-              map,
-              margins,
-              resolution,
-              options.legendPosition
-            );
-          } else if (options.legendPosition === 'newpage') {
-            await this.addLegend(doc, map, margins, resolution);
+          if (options.legendPosition !== 'none') {
+            if (
+              ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
+                options.legendPosition
+              ) > -1
+            ) {
+              await this.addLegendSamePage(
+                doc,
+                map,
+                margins,
+                resolution,
+                options.legendPosition
+              );
+            } else if (options.legendPosition === 'newpage') {
+              await this.addLegend(doc, map, margins, resolution);
+            }
+          } else {
+            await this.saveDoc(doc);
           }
-        } else {
-          await this.saveDoc(doc);
+        }
+
+        if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
+          this.activityService.unregister(this.activityId);
+          status$.next(SubjectStatus.Done);
         }
       }
-
-      if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
-        this.activityService.unregister(this.activityId);
-        status$.next(SubjectStatus.Done);
-      }
-    });
+    );
 
     return status$;
   }
