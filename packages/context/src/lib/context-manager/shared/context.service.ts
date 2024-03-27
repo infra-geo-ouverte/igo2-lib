@@ -576,7 +576,7 @@ export class ContextService {
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
         }
-        const opts = {
+        const opts: AnyLayerOptions = {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
@@ -588,7 +588,8 @@ export class ContextService {
           clusterParam: layerFound[`clusterParam`],
           visible: layer.visible,
           opacity: layer.opacity,
-          sourceOptions: layerFound.sourceOptions
+          sourceOptions: layerFound.sourceOptions,
+          workspace: layerFound.workspace
         };
         context.layers.push(opts);
       } else {
