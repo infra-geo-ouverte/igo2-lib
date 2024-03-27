@@ -28,3 +28,11 @@ export type AnyDataSourceOptions =
   | TileArcGISRestDataSourceOptions
   | MVTDataSourceOptions
   | ClusterDataSourceOptions;
+
+export interface InfoFromSourceOptions {
+  id: string;
+  layerName: string;
+  url: string;
+  sourceOptions: AnyDataSourceOptions;
+  context: string;
+}
