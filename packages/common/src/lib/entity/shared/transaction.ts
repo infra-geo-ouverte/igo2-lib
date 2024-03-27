@@ -11,7 +11,7 @@ import {
 import { getEntityId } from './entity.utils';
 import { EntityStore } from './store';
 
-interface EntityOperation<E extends object = object> {
+export interface EntityOperation<E extends object = object> {
   key: EntityKey;
   type: EntityOperationType;
   previous: E | undefined;
