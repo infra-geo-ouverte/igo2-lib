@@ -1,0 +1,31 @@
+<igo-package-progress-status></igo-package-progress-status>
+<div class="table-container">
+  <igo-entity-table
+    #entityTable
+    [store]="store"
+    [template]="template"
+    (entitySortChange)="entitySortChange()"
+  ></igo-entity-table>
+</div>
+
+<div class="action-row">
+  <div class="quota">
+    {{ 'igo.integration.package-manager.usage' | translate }}:
+    {{ this.quota$ | async }}
+  </div>
+  @if (this.isActionCancelable() | async) {
+    <button mat-raised-button color="warn" (click)="cancelAction()">
+      {{ 'igo.integration.package-manager.cancel' | translate }}
+    </button>
+  } @else {
+    <button
+      #elseBlock
+      mat-raised-button
+      color="warn"
+      [disabled]="!selectedPackage || action"
+      (click)="deleteSelectedPackage()"
+    >
+      {{ 'igo.integration.package-manager.delete' | translate }}
+    </button>
+  }
+</div>

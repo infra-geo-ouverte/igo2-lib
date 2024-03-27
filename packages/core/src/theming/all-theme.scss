@@ -12,4 +12,5 @@
   @include igo.common-component-themes($config);
   @include igo.context-component-themes($config);
   @include igo.geo-component-themes($config);
+  @include igo.integration-component-themes($config);
 }

@@ -144,6 +144,7 @@ export class LayerService {
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
     return new TileLayer(
       layerOptions,
+      this.geoNetworkService,
       this.messageService,
       this.authInterceptor
     );

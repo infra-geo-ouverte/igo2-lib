@@ -27,6 +27,9 @@
   "exports": {
     ".": {
       "import": "./src/public_api.ts"
+    },
+    "./theme": {
+      "sass": "./src/integration-theme.scss"
     }
   },
   "dependencies": {
