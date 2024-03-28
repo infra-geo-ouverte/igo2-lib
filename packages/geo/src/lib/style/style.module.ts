@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
+import { GeostylerService } from './geostyler-service/geostyler.service';
 import { IgoStyleListModule } from './style-list/style-list.module';
 import { StyleModalDrawingComponent } from './style-modal/drawing/style-modal-drawing.component';
 import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style-modal-layer-button.component';
@@ -25,7 +26,7 @@ export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {
     return {
       ngModule: IgoStyleModule,
-      providers: [StyleService, DrawStyleService]
+      providers: [StyleService, DrawStyleService, GeostylerService]
     };
   }
 }

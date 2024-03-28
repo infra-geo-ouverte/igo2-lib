@@ -67,6 +67,8 @@
     "@turf/helpers": "^6.5.0",
     "@turf/line-intersect": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
+    "geostyler-legend": "^4.0.0",
+    "geostyler-openlayers-parser": "^4.2.1",
     "@types/tinycolor2": "^1.4.4",
     "bowser": "^2.11.0",
     "core-js": "^3.32.2",
