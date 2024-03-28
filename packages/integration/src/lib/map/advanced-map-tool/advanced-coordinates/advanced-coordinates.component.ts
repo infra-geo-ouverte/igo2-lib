@@ -136,14 +136,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.mapState$$ = this.map.viewController.state$
       .pipe(debounceTime(50))
       .subscribe(() => {
+        this.setScaleValue(this.map);
         this.updateCoordinates();
       });
 
-    this.formStatus$$ = this.form.valueChanges
-      .pipe(debounceTime(50))
-      .subscribe(() => {
-        this.updateCoordinates();
-      });
+    this.formStatus$$ = this.form.valueChanges.subscribe(() => {
+      this.updateCoordinates();
+    });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
@@ -198,7 +197,6 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   updateCoordinates() {
-    this.setScaleValue(this.map);
     this.currentCenterDefaultProj = this.map.viewController.getCenter(
       this.defaultProj.code
     );
@@ -221,7 +219,6 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
     this.checkLambert(this.currentCenterDefaultProj);
     this.coordinates = this.getCoordinates();
-    this.cdRef.detectChanges();
 
     this.storageService.set(
       'currentProjection',
