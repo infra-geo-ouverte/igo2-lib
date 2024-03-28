@@ -149,9 +149,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       'currentProjection'
     ) as InputProjections;
 
-    this.inputProj = this.projections$.value.find(
-      (val) => val.code === this.defaultProj.code
-    );
+    this.inputProj =
+      this.projections$.value.find(
+        (val) => val.code === this.defaultProj.code
+      ) ?? this.projections$.value[0];
 
     if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
