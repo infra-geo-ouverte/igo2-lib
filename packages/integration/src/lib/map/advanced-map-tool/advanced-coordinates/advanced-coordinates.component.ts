@@ -78,6 +78,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private inMtmZone: boolean = true;
   private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
+  private formStatus$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private defaultProj: InputProjections;
@@ -138,14 +139,20 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         this.updateCoordinates();
       });
 
-    this.form.valueChanges.subscribe(() => {
-      this.updateCoordinates();
-    });
+    this.formStatus$$ = this.form.valueChanges
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.updateCoordinates();
+      });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
     ) as InputProjections;
-    this.inputProj = this.projections$.value[0];
+
+    this.inputProj = this.projections$.value.find(
+      (val) => val.code === this.defaultProj.code
+    );
+
     if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
@@ -161,6 +168,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.map.mapCenter$.next(false);
     this.mapState$$.unsubscribe();
+    this.formStatus$$.unsubscribe();
   }
 
   setScaleValue(map: IgoMap) {
@@ -213,6 +221,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.checkLambert(this.currentCenterDefaultProj);
     this.coordinates = this.getCoordinates();
     this.cdRef.detectChanges();
+
     this.storageService.set(
       'currentProjection',
       this.inputProj,
