@@ -2,6 +2,8 @@ import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olStyle from 'ol/style/Style';
 
+import { Style as GeostylerStyle } from 'geostyler-style';
+
 import type { Feature } from '../../../feature/shared/feature.interfaces';
 
 export interface FeatureCommonVectorStyleOptions
@@ -18,6 +20,11 @@ export interface IgoStyleBase {
   igoStyleObject?: { [key: string]: any };
   mapboxStyle?: MapboxStyle;
   styleByAttribute?: StyleByAttribute;
+  geostylerStyle?: GeostylerStyleInterfaceOptions;
+}
+
+export interface GeostylerStyleInterfaceOptions {
+  global?: GeostylerStyle;
 }
 
 export interface OverlayStyleOptions {
