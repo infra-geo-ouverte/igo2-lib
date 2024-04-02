@@ -1,6 +1,6 @@
 import { Directive, OnDestroy, OnInit } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 import {
   MapBrowserComponent,
   MapControlsOptions,
@@ -16,7 +16,8 @@ import { ContextMapView, DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-  selector: '[igoMapContext]'
+  selector: '[igoMapContext]',
+  standalone: true
 })
 export class MapContextDirective implements OnInit, OnDestroy {
   private component: MapBrowserComponent;

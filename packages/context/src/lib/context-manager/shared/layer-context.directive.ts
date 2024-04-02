@@ -1,6 +1,8 @@
+import { HttpClientModule } from '@angular/common/http';
 import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { ConfigService, RouteService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { RouteService } from '@igo2/core/route';
 import {
   Layer,
   LayerOptions,
@@ -23,7 +25,9 @@ import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-  selector: '[igoLayerContext]'
+  selector: '[igoLayerContext]',
+  standalone: true,
+  providers: [HttpClientModule]
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;

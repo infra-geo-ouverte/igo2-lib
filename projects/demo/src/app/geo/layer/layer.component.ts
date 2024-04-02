@@ -1,13 +1,20 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
+import { PanelComponent } from '@igo2/common';
 import {
   DataSourceService,
+  DownloadButtonComponent,
+  FILTER_DIRECTIVES,
   FeatureDataSource,
   IgoMap,
   ImageLayer,
   ImageLayerOptions,
+  LAYER_DIRECTIVES,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
+  METADATA_DIRECTIVES,
   MapViewOptions,
   MetadataLayerOptions,
   OSMDataSource,
@@ -19,10 +26,25 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-layer',
   templateUrl: './layer.component.html',
-  styleUrls: ['./layer.component.scss']
+  styleUrls: ['./layer.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES,
+    METADATA_DIRECTIVES,
+    DownloadButtonComponent,
+    FILTER_DIRECTIVES
+  ]
 })
 export class AppLayerComponent {
   public map: IgoMap = new IgoMap({
@@ -149,10 +171,10 @@ export class AppLayerComponent {
         visible: false,
         legendOptions: {
           stylesAvailable: [
-            {name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR'},
-            {name: 'WDIR6', title: 'WDIR6'},
-            {name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR'},
-            {name: 'WDIR3', title: 'WDIR3'}
+            { name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR' },
+            { name: 'WDIR6', title: 'WDIR6' },
+            { name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR' },
+            { name: 'WDIR3', title: 'WDIR3' }
           ]
         },
         sourceOptions: {

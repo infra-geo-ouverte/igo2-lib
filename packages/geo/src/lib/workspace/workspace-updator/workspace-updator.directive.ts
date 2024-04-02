@@ -22,7 +22,8 @@ import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 
 @Directive({
-  selector: '[igoWorkspaceUpdator]'
+  selector: '[igoWorkspaceUpdator]',
+  standalone: true
 })
 export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   private layers$$: Subscription;

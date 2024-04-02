@@ -16,7 +16,7 @@
     [igoMatBadgeIcon]="getBadgeIcon()"
     igoMatBadgeColor="rgba(0,0,0,0.87)"
     igoMatBadgeBackgroundColor="none"
-    igoMatBadgeInverseColor="true"
+    [igoMatBadgeInverseColor]="true"
     [matBadgeHidden]="
       ((inRange$ | async) && (isVisible$ | async) === true) ||
       ((inRange$ | async) && !added) ||
@@ -44,9 +44,9 @@
     aria-hidden="false"
     matBadge="icon"
     igoMatBadgeIcon="eye-off"
-    igoMatBadgeInverseColor="true"
+    [igoMatBadgeInverseColor]="true"
     [matBadgeHidden]="inRange$ | async"
-    matBadgeDisabled="true"
+    [matBadgeDisabled]="true"
     matBadgeSize="small"
     matBadgePosition="after"
     svgIcon="file-plus-outline"

@@ -19,7 +19,7 @@
           <h1>
             Query Title :
             <span style="background-color: #e0e0e0">{{
-              getTitle(feature)
+              getTitle($any(feature))
             }}</span>
           </h1>
           <igo-feature-details [feature]="feature"></igo-feature-details>

@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { IgoActionbarModule } from './actionbar/actionbar.module';
+import { ActionbarComponent } from './actionbar/actionbar.component';
 
+/**
+ * @deprecated import the ActionbarComponent directly
+ */
 @NgModule({
-  imports: [CommonModule, IgoActionbarModule],
-  exports: [IgoActionbarModule],
-  declarations: [],
-  providers: []
+  imports: [ActionbarComponent],
+  exports: [ActionbarComponent]
 })
 export class IgoActionModule {}

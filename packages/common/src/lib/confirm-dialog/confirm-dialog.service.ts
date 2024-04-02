@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ConfirmDialogOptions } from './confirm-dialog.interface';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ConfirmDialogService {
   constructor(private dialog: MatDialog) {}
 

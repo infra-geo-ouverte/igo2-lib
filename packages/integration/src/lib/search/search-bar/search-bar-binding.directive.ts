@@ -13,7 +13,8 @@ import { Subscription } from 'rxjs';
 import { SearchState } from '../search.state';
 
 @Directive({
-  selector: '[igoSearchBarBinding]'
+  selector: '[igoSearchBarBinding]',
+  standalone: true
 })
 export class SearchBarBindingDirective implements OnInit, OnDestroy {
   get searchTerm(): string {

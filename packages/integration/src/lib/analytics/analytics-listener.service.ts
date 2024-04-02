@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { AnalyticsService } from '@igo2/core';
+import { AnalyticsService } from '@igo2/core/analytics';
 import {
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,

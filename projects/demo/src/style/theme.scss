@@ -3,6 +3,7 @@
 
 @use '../../../../packages/core/src/index' as igo;
 @use '../../../../packages/core/src/theming/all-theme';
+
 @use '../app/app.theme' as app;
 
 $primary: mat.define-palette(mat.$deep-purple-palette);

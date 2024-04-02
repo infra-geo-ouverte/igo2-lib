@@ -1,6 +1,6 @@
 import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
 
-import { ActivityService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -14,7 +14,8 @@ import { SpinnerComponent } from './spinner.component';
  * is greater than 0.
  */
 @Directive({
-  selector: '[igoSpinnerActivity]'
+  selector: '[igoSpinnerActivity]',
+  standalone: true
 })
 export class SpinnerActivityDirective implements OnInit, OnDestroy {
   /**

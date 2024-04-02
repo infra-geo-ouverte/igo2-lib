@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { ToolComponent } from '@igo2/common';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
-  LanguageService,
-  MessageService,
-  StorageScope,
-  StorageService
-} from '@igo2/core';
-import {
+  IgoDirectionsModule,
   IgoMap,
   RoutesFeatureStore,
   StepFeatureStore,
@@ -29,7 +27,9 @@ import { DirectionState } from '../directions.state';
 })
 @Component({
   selector: 'igo-directions-tool',
-  templateUrl: './directions-tool.component.html'
+  templateUrl: './directions-tool.component.html',
+  standalone: true,
+  imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {
   public currentContextUri: string;

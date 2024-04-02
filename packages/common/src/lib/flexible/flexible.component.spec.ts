@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 
 import { FlexibleComponent } from './flexible.component';
 
@@ -10,7 +10,7 @@ describe('FlexibleComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [FlexibleComponent],
+      imports: [FlexibleComponent],
       providers: [MediaService]
     }).compileComponents();
   }));

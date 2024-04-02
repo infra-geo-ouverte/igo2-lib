@@ -1,15 +1,23 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatRadioChange } from '@angular/material/radio';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
 import {
   EntityTableComponent,
   EntityTableTemplate,
   ToolComponent
 } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Clipboard, NumberUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { MapProximityState } from '../map-proximity.state';
@@ -26,7 +34,20 @@ import { MapState } from '../map.state';
 @Component({
   selector: 'igo-map-proximity-tool',
   templateUrl: './map-proximity-tool.component.html',
-  styleUrls: ['./map-proximity-tool.component.scss']
+  styleUrls: ['./map-proximity-tool.component.scss'],
+  standalone: true,
+  imports: [
+    EntityTableComponent,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRadioModule,
+    FormsModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class MapProximityToolComponent implements OnInit, OnDestroy {
   private subs$$: Subscription[] = [];
