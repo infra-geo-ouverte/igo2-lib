@@ -66,6 +66,7 @@ export class DropGeoFileDirective
 
   ngOnDestroy() {
     this.filesDropped$$.unsubscribe();
+    this.epsgCode$$.map((e) => e.unsubscribe());
   }
 
   @HostListener('dragover', ['$event'])
