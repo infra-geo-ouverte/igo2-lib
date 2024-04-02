@@ -5,7 +5,8 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
 @Pipe({
-  name: 'filterableDataSource'
+  name: 'filterableDataSource',
+  standalone: true
 })
 export class FilterableDataSourcePipe implements PipeTransform {
   transform(value: Layer[], arg: string): Layer[] {

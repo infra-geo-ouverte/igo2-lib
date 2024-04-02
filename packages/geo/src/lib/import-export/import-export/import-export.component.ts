@@ -1,3 +1,4 @@
+import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -8,20 +9,36 @@ import {
   Output
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-
-import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import {
-  ConfigService,
-  LanguageService,
-  MessageService,
-  StorageService
-} from '@igo2/core';
+  MatSlideToggleChange,
+  MatSlideToggleModule
+} from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import {
+  ConfirmDialogService,
+  CustomHtmlComponent,
+  EntityRecord,
+  SpinnerComponent,
+  Workspace
+} from '@igo2/common';
+import type { WorkspaceStore } from '@igo2/common';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { strEnum } from '@igo2/utils';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -30,6 +47,7 @@ import { circular } from 'ol/geom/Polygon';
 import olClusterSource from 'ol/source/Cluster';
 import olVectorSource from 'ol/source/Vector';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -66,7 +84,29 @@ import {
 @Component({
   selector: 'igo-import-export',
   templateUrl: './import-export.component.html',
-  styleUrls: ['./import-export.component.scss']
+  styleUrls: ['./import-export.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatTooltipModule,
+    MatButtonModule,
+    SpinnerComponent,
+    CustomHtmlComponent,
+    NgClass,
+    MatSlideToggleModule,
+    MatInputModule,
+    AsyncPipe,
+    KeyValuePipe,
+    TranslateModule
+  ],
+  providers: [ConfirmDialogService]
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: UntypedFormGroup;

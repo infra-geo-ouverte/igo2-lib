@@ -2,7 +2,7 @@
   *ngIf="form$ | async as form"
   [form]="form"
   [formData]="data$ | async"
-  (submitForm)="onSubmit($event)"
+  (submitForm)="onSubmit($any($event))"
 >
   <div *ngIf="form.fields.length" class="form-container">
     <igo-form-field

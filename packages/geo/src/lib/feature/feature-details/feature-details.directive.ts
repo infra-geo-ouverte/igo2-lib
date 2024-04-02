@@ -14,7 +14,8 @@ import { FeatureDetailsComponent } from './feature-details.component';
 
 @Directive({
   // This directive allow to view the route between the user coordinates and the feature
-  selector: '[igoFeatureDetailsDirective]'
+  selector: '[igoFeatureDetailsDirective]',
+  standalone: true
 })
 export class FeatureDetailsDirective implements OnInit {
   private component: FeatureDetailsComponent;

@@ -1,3 +1,4 @@
+import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,11 +9,21 @@ import {
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule
+} from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { MediaService, StorageService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import {
@@ -39,7 +50,22 @@ import {
   templateUrl: './search-settings.component.html',
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, MatButtonModule]
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatIconModule,
+    NgIf,
+    NgFor,
+    MatCheckboxModule,
+    NgSwitch,
+    NgSwitchCase,
+    MatRadioModule,
+    MatDividerModule,
+    MatSlideToggleModule,
+    TranslateModule
+  ]
 })
 export class SearchSettingsComponent implements OnInit {
   public hasPointerReverseSearchSource: boolean = false;

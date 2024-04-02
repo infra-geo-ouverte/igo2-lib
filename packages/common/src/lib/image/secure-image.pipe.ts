@@ -1,14 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
 @Pipe({
-  name: 'secureImage'
+  name: 'secureImage',
+  standalone: true
 })
 export class SecureImagePipe implements PipeTransform {
   constructor(

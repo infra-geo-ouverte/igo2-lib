@@ -2,9 +2,11 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { SidenavShimDirective } from './sidenav-shim.directive';
 
+/**
+ * @deprecated import the SidenavShimDirective directly
+ */
 @NgModule({
-  imports: [],
-  declarations: [SidenavShimDirective],
+  imports: [SidenavShimDirective],
   exports: [SidenavShimDirective]
 })
 export class IgoSidenavModule {

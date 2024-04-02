@@ -2,12 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { SecureImagePipe } from '@igo2/common';
-import {
-  ActivityService,
-  ConfigService,
-  LanguageService,
-  MessageService
-} from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { SubjectStatus } from '@igo2/utils';
 
 import { saveAs } from 'file-saver';
@@ -46,11 +44,11 @@ export class PrintService {
   mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
-    titleFont: 'Times',
+    titleFont: 'Sans Serif',
     titleFontStyle: 'bold',
-    subtitleFont: 'Times',
+    subtitleFont: 'Sans Serif',
     subtitleFontStyle: 'bold',
-    commentFont: 'courier',
+    commentFont: 'Sans Serif',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
@@ -493,7 +491,7 @@ export class PrintService {
       const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
-    doc.setFont('courier');
+    doc.setFont(this.TEXTPDFFONT.commentFont);
     doc.setFontSize(projScaleSize);
     doc.text(textProjScale, projScaleMarginLeft, heightPixels);
   }

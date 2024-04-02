@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +10,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 
 import { Widget } from '../../widget';
+import { WidgetOutletComponent } from '../../widget/widget-outlet/widget-outlet.component';
 import { Workspace } from '../shared/workspace';
 
 /**
@@ -20,7 +22,9 @@ import { Workspace } from '../shared/workspace';
   selector: 'igo-workspace-widget-outlet',
   templateUrl: './workspace-widget-outlet.component.html',
   styleUrls: ['./workspace-widget-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, WidgetOutletComponent, AsyncPipe]
 })
 export class WorkspaceWidgetOutletComponent {
   /**

@@ -3,14 +3,11 @@ import { Injectable, Optional } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { Tool } from '@igo2/common';
-import {
-  ConfigService,
-  LanguageService,
-  Message,
-  MessageService,
-  RouteService,
-  StorageService
-} from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { Message, MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
+import { StorageService } from '@igo2/core/storage';
 import type {
   AnyLayerOptions,
   IgoMap,

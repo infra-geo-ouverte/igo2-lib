@@ -1,14 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { WorkspaceUpdatorDirective } from './workspace-updator.directive';
 
 /**
- * @ignore
+ * @deprecated import the WorkspaceUpdatorDirective directly
  */
 @NgModule({
-  imports: [CommonModule],
-  exports: [WorkspaceUpdatorDirective],
-  declarations: [WorkspaceUpdatorDirective]
+  imports: [WorkspaceUpdatorDirective],
+  exports: [WorkspaceUpdatorDirective]
 })
 export class IgoWorkspaceUpdatorModule {}

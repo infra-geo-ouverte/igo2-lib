@@ -1,5 +1,14 @@
 import { Component, Input } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface DialogData {
   label: string;
@@ -8,7 +17,16 @@ export interface DialogData {
 @Component({
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-layer-popup.component.html',
-  styleUrls: ['./draw-layer-popup.component.scss']
+  styleUrls: ['./draw-layer-popup.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogContent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogActions,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class DrawLayerPopupComponent {
   @Input() confirmFlag: boolean = false;

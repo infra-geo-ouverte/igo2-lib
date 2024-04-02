@@ -1,11 +1,18 @@
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap } from '../shared/map';
 
 @Component({
   selector: 'igo-zoom-button',
   templateUrl: './zoom-button.component.html',
-  styleUrls: ['./zoom-button.component.scss']
+  styleUrls: ['./zoom-button.component.scss'],
+  standalone: true,
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class ZoomButtonComponent {
   @Input() map: IgoMap;

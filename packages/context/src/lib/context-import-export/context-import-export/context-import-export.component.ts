@@ -1,14 +1,27 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
-import { ConfigService, MessageService } from '@igo2/core';
+import { SpinnerComponent } from '@igo2/common';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -26,7 +39,24 @@ import {
 @Component({
   selector: 'igo-context-import-export',
   templateUrl: './context-import-export.component.html',
-  styleUrls: ['./context-import-export.component.scss']
+  styleUrls: ['./context-import-export.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    NgIf,
+    FormsModule,
+    MatButtonModule,
+    SpinnerComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    NgFor,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class ContextImportExportComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;

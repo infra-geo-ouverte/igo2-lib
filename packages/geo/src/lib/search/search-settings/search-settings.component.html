@@ -25,7 +25,7 @@
         <mat-checkbox
           class="igo-search-settings-checkbox"
           [checked]="source.enabled"
-          [value]="source"
+          [value]="$any(source)"
           (click)="$event.stopPropagation()"
           (change)="onCheckSearchSource($event, source)"
         >
@@ -150,7 +150,7 @@
                 <mat-checkbox
                   [style.display]="displayBlock"
                   [checked]="settingValue.enabled"
-                  [value]="setting"
+                  [value]="$any(setting)"
                   [matTooltip]="getAvailableHashtagsValues(settingValue)"
                   (click)="$event.stopPropagation()"
                   (change)="

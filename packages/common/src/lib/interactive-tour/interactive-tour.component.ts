@@ -1,5 +1,10 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 
 import { ToolService } from '../tool/shared/tool.service';
@@ -9,7 +14,17 @@ import { InteractiveTourService } from './interactive-tour.service';
   selector: 'igo-interactive-tour',
   templateUrl: './interactive-tour.component.html',
   styleUrls: ['./interactive-tour.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    NgClass,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class InteractiveTourComponent {
   /**

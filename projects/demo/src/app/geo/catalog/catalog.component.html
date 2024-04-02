@@ -12,7 +12,7 @@
 
     <igo-panel title="Catalog Library">
       <igo-catalog-library
-        [store]="catalogStore"
+        [store]="$any(catalogStore)"
         (catalogSelectChange)="onCatalogSelectChange($event)"
       >
       </igo-catalog-library>
@@ -21,7 +21,7 @@
     <igo-panel title="Catalog Browser">
       <igo-catalog-browser
         [catalog]="catalog"
-        [store]="catalogItemStore"
+        [store]="$any(catalogItemStore)"
         [map]="map"
       >
       </igo-catalog-browser>
