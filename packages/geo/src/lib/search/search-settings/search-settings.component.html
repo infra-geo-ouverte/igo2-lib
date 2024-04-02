@@ -42,7 +42,8 @@
         </button>
       </span>
       <mat-menu #sub_menu="matMenu">
-        <div class="checkMenuDefaultButton">
+        <!--
+          <div class="checkMenuDefaultButton">
           <button
             mat-raised-button
             (click)="checkMenuDefaultOptions($event, source)"
@@ -50,6 +51,7 @@
             {{ 'igo.geo.search.searchSources.defaultSettings' | translate }}
           </button>
         </div>
+        -->
         <ng-container *ngFor="let setting of source.settings">
           <button mat-menu-item [matMenuTriggerFor]="test_sub_menu">
             {{
@@ -88,7 +90,35 @@
               </mat-radio-group>
             </span>
             <span *ngSwitchCase="'checkbox'">
-              <div class="checkAllButton" *ngIf="setting.values.length > 3">
+              <div class="selectionButtons">
+                <button
+                  class="checkAllButton"
+                  mat-raised-button
+                  (click)="checkUncheckAll($event, source, setting)"
+                  *ngIf="setting.values.length > 3"
+                >
+                  {{
+                    setting.allEnabled || setting.allEnabled === undefined
+                      ? ('igo.geo.search.searchSources.settings.unselectAll'
+                        | translate)
+                      : ('igo.geo.search.searchSources.settings.selectAll'
+                        | translate)
+                  }}
+                </button>
+                <button
+                  class="checkDefaultButton"
+                  mat-icon-button
+                  (click)="checkDefaultOptions($event, source, setting)"
+                >
+                  <mat-icon>home</mat-icon>
+                  <!-- 
+                  {{
+                    'igo.geo.search.searchSources.defaultSettings' | translate
+                  }}
+                  -->
+                </button>
+              </div>
+              <!--<div class="checkAllButton" *ngIf="setting.values.length > 3">
                 <button
                   mat-raised-button
                   (click)="checkUncheckAll($event, source, setting)"
@@ -111,7 +141,7 @@
                     'igo.geo.search.searchSources.defaultSettings' | translate
                   }}
                 </button>
-              </div>
+              </div>    -->
               <div
                 class="igo-search-settings-sub-menu"
                 mat-menu-item

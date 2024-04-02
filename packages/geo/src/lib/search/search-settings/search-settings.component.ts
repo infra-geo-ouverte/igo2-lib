@@ -7,7 +7,9 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 import { MatRadioChange } from '@angular/material/radio';
 
 import { MediaService, StorageService } from '@igo2/core';
@@ -36,7 +38,8 @@ import {
   selector: 'igo-search-settings',
   templateUrl: './search-settings.component.html',
   styleUrls: ['./search-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIconModule, MatButtonModule]
 })
 export class SearchSettingsComponent implements OnInit {
   public hasPointerReverseSearchSource: boolean = false;
