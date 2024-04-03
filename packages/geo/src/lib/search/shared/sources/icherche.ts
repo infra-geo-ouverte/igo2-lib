@@ -513,7 +513,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
-        icon: data.icon || 'map-marker',
+        icon: data.icon || 'location_on',
         score:
           data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
@@ -927,7 +927,7 @@ export class IChercheReverseSearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'map-marker',
+        icon: data.icon || 'location_on',
         pointerSummaryTitle: this.getSubtitle(data) + ': ' + data.properties.nom
       }
     };

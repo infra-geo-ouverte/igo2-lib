@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { IgoActivityModule } from '@igo2/core/activity';
 import { IgoConfigModule } from '@igo2/core/config';
@@ -69,11 +68,7 @@ export class IgoCoreModule {
     };
   }
 
-  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
-    matIconRegistry.addSvgIconSet(
-      domSanitizer.bypassSecurityTrustResourceUrl(
-        './assets/igo2/core/icons/mdi.svg'
-      )
-    );
+  constructor(iconRegistry: MatIconRegistry) {
+    iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
   }
 }

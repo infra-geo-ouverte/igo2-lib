@@ -1,6 +1,5 @@
 <mat-list-item>
   <mat-icon
-    svgIcon="chevron-up"
     class="igo-chevron"
     matListItemIcon
     igoCollapse
@@ -8,6 +7,7 @@
     [collapsed]="collapsed"
     (toggle)="collapsed = $event"
   >
+    expand_less
   </mat-icon>
   <span matListItemTitle>{{ title }}</span>
 </mat-list-item>

@@ -30,7 +30,6 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalogBrowser',
   title: 'igo.integration.tools.catalog',
-  icon: 'photo-browser',
   parent: 'catalog'
 })
 @Component({

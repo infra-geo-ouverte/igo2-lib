@@ -19,7 +19,7 @@ import { DrawState } from '../draw.state';
 @ToolComponent({
   name: 'draw',
   title: 'igo.integration.tools.draw',
-  icon: 'draw'
+  icon: 'stylus_note'
 })
 @Component({
   selector: 'igo-drawing-tool',

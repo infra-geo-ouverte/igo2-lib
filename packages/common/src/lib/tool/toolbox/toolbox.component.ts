@@ -222,7 +222,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         id: tool.name,
         title: tool.title,
         icon: tool.icon,
-        // iconImage: tool.iconImage,
+        iconSvg: tool.iconSvg,
         tooltip: tool.tooltip,
         args: [tool, this.toolbox],
         handler: (_tool: Tool, _toolbox: Toolbox) => {

@@ -3,7 +3,6 @@
     *ngIf="haveGroup()"
     class="catalog-browser-layer-carret"
     matListItemIcon
-    svgIcon="blank"
   ></mat-icon>
   <span
     matListItemTitle
@@ -24,8 +23,8 @@
         [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
         color="primary"
         (click)="$event.stopPropagation()"
-        svgIcon="earth-arrow-right"
       >
+        public
       </mat-icon>
     </button>
     <igo-metadata-button [layer]="$any(layer)"></igo-metadata-button>
@@ -55,8 +54,8 @@
         [matBadgeDisabled]="(inRange$ | async) === false"
         matBadgeSize="small"
         matBadgePosition="after"
-        [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'"
       >
+        {{ (isPreview$ | async) ? 'plus' : added ? 'delete' : 'add' }}
       </mat-icon>
     </button>
   </div>

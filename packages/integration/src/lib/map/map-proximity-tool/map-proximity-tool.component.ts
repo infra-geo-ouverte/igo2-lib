@@ -26,7 +26,7 @@ import { MapState } from '../map.state';
 @ToolComponent({
   name: 'map-proximity',
   title: 'igo.integration.tools.closestFeature',
-  icon: 'radius'
+  icon: 'output_circle'
 })
 /**
  * Tool to handle the advanced map tools

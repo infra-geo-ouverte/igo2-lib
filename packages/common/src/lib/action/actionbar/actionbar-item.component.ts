@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
+import { IconService } from '../../icons';
 import { Action } from '../shared/action.interfaces';
 
 /**
@@ -131,9 +132,16 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     return this.action.title;
   }
 
-  constructor() {}
+  constructor(private iconService: IconService) {}
 
   ngOnInit() {
+    if (this.action.iconSvg) {
+      this.iconService.registerSvg(
+        this.action.iconSvg.name,
+        this.action.iconSvg.svg
+      );
+    }
+
     const args = this.action.args || [];
 
     if (this.action.ngClass !== undefined) {

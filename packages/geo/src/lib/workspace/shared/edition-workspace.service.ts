@@ -308,7 +308,7 @@ export class EditionWorkspaceService {
           return [
             {
               editMode: false,
-              icon: 'pencil',
+              icon: 'edit',
               color: 'primary',
               disabled:
                 layer.dataSource.options.edition.modifyButton === false
@@ -341,7 +341,7 @@ export class EditionWorkspaceService {
             },
             {
               editMode: true,
-              icon: 'alpha-x',
+              icon: 'close',
               color: 'primary',
               disabled: this.loading,
               click: (feature) => {

@@ -21,9 +21,9 @@
     />
   </mat-slider>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
-    <mat-icon [svgIcon]="playIcon"></mat-icon>
+    <mat-icon>{{ playIcon }}</mat-icon>
   </button>
   <button mat-icon-button color="primary" (click)="resetFilter($event)">
-    <mat-icon svgIcon="{{ resetIcon }}"></mat-icon>
+    <mat-icon>{{ resetIcon }}</mat-icon>
   </button>
 </div>

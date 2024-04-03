@@ -36,8 +36,7 @@
         matBadgePosition="after"
         [matBadgeHidden]="queryBadgeHidden$ | async"
         [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-        [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'"
-      >
+        >{{ (layer.visible$ | async) ? 'visibility' : 'visibility_off' }}
       </mat-icon>
     </button>
 
@@ -64,8 +63,7 @@
         matBadgePosition="after"
         [matBadgeHidden]="queryBadgeHidden$ | async"
         [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-        [svgIcon]="layer.visible ? 'eye' : 'eye-off'"
-      >
+        >{{ layer.visible ? 'visibility' : 'visibility_off' }}
       </mat-icon>
     </button>
 
@@ -79,7 +77,7 @@
       color="primary"
       (click)="toggleLayerTool()"
     >
-      <mat-icon svgIcon="dots-horizontal"></mat-icon>
+      <mat-icon>more_horiz</mat-icon>
     </button>
   </div>
 </mat-list-item>

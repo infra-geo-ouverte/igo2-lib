@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
+import { IconService, MICROSOFT_ICON } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
 
 import {
@@ -52,10 +53,12 @@ export class AuthMicrosoftComponent {
     private authService: AuthService,
     private config: ConfigService,
     private appRef: ApplicationRef,
+    iconService: IconService,
     private msalService: MsalService,
     @Inject(MSAL_GUARD_CONFIG)
     private msalGuardConfig: MSPMsalGuardConfiguration[]
   ) {
+    iconService.registerSvg('microsoft', MICROSOFT_ICON);
     this.options = this.config.getConfig('auth.microsoft');
 
     this.msalService.instance = new PublicClientApplication({

@@ -150,7 +150,7 @@ export function getGeoServiceAction(
           } else {
             return [
               {
-                icon: 'plus',
+                icon: 'add',
                 color: 'primary',
                 click: (row, record) => {
                   addOrRemoveLayer(

@@ -25,8 +25,7 @@
     [matBadgeDisabled]="(inRange$ | async) === false"
     matBadgeSize="small"
     matBadgePosition="after"
-    [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'"
-  >
+    >{{ (isPreview$ | async) ? 'add' : added ? 'delete' : 'add' }}
   </mat-icon>
 </button>
 
@@ -43,13 +42,12 @@
   <mat-icon
     aria-hidden="false"
     matBadge="icon"
-    igoMatBadgeIcon="eye-off"
+    igoMatBadgeIcon="visibility_off"
     [igoMatBadgeInverseColor]="true"
     [matBadgeHidden]="inRange$ | async"
     [matBadgeDisabled]="true"
     matBadgeSize="small"
     matBadgePosition="after"
-    svgIcon="file-plus-outline"
-  >
+    >list_alt_add
   </mat-icon>
 </button>

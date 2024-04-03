@@ -1,9 +1,11 @@
+import { IconSvg } from '../../icons';
+
 export interface Tool {
   name: string;
   component: any;
   title?: string;
   icon?: string;
-  iconImage?: string;
+  iconSvg?: IconSvg;
   tooltip?: string;
   global?: boolean;
   options?: { [key: string]: any };

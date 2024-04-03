@@ -40,7 +40,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'add',
         title: 'Add',
-        icon: 'plus',
+        icon: 'add',
         tooltip: 'Add Tooltip',
         handler: () => {
           alert('Add!');
@@ -50,7 +50,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'edit',
         title: 'Edit',
-        icon: 'pencil',
+        icon: 'edit',
         tooltip: 'Edit Tooltip',
         args: ['1'],
         handler: (item: string) => {

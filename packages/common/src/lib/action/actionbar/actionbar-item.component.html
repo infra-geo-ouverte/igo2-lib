@@ -15,7 +15,11 @@
     [disabled]="disabled$ | async"
     [disableRipple]="true"
   >
-    <mat-icon *ngIf="withIcon" svgIcon="{{ icon$ | async }}"></mat-icon>
+    @if (action.iconSvg) {
+      <mat-icon [svgIcon]="action.iconSvg.name"></mat-icon>
+    } @else {
+      <mat-icon>{{ icon$ | async }}</mat-icon>
+    }
   </button>
   <span *ngIf="withTitle" matLine>{{ title | translate }}</span>
 </mat-list-item>

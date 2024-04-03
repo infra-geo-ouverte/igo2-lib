@@ -31,7 +31,7 @@ import {
 @ToolComponent({
   name: 'importExport',
   title: 'igo.integration.tools.importExport',
-  icon: 'file-move'
+  icon: 'file_save'
 })
 @Component({
   selector: 'igo-import-export-tool',

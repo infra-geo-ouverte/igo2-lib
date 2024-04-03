@@ -2,11 +2,9 @@
   (mouseenter)="onMouseEvent($event)"
   (mouseleave)="onMouseEvent($event)"
 >
-  <mat-icon
-    *ngIf="icon"
-    matListItemIcon
-    [svgIcon]="showIcons ? icon : 'blank'"
-  ></mat-icon>
+  <mat-icon *ngIf="icon" matListItemIcon>{{
+    showIcons ? icon : 'blank'
+  }}</mat-icon>
 
   <div
     matListItemTitle
@@ -33,7 +31,7 @@
       mat-icon-button
       (click)="onZoomHandler()"
     >
-      <mat-icon svgIcon="magnify"></mat-icon>
+      <mat-icon>search</mat-icon>
     </button>
 
     <ng-content select="[igoSearchItemToolbar]"> </ng-content>

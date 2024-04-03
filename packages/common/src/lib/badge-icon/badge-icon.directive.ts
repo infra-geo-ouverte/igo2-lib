@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * This directive allow to add an icon inside a matBadge.
@@ -14,12 +14,12 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 export class IgoBadgeIconDirective implements OnInit {
   @Input()
   set igoMatBadgeIcon(value: string) {
-    this.matIconRegistry.getNamedSvgIcon(value).subscribe((svgObj) => {
-      this.svg = svgObj;
-      this.updateSvg();
-    });
+    this.html = `
+      <mat-icon class="mat-icon material-symbols-outlined">${value}</mat-icon>
+    `;
+    this.updateHtml();
   }
-  private svg: SVGElement;
+  private html: string;
 
   @Input()
   set matBadgeHidden(value: boolean) {
@@ -69,10 +69,7 @@ export class IgoBadgeIconDirective implements OnInit {
 
   private originalColor: string;
 
-  constructor(
-    private el: ElementRef,
-    private matIconRegistry: MatIconRegistry
-  ) {}
+  constructor(private el: ElementRef) {}
 
   ngOnInit() {
     this.badge.style.alignItems = 'center';
@@ -80,16 +77,16 @@ export class IgoBadgeIconDirective implements OnInit {
 
     this.updateHidden();
     this.updateColor();
-    this.updateSvg();
+    this.updateHtml();
   }
 
-  private updateSvg() {
+  private updateHtml() {
     if (!this.badge) {
       return;
     }
     this.badge.innerHTML = '';
-    if (this.svg) {
-      this.badge.appendChild(this.svg);
+    if (this.html) {
+      this.badge.innerHTML = this.html;
     }
   }
   private updateColor() {

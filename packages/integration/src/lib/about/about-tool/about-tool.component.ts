@@ -24,7 +24,7 @@ import { AllEnvironmentOptions } from '../../environment';
 @ToolComponent({
   name: 'about',
   title: 'igo.integration.tools.about',
-  icon: 'help-circle'
+  icon: 'help'
 })
 @Component({
   selector: 'igo-about-tool',
