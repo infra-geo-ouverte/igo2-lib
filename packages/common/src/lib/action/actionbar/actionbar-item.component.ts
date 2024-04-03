@@ -15,9 +15,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, Subscription, isObservable } from 'rxjs';
+import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
-import { IconSvg, IgoIconComponent } from '../../icons';
+import { IgoIconComponent } from '../../icons';
 import { Action } from '../shared/action.interfaces';
 
 /**
@@ -49,8 +49,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     undefined
   );
 
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject(undefined);
-
   readonly tooltip$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly noDisplay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -64,8 +62,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private availability$$: Subscription;
 
-  private icon$$: Subscription;
-
   private checkCondition$$: Subscription;
 
   private tooltip$$: Subscription;
@@ -73,6 +69,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   private noDisplay$$: Subscription;
 
   private display$$: Subscription;
+
+  isObservable = isObservable;
 
   /**
    * Action
@@ -202,11 +200,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.checkCondition$$ = undefined;
     }
 
-    if (this.icon$$ !== undefined) {
-      this.icon$$.unsubscribe();
-      this.icon$$ = undefined;
-    }
-
     if (this.tooltip$$ !== undefined) {
       this.tooltip$$.unsubscribe();
       this.tooltip$$ = undefined;
@@ -238,15 +231,5 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private updateCheckCondition(checkCondition: boolean) {
     this.checkCondition$.next(checkCondition);
-  }
-
-  private updateIcon(icon: string) {
-    this.icon$.next(icon);
-  }
-
-  isObservableIcon(
-    icon: string | IconSvg | Observable<string>
-  ): icon is Observable<string> {
-    return isObservable(icon);
   }
 }
