@@ -4,8 +4,7 @@ export interface Tool {
   name: string;
   component: any;
   title?: string;
-  icon?: string;
-  iconSvg?: IconSvg;
+  icon?: string | IconSvg;
   tooltip?: string;
   global?: boolean;
   options?: { [key: string]: any };

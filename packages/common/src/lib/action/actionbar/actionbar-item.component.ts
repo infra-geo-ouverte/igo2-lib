@@ -15,9 +15,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, isObservable } from 'rxjs';
 
-import { IconService } from '../../icons';
+import { IconSvg, IgoIconComponent } from '../../icons';
 import { Action } from '../shared/action.interfaces';
 
 /**
@@ -38,7 +38,8 @@ import { Action } from '../shared/action.interfaces';
     MatIconModule,
     MatCheckboxModule,
     AsyncPipe,
-    TranslateModule
+    TranslateModule,
+    IgoIconComponent
   ]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
@@ -132,16 +133,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     return this.action.title;
   }
 
-  constructor(private iconService: IconService) {}
-
   ngOnInit() {
-    if (this.action.iconSvg) {
-      this.iconService.registerSvg(
-        this.action.iconSvg.name,
-        this.action.iconSvg.svg
-      );
-    }
-
     const args = this.action.args || [];
 
     if (this.action.ngClass !== undefined) {
@@ -150,14 +142,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
         .subscribe((ngClass: { [key: string]: boolean }) =>
           this.updateNgClass(ngClass)
         );
-    }
-
-    if (isObservable(this.action.icon)) {
-      this.icon$$ = this.action.icon.subscribe((icon: string) =>
-        this.updateIcon(icon)
-      );
-    } else {
-      this.updateIcon(this.action.icon);
     }
 
     if (isObservable(this.action.checkCondition)) {
@@ -258,5 +242,11 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private updateIcon(icon: string) {
     this.icon$.next(icon);
+  }
+
+  isObservableIcon(
+    icon: string | IconSvg | Observable<string>
+  ): icon is Observable<string> {
+    return isObservable(icon);
   }
 }

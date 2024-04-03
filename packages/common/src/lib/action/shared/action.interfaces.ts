@@ -6,8 +6,7 @@ export interface Action {
   id: string;
   handler: ActionHandler;
   title?: string;
-  icon?: string | Observable<string>;
-  iconSvg?: IconSvg;
+  icon?: string | IconSvg | Observable<string>;
   tooltip?: string | Observable<string>;
   args?: any[];
   checkbox?: boolean;

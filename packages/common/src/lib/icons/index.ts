@@ -1,3 +1,2 @@
-export * from './icons';
-export * from './icon.interface';
-export * from './icon.service';
+export * from './shared';
+export * from './icon/icon.component';

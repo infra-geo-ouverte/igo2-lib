@@ -15,7 +15,7 @@ export class IgoBadgeIconDirective implements OnInit {
   @Input()
   set igoMatBadgeIcon(value: string) {
     this.html = `
-      <mat-icon class="mat-icon material-symbols-outlined">${value}</mat-icon>
+      <mat-icon class="mat-icon material-symbols-outlined" style="height: 16px; width: 16px; font-size: 16px;">${value}</mat-icon>
     `;
     this.updateHtml();
   }

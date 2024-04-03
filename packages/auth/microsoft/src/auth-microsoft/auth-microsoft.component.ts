@@ -7,10 +7,9 @@ import {
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
-import { IconService, MICROSOFT_ICON } from '@igo2/common';
+import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
 
 import {
@@ -41,7 +40,7 @@ import {
   styleUrls: ['./auth-microsoft.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, TranslateModule, IgoIconComponent]
 })
 export class AuthMicrosoftComponent {
   private options?: AuthMicrosoftOptions;
@@ -49,16 +48,16 @@ export class AuthMicrosoftComponent {
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
   private broadcastService: MsalBroadcastService;
 
+  svgIcon: IconSvg = MICROSOFT_ICON;
+
   constructor(
     private authService: AuthService,
     private config: ConfigService,
     private appRef: ApplicationRef,
-    iconService: IconService,
     private msalService: MsalService,
     @Inject(MSAL_GUARD_CONFIG)
     private msalGuardConfig: MSPMsalGuardConfiguration[]
   ) {
-    iconService.registerSvg('microsoft', MICROSOFT_ICON);
     this.options = this.config.getConfig('auth.microsoft');
 
     this.msalService.instance = new PublicClientApplication({

@@ -23,7 +23,7 @@ import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
-  IconService,
+  IconSvg,
   ListComponent,
   ListItemDirective,
   MAGNIFY_SCAN_ICON,
@@ -274,13 +274,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
+  svgIcon: IconSvg = MAGNIFY_SCAN_ICON;
 
-  constructor(
-    private elRef: ElementRef,
-    iconService: IconService
-  ) {
-    iconService.registerSvg('magnify-scan', MAGNIFY_SCAN_ICON);
-  }
+  constructor(private elRef: ElementRef) {}
 
   /**
    * Subscribe to the search term stream and trigger researches

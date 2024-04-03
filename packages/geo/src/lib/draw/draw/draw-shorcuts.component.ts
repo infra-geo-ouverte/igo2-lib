@@ -7,7 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IconService, KEYBOARD_ESC_ICON } from '@igo2/common';
+import { IconSvg, IgoIconComponent, KEYBOARD_ESC_ICON } from '@igo2/common';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -22,11 +22,10 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule
+    TranslateModule,
+    IgoIconComponent
   ]
 })
 export class DrawShorcutsComponent {
-  constructor(iconService: IconService) {
-    iconService.registerSvg('keyboard-esc', KEYBOARD_ESC_ICON);
-  }
+  svgIcon: IconSvg = KEYBOARD_ESC_ICON;
 }
