@@ -84,7 +84,7 @@ export class ExportService {
 
       if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
         const style = JSON.stringify(olFeature.get('_style'));
-        keys = keys.filter((key) => key !== '_style');
+        if (style.length > 256) keys = keys.filter((key) => key !== '_style');
       }
 
       const properties = keys.reduce(

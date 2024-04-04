@@ -22,7 +22,6 @@ export function featureRandomStyleFunction(): (
   });
   return (olFeature: olFeature<OlGeometry>, resolution: number) => {
     const customStyle = olFeature.get('_style');
-    console.log('customStyle', customStyle);
     if (customStyle && isValidJSON(customStyle)) {
       if (
         customStyle.circle &&
