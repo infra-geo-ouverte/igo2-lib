@@ -5,10 +5,14 @@ import {
   makeEnvironmentProviders
 } from '@angular/core';
 
-import { AuthStorageService } from '@igo2/auth/form';
 import { StorageService } from '@igo2/core/storage';
 
-import { AuthFeature, AuthFeatureKind, AuthInterceptor } from './shared';
+import {
+  AuthFeature,
+  AuthFeatureKind,
+  AuthInterceptor,
+  AuthStorageService
+} from './shared';
 
 export function provideAuthentification(
   ...features: AuthFeature<AuthFeatureKind>[]

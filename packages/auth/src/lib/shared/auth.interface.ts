@@ -48,6 +48,6 @@ export interface AuthFeature<KindT extends AuthFeatureKind> {
   providers: Provider[];
 }
 
-export declare enum AuthFeatureKind {
+export enum AuthFeatureKind {
   Microsoft = 0
 }
