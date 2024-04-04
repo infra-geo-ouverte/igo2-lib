@@ -13,6 +13,7 @@ describe('IconComponent', () => {
 
     fixture = TestBed.createComponent(IgoIconComponent);
     component = fixture.componentInstance;
+    component.icon = 'test';
     fixture.detectChanges();
   });
 
