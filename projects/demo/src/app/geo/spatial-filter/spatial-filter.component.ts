@@ -45,7 +45,6 @@ import {
 
 import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
@@ -433,9 +432,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          const ol = dataSource.ol as
-            | olSourceVector<OlGeometry>
-            | olSourceCluster;
+          const ol = dataSource.ol as olSourceVector | olSourceCluster;
           ol.addFeatures(featuresOl);
           olLayer.ol.setStyle(this.defaultStyle);
           this.map.addLayer(olLayer);
@@ -579,7 +576,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           const featuresOl = features.map((feature: Feature) => {
             return featureToOl(feature, this.map.projectionCode);
           });
-          const ol = dataSource.ol as olSourceVector<OlGeometry>;
+          const ol = dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
           if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
             this.map.removeLayer(

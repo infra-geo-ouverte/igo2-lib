@@ -1,4 +1,3 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 import type { ServerType } from 'ol/source/wms';
@@ -18,7 +17,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   resolutions?: number[];
   serverType?: ServerType;
   ratio?: number;
-  ol?: olSourceVector<OlGeometry> | olSource;
+  ol?: olSourceVector | olSource;
   refreshIntervalSec?: number;
   contentDependentLegend?: boolean;
   excludeAttribute?: Array<string>;
