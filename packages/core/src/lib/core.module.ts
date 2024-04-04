@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
 
 import { IgoActivityModule } from '@igo2/core/activity';
 import { IgoConfigModule } from '@igo2/core/config';
@@ -61,6 +60,9 @@ const dbConfig: DBConfig = {
   ]
 })
 export class IgoCoreModule {
+  /**
+   * @deprecated it has no effect
+   */
   static forRoot(): ModuleWithProviders<IgoCoreModule> {
     return {
       ngModule: IgoCoreModule,
@@ -68,7 +70,5 @@ export class IgoCoreModule {
     };
   }
 
-  constructor(iconRegistry: MatIconRegistry) {
-    iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
-  }
+  constructor() {}
 }
