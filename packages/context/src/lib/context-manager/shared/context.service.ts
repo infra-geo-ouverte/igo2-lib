@@ -577,19 +577,12 @@ export class ContextService {
           delete layerFound.sourceOptions[`format`];
         }
         const opts: AnyLayerOptions = {
-          baseLayer: layerFound.baseLayer,
+          ...layerFound,
           title: layer.options.title,
           zIndex: layer.zIndex,
-          igoStyle: {
-            styleByAttribute: layerFoundAs.igoStyle?.styleByAttribute,
-            clusterBaseStyle: layerFoundAs.igoStyle?.clusterBaseStyle
-          },
           style: layerStyle,
-          clusterParam: layerFound[`clusterParam`],
           visible: layer.visible,
-          opacity: layer.opacity,
-          sourceOptions: layerFound.sourceOptions,
-          workspace: layerFound.workspace
+          opacity: layer.opacity
         };
         context.layers.push(opts);
       } else {
