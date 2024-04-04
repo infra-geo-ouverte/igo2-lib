@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { IconComponent } from './icon.component';
+import { AppIconComponent } from './icon.component';
 
-describe('IconComponent', () => {
-  let component: IconComponent;
-  let fixture: ComponentFixture<IconComponent>;
+describe('AppIconComponent', () => {
+  let component: AppIconComponent;
+  let fixture: ComponentFixture<AppIconComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IconComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(IconComponent);
+      imports: [AppIconComponent, NoopAnimationsModule]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AppIconComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
