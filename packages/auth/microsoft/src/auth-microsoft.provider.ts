@@ -1,3 +1,4 @@
+import { AuthFeature, AuthFeatureKind } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
 import {
@@ -25,6 +26,9 @@ export function MSALConfigFactory(
   config: ConfigService
 ): PublicClientApplication {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
+  if (!msConf) {
+    return;
+  }
 
   msConf.redirectUri = msConf?.redirectUri || window.location.href;
   msConf.authority =
@@ -46,6 +50,9 @@ export function MSALConfigFactoryb2c(
   const msConf = config.getConfig(
     'auth.microsoftb2c.browserAuthOptions'
   ) as BrowserAuthOptions;
+  if (!msConf) {
+    return;
+  }
   msConf.redirectUri = msConf?.redirectUri || window.location.href;
   msConf.authority =
     msConf?.authority || 'https://login.microsoftonline.com/organizations';
@@ -91,36 +98,44 @@ export function MSALAngularConfigFactoryb2c(
   };
 }
 
-export function provideAuthMicrosoft(type?: string) {
+export function withMicrosoftSupport(
+  type?: string
+): AuthFeature<AuthFeatureKind.Microsoft> {
   if (type === 'b2c') {
-    return [
-      {
-        provide: MSAL_INSTANCE,
-        useFactory: MSALConfigFactoryb2c,
-        deps: [ConfigService]
-      },
-      {
-        provide: MSAL_GUARD_CONFIG,
-        useFactory: MSALAngularConfigFactoryb2c,
-        deps: [ConfigService],
-        multi: true
-      },
-      MsalServiceb2c
-    ];
+    return {
+      kind: AuthFeatureKind.Microsoft,
+      providers: [
+        {
+          provide: MSAL_INSTANCE,
+          useFactory: MSALConfigFactoryb2c,
+          deps: [ConfigService]
+        },
+        {
+          provide: MSAL_GUARD_CONFIG,
+          useFactory: MSALAngularConfigFactoryb2c,
+          deps: [ConfigService],
+          multi: true
+        },
+        MsalServiceb2c
+      ]
+    };
   } else {
-    return [
-      {
-        provide: MSAL_INSTANCE,
-        useFactory: MSALConfigFactory,
-        deps: [ConfigService]
-      },
-      {
-        provide: MSAL_GUARD_CONFIG,
-        useFactory: MSALAngularConfigFactory,
-        deps: [ConfigService],
-        multi: true
-      },
-      MsalService
-    ];
+    return {
+      kind: AuthFeatureKind.Microsoft,
+      providers: [
+        {
+          provide: MSAL_INSTANCE,
+          useFactory: MSALConfigFactory,
+          deps: [ConfigService]
+        },
+        {
+          provide: MSAL_GUARD_CONFIG,
+          useFactory: MSALAngularConfigFactory,
+          deps: [ConfigService],
+          multi: true
+        },
+        MsalService
+      ]
+    };
   }
 }
