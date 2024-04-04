@@ -78,9 +78,15 @@ export class ExportService {
     }
 
     return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
-      const keys = olFeature
+      let keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith(excludePrefix));
+
+      if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
+        const style = JSON.stringify(olFeature.get('_style'));
+        keys = keys.filter((key) => key !== '_style');
+      }
+
       const properties = keys.reduce(
         (acc: object, key: string) => {
           acc[key] = olFeature.get(key);

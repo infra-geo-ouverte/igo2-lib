@@ -3,6 +3,7 @@ import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olStyle from 'ol/style';
 
+import { isValidJSON } from '../../../import-export';
 import { StyleService } from '../../style-service/style.service';
 
 export function featureRandomStyleFunction(): (
@@ -21,7 +22,8 @@ export function featureRandomStyleFunction(): (
   });
   return (olFeature: olFeature<OlGeometry>, resolution: number) => {
     const customStyle = olFeature.get('_style');
-    if (customStyle) {
+    console.log('customStyle', customStyle);
+    if (customStyle && isValidJSON(customStyle)) {
       if (
         customStyle.circle &&
         olFeature.get('rad') &&
