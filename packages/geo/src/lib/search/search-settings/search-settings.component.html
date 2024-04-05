@@ -99,6 +99,7 @@
                   class="check-default-button"
                   mat-icon-button
                   (click)="checkDefaultOptions($event, source, setting)"
+                  *ngIf="setting.values.length > 3"
                 >
                   <mat-icon svgIcon="refresh"></mat-icon>
                 </button>
