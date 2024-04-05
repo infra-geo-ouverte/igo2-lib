@@ -11,7 +11,7 @@
     <mat-icon svgIcon="chevron-down"></mat-icon>
   </button>
   <mat-menu #searchSettingsMenu="matMenu" class="no-border-radius">
-    <div class="checkAllButton" *ngIf="getSearchSources().length > 4">
+    <div class="check-all-button" *ngIf="getSearchSources().length > 4">
       <button mat-raised-button (click)="checkUncheckAllSources($event)">
         {{
           !searchSourcesAllEnabled
@@ -42,16 +42,6 @@
         </button>
       </span>
       <mat-menu #sub_menu="matMenu">
-        <!--
-          <div class="checkMenuDefaultButton">
-          <button
-            mat-raised-button
-            (click)="checkMenuDefaultOptions($event, source)"
-          >
-            {{ 'igo.geo.search.searchSources.defaultSettings' | translate }}
-          </button>
-        </div>
-        -->
         <ng-container *ngFor="let setting of source.settings">
           <button mat-menu-item [matMenuTriggerFor]="test_sub_menu">
             {{
@@ -90,9 +80,9 @@
               </mat-radio-group>
             </span>
             <span *ngSwitchCase="'checkbox'">
-              <div class="selectionButtons">
+              <div class="selection-buttons">
                 <button
-                  class="checkAllButton"
+                  class="check-all-button"
                   mat-raised-button
                   (click)="checkUncheckAll($event, source, setting)"
                   *ngIf="setting.values.length > 3"
@@ -106,42 +96,13 @@
                   }}
                 </button>
                 <button
-                  class="checkDefaultButton"
+                  class="check-default-button"
                   mat-icon-button
                   (click)="checkDefaultOptions($event, source, setting)"
                 >
-                  <mat-icon>home</mat-icon>
-                  <!-- 
-                  {{
-                    'igo.geo.search.searchSources.defaultSettings' | translate
-                  }}
-                  -->
+                  <mat-icon svgIcon="refresh"></mat-icon>
                 </button>
               </div>
-              <!--<div class="checkAllButton" *ngIf="setting.values.length > 3">
-                <button
-                  mat-raised-button
-                  (click)="checkUncheckAll($event, source, setting)"
-                >
-                  {{
-                    setting.allEnabled || setting.allEnabled === undefined
-                      ? ('igo.geo.search.searchSources.settings.unselectAll'
-                        | translate)
-                      : ('igo.geo.search.searchSources.settings.selectAll'
-                        | translate)
-                  }}
-                </button>
-              </div>
-              <div class="checkDefaultButton">
-                <button
-                  mat-raised-button
-                  (click)="checkDefaultOptions($event, source, setting)"
-                >
-                  {{
-                    'igo.geo.search.searchSources.defaultSettings' | translate
-                  }}
-                </button>
-              </div>    -->
               <div
                 class="igo-search-settings-sub-menu"
                 mat-menu-item
@@ -168,6 +129,15 @@
             </span>
           </mat-menu>
         </ng-container>
+        <div class="check-menu-default-button">
+          <label>Sélection par défaut</label>
+          <button
+            mat-icon-button
+            (click)="checkMenuDefaultOptions($event, source)"
+          >
+            <mat-icon svgIcon="refresh"></mat-icon>
+          </button>
+        </div>
       </mat-menu>
     </ng-container>
     <mat-divider></mat-divider>

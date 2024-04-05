@@ -6,23 +6,35 @@
   align-items: center;
 }
 
+.selection-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 // This component is projected, the style need to be apply outside is scope
-.checkDefaultButton {
+.check-all-button {
   text-align: center;
   padding: 0 5px;
   margin: 5px;
 }
 
 // This component is projected, the style need to be apply outside is scope
-.checkMenuDefaultButton {
+.check-default-button {
   text-align: center;
   padding: 0 5px;
+  margin: 5px;
 }
 
 // This component is projected, the style need to be apply outside is scope
-.checkAllButton {
-  text-align: center;
-  padding: 0 5px;
+.check-menu-default-button {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  label {
+    text-align: right;
+    font-size: 10px;
+  }
 }
 
 .igo-search-settings-radio-group {

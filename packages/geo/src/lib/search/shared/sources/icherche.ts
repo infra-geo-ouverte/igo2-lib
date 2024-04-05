@@ -119,7 +119,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
     const limit =
       !forceReset && this.options.params && this.options.params.limit
-      ? Number(this.options.params.limit)
+        ? Number(this.options.params.limit)
         : undefined;
     const ecmax =
       !forceReset && this.options.params && this.options.params.ecmax
