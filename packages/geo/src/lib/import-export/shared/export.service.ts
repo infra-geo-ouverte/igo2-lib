@@ -34,6 +34,8 @@ export class ExportService {
   private ogreUrl: string;
   private aggregateInComment: boolean = true;
 
+  private ShapefileMaxLength: number = 255;
+
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
     const gpxAggregateInComment = this.config.getConfig(
@@ -84,7 +86,8 @@ export class ExportService {
 
       if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
         const style = JSON.stringify(olFeature.get('_style'));
-        if (style.length > 256) keys = keys.filter((key) => key !== '_style');
+        if (style.length > this.ShapefileMaxLength)
+          keys = keys.filter((key) => key !== '_style');
       }
 
       const properties = keys.reduce(
