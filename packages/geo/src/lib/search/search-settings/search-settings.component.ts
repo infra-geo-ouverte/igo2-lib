@@ -239,7 +239,7 @@ export class SearchSettingsComponent implements OnInit {
    * @internal
    */
   checkDefaultOptions(
-    event,
+    event: PointerEvent,
     source: SearchSource,
     setting: SearchSourceSettings
   ) {

@@ -8,12 +8,13 @@
 
 .selection-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
 // This component is projected, the style need to be apply outside is scope
 .check-all-button {
+  justify-content: flex-start;
   text-align: center;
   padding: 0 5px;
   margin: 5px;
@@ -21,7 +22,7 @@
 
 // This component is projected, the style need to be apply outside is scope
 .check-default-button {
-  text-align: center;
+  justify-content: flex-end;
   padding: 0 5px;
   margin: 5px;
 }
