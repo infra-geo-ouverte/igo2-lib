@@ -141,10 +141,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         if (authenticated) {
           const profileWithAuth: BaseDirectionsSourceOptionsProfile =
             this.directionsSourceService.sources[0].getProfileWithAuthorization();
-          this.http.get(profileWithAuth.authorization.url).subscribe((user) => {
-            this.hasOsrmPrivateAccess =
-              user[profileWithAuth.authorization.property];
-          });
+          if (profileWithAuth) {
+            this.http
+              .get(profileWithAuth.authorization.url)
+              .subscribe((user) => {
+                this.hasOsrmPrivateAccess =
+                  user[profileWithAuth.authorization.property];
+              });
+          }
         }
       }
     );
