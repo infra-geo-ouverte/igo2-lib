@@ -36,8 +36,6 @@ export class ExportService {
   private ogreUrl: string;
   private aggregateInComment: boolean = true;
 
-  private ShapefileMaxLength: number = 255;
-
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
     const gpxAggregateInComment = this.config.getConfig(

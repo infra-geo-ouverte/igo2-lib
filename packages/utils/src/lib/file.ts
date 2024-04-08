@@ -34,9 +34,9 @@ export function downloadFromUri(uri: string, fileName: string) {
 }
 
 /**
- *
+ * Validate if string is valid json object
  * @param jsonString
- * @returns boolean
+ * @return boolean
  */
 export function isValidJSON(jsonString: string): boolean {
   try {
