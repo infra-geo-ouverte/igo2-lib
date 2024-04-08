@@ -1,9 +1,10 @@
+import { isValidJSON } from '@igo2/utils';
+
 import olFeature from 'ol/Feature';
 import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olStyle from 'ol/style';
 
-import { isValidJSON } from '../../../import-export';
 import { StyleService } from '../../style-service/style.service';
 
 export function featureRandomStyleFunction(): (

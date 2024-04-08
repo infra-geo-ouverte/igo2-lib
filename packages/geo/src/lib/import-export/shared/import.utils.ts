@@ -411,11 +411,3 @@ export function getFileExtension(file: File): string {
 export function computeLayerTitleFromFile(file: File): string {
   return file.name.substr(0, file.name.lastIndexOf('.'));
 }
-
-export function isValidJSON(jsonString: string) {
-  try {
-    return JSON.parse(jsonString) && !!jsonString;
-  } catch (e) {
-    return false;
-  }
-}

@@ -16,6 +16,8 @@ import {
 } from './export.errors';
 import { EncodingFormat, ExportFormat } from './export.type';
 
+const SHAPEFILE_FIELD_MAX_LENGHT = 255;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -86,7 +88,7 @@ export class ExportService {
 
       if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
         const style = JSON.stringify(olFeature.get('_style'));
-        if (style.length > this.ShapefileMaxLength)
+        if (style.length > SHAPEFILE_FIELD_MAX_LENGHT)
           keys = keys.filter((key) => key !== '_style');
       }
 
