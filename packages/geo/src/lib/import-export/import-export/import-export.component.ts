@@ -41,7 +41,6 @@ import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 import { strEnum } from '@igo2/utils';
 
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import { circular } from 'ol/geom/Polygon';
 import olClusterSource from 'ol/source/Cluster';
@@ -665,9 +664,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             .map((e) => (e.entity as Feature).ol);
         }
       } else {
-        const ol = lay.dataSource.ol as
-          | olVectorSource<OlGeometry>
-          | olClusterSource;
+        const ol = lay.dataSource.ol as olVectorSource | olClusterSource;
         if (data.featureInMapExtent) {
           olFeatures = ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()

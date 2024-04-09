@@ -20,7 +20,6 @@ import {
 import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
-import { default as OlGeometry } from 'ol/geom/Geometry';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
@@ -456,7 +455,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         activeStore.layer.visible = true;
         activeStore.source.ol.on(
           'removefeature',
-          (event: OlVectorSourceEvent<OlGeometry>) => {
+          (event: OlVectorSourceEvent) => {
             const olGeometry = event.feature.getGeometry();
             this.clearLabelsOfOlGeometry(olGeometry);
           }
