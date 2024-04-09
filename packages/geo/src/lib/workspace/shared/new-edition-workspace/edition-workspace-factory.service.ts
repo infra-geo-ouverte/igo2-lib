@@ -13,7 +13,7 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy
 } from '../../../feature/shared';
-import { VectorLayer } from '../../../layer/shared';
+import { GeoWorkspaceOptions, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared';
 import { createFilterInMapExtentOrResolutionStrategy } from '../workspace.utils';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
@@ -52,6 +52,11 @@ export class EditionWorkspaceFactoryService {
     });
 
     this.tableTemplateFactory.createWFSTemplate(workspace, layer);
+    layer.options.workspace = Object.assign({}, layer.options.workspace, {
+      srcId: layer.id,
+      workspaceId: layer.id,
+      enabled: true
+    } as GeoWorkspaceOptions);
     return workspace;
   }
 
