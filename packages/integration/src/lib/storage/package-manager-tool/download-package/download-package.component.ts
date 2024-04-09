@@ -17,6 +17,7 @@ import {
   EntityStore,
   EntityTableComponent,
   EntityTableTemplate,
+  IgoIconComponent,
   getEntityProperty
 } from '@igo2/common';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
@@ -39,7 +40,8 @@ import { dynamicFormatSize } from '../utils';
     MatInputModule,
     FormsModule,
     TranslateModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    IgoIconComponent
   ],
   templateUrl: './download-package.component.html',
   styleUrls: ['./download-package.component.scss'],
