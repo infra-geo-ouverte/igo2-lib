@@ -16,6 +16,7 @@ import {
 import { VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared';
 import { createFilterInMapExtentOrResolutionStrategy } from '../workspace.utils';
+import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { NewEditionWorkspace } from './new-edition-workspace';
 import { RestAPIEdition } from './rest-api-edition';
 
@@ -27,6 +28,8 @@ export class EditionWorkspaceFactoryService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
+  private tableTemplateFactory = new EditionWorkspaceTableTemplateFactory();
+
   constructor(
     private storageService: StorageService,
     private http: HttpClient
@@ -36,7 +39,7 @@ export class EditionWorkspaceFactoryService {
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
-    return new RestAPIEdition(this.http, {
+    const workspace = new RestAPIEdition(this.http, {
       id: layer.id,
       title: layer.title,
       layer,
@@ -47,6 +50,9 @@ export class EditionWorkspaceFactoryService {
         tableTemplate: undefined
       }
     });
+
+    this.tableTemplateFactory.createWFSTemplate(workspace, layer);
+    return workspace;
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
@@ -71,7 +77,7 @@ export class EditionWorkspaceFactoryService {
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,
       many: true,
       dragBox: true
-    });
+    }); // TODO check if usefull
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
