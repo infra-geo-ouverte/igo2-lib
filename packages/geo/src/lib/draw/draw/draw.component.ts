@@ -272,7 +272,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             return [
               {
                 editMode: false,
-                icon: 'pencil',
+                icon: 'edit',
                 color: 'primary',
                 click: () => {
                   this.editLabelDrawing(feature);

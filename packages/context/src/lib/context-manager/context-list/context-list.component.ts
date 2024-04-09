@@ -206,7 +206,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContext'
         ),
-        icon: 'map-outline',
+        icon: 'star',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContextTooltip'
         ),
@@ -219,7 +219,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.contextMap'
         ),
-        icon: 'map-check',
+        icon: 'map',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.contextMapTooltip'
         ),
@@ -364,8 +364,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .toLowerCase();
   }
 
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
+  toggleSort() {
+    this.sortedAlpha = !this.sortedAlpha;
   }
 
   clearFilter() {

@@ -28,7 +28,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 @ToolComponent({
   name: 'demo-salutation',
   title: 'Salutation',
-  icon: 'account',
+  icon: 'person',
   options: { name: 'Jack' }
 })
 @Component({

@@ -36,7 +36,7 @@ import { MapState } from './../map.state';
 @ToolComponent({
   name: 'mapLegend',
   title: 'igo.integration.tools.legend',
-  icon: 'format-list-bulleted-type'
+  icon: 'format_list_bulleted'
 })
 @Component({
   selector: 'igo-map-legend-tool',

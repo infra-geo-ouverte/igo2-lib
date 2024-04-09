@@ -16,7 +16,6 @@
     [disabled]="(rotated$ | async) === false"
     (click)="map.viewController.resetRotation()"
   >
-    <mat-icon [ngStyle]="currentStyle$ | async" svgIcon="navigation">
-    </mat-icon>
+    <mat-icon [ngStyle]="currentStyle$ | async">navigation </mat-icon>
   </button>
 </div>

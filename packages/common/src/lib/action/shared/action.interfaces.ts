@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs';
 
+import { IconSvg } from '../../icons';
+
 export interface Action {
   id: string;
   handler: ActionHandler;
   title?: string;
-  icon?: string | Observable<string>;
+  icon?: string | IconSvg | Observable<string>;
   tooltip?: string | Observable<string>;
   args?: any[];
   checkbox?: boolean;

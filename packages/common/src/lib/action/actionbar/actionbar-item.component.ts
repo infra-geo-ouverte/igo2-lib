@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
+import { IgoIconComponent } from '../../icons';
 import { Action } from '../shared/action.interfaces';
 
 /**
@@ -37,7 +38,8 @@ import { Action } from '../shared/action.interfaces';
     MatIconModule,
     MatCheckboxModule,
     AsyncPipe,
-    TranslateModule
+    TranslateModule,
+    IgoIconComponent
   ]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
@@ -46,8 +48,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(
     undefined
   );
-
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly tooltip$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -62,8 +62,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private availability$$: Subscription;
 
-  private icon$$: Subscription;
-
   private checkCondition$$: Subscription;
 
   private tooltip$$: Subscription;
@@ -71,6 +69,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   private noDisplay$$: Subscription;
 
   private display$$: Subscription;
+
+  isObservable = isObservable;
 
   /**
    * Action
@@ -131,8 +131,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     return this.action.title;
   }
 
-  constructor() {}
-
   ngOnInit() {
     const args = this.action.args || [];
 
@@ -142,14 +140,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
         .subscribe((ngClass: { [key: string]: boolean }) =>
           this.updateNgClass(ngClass)
         );
-    }
-
-    if (isObservable(this.action.icon)) {
-      this.icon$$ = this.action.icon.subscribe((icon: string) =>
-        this.updateIcon(icon)
-      );
-    } else {
-      this.updateIcon(this.action.icon);
     }
 
     if (isObservable(this.action.checkCondition)) {
@@ -210,11 +200,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.checkCondition$$ = undefined;
     }
 
-    if (this.icon$$ !== undefined) {
-      this.icon$$.unsubscribe();
-      this.icon$$ = undefined;
-    }
-
     if (this.tooltip$$ !== undefined) {
       this.tooltip$$.unsubscribe();
       this.tooltip$$ = undefined;
@@ -246,9 +231,5 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private updateCheckCondition(checkCondition: boolean) {
     this.checkCondition$.next(checkCondition);
-  }
-
-  private updateIcon(icon: string) {
-    this.icon$.next(icon);
   }
 }

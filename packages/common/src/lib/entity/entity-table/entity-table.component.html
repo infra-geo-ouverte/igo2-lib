@@ -313,15 +313,12 @@
             class="mat-cell-text"
             [ngClass]="row.cellData[column.name].class"
           >
-            <mat-icon
-              *ngIf="column.onClick"
-              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
-              (click)="column.onClick($event)"
-            ></mat-icon>
-            <mat-icon
-              *ngIf="!column.onClick"
-              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
-            ></mat-icon>
+            <mat-icon *ngIf="column.onClick" (click)="column.onClick($event)">{{
+              row.cellData[column.name].value || column.icon
+            }}</mat-icon>
+            <mat-icon *ngIf="!column.onClick">{{
+              row.cellData[column.name].value || column.icon
+            }}</mat-icon>
           </td>
         </ng-container>
         <ng-container
@@ -348,7 +345,7 @@
                     (mousedown)="onButtonClick(button.click, row.record)"
                     [disabled]="button.disabled"
                   >
-                    <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
+                    <mat-icon>{{ button.icon }}</mat-icon>
                   </button>
                   <button
                     *ngIf="button.style !== 'mat-icon-button'"
@@ -358,7 +355,7 @@
                     (mousedown)="onButtonClick(button.click, row.record)"
                     [disabled]="button.disabled"
                   >
-                    <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
+                    <mat-icon>{{ button.icon }}</mat-icon>
                   </button>
                 </ng-container>
               </span>

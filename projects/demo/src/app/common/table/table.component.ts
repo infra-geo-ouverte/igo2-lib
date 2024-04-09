@@ -43,7 +43,7 @@ export class AppTableComponent implements OnInit {
     ],
     actions: [
       {
-        icon: 'file-document',
+        icon: 'description',
         color: TableActionColor.primary,
         click: (row) => this.showName(row.name)
       }

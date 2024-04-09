@@ -9,7 +9,12 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityStore, PanelComponent, ToolComponent } from '@igo2/common';
+import {
+  EntityStore,
+  PanelComponent,
+  SELECTION_MARKER_ICON,
+  ToolComponent
+} from '@igo2/common';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {
@@ -62,7 +67,7 @@ import {
 @ToolComponent({
   name: 'spatialFilter',
   title: 'igo.integration.tools.spatialFilter',
-  icon: 'selection-marker'
+  icon: SELECTION_MARKER_ICON
 })
 /**
  * Spatial Filter Type

@@ -301,9 +301,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.value) {
-      return this.isVisible$.value ? '' : 'eye-off';
+      return this.isVisible$.value ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 

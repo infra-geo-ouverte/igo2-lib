@@ -21,7 +21,7 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: 'layers-plus'
+  icon: 'library_add'
 })
 @Component({
   selector: 'igo-catalog-library-tool',

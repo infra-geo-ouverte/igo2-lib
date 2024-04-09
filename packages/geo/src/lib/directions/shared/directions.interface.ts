@@ -1,6 +1,7 @@
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { SearchMeta } from '../../search';
 import { SearchSource } from '../../search/shared/sources/source';
 import {
   DirectionRelativePositionType,
@@ -60,15 +61,7 @@ export interface SourceProposal {
   type: ProposalType;
   source: SearchSource;
   results: { [key: string]: any }[];
-  meta: {
-    dataType: string;
-    id: string;
-    title: string;
-    titleHtml?: string;
-    icon: string;
-    score?: number;
-    nextPage?: boolean;
-  };
+  meta: SearchMeta;
 }
 
 export interface Direction {

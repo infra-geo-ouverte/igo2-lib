@@ -10,7 +10,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'shareMap',
   title: 'igo.integration.tools.shareMap',
-  icon: 'share-variant'
+  icon: 'share'
 })
 @Component({
   selector: 'igo-context-share-tool',
