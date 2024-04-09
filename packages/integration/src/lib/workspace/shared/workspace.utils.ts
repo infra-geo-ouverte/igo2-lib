@@ -8,13 +8,11 @@ import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
-  EditionWorkspace,
   ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
-  FeatureWorkspace,
+  LayerWorkspace,
   OgcFilterableDataSource,
-  WfsWorkspace,
   mapExtentStrategyActiveToolTip,
   noElementSelected
 } from '@igo2/geo';
@@ -26,10 +24,7 @@ import { BehaviorSubject, map } from 'rxjs';
 
 import { ToolState } from '../../tool';
 
-export function handleZoomAuto(
-  workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,
-  storageService
-) {
+export function handleZoomAuto(workspace: LayerWorkspace, storageService) {
   const zoomStrategy = workspace.entityStore.getStrategyOfType(
     FeatureStoreSelectionStrategy
   ) as FeatureStoreSelectionStrategy;
@@ -41,7 +36,7 @@ export function handleZoomAuto(
 }
 
 export function getWorkspaceActions(
-  workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,
+  workspace: LayerWorkspace,
   rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
   selectOnlyCheckCondition$: BehaviorSubject<boolean>,
   ogcFilterWidget: Widget,
@@ -92,21 +87,20 @@ export function getWorkspaceActions(
       icon: 'select-off',
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
-      handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
+      handler: (ws: LayerWorkspace) => {
         ws.entityStore.state.updateMany(ws.entityStore.view.all(), {
           selected: false
         });
       },
       args: [workspace],
-      availability: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) =>
-        noElementSelected(ws)
+      availability: (ws: LayerWorkspace) => noElementSelected(ws)
     },
     {
       id: 'featureDownload',
       icon: 'file-export',
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
-      handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
+      handler: (ws: LayerWorkspace) => {
         const filterStrategy = ws.entityStore.getStrategyOfType(
           EntityStoreFilterCustomFuncStrategy
         );
@@ -132,10 +126,7 @@ export function getWorkspaceActions(
       icon: 'filter',
       title: 'igo.integration.workspace.ogcFilter.title',
       tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
-      handler: (
-        widget: Widget,
-        ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace
-      ) => {
+      handler: (widget: Widget, ws: LayerWorkspace) => {
         ws.activateWidget(widget, {
           map: ws.map,
           layer: ws.layer
@@ -182,7 +173,7 @@ export function getWorkspaceActions(
       icon: 'printer',
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
-      handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
+      handler: (ws: LayerWorkspace) => {
         const title = `${ws.layer.title} (${dateTransform(
           new Date(),
           'YYYY-MM-DD-HH_mm'

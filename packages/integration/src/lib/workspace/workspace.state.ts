@@ -10,7 +10,12 @@ import {
   WorkspaceStore
 } from '@igo2/common';
 import { StorageService } from '@igo2/core/storage';
-import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
+import {
+  EditionWorkspace,
+  FeatureWorkspace,
+  NewEditionWorkspace,
+  WfsWorkspace
+} from '@igo2/geo';
 
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 
@@ -128,7 +133,10 @@ export class WorkspaceState implements OnDestroy {
                 this.rowsInMapExtentCheckCondition$,
                 this.selectOnlyCheckCondition$
               );
-            } else if (wks.entity instanceof EditionWorkspace) {
+            } else if (
+              wks.entity instanceof EditionWorkspace ||
+              wks.entity instanceof NewEditionWorkspace
+            ) {
               this.editionActionsService.loadActions(
                 wks.entity,
                 this.rowsInMapExtentCheckCondition$,
