@@ -1,3 +1,14 @@
+# [17.0.0-next.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.3...v17.0.0-next.4) (2024-03-13)
+
+
+### Bug Fixes
+
+* **auth:** include submodule scss ([8b40bcf](https://github.com/infra-geo-ouverte/igo2-lib/commit/8b40bcfaf6817c57ed8b8f6a9bef112423771ce3))
+* **context:** poi-button add PoiService provider ([7388ac4](https://github.com/infra-geo-ouverte/igo2-lib/commit/7388ac405c7c3226c602cba50c467cbb44f5aff2))
+* **context:** revert change causing duplicate list ([fd525c2](https://github.com/infra-geo-ouverte/igo2-lib/commit/fd525c22a9ae9456c9471e91d3b203d86fd2eb72))
+
+
+
 # [17.0.0-next.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/v17.0.0-next.2...v17.0.0-next.3) (2024-03-12)
 
 

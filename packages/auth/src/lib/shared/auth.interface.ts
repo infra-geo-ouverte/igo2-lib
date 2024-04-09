@@ -1,3 +1,5 @@
+import { Provider } from '@angular/core';
+
 import { BaseUser } from '@igo2/core/user';
 
 export interface User extends BaseUser {
@@ -39,4 +41,13 @@ export interface WithCredentialsOptions {
 
 export interface AuthInternOptions {
   enabled?: boolean;
+}
+
+export interface AuthFeature<KindT extends AuthFeatureKind> {
+  kind: KindT;
+  providers: Provider[];
+}
+
+export enum AuthFeatureKind {
+  Microsoft = 0
 }

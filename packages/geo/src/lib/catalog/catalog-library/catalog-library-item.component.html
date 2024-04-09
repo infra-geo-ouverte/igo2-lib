@@ -12,8 +12,8 @@
       [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
       color="primary"
       (click)="$event.stopPropagation()"
-      svgIcon="earth-arrow-right"
     >
+      public
     </mat-icon>
     <button
       *ngIf="catalog.removable"
@@ -24,7 +24,7 @@
       color="warn"
       (click)="removeCatalogFromLibrary($event)"
     >
-      <mat-icon svgIcon="delete"></mat-icon>
+      <mat-icon>delete</mat-icon>
     </button>
 
     <button
@@ -33,7 +33,7 @@
       disabled="true"
       mat-icon-button
     >
-      <mat-icon svgIcon="blank"></mat-icon>
+      <mat-icon></mat-icon>
     </button>
   </div>
 </mat-list-item>

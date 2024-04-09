@@ -1,10 +1,5 @@
 import { provideHttpClient, withJsonpSupport } from '@angular/common/http';
-import {
-  APP_INITIALIZER,
-  ApplicationRef,
-  enableProdMode,
-  importProvidersFrom
-} from '@angular/core';
+import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,9 +22,11 @@ import {
   withPreloading
 } from '@angular/router';
 
+import { provideAuthentification } from '@igo2/auth';
+import { provideIcon } from '@igo2/common';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfigOptions } from '@igo2/core/config';
-import { LanguageService } from '@igo2/core/language';
+import { provideRootTranslation } from '@igo2/core/language';
 import {
   IgoDirectionsModule,
   IgoGeoWorkspaceModule,
@@ -37,8 +34,6 @@ import {
   provideOsrmDirectionsSource,
   provideWorkspaceSearchSource
 } from '@igo2/geo';
-
-import { concatMap, first } from 'rxjs';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routing';
@@ -70,46 +65,21 @@ bootstrapApplication(AppComponent, {
       IgoDirectionsModule
     ),
     provideHttpClient(withJsonpSupport()),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideAnimations(),
     provideConfigOptions({
       default: environment.igo
     }),
-    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideRootTranslation(),
+    provideAuthentification(),
+    provideOsrmDirectionsSource(),
+    provideIChercheSearchSource(),
+    provideWorkspaceSearchSource(),
+    provideIcon(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' }
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializerFactory,
-      deps: [ApplicationRef, LanguageService],
-      multi: true
-    },
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
-    provideAnimations(),
-    provideOsrmDirectionsSource(),
-    provideIChercheSearchSource(),
-    provideWorkspaceSearchSource()
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions }
   ]
 }).catch((err) => console.log(err));
-
-export function appInitializerFactory(
-  applicationRef: ApplicationRef,
-  languageService: LanguageService
-) {
-  return () =>
-    new Promise<any>((resolve: any) => {
-      applicationRef.isStable
-        .pipe(
-          first((isStable) => isStable === true),
-          concatMap(() => {
-            const lang = languageService.getLanguage();
-            return languageService.translate.getTranslation(lang);
-          })
-        )
-        .subscribe((translations) => {
-          const lang = languageService.getLanguage();
-          languageService.translate.setTranslation(lang, translations);
-          resolve();
-        });
-    });
-}

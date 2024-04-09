@@ -97,24 +97,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  @Input()
-  get selectedContext(): DetailedContext {
-    return this._selectedContext;
-  }
-  set selectedContext(value: DetailedContext) {
-    this._selectedContext = value;
-    this.cdRef.detectChanges();
-  }
-  private _selectedContext: DetailedContext;
+  @Input() selectedContext: DetailedContext;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Input()
   get defaultContextId(): string {
@@ -221,7 +206,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContext'
         ),
-        icon: 'map-outline',
+        icon: 'star',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContextTooltip'
         ),
@@ -234,7 +219,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.contextMap'
         ),
-        icon: 'map-check',
+        icon: 'map',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.contextMapTooltip'
         ),
@@ -379,8 +364,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .toLowerCase();
   }
 
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
+  toggleSort() {
+    this.sortedAlpha = !this.sortedAlpha;
   }
 
   clearFilter() {

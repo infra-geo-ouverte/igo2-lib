@@ -13,8 +13,8 @@ import { sliceOlGeometry } from '../geometry.utils';
 import { DrawControl } from './draw';
 
 export interface SliceControlOptions {
-  source?: OlVectorSource<OlGeometry>;
-  layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  source?: OlVectorSource;
+  layer?: OlVectorLayer<OlVectorSource>;
   layerStyle?: OlStyleLike;
   drawStyle?: OlStyleLike;
 }
@@ -34,7 +34,7 @@ export class SliceControl {
   public error$: Subject<GeometrySliceError> = new Subject();
 
   private olMap: OlMap;
-  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olOverlayLayer: OlVectorLayer<OlVectorSource>;
 
   /**
    * Draw line control
@@ -62,7 +62,7 @@ export class SliceControl {
    * OL overlay source
    * @internal
    */
-  get olOverlaySource(): OlVectorSource<OlGeometry> {
+  get olOverlaySource(): OlVectorSource {
     return this.olOverlayLayer.getSource();
   }
 
@@ -95,7 +95,7 @@ export class SliceControl {
   /**
    * Return the overlay source
    */
-  getSource(): OlVectorSource<OlGeometry> {
+  getSource(): OlVectorSource {
     return this.olOverlaySource;
   }
 
@@ -112,9 +112,7 @@ export class SliceControl {
   /**
    * Create an overlay source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<
-    OlVectorSource<OlGeometry>
-  > {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource> {
     return new OlVectorLayer({
       source: this.options.source ? this.options.source : new OlVectorSource(),
       style: this.options.layerStyle,

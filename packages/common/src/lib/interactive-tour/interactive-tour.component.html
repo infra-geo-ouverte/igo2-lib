@@ -15,7 +15,7 @@
     "
     [disabled]="disabledTourButton"
   >
-    <mat-icon iconPositionEnd svgIcon="presentation-play"> </mat-icon>
+    <mat-icon iconPositionEnd>help_center</mat-icon>
   </button>
 
   <ng-template #raisedButton>
@@ -32,14 +32,13 @@
       {{ discoverTitleInLocale$ | async | translate }}
       <mat-icon
         iconPositionEnd
-        svgIcon="presentation-play"
         [matTooltip]="
           disabledTourButton
             ? ('igo.common.interactiveTour.disaledTooltipTourToolButton'
               | translate)
             : ('igo.common.interactiveTour.tooltipTourToolButton' | translate)
         "
-      >
+        >help_center
       </mat-icon>
     </button>
   </ng-template>

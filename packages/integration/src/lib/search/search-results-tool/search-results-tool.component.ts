@@ -67,7 +67,7 @@ import { SearchState } from '../search.state';
 @ToolComponent({
   name: 'searchResults',
   title: 'igo.integration.tools.searchResults',
-  icon: 'magnify'
+  icon: 'search'
 })
 @Component({
   selector: 'igo-search-results-tool',
