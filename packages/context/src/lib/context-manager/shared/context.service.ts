@@ -576,6 +576,7 @@ export class ContextService {
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
         }
+        delete layerFound.source;
         const opts: AnyLayerOptions = {
           ...layerFound,
           title: layer.options.title,
