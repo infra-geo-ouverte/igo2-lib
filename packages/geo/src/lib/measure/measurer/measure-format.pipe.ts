@@ -12,7 +12,8 @@ import {
  * to the specified unit. It also keeps a certain number of decimals.
  */
 @Pipe({
-  name: 'measureFormat'
+  name: 'measureFormat',
+  standalone: true
 })
 export class MeasureFormatPipe implements PipeTransform {
   /**

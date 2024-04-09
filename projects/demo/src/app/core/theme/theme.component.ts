@@ -1,13 +1,28 @@
+import { NgFor } from '@angular/common';
 import { Component, Renderer2 } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 import { loadTheme } from '@igo2/utils';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-theme',
   templateUrl: './theme.component.html',
-  styleUrls: ['./theme.component.scss']
+  styleUrls: ['./theme.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule
+  ]
 })
 export class AppThemeComponent {
   isDark: boolean;

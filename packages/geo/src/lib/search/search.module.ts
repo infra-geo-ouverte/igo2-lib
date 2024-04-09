@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { IgoSearchBarModule } from './search-bar/search-bar.module';
@@ -14,11 +13,11 @@ import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.prov
 
 @NgModule({
   imports: [
-    CommonModule,
     IgoSearchBarModule,
     IgoSearchSelectorModule,
     IgoSearchResultsModule,
-    IgoSearchSettingsModule
+    IgoSearchSettingsModule,
+    SearchPointerSummaryDirective
   ],
   exports: [
     IgoSearchBarModule,
@@ -26,8 +25,7 @@ import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.prov
     IgoSearchResultsModule,
     IgoSearchSettingsModule,
     SearchPointerSummaryDirective
-  ],
-  declarations: [SearchPointerSummaryDirective]
+  ]
 })
 export class IgoSearchModule {
   static forRoot(): ModuleWithProviders<IgoSearchModule> {

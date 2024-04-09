@@ -5,6 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,19 +17,33 @@ import {
   ViewChild
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup
 } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   EntityRecord,
   EntityTableButton,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';
@@ -45,6 +60,7 @@ import OlVectorSource from 'ol/source/Vector';
 import { getDistance, getLength } from 'ol/sphere';
 import * as OlStyle from 'ol/style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first, skip } from 'rxjs/operators';
 
@@ -110,7 +126,28 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   ],
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    EntityTableComponent,
+    MatBadgeModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
   /**

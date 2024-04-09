@@ -7,15 +7,29 @@ import {
   IgoMap,
   LayerOptions,
   LayerService,
+  MapBrowserComponent,
   MapViewOptions,
+  MeasurerComponent,
   OSMDataSource,
-  OSMDataSourceOptions
+  OSMDataSourceOptions,
+  ZoomButtonComponent
 } from '@igo2/geo';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-measure',
   templateUrl: './measure.component.html',
-  styleUrls: ['./measure.component.scss']
+  styleUrls: ['./measure.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    MeasurerComponent
+  ]
 })
 export class AppMeasureComponent {
   public map: IgoMap = new IgoMap({
@@ -33,7 +47,9 @@ export class AppMeasureComponent {
     projection: 'EPSG:3857'
   };
 
-  public store: FeatureStore = new FeatureStore<FeatureWithMeasure>([], { map: this.map });
+  public store: FeatureStore = new FeatureStore<FeatureWithMeasure>([], {
+    map: this.map
+  });
 
   constructor(
     private dataSourceService: DataSourceService,

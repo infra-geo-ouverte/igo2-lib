@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,8 +6,14 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { getEntityTitle } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
@@ -18,7 +25,16 @@ import { Catalog } from '../shared/catalog.abstract';
   selector: 'igo-catalog-library-item',
   templateUrl: './catalog-library-item.component.html',
   styleUrls: ['./catalog-library-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class CatalogLibaryItemComponent {
   /**

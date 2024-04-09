@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
+import { PanelComponent } from '@igo2/common';
 import {
   DataSourceService,
+  FILTER_DIRECTIVES,
   IgoMap,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -14,10 +18,22 @@ import {
   TimeFilterableDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-time-filter',
   templateUrl: './time-filter.component.html',
-  styleUrls: ['./time-filter.component.scss']
+  styleUrls: ['./time-filter.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    FILTER_DIRECTIVES
+  ]
 })
 export class AppTimeFilterComponent {
   public map: IgoMap = new IgoMap({

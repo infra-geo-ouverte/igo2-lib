@@ -1,4 +1,6 @@
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import { SearchSource } from './source';
 import { WorkspaceSearchSource } from './workspace';

@@ -1,12 +1,25 @@
+import { AsyncPipe, NgClass, NgIf, NgStyle } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { CollapseDirective } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
+import { OgcFilterableFormComponent } from '../ogc-filterable-form/ogc-filterable-form.component';
 import { OgcFilterWriter } from '../shared/ogc-filter';
 import {
   OgcFilterableDataSource,
@@ -18,7 +31,26 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
 @Component({
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
-  styleUrls: ['./ogc-filterable-item.component.scss']
+  styleUrls: ['./ogc-filterable-item.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    CollapseDirective,
+    NgStyle,
+    MatTooltipModule,
+    MatButtonModule,
+    LayerLegendComponent,
+    OgcFilterableFormComponent,
+    MatDividerModule,
+    MatCheckboxModule,
+    FormsModule,
+    AsyncPipe,
+    TranslateModule
+  ],
+  providers: [OGCFilterService]
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
@@ -35,7 +67,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
 
   @Input() layer: Layer;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() header: boolean = true;
 

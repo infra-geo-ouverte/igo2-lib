@@ -1,12 +1,12 @@
-import { DatePipe } from '@angular/common';
-
 import {
   Action,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
   Widget
 } from '@igo2/common';
-import { LanguageService, MediaService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
   ExportOptions,
@@ -18,6 +18,7 @@ import {
   mapExtentStrategyActiveToolTip,
   noElementSelected
 } from '@igo2/geo';
+import { dateTransform } from '@igo2/utils';
 
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -50,7 +51,6 @@ export function getWorkspaceActions(
   languageService: LanguageService,
   mediaService: MediaService,
   toolState: ToolState,
-  datePipe: DatePipe,
   interactiveSelectionFormWidget?: Widget
 ): Action[] {
   const actions = [
@@ -197,9 +197,9 @@ export function getWorkspaceActions(
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
-        const title = `${ws.layer.title} (${datePipe.transform(
-          Date.now(),
-          'YYYY-MM-dd-H_mm'
+        const title = `${ws.layer.title} (${dateTransform(
+          new Date(),
+          'YYYY-MM-DD-HH_mm'
         )})`;
         const doc: any = new jsPDF.default('landscape');
         const totalPagesExp = '{total_pages_count_string}';

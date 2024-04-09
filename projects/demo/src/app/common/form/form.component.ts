@@ -1,27 +1,49 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
-import { Form, FormField, FormFieldConfig, FormService } from '@igo2/common';
+import {
+  Form,
+  FormComponent,
+  FormField,
+  FormFieldConfig,
+  FormGroupComponent,
+  FormService
+} from '@igo2/common';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss']
+  styleUrls: ['./form.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    NgIf,
+    FormComponent,
+    FormGroupComponent,
+    MatButtonModule,
+    AsyncPipe
+  ]
 })
 export class AppFormComponent implements OnInit, OnDestroy {
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
-  data$: BehaviorSubject<object> = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$: BehaviorSubject<object> = new BehaviorSubject<{ [key: string]: any }>(
+    undefined
+  );
 
   submitDisabled = true;
 
   private valueChanges$$: Subscription;
 
-  constructor(
-    private formService: FormService
-  ) {}
+  constructor(private formService: FormService) {}
 
   ngOnInit() {
     const fieldConfigs: FormFieldConfig[] = [
@@ -57,7 +79,9 @@ export class AppFormComponent implements OnInit, OnDestroy {
       }
     ];
 
-    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) => this.formService.field(config));
+    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) =>
+      this.formService.field(config)
+    );
     const form: Form = this.formService.form(
       [],
       [this.formService.group({ name: 'info' }, fields)]

@@ -1,15 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FormComponent } from './form.component';
 
 /**
- * @ignore
+ * @deprecated import the FormComponent directly
  */
 @NgModule({
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [FormComponent, FormsModule, ReactiveFormsModule],
-  declarations: [FormComponent]
+  imports: [FormComponent],
+  exports: [FormComponent]
 })
 export class IgoFormFormModule {}

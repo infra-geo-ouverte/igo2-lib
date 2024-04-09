@@ -4,13 +4,13 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
+import { IgoActivityModule } from '@igo2/core/activity';
+import { IgoConfigModule } from '@igo2/core/config';
+import { IgoLanguageModule, provideRootTranslation } from '@igo2/core/language';
+import { IgoMessageModule } from '@igo2/core/message';
+import { IgoErrorModule } from '@igo2/core/request';
 
-import { IgoActivityModule } from './activity/activity.module';
-import { IgoConfigModule } from './config/config.module';
-import { IgoLanguageModule } from './language/language.module';
-import { IgoMessageModule } from './message/message.module';
-import { IgoErrorModule } from './request/error.module';
+import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
 
 const dbConfig: DBConfig = {
   name: 'igo2DB',
@@ -48,10 +48,10 @@ const dbConfig: DBConfig = {
     IgoActivityModule.forRoot(),
     IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
-    IgoLanguageModule.forRoot(),
-    IgoMessageModule.forRoot(),
+    IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
+  providers: [provideRootTranslation()],
   declarations: [],
   exports: [
     IgoActivityModule,

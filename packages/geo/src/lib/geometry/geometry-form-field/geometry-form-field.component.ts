@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,17 +7,27 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 import { IgoFormFieldComponent } from '@igo2/common';
 
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
+import { GeometryFormFieldInputComponent } from './geometry-form-field-input.component';
 
 /**
  * This input allows a user to draw a new geometry or to edit
@@ -27,7 +38,20 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
   selector: 'igo-geometry-form-field',
   templateUrl: './geometry-form-field.component.html',
   styleUrls: ['./geometry-form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(

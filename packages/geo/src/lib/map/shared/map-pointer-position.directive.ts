@@ -8,7 +8,7 @@ import {
   Self
 } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
@@ -23,7 +23,8 @@ import { IgoMap } from '../../map/shared/map';
  * to avoid too many emitted values.
  */
 @Directive({
-  selector: '[igoPointerPosition]'
+  selector: '[igoPointerPosition]',
+  standalone: true
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
   private lastTimeoutRequest;

@@ -1,16 +1,33 @@
 import { JsonPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
-import { AnyMonitoringOptions, MONITORING_OPTIONS } from '@igo2/core';
+import { provideAuthUserMonitoring } from '@igo2/auth/monitoring';
+import {
+  AnyMonitoringOptions,
+  MONITORING_OPTIONS,
+  provideMonitoring
+} from '@igo2/core/monitoring';
+
+import { environment } from 'projects/demo/src/environments/environment';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-monitoring',
   templateUrl: './monitoring.component.html',
   styleUrls: ['./monitoring.component.scss'],
-  providers: [JsonPipe]
+  providers: [
+    JsonPipe,
+    ...provideMonitoring(environment.igo.monitoring),
+    ...provideAuthUserMonitoring(environment.igo.monitoring)
+  ],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
-export class MonitoringComponent {
-  exampleModuleCode: string = EXAMPLE_MODULE_PROVIDER;
+export class AppMonitoringComponent {
+  exampleProviderCode: string = EXAMPLE_PROVIDER;
   constructor(
     @Inject(MONITORING_OPTIONS)
     public options: AnyMonitoringOptions | null,
@@ -28,12 +45,10 @@ export class MonitoringComponent {
       2
     )}}}`;
     return this.json.transform(JSON.parse(codeExample));
-  };
+  }
 }
 
-const EXAMPLE_MODULE_PROVIDER = `@NgModule({
-  declarations: [...],
-  imports: [...],
+const EXAMPLE_PROVIDER = `bootstrapApplication(AppComponent, {
   providers: [
     ...provideMonitoring(environment.igo.monitoring),
 

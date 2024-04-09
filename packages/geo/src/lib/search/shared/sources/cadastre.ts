@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';
@@ -65,9 +66,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    term = term.replace(/ /g, '');
+    term = term.replace(/,+/g, ',');
     term = term.endsWith(',') ? term.slice(0, -1) : term;
     term = term.startsWith(',') ? term.substr(1) : term;
-    term = term.replace(/ /g, '');
 
     const params = this.computeSearchRequestParams(term, options || {});
     if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {

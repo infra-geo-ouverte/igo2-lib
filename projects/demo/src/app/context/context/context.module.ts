@@ -12,16 +12,13 @@ import {
   IgoQueryModule
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
 import { AppContextRoutingModule } from './context-routing.module';
 import { AppContextComponent } from './context.component';
 
 @NgModule({
-  declarations: [AppContextComponent],
   imports: [
     HttpClientJsonpModule,
     AppContextRoutingModule,
-    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoLayerModule,
@@ -29,7 +26,8 @@ import { AppContextComponent } from './context.component';
     IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
-    IgoContextModule
+    IgoContextModule,
+    AppContextComponent
   ],
   exports: [AppContextComponent]
 })
