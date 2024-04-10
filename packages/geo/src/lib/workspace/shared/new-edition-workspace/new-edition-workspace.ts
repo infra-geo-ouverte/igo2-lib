@@ -59,6 +59,7 @@ export abstract class NewEditionWorkspace extends Workspace {
   ) {
     // TODO Add support for geometry edition
     // TODO freeze entity table on move when editing
+    // TODO implement domainValues
     super(options);
   }
 
@@ -117,11 +118,6 @@ export abstract class NewEditionWorkspace extends Workspace {
       case EditionType.UPDATE:
         return this.cancelUpdate(feature, fromSave);
     }
-  }
-
-  getPrimaryPropertyName() {
-    // TODO add to template
-    throw Error('Not yet implemented');
   }
 
   private cancelCreation(feature: EditionFeature) {

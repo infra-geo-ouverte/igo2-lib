@@ -51,7 +51,7 @@ export class EditionWorkspaceFactoryService {
       }
     });
 
-    this.tableTemplateFactory.createWFSTemplate(workspace, layer);
+    this.tableTemplateFactory.addTemplateToWorkspace(workspace, layer);
     layer.options.workspace = Object.assign({}, layer.options.workspace, {
       srcId: layer.id,
       workspaceId: layer.id,

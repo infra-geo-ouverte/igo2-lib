@@ -5,14 +5,39 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { first, skipWhile } from 'rxjs';
 
+import {
+  RelationOptions,
+  SourceFieldsOptionsParams
+} from '../../../datasource';
 import { Feature } from '../../../feature/shared';
 import { VectorLayer } from '../../../layer/shared';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
 export class EditionWorkspaceTableTemplateFactory {
-  createWFSTemplate(workspace: NewEditionWorkspace, layer: VectorLayer) {
-    const buttons = this.createButtonTemplate(workspace, layer);
-    // TODO add all validation from EditionWorkspaceService
+  addTemplateToWorkspace(workspace: NewEditionWorkspace, layer: VectorLayer) {
+    const buttons = this.getButtonTemplate(workspace, layer);
+
+    const fields = layer.dataSource.options.sourceFields;
+    if (!fields) {
+      return this.createEmptySourceFieldTemplate(workspace);
+    }
+
+    const sourceFieldsColumns = this.getSourceFieldsTemplate(fields);
+
+    const relations = layer.dataSource.options.relations ?? [];
+    const relationsColumns = this.getRelationsTemplate(relations);
+
+    const columns: unknown[] = sourceFieldsColumns;
+    columns.push(...relationsColumns);
+    columns.push(...buttons);
+    workspace.meta.tableTemplate = {
+      selection: false,
+      sort: true,
+      columns
+    };
+  }
+
+  private createEmptySourceFieldTemplate(workspace: NewEditionWorkspace) {
     workspace.entityStore.entities$
       .pipe(
         skipWhile((val) => val.length === 0),
@@ -33,22 +58,72 @@ export class EditionWorkspaceTableTemplateFactory {
             return {
               name: `properties.${key}`,
               title: key,
-              renderer: EntityTableColumnRenderer.UnsanitizedHTML,
-              primary: key === 'id' // TODO use workspace.getPrimaryPropName
+              renderer: EntityTableColumnRenderer.UnsanitizedHTML
             };
           });
-
-        const columns = columnsFromFeatures;
-        columns.push(...buttons);
         workspace.meta.tableTemplate = {
           selection: false,
           sort: true,
-          columns
+          columns: columnsFromFeatures
         };
       });
   }
 
-  private createButtonTemplate(
+  private getRelationsTemplate(relations: RelationOptions[]) {
+    return relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        tooltip: relation.tooltip,
+        onClick: () => {
+          throw Error('Not yet implemented');
+          // if (this.adding$.getValue() === false) {
+          //   this.ws$.next(relation.title);
+          // }
+        },
+        cellClassFunc: () => {
+          return { class_icon: true };
+        }
+      };
+    });
+  }
+
+  private getSourceFieldsTemplate(fields: SourceFieldsOptionsParams[]) {
+    // TODO implement domainValues
+    //  if (field.type === 'list' || field.type === 'autocomplete') {
+
+    return fields.map((field) => {
+      return {
+        name: `properties.${field.name}`,
+        title: field.alias ? field.alias : field.name,
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
+        valueAccessor: undefined,
+        cellClassFunc: () => {
+          const cellClass = {};
+          if (field.type) {
+            cellClass[`class_${field.type}`] = true;
+            return cellClass;
+          }
+        },
+        primary: field.primary === true ? true : false,
+        visible: field.visible,
+        validation: field.validation,
+        linkColumnForce: field.linkColumnForce,
+        type: field.type,
+        domainValues: undefined,
+        relation: undefined,
+        multiple: field.multiple,
+        step: field.step,
+        tooltip: field.tooltip
+      };
+    });
+  }
+
+  private getButtonTemplate(
     workspace: NewEditionWorkspace,
     layer: VectorLayer
   ) {
