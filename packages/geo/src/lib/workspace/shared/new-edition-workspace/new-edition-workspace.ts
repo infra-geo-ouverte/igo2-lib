@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Workspace, WorkspaceOptions } from '@igo2/common';
 
+import { BehaviorSubject, map } from 'rxjs';
+
 import { ImageLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 
@@ -12,7 +14,6 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 
 export abstract class NewEditionWorkspace extends Workspace {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
-
   private isLoadingVal = false;
   get isLoading() {
     return this.isLoadingVal;
@@ -26,11 +27,21 @@ export abstract class NewEditionWorkspace extends Workspace {
     return this.options.map;
   }
 
+  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
+    true
+  );
+
   constructor(
     private http: HttpClient,
     protected options: EditionWorkspaceOptions
   ) {
     super(options);
+    this.map.viewController.resolution$.subscribe((mapResolution) => {
+      this.inResolutionRange$.next(
+        mapResolution > this.layer.minResolution &&
+          mapResolution < this.layer.maxResolution
+      );
+    });
   }
 
   createFeature(feature: Object) {
