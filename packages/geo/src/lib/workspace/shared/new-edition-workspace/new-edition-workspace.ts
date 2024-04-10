@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
 
@@ -9,6 +9,7 @@ import { IgoMap } from '../../../map/shared/map';
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
   map: IgoMap;
+  editionUrl: string;
 }
 
 export interface EditionFeature extends Feature {
@@ -60,17 +61,14 @@ export abstract class NewEditionWorkspace extends Workspace {
     // TODO Add support for geometry edition
     // TODO freeze entity table on move when editing
     // TODO implement domainValues
+    // TODO NEXT implement messages
     super(options);
   }
 
   private edition?: CurrentEdition = undefined;
 
-  abstract getUpdateBody(): Object;
-  abstract getCreateBody(): Object;
-
-  createFeature(feature: Feature) {
-    throw Error('Not yet implemented');
-  }
+  abstract getUpdateBody(feature: EditionFeature): Object;
+  abstract getCreateBody(feature: EditionFeature): Object;
 
   editFeature(feature: EditionFeature) {
     // TODO Domain values
@@ -96,16 +94,19 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   saveFeature(feature: EditionFeature) {
-    throw Error('Not yet implemented');
+    const { type } = this.edition;
+    switch (type) {
+      case EditionType.CREATION:
+        return this.createFeature(feature);
+      case EditionType.UPDATE:
+        return this.updateFeature(feature);
+    }
   }
 
-  cancelEdit(feature: EditionFeature, fromSave = false) {
+  cancelEdit(feature: EditionFeature) {
     if (!this.edition) {
       throw Error("Can't cancel: not editing any feature");
     }
-
-    feature.edition = false;
-    this.entityStore.stateView.clear();
 
     // TODO check following
     // this.adding$.next(false);
@@ -114,10 +115,52 @@ export abstract class NewEditionWorkspace extends Workspace {
     const { type } = this.edition;
     switch (type) {
       case EditionType.CREATION:
-        return this.cancelCreation(feature);
+        this.cancelCreation(feature);
+        break;
       case EditionType.UPDATE:
-        return this.cancelUpdate(feature, fromSave);
+        this.cancelUpdate(feature);
+        break;
     }
+
+    this.closeEdition(feature);
+  }
+
+  private closeEdition(feature: EditionFeature) {
+    feature.edition = false;
+    this.entityStore.stateView.clear();
+    this.edition = undefined;
+  }
+
+  private createFeature(feature: EditionFeature) {
+    throw Error('Not yet implemented');
+  }
+
+  private updateFeature(feature: EditionFeature) {
+    console.log('update feature');
+    const editionOptions = this.layer.dataSource.options.edition;
+    const { modifyUrl, modifyMethod, modifyHeaders } = editionOptions;
+
+    const modifyFeatUrl =
+      modifyMethod !== 'post'
+        ? modifyUrl + this.getFeatureId(feature)
+        : modifyUrl;
+
+    const url = new URL(modifyFeatUrl, this.options.editionUrl).href;
+
+    const headers = new HttpHeaders(modifyHeaders);
+
+    this.isLoadingVal = true;
+    this.http[modifyMethod ?? 'patch'](url, this.getUpdateBody(feature), {
+      headers: headers
+    }).subscribe(
+      () => {
+        this.isLoadingVal = false;
+        this.closeEdition(feature);
+      },
+      () => {
+        this.isLoadingVal = false;
+      }
+    );
   }
 
   private cancelCreation(feature: EditionFeature) {
@@ -127,16 +170,15 @@ export abstract class NewEditionWorkspace extends Workspace {
     throw Error('Not implemented yet');
   }
 
-  private cancelUpdate(feature: EditionFeature, fromSave) {
+  private cancelUpdate(feature: EditionFeature) {
     if (this.edition.type !== EditionType.UPDATE) {
       throw Error("Can't cancel update current edition is not update");
     }
 
     const { featureData } = this.edition;
-    if (!fromSave) {
-      feature.properties = featureData.properties;
-      feature.geometry = featureData.geometry;
-    }
+
+    feature.properties = featureData.properties;
+    feature.geometry = featureData.geometry;
 
     this.edition = undefined;
   }

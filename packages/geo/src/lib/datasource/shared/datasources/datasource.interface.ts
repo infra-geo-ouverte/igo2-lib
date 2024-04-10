@@ -82,7 +82,7 @@ export interface EditionOptions {
   messages?: any[];
   addHeaders?: { [key: string]: any };
   modifyHeaders?: { [key: string]: any };
-  modifyProtocol?: string;
+  modifyMethod?: string;
   addButton?: boolean;
   modifyButton?: boolean;
   deleteButton?: boolean;

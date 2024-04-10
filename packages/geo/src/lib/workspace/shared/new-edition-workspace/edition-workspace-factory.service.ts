@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
@@ -13,7 +14,11 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy
 } from '../../../feature/shared';
-import { GeoWorkspaceOptions, VectorLayer } from '../../../layer/shared';
+import {
+  GeoWorkspaceOptions,
+  ImageLayer,
+  VectorLayer
+} from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared';
 import { createFilterInMapExtentOrResolutionStrategy } from '../workspace.utils';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
@@ -31,8 +36,9 @@ export class EditionWorkspaceFactoryService {
   private tableTemplateFactory = new EditionWorkspaceTableTemplateFactory();
 
   constructor(
+    private http: HttpClient,
     private storageService: StorageService,
-    private http: HttpClient
+    private configService: ConfigService
   ) {}
 
   createWFSEditionWorkspace(
@@ -44,6 +50,7 @@ export class EditionWorkspaceFactoryService {
       title: layer.title,
       layer,
       map,
+      editionUrl: this.getEditionUrl(layer),
       entityStore: this.createFeatureStore(layer, map),
       actionStore: new ActionStore([]),
       meta: {
@@ -90,5 +97,11 @@ export class EditionWorkspaceFactoryService {
     store.addStrategy(selectedRecordStrategy, false);
     store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
+  }
+
+  private getEditionUrl(layer: VectorLayer | ImageLayer): string {
+    const editionUrl = layer.dataSource.options.edition.baseUrl;
+    const baseUrl = this.configService.getConfig('edition.url');
+    return !baseUrl ? editionUrl : new URL(editionUrl, baseUrl).href;
   }
 }
