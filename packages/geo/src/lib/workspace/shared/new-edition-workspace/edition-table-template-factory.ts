@@ -34,7 +34,7 @@ export class EditionWorkspaceTableTemplateFactory {
               name: `properties.${key}`,
               title: key,
               renderer: EntityTableColumnRenderer.UnsanitizedHTML,
-              primary: key === 'id'
+              primary: key === 'id' // TODO use workspace.getPrimaryPropName
             };
           });
 

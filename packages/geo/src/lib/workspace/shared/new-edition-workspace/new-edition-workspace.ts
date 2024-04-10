@@ -98,8 +98,51 @@ export abstract class NewEditionWorkspace extends Workspace {
     throw Error('Not yet implemented');
   }
 
-  cancelEdit(feature: EditionFeature) {
+  cancelEdit(feature: EditionFeature, fromSave = false) {
+    if (!this.edition) {
+      throw Error("Can't cancel: not editing any feature");
+    }
+
+    feature.edition = false;
+    this.entityStore.stateView.clear();
+
+    // TODO check following
+    // this.adding$.next(false);
+    // workspace.deleteDrawings();
+
+    const { type } = this.edition;
+    switch (type) {
+      case EditionType.CREATION:
+        return this.cancelCreation(feature);
+      case EditionType.UPDATE:
+        return this.cancelUpdate(feature, fromSave);
+    }
+  }
+
+  getPrimaryPropertyName() {
+    // TODO add to template
     throw Error('Not yet implemented');
+  }
+
+  private cancelCreation(feature: EditionFeature) {
+    if (this.edition.type !== EditionType.CREATION) {
+      throw Error("Can't cancel creation current edition is not creation");
+    }
+    throw Error('Not implemented yet');
+  }
+
+  private cancelUpdate(feature: EditionFeature, fromSave) {
+    if (this.edition.type !== EditionType.UPDATE) {
+      throw Error("Can't cancel update current edition is not update");
+    }
+
+    const { featureData } = this.edition;
+    if (!fromSave) {
+      feature.properties = featureData.properties;
+      feature.geometry = featureData.geometry;
+    }
+
+    this.edition = undefined;
   }
 
   private focusEditedFeature(feature: EditionFeature) {
