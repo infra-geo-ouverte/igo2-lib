@@ -1,3 +1,12 @@
+## [1.14.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.2...1.14.3) (2024-04-10)
+
+
+### Features
+
+* **linked-layers:** Added new config for visibility in Base Layer Switcher ([#1560](https://github.com/infra-geo-ouverte/igo2-lib/issues/1560)) ([8d7a15f](https://github.com/infra-geo-ouverte/igo2-lib/commit/8d7a15f39b3a4a6799a68a6ce6615dcdcaff1f51))
+
+
+
 ## [1.14.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.1...1.14.2) (2023-03-15)
 
 
