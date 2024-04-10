@@ -7,7 +7,7 @@ import { first, skipWhile } from 'rxjs';
 
 import { Feature } from '../../../feature/shared';
 import { VectorLayer } from '../../../layer/shared';
-import { NewEditionWorkspace } from './new-edition-workspace';
+import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
 export class EditionWorkspaceTableTemplateFactory {
   createWFSTemplate(workspace: NewEditionWorkspace, layer: VectorLayer) {
@@ -68,7 +68,7 @@ export class EditionWorkspaceTableTemplateFactory {
                 layer.dataSource.options.edition.modifyButton === false
                   ? true
                   : false,
-              click: (feature) => {
+              click: (feature: EditionFeature) => {
                 workspace.editFeature(feature);
               }
             },
@@ -80,7 +80,7 @@ export class EditionWorkspaceTableTemplateFactory {
                 layer.dataSource.options.edition.deleteButton === false
                   ? true
                   : false,
-              click: (feature) => {
+              click: (feature: EditionFeature) => {
                 workspace.deleteFeature(feature);
               }
             },
@@ -89,7 +89,7 @@ export class EditionWorkspaceTableTemplateFactory {
               icon: 'check',
               color: 'primary',
               disabled: workspace.isLoading,
-              click: (feature) => {
+              click: (feature: EditionFeature) => {
                 workspace.saveFeature(feature);
               }
             },
@@ -98,7 +98,7 @@ export class EditionWorkspaceTableTemplateFactory {
               icon: 'alpha-x',
               color: 'primary',
               disabled: workspace.isLoading,
-              click: (feature) => {
+              click: (feature: EditionFeature) => {
                 workspace.cancelEdit(feature);
               }
             }
