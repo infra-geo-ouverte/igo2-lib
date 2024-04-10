@@ -27,21 +27,15 @@ export abstract class NewEditionWorkspace extends Workspace {
     return this.options.map;
   }
 
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  get inResolutionRange$() {
+    return this.layer.isInResolutionsRange$;
+  }
 
   constructor(
     private http: HttpClient,
     protected options: EditionWorkspaceOptions
   ) {
     super(options);
-    this.map.viewController.resolution$.subscribe((mapResolution) => {
-      this.inResolutionRange$.next(
-        mapResolution > this.layer.minResolution &&
-          mapResolution < this.layer.maxResolution
-      );
-    });
   }
 
   createFeature(feature: Object) {
