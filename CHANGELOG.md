@@ -1,9 +1,10 @@
-## [1.15.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.2...1.15.4) (2023-07-05)
+## [1.15.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.2...1.15.5) (2024-04-11)
 
 
-### Reverts
+### Features
 
-* Revert "chore(searchSource): deletion of cadastre search source (#1152)" ([2e073d7](https://github.com/infra-geo-ouverte/igo2-lib/commit/2e073d71890d3b8aea68f84129f4600b9652d158)), closes [#1152](https://github.com/infra-geo-ouverte/igo2-lib/issues/1152)
+* **linked-layers:** Added new config for visibility in Base Layer Switcher ([#1560](https://github.com/infra-geo-ouverte/igo2-lib/issues/1560)) ([18461f6](https://github.com/infra-geo-ouverte/igo2-lib/commit/18461f6322449f74eab9c2a6e2c332277b180856))
+* **workspace:** can now detect geoservice properties (wms...) to add/remove layer from workspace ([3409bdf](https://github.com/infra-geo-ouverte/igo2-lib/commit/3409bdf869e7b5c1c497fbc5e9131c6609de2b75))
 
 
 
