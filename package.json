@@ -64,7 +64,6 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog-current": "conventional-changelog -p angular -r 2",
     "publish": "gulp prepublishOnly && npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/context && npm publish ./dist/integration",
-    "preversion": "npm run test.all",
     "preversion.linux": "npm run test.all",
     "version": "gulp bumpVersion && rimraf ./dist && npm run build.all && npm run changelog && git add -u",
     "version.linux": "gulp bumpVersion && rimraf ./dist && npm run build.all && npm run changelog && git add -u",
