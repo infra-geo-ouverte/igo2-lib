@@ -5,7 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { LAYER_PLUS_ICON, ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
@@ -21,7 +21,7 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: 'library_add'
+  icon: LAYER_PLUS_ICON
 })
 @Component({
   selector: 'igo-catalog-library-tool',
