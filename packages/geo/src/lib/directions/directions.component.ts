@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { EntityStoreWatcher } from '@igo2/common';
+import { EntityStoreWatcher } from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';

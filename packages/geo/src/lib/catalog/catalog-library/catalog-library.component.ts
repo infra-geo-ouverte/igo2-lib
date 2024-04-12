@@ -13,13 +13,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityStore,
-  IconService,
-  LAYER_PLUS_ICON,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { IconService, LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageScope, StorageService } from '@igo2/core/storage';

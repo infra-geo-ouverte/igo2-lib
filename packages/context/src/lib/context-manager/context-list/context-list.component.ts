@@ -23,11 +23,10 @@ import { AuthService } from '@igo2/auth';
 import {
   ActionStore,
   ActionbarComponent,
-  ActionbarMode,
-  CollapsibleComponent,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+  ActionbarMode
+} from '@igo2/common/action';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';

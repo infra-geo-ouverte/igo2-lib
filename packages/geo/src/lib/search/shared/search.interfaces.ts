@@ -1,4 +1,4 @@
-import { IconSvg } from '@igo2/common';
+import { IconSvg } from '@igo2/common/icon';
 
 import { Observable } from 'rxjs';
 

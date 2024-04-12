@@ -5,7 +5,7 @@ import {
   EntityStore,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import {

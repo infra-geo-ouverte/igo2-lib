@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { IgoFormFieldComponent } from '@igo2/common';
+import { IgoFormFieldComponent } from '@igo2/common/form';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import type { Type } from 'ol/geom/Geometry';

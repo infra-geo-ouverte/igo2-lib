@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { IgoIconComponent } from '@igo2/common';
+import { IgoIconComponent } from '@igo2/common/icon';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -40,7 +40,7 @@ const EXAMPLE_STYLE_VARIABLE = `.material-symbols-outlined {
   'opsz' 24
 }`;
 
-const EXAMPLE_PROVIDER = `import { provideIcon } from '@igo2/common';
+const EXAMPLE_PROVIDER = `import { provideIcon } from '@igo2/common/icon';
 
 bootstrapApplication(AppComponent, {
   providers: [

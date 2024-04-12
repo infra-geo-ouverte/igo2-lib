@@ -19,12 +19,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  CollapseDirective,
-  ImageErrorDirective,
-  SanitizeHtmlPipe,
-  SecureImagePipe
-} from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
+import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';

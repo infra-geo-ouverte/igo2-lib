@@ -23,7 +23,7 @@ import {
 } from '@angular/router';
 
 import { provideAuthentification } from '@igo2/auth';
-import { provideIcon } from '@igo2/common';
+import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation } from '@igo2/core/language';

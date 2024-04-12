@@ -1,4 +1,4 @@
-import { DOMValue } from '@igo2/common';
+import { DOMValue } from '@igo2/common/dom';
 
 import olFormatFilter from 'ol/format/filter/Filter';
 import olGeometry from 'ol/geom/Geometry';

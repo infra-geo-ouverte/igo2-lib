@@ -10,11 +10,11 @@ import {
 import {
   ActionStore,
   ActionbarComponent,
-  ActionbarMode,
-  CONTEXT_MENU_DIRECTIVES,
-  EntityStore,
-  PanelComponent
-} from '@igo2/common';
+  ActionbarMode
+} from '@igo2/common/action';
+import { CONTEXT_MENU_DIRECTIVES } from '@igo2/common/context-menu';
+import { EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
