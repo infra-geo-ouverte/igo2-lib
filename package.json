@@ -64,7 +64,6 @@
     "preversion.linux": "rimraf ./dist && npm run build.all && npm run test.all",
     "version.linux": "gulp bumpVersion && npm run build.libs && npm run changelog && git add -u",
     "postversion.linux": "git push && git push --tags && npm run publish && npm run ghpages",
-    "preversion": "rimraf ./dist && npm run build.all && npm run test.all",
     "version": "gulp bumpVersion && npm run build.libs && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages.win",
     "preghpages": "gulp core:bundleLocale && npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
