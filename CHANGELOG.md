@@ -1,9 +1,15 @@
-## [1.14.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.2...1.14.3) (2024-04-10)
+## [1.14.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.2...1.14.4) (2024-04-15)
+
+
+### Bug Fixes
+
+* remove preversion ([effc462](https://github.com/infra-geo-ouverte/igo2-lib/commit/effc4621b71395022a53277626875efead2b0e77))
 
 
 ### Features
 
 * **linked-layers:** Added new config for visibility in Base Layer Switcher ([#1560](https://github.com/infra-geo-ouverte/igo2-lib/issues/1560)) ([8d7a15f](https://github.com/infra-geo-ouverte/igo2-lib/commit/8d7a15f39b3a4a6799a68a6ce6615dcdcaff1f51))
+* **workspace:** can now detect geoservice properties (wms...) to add/remove layer from workspace (PARTIALLY PICK) ([d210c20](https://github.com/infra-geo-ouverte/igo2-lib/commit/d210c20db6905b88a742fdc17a0c6235aa61ed73))
 
 
 
