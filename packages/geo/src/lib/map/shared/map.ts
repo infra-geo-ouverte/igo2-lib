@@ -11,7 +11,7 @@ import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
+import { BehaviorSubject, pairwise, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -135,22 +135,33 @@ export class IgoMap {
           projection: this.viewController.getOlProjection()
         },
         this.storageService,
-        this.configService);
+        this.configService
+      );
       this.geolocationController.setOlMap(this.ol);
       if (this.geolocationController) {
-        this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
+        this.geolocationController.updateGeolocationOptions(
+          this.mapViewOptions
+        );
       }
-      this.layers$.subscribe((layers) => {
+      this.layers$.pipe(pairwise()).subscribe(([prevLayers, currentLayers]) => {
+        let prevLayersId;
+        if (prevLayers) {
+          prevLayersId = prevLayers.map((l) => l.id);
+        }
+        const layers = currentLayers.filter(
+          (l) => !prevLayersId.includes(l.id)
+        );
+
         for (const layer of layers) {
           if (layer.options.linkedLayers) {
             layer.ol.once('postrender', () => {
-              initLayerSyncFromRootParentLayers(this, this.layers);
+              initLayerSyncFromRootParentLayers(this, layers);
             });
           }
         }
       });
       this.viewController.monitorRotation();
-  });
+    });
   this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }
 
