@@ -69,10 +69,6 @@ export interface FeatureStoreLoadingStrategyOptions
   motion?: FeatureMotion;
 }
 
-export interface FeatureStorePropertyTypeStrategyOptions
-extends FeatureStoreStrategyOptions {
-  map: IgoMap
-}
 export interface FeatureStoreInMapExtentStrategyOptions
 extends FeatureStoreStrategyOptions {}
 
