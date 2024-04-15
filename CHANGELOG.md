@@ -1,3 +1,12 @@
+## [1.15.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.5...1.15.6) (2024-04-15)
+
+
+### Reverts
+
+* Revert "feat(workspace): can now detect geoservice properties (wms...) to add/remove layer from workspace" ([bb6d0e4](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb6d0e450343ec52d2f7a9ab9786ab57504c3c21))
+
+
+
 ## [1.15.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.2...1.15.5) (2024-04-11)
 
 
