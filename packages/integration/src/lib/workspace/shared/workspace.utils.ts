@@ -18,10 +18,10 @@ import {
   mapExtentStrategyActiveToolTip,
   noElementSelected
 } from '@igo2/geo';
-import { dateTransform } from '@igo2/utils';
 
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import moment from 'moment';
 import { BehaviorSubject, map } from 'rxjs';
 
 import { ToolState } from '../../tool';
@@ -226,4 +226,8 @@ export function getWorkspaceActions(
       ? actions
       : actions.filter((action) => action.id !== 'print');
   return returnActions;
+}
+
+function dateTransform(date: Date, format: string): string {
+  return moment(date).format(format);
 }
