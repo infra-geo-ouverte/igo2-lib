@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
@@ -38,14 +39,15 @@ export class EditionWorkspaceFactoryService {
   constructor(
     private http: HttpClient,
     private storageService: StorageService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private dialog: MatDialog
   ) {}
 
   createWFSEditionWorkspace(
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
-    const workspace = new RestAPIEdition(this.http, {
+    const workspace = new RestAPIEdition(this.http, this.dialog, {
       id: layer.id,
       title: layer.title,
       layer,

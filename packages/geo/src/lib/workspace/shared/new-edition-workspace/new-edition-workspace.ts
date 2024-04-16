@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 
 import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
 
@@ -7,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Feature, FeatureGeometry } from '../../../feature';
 import { ImageLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
+import { ConfirmationPopupComponent } from '../../confirmation-popup';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -62,6 +64,7 @@ export abstract class NewEditionWorkspace extends Workspace {
 
   constructor(
     private http: HttpClient,
+    private dialog: MatDialog,
     protected options: EditionWorkspaceOptions
   ) {
     // TODO Add support for geometry edition
@@ -96,7 +99,16 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   deleteFeature(feature: EditionFeature) {
-    throw Error('Not yet implemented');
+    const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+      disableClose: false,
+      data: { type: 'delete' }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        this.removeFeature(feature);
+      }
+    });
   }
 
   saveFeature(feature: EditionFeature) {
@@ -137,6 +149,41 @@ export abstract class NewEditionWorkspace extends Workspace {
     this.edition = undefined;
   }
 
+  private removeFeature(feature: EditionFeature) {
+    const { deleteUrl } = this.layer.dataSource.options.edition;
+    const url = this.getFeatureEditionUrl(feature, deleteUrl, 'delete');
+
+    this.isLoadingSubject.next(true);
+    this.http.delete(url, {}).subscribe({
+      next: () => {
+        this.isLoadingSubject.next(false);
+        this.refreshLayer();
+        // TODO handle relations
+        // this.messageService.success('igo.geo.workspace.deleteSuccess');
+      },
+      error: () => {
+        this.isLoadingSubject.next(false);
+        // TODO handle error: add custom message etc
+      }
+    });
+  }
+
+  private refreshLayer() {
+    const olLayer = this.layer.dataSource.ol;
+    olLayer.refresh();
+  }
+
+  private getFeatureEditionUrl(
+    feature: EditionFeature,
+    methodUrl: string | undefined,
+    method: string
+  ) {
+    const baseUrl = methodUrl ?? '';
+    const featUrl =
+      method !== 'post' ? baseUrl + this.getFeatureId(feature) : baseUrl;
+    return new URL(featUrl, this.options.editionUrl).href;
+  }
+
   private createFeature(feature: EditionFeature) {
     throw Error('Not yet implemented');
   }
@@ -146,12 +193,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     const editionOptions = this.layer.dataSource.options.edition;
     const { modifyUrl, modifyMethod, modifyHeaders } = editionOptions;
 
-    const modifyFeatUrl =
-      modifyMethod !== 'post'
-        ? modifyUrl + this.getFeatureId(feature)
-        : modifyUrl;
-
-    const url = new URL(modifyFeatUrl, this.options.editionUrl).href;
+    const url = this.getFeatureEditionUrl(feature, modifyUrl, modifyMethod);
 
     const headers = new HttpHeaders(modifyHeaders);
 
@@ -208,7 +250,7 @@ export abstract class NewEditionWorkspace extends Workspace {
 
     const primaryColumn = columns.find((column) => column.primary);
     if (!primaryColumn) {
-      return undefined; // TODO should return Error cannot edit if no primary
+      throw Error('No primary keys in feature');
     }
 
     const { name: primaryColumnName } = primaryColumn;
