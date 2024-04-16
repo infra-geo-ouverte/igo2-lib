@@ -127,6 +127,31 @@ export class EditionWorkspaceTableTemplateFactory {
     workspace: NewEditionWorkspace,
     layer: VectorLayer
   ) {
+    const confirmButton = {
+      editMode: true,
+      icon: 'check',
+      color: 'primary',
+      disabled: false,
+      click: (feature: EditionFeature) => {
+        workspace.saveFeature(feature);
+      }
+    };
+
+    const cancelButton = {
+      editMode: true,
+      icon: 'alpha-x',
+      color: 'primary',
+      disabled: false,
+      click: (feature: EditionFeature) => {
+        workspace.cancelEdit(feature);
+      }
+    };
+
+    workspace.isLoading$.subscribe((isLoading) => {
+      confirmButton.disabled = isLoading;
+      cancelButton.disabled = isLoading;
+    });
+
     return [
       {
         name: 'edition',
@@ -159,24 +184,8 @@ export class EditionWorkspaceTableTemplateFactory {
                 workspace.deleteFeature(feature);
               }
             },
-            {
-              editMode: true,
-              icon: 'check',
-              color: 'primary',
-              disabled: workspace.isLoading,
-              click: (feature: EditionFeature) => {
-                workspace.saveFeature(feature);
-              }
-            },
-            {
-              editMode: true,
-              icon: 'alpha-x',
-              color: 'primary',
-              disabled: workspace.isLoading,
-              click: (feature: EditionFeature) => {
-                workspace.cancelEdit(feature);
-              }
-            }
+            confirmButton,
+            cancelButton
           ] as EntityTableButton[];
         }
       }

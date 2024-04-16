@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
 
+import { BehaviorSubject } from 'rxjs';
+
 import { Feature, FeatureGeometry } from '../../../feature';
 import { ImageLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
@@ -37,9 +39,13 @@ type CurrentEdition = UpdateEdition | CreationEdition;
 
 export abstract class NewEditionWorkspace extends Workspace {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
-  private isLoadingVal = false;
+  private isLoadingSubject = new BehaviorSubject(false);
   get isLoading() {
-    return this.isLoadingVal;
+    return this.isLoadingSubject.value;
+  }
+
+  get isLoading$() {
+    return this.isLoadingSubject.asObservable();
   }
 
   get layer(): ImageLayer | VectorLayer {
@@ -149,16 +155,16 @@ export abstract class NewEditionWorkspace extends Workspace {
 
     const headers = new HttpHeaders(modifyHeaders);
 
-    this.isLoadingVal = true;
+    this.isLoadingSubject.next(true);
     this.http[modifyMethod ?? 'patch'](url, this.getUpdateBody(feature), {
       headers: headers
     }).subscribe(
       () => {
-        this.isLoadingVal = false;
+        this.isLoadingSubject.next(false);
         this.closeEdition(feature);
       },
       () => {
-        this.isLoadingVal = false;
+        this.isLoadingSubject.next(false);
       }
     );
   }
