@@ -15,7 +15,9 @@ import {
   StopsFeatureStore,
   StopsStore,
   TileLayer,
-  TileLayerOptions
+  TileLayerOptions,
+  provideDirection,
+  withOsrmSource
 } from '@igo2/geo';
 
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -35,7 +37,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     MAP_DIRECTIVES,
     IgoDirectionsModule,
     IgoSearchModule
-  ]
+  ],
+  providers: [provideDirection(withOsrmSource())]
 })
 export class AppDirectionsComponent {
   public map: IgoMap = new IgoMap({

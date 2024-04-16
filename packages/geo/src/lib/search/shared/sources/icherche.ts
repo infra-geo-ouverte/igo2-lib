@@ -629,7 +629,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
     let keep = false;
     keep = hashtags.some((hashtag) => {
-      const hashtagKey = hashtag.substring(1);
+      const hashtagKey = String(hashtag).substring(1);
       return this.hashtagsLieuxToKeep.some(
         (h) =>
           h

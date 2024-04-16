@@ -27,13 +27,6 @@ import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation } from '@igo2/core/language';
-import {
-  IgoDirectionsModule,
-  IgoGeoWorkspaceModule,
-  provideIChercheSearchSource,
-  provideOsrmDirectionsSource,
-  provideWorkspaceSearchSource
-} from '@igo2/geo';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routing';
@@ -60,9 +53,7 @@ bootstrapApplication(AppComponent, {
       MatIconModule,
       MatListModule,
       MatSidenavModule,
-      MatToolbarModule,
-      IgoGeoWorkspaceModule,
-      IgoDirectionsModule
+      MatToolbarModule
     ),
     provideHttpClient(withJsonpSupport()),
     provideRouter(routes, withPreloading(PreloadAllModules)),
@@ -72,9 +63,6 @@ bootstrapApplication(AppComponent, {
     }),
     provideTranslation(),
     provideAuthentification(),
-    provideOsrmDirectionsSource(),
-    provideIChercheSearchSource(),
-    provideWorkspaceSearchSource(),
     provideIcon(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

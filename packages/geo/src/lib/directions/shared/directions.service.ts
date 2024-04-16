@@ -26,9 +26,7 @@ import {
   formatInstruction
 } from './directions.utils';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class DirectionsService {
   constructor(
     private directionsSourceService: DirectionsSourceService,

@@ -1,3 +1,5 @@
+import { Provider } from '@angular/core';
+
 export interface DirectionsSourceOptions extends BaseDirectionsSourceOptions {
   osrm?: OsrmDirectionsSourceOptions;
   logo?: string;
@@ -20,4 +22,13 @@ export interface BaseDirectionsSourceOptionsProfile {
 export interface BaseDirectionsSourceOptionsProfileAuthorization {
   url: string;
   property: string;
+}
+
+export interface DirectionSourceFeature<KindT extends DirectionSourceKind> {
+  kind: KindT;
+  providers: Provider[];
+}
+
+export enum DirectionSourceKind {
+  OSRM = 0
 }
