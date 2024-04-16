@@ -104,7 +104,6 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
-  send?: boolean;
 }
 
 export interface Legend {
