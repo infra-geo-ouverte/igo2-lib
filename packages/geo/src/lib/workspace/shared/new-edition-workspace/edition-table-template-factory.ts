@@ -169,7 +169,7 @@ export class EditionWorkspaceTableTemplateFactory {
                   ? true
                   : false,
               click: (feature: EditionFeature) => {
-                workspace.editFeature(feature);
+                workspace.updateFeature(feature);
               }
             },
             {

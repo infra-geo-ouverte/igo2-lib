@@ -79,23 +79,37 @@ export abstract class NewEditionWorkspace extends Workspace {
   abstract getUpdateBody(feature: EditionFeature): Object;
   abstract getCreateBody(feature: EditionFeature): Object;
 
-  editFeature(feature: EditionFeature) {
+  updateFeature(feature: EditionFeature) {
+    this.editFeature(feature, EditionType.UPDATE);
+  }
+
+  private editFeature(feature: EditionFeature, type: EditionType) {
     // TODO Domain values
     feature.edition = true;
-    const id = this.getFeatureId(feature);
 
-    this.edition = id
-      ? {
-          type: EditionType.UPDATE,
-          featureData: {
-            geometry: feature.geometry,
-            properties: JSON.parse(JSON.stringify(feature.properties))
+    this.edition =
+      type === EditionType.UPDATE
+        ? {
+            type: EditionType.UPDATE,
+            featureData: {
+              geometry: feature.geometry,
+              properties: JSON.parse(JSON.stringify(feature.properties))
+            }
           }
-        }
-      : { type: EditionType.CREATION };
+        : { type: EditionType.CREATION };
+
+    if (type === EditionType.CREATION) {
+      this.entityStore.insert(feature);
+      this.entityStore.state.update(feature, { newFeature: true }, true);
+    }
 
     this.focusEditedFeature(feature);
     // TODO handle !id (creation)
+  }
+
+  createFeature(feature: EditionFeature) {
+    console.log('create feature', feature);
+    this.editFeature(feature, EditionType.CREATION);
   }
 
   deleteFeature(feature: EditionFeature) {
@@ -115,9 +129,9 @@ export abstract class NewEditionWorkspace extends Workspace {
     const { type } = this.edition;
     switch (type) {
       case EditionType.CREATION:
-        return this.createFeature(feature);
+        return this.saveCreateFeature(feature);
       case EditionType.UPDATE:
-        return this.updateFeature(feature);
+        return this.saveUpdateFeature(feature);
     }
   }
 
@@ -184,11 +198,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     return new URL(featUrl, this.options.editionUrl).href;
   }
 
-  private createFeature(feature: EditionFeature) {
-    throw Error('Not yet implemented');
-  }
-
-  private updateFeature(feature: EditionFeature) {
+  private saveUpdateFeature(feature: EditionFeature) {
     console.log('update feature');
     const editionOptions = this.layer.dataSource.options.edition;
     const { modifyUrl, modifyMethod, modifyHeaders } = editionOptions;
@@ -211,11 +221,16 @@ export abstract class NewEditionWorkspace extends Workspace {
     );
   }
 
+  private saveCreateFeature(feature: EditionFeature) {
+    console.log('Save creation feature');
+  }
+
   private cancelCreation(feature: EditionFeature) {
     if (this.edition.type !== EditionType.CREATION) {
       throw Error("Can't cancel creation current edition is not creation");
     }
-    throw Error('Not implemented yet');
+    this.entityStore.delete(feature);
+    // TODO CHECK this.rowsInMapExtentCheckCondition$.next(true);
   }
 
   private cancelUpdate(feature: EditionFeature) {
