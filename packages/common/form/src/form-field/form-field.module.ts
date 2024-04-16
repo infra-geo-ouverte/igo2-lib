@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { FORM_FIELD_DIRECTIVES } from '.';
+import { FORM_FIELD_DIRECTIVES } from './form-field.directive';
 
 /**
  * @deprecated import the components directly or FORM_FIELD_DIRECTIVES for every components/directives

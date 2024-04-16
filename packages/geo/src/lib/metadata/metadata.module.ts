@@ -5,6 +5,11 @@ import {
   MetadataButtonComponent
 } from './metadata-button/metadata-button.component';
 
+export const METADATA_DIRECTIVES = [
+  MetadataButtonComponent,
+  MetadataAbstractComponent
+] as const;
+
 /**
  * @deprecated import the components/directives directly or METADATA_DIRECTIVES for the set
  */
