@@ -104,7 +104,6 @@ export abstract class NewEditionWorkspace extends Workspace {
     }
 
     this.focusEditedFeature(feature);
-    // TODO handle !id (creation)
   }
 
   createFeature(feature: EditionFeature) {
@@ -209,11 +208,12 @@ export abstract class NewEditionWorkspace extends Workspace {
 
     this.isLoadingSubject.next(true);
     this.http[modifyMethod ?? 'patch'](url, this.getUpdateBody(feature), {
-      headers: headers
+      headers
     }).subscribe(
       () => {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
+        // TODO ADD SUCCESS MESSAGE
       },
       () => {
         this.isLoadingSubject.next(false);
@@ -222,7 +222,25 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   private saveCreateFeature(feature: EditionFeature) {
-    console.log('Save creation feature');
+    const editionOptions = this.layer.dataSource.options.edition;
+    const { addUrl, addHeaders } = editionOptions;
+
+    const url = new URL(addUrl ?? '', this.options.editionUrl).href;
+    const headers = new HttpHeaders(addHeaders);
+
+    this.isLoadingSubject.next(true);
+    this.http.post(url, this.getCreateBody(feature), { headers }).subscribe({
+      next: () => {
+        this.isLoadingSubject.next(false);
+        this.closeEdition(feature);
+
+        // TODO ADD SUCCESS MESSAGE
+      },
+      error: () => {
+        this.isLoadingSubject.next(false);
+        this.closeEdition(feature);
+      }
+    });
   }
 
   private cancelCreation(feature: EditionFeature) {
