@@ -26,6 +26,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, skipWhile, take } from 'rxjs/operators';
 
 import {
