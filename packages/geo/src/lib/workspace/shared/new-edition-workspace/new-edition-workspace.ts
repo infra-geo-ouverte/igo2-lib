@@ -25,7 +25,11 @@ enum EditionType {
   UPDATE
 }
 
-interface UpdateEdition {
+interface BaseEdition {
+  feature: EditionFeature;
+}
+
+interface UpdateEdition extends BaseEdition {
   type: EditionType.UPDATE;
   featureData: {
     geometry?: FeatureGeometry;
@@ -33,7 +37,7 @@ interface UpdateEdition {
   };
 }
 
-interface CreationEdition {
+interface CreationEdition extends BaseEdition {
   type: EditionType.CREATION;
 }
 
@@ -80,6 +84,9 @@ export abstract class NewEditionWorkspace extends Workspace {
   abstract getCreateBody(feature: EditionFeature): Object;
 
   updateFeature(feature: EditionFeature) {
+    if (this.edition) {
+      this.cancelEdit(this.edition.feature);
+    }
     this.editFeature(feature, EditionType.UPDATE);
   }
 
@@ -91,12 +98,13 @@ export abstract class NewEditionWorkspace extends Workspace {
       type === EditionType.UPDATE
         ? {
             type: EditionType.UPDATE,
+            feature,
             featureData: {
               geometry: feature.geometry,
               properties: JSON.parse(JSON.stringify(feature.properties))
             }
           }
-        : { type: EditionType.CREATION };
+        : { type: EditionType.CREATION, feature };
 
     if (type === EditionType.CREATION) {
       this.entityStore.insert(feature);
@@ -107,7 +115,9 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   createFeature(feature: EditionFeature) {
-    console.log('create feature', feature);
+    if (this.edition) {
+      this.cancelEdit(this.edition.feature);
+    }
     this.editFeature(feature, EditionType.CREATION);
   }
 
@@ -233,7 +243,7 @@ export abstract class NewEditionWorkspace extends Workspace {
       next: () => {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
-
+        this.refreshLayer();
         // TODO ADD SUCCESS MESSAGE
       },
       error: () => {
