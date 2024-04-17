@@ -12,7 +12,7 @@ export class RestAPIEdition extends NewEditionWorkspace {
     } = this.dataSourceOptions;
 
     const fieldsToRemove: string[] = this.getPropertyKeys(
-      (sourceField) => !sourceField.validation?.readonly
+      (sourceField) => sourceField.validation?.readonly
     );
 
     fieldsToRemove.push(fieldNameGeometry, 'boundedBy');
@@ -23,7 +23,7 @@ export class RestAPIEdition extends NewEditionWorkspace {
   getCreateBody(feature: EditionFeature): Object {
     // TODO support geometry
     const fieldsToRemove = this.getPropertyKeys(
-      (sourceField) => !sourceField.validation?.readonly || !sourceField.primary
+      (sourceField) => sourceField.validation?.readonly && sourceField.primary
     );
     return this.removeProperties(feature, fieldsToRemove);
   }
