@@ -16,10 +16,10 @@ import {
   mapExtentStrategyActiveToolTip,
   noElementSelected
 } from '@igo2/geo';
-import { dateTransform } from '@igo2/utils';
 
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import moment from 'moment';
 import { BehaviorSubject, map } from 'rxjs';
 
 import { ToolState } from '../../tool';
@@ -84,7 +84,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'clearselection',
-      icon: 'select-off',
+      icon: 'deselect',
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
       handler: (ws: LayerWorkspace) => {
@@ -97,7 +97,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'featureDownload',
-      icon: 'file-export',
+      icon: 'file_save',
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
       handler: (ws: LayerWorkspace) => {
@@ -123,7 +123,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'ogcFilter',
-      icon: 'filter',
+      icon: 'filter_alt',
       title: 'igo.integration.workspace.ogcFilter.title',
       tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
       handler: (widget: Widget, ws: LayerWorkspace) => {
@@ -170,7 +170,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'print',
-      icon: 'printer',
+      icon: 'print',
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
       handler: (ws: LayerWorkspace) => {
@@ -217,4 +217,8 @@ export function getWorkspaceActions(
       ? actions
       : actions.filter((action) => action.id !== 'print');
   return returnActions;
+}
+
+function dateTransform(date: Date, format: string): string {
+  return moment(date).format(format);
 }

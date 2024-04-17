@@ -76,7 +76,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   toggleCollapseAction = {
     id: 'actionbar_toggle',
-    icon: 'dots-vertical',
+    icon: 'more_vert',
     handler: () => {
       this.collapsed = !this.collapsed;
     }
@@ -160,7 +160,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Which icon want to be shown
    */
-  @Input() icon = 'dots-horizontal';
+  @Input() icon = 'more_horiz';
 
   /**
    * Overlay X position

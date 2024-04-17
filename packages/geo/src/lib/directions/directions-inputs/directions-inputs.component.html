@@ -43,7 +43,7 @@
           aria-label="Clear"
           (click)="clearStop(stop)"
         >
-          <mat-icon svgIcon="close"></mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
 
         <mat-autocomplete
@@ -82,7 +82,7 @@
         [matTooltip]="'igo.geo.directionsForm.moveStop' | translate"
         color="primary"
       >
-        <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
+        <mat-icon>drag_indicator</mat-icon>
       </button>
 
       <button
@@ -94,7 +94,7 @@
         color="warn"
         (click)="removeStop(stop)"
       >
-        <mat-icon svgIcon="delete"></mat-icon>
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
   </div>

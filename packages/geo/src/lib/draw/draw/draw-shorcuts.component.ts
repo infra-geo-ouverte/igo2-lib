@@ -7,6 +7,8 @@ import {
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
+import { IconSvg, IgoIconComponent, KEYBOARD_ESC_ICON } from '@igo2/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -20,7 +22,10 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule
+    TranslateModule,
+    IgoIconComponent
   ]
 })
-export class DrawShorcutsComponent {}
+export class DrawShorcutsComponent {
+  svgIcon: IconSvg = KEYBOARD_ESC_ICON;
+}

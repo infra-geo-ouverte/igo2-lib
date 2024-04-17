@@ -22,6 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
+import { IgoIconComponent, LAYER_PLUS_ICON } from '@igo2/common';
 
 @Component({
   selector: 'igo-advanced-swipe',
@@ -40,7 +41,8 @@ import { MapState } from '../../map.state';
     MatSlideToggleModule,
     MatListModule,
     MatIconModule,
-    TranslateModule
+    TranslateModule,
+    IgoIconComponent
   ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
@@ -51,6 +53,8 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public layers: VectorLayer[];
   public res: DetailedContext;
   public listForSwipe: Layer[];
+
+  layerPlusIcon = LAYER_PLUS_ICON;
 
   /**
    * Get an active map state

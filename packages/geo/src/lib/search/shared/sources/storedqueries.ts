@@ -356,7 +356,7 @@ export class StoredQueriesSearchSource
         id,
         title: data.properties.title,
         titleHtml: data.properties[title],
-        icon: 'map-marker',
+        icon: 'location_on',
         score: data.properties.title
           ? computeTermSimilarity(term.trim(), data.properties.title)
           : computeTermSimilarity(term.trim(), data.properties[title])
@@ -574,7 +574,7 @@ export class StoredQueriesReverseSearchSource
         dataType: FEATURE,
         id,
         title: data.properties[title],
-        icon: 'map-marker'
+        icon: 'location_on'
       }
     };
   }

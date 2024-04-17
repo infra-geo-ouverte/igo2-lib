@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { IgoActivityModule } from '@igo2/core/activity';
-import { IgoConfigModule } from '@igo2/core/config';
-import { IgoLanguageModule, provideRootTranslation } from '@igo2/core/language';
+import { ConfigOptions, provideConfig } from '@igo2/core/config';
+import { IgoLanguageModule, provideTranslation } from '@igo2/core/language';
 import { IgoMessageModule } from '@igo2/core/message';
 import { IgoErrorModule } from '@igo2/core/request';
 
@@ -46,34 +44,28 @@ const dbConfig: DBConfig = {
     CommonModule,
     HttpClientModule,
     IgoActivityModule.forRoot(),
-    IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
     IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
-  providers: [provideRootTranslation()],
+  providers: [],
   declarations: [],
   exports: [
     IgoActivityModule,
-    IgoConfigModule,
     IgoErrorModule,
     IgoLanguageModule,
     IgoMessageModule
   ]
 })
 export class IgoCoreModule {
-  static forRoot(): ModuleWithProviders<IgoCoreModule> {
+  static forRoot(
+    options: ConfigOptions = {}
+  ): ModuleWithProviders<IgoCoreModule> {
     return {
       ngModule: IgoCoreModule,
-      providers: []
+      providers: [provideConfig(options), provideTranslation()]
     };
   }
 
-  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
-    matIconRegistry.addSvgIconSet(
-      domSanitizer.bypassSecurityTrustResourceUrl(
-        './assets/igo2/core/icons/mdi.svg'
-      )
-    );
-  }
+  constructor() {}
 }
