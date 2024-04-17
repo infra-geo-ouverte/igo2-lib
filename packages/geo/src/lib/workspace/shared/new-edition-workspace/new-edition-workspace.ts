@@ -1,7 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
+import { MessageService } from '@igo2/core/message';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -69,11 +74,13 @@ export abstract class NewEditionWorkspace extends Workspace {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
+    private messageService: MessageService,
     protected options: EditionWorkspaceOptions
   ) {
     // TODO Add support for geometry edition
     // TODO freeze entity table on move when editing
     // TODO implement domainValues
+    // TODO handle relations
     // TODO NEXT implement messages
     super(options);
   }
@@ -181,12 +188,12 @@ export abstract class NewEditionWorkspace extends Workspace {
       next: () => {
         this.isLoadingSubject.next(false);
         this.refreshLayer();
-        // TODO handle relations
-        // this.messageService.success('igo.geo.workspace.deleteSuccess');
+
+        this.messageService.success('igo.geo.workspace.deleteSuccess');
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.isLoadingSubject.next(false);
-        // TODO handle error: add custom message etc
+        this.handleEditionError(error);
       }
     });
   }
@@ -224,9 +231,12 @@ export abstract class NewEditionWorkspace extends Workspace {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
         // TODO ADD SUCCESS MESSAGE
+        this.messageService.success('igo.geo.workspace.modifySuccess');
       },
-      () => {
+      (error: HttpErrorResponse) => {
         this.isLoadingSubject.next(false);
+        this.closeEdition(feature);
+        this.handleEditionError(error);
       }
     );
   }
@@ -244,13 +254,20 @@ export abstract class NewEditionWorkspace extends Workspace {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
         this.refreshLayer();
-        // TODO ADD SUCCESS MESSAGE
+
+        this.messageService.success('igo.geo.workspace.addSuccess');
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
+        this.handleEditionError(error);
       }
     });
+  }
+
+  private handleEditionError(error: HttpErrorResponse) {
+    error.error.caught = true;
+    this.messageService.error('igo.geo.workspace.addError');
   }
 
   private cancelCreation(feature: EditionFeature) {

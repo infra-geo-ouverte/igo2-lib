@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
@@ -40,6 +41,7 @@ export class EditionWorkspaceFactoryService {
     private http: HttpClient,
     private storageService: StorageService,
     private configService: ConfigService,
+    private messageService: MessageService,
     private dialog: MatDialog
   ) {}
 
@@ -47,18 +49,23 @@ export class EditionWorkspaceFactoryService {
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
-    const workspace = new RestAPIEdition(this.http, this.dialog, {
-      id: layer.id,
-      title: layer.title,
-      layer,
-      map,
-      editionUrl: this.getEditionUrl(layer),
-      entityStore: this.createFeatureStore(layer, map),
-      actionStore: new ActionStore([]),
-      meta: {
-        tableTemplate: undefined
+    const workspace = new RestAPIEdition(
+      this.http,
+      this.dialog,
+      this.messageService,
+      {
+        id: layer.id,
+        title: layer.title,
+        layer,
+        map,
+        editionUrl: this.getEditionUrl(layer),
+        entityStore: this.createFeatureStore(layer, map),
+        actionStore: new ActionStore([]),
+        meta: {
+          tableTemplate: undefined
+        }
       }
-    });
+    );
 
     this.tableTemplateFactory.addTemplateToWorkspace(workspace, layer);
     layer.options.workspace = Object.assign({}, layer.options.workspace, {
