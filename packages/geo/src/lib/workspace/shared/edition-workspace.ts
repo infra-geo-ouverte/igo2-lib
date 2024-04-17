@@ -22,7 +22,7 @@ import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
-export interface EditionWorkspaceOptions extends WorkspaceOptions {
+interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
   map: IgoMap;
 }
@@ -156,7 +156,7 @@ export class EditionWorkspace extends Workspace {
           }
           if (url) {
             url += id;
-            this.deleteFeature(workspace, url);
+            this.deleteFeature(workspace, url); // bug here
           }
         }
       });
