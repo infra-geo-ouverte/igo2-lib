@@ -121,11 +121,27 @@ export abstract class NewEditionWorkspace extends Workspace {
     this.focusEditedFeature(feature);
   }
 
-  createFeature(feature: EditionFeature) {
+  createFeature() {
+    const feature = {
+      type: 'Feature',
+      properties: this.initNewFeatureProperties()
+    };
+
     if (this.edition) {
       this.cancelEdit(this.edition.feature);
     }
     this.editFeature(feature, EditionType.CREATION);
+  }
+
+  private initNewFeatureProperties() {
+    const { sourceFields } = this.layer.options.sourceOptions;
+    let properties = {};
+    sourceFields.forEach((field) => {
+      if (!field.primary) {
+        properties[field.name] = '';
+      }
+    });
+    return properties;
   }
 
   deleteFeature(feature: EditionFeature) {
