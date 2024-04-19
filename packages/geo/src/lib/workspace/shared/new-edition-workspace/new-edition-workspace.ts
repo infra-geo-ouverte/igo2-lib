@@ -133,7 +133,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     if (this.edition) {
       this.cancelEdit(this.edition.feature);
     }
-    this.geometryEditor.enableCreate();
+    this.geometryEditor.enableCreate(feature);
     this.editFeature(feature, EditionType.CREATION);
   }
 

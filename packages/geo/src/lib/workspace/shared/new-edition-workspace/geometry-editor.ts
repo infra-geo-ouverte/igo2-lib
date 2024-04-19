@@ -1,3 +1,5 @@
+import OlGeoJSON from 'ol/format/GeoJSON';
+import { Geometry } from 'ol/geom';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 
@@ -5,7 +7,7 @@ import { Subject, Subscription } from 'rxjs';
 
 import { FeatureDataSource } from '../../../datasource';
 import { GeometryType, createInteractionStyle } from '../../../draw';
-import { FeatureGeometry } from '../../../feature';
+import { Feature, FeatureGeometry, featureToOl } from '../../../feature';
 import { DrawControl } from '../../../geometry';
 import { VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map';
@@ -62,18 +64,44 @@ export class GeometryEditor {
 
   enableEdit() {}
 
-  enableCreate() {
+  enableCreate(feature: Feature) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry) =>
-      console.log(olGeometry)
+      this.addFeatureToMap(feature, olGeometry)
     );
     this.drawControl.setOlMap(this.map.ol, true);
   }
 
   disable() {
+    this.disableDrawControl();
+    this.clearDrawings();
+  }
+
+  private disableDrawControl() {
     this.drawEnd$$?.unsubscribe();
     this.drawEnd$$ = undefined;
     this.drawControl.setOlMap(undefined);
-    this.clearDrawings();
+  }
+
+  private addFeatureToMap(feature: Feature, olGeometry: Geometry) {
+    const projection = this.map.ol.getView().getProjection();
+    const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
+      featureProjection: projection,
+      dataProjection: 'EPSG:4326'
+    }) as unknown as FeatureGeometry;
+
+    feature.projection = 'EPSG:4326';
+    feature.geometry = geometry;
+
+    const olFeature = featureToOl(feature, projection.getCode());
+    olFeature.setStyle(this.modifyStyle);
+
+    this.drawingLayer.dataSource.ol.clear();
+    this.drawingLayer.dataSource.ol.addFeature(olFeature);
+    this.map.addLayer(this.drawingLayer);
+
+    this.disableDrawControl();
+
+    // TODO Add edit
   }
 
   private clearDrawings() {
