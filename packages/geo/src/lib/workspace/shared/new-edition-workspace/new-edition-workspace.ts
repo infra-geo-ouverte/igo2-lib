@@ -10,10 +10,12 @@ import { MessageService } from '@igo2/core/message';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { GeometryType } from '../../../draw';
 import { Feature, FeatureGeometry } from '../../../feature';
 import { ImageLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 import { ConfirmationPopupComponent } from '../../confirmation-popup';
+import { GeometryEditor } from './geometry-editor';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -71,6 +73,8 @@ export abstract class NewEditionWorkspace extends Workspace {
     return this.layer.isInResolutionsRange$;
   }
 
+  private edition?: CurrentEdition = undefined;
+  private geometryEditor: GeometryEditor;
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
@@ -83,9 +87,8 @@ export abstract class NewEditionWorkspace extends Workspace {
     // TODO handle relations
     // TODO NEXT implement messages
     super(options);
+    this.geometryEditor = new GeometryEditor(this.map, GeometryType.Point);
   }
-
-  private edition?: CurrentEdition = undefined;
 
   abstract getUpdateBody(feature: EditionFeature): Object;
   abstract getCreateBody(feature: EditionFeature): Object;
@@ -130,6 +133,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     if (this.edition) {
       this.cancelEdit(this.edition.feature);
     }
+    this.geometryEditor.enableCreate();
     this.editFeature(feature, EditionType.CREATION);
   }
 
@@ -193,6 +197,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     feature.edition = false;
     this.entityStore.stateView.clear();
     this.edition = undefined;
+    this.geometryEditor.disable();
   }
 
   private removeFeature(feature: EditionFeature) {
