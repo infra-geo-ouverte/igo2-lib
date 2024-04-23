@@ -1,5 +1,8 @@
+import Collection from 'ol/Collection';
+import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import { Geometry } from 'ol/geom';
+import OlModify from 'ol/interaction/Modify';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 
@@ -54,6 +57,8 @@ export class GeometryEditor {
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
 
+  private modifyInteraction: OlModify | undefined;
+
   constructor(
     private map: IgoMap,
     private geometryType: GeometryType
@@ -90,6 +95,8 @@ export class GeometryEditor {
     }) as unknown as FeatureGeometry;
 
     feature.projection = 'EPSG:4326';
+
+    // Add geometry to the geometry being edited.
     feature.geometry = geometry;
 
     const olFeature = featureToOl(feature, projection.getCode());
@@ -101,12 +108,34 @@ export class GeometryEditor {
 
     this.disableDrawControl();
 
-    // TODO Add edit
+    this.addModifyInterationToFeature(olFeature, feature);
   }
 
   private clearDrawings() {
     this.map.removeLayer(this.drawingLayer);
     this.drawingLayerSource.clear();
+  }
+
+  private addModifyInterationToFeature(
+    olFeature: OlFeature<Geometry>,
+    feature: Feature
+  ) {
+    if (!this.modifyInteraction) {
+      this.map.ol.removeInteraction(this.modifyInteraction);
+    }
+    olFeature.setStyle(this.modifyStyle);
+
+    const features = new Collection([olFeature], { unique: true });
+    this.modifyInteraction = new OlModify({ features });
+
+    this.map.ol.addInteraction(this.modifyInteraction);
+
+    this.modifyInteraction.on('modifyend', (event) => {
+      const olGeometry = event.features.getArray()[0]?.getGeometry();
+      if (olGeometry) {
+        this.addFeatureToMap(feature, olGeometry);
+      }
+    });
   }
 
   private createDrawControl(
