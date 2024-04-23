@@ -78,7 +78,7 @@ export class PrintService {
       format: paperFormat.toLowerCase(),
       unit: 'mm' // default
     });
-    console.log('sss', doc.getFontList());
+
     const dimensions = [
       doc.internal.pageSize.width,
       doc.internal.pageSize.height
