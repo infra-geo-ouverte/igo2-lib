@@ -50,7 +50,7 @@ interface CreationEdition extends BaseEdition {
 
 type CurrentEdition = UpdateEdition | CreationEdition;
 
-export abstract class NewEditionWorkspace extends Workspace {
+export abstract class NewEditionWorkspace extends Workspace<Feature> {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
   private isLoadingSubject = new BehaviorSubject(false);
   get isLoading() {

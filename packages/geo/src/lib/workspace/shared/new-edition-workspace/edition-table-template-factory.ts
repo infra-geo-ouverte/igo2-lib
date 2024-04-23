@@ -1,7 +1,6 @@
 import { EntityTableButton, EntityTableColumnRenderer } from '@igo2/common';
 
 import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { first, skipWhile } from 'rxjs';
 
@@ -9,7 +8,6 @@ import {
   RelationOptions,
   SourceFieldsOptionsParams
 } from '../../../datasource';
-import { Feature } from '../../../feature/shared';
 import { VectorLayer } from '../../../layer/shared';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
@@ -44,7 +42,7 @@ export class EditionWorkspaceTableTemplateFactory {
         first()
       )
       .subscribe((entities) => {
-        const ol = (entities[0] as Feature).ol as olFeature<OlGeometry>;
+        const ol = entities[0].ol as olFeature;
         const columnsFromFeatures = ol
           .getKeys()
           .filter(
