@@ -97,7 +97,11 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
     if (this.edition) {
       this.cancelEdit(this.edition.feature);
     }
+
     this.editFeature(feature, EditionType.UPDATE);
+
+    this.geometryEditor.enableEdit(feature);
+    // TODO remove edited feature from layer and add it back if cancel
   }
 
   private editFeature(feature: EditionFeature, type: EditionType) {

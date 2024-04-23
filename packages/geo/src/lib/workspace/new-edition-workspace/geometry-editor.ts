@@ -67,13 +67,20 @@ export class GeometryEditor {
     this.drawControl = this.createDrawControl();
   }
 
-  enableEdit() {}
-
   enableCreate(feature: Feature) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry) =>
-      this.addFeatureToMap(feature, olGeometry)
+      this.updateFeatureGeometry(feature, olGeometry)
     );
     this.drawControl.setOlMap(this.map.ol, true);
+  }
+
+  enableEdit(feature: Feature) {
+    const geometry = feature.geometry;
+    if (!geometry) {
+      return this.enableCreate(feature);
+    }
+
+    this.addFeatureToMap(feature);
   }
 
   disable() {
@@ -87,7 +94,7 @@ export class GeometryEditor {
     this.drawControl.setOlMap(undefined);
   }
 
-  private addFeatureToMap(feature: Feature, olGeometry: Geometry) {
+  private updateFeatureGeometry(feature: Feature, olGeometry: Geometry) {
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
@@ -96,8 +103,13 @@ export class GeometryEditor {
 
     feature.projection = 'EPSG:4326';
 
-    // Add geometry to the geometry being edited.
     feature.geometry = geometry;
+
+    this.addFeatureToMap(feature);
+  }
+
+  private addFeatureToMap(feature: Feature) {
+    const projection = this.map.ol.getView().getProjection();
 
     const olFeature = featureToOl(feature, projection.getCode());
     olFeature.setStyle(this.modifyStyle);
@@ -133,7 +145,7 @@ export class GeometryEditor {
     this.modifyInteraction.on('modifyend', (event) => {
       const olGeometry = event.features.getArray()[0]?.getGeometry();
       if (olGeometry) {
-        this.addFeatureToMap(feature, olGeometry);
+        this.updateFeatureGeometry(feature, olGeometry);
       }
     });
   }
