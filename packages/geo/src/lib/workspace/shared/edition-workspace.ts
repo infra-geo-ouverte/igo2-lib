@@ -16,7 +16,7 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
 import { GeometryType, createInteractionStyle } from '../../draw/shared';
-import { featureToOl } from '../../feature/shared';
+import { Feature, featureToOl } from '../../feature/shared';
 import { DrawControl } from '../../geometry/shared';
 import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
@@ -27,7 +27,7 @@ interface EditionWorkspaceOptions extends WorkspaceOptions {
   map: IgoMap;
 }
 
-export class EditionWorkspace extends Workspace {
+export class EditionWorkspace extends Workspace<Feature> {
   readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
     true
   );
