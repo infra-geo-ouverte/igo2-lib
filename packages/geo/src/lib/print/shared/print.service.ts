@@ -19,6 +19,7 @@ import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
+import jsPdfFonts from './fonts/fonts';
 import GeoPdfPlugin from './geopdf';
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import {
@@ -44,11 +45,11 @@ export class PrintService {
   mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
-    titleFont: 'Sans Serif',
+    titleFont: 'Roboto',
     titleFontStyle: 'bold',
-    subtitleFont: 'Sans Serif',
+    subtitleFont: 'Roboto',
     subtitleFontStyle: 'bold',
-    commentFont: 'Sans Serif',
+    commentFont: 'OpenSans',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
@@ -70,12 +71,15 @@ export class PrintService {
     this.activityId = this.activityService.register();
 
     GeoPdfPlugin(jsPDF.API);
+    jsPdfFonts(jsPDF.API);
 
     const doc = new jsPDF({
       orientation,
       format: paperFormat.toLowerCase(),
       unit: 'mm' // default
     });
+
+    console.log('fonts', doc.getFontList());
 
     const dimensions = [
       doc.internal.pageSize.width,
@@ -491,7 +495,10 @@ export class PrintService {
       const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
-    doc.setFont(this.TEXTPDFFONT.commentFont);
+    doc.setFont(
+      this.TEXTPDFFONT.commentFont,
+      this.TEXTPDFFONT.commentFontStyle
+    );
     doc.setFontSize(projScaleSize);
     doc.text(textProjScale, projScaleMarginLeft, heightPixels);
   }
