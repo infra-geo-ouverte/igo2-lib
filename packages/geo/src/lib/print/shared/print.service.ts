@@ -45,11 +45,11 @@ export class PrintService {
   mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
-    titleFont: 'Roboto',
+    titleFont: 'SourceSans',
     titleFontStyle: 'bold',
-    subtitleFont: 'Roboto',
+    subtitleFont: 'SourceSans',
     subtitleFontStyle: 'bold',
-    commentFont: 'OpenSans',
+    commentFont: 'SourceSans',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
@@ -78,7 +78,7 @@ export class PrintService {
       format: paperFormat.toLowerCase(),
       unit: 'mm' // default
     });
-
+    console.log('sss', doc.getFontList());
     const dimensions = [
       doc.internal.pageSize.width,
       doc.internal.pageSize.height
