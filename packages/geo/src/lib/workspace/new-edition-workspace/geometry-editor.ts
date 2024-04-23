@@ -120,7 +120,7 @@ export class GeometryEditor {
     olFeature: OlFeature<Geometry>,
     feature: Feature
   ) {
-    if (!this.modifyInteraction) {
+    if (this.modifyInteraction) {
       this.map.ol.removeInteraction(this.modifyInteraction);
     }
     olFeature.setStyle(this.modifyStyle);
