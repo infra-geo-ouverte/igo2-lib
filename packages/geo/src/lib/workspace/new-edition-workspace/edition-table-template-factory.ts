@@ -9,6 +9,7 @@ import { VectorLayer } from '../../layer/shared';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
 export class EditionWorkspaceTableTemplateFactory {
+  // TODO add columns type see EntityTableColumn
   addTemplateToWorkspace(workspace: NewEditionWorkspace, layer: VectorLayer) {
     const buttons = this.getButtonTemplate(workspace, layer);
 
