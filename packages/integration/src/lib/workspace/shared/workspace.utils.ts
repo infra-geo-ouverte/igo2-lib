@@ -8,10 +8,10 @@ import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
+  AnyWorkspace,
   ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
-  LayerWorkspace,
   OgcFilterableDataSource,
   mapExtentStrategyActiveToolTip,
   noElementSelected
@@ -24,7 +24,7 @@ import { BehaviorSubject, map } from 'rxjs';
 
 import { ToolState } from '../../tool';
 
-export function handleZoomAuto(workspace: LayerWorkspace, storageService) {
+export function handleZoomAuto(workspace: AnyWorkspace, storageService) {
   const zoomStrategy = workspace.entityStore.getStrategyOfType(
     FeatureStoreSelectionStrategy
   ) as FeatureStoreSelectionStrategy;
@@ -36,7 +36,7 @@ export function handleZoomAuto(workspace: LayerWorkspace, storageService) {
 }
 
 export function getWorkspaceActions(
-  workspace: LayerWorkspace,
+  workspace: AnyWorkspace,
   rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
   selectOnlyCheckCondition$: BehaviorSubject<boolean>,
   ogcFilterWidget: Widget,
@@ -87,20 +87,20 @@ export function getWorkspaceActions(
       icon: 'deselect',
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
-      handler: (ws: LayerWorkspace) => {
+      handler: (ws: AnyWorkspace) => {
         ws.entityStore.state.updateMany(ws.entityStore.view.all(), {
           selected: false
         });
       },
       args: [workspace],
-      availability: (ws: LayerWorkspace) => noElementSelected(ws)
+      availability: (ws: AnyWorkspace) => noElementSelected(ws)
     },
     {
       id: 'featureDownload',
       icon: 'file_save',
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
-      handler: (ws: LayerWorkspace) => {
+      handler: (ws: AnyWorkspace) => {
         const filterStrategy = ws.entityStore.getStrategyOfType(
           EntityStoreFilterCustomFuncStrategy
         );
@@ -126,7 +126,7 @@ export function getWorkspaceActions(
       icon: 'filter_alt',
       title: 'igo.integration.workspace.ogcFilter.title',
       tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
-      handler: (widget: Widget, ws: LayerWorkspace) => {
+      handler: (widget: Widget, ws: AnyWorkspace) => {
         ws.activateWidget(widget, {
           map: ws.map,
           layer: ws.layer
@@ -173,7 +173,7 @@ export function getWorkspaceActions(
       icon: 'print',
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
-      handler: (ws: LayerWorkspace) => {
+      handler: (ws: AnyWorkspace) => {
         const title = `${ws.layer.title} (${dateTransform(
           new Date(),
           'YYYY-MM-DD-HH_mm'
