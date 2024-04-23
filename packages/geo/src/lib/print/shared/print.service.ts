@@ -79,8 +79,6 @@ export class PrintService {
       unit: 'mm' // default
     });
 
-    console.log('fonts', doc.getFontList());
-
     const dimensions = [
       doc.internal.pageSize.width,
       doc.internal.pageSize.height
