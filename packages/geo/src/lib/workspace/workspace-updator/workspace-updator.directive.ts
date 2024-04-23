@@ -16,9 +16,9 @@ import { OgcFilterableDataSourceOptions } from '../../filter/shared';
 import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { EditionWorkspaceFactoryService } from '../new-edition-workspace/edition-workspace-factory.service';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
-import { EditionWorkspaceFactoryService } from '../shared/new-edition-workspace/edition-workspace-factory.service';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 

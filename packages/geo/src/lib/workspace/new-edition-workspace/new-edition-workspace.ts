@@ -10,11 +10,11 @@ import { MessageService } from '@igo2/core/message';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { GeometryType } from '../../../draw';
-import { Feature, FeatureGeometry } from '../../../feature';
-import { ImageLayer, VectorLayer } from '../../../layer/shared';
-import { IgoMap } from '../../../map/shared/map';
-import { ConfirmationPopupComponent } from '../../confirmation-popup';
+import { GeometryType } from '../../draw';
+import { Feature, FeatureGeometry } from '../../feature';
+import { ImageLayer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared/map';
+import { ConfirmationPopupComponent } from '../confirmation-popup';
 import { GeometryEditor } from './geometry-editor';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {

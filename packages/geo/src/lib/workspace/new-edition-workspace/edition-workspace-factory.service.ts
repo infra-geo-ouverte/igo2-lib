@@ -7,7 +7,7 @@ import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 
-import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import {
   FeatureMotion,
   FeatureStore,
@@ -15,14 +15,14 @@ import {
   FeatureStoreInMapResolutionStrategy,
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy
-} from '../../../feature/shared';
+} from '../../feature/shared';
 import {
   GeoWorkspaceOptions,
   ImageLayer,
   VectorLayer
-} from '../../../layer/shared';
-import { IgoMap } from '../../../map/shared';
-import { createFilterInMapExtentOrResolutionStrategy } from '../workspace.utils';
+} from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
+import { createFilterInMapExtentOrResolutionStrategy } from '../shared/workspace.utils';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { NewEditionWorkspace } from './new-edition-workspace';
 import { RestAPIEdition } from './rest-api-edition';

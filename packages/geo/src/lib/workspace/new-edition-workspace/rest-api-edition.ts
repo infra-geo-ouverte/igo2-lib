@@ -1,4 +1,4 @@
-import { SourceFieldsOptionsParams } from '../../../datasource';
+import { SourceFieldsOptionsParams } from '../../datasource';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
 export class RestAPIEdition extends NewEditionWorkspace {

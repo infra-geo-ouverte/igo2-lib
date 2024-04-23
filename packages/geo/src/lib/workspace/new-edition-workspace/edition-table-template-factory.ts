@@ -4,11 +4,8 @@ import olFeature from 'ol/Feature';
 
 import { first, skipWhile } from 'rxjs';
 
-import {
-  RelationOptions,
-  SourceFieldsOptionsParams
-} from '../../../datasource';
-import { VectorLayer } from '../../../layer/shared';
+import { RelationOptions, SourceFieldsOptionsParams } from '../../datasource';
+import { VectorLayer } from '../../layer/shared';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 
 export class EditionWorkspaceTableTemplateFactory {

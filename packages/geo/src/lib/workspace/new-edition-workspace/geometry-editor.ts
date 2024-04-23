@@ -5,12 +5,12 @@ import * as OlStyle from 'ol/style';
 
 import { Subject, Subscription } from 'rxjs';
 
-import { FeatureDataSource } from '../../../datasource';
-import { GeometryType, createInteractionStyle } from '../../../draw';
-import { Feature, FeatureGeometry, featureToOl } from '../../../feature';
-import { DrawControl } from '../../../geometry';
-import { VectorLayer } from '../../../layer/shared';
-import { IgoMap } from '../../../map';
+import { FeatureDataSource } from '../../datasource';
+import { GeometryType, createInteractionStyle } from '../../draw';
+import { Feature, FeatureGeometry, featureToOl } from '../../feature';
+import { DrawControl } from '../../geometry';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map';
 
 export class GeometryEditor {
   private editionDoneSub = new Subject<FeatureGeometry>();
