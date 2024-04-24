@@ -179,7 +179,7 @@
       <mat-icon
         matBadgeColor="primary"
         matBadgeSize="medium"
-        svgIcon="magnify-scan"
+        [svgIcon]="magnifyIcon.name"
       ></mat-icon>
     </button>
 
@@ -340,7 +340,7 @@
       [matTooltip]="'igo.geo.layer.zoomLayers' | translate"
       (click)="zoomLayersExtents(layersChecked)"
     >
-      <mat-icon svgIcon="magnify-scan"></mat-icon>
+      <mat-icon [svgIcon]="magnifyIcon.name"></mat-icon>
     </button>
   </div>
 </igo-panel>
