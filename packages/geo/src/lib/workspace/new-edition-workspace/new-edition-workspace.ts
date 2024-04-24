@@ -105,7 +105,6 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
   }
 
   private editFeature(feature: EditionFeature, type: EditionType) {
-    // TODO Domain values
     feature.edition = true;
 
     this.edition =
@@ -240,7 +239,6 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
   }
 
   private saveUpdateFeature(feature: EditionFeature) {
-    console.log('update feature');
     const editionOptions = this.layer.dataSource.options.edition;
     const { modifyUrl, modifyMethod, modifyHeaders } = editionOptions;
 
@@ -249,13 +247,16 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
     const headers = new HttpHeaders(modifyHeaders);
 
     this.isLoadingSubject.next(true);
+
     this.http[modifyMethod ?? 'patch'](url, this.getUpdateBody(feature), {
       headers
     }).subscribe(
       () => {
         this.isLoadingSubject.next(false);
         this.closeEdition(feature);
-        // TODO ADD SUCCESS MESSAGE
+
+        this.refreshLayer();
+
         this.messageService.success('igo.geo.workspace.modifySuccess');
       },
       (error: HttpErrorResponse) => {
@@ -323,10 +324,6 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
     );
 
     this.entityStore.state.update(feature, { edit: true }, true);
-  }
-
-  private addFeatureToStore(feature: EditionFeature) {
-    // TODO implement add geometry feature
   }
 
   private getFeatureId(feature: EditionFeature) {

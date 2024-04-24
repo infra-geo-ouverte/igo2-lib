@@ -7,6 +7,7 @@ export class RestAPIEdition extends NewEditionWorkspace {
   }
 
   getUpdateBody(feature: EditionFeature): Object {
+    // TODO support Geometry
     const {
       params: { fieldNameGeometry }
     } = this.dataSourceOptions;
