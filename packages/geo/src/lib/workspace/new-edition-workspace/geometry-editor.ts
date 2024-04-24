@@ -63,7 +63,6 @@ export class GeometryEditor {
     private map: IgoMap,
     private geometryType: GeometryType
   ) {
-    // TODO add modify interaction to after create and edit
     this.drawControl = this.createDrawControl();
   }
 
