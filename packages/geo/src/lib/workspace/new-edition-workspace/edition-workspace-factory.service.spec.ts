@@ -14,8 +14,9 @@ import {
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
 import { EditionWorkspaceFactoryService } from './edition-workspace-factory.service';
+import { createTestIgoMap } from './tests.utils';
 
-fdescribe('EditionWorkspaceFactoryService', () => {
+describe('EditionWorkspaceFactoryService', () => {
   let service: EditionWorkspaceFactoryService;
   let map: IgoMap;
 
@@ -47,15 +48,7 @@ fdescribe('EditionWorkspaceFactoryService', () => {
         { provide: MessageService, useValue: {} }
       ]
     });
-    map = new IgoMap({
-      view: {
-        projection: 'EPSG:3857',
-        center: [-71.938087, 48.446975],
-        zoom: 6,
-        maxZoom: 19,
-        maxZoomOnExtent: 17
-      }
-    });
+    map = createTestIgoMap();
     map.init();
     service = TestBed.inject(EditionWorkspaceFactoryService);
   });
