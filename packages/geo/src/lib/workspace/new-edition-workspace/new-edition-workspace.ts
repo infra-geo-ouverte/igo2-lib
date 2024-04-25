@@ -196,7 +196,7 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
   }
 
   private closeEdition(feature: EditionFeature) {
-    feature.edition = false;
+    delete feature.edition;
     this.entityStore.stateView.clear();
     this.edition = undefined;
     this.geometryEditor.disable();
