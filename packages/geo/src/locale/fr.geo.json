@@ -346,7 +346,8 @@
           "bottomright": "Coin bas droit de la carte",
           "newpage": "Sur une nouvelle page",
           "newimage": "Sur une nouvelle image"
-        }
+        },
+        "showNorthArrow": "Afficher la flèche du nord"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",

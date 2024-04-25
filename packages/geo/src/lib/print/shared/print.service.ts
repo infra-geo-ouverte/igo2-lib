@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 import { SecureImagePipe } from '@igo2/common';
 import { ActivityService } from '@igo2/core/activity';
@@ -58,7 +59,8 @@ export class PrintService {
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -172,11 +174,22 @@ export class PrintService {
       legendPostion
     ).subscribe(async (status: SubjectStatus) => {
       if (status === SubjectStatus.Done) {
-        await this.handleMeasureLayer(doc, map, baseMargins);
         const width = this.imgSizeAdded[0];
         const height = this.imgSizeAdded[1];
         this.addGeoRef(doc, map, width, height, baseMargins);
-
+        await this.handleMeasureLayer(doc, map, baseMargins);
+        if (options.showNorthArrow) {
+          const northArrowCanvas = await this.createNorthDirectionArrow(
+            map.viewController.getRotation()
+          );
+          await this.addNorthArrowInDoc(
+            doc,
+            northArrowCanvas,
+            baseMargins,
+            legendPostion,
+            width
+          );
+        }
         if (options.legendPosition !== 'none') {
           if (
             ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
@@ -882,8 +895,7 @@ export class PrintService {
     const mapOverlayHTML = map.ol
       .getOverlayContainerStopEvent()
       .cloneNode(true) as HTMLElement;
-    // add North Direction to mapOverly
-    await this.addNorthDirection(mapOverlayHTML, position);
+
     // add map Attribution designe to print
     await this.addAttribution(mapOverlayHTML);
 
@@ -917,28 +929,66 @@ export class PrintService {
     mapOverlayHTML.remove();
   }
 
-  private async addNorthDirection(
-    mapOverlayHTML: HTMLElement,
-    position: PrintLegendPosition
-  ): Promise<void> {
-    const northDirection = document
-      .getElementsByTagName('igo-rotation-button')[0]
-      .cloneNode(true) as HTMLElement;
-    const HTMLButton = northDirection.getElementsByTagName(
-      'button'
-    )[0] as HTMLElement;
-    if (!HTMLButton) {
-      return null;
+  private async addNorthArrowInDoc(
+    doc: jsPDF | CanvasRenderingContext2D,
+    arrawCanvas: HTMLCanvasElement,
+    baseMargins: [number, number, number, number],
+    legendPosition: PrintLegendPosition,
+    width: number,
+    yPosition: number = 0
+  ) {
+    let xPosition: number = 0;
+    let northArrowDimension: number = 0;
+    if (doc instanceof CanvasRenderingContext2D) {
+      northArrowDimension = 50;
+      xPosition =
+        legendPosition === 'topright' ? 0 : width - northArrowDimension;
+      doc.drawImage(
+        arrawCanvas,
+        xPosition,
+        yPosition,
+        northArrowDimension,
+        northArrowDimension
+      );
+    } else {
+      northArrowDimension = 16;
+      xPosition = legendPosition === 'topright' ? 10 : width - baseMargins[1];
+      yPosition = legendPosition === 'topright' ? 10 : baseMargins[0];
+      doc.addImage(
+        arrawCanvas.toDataURL(),
+        xPosition,
+        yPosition,
+        northArrowDimension,
+        northArrowDimension
+      );
     }
-    // in case legend position is topright
-    // we change rotate btn to topleft
-    if (position === 'topright') {
-      northDirection.style.width = 'inherit';
-      northDirection.style.left = '10px';
+  }
+
+  /**
+   * @param rotation - map rotation 'rad' unit
+   *
+   */
+  private async createNorthDirectionArrow(
+    rotation: number
+  ): Promise<HTMLCanvasElement> {
+    const div = this.document.createElement('div');
+    div.style.maxWidth = '50mm';
+    div.style.maxHeight = '50mm';
+    div.style.textAlign = 'center';
+
+    const img = this.document.createElement('img');
+    img.src = './assets/igo2/geo/images/north-direction.png';
+    img.style.maxWidth = '50mm';
+    img.style.maxHeight = '50mm';
+    img.style.transform = 'rotate(' + rotation + 'rad)';
+    img.style.padding = '5mm';
+    div.appendChild(img);
+    this.document.body.appendChild(div);
+    const canvas = await html2canvas(div, { backgroundColor: null });
+    this.removeHtmlElement(div);
+    if (canvas) {
+      return canvas;
     }
-    HTMLButton.parentElement.style.background = 'transparent';
-    HTMLButton.style.color = '#000';
-    mapOverlayHTML.appendChild(northDirection);
   }
 
   private async addAttribution(mapOverlayHTML: HTMLElement): Promise<void> {
@@ -979,7 +1029,8 @@ export class PrintService {
     subtitle = '',
     comment = '',
     doZipFile = true,
-    legendPosition: PrintLegendPosition
+    legendPosition: PrintLegendPosition,
+    showNorthArrow: boolean
   ) {
     const status$ = new Subject();
     this.activityId = this.activityService.register();
@@ -999,6 +1050,7 @@ export class PrintService {
       this.resetOriginalMapSize(map, initialMapSize, viewResolution);
 
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
+
       // Check the legendPosition
       if (legendPosition !== 'none') {
         if (
@@ -1147,6 +1199,20 @@ export class PrintService {
       }
 
       newContext.drawImage(mapResultCanvas, 0, positionHCanvas);
+
+      if (showNorthArrow) {
+        const northArrowCanvas = await this.createNorthDirectionArrow(
+          map.viewController.getRotation()
+        );
+        await this.addNorthArrowInDoc(
+          newContext,
+          northArrowCanvas,
+          null,
+          legendPosition,
+          width,
+          positionHCanvas
+        );
+      }
 
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
