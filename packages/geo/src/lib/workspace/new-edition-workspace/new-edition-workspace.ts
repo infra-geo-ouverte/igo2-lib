@@ -121,7 +121,6 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
 
     if (type === EditionType.CREATION) {
       this.entityStore.insert(feature);
-      this.entityStore.state.update(feature, { newFeature: true }, true);
     }
 
     this.focusEditedFeature(feature);
