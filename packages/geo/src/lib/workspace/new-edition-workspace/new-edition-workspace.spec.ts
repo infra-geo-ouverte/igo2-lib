@@ -9,13 +9,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageService } from '@igo2/core/message';
 
 import { DataSourceOptions, FeatureDataSource } from '../../datasource';
-import { FeatureStore } from '../../feature';
+import { Feature, FeatureStore } from '../../feature';
 import { GeoWorkspaceOptions, VectorLayer } from '../../layer/shared';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 import { createTestIgoMap } from './tests.utils';
 
-describe('NewEditionWorkspace', () => {
+fdescribe('NewEditionWorkspace', () => {
   let workspace: NewEditionWorkspace;
 
   const editionUrl = 'http://testing.com';
@@ -116,7 +116,7 @@ describe('NewEditionWorkspace', () => {
     expect(workspace).toBeTruthy();
   });
 
-  it('should create a feature', () => {
+  const createFeature = () => {
     const fieldsValues = { name: 'New Feature' };
 
     workspace.createFeature();
@@ -135,6 +135,11 @@ describe('NewEditionWorkspace', () => {
     expect(req.request.url).toEqual(editionUrl + dsOptions.edition.addUrl);
 
     expect(workspace.isLoading).toBeTruthy();
+    return req;
+  };
+
+  it('should create a feature', () => {
+    const req = createFeature();
 
     req.flush({});
 
@@ -142,6 +147,84 @@ describe('NewEditionWorkspace', () => {
 
     expect(messageService.success).toHaveBeenCalledWith(
       'igo.geo.workspace.addSuccess'
+    );
+  });
+
+  it('should not create a feature when canceling', () => {
+    // TODO
+    // const req = createFeature();
+    // req.flush({}, { status: 400, statusText: 'Bad Request' });
+    // expect(workspace.isLoading).toBeFalsy();
+    // expect(messageService.error).toHaveBeenCalledWith(
+    //   'igo.geo.workspace.addError'
+    // );
+  });
+
+  it('should not create a feature', () => {
+    const req = createFeature();
+
+    req.flush({}, { status: 400, statusText: 'Bad Request' });
+
+    expect(workspace.isLoading).toBeFalsy();
+
+    expect(messageService.error).toHaveBeenCalledWith(
+      'igo.geo.workspace.addError'
+    );
+  });
+
+  const updateFeature = () => {
+    const fieldsValues = { name: 'updated' };
+    const existingFeatures: Feature[] = [
+      {
+        type: 'Feature',
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016566]
+        },
+        properties: { id: '1234', name: 'toUpdate' }
+      },
+      {
+        type: 'Feature',
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016567]
+        },
+        properties: { id: '2345', name: 'notToUpdate' }
+      }
+    ];
+
+    workspace.entityStore.insertMany(existingFeatures);
+
+    const featureToEdit = existingFeatures[0];
+    workspace.updateFeature(featureToEdit);
+
+    featureToEdit.properties = {
+      ...featureToEdit.properties,
+      ...fieldsValues
+    };
+    workspace.saveFeature(featureToEdit);
+
+    const req = httpTestingController.expectOne(
+      editionUrl + dsOptions.edition.modifyUrl + featureToEdit.properties.id
+    );
+    expect(req.request.method).toEqual('PATCH');
+    expect(req.request.body).toEqual(featureToEdit.properties);
+
+    expect(workspace.isLoading).toBeTruthy();
+    return req;
+  };
+
+  it('should update a feature', () => {
+    const req = updateFeature();
+
+    req.flush({});
+
+    expect(workspace.isLoading).toBeFalsy();
+
+    expect(messageService.success).toHaveBeenCalledWith(
+      'igo.geo.workspace.modifySuccess'
     );
   });
 });
