@@ -6,11 +6,24 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
+import { EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { MessageService } from '@igo2/core/message';
 
+import { timer } from 'rxjs';
+
 import { DataSourceOptions, FeatureDataSource } from '../../datasource';
-import { Feature, FeatureStore } from '../../feature';
+import {
+  Feature,
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreInMapExtentStrategy,
+  FeatureStoreInMapResolutionStrategy,
+  FeatureStoreLoadingLayerStrategy,
+  FeatureStoreSelectionStrategy
+} from '../../feature';
 import { GeoWorkspaceOptions, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map';
+import { createFilterInMapExtentOrResolutionStrategy } from '../shared';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 import { createTestIgoMap } from './tests.utils';
@@ -151,13 +164,22 @@ fdescribe('NewEditionWorkspace', () => {
   });
 
   it('should not create a feature when canceling', () => {
-    // TODO
-    // const req = createFeature();
-    // req.flush({}, { status: 400, statusText: 'Bad Request' });
-    // expect(workspace.isLoading).toBeFalsy();
-    // expect(messageService.error).toHaveBeenCalledWith(
-    //   'igo.geo.workspace.addError'
-    // );
+    const fieldsValues = { name: 'New Feature' };
+
+    workspace.createFeature();
+
+    expect(workspace.entityStore.count).toBe(1);
+
+    const entities = workspace.entityStore.all();
+    const newFeature = entities[0];
+
+    newFeature.properties = {
+      ...newFeature.properties,
+      ...fieldsValues
+    };
+    workspace.cancelEdit(newFeature);
+
+    expect(workspace.entityStore.count).toBe(0);
   });
 
   it('should not create a feature when server send bad request', () => {
@@ -177,6 +199,7 @@ fdescribe('NewEditionWorkspace', () => {
     const existingFeatures: Feature[] = [
       {
         type: 'Feature',
+        meta: { id: '1' },
         projection: 'EPSG:4326',
         geometry: {
           type,
@@ -186,6 +209,7 @@ fdescribe('NewEditionWorkspace', () => {
       },
       {
         type: 'Feature',
+        meta: { id: '2' },
         projection: 'EPSG:4326',
         geometry: {
           type,
@@ -228,15 +252,48 @@ fdescribe('NewEditionWorkspace', () => {
     );
   });
 
-  it('should not update a feature when server send bad request', () => {
-    const req = updateFeature();
+  fit('should not update a feature when server send bad request', () => {
+    const fieldsValues = { name: 'updated' };
+    const existingFeatures: Feature[] = [
+      {
+        type: 'Feature',
+        meta: { id: '1' },
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016566]
+        },
+        properties: { id: '1234', name: 'toUpdate' }
+      },
+      {
+        type: 'Feature',
+        meta: { id: '2' },
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016567]
+        },
+        properties: { id: '2345', name: 'notToUpdate' }
+      }
+    ];
+    workspace.entityStore.insertMany(existingFeatures);
 
-    req.flush({}, { status: 400, statusText: 'Bad Request' });
+    const featureToEdit = existingFeatures[0];
+    const featureBeforeEdit = JSON.parse(JSON.stringify(featureToEdit));
+    workspace.updateFeature(featureToEdit);
 
-    expect(workspace.isLoading).toBeFalsy();
+    expect(workspace.entityStore.count).toBe(2);
 
-    expect(messageService.error).toHaveBeenCalledWith(
-      'igo.geo.workspace.addError'
-    );
+    featureToEdit.properties = {
+      ...featureToEdit.properties,
+      ...fieldsValues
+    };
+
+    workspace.cancelEdit(featureToEdit);
+
+    expect(workspace.entityStore.count).toBe(2);
+
+    const canceledFeatureEdition = workspace.entityStore.all()[0];
+    expect(canceledFeatureEdition).toEqual(featureBeforeEdit);
   });
 });
