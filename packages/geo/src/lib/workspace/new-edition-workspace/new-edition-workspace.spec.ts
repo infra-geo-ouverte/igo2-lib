@@ -160,7 +160,7 @@ fdescribe('NewEditionWorkspace', () => {
     // );
   });
 
-  it('should not create a feature', () => {
+  it('should not create a feature when server send bad request', () => {
     const req = createFeature();
 
     req.flush({}, { status: 400, statusText: 'Bad Request' });
@@ -225,6 +225,18 @@ fdescribe('NewEditionWorkspace', () => {
 
     expect(messageService.success).toHaveBeenCalledWith(
       'igo.geo.workspace.modifySuccess'
+    );
+  });
+
+  it('should not update a feature when server send bad request', () => {
+    const req = updateFeature();
+
+    req.flush({}, { status: 400, statusText: 'Bad Request' });
+
+    expect(workspace.isLoading).toBeFalsy();
+
+    expect(messageService.error).toHaveBeenCalledWith(
+      'igo.geo.workspace.addError'
     );
   });
 });
