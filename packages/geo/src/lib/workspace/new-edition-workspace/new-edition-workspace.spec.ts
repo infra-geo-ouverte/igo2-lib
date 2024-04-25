@@ -6,29 +6,18 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import { EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { MessageService } from '@igo2/core/message';
 
-import { timer } from 'rxjs';
+import { of } from 'rxjs';
 
 import { DataSourceOptions, FeatureDataSource } from '../../datasource';
-import {
-  Feature,
-  FeatureMotion,
-  FeatureStore,
-  FeatureStoreInMapExtentStrategy,
-  FeatureStoreInMapResolutionStrategy,
-  FeatureStoreLoadingLayerStrategy,
-  FeatureStoreSelectionStrategy
-} from '../../feature';
+import { Feature, FeatureStore } from '../../feature';
 import { GeoWorkspaceOptions, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map';
-import { createFilterInMapExtentOrResolutionStrategy } from '../shared';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { EditionFeature, NewEditionWorkspace } from './new-edition-workspace';
 import { createTestIgoMap } from './tests.utils';
 
-fdescribe('NewEditionWorkspace', () => {
+describe('NewEditionWorkspace', () => {
   let workspace: NewEditionWorkspace;
 
   const editionUrl = 'http://testing.com';
@@ -74,7 +63,15 @@ fdescribe('NewEditionWorkspace', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatDialogModule]
+      imports: [HttpClientTestingModule, MatDialogModule],
+      providers: [
+        {
+          provide: MatDialog,
+          useValue: jasmine.createSpyObj(MatDialog, {
+            open: { afterClosed: () => of(false) }
+          })
+        }
+      ]
     });
 
     http = TestBed.inject(HttpClient);
@@ -252,7 +249,7 @@ fdescribe('NewEditionWorkspace', () => {
     );
   });
 
-  fit('should not update a feature when server send bad request', () => {
+  it('should not update a feature when server send bad request', () => {
     const fieldsValues = { name: 'updated' };
     const existingFeatures: Feature[] = [
       {
@@ -295,5 +292,77 @@ fdescribe('NewEditionWorkspace', () => {
 
     const canceledFeatureEdition = workspace.entityStore.all()[0];
     expect(canceledFeatureEdition).toEqual(featureBeforeEdit);
+  });
+
+  const deleteFeature = () => {
+    const existingFeatures: Feature[] = [
+      {
+        type: 'Feature',
+        meta: { id: '2345' },
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016567]
+        },
+        properties: { id: '2345', name: 'notToDelete1' }
+      },
+      {
+        type: 'Feature',
+        meta: { id: '1234' },
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016566]
+        },
+        properties: { id: '1234', name: 'toDelete' }
+      },
+      {
+        type: 'Feature',
+        meta: { id: '3456' },
+        projection: 'EPSG:4326',
+        geometry: {
+          type,
+          coordinates: [-69.84844106937622, 47.20478973016567]
+        },
+        properties: { id: '3456', name: 'notToDelete2' }
+      }
+    ];
+
+    workspace.entityStore.insertMany(existingFeatures);
+
+    const featureToDelete = existingFeatures[1];
+    workspace.deleteFeature(featureToDelete);
+
+    const req = httpTestingController.expectOne(
+      editionUrl + dsOptions.edition.deleteUrl + featureToDelete.properties.id
+    );
+
+    expect(req.request.method).toBe('DELETE');
+
+    expect(workspace.isLoading).toBeTruthy();
+
+    return req;
+  };
+
+  it('should delete a feature', () => {
+    const req = deleteFeature();
+    req.flush({});
+
+    expect(workspace.isLoading).toBeFalsy();
+
+    expect(messageService.success).toHaveBeenCalledWith(
+      'igo.geo.workspace.deleteSuccess'
+    );
+  });
+
+  it('should handle error when deleting a feature', () => {
+    const req = deleteFeature();
+    req.flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(workspace.isLoading).toBeFalsy();
+
+    expect(messageService.error).toHaveBeenCalledWith(
+      'igo.geo.workspace.addError'
+    );
   });
 });
