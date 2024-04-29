@@ -32,7 +32,12 @@
   <mat-divider *ngIf="withDivider" [vertical]="true"></mat-divider>
 
   <div class="search-bar-buttons">
-    <button *ngIf="showSearchButton" mat-icon-button [color]="color">
+    <button
+      *ngIf="showSearchButton"
+      mat-icon-button
+      [color]="color"
+      (click)="handleSearch()"
+    >
       <mat-icon>search</mat-icon>
     </button>
 

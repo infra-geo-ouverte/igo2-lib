@@ -387,6 +387,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleSearch(): void {
+    this.doSearch(this.term);
+  }
+
   /**
    * Clear the stream and the input
    */
