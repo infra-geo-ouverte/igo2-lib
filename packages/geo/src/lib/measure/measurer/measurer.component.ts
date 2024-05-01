@@ -22,6 +22,7 @@ import {
   EntityTableTemplate
 } from '@igo2/common';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import { uuid } from '@igo2/utils';
 
@@ -35,7 +36,6 @@ import OlVectorSource from 'ol/source/Vector';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import OlStyle from 'ol/style/Style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
@@ -96,7 +96,7 @@ import { MeasurerItemComponent } from './measurer-item.component';
     MatIconModule,
     EntityTableComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MeasurerComponent implements OnInit, OnDestroy {

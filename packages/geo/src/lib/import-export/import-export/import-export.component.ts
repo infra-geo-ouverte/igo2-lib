@@ -37,6 +37,7 @@ import {
 import type { WorkspaceStore } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 import { strEnum } from '@igo2/utils';
@@ -46,7 +47,6 @@ import { circular } from 'ol/geom/Polygon';
 import olClusterSource from 'ol/source/Cluster';
 import olVectorSource from 'ol/source/Vector';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -103,7 +103,7 @@ import {
     MatInputModule,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [ConfirmDialogService]
 })

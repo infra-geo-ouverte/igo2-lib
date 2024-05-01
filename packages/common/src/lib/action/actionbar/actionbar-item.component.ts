@@ -14,7 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
 import { IgoIconComponent } from '../../icons';
@@ -38,7 +39,7 @@ import { Action } from '../shared/action.interfaces';
     MatIconModule,
     MatCheckboxModule,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     IgoIconComponent
   ]
 })

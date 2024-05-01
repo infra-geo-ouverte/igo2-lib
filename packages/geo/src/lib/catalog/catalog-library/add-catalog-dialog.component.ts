@@ -26,8 +26,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { EntityStore } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TypeCapabilities } from '../../datasource/shared/capabilities.interface';
@@ -55,7 +55,7 @@ import { Catalog } from '../shared/catalog.abstract';
     MatDialogActions,
     MatButtonModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {

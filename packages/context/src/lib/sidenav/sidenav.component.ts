@@ -13,6 +13,7 @@ import {
   Tool,
   getEntityTitle
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 import type { Media } from '@igo2/core/media';
 import {
   Feature,
@@ -23,8 +24,6 @@ import {
 import type { IgoMap } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'igo-sidenav',
@@ -40,7 +39,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatTooltipModule,
     MatIconModule,
     FeatureDetailsComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SidenavComponent {

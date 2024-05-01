@@ -4,8 +4,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ToolComponent } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { MapState } from '../map.state';
 import { AdvancedCoordinatesComponent } from './advanced-coordinates/advanced-coordinates.component';
@@ -30,7 +29,7 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
     AdvancedCoordinatesComponent,
     MatSlideToggleModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AdvancedMapToolComponent {

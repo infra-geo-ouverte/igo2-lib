@@ -12,10 +12,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Clipboard, ObjectUtils } from '@igo2/utils';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { Context } from '../shared/context.interface';
 
@@ -33,7 +32,7 @@ import { Context } from '../shared/context.interface';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextFormComponent implements OnInit {

@@ -22,9 +22,9 @@ import {
 } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { EntityStoreWatcher } from '../../entity';
@@ -54,7 +54,7 @@ import { ActionbarItemComponent } from './actionbar-item.component';
     MatMenuModule,
     MatCardModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { FormFieldComponent } from '../form-field/form-field.component';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
@@ -26,7 +26,7 @@ import { getControlErrorMessage } from '../shared/form.utils';
     NgClass,
     FormFieldComponent,
     MatFormFieldModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class FormGroupComponent {

@@ -9,8 +9,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CollapseDirective } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -48,7 +48,7 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     MatCheckboxModule,
     FormsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [OGCFilterService]
 })

@@ -10,7 +10,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
   selector: 'igo-poi-dialog',
@@ -24,7 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class PoiDialogComponent {

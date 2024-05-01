@@ -11,7 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { ColorEvent } from 'ngx-color';
 import { ColorChromeModule } from 'ngx-color/chrome';
 import tinycolor, { ColorInput } from 'tinycolor2';
@@ -37,7 +38,7 @@ type ColorFormat = 'hex' | 'rgba' | 'hsla';
     CdkConnectedOverlay,
     ColorChromeModule,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ColorPickerFormFieldComponent implements ControlValueAccessor {

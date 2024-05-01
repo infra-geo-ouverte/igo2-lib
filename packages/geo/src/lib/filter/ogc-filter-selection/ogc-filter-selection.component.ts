@@ -27,9 +27,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { Subject, BehaviorSubject, Observable, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -45,7 +45,6 @@ import { MapBase } from '../../map';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
-import { OgcFilterChipsComponent } from '../ogc-filter-chips/ogc-filter-chips.component';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -72,8 +71,7 @@ import { OgcFilterChipsComponent } from '../ogc-filter-chips/ogc-filter-chips.co
     MatAutocompleteModule,
     OgcFilterTimeComponent,
     AsyncPipe,
-    TranslateModule,
-    OgcFilterChipsComponent
+    IgoLanguageModule
   ]
 })
 export class OgcFilterSelectionComponent implements OnInit {

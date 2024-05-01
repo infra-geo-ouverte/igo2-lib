@@ -17,11 +17,11 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { SpinnerComponent } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -55,7 +55,7 @@ import {
     MatDividerModule,
     NgFor,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextImportExportComponent implements OnInit, OnDestroy {

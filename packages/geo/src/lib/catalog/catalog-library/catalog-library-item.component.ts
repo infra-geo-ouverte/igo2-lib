@@ -12,8 +12,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { getEntityTitle } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
@@ -33,7 +32,7 @@ import { Catalog } from '../shared/catalog.abstract';
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogLibaryItemComponent {

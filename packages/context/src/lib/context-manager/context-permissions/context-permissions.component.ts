@@ -32,8 +32,8 @@ import {
   StopPropagationDirective
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { TypePermission } from '../shared/context.enum';
@@ -67,7 +67,7 @@ import {
     StopPropagationDirective,
     MatTooltipModule,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextPermissionsComponent implements OnInit {

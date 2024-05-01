@@ -4,7 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { Observable, of } from 'rxjs';
 
 import {
@@ -28,7 +29,7 @@ import { InteractiveTourService } from './interactive-tour.service';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     IgoIconComponent
   ]
 })

@@ -23,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
@@ -36,7 +37,6 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -64,7 +64,7 @@ import { MapState } from '../../map.state';
     MatSlideToggleModule,
     AsyncPipe,
     DecimalPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {

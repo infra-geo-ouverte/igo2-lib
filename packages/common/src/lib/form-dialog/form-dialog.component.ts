@@ -9,8 +9,8 @@ import {
 } from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { CustomHtmlComponent } from '../custom-html/custom-html.component';
@@ -42,7 +42,7 @@ import { FormDialogData } from './form-dialog.interface';
     MatButtonModule,
     CustomHtmlComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class FormDialogComponent {

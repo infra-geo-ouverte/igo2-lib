@@ -18,9 +18,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
@@ -46,7 +46,7 @@ import { TooltipType } from '../shared/layers/layer.interface';
     NgClass,
     LayerLegendComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
