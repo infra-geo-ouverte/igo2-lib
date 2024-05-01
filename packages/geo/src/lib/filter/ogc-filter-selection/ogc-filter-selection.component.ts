@@ -27,8 +27,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -71,7 +71,7 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     MatAutocompleteModule,
     OgcFilterTimeComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class OgcFilterSelectionComponent implements OnInit {

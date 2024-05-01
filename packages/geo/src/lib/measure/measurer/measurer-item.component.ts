@@ -12,7 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
@@ -42,7 +43,7 @@ import { MeasureFormatPipe } from './measure-format.pipe';
     NgFor,
     MatOptionModule,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     MeasureFormatPipe
   ]
 })

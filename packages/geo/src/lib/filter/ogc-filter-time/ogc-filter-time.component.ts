@@ -24,7 +24,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { default as moment } from 'moment';
 
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
@@ -56,7 +57,7 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
     ReactiveFormsModule,
     NgFor,
     MatOptionModule,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })

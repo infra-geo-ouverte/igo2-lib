@@ -12,7 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
@@ -41,7 +42,7 @@ import {
     NgIf,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class FormFieldSelectComponent implements OnInit {

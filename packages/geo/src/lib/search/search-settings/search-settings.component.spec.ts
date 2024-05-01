@@ -14,7 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, IgoLanguageModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -43,7 +43,7 @@ describe('SearchSettingsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
-        TranslateModule.forRoot({
+        IgoLanguageModule.forRoot({
           loader: {
             provide: TranslateLoader,
             useFactory: HttpLoaderFactory,

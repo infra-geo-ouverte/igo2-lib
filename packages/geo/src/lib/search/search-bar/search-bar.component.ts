@@ -23,8 +23,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -58,7 +58,7 @@ import { SearchService } from '../shared/search.service';
     SearchSelectorComponent,
     SearchSettingsComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {

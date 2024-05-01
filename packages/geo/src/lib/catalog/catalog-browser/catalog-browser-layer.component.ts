@@ -19,8 +19,8 @@ import {
   getEntityIcon,
   getEntityTitle
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -53,7 +53,7 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
     IgoBadgeIconDirective,
     LayerLegendComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {

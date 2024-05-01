@@ -17,11 +17,10 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 
 import { ColorPickerFormFieldComponent } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import {
   LayerMatDialogData,
@@ -43,7 +42,7 @@ import {
     ColorPickerFormFieldComponent,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class StyleModalLayerComponent implements OnInit {

@@ -30,10 +30,10 @@ import {
   MAGNIFY_SCAN_ICON,
   PanelComponent
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olextent from 'ol/extent';
 
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   EMPTY,
@@ -90,7 +90,7 @@ import { LayerListSelectVisibleEnum } from './layer-list.enum';
     NgTemplateOutlet,
     FormsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerListComponent implements OnInit, OnDestroy {

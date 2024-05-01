@@ -20,11 +20,11 @@ import {
   ListComponent,
   ListItemDirective
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
@@ -55,7 +55,7 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {

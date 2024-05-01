@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
   selector: 'igo-confirm-dialog',
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogContent,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ConfirmDialogComponent {

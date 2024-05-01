@@ -11,8 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ListItemDirective } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
@@ -34,7 +33,7 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
     MatBadgeModule,
     TimeFilterItemComponent,
     ListItemDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class TimeFilterButtonComponent implements OnInit {

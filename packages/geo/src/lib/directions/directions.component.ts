@@ -9,6 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { EntityStoreWatcher } from '@igo2/common';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
@@ -18,7 +19,6 @@ import { SelectEvent } from 'ol/interaction/Select';
 import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
@@ -64,7 +64,7 @@ import {
     DirectionsButtonsComponent,
     DirectionsInputsComponent,
     DirectionsResultsComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {

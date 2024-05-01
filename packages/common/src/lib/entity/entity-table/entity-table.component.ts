@@ -48,9 +48,9 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StringUtils } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { default as moment } from 'moment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -125,7 +125,7 @@ interface RowData {
     SanitizeHtmlPipe,
     SecureImagePipe,
     StopPropagationDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {

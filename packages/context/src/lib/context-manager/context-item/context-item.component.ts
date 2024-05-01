@@ -13,9 +13,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { CollapseDirective, StopPropagationDirective } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
@@ -35,7 +34,7 @@ import { DetailedContext } from '../shared/context.interface';
     MatTooltipModule,
     MatIconModule,
     CollapseDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextItemComponent {

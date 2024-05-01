@@ -19,9 +19,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { ObjectUtils } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -46,7 +46,7 @@ import { TableModel } from './table-model.interface';
     NgClass,
     MatButtonModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class TableComponent implements OnChanges, OnInit, AfterViewInit {

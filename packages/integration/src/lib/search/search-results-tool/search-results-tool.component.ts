@@ -23,6 +23,7 @@ import {
   getEntityTitle
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   FEATURE,
   Feature,
@@ -51,7 +52,6 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -86,7 +86,7 @@ import { SearchState } from '../search.state';
     MatBadgeModule,
     FeatureDetailsComponent,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     SanitizeHtmlPipe
   ]
 })
