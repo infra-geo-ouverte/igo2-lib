@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,19 +6,27 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
-import { Media, MediaService } from '@igo2/core';
+import {
+  EntityStore,
+  IgoBadgeIconDirective,
+  StopPropagationDirective
+} from '@igo2/common';
+import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
-import { default as OlGeometry } from 'ol/geom/Geometry';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -46,7 +55,19 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   selector: 'igo-search-add-button',
   templateUrl: './search-results-add-button.component.html',
   styleUrls: ['./search-results-add-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
@@ -280,9 +301,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.value) {
-      return this.isVisible$.value ? '' : 'eye-off';
+      return this.isVisible$.value ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 
@@ -434,7 +455,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         activeStore.layer.visible = true;
         activeStore.source.ol.on(
           'removefeature',
-          (event: OlVectorSourceEvent<OlGeometry>) => {
+          (event: OlVectorSourceEvent) => {
             const olGeometry = event.feature.getGeometry();
             this.clearLabelsOfOlGeometry(olGeometry);
           }

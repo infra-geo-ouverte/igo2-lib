@@ -511,7 +511,7 @@
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites":"Numéro d'unite"
+            "unites": "Unités (appartements, bureaux, etc.)"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -676,7 +676,7 @@
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
         "polices": "Poste de police",
-        "unites":"Numéro d'unite"
+        "unites": "Numéro d'unite"
       },
       "measure": {
         "dialog": {

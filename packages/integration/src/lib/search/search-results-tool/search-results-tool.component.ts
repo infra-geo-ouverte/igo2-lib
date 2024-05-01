@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,24 +7,33 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   EntityState,
   EntityStore,
   FlexibleComponent,
   FlexibleState,
+  PanelComponent,
+  SanitizeHtmlPipe,
   ToolComponent,
   getEntityTitle
 } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import {
   FEATURE,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   FeatureStore,
   IgoMap,
   Research,
   SearchResult,
+  SearchResultAddButtonComponent,
+  SearchResultsComponent,
   computeOlFeaturesExtent,
   featureFromOl,
   featureToOl,
@@ -41,6 +51,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -56,12 +67,28 @@ import { SearchState } from '../search.state';
 @ToolComponent({
   name: 'searchResults',
   title: 'igo.integration.tools.searchResults',
-  icon: 'magnify'
+  icon: 'search'
 })
 @Component({
   selector: 'igo-search-results-tool',
   templateUrl: './search-results-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    FlexibleComponent,
+    SearchResultsComponent,
+    SearchResultAddButtonComponent,
+    PanelComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    FeatureDetailsComponent,
+    AsyncPipe,
+    TranslateModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**

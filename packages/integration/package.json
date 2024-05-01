@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "16.2.0",
+  "version": "17.0.0-next.6",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -16,8 +16,11 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "build": "ng build integration --configuration production",
+    "build": "ng build integration --configuration production && npm run clean-exports",
+    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts integration",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint integration",
+    "lint.fix": "ng lint integration --fix",
     "test": "",
     "watch": "ng build integration --watch"
   },
@@ -30,8 +33,9 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
     "jspdf": "^2.5.1",

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -6,16 +7,29 @@ import {
   ViewChild
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { MatOption } from '@angular/material/core';
-import { MatSelect } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
+import { TranslateModule } from '@ngx-translate/core';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -27,16 +41,40 @@ import {
   OgcSelectorBundle,
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
+import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
+import { OgcFilterChipsComponent } from '../ogc-filter-chips/ogc-filter-chips.component';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
   templateUrl: './ogc-filter-selection.component.html',
   styleUrls: ['./ogc-filter-selection.component.scss'],
-  providers: [DOMService]
+  providers: [DOMService],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    NgIf,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatOptionModule,
+    MatButtonToggleModule,
+    NgStyle,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatIconModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    OgcFilterTimeComponent,
+    AsyncPipe,
+    TranslateModule,
+    OgcFilterChipsComponent
+  ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
   @ViewChild('selection') sel: MatSelect;
@@ -45,7 +83,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() checkboxesIndex = 5;
   @Input() radioButtonsIndex = 5;
@@ -74,7 +112,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
   public autocompleteEnableds$ = new BehaviorSubject([]);
-  public filteredOgcAutocomplete: {[key: string]: Observable<unknown[]> } = {};
+  public filteredOgcAutocomplete: {[key: string]: Observable<any[]> } = {};
   public activeFilters = [];
 
   public applyFiltersTimeout;
@@ -885,14 +923,14 @@ export class OgcFilterSelectionComponent implements OnInit {
         return pos && pos === 1
           ? 'lowerBoundary'
           : pos && pos === 2
-          ? 'upperBoundary'
-          : undefined;
+            ? 'upperBoundary'
+            : undefined;
       case OgcFilterOperator.During:
         return pos && pos === 1
           ? 'begin'
           : pos && pos === 2
-          ? 'end'
-          : undefined;
+            ? 'end'
+            : undefined;
       default:
         return;
     }

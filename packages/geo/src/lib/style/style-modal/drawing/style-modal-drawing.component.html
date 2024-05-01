@@ -10,7 +10,7 @@
     <div class="color-picker">
       <ng-container *ngIf="linestringOnly !== true">
         <span>
-          <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
+          <mat-icon class="stroke-palette-icon">format_color_fill</mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
 
@@ -20,8 +20,7 @@
       </ng-container>
 
       <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
-        </mat-icon>
+        <mat-icon class="stroke-palette-icon">border_color </mat-icon>
         {{ 'igo.geo.style.stroke' | translate }}
       </span>
 
@@ -41,7 +40,7 @@
           min="10"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureFontSize()"
-          (input)="styleModalData.fontSize = $event.target.value"
+          (input)="styleModalData.fontSize = $any($event.target).value"
         />
         <span matTextSuffix>px</span>
       </mat-form-field>
@@ -68,7 +67,7 @@
           type="number"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureOffsetX()"
-          (input)="styleModalData.offsetX = $event.target.value"
+          (input)="styleModalData.offsetX = $any($event.target).value"
         />
       </mat-form-field>
       <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
@@ -79,7 +78,7 @@
           type="number"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureOffsetY()"
-          (input)="styleModalData.offsetY = $event.target.value"
+          (input)="styleModalData.offsetY = $any($event.target).value"
         />
       </mat-form-field>
     </div>

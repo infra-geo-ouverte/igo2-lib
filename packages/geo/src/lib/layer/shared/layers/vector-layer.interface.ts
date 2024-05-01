@@ -1,6 +1,5 @@
 import Feature from 'ol/Feature';
 import * as olColor from 'ol/color';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import RenderFeature from 'ol/render/Feature';
 import olSourceVector from 'ol/source/Vector';
@@ -42,7 +41,7 @@ export interface VectorLayerOptions extends LayerOptions {
       ) => void | olStyle | olStyle[]);
   browsable?: boolean;
   exportable?: boolean;
-  ol?: olLayerVector<olSourceVector<OlGeometry>>;
+  ol?: olLayerVector<olSourceVector>;
   animation?: VectorAnimation;
   clusterParam?: ClusterParam;
   trackFeature?: string | number;

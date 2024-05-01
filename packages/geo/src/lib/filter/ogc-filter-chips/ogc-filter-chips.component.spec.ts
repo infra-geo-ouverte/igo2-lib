@@ -8,9 +8,8 @@ describe('OgcFilterChipsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OgcFilterChipsComponent ]
-    })
-    .compileComponents();
+      declarations: [OgcFilterChipsComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(OgcFilterChipsComponent);
     component = fixture.componentInstance;

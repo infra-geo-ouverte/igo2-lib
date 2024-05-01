@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -10,10 +11,24 @@ import {
   ViewChildren
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { SecureImagePipe } from '@igo2/common';
-import { ConfigService, LanguageService } from '@igo2/core';
+import {
+  CollapseDirective,
+  ImageErrorDirective,
+  SanitizeHtmlPipe,
+  SecureImagePipe
+} from '@igo2/common';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -31,7 +46,26 @@ import {
   selector: 'igo-layer-legend',
   templateUrl: './layer-legend.component.html',
   styleUrls: ['./layer-legend.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    NgClass,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    FormsModule,
+    MatOptionModule,
+    ImageErrorDirective,
+    NgStyle,
+    AsyncPipe,
+    TranslateModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
   @Input() updateLegendOnResolutionChange: boolean = false;

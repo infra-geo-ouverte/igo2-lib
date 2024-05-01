@@ -1,17 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { IgoEntitySelectorModule } from './entity-selector/entity-selector.module';
-import { IgoEntityTablePaginatorModule } from './entity-table-paginator/entity-table-paginator.module';
-import { IgoEntityTableModule } from './entity-table/entity-table.module';
+import { ENTITY_DIRECTIVES } from '.';
 
+/**
+ * @deprecated import the components directly or ENTITY_DIRECTIVES for every components/directives
+ */
 @NgModule({
-  imports: [CommonModule],
-  exports: [
-    IgoEntitySelectorModule,
-    IgoEntityTableModule,
-    IgoEntityTablePaginatorModule
-  ],
-  declarations: []
+  imports: [...ENTITY_DIRECTIVES],
+  exports: [...ENTITY_DIRECTIVES]
 })
 export class IgoEntityModule {}

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
+  DrawComponent,
   DrawControl,
   FeatureStore,
   FeatureWithDraw,
@@ -18,12 +19,14 @@ import { DrawState } from '../draw.state';
 @ToolComponent({
   name: 'draw',
   title: 'igo.integration.tools.draw',
-  icon: 'draw'
+  icon: 'stylus_note'
 })
 @Component({
   selector: 'igo-drawing-tool',
   templateUrl: './drawing-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [DrawComponent]
 })
 export class DrawingToolComponent {
   /**

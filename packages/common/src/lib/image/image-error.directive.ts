@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
-  selector: '[igoImageError]'
+  selector: '[igoImageError]',
+  standalone: true
 })
 export class ImageErrorDirective {
   @Input() errorImageUrl: string = './assets/igo2/common/images/na.png';

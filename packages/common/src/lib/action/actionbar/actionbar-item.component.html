@@ -15,7 +15,9 @@
     [disabled]="disabled$ | async"
     [disableRipple]="true"
   >
-    <mat-icon *ngIf="withIcon" svgIcon="{{ icon$ | async }}"></mat-icon>
+    <igo-icon
+      [icon]="isObservable(action.icon) ? (action.icon | async) : action.icon"
+    ></igo-icon>
   </button>
   <span *ngIf="withTitle" matLine>{{ title | translate }}</span>
 </mat-list-item>

@@ -1,7 +1,17 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 
+import {
+  IconService,
+  IgoIconComponent,
+  PRESENTATION_PLAY_ICON
+} from '../icons';
 import { ToolService } from '../tool/shared/tool.service';
 import { InteractiveTourService } from './interactive-tour.service';
 
@@ -9,9 +19,22 @@ import { InteractiveTourService } from './interactive-tour.service';
   selector: 'igo-interactive-tour',
   templateUrl: './interactive-tour.component.html',
   styleUrls: ['./interactive-tour.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    NgClass,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule,
+    IgoIconComponent
+  ]
 })
 export class InteractiveTourComponent {
+  presentationIcon = PRESENTATION_PLAY_ICON;
+
   /**
    * Toolbox that holds main tools
    */
@@ -95,8 +118,11 @@ export class InteractiveTourComponent {
 
   constructor(
     private interactiveTourService: InteractiveTourService,
-    private toolService: ToolService
-  ) {}
+    private toolService: ToolService,
+    private iconService: IconService
+  ) {
+    this.iconService.registerSvg(this.presentationIcon);
+  }
 
   startInteractiveTour() {
     const tour = this.getTourToStart();

@@ -12,7 +12,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoLanguageModule } from '@igo2/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -60,9 +60,9 @@ describe('SearchSettingsComponent', () => {
         MatCheckboxModule,
         MatDividerModule,
         MatSlideToggleModule,
-        MatIconTestingModule
+        MatIconTestingModule,
+        SearchSettingsComponent
       ],
-      declarations: [SearchSettingsComponent],
       providers: [
         { provide: SearchSourceService, useValue: spy },
         provideDefaultIChercheSearchResultFormatter(),

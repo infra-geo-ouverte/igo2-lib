@@ -1,5 +1,5 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -7,20 +7,50 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet
+} from '@angular/router';
 
-import { version } from '@igo2/core';
+import { version } from '@igo2/core/config';
 import { DomUtils, userAgent } from '@igo2/utils';
 
 import { delay, first } from 'rxjs';
 
+import { ROUTES_CONFIG } from './app.routing';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [
+    NgFor,
+    NgIf,
+    MatExpansionModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet
+  ]
 })
 export class AppComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
+
+  routesConfig = ROUTES_CONFIG;
 
   public title = 'IGO';
   public version = version;

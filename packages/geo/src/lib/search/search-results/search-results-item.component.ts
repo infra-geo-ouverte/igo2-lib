@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,8 +6,13 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
+  StopPropagationDirective,
   getEntityIcon,
   getEntityTitle,
   getEntityTitleHtml
@@ -25,7 +31,16 @@ import { SearchResult } from '../shared/search.interfaces';
   selector: 'igo-search-results-item',
   templateUrl: './search-results-item.component.html',
   styleUrls: ['./search-results-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    StopPropagationDirective
+  ]
 })
 export class SearchResultsItemComponent {
   /**

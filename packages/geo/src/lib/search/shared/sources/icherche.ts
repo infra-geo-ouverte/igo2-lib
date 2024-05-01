@@ -6,7 +6,9 @@ import {
 import { Inject, Injectable, Injector } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, StorageService } from '@igo2/core';
+import { IconSvg } from '@igo2/common';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -19,6 +21,7 @@ import { Feature } from '../../../feature/shared/feature.interfaces';
 import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { GoogleLinks } from './../../../utils/googleLinks';
+import { ICHERCHE_ICONS } from './icherche-icons';
 import {
   IChercheData,
   IChercheResponse,
@@ -280,7 +283,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: 'igo.geo.search.icherche.type.unites',
               value: 'unites',
               enabled: types.indexOf('unites') !== -1,
-              hashtags: ['unites']
+              hashtags: ['unites', 'adresse']
             }
           ]
         } satisfies SearchSourceSettings,
@@ -494,6 +497,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       ? '<br><small> ' + data.highlight.title3 + '</small>'
       : '';
 
+    let icon: string | IconSvg = data.icon;
+    if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
+      icon = ICHERCHE_ICONS[icon];
+    }
+
     return {
       source: this,
       data: {
@@ -512,7 +520,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
-        icon: data.icon || 'map-marker',
+        icon: icon || 'location_on',
         score:
           data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
@@ -926,7 +934,7 @@ export class IChercheReverseSearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'map-marker',
+        icon: data.icon || 'location_on',
         pointerSummaryTitle: this.getSubtitle(data) + ': ' + data.properties.nom
       }
     };

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,15 +8,27 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { getEntityIcon, getEntityTitle } from '@igo2/common';
+import {
+  IgoBadgeIconDirective,
+  getEntityIcon,
+  getEntityTitle
+} from '@igo2/common';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
 import { LayerService } from '../../layer/shared/layer.service';
 import { Layer, TooltipType } from '../../layer/shared/layers';
 import { IgoMap } from '../../map/shared/map';
+import { MetadataButtonComponent } from '../../metadata/metadata-button/metadata-button.component';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 
@@ -26,7 +39,22 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   selector: 'igo-catalog-browser-layer',
   templateUrl: './catalog-browser-layer.component.html',
   styleUrls: ['./catalog-browser-layer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    NgClass,
+    MatTooltipModule,
+    MatButtonModule,
+    MetadataButtonComponent,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    LayerLegendComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -243,9 +271,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.getValue()) {
-      return this.isVisible$.getValue() ? '' : 'eye-off';
+      return this.isVisible$.getValue() ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 

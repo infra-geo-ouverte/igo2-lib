@@ -1,18 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 
-import { IgoLanguageModule } from '@igo2/core';
-
-import { IgoFilterModule } from '../../../filter/filter.module';
 import { OgcFilterComponent } from './ogc-filter.component';
 
 /**
- * @ignore
+ * @deprecated import the OgcFilterComponent directly
  */
 @NgModule({
-  imports: [CommonModule, MatButtonModule, IgoLanguageModule, IgoFilterModule],
-  exports: [OgcFilterComponent],
-  declarations: [OgcFilterComponent]
+  imports: [OgcFilterComponent],
+  exports: [OgcFilterComponent]
 })
 export class IgoOgcFilterModule {}

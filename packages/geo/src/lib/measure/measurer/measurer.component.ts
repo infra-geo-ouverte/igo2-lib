@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,24 +8,34 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityRecord, EntityTableTemplate } from '@igo2/common';
-import type { EntityTableComponent } from '@igo2/common';
-import { LanguageService, StorageScope, StorageService } from '@igo2/core';
+import {
+  EntityRecord,
+  EntityTableComponent,
+  EntityTableTemplate
+} from '@igo2/common';
+import { LanguageService } from '@igo2/core/language';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
 import { unByKey } from 'ol/Observable';
 import OlOverlay from 'ol/Overlay';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
 import OlVectorSource from 'ol/source/Vector';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import OlStyle from 'ol/style/Style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
@@ -64,6 +74,7 @@ import {
   updateOlTooltipsAtMidpoints
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
+import { MeasurerItemComponent } from './measurer-item.component';
 
 /**
  * Tool to measure lengths and areas
@@ -72,7 +83,21 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
   selector: 'igo-measurer',
   templateUrl: './measurer.component.html',
   styleUrls: ['./measurer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    NgIf,
+    MatDividerModule,
+    MeasurerItemComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    EntityTableComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class MeasurerComponent implements OnInit, OnDestroy {
   /**
@@ -600,7 +625,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     } else {
       const localFeature = this.selectedFeatures$.value[0];
       const olFeatures = this.store.layer.ol.getSource().getFeatures();
-      const olFeature = olFeatures.find((_olFeature: OlFeature<OlGeometry>) => {
+      const olFeature = olFeatures.find((_olFeature: OlFeature) => {
         return _olFeature.get('id') === localFeature.properties.id;
       });
 
@@ -669,7 +694,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     this.onFeatureAddedKey = store.source.ol.on(
       'addfeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
+      (event: OlVectorSourceEvent) => {
         const localFeature = event.feature;
         const olGeometry = localFeature.getGeometry() as any;
         this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
@@ -681,7 +706,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     this.onFeatureRemovedKey = store.source.ol.on(
       'removefeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
+      (event: OlVectorSourceEvent) => {
         const olGeometry = event.feature.getGeometry() as any;
         this.clearTooltipsOfOlGeometry(olGeometry);
       }
@@ -1086,8 +1111,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private updateTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
-    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+  private updateTooltipsOfOlSource(olSource: OlVectorSource) {
+    olSource.forEachFeature((olFeature: OlFeature) => {
       this.updateTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
@@ -1095,8 +1120,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private showTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
-    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+  private showTooltipsOfOlSource(olSource: OlVectorSource) {
+    olSource.forEachFeature((olFeature: OlFeature) => {
       this.showTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
@@ -1105,8 +1130,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Clear the map tooltips
    * @param olDrawSource OL vector source
    */
-  private clearTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
-    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+  private clearTooltipsOfOlSource(olSource: OlVectorSource) {
+    olSource.forEachFeature((olFeature: OlFeature) => {
       const olGeometry = olFeature.getGeometry();
       if (olGeometry !== undefined) {
         this.clearTooltipsOfOlGeometry(olFeature.getGeometry() as any);

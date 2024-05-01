@@ -6,7 +6,8 @@ import { MapService } from '../../map/shared/map.service';
 import { TimeFilterListComponent } from './time-filter-list.component';
 
 @Directive({
-  selector: '[igoTimeFilterListBinding]'
+  selector: '[igoTimeFilterListBinding]',
+  standalone: true
 })
 export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
   private component: TimeFilterListComponent;

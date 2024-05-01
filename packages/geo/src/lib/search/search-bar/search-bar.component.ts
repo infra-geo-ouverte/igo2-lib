@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,17 +10,26 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import {
   FloatLabelType,
-  MatFormFieldAppearance
+  MatFormFieldAppearance,
+  MatFormFieldModule
 } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { SearchSelectorComponent } from '../search-selector/search-selector.component';
+import { SearchSettingsComponent } from '../search-settings/search-settings.component';
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
@@ -34,7 +44,22 @@ import { SearchService } from '../shared/search.service';
   selector: 'igo-search-bar',
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgClass,
+    MatFormFieldModule,
+    NgIf,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatDividerModule,
+    SearchSelectorComponent,
+    SearchSettingsComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   /**
@@ -360,6 +385,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (slug.length >= this.minLength || slug.length === 0) {
       this.stream$.next(term);
     }
+  }
+
+  handleSearch(): void {
+    this.doSearch(this.term);
   }
 
   /**

@@ -9,7 +9,7 @@
       [projectionsLimitations]="projectionsLimitations"
       [store]="workspaceStore"
       [selectedMode]="importExportState.selectedMode$ | async"
-      (selectMode)="modeChanged($event)"
+      (selectMode)="modeChanged($any($event))"
       [exportOptions$]="importExportState.exportOptions$"
       (exportOptionsChange)="exportOptionsChange($event)"
     >
@@ -28,7 +28,7 @@
   [map]="map"
   [store]="workspaceStore"
   [selectedMode]="importExportState.selectedMode$ | async"
-  (selectMode)="modeChanged($event)"
+  (selectMode)="modeChanged($any($event))"
   [exportOptions$]="importExportState.exportOptions$"
   (exportOptionsChange)="exportOptionsChange($event)"
 >

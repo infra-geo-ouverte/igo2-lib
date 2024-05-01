@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,6 +12,8 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
+import { ActionbarComponent } from '../../action/actionbar/actionbar.component';
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
 import { Tool } from '../shared/tool.interface';
 import { Toolbox } from '../shared/toolbox';
 import { ToolboxColor } from '../shared/toolbox.enums';
@@ -21,7 +24,15 @@ import { toolSlideInOut } from './toolbox.animation';
   templateUrl: 'toolbox.component.html',
   styleUrls: ['toolbox.component.scss'],
   animations: [toolSlideInOut()],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    ActionbarComponent,
+    NgClass,
+    DynamicOutletComponent,
+    AsyncPipe
+  ]
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
   /**
@@ -90,14 +101,14 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Color of Toolbox
    */
-  @Input() color: ToolboxColor = ToolboxColor.White;
+  @Input() color: ToolboxColor = 'white';
 
   /**
    * @ignore
    */
   @HostBinding('class.color-grey')
   get classColorGrey() {
-    return this.color === ToolboxColor.Grey;
+    return this.color === 'grey';
   }
 
   /**
@@ -105,7 +116,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   @HostBinding('class.color-primary')
   get classColorPrimary() {
-    return this.color === ToolboxColor.Primary;
+    return this.color === 'primary';
   }
 
   /**
@@ -211,7 +222,6 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         id: tool.name,
         title: tool.title,
         icon: tool.icon,
-        // iconImage: tool.iconImage,
         tooltip: tool.tooltip,
         args: [tool, this.toolbox],
         handler: (_tool: Tool, _toolbox: Toolbox) => {

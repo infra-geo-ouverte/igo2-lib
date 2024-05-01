@@ -1,15 +1,28 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 import { userAgent } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-wake-lock-button',
   templateUrl: './wake-lock-button.component.html',
-  styleUrls: ['./wake-lock-button.component.scss']
+  styleUrls: ['./wake-lock-button.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 
 /**
@@ -32,7 +45,7 @@ export class WakeLockButtonComponent {
   }
 
   private noSleep: NoSleep;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('sleep');
+  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('bedtime');
   public visible = false;
 
   constructor(private storageService: StorageService) {
@@ -65,7 +78,7 @@ export class WakeLockButtonComponent {
   private enableWakeLock() {
     this.noSleep.enable();
     this.enabled = true;
-    this.icon$.next('sleep-off');
+    this.icon$.next('bedtime_off');
   }
   /**
    * Let display sleep
@@ -73,7 +86,7 @@ export class WakeLockButtonComponent {
   private disableWakeLock() {
     this.noSleep.disable();
     this.enabled = false;
-    this.icon$.next('sleep');
+    this.icon$.next('bedtime');
   }
 
   toggleWakeLock() {

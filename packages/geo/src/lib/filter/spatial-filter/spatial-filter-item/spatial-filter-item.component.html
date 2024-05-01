@@ -9,7 +9,7 @@
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async"
   [radius]="radius"
-  [predefinedRadius]="predefinedRadius"
+  [predefinedRadius]="$any(predefinedRadius)"
 >
 </igo-geometry-form-field-input>
 
@@ -152,11 +152,9 @@
     <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
       <div class="mat-tree-node">
         <button mat-icon-button (click)="onToggleClick(node)">
-          <mat-icon
-            [svgIcon]="
-              treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'
-            "
-          ></mat-icon>
+          <mat-icon>{{
+            treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'
+          }}</mat-icon>
         </button>
         {{ node.name }}
         <mat-checkbox
@@ -228,14 +226,14 @@
 </div>
 
 <button
-  class="chevron-down"
+  class="expand-more"
   *ngIf="store.all().length && tableTemplate && !listIsVisible"
   mat-icon-button
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.spatialFilter.showSearchResults' | translate"
   (click)="toggleVisibleList()"
 >
-  <mat-icon svgIcon="chevron-down"></mat-icon>
+  <mat-icon>expand_more</mat-icon>
 </button>
 
 <div
@@ -249,7 +247,7 @@
     [matTooltip]="'igo.geo.spatialFilter.hideSearchResults' | translate"
     (click)="toggleVisibleList()"
   >
-    <mat-icon svgIcon="chevron-up"></mat-icon>
+    <mat-icon>expand_less</mat-icon>
   </button>
   <igo-entity-table
     class="results-list"

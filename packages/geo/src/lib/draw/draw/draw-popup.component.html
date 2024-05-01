@@ -38,7 +38,9 @@
           class="mat-typography"
           [value]="option.value"
           [disabled]="optionAvailable(option.value)"
-          (change)="onLabelTypeChange($event.source.value, $event.checked)"
+          (change)="
+            onLabelTypeChange($any($event.source.value), $event.checked)
+          "
           [checked]="option.checked"
         >
           {{ getProperLengthLabel(option.value) }}
@@ -153,7 +155,7 @@
         #input
         matInput
         (select)="(true)"
-        (input)="getLabelLength($event.target.value)"
+        (input)="getLabelLength($any($event.target).value)"
         placeholder="{{ 'igo.geo.draw.dialogTitle' | translate }}"
         value="{{ currentLabel }}"
         cdkFocusInitial

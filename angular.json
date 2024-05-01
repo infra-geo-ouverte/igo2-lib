@@ -164,21 +164,21 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build",
             "host": "127.0.0.1",
             "proxyConfig": "projects/demo/proxy.conf.json",
-            "hmr": true
+            "hmr": true,
+            "buildTarget": "demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "buildTarget": "demo:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "demo:build"
+            "buildTarget": "demo:build"
           }
         },
         "lint": {
@@ -245,7 +245,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/auth/ng-package.prod.json",
+              "project": "packages/auth/ng-package.json",
               "tsConfig": "packages/auth/tsconfig.lib.prod.json"
             }
           }
@@ -291,7 +291,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/common/ng-package.prod.json",
+              "project": "packages/common/ng-package.json",
               "tsConfig": "packages/common/tsconfig.lib.prod.json"
             }
           }
@@ -319,7 +319,7 @@
     },
     "core": {
       "root": "packages/core",
-      "sourceRoot": "packages/core/src",
+      "sourceRoot": "packages/core",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -337,7 +337,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/core/ng-package.prod.json",
+              "project": "packages/core/ng-package.json",
               "tsConfig": "packages/core/tsconfig.lib.prod.json"
             }
           }
@@ -345,7 +345,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "packages/core/src/test.ts",
+            "main": "packages/core/test.ts",
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/core/tsconfig.spec.json",
             "karmaConfig": "packages/core/karma.conf.js",
@@ -383,7 +383,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/geo/ng-package.prod.json",
+              "project": "packages/geo/ng-package.json",
               "tsConfig": "packages/geo/tsconfig.lib.prod.json"
             }
           }
@@ -423,7 +423,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/utils/ng-package.prod.json",
+              "project": "packages/utils/ng-package.json",
               "tsConfig": "packages/utils/tsconfig.lib.prod.json"
             }
           }
@@ -469,7 +469,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/context/ng-package.prod.json",
+              "project": "packages/context/ng-package.json",
               "tsConfig": "packages/context/tsconfig.lib.prod.json"
             }
           }
@@ -515,7 +515,7 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/integration/ng-package.prod.json",
+              "project": "packages/integration/ng-package.json",
               "tsConfig": "packages/integration/tsconfig.lib.prod.json"
             }
           }

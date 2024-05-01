@@ -211,8 +211,8 @@ export function featureFromOl(
   const id = olFeature.getId()
     ? olFeature.getId()
     : olFeature.get(idColumn)
-    ? olFeature.get(idColumn)
-    : uuid();
+      ? olFeature.get(idColumn)
+      : uuid();
   const newFeature = olFeature.get('_newFeature');
 
   return {

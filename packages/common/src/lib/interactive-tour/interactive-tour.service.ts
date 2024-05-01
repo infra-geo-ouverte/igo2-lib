@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { ConfigService, LanguageService, MediaService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 
 import { autoPlacement, offset } from '@floating-ui/dom';
 import { ShepherdService } from 'angular-shepherd';
@@ -313,10 +315,10 @@ export class InteractiveTourService {
           i === 0
             ? 'first'
             : i + 1 === tourConfig.steps.length
-            ? 'last'
-            : tourConfig.steps[i].noBackButton
-            ? 'noBackButton'
-            : undefined
+              ? 'last'
+              : tourConfig.steps[i].noBackButton
+                ? 'noBackButton'
+                : undefined
         ),
         classes: step.class,
         highlightClass: step.highlightClass,

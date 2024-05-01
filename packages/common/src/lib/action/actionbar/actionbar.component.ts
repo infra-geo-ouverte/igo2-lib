@@ -1,4 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,15 +11,27 @@ import {
   OnDestroy,
   SimpleChanges
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import {
+  MatMenuModule,
+  MenuPositionX,
+  MenuPositionY
+} from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Media, MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core/media';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { EntityStoreWatcher } from '../../entity';
 import { ActionbarMode } from '../shared/action.enums';
 import { Action } from '../shared/action.interfaces';
 import { ActionStore } from '../shared/store';
+import { ActionbarItemComponent } from './actionbar-item.component';
 
 /**
  * A list of action buttons.
@@ -28,7 +41,21 @@ import { ActionStore } from '../shared/store';
   selector: 'igo-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatListModule,
+    ActionbarItemComponent,
+    NgFor,
+    MatMenuModule,
+    MatCardModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
@@ -49,7 +76,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   toggleCollapseAction = {
     id: 'actionbar_toggle',
-    icon: 'dots-vertical',
+    icon: 'more_vert',
     handler: () => {
       this.collapsed = !this.collapsed;
     }
@@ -133,17 +160,17 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Which icon want to be shown
    */
-  @Input() icon = 'dots-horizontal';
+  @Input() icon = 'more_horiz';
 
   /**
    * Overlay X position
    */
-  @Input() xPosition = 'before';
+  @Input() xPosition: MenuPositionX = 'before';
 
   /**
    * Overlay Y position
    */
-  @Input() yPosition = 'above';
+  @Input() yPosition: MenuPositionY = 'above';
 
   /**
    * Class to add to the actionbar overlay

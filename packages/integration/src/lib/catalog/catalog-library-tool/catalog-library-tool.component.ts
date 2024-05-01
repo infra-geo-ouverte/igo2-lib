@@ -5,10 +5,10 @@ import {
   OnInit
 } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { LAYER_PLUS_ICON, ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
-import { StorageService } from '@igo2/core';
-import { Catalog, CatalogService } from '@igo2/geo';
+import { StorageService } from '@igo2/core/storage';
+import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 
 import { take } from 'rxjs/operators';
 
@@ -21,12 +21,14 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: 'layers-plus'
+  icon: LAYER_PLUS_ICON
 })
 @Component({
   selector: 'igo-catalog-library-tool',
   templateUrl: './catalog-library-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CatalogLibaryComponent]
 })
 export class CatalogLibraryToolComponent implements OnInit {
   /**

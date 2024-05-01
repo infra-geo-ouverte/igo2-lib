@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,12 +8,23 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
-import { MessageService, StorageService } from '@igo2/core';
+import {
+  EntityStore,
+  IconService,
+  LAYER_PLUS_ICON,
+  ListComponent,
+  ListItemDirective
+} from '@igo2/common';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
@@ -22,6 +34,7 @@ import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
+import { CatalogLibaryItemComponent } from './catalog-library-item.component';
 
 /**
  * Component to browse a list of available catalogs
@@ -30,7 +43,20 @@ import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
   selector: 'igo-catalog-library',
   templateUrl: './catalog-library.component.html',
   styleUrls: ['./catalog-library.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgFor,
+    CatalogLibaryItemComponent,
+    ListItemDirective,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**
@@ -62,6 +88,9 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   }>();
 
   submitDisabled = true;
+
+  layerPlusIcon = LAYER_PLUS_ICON;
+
   private addingCatalog$$: Subscription;
 
   get addedCatalogs(): Catalog[] {
@@ -75,8 +104,11 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private iconService: IconService
+  ) {
+    this.iconService.registerSvg(this.layerPlusIcon);
+  }
 
   /**
    * @internal

@@ -208,7 +208,7 @@
             matTooltipClass="material-tooltip"
             (click)="emptySelect()"
           >
-            <mat-icon svgIcon="filter-remove"></mat-icon>
+            <mat-icon>filter_alt_off</mat-icon>
           </mat-button>
           <mat-form-field
             [style.width.%]="bundle.width ? bundle.width : undefined"
@@ -309,7 +309,7 @@
             matTooltipClass="material-tooltip"
             (click)="emptyAutocomplete()"
           >
-            <mat-icon svgIcon="filter-remove"></mat-icon>
+            <mat-icon>filter_alt_off</mat-icon>
           </mat-button>
           <mat-form-field
             *ngIf="filteredOgcAutocomplete[bundle.id]"
@@ -363,8 +363,8 @@
   </h3>
   <h3 *ngIf="currentFilter.title">{{ currentFilter.title }}</h3>
   <igo-ogc-filter-time
-    [(datasource)]="datasource"
-    [(currentFilter)]="currentFilter"
+    [datasource]="datasource"
+    [currentFilter]="currentFilter"
     (changeProperty)="changeProperty($event.value, $event.pos)"
   >
   </igo-ogc-filter-time>

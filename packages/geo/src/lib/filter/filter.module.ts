@@ -1,45 +1,6 @@
-import { MatChipsModule } from '@angular/material/chips';
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-import { MatOptionModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTreeModule } from '@angular/material/tree';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
-import {
-  IgoCollapsibleModule,
-  IgoDOMModule,
-  IgoEntityModule,
-  IgoKeyValueModule,
-  IgoListModule
-} from '@igo2/common';
-import { IgoLanguageModule } from '@igo2/core';
-
-import {
-  MatDatetimepickerModule,
-  MatNativeDatetimeModule
-} from '@mat-datetimepicker/core';
-
-import { IgoLayerModule } from '../layer/layer.module';
-import { IgoGeometryModule } from './../geometry/geometry.module';
 import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.component';
 import { OgcFilterFormComponent } from './ogc-filter-form/ogc-filter-form.component';
 import { OgcFilterSelectionComponent } from './ogc-filter-selection/ogc-filter-selection.component';
@@ -62,88 +23,36 @@ import { TimeFilterFormComponent } from './time-filter-form/time-filter-form.com
 import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.component';
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
 import { TimeFilterListComponent } from './time-filter-list/time-filter-list.component';
-
 import { OgcFilterChipsComponent } from './ogc-filter-chips/ogc-filter-chips.component';
 
+const DIRECTIVES = [
+  FilterableDataSourcePipe,
+  TimeFilterButtonComponent,
+  TimeFilterFormComponent,
+  TimeFilterItemComponent,
+  TimeFilterListComponent,
+  TimeFilterListBindingDirective,
+  OgcFilterFormComponent,
+  OgcFilterButtonComponent,
+  OgcFilterSelectionComponent,
+  OgcFilterableFormComponent,
+  OgcFilterableItemComponent,
+  OgcFilterableListComponent,
+  OgcFilterableListBindingDirective,
+  SpatialFilterTypeComponent,
+  SpatialFilterListComponent,
+  SpatialFilterItemComponent,
+  OgcFilterTimeComponent,
+  OgcFilterTimeSliderComponent,
+  OgcFilterableListComponent,
+  OgcFilterChipsComponent
+];
+/**
+ * @deprecated import the components directly or the FILTER_DIRECTIVES for the set
+ */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatRadioModule,
-    MatMenuModule,
-    MatTableModule,
-    MatTreeModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatListModule,
-    MatTooltipModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatDatetimepickerModule,
-    MatNativeDatetimeModule,
-    IgoLanguageModule,
-    IgoLayerModule,
-    IgoCollapsibleModule,
-    IgoListModule,
-    IgoEntityModule,
-    IgoDOMModule,
-    IgoKeyValueModule,
-    IgoGeometryModule,
-    MatChipsModule,
-    MatBadgeModule
-  ],
-  exports: [
-    FilterableDataSourcePipe,
-    TimeFilterButtonComponent,
-    TimeFilterFormComponent,
-    TimeFilterItemComponent,
-    TimeFilterListComponent,
-    TimeFilterListBindingDirective,
-    OgcFilterFormComponent,
-    OgcFilterButtonComponent,
-    OgcFilterSelectionComponent,
-    OgcFilterableFormComponent,
-    OgcFilterableItemComponent,
-    OgcFilterableListComponent,
-    OgcFilterableListBindingDirective,
-    SpatialFilterTypeComponent,
-    SpatialFilterListComponent,
-    SpatialFilterItemComponent,
-    OgcFilterTimeComponent,
-    OgcFilterTimeSliderComponent
-  ],
-  declarations: [
-    FilterableDataSourcePipe,
-    TimeFilterButtonComponent,
-    TimeFilterFormComponent,
-    TimeFilterItemComponent,
-    TimeFilterListComponent,
-    TimeFilterListBindingDirective,
-    OgcFilterFormComponent,
-    OgcFilterButtonComponent,
-    OgcFilterSelectionComponent,
-    OgcFilterableFormComponent,
-    OgcFilterableItemComponent,
-    OgcFilterableListComponent,
-    OgcFilterableListBindingDirective,
-    SpatialFilterTypeComponent,
-    SpatialFilterListComponent,
-    SpatialFilterItemComponent,
-    OgcFilterTimeComponent,
-    OgcFilterTimeSliderComponent,
-    OgcFilterChipsComponent
-  ],
+  imports: DIRECTIVES,
+  exports: DIRECTIVES,
   providers: [
     TimeFilterService,
     OGCFilterService,
