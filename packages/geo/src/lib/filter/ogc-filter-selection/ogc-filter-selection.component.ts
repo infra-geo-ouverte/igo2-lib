@@ -45,6 +45,7 @@ import { MapBase } from '../../map';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
+import { OgcFilterChipsComponent } from '../ogc-filter-chips';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -71,7 +72,8 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     MatAutocompleteModule,
     OgcFilterTimeComponent,
     AsyncPipe,
-    IgoLanguageModule
+    IgoLanguageModule,
+    OgcFilterChipsComponent
   ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
