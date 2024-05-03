@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,21 +11,13 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoLanguageModule } from '@igo2/core/language';
-
-import { TranslateLoader, IgoLanguageModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideMockTranslation } from '@igo2/core/language';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
 import { provideILayerSearchResultFormatter } from '../shared/sources/ilayer.providers';
 import { SearchSettingsComponent } from './search-settings.component';
-
-// AoT requires an exported function for factories
-export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient);
-}
 
 describe('SearchSettingsComponent', () => {
   let component: SearchSettingsComponent;
@@ -43,14 +34,6 @@ describe('SearchSettingsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
-        IgoLanguageModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
-        }),
-        IgoLanguageModule,
         CommonModule,
         MatTooltipModule,
         MatIconModule,
@@ -65,6 +48,7 @@ describe('SearchSettingsComponent', () => {
       ],
       providers: [
         { provide: SearchSourceService, useValue: spy },
+        provideMockTranslation(),
         provideDefaultIChercheSearchResultFormatter(),
         provideDefaultCoordinatesSearchResultFormatter(),
         provideILayerSearchResultFormatter()

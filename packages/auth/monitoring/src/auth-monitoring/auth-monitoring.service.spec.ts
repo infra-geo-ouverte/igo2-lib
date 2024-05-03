@@ -20,13 +20,9 @@ const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
   TestBed.configureTestingModule({
-    imports: [
-      HttpClientModule,
-      provideMockTranslation(),
-      IgoAuthFormModule,
-      ToastrModule
-    ],
+    imports: [HttpClientModule, IgoAuthFormModule, ToastrModule],
     providers: [
+      provideMockTranslation(),
       { provide: MONITORING_OPTIONS, useValue: options },
       ToastrService,
       MessageService

@@ -227,7 +227,7 @@
     },
     "auth": {
       "root": "packages/auth",
-      "sourceRoot": "packages/auth/src",
+      "sourceRoot": "packages/auth",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
