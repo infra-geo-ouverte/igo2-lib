@@ -265,16 +265,16 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      pushButtons: ['', [Validators.required]],
-      radioButtons: ['', [Validators.required]],
+      pushButtons: [''],
+      radioButtons: [''],
       pushButtonsGroup: ['', [Validators.required]],
       checkboxesGroup: ['', [Validators.required]],
       radioButtonsGroup: ['', [Validators.required]],
       selectGroup: ['', [Validators.required]],
-      select: ['', [Validators.required]],
-      selectMulti: ['', [Validators.required]],
+      select: [''],
+      selectMulti: [''],
       autocompleteGroup: ['', [Validators.required]],
-      autocomplete: ['', [Validators.required]]
+      autocomplete: ['']
     });
   }
 
