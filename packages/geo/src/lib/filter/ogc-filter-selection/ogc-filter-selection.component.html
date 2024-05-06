@@ -329,26 +329,33 @@
               #autocomplete
               [displayWith]="displayFn"
             >
-              <div 
-                *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async">
-                  <mat-option id="mat-option">
-                    <div (click)="$event.stopPropagation(); autocompleteOptionClick(ogcAutocomplete.value)">
-                      <mat-checkbox
-                        id="mat-checkbox"
-                        #autocomplete
-                        [disabled]="true"
-                        [matTooltip]="getToolTip(ogcAutocomplete)"
-                        tooltip-position="below"
-                        matTooltipShowDelay="500"
-                        matTooltipClass="material-tooltip"
-                        [checked]="checkedStatus(ogcAutocomplete.value)"
-                      >
-                        {{ogcAutocomplete.value}}
-                      </mat-checkbox>
-                    </div>
-                  </mat-option>
+              <mat-option
+                *ngFor="
+                  let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
+                    | async
+                "
+                id="mat-option"
+              >
+                <div
+                  (click)="
+                    $event.stopPropagation();
+                    autocompleteOptionClick(ogcAutocomplete.value)
+                  "
+                >
+                  <mat-checkbox
+                    id="mat-checkbox"
+                    #autocomplete
+                    [matTooltip]="getToolTip(ogcAutocomplete)"
+                    tooltip-position="below"
+                    matTooltipShowDelay="500"
+                    matTooltipClass="material-tooltip"
+                    [checked]="checkedStatus(ogcAutocomplete.value)"
+                  >
+                    {{ ogcAutocomplete.value }}
+                  </mat-checkbox>
                 </div>
-              </mat-autocomplete>
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
       </ng-container>
