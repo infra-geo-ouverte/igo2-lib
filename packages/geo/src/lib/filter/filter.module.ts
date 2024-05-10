@@ -23,7 +23,6 @@ import { TimeFilterFormComponent } from './time-filter-form/time-filter-form.com
 import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.component';
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
 import { TimeFilterListComponent } from './time-filter-list/time-filter-list.component';
-import { OgcFilterChipsComponent } from './ogc-filter-chips/ogc-filter-chips.component';
 
 const DIRECTIVES = [
   FilterableDataSourcePipe,
@@ -44,8 +43,7 @@ const DIRECTIVES = [
   SpatialFilterItemComponent,
   OgcFilterTimeComponent,
   OgcFilterTimeSliderComponent,
-  OgcFilterableListComponent,
-  OgcFilterChipsComponent
+  OgcFilterableListComponent
 ];
 /**
  * @deprecated import the components directly or the FILTER_DIRECTIVES for the set

@@ -33,7 +33,6 @@ export * from './ogc-filterable-list';
 export * from './ogc-filter-form';
 export * from './ogc-filter-selection';
 export * from './ogc-filter-button';
-export * from './ogc-filter-chips';
 export * from './ogc-filter-time';
 export * from './time-filter-button';
 export * from './spatial-filter/spatial-filter-type';
