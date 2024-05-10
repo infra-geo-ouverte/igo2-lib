@@ -85,7 +85,7 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfilterButton?: boolean;
-  thresholdSize?: number;
+  maxOptionCountChips?: number;
   selectors?:
     | OgcPushButton[]
     | OgcCheckbox[]

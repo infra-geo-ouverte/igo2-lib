@@ -290,14 +290,6 @@
         *ngFor="let bundle of currentAutocompleteGroup.computedSelectors"
       >
         <h3>{{ bundle.title }}</h3>
-        <igo-ogc-filter-chips
-          *ngIf="filteredOgcAutocomplete[bundle.id]"
-          [activeFilters]="activeFilters"
-          [thresholdSize]="bundle.thresholdSize"
-          [size]="autocompleteDomValueSize"
-          (autocompleteOptionClick)="autocompleteOptionClick($event)"
-        >
-        </igo-ogc-filter-chips>
         <div class="groupsSelector">
           <mat-button
             *ngIf="bundle.unfilterButton"
@@ -316,28 +308,45 @@
             [style.width.%]="bundle.width ? bundle.width : undefined"
           >
             <mat-label>{{ bundle.title }}</mat-label>
-            <input
-              matInput
-              type="text"
-              formControlName="autocomplete"
-              #autocomplete
-              class="autocomplete"
-              [matAutocomplete]="auto"
-              (input)="onInputChange()"
-            />
-            <mat-autocomplete
-              #auto="matAutocomplete"
-              #autocomplete
-              [displayWith]="displayFn"
+            <mat-chip-grid
+              *ngIf="
+                filteredOgcAutocomplete[bundle.id] &&
+                autocompleteDomValueSize <= bundle.maxOptionCountChips
+              "
+              #chipGrid
             >
-              <mat-option
-                *ngFor="
-                  let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
-                    | async
-                "
-                id="mat-option"
+              <mat-chip-row
+                *ngFor="let autocompleteEnabled of autocompleteEnableds"
+                (removed)="autocompleteOptionClick(autocompleteEnabled)"
               >
-                <div
+                {{ autocompleteEnabled }}
+                <button
+                  matChipRemove
+                  [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+              <input
+                matInput
+                [matChipInputFor]="chipGrid"
+                type="text"
+                formControlName="autocomplete"
+                #input
+                [matAutocomplete]="auto"
+                (input)="onInputChange()"
+              />
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                [displayWith]="displayFn"
+              >
+                <mat-option
+                  *ngFor="
+                    let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
+                      | async
+                  "
+                  id="mat-option"
+                  [matTooltip]="getToolTip(ogcAutocomplete)"
                   (click)="
                     $event.stopPropagation();
                     autocompleteOptionClick(ogcAutocomplete.value)
@@ -345,18 +354,18 @@
                 >
                   <mat-checkbox
                     id="mat-checkbox"
-                    #autocomplete
-                    [matTooltip]="getToolTip(ogcAutocomplete)"
-                    tooltip-position="below"
-                    matTooltipShowDelay="500"
-                    matTooltipClass="material-tooltip"
+                    color="primary"
                     [checked]="checkedStatus(ogcAutocomplete.value)"
+                    (click)="
+                      $event.stopPropagation();
+                      autocompleteOptionClick(ogcAutocomplete.value)
+                    "
                   >
-                    {{ ogcAutocomplete.value }}
                   </mat-checkbox>
-                </div>
-              </mat-option>
-            </mat-autocomplete>
+                  {{ ogcAutocomplete.value }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-chip-grid>
           </mat-form-field>
         </div>
       </ng-container>

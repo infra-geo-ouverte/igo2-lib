@@ -13,9 +13,13 @@ import {
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteTrigger
+} from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,7 +46,6 @@ import {
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
 import { MapBase } from '../../map';
-import { OgcFilterChipsComponent } from '../ogc-filter-chips';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
@@ -73,11 +76,13 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     OgcFilterTimeComponent,
     AsyncPipe,
     IgoLanguageModule,
-    OgcFilterChipsComponent
+    MatChipsModule
   ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
   @ViewChild('selection') sel: MatSelect;
+  @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger })
+  matAutocomplete: MatAutocompleteTrigger;
 
   @Input() refreshFilters: () => void;
 
@@ -111,9 +116,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   public selectAllSelected = false;
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
-  public autocompleteEnableds$ = new BehaviorSubject([]);
+  public autocompleteEnableds$ = new BehaviorSubject<string[]>([]);
   public filteredOgcAutocomplete: { [key: string]: Observable<any[]> } = {};
-  public activeFilters = [];
 
   public applyFiltersTimeout;
 
@@ -248,8 +252,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   // Indicates the checked status of autocomplete checkboxes
-  checkedStatus(autocompleteFilter): boolean {
-    return this.activeFilters.includes(autocompleteFilter);
+  checkedStatus(autocompleteFilter: string): boolean {
+    return this.autocompleteEnableds.includes(autocompleteFilter);
   }
 
   constructor(
@@ -396,7 +400,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       });
 
     // Debounce time for autocomplete filter options - value chosen arbitrarily
-    this.inputChangeAutocomplete.pipe(debounceTime(300)).subscribe(() => {
+    this.inputChangeAutocomplete.pipe().subscribe(() => {
       this.getAutocompleteDomValues();
     });
   }
@@ -716,7 +720,6 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.autocompleteEnableds = [];
     this.form.controls['autocomplete'].setValue('');
     this.form.controls['autocomplete'].markAsUntouched();
-    this.activeFilters = [];
   }
 
   toggleAllSelection() {
@@ -770,29 +773,15 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  // Modifies autocompleteEnableds to reflect active filters
-  autocompleteOptionClick(toggledFilter) {
-    let removed = false;
-    for (const filter of this.autocompleteEnableds) {
-      if (toggledFilter === filter) {
-        const temp = this.autocompleteEnableds.filter(
-          (element) => element !== toggledFilter
-        );
-        this.autocompleteEnableds = temp;
-        removed = true;
-      }
+  autocompleteOptionClick(toggledFilter: string) {
+    this.matAutocomplete.openPanel();
+    if (this.autocompleteEnableds.includes(toggledFilter)) {
+      this.autocompleteEnableds = this.autocompleteEnableds.filter(
+        (enabledFilter) => enabledFilter !== toggledFilter
+      );
+    } else {
+      this.autocompleteEnableds = [...this.autocompleteEnableds, toggledFilter];
     }
-    if (!removed) {
-      const temp = this.autocompleteEnableds;
-      temp.push(toggledFilter);
-      this.autocompleteEnableds = temp;
-    }
-
-    this.activeFilters.includes(toggledFilter)
-      ? (this.activeFilters = this.activeFilters.filter(
-          (element) => element !== toggledFilter
-        ))
-      : this.activeFilters.push(toggledFilter);
   }
 
   // Value displayed in the autocomplete input box
