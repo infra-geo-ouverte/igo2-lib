@@ -8,9 +8,8 @@ import {
 } from '@angular/material/dialog';
 
 import { AuthService } from '@igo2/auth';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'igo-user-dialog',
@@ -21,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogContent,
     MatButtonModule,
     MatDialogActions,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class UserDialogComponent {

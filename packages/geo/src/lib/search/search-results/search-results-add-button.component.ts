@@ -17,6 +17,7 @@ import {
   IgoBadgeIconDirective,
   StopPropagationDirective
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
@@ -26,7 +27,6 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -66,7 +66,7 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
     MatBadgeModule,
     IgoBadgeIconDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {

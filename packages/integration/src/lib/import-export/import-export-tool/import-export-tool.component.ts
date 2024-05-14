@@ -10,14 +10,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { ContextImportExportComponent } from '@igo2/context';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportOptions,
   IgoMap,
   ImportExportComponent,
   ProjectionsLimitationsOptions
 } from '@igo2/geo';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
@@ -45,7 +44,7 @@ import {
     ImportExportComponent,
     ContextImportExportComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ImportExportToolComponent implements OnInit {

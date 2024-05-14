@@ -17,8 +17,8 @@ import {
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { SelectValueDialogType } from './select-value-dialog.enums';
@@ -40,7 +40,7 @@ import { SelectValueData } from './select-value-dialog.interface';
     MatDialogActions,
     MatButtonModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SelectValueCheckRadioDialogComponent implements OnInit {

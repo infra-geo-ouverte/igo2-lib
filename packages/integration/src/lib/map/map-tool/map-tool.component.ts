@@ -6,6 +6,7 @@ import {
   ContextListBindingDirective,
   ContextListComponent
 } from '@igo2/context';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportButtonComponent,
   ExportOptions,
@@ -20,8 +21,6 @@ import {
   TimeFilterButtonComponent,
   TrackFeatureButtonComponent
 } from '@igo2/geo';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import {
   ImportExportMode,
@@ -57,7 +56,7 @@ import { MapState } from './../map.state';
     MetadataButtonComponent,
     ContextListComponent,
     ContextListBindingDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MapToolComponent {

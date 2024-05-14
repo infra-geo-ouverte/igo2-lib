@@ -23,8 +23,8 @@ import {
   ListItemDirective
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
@@ -60,7 +60,7 @@ export enum SearchResultMode {
     ListItemDirective,
     MatTabsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {

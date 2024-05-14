@@ -97,6 +97,7 @@ export class ConfigService<T extends object = { [key: string]: any }> {
         .pipe(
           catchError((error: any): any => {
             console.log(`Configuration file ${options.path} could not be read`);
+            this._isLoaded$.next(false);
             resolve(true);
             return throwError(error.error || 'Server error');
           })

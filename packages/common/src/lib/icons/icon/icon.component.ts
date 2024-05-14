@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
 
 import { IconSvg } from '../shared';
+import { IconService } from '../shared/icon.service';
 
 @Component({
   selector: 'igo-icon',
@@ -24,16 +24,10 @@ export class IgoIconComponent {
   }
   private _icon: string | IconSvg;
 
-  constructor(
-    private iconRegistry: MatIconRegistry,
-    private sanitizer: DomSanitizer
-  ) {}
+  constructor(private iconService: IconService) {}
 
   registerSvg(icon: IconSvg): void {
-    this.iconRegistry.addSvgIconLiteral(
-      icon.name,
-      this.sanitizer.bypassSecurityTrustHtml(icon.svg)
-    );
+    this.iconService.registerSvg(icon);
   }
 
   isSvg(icon: string | IconSvg): icon is IconSvg {

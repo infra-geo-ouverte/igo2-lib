@@ -14,8 +14,8 @@ import {
 } from '@igo2/common';
 import { ConfigService, version } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 
@@ -40,7 +40,7 @@ import { AllEnvironmentOptions } from '../../environment';
     MatMenuModule,
     NgFor,
     CustomHtmlComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AboutToolComponent implements OnInit {

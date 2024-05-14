@@ -6,8 +6,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CollapseDirective } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -33,7 +33,7 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
     LayerLegendComponent,
     TimeFilterFormComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [TimeFilterService]
 })

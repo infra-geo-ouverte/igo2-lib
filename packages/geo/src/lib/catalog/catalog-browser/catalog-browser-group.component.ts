@@ -19,8 +19,8 @@ import {
   ListItemDirective
 } from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
@@ -55,7 +55,7 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
     CatalogBrowserLayerComponent,
     ListItemDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {

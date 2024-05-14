@@ -4,9 +4,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { Observable, of } from 'rxjs';
 
+import {
+  IconService,
+  IgoIconComponent,
+  PRESENTATION_PLAY_ICON
+} from '../icons';
 import { ToolService } from '../tool/shared/tool.service';
 import { InteractiveTourService } from './interactive-tour.service';
 
@@ -23,10 +29,13 @@ import { InteractiveTourService } from './interactive-tour.service';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule,
+    IgoIconComponent
   ]
 })
 export class InteractiveTourComponent {
+  presentationIcon = PRESENTATION_PLAY_ICON;
+
   /**
    * Toolbox that holds main tools
    */
@@ -110,8 +119,11 @@ export class InteractiveTourComponent {
 
   constructor(
     private interactiveTourService: InteractiveTourService,
-    private toolService: ToolService
-  ) {}
+    private toolService: ToolService,
+    private iconService: IconService
+  ) {
+    this.iconService.registerSvg(this.presentationIcon);
+  }
 
   startInteractiveTour() {
     const tour = this.getTourToStart();

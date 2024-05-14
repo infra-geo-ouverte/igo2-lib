@@ -37,6 +37,7 @@ import {
   EntityTableTemplate
 } from '@igo2/common';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
 import OlFeature from 'ol/Feature';
@@ -45,7 +46,6 @@ import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 import * as olStyle from 'ol/style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -95,7 +95,7 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
     MatTooltipModule,
     EntityTableComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
