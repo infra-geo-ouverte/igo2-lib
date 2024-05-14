@@ -7,7 +7,7 @@
         (click)="toolbox.activatePreviousTool()"
         *ngIf="activeTool$ | async"
       >
-        <mat-icon svgIcon="arrow-back"></mat-icon>
+        <mat-icon>arrow_back</mat-icon>
       </button>
 
       <button
@@ -16,7 +16,7 @@
         (click)="toolbox.deactivateTool()"
         *ngIf="activeTool$ | async"
       >
-        <mat-icon svgIcon="menu"></mat-icon>
+        <mat-icon>menu</mat-icon>
       </button>
 
       <igo-toolbox

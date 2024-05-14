@@ -14,7 +14,7 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
 @ToolComponent({
   name: 'advancedMap',
   title: 'igo.integration.tools.advancedMap',
-  icon: 'toolbox'
+  icon: 'home_repair_service'
 })
 /**
  * Tool to handle the advanced map tools

@@ -24,7 +24,7 @@ interface DataIssueReporterData {
 @ToolComponent({
   name: 'dataIssueReporter',
   title: 'igo.integration.tools.dataIssueReporter',
-  icon: 'message-alert'
+  icon: 'feedback'
 })
 @Component({
   selector: 'igo-issue-reporter-tool',

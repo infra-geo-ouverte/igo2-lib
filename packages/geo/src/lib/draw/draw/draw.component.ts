@@ -272,7 +272,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             return [
               {
                 editMode: false,
-                icon: 'pencil',
+                icon: 'edit',
                 color: 'primary',
                 click: () => {
                   this.editLabelDrawing(feature);
@@ -1010,7 +1010,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.activeStore.layer.visible = true;
     this.activeStore.source.ol.on(
       'removefeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
+      (event: OlVectorSourceEvent) => {
         const olGeometry = event.feature.getGeometry();
         this.clearLabelsOfOlGeometry(olGeometry);
       }

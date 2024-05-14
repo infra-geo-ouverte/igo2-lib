@@ -25,7 +25,7 @@
       (click)="onClearButtonClick()"
       [matTooltip]="'igo.geo.search.clearSearch' | translate"
     >
-      <mat-icon svgIcon="close"></mat-icon>
+      <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
 
@@ -33,7 +33,7 @@
 
   <div class="search-bar-buttons">
     <button *ngIf="showSearchButton" mat-icon-button [color]="color">
-      <mat-icon svgIcon="magnify"></mat-icon>
+      <mat-icon>search</mat-icon>
     </button>
 
     <igo-search-selector

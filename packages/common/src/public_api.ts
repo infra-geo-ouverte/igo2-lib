@@ -67,6 +67,7 @@ export * from './lib/flexible';
 export * from './lib/form-dialog';
 export * from './lib/form';
 export * from './lib/home-button';
+export * from './lib/icons';
 export * from './lib/image';
 export * from './lib/interactive-tour';
 export * from './lib/json-dialog';

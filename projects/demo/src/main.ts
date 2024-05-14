@@ -23,6 +23,7 @@ import {
 } from '@angular/router';
 
 import { provideAuthentification } from '@igo2/auth';
+import { provideIcon } from '@igo2/common';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfigOptions } from '@igo2/core/config';
 import { provideRootTranslation } from '@igo2/core/language';
@@ -74,6 +75,7 @@ bootstrapApplication(AppComponent, {
     provideOsrmDirectionsSource(),
     provideIChercheSearchSource(),
     provideWorkspaceSearchSource(),
+    provideIcon(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' }

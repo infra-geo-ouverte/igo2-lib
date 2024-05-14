@@ -94,7 +94,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   public interval: any;
-  public playIcon = 'play-circle';
+  public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
   @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
@@ -375,7 +375,7 @@ export class TimeFilterFormComponent implements OnInit {
     if (this.interval) {
       this.stopFilter();
     } else {
-      this.playIcon = 'pause-circle';
+      this.playIcon = 'pause_circle';
       this.interval = setInterval(
         (that) => {
           let newMinDateNumber;
@@ -409,7 +409,7 @@ export class TimeFilterFormComponent implements OnInit {
     if (this.interval) {
       this.stopFilter();
     } else {
-      this.playIcon = 'pause-circle';
+      this.playIcon = 'pause_circle';
       this.interval = setInterval(
         () => {
           if (this.year + this.mySlider.step > this.max.getFullYear()) {
@@ -430,7 +430,7 @@ export class TimeFilterFormComponent implements OnInit {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playIcon = 'play-circle';
+    this.playIcon = 'play_circle';
   }
 
   handleSliderDateChange(event: any) {

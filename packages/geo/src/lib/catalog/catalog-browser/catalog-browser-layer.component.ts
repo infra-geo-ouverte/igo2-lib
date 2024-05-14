@@ -271,9 +271,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.getValue()) {
-      return this.isVisible$.getValue() ? '' : 'eye-off';
+      return this.isVisible$.getValue() ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 

@@ -22,7 +22,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ListComponent, ListItemDirective, PanelComponent } from '@igo2/common';
+import {
+  IconSvg,
+  ListComponent,
+  ListItemDirective,
+  MAGNIFY_SCAN_ICON,
+  PanelComponent
+} from '@igo2/common';
 
 import * as olextent from 'ol/extent';
 
@@ -268,6 +274,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
+  svgIcon: IconSvg = MAGNIFY_SCAN_ICON;
 
   constructor(private elRef: ElementRef) {}
 

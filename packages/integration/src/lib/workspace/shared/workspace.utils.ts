@@ -90,7 +90,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'clearselection',
-      icon: 'select-off',
+      icon: 'deselect',
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
@@ -104,7 +104,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'featureDownload',
-      icon: 'file-export',
+      icon: 'file_save',
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
@@ -130,7 +130,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'ogcFilter',
-      icon: 'filter',
+      icon: 'filter_alt',
       title: 'igo.integration.workspace.ogcFilter.title',
       tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
       handler: (
@@ -193,7 +193,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'print',
-      icon: 'printer',
+      icon: 'print',
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {

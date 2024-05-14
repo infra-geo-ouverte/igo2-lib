@@ -1,6 +1,6 @@
 {
   "name": "@igo2/auth",
-  "version": "17.0.0-next.5",
+  "version": "17.0.0-next.6",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -63,6 +63,7 @@
     "@angular/router": "^17.0.6",
     "@azure/msal-angular": "^3.0.4",
     "@azure/msal-browser": "^3.0.4",
+    "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/utils": "*",
     "rxjs": "^7.8.0"

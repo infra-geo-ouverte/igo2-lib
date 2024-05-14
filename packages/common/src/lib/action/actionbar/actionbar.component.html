@@ -9,7 +9,7 @@
     [matTooltip]="'igo.common.actionbar.scrollUp' | translate"
     (click)="scrollUp()"
   >
-    <mat-icon svgIcon="chevron-up"></mat-icon>
+    <mat-icon>expand_less</mat-icon>
   </button>
 </div>
 <mat-list *ngIf="mode === actionbarMode.Dock" matListItemIcon>
@@ -57,7 +57,7 @@
     [matTooltip]="'igo.common.actionbar.scrollDown' | translate"
     (click)="scrollDown()"
   >
-    <mat-icon svgIcon="chevron-down"></mat-icon>
+    <mat-icon>expand_more</mat-icon>
   </button>
 </div>
 
@@ -72,7 +72,7 @@
     [disabled]="store.view.empty"
     [color]="iconColor"
   >
-    <mat-icon [svgIcon]="icon"></mat-icon>
+    <mat-icon>{{ icon }}</mat-icon>
   </button>
 
   <mat-menu

@@ -9,14 +9,11 @@
   <mat-icon
     *ngIf="disableSwitch === true"
     class="igo-form-disable-switch"
-    [svgIcon]="
-      (disabled$ | async) === true
-        ? 'checkbox-blank-outline'
-        : 'checkbox-marked-outline'
-    "
     (click)="onDisableSwitchClick()"
     matPrefix
-  >
+    >{{
+      (disabled$ | async) === true ? 'check_box_outline_blank' : 'check_box'
+    }}
   </mat-icon>
   <mat-error *ngIf="formControl.errors">{{
     getErrorMessage() | translate
