@@ -305,17 +305,17 @@
           </mat-button>
           <mat-form-field
             *ngIf="filteredOgcAutocomplete[bundle.id]"
+            floatLabel="always"
             [style.width.%]="bundle.width ? bundle.width : undefined"
           >
             <mat-label>{{ bundle.title }}</mat-label>
-            <mat-chip-grid
+            <mat-chip-set
               *ngIf="
                 filteredOgcAutocomplete[bundle.id] &&
                 autocompleteDomValueSize <= bundle.maxOptionCountChips
               "
-              #chipGrid
             >
-              <mat-chip-row
+              <mat-chip
                 *ngFor="let autocompleteEnabled of autocompleteEnableds"
                 (removed)="autocompleteOptionClick(autocompleteEnabled)"
               >
@@ -326,46 +326,42 @@
                 >
                   <mat-icon>cancel</mat-icon>
                 </button>
-              </mat-chip-row>
-              <input
-                matInput
-                [matChipInputFor]="chipGrid"
-                type="text"
-                formControlName="autocomplete"
-                #input
-                [matAutocomplete]="auto"
-                (input)="onInputChange()"
-              />
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                [displayWith]="displayFn"
+              </mat-chip>
+            </mat-chip-set>
+            <input
+              matInput
+              type="text"
+              formControlName="autocomplete"
+              #input
+              [matAutocomplete]="auto"
+              (input)="onInputChange()"
+            />
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+              <mat-option
+                *ngFor="
+                  let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
+                    | async
+                "
+                id="mat-option"
+                [matTooltip]="getToolTip(ogcAutocomplete)"
+                (click)="
+                  $event.stopPropagation();
+                  autocompleteOptionClick(ogcAutocomplete.value)
+                "
               >
-                <mat-option
-                  *ngFor="
-                    let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
-                      | async
-                  "
-                  id="mat-option"
-                  [matTooltip]="getToolTip(ogcAutocomplete)"
+                <mat-checkbox
+                  id="mat-checkbox"
+                  color="primary"
+                  [checked]="checkedStatus(ogcAutocomplete.value)"
                   (click)="
                     $event.stopPropagation();
                     autocompleteOptionClick(ogcAutocomplete.value)
                   "
                 >
-                  <mat-checkbox
-                    id="mat-checkbox"
-                    color="primary"
-                    [checked]="checkedStatus(ogcAutocomplete.value)"
-                    (click)="
-                      $event.stopPropagation();
-                      autocompleteOptionClick(ogcAutocomplete.value)
-                    "
-                  >
-                  </mat-checkbox>
-                  {{ ogcAutocomplete.value }}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-chip-grid>
+                </mat-checkbox>
+                {{ ogcAutocomplete.value }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
       </ng-container>
