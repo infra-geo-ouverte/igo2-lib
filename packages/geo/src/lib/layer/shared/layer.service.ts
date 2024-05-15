@@ -16,7 +16,10 @@ import { catchError, concatMap, map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
+  AnyDataSourceOptions,
+  AnyDataSourceOptionsWithParams,
   ArcGISRestDataSource,
+  ArcGISRestDataSourceOptions,
   CartoDataSource,
   ClusterDataSource,
   FeatureDataSource,
@@ -28,6 +31,7 @@ import {
   WFSDataSource,
   WMSDataSource,
   WMTSDataSource,
+  WMTSDataSourceOptions,
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
@@ -53,6 +57,8 @@ import {
   providedIn: 'root'
 })
 export class LayerService {
+  public unavailableLayers: AnyLayerOptions[] = [];
+
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
@@ -127,6 +133,13 @@ export class LayerService {
       .pipe(
         map((source) => {
           if (source === undefined) {
+            const found = this.unavailableLayers.some(
+              (el) => el === layerOptions
+            );
+            if (!found) {
+              this.unavailableLayers.push(layerOptions);
+            }
+
             return undefined;
           }
           return this.createLayer(Object.assign(layerOptions, { source }));
@@ -408,5 +421,39 @@ export class LayerService {
         );
       })
     );
+  }
+
+  deleteUnavailableLayers(anyLayerOptions: AnyLayerOptions) {
+    const anyLayerSourceOptions = anyLayerOptions.sourceOptions;
+    const index = this.unavailableLayers.findIndex((item) => {
+      const baseSourceOptions = item.sourceOptions;
+      if (
+        this.sourceOptionsWithParams(baseSourceOptions) &&
+        this.sourceOptionsWithParams(anyLayerSourceOptions)
+      ) {
+        return (
+          baseSourceOptions.params.LAYERS ===
+          anyLayerSourceOptions.params.LAYERS
+        );
+      } else if (
+        this.sourceOptionsWithLayer(baseSourceOptions) &&
+        this.sourceOptionsWithLayer(anyLayerSourceOptions)
+      ) {
+        return baseSourceOptions.layer === anyLayerSourceOptions.layer;
+      }
+    });
+    this.unavailableLayers.splice(index, index >= 0 ? 1 : 0);
+  }
+
+  sourceOptionsWithParams(
+    sourceOptions: AnyDataSourceOptions
+  ): sourceOptions is AnyDataSourceOptionsWithParams {
+    return 'params' in sourceOptions;
+  }
+
+  sourceOptionsWithLayer(
+    sourceOptions: AnyDataSourceOptions
+  ): sourceOptions is ArcGISRestDataSourceOptions | WMTSDataSourceOptions {
+    return 'layer' in sourceOptions;
   }
 }

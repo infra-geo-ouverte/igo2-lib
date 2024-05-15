@@ -9,6 +9,7 @@
   $foreground: map.get($theme, foreground);
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
+  $background: map.get($theme, background);
 
   igo-layer-item {
     &.igo-layer-item-focused > mat-list-item {
@@ -17,7 +18,7 @@
     }
 
     button {
-      &:not(.mat-primary) {
+      &.mat-default {
         mat-icon {
           color: mat.m2-get-color-from-palette($foreground, base);
         }
@@ -28,6 +29,13 @@
           color: mat.m2-get-color-from-palette($foreground, disabled);
         }
       }
+    }
+
+    .unavailable-layer {
+      background-color: mat.m2-get-color-from-palette(
+        $background,
+        disabled-list-option
+      );
     }
   }
 }
