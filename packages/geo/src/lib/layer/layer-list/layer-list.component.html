@@ -28,6 +28,15 @@
 <mat-divider></mat-divider>
 
 <igo-list #igoList [navigation]="false" [selection]="false">
+  <ng-template ngFor let-unavailableLayer [ngForOf]="unavailableLayers">
+    <igo-layer-item
+      igoListItem
+      [unavailableLayer]="unavailableLayer"
+      (action)="deleteUnavailableLayer($event)"
+    >
+    </igo-layer-item>
+  </ng-template>
+
   <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item
       *ngIf="!(excludeBaseLayers && layer.baseLayer)"
