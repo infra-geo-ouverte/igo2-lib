@@ -5,8 +5,9 @@ import {
   OnInit
 } from '@angular/core';
 
-import { LAYER_PLUS_ICON, ToolComponent } from '@igo2/common';
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { ToolComponent } from '@igo2/common/tool';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 

@@ -1,4 +1,4 @@
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 

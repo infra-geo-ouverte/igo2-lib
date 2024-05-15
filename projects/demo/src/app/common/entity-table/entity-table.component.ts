@@ -9,7 +9,7 @@ import {
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 

@@ -8,7 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService, StopPropagationDirective } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';

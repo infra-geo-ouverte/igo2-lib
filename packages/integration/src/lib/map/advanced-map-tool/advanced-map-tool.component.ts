@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { MapState } from '../map.state';

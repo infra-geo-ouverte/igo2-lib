@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { Tool } from '@igo2/common';
+import { Tool } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { Message, MessageService } from '@igo2/core/message';

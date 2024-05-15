@@ -13,12 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  CollapseDirective,
-  EntityStore,
-  ListItemDirective
-} from '@igo2/common';
-import type { EntityStateManager } from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import type { EntityStateManager } from '@igo2/common/entity';
+import { EntityStore } from '@igo2/common/entity';
+import { ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject } from 'rxjs';

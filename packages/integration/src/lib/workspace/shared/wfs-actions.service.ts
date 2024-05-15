@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
-import { Action, Widget } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import {
