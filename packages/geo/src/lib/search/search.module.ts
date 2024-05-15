@@ -40,6 +40,9 @@ export const SEARCH_DIRECTIVES = [
   ]
 })
 export class IgoSearchModule {
+  /**
+   * @deprecated import the provideSearch() directly and add the source in the provider property
+   */
   static forRoot(): ModuleWithProviders<IgoSearchModule> {
     return {
       ngModule: IgoSearchModule,

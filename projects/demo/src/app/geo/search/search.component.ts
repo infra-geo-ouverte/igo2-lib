@@ -33,12 +33,10 @@ import {
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
-  SearchService,
   ZoomButtonComponent,
-  provideDefaultCoordinatesSearchResultFormatter,
-  provideDefaultIChercheSearchResultFormatter,
-  provideILayerSearchResultFormatter,
-  provideSearchSourceService
+  provideSearch,
+  withIChercheSource,
+  withWorkspaceSource
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 
@@ -70,11 +68,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     FeatureDetailsComponent
   ],
   providers: [
-    SearchService,
-    provideSearchSourceService(),
-    provideDefaultIChercheSearchResultFormatter(),
-    provideDefaultCoordinatesSearchResultFormatter(),
-    provideILayerSearchResultFormatter()
+    provideSearch([withIChercheSource(), withWorkspaceSource()], {
+      analytics: true
+    }),
+    SearchState
   ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {

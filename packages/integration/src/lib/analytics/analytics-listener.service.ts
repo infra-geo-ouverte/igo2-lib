@@ -15,7 +15,6 @@ import { skip } from 'rxjs/operators';
 
 import { ContextState } from '../context/context.state';
 import { MapState } from '../map/map.state';
-import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
 
 /**
@@ -33,7 +32,6 @@ export class AnalyticsListenerService {
     private analyticsService: AnalyticsService,
     private authService: AuthService,
     private contextState: ContextState,
-    private searchState: SearchState,
     private toolState: ToolState,
     private mapState: MapState
   ) {}
@@ -42,7 +40,6 @@ export class AnalyticsListenerService {
     this.listenUser();
     this.listenContext();
     this.listenTool();
-    this.listenSearch();
     this.listenLayer();
   }
 
@@ -79,19 +76,6 @@ export class AnalyticsListenerService {
         this.analyticsService.trackEvent('tool', 'activateTool', tool.name);
       }
     });
-  }
-
-  listenSearch() {
-    this.searchState.searchTerm$
-      .pipe(skip(1))
-      .subscribe((searchTerm: string) => {
-        if (searchTerm !== undefined && searchTerm !== null) {
-          this.analyticsService.trackSearch(
-            searchTerm,
-            this.searchState.store.count
-          );
-        }
-      });
   }
 
   /**

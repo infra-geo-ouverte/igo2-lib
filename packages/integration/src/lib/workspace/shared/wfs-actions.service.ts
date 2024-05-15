@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
@@ -40,7 +40,9 @@ export class WfsActionsService implements OnDestroy {
   }
 
   constructor(
-    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
+    @Optional()
+    @Inject(OgcFilterWidget)
+    private ogcFilterWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private mediaService: MediaService,

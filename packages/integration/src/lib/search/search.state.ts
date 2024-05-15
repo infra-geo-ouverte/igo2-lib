@@ -36,9 +36,7 @@ export interface SearchFeatureMotion {
 /**
  * Service that holds the state of the search module
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SearchState {
   public searchLayerStores: FeatureStore<Feature>[] = [];
   public searchOverlayStyle: CommonVectorStyleOptions = {};
