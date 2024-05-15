@@ -7,7 +7,7 @@ import {
 
 import { LAYER_PLUS_ICON, ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 
 import { take } from 'rxjs/operators';
@@ -49,6 +49,18 @@ export class CatalogLibraryToolComponent implements OnInit {
    */
   @Input() predefinedCatalogs: Catalog[] = [];
 
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
+  get currentTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[1];
+  }
+
+  get lastTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[0];
+  }
+
   constructor(
     private catalogService: CatalogService,
     private catalogState: CatalogState,
@@ -60,6 +72,10 @@ export class CatalogLibraryToolComponent implements OnInit {
    * @internal
    */
   ngOnInit() {
+    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
+      this.selectedCatalogId = null;
+    }
+
     if (this.store.count === 0) {
       this.loadCatalogs();
     }
