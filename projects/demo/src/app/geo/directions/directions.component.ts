@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
+import { AuthService } from '@igo2/auth';
 import {
   IgoDirectionsModule,
   IgoMap,
   IgoSearchModule,
-  LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapService,
@@ -14,10 +14,11 @@ import {
   StepFeatureStore,
   StopsFeatureStore,
   StopsStore,
-  TileLayer
+  TileLayer,
+  TileLayerOptions
 } from '@igo2/geo';
 
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -63,20 +64,26 @@ export class AppDirectionsComponent {
   });
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
+  public authenticated$: BehaviorSubject<boolean>;
+
   constructor(
     private layerService: LayerService,
-    private mapService: MapService
+    private mapService: MapService,
+    private authService: AuthService
   ) {
+    this.authenticated$ = this.authService.authenticate$;
     this.mapService.setMap(this.map);
     this.layerService
       .createAsyncLayer({
-        title: 'OSM',
+        title: 'Quebec Base Map',
         baseLayer: true,
         visible: true,
         sourceOptions: {
-          type: 'osm'
+          type: 'xyz',
+          url: '/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
+          crossOrigin: 'anonymous'
         }
-      } satisfies LayerOptions)
+      } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }
