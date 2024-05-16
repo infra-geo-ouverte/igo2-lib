@@ -101,7 +101,7 @@
                   (click)="checkDefaultOptions($event, source, setting)"
                   *ngIf="setting.values.length > 3"
                 >
-                  <mat-icon svgIcon="refresh"></mat-icon>
+                  <mat-icon>refresh</mat-icon>
                 </button>
               </div>
               <div
@@ -131,12 +131,14 @@
           </mat-menu>
         </ng-container>
         <div class="check-menu-default-button">
-          <label>Sélection par défaut</label>
+          <label>{{
+            'igo.geo.search.searchSources.defaultSettings' | translate
+          }}</label>
           <button
             mat-icon-button
             (click)="checkMenuDefaultOptions($event, source)"
           >
-            <mat-icon svgIcon="refresh"></mat-icon>
+            <mat-icon>refresh</mat-icon>
           </button>
         </div>
       </mat-menu>
