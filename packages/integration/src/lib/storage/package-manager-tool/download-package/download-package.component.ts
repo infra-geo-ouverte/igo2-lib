@@ -17,9 +17,9 @@ import {
   EntityStore,
   EntityTableComponent,
   EntityTableTemplate,
-  IgoIconComponent,
   getEntityProperty
-} from '@igo2/common';
+} from '@igo2/common/entity';
+import { IgoIconComponent } from '@igo2/common/icon';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 import { PackageInfo, PackageManagerService, QuotaService } from '@igo2/geo';
 
