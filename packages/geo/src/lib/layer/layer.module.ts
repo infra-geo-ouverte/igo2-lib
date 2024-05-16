@@ -13,6 +13,18 @@ import { LayerListComponent } from './layer-list/layer-list.component';
 import { LayerService } from './shared/layer.service';
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
+export const LAYER_DIRECTIVES = [
+  LayerItemComponent,
+  LayerLegendItemComponent,
+  LayerLegendComponent,
+  LayerListComponent,
+  LayerListToolComponent,
+  LayerLegendListComponent,
+  LayerListBindingDirective,
+  LayerLegendListBindingDirective,
+  TrackFeatureButtonComponent
+] as const;
+
 /**
  * @deprecated import the components/directives directly or LAYER_DIRECTIVES for the set
  */

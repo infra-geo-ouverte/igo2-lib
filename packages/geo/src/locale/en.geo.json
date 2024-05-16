@@ -379,7 +379,12 @@
           "copyMsgLink": "Link for directions copied to clipboard",
           "copyTitle": "Directions"
         },
-        "toggleActive": "Activate direction control"
+        "toggleActive": "Activate direction control",
+        "toggleType": "Include forest roads",
+        "forestRoadsWarning": {
+          "title": "Warning",
+          "text": "Some forest roads may be impassable or not suitable for vehicles."
+        }
       },
       "directions": {
         "uturn": "u-turn",

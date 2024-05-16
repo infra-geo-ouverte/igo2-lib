@@ -21,10 +21,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 
-import { ListComponent, ListItemDirective } from '@igo2/common';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -54,7 +54,7 @@ import { SearchResultsItemComponent } from './search-results-item.component';
     MatDialogActions,
     MatButtonModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SaveFeatureDialogComponent implements OnInit {

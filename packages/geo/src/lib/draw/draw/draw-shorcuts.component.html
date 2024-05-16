@@ -1,25 +1,25 @@
 <mat-dialog-content>
   <div>
     <span class="shortcut mat-typography">
-      <mat-icon class="shortcut-icon" svgIcon="keyboard-return"></mat-icon
+      <mat-icon class="shortcut-icon">keyboard_return</mat-icon
       >{{ 'igo.geo.draw.finish' | translate }}</span
     >
   </div>
   <div>
     <span class="shortcut mat-typography">
-      <mat-icon class="shortcut-icon" svgIcon="backspace-outline"></mat-icon
+      <mat-icon class="shortcut-icon">keyboard_backspace</mat-icon
       >{{ 'igo.geo.draw.undo' | translate }}</span
     >
   </div>
   <div>
     <span class="shortcut mat-typography">
-      <mat-icon class="shortcut-icon" svgIcon="keyboard-esc"></mat-icon
-      >{{ 'igo.geo.draw.abort' | translate }}</span
-    >
+      <igo-icon [icon]="svgIcon" />
+      {{ 'igo.geo.draw.abort' | translate }}
+    </span>
   </div>
   <div>
     <span class="shortcut mat-typography">
-      <mat-icon class="shortcut-icon" svgIcon="keyboard-space"></mat-icon
+      <mat-icon class="shortcut-icon">space_bar</mat-icon
       >{{ 'igo.geo.draw.move' | translate }}</span
     >
   </div>

@@ -17,7 +17,7 @@
             [matTooltip]="'igo.context.sidenav.goBack' | translate"
             *ngIf="tool"
           >
-            <mat-icon svgIcon="arrow-back"></mat-icon>
+            <mat-icon>arrow_back</mat-icon>
           </button>
 
           <button
@@ -28,7 +28,7 @@
             [matTooltip]="'igo.context.sidenav.mainMenu' | translate"
             *ngIf="tool"
           >
-            <mat-icon svgIcon="menu"></mat-icon>
+            <mat-icon>menu</mat-icon>
           </button>
         </igo-panel>
       </div>
@@ -41,13 +41,11 @@
             class="igo-icon-button"
             (click)="toggleTopPanel()"
           >
-            <mat-icon
-              [svgIcon]="
-                ['collapsed', 'initial'].indexOf(topPanel.state) >= 0
-                  ? 'arrow_downward'
-                  : 'arrow_upward'
-              "
-            ></mat-icon>
+            <mat-icon>{{
+              ['collapsed', 'initial'].indexOf(topPanel.state) >= 0
+                ? 'arrow_downward'
+                : 'arrow_upward'
+            }}</mat-icon>
           </button>
 
           <button
@@ -57,7 +55,7 @@
             (click)="zoomToFeatureExtent()"
             *ngIf="feature.geometry"
           >
-            <mat-icon svgIcon="zoom-in"></mat-icon>
+            <mat-icon>zoom_in</mat-icon>
           </button>
 
           <igo-feature-details

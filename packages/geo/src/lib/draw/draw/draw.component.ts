@@ -42,8 +42,9 @@ import {
   EntityTableColumnRenderer,
   EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';
@@ -60,7 +61,6 @@ import OlVectorSource from 'ol/source/Vector';
 import { getDistance, getLength } from 'ol/sphere';
 import * as OlStyle from 'ol/style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first, skip } from 'rxjs/operators';
 
@@ -146,7 +146,7 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     EntityTableComponent,
     MatBadgeModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
@@ -272,7 +272,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             return [
               {
                 editMode: false,
-                icon: 'pencil',
+                icon: 'edit',
                 color: 'primary',
                 click: () => {
                   this.editLabelDrawing(feature);
@@ -1010,7 +1010,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.activeStore.layer.visible = true;
     this.activeStore.source.ol.on(
       'removefeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
+      (event: OlVectorSourceEvent) => {
         const olGeometry = event.feature.getGeometry();
         this.clearLabelsOfOlGeometry(olGeometry);
       }

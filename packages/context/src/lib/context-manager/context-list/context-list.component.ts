@@ -23,17 +23,16 @@ import { AuthService } from '@igo2/auth';
 import {
   ActionStore,
   ActionbarComponent,
-  ActionbarMode,
-  CollapsibleComponent,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+  ActionbarMode
+} from '@igo2/common/action';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import type { IgoMap } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
@@ -73,7 +72,7 @@ import { ContextListControlsEnum } from './context-list.enum';
     ListItemDirective,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
@@ -206,7 +205,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContext'
         ),
-        icon: 'map-outline',
+        icon: 'star',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContextTooltip'
         ),
@@ -219,7 +218,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.contextMap'
         ),
-        icon: 'map-check',
+        icon: 'map',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.contextMapTooltip'
         ),
@@ -364,8 +363,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .toLowerCase();
   }
 
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
+  toggleSort() {
+    this.sortedAlpha = !this.sortedAlpha;
   }
 
   clearFilter() {

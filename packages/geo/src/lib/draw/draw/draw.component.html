@@ -109,7 +109,8 @@
       "
       (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible"
     >
-      <mat-icon [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
+      <mat-icon>
+        {{ activeDrawingLayer.visible ? 'visibility' : 'visibility_off' }}
       </mat-icon>
     </button>
   </div>
@@ -126,7 +127,7 @@
       [disabled]="(selectedFeatures$ | async).length === 0"
       (click)="deleteDrawings()"
     >
-      <mat-icon svgIcon="delete"></mat-icon>
+      <mat-icon>delete</mat-icon>
     </button>
 
     <div>
@@ -174,11 +175,10 @@
     >
       <mat-icon
         class="shortcuts-icon"
-        svgIcon="keyboard-outline"
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.draw.shortcuts' | translate"
-      >
+        >keyboard
       </mat-icon>
     </button>
 
@@ -194,11 +194,10 @@
         aria-hidden="false"
         iconPositionEnd
         class="style-icon"
-        svgIcon="palette"
         [matBadge]="selectedFeatures$.value.length"
         matBadgeColor="warn"
         matBadgeSize="medium"
-      >
+        >palette
       </mat-icon>
     </button>
   </div>

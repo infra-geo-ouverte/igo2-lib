@@ -1,7 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntitySelectorComponent, EntityStore } from '@igo2/common';
+import { EntitySelectorComponent, EntityStore } from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 

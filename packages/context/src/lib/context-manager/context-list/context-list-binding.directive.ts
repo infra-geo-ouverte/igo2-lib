@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';

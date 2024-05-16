@@ -10,9 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ListItemDirective } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { MapBase } from '../../map';
@@ -36,7 +35,7 @@ import {
     MatBadgeModule,
     OgcFilterableItemComponent,
     ListItemDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class OgcFilterButtonComponent implements OnInit {

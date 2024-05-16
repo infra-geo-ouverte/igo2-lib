@@ -73,7 +73,7 @@
       >
         <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
           <mat-list-item>
-            <mat-icon matListItemIcon svgIcon="account-outline"></mat-icon>
+            <mat-icon matListItemIcon>person</mat-icon>
             <h4 matListItemTitle>
               {{ permission.profilTitle }}
               <small class="mat-typography">{{ permission.profil }}</small>
@@ -95,7 +95,7 @@
                 color="warn"
                 (click)="removePermission.emit(permission)"
               >
-                <mat-icon svgIcon="delete"></mat-icon>
+                <mat-icon>delete</mat-icon>
               </button>
             </div>
           </mat-list-item>

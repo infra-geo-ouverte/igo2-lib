@@ -15,12 +15,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olGeom from 'ol/geom';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -55,7 +55,7 @@ import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
     MatListModule,
     MatIconModule,
     NgClass,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {

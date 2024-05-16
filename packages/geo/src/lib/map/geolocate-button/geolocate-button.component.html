@@ -12,6 +12,6 @@
     [color]="color"
     (click)="onGeolocationClick()"
   >
-    <mat-icon svgIcon="{{ icon$ | async }}"></mat-icon>
+    <mat-icon>{{ icon$ | async }}</mat-icon>
   </button>
 </div>

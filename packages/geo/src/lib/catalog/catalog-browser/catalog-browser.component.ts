@@ -8,12 +8,8 @@ import {
   OnInit
 } from '@angular/core';
 
-import {
-  EntityStore,
-  EntityStoreWatcher,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common/entity';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
 import { BehaviorSubject, zip } from 'rxjs';
 

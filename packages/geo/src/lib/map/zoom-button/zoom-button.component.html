@@ -7,7 +7,7 @@
     [disabled]="zoom >= maxZoom"
     (click)="map.viewController.zoomIn()"
   >
-    <mat-icon svgIcon="plus"></mat-icon>
+    <mat-icon>add</mat-icon>
   </button>
 
   <button
@@ -18,6 +18,6 @@
     [disabled]="zoom <= minZoom"
     (click)="map.viewController.zoomOut()"
   >
-    <mat-icon svgIcon="minus"></mat-icon>
+    <mat-icon>remove</mat-icon>
   </button>
 </div>
