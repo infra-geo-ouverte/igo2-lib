@@ -3,9 +3,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AuthService } from '@igo2/auth';
 import {
-  IgoDirectionsModule,
+  DirectionsComponent,
   IgoMap,
-  IgoSearchModule,
   LayerService,
   MAP_DIRECTIVES,
   MapService,
@@ -17,6 +16,8 @@ import {
   TileLayer,
   TileLayerOptions,
   provideDirection,
+  provideSearch,
+  withIChercheSource,
   withOsrmSource
 } from '@igo2/geo';
 
@@ -35,10 +36,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MatGridListModule,
     MAP_DIRECTIVES,
-    IgoDirectionsModule,
-    IgoSearchModule
+    DirectionsComponent
   ],
-  providers: [provideDirection(withOsrmSource())]
+  providers: [
+    provideDirection(withOsrmSource()),
+    provideSearch([withIChercheSource()])
+  ]
 })
 export class AppDirectionsComponent {
   public map: IgoMap = new IgoMap({
