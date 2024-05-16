@@ -13,7 +13,6 @@ import { EntityStore } from '@igo2/common/entity';
 import { LAYER_PLUS_ICON } from '@igo2/common/icon';
 import { ToolComponent } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
-import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
@@ -76,6 +75,11 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   @Input() addCatalogAllowed: boolean = false;
 
   /**
+   * Determine if the export button is shown
+   */
+  @Input() exportButton: boolean = true;
+
+  /**
    * List of predefined catalogs
    */
   @Input() predefinedCatalogs: Catalog[] = [];
@@ -98,8 +102,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     private catalogState: CatalogState,
     private toolState: ToolState,
     private storageService: StorageService,
-    private languageService: LanguageService,
-    private configService: ConfigService
+    private languageService: LanguageService
   ) {}
 
   /**
@@ -113,10 +116,6 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     if (this.store.count === 0) {
       this.loadCatalogs();
     }
-    this.exportAsListButton = this.configService.getConfig(
-      'catalog.exportAsListButton',
-      true
-    );
   }
 
   ngOnDestroy() {
