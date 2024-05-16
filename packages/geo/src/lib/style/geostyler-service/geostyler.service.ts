@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import LegendRenderer from 'geostyler-legend/dist/LegendRenderer/LegendRenderer';
+import { LegendRenderer } from 'geostyler-legend';
 import { OlStyleParser as OpenLayersParser } from 'geostyler-openlayers-parser';
 import {
   Style as GeostylerStyle,
   IconSymbolizer,
-  LineSymbolizer,
-  MarkSymbolizer,
   WriteStyleResult
 } from 'geostyler-style';
 import { Observable, from, map, tap } from 'rxjs';
@@ -96,7 +94,6 @@ export class GeostylerService {
 
     const renderer = new LegendRenderer({
       maxColumnWidth: 300,
-      maxColumnHeight: 300,
       overflow: 'auto',
       styles: layerDescriptors,
       size: [width ?? 300, height ?? computedHeightByStyles],
@@ -129,12 +126,6 @@ export class GeostylerService {
         var styleRuleSymbolizersAdapted = [];
         styleRule.symbolizers.map((styleRuleSymbolizer) => {
           switch (styleRuleSymbolizer.kind) {
-            case 'Mark':
-              (styleRuleSymbolizer as MarkSymbolizer).radius = 10;
-              break;
-            case 'Line':
-              (styleRuleSymbolizer as LineSymbolizer).width = 3;
-              break;
             case 'Icon':
               (styleRuleSymbolizer as IconSymbolizer).size = 15;
             default:
@@ -144,7 +135,9 @@ export class GeostylerService {
         });
         descriptorLayerRulesAdapted.push({
           name: styleRule.name,
-          symbolizers: styleRuleSymbolizersAdapted
+          symbolizers: styleRuleSymbolizersAdapted.filter(
+            (s) => s.kind !== 'Text'
+          )
         });
       });
       const styleNoRadius: any = {
