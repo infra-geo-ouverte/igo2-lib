@@ -65,6 +65,12 @@ export class TileLayer extends Layer {
    * @param url the url string or function to retrieve the data
    */
   customLoader(tile, url: string, interceptor: AuthInterceptor) {
+    const dataRegex =
+      /data:(?<mime>[\w\/\-\.]+);(?<encoding>\w+),(?<data>.*)/gm;
+    if (dataRegex.test(url)) {
+      tile.getImage().src = url;
+      return;
+    }
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
