@@ -24,7 +24,7 @@ import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.com
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
 import { TimeFilterListComponent } from './time-filter-list/time-filter-list.component';
 
-const DIRECTIVES = [
+export const FILTER_DIRECTIVES = [
   FilterableDataSourcePipe,
   TimeFilterButtonComponent,
   TimeFilterFormComponent,
@@ -42,15 +42,15 @@ const DIRECTIVES = [
   SpatialFilterListComponent,
   SpatialFilterItemComponent,
   OgcFilterTimeComponent,
-  OgcFilterTimeSliderComponent,
-  OgcFilterableListComponent
-];
+  OgcFilterTimeSliderComponent
+] as const;
+
 /**
  * @deprecated import the components directly or the FILTER_DIRECTIVES for the set
  */
 @NgModule({
-  imports: DIRECTIVES,
-  exports: DIRECTIVES,
+  imports: [...FILTER_DIRECTIVES],
+  exports: [...FILTER_DIRECTIVES],
   providers: [
     TimeFilterService,
     OGCFilterService,

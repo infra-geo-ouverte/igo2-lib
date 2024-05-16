@@ -12,7 +12,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { CollapseDirective, StopPropagationDirective } from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 

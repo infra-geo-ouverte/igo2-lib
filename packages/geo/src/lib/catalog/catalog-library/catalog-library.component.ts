@@ -13,16 +13,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityStore,
-  IconService,
-  LAYER_PLUS_ICON,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { IconService, LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { Observable, Subscription } from 'rxjs';
@@ -100,6 +96,13 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
+  get selectedCatalogId() {
+    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
+  }
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
   constructor(
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
@@ -116,6 +119,14 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.state.clear();
 
+    if (this.selectedCatalogId) {
+      const selectedCatalog = this.store
+        .all()
+        .find((item) => item.id === this.selectedCatalogId);
+      if (selectedCatalog) {
+        this.onCatalogSelect(selectedCatalog);
+      }
+    }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
       c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
       c.title = c.title === '' || !c.title ? c.url : c.title;
@@ -141,6 +152,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       },
       true
     );
+    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 

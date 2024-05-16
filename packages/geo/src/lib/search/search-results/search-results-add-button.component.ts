@@ -12,11 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityStore,
-  IgoBadgeIconDirective,
-  StopPropagationDirective
-} from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { EntityStore } from '@igo2/common/entity';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
 

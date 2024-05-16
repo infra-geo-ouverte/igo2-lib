@@ -6,7 +6,7 @@ import {
   Input
 } from '@angular/core';
 
-import { ListComponent, ListItemDirective } from '@igo2/common';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';

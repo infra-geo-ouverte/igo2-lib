@@ -9,12 +9,10 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import {
-  EntityStore,
-  PanelComponent,
-  SELECTION_MARKER_ICON,
-  ToolComponent
-} from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {

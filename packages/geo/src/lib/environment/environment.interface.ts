@@ -1,4 +1,5 @@
-import { DOMOptions, DepotOptions } from '@igo2/common';
+import { DOMOptions } from '@igo2/common/dom';
+import { DepotOptions } from '@igo2/common/environment';
 
 import { CatalogServiceOptions } from '../catalog/shared/catalog.interface';
 import { OptionsApiOptions } from '../datasource/shared/options/options-api.interface';

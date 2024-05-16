@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { IgoTableModule } from '@igo2/common';
+import { IgoTableModule } from '@igo2/common/table';
 
 import { AppTableRoutingModule } from './table-routing.module';
 import { AppTableComponent } from './table.component';
