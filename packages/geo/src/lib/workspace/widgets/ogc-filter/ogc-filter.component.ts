@@ -6,6 +6,8 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { OnUpdateInputs } from '@igo2/common/dynamic-component';
 import { WidgetComponent } from '@igo2/common/widget';
@@ -20,7 +22,7 @@ import { IgoMap } from '../../../map/shared/map';
   styleUrls: ['./ogc-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [OgcFilterableItemComponent]
+  imports: [OgcFilterableItemComponent, MatButtonModule, MatIconModule]
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   @Input() layer: Layer;

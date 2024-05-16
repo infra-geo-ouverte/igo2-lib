@@ -1,6 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import {
@@ -8,7 +9,7 @@ import {
   StorageServiceEvent,
   StorageServiceEventEnum
 } from '@igo2/core/storage';
-import { FeatureWorkspace } from '@igo2/geo';
+import { FeatureWorkspace, InteractiveSelectionFormWidget } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -35,6 +36,8 @@ export class FeatureActionsService implements OnDestroy {
   }
 
   constructor(
+    @Inject(InteractiveSelectionFormWidget)
+    private interactiveSelectionFormWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private toolState: ToolState,
@@ -92,7 +95,8 @@ export class FeatureActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState
+      this.toolState,
+      this.interactiveSelectionFormWidget
     );
   }
 }
