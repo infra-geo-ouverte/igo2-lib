@@ -13,14 +13,14 @@ import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { OnUpdateInputs } from '@igo2/common/dynamic-component';
 import {
   Form,
   FormComponent,
   FormFieldComponent,
-  FormService,
-  OnUpdateInputs,
-  WidgetComponent
-} from '@igo2/common';
+  FormService
+} from '@igo2/common/form';
+import { WidgetComponent } from '@igo2/common/widget';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 
 import * as olstyle from 'ol/style';
