@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
@@ -25,7 +25,7 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class TrackFeatureButtonComponent implements OnInit {

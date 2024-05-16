@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
-import { ListItemDirective } from '@igo2/common';
+import { ListItemDirective } from '@igo2/common/list';
 
 import { MapBase } from '../../map';
 import { OgcFilterFormComponent } from '../ogc-filter-form/ogc-filter-form.component';

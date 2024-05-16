@@ -15,13 +15,14 @@
     color="warn"
     (click)="clearTerm()"
   >
-    <mat-icon svgIcon="close"></mat-icon>
+    <mat-icon>close</mat-icon>
   </button>
 </mat-form-field>
 
 <div class="actions-container">
   <button
     class="sort-alpha"
+    [class.--active]="sortAlpha"
     [color]="sortAlpha ? 'warn' : 'primary'"
     mat-icon-button
     [matTooltip]="
@@ -32,11 +33,8 @@
     matTooltipShowDelay="500"
     (click)="toggleSortAlpha()"
   >
-    <mat-icon
-      [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"
-    ></mat-icon>
+    <mat-icon>sort_by_alpha</mat-icon>
   </button>
-
   <button
     class="only-visible"
     mat-icon-button
@@ -53,11 +51,11 @@
     <mat-icon
       aria-hidden="false"
       matBadge="icon"
-      igoMatBadgeIcon="eye"
+      igoMatBadgeIcon="visibility"
       [igoMatBadgeInverseColor]="true"
       [igoMatBadgeInheritColor]="true"
-      [svgIcon]="onlyVisible ? 'filter-remove' : 'filter'"
     >
+      {{ onlyVisible ? 'filter_alt_off' : 'filter_alt' }}
     </mat-icon>
   </button>
 
@@ -73,12 +71,8 @@
     matTooltipShowDelay="500"
     (click)="toggleSelectionMode()"
   >
-    <mat-icon
-      [svgIcon]="
-        selectionMode
-          ? 'checkbox-multiple-marked-outline'
-          : 'checkbox-multiple-blank-outline'
-      "
-    ></mat-icon>
+    <mat-icon>{{
+      selectionMode ? 'library_add_check' : 'filter_none'
+    }}</mat-icon>
   </button>
 </div>

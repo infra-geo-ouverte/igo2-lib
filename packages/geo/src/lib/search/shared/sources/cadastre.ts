@@ -139,7 +139,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
         id,
         title: numero,
         score: computeTermSimilarity(term.trim(), numero),
-        icon: 'map-marker'
+        icon: 'location_on'
       },
       data: {
         type: FEATURE,

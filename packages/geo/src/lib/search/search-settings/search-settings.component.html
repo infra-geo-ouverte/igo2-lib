@@ -8,7 +8,7 @@
     [matTooltip]="'igo.geo.search.menu.tooltip' | translate"
     [matMenuTriggerFor]="searchSettingsMenu"
   >
-    <mat-icon svgIcon="chevron-down"></mat-icon>
+    <mat-icon>expand_more</mat-icon>
   </button>
   <mat-menu #searchSettingsMenu="matMenu" class="no-border-radius">
     <div class="check-all-button" *ngIf="getSearchSources().length > 4">

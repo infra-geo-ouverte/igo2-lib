@@ -7,10 +7,11 @@ import {
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
+import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import {
   MSAL_GUARD_CONFIG,
@@ -25,7 +26,6 @@ import {
   PublicClientApplication,
   SilentRequest
 } from '@azure/msal-browser';
-import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -40,13 +40,15 @@ import {
   styleUrls: ['./auth-microsoft.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
 })
 export class AuthMicrosoftComponent {
   private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
   private broadcastService: MsalBroadcastService;
+
+  svgIcon: IconSvg = MICROSOFT_ICON;
 
   constructor(
     private authService: AuthService,

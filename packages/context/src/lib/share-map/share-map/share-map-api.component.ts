@@ -14,11 +14,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard, uuid } from '@igo2/utils';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { ShareMapService } from '../shared/share-map.service';
 
@@ -36,7 +35,7 @@ import { ShareMapService } from '../shared/share-map.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ShareMapApiComponent implements OnInit {

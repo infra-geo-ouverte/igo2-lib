@@ -211,7 +211,7 @@ export class CoordinatesReverseSearchSource
         id: data[0].toString() + ',' + data[1].toString(),
         title: roundedCoordString,
         titleHtml: roundedCoordString + subtitleHtml,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: 100 // every coord exists
       }
     };

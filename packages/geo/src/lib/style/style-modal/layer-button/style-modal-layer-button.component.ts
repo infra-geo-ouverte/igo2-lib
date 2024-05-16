@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { StyleModalLayerComponent } from '../layer/style-modal-layer.component';
@@ -16,7 +16,7 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
   styleUrls: ['./style-modal-layer-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class StyleModalLayerButtonComponent {
   @Input() layer: VectorLayer;

@@ -108,7 +108,7 @@
       color="accent"
       (click)="onCalculateClick()"
     >
-      <mat-icon svgIcon="calculator"></mat-icon>
+      <mat-icon>calculate</mat-icon>
     </button>
 
     <button
@@ -119,16 +119,8 @@
       color="warn"
       (click)="onDeleteClick()"
     >
-      <mat-icon svgIcon="delete"></mat-icon>
+      <mat-icon>delete</mat-icon>
     </button>
-
-    <!--button
-      mat-icon-button
-      [matTooltip]="'igo.geo.measure.actionbar.modify.tooltip' | translate"
-      [disabled]="(selectedFeatures$ | async).length !== 1"
-      (click)="onModifyClick()">
-      <mat-icon svgIcon="edit"></mat-icon>
-    </button-->
   </div>
 
   <igo-entity-table
