@@ -9,7 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '@igo2/auth';
-import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common';
+import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 

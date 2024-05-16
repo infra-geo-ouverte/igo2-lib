@@ -26,11 +26,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import {
-  CollapsibleComponent,
-  ListComponent,
-  StopPropagationDirective
-} from '@igo2/common';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent } from '@igo2/common/list';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 

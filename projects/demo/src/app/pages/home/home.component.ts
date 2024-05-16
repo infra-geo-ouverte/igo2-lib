@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 
-import { IgoInteractiveTourModule, InteractiveTourService } from '@igo2/common';
+import {
+  IgoInteractiveTourModule,
+  InteractiveTourService
+} from '@igo2/common/interactive-tour';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 

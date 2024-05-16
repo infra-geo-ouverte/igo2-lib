@@ -3,20 +3,20 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
+import { Action, ActionbarComponent, ActionbarMode } from '@igo2/common/action';
 import {
-  Action,
-  ActionbarComponent,
-  ActionbarMode,
   EntityRecord,
   EntityTableComponent,
   EntityTablePaginatorComponent,
   EntityTablePaginatorOptions,
-  EntityTableScrollBehavior,
+  EntityTableScrollBehavior
+} from '@igo2/common/entity';
+import {
   Workspace,
   WorkspaceSelectorComponent,
   WorkspaceStore,
   WorkspaceWidgetOutletComponent
-} from '@igo2/common';
+} from '@igo2/common/workspace';
 import {
   DataSourceService,
   IgoGeoWorkspaceModule,

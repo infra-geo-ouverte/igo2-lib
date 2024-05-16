@@ -8,8 +8,8 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Form, getEntityRevision } from '@igo2/common';
-import { FormComponent } from '@igo2/common';
+import { getEntityRevision } from '@igo2/common/entity';
+import { Form, FormComponent } from '@igo2/common/form';
 import { uuid } from '@igo2/utils';
 
 import { BehaviorSubject } from 'rxjs';

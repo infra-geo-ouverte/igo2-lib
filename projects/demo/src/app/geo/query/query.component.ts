@@ -1,7 +1,8 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { PanelComponent, getEntityTitle } from '@igo2/common';
+import { getEntityTitle } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import {
   DataSource,
   DataSourceService,

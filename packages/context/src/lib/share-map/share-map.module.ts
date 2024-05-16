@@ -4,6 +4,12 @@ import { ShareMapApiComponent } from './share-map/share-map-api.component';
 import { ShareMapUrlComponent } from './share-map/share-map-url.component';
 import { ShareMapComponent } from './share-map/share-map.component';
 
+export const SHARE_MAP_DIRECTIVES = [
+  ShareMapComponent,
+  ShareMapUrlComponent,
+  ShareMapApiComponent
+] as const;
+
 /**
  * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for the set
  */

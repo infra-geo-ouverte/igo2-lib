@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { INTEGRATION_CONTEXT_DIRECTIVES } from '.';
+import { INTEGRATION_CONTEXT_DIRECTIVES } from './context.directive';
 
 /**
  * @deprecated import the components/directive directly or INTEGRATION_CONTEXT_DIRECTIVES for the set

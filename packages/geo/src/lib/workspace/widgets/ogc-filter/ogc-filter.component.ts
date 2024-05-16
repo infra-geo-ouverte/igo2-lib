@@ -9,7 +9,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { OnUpdateInputs, WidgetComponent } from '@igo2/common';
+import { OnUpdateInputs } from '@igo2/common/dynamic-component';
+import { WidgetComponent } from '@igo2/common/widget';
 
 import { OgcFilterableItemComponent } from '../../../filter/ogc-filterable-item/ogc-filterable-item.component';
 import { Layer } from '../../../layer/shared/layers/layer';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
 import { Catalog, CatalogItem } from '@igo2/geo';
 
 /**

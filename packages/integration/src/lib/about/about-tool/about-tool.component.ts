@@ -7,11 +7,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import {
-  CustomHtmlComponent,
-  InteractiveTourComponent,
-  ToolComponent
-} from '@igo2/common';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { InteractiveTourComponent } from '@igo2/common/interactive-tour';
+import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
