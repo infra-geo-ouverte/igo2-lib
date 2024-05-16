@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   FeatureStore,
   FeatureWithMeasure,
@@ -17,7 +17,7 @@ import { MeasureState } from '../measure.state';
 @ToolComponent({
   name: 'measurer',
   title: 'igo.integration.tools.measurer',
-  icon: 'ruler'
+  icon: 'square_foot'
 })
 @Component({
   selector: 'igo-measurer-tool',

@@ -1,4 +1,4 @@
-import { Workspace } from '@igo2/common';
+import { Workspace } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 

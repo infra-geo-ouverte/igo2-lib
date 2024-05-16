@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 
-import { Widget, WidgetService } from '@igo2/common';
+import { Widget, WidgetService } from '@igo2/common/widget';
 
 import { OgcFilterComponent } from './ogc-filter/ogc-filter.component';
 

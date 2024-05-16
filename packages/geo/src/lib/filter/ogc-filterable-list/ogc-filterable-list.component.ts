@@ -1,9 +1,8 @@
 import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { ListComponent, ListItemDirective } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { MapBase } from '../../map/shared/map.abstract';
@@ -22,7 +21,7 @@ import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
     NgFor,
     OgcFilterableItemComponent,
     ListItemDirective,
-    TranslateModule,
+    IgoLanguageModule,
     FilterableDataSourcePipe
   ]
 })

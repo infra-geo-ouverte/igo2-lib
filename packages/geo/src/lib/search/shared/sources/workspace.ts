@@ -167,7 +167,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.feature.meta.title,
         titleHtml: titleHtml + subtitleHtml2,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: data.score,
         nextPage:
           resultsCnt % +this.options.params.limit === 0 &&

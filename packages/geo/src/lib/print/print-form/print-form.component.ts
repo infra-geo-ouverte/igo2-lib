@@ -15,9 +15,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
@@ -48,7 +48,7 @@ import {
     MatButtonModule,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class PrintFormComponent implements OnInit {

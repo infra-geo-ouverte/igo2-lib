@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { MeasureAreaUnit, MeasureLengthUnit } from '../shared/measure.enum';
 import { MeasurerDialogData } from '../shared/measure.interfaces';
@@ -22,7 +22,7 @@ import { MeasureFormatPipe } from './measure-format.pipe';
     MatDialogTitle,
     MatDialogContent,
     NgIf,
-    TranslateModule,
+    IgoLanguageModule,
     MeasureFormatPipe
   ]
 })

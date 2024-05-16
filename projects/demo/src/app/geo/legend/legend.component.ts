@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { PanelComponent } from '@igo2/common';
+import { PanelComponent } from '@igo2/common/panel';
 import {
   DataSourceService,
   IgoMap,

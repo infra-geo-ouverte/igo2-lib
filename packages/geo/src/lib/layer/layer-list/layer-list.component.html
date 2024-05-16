@@ -68,7 +68,7 @@
       [matTooltip]="'igo.geo.layer.removeLayer' | translate"
       (click)="removeLayers()"
     >
-      <mat-icon svgIcon="delete"></mat-icon>
+      <mat-icon>delete</mat-icon>
     </button>
 
     <button
@@ -91,8 +91,8 @@
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="lowerDisabled"
-        svgIcon="arrow-down"
-      ></mat-icon>
+        >arrow_downward</mat-icon
+      >
     </button>
 
     <button
@@ -115,8 +115,8 @@
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="raiseDisabled"
-        svgIcon="arrow-up"
-      ></mat-icon>
+        >arrow_upward</mat-icon
+      >
     </button>
 
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
@@ -134,8 +134,8 @@
         [matBadge]="badgeOpacity"
         matBadgeColor="primary"
         matBadgeSize="medium"
-        svgIcon="opacity"
-      ></mat-icon>
+        >opacity</mat-icon
+      >
     </button>
 
     <mat-menu #opacityMenu="matMenu" class="panel-opacity-menu">
@@ -179,7 +179,7 @@
       <mat-icon
         matBadgeColor="primary"
         matBadgeSize="medium"
-        svgIcon="magnify-scan"
+        [svgIcon]="magnifyIcon.name"
       ></mat-icon>
     </button>
 
@@ -220,8 +220,8 @@
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="isAllLayersRemovable(layersChecked)"
-        svgIcon="delete"
-      ></mat-icon>
+        >delete</mat-icon
+      >
     </button>
 
     <button
@@ -238,11 +238,11 @@
       "
       (click)="toggleVisibility(layersChecked)"
     >
-      <mat-icon
-        [svgIcon]="
-          statusSelectedLayersCheck === 'ALL_HIDDEN' ? 'eye-off' : 'eye'
-        "
-      ></mat-icon>
+      <mat-icon>{{
+        statusSelectedLayersCheck === 'ALL_HIDDEN'
+          ? 'visibility_off'
+          : 'visibility'
+      }}</mat-icon>
     </button>
 
     <button
@@ -265,8 +265,8 @@
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="lowerDisabledSelection"
-        svgIcon="arrow-down"
-      ></mat-icon>
+        >arrow_downward</mat-icon
+      >
     </button>
 
     <button
@@ -289,8 +289,8 @@
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="raiseDisabledSelection"
-        svgIcon="arrow-up"
-      ></mat-icon>
+        >arrow_upward</mat-icon
+      >
     </button>
 
     <button
@@ -303,7 +303,7 @@
       [matMenuTriggerFor]="opacityMenu"
       [matTooltip]="'igo.geo.layer.opacity' | translate"
     >
-      <mat-icon svgIcon="opacity"></mat-icon>
+      <mat-icon>opacity</mat-icon>
     </button>
 
     <mat-menu #opacityMenu="matMenu" class="mat-menu-opacity-slider">
@@ -340,7 +340,7 @@
       [matTooltip]="'igo.geo.layer.zoomLayers' | translate"
       (click)="zoomLayersExtents(layersChecked)"
     >
-      <mat-icon svgIcon="magnify-scan"></mat-icon>
+      <mat-icon [svgIcon]="magnifyIcon.name"></mat-icon>
     </button>
   </div>
 </igo-panel>

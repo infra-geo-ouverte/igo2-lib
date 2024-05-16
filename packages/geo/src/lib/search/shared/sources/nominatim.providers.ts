@@ -5,6 +5,7 @@ import { StorageService } from '@igo2/core/storage';
 
 import { NominatimSearchSource } from './nominatim';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * Nominatim search source factory
@@ -31,5 +32,12 @@ export function provideNominatimSearchSource() {
     useFactory: nominatimSearchSourceFactory,
     multi: true,
     deps: [HttpClient, ConfigService, StorageService]
+  };
+}
+
+export function withNominatimSource(): SearchSourceFeature<SearchSourceKind.Nominatim> {
+  return {
+    kind: SearchSourceKind.Nominatim,
+    providers: [provideNominatimSearchSource()]
   };
 }
