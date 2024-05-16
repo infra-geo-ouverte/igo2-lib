@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService } from '@igo2/auth';
 import { IgoAuthFormModule } from '@igo2/auth/form';
 import { ConfigService } from '@igo2/core/config';
-import { provideMockRootTranslation } from '@igo2/core/language';
+import { provideMockTranslation } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {
   AnyMonitoringOptions,
@@ -20,13 +20,9 @@ const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
   TestBed.configureTestingModule({
-    imports: [
-      HttpClientModule,
-      provideMockRootTranslation(),
-      IgoAuthFormModule,
-      ToastrModule
-    ],
+    imports: [HttpClientModule, IgoAuthFormModule, ToastrModule],
     providers: [
+      provideMockTranslation(),
       { provide: MONITORING_OPTIONS, useValue: options },
       ToastrService,
       MessageService

@@ -27,16 +27,15 @@ import {
 } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  ConfirmDialogService,
-  CustomHtmlComponent,
-  EntityRecord,
-  SpinnerComponent,
-  Workspace
-} from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { EntityRecord } from '@igo2/common/entity';
+import { SpinnerComponent } from '@igo2/common/spinner';
+import type { WorkspaceStore } from '@igo2/common/workspace';
+import { Workspace } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 import { strEnum } from '@igo2/utils';
@@ -46,7 +45,6 @@ import { circular } from 'ol/geom/Polygon';
 import olClusterSource from 'ol/source/Cluster';
 import olVectorSource from 'ol/source/Vector';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -103,7 +101,7 @@ import {
     MatInputModule,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [ConfirmDialogService]
 })

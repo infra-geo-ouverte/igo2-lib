@@ -5,7 +5,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { IgoActivityModule } from '@igo2/core/activity';
 import { ConfigOptions, provideConfig } from '@igo2/core/config';
 import { IgoLanguageModule, provideTranslation } from '@igo2/core/language';
-import { IgoMessageModule } from '@igo2/core/message';
+import { provideMessage } from '@igo2/core/message';
 import { IgoErrorModule } from '@igo2/core/request';
 
 import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
@@ -49,17 +49,11 @@ const dbConfig: DBConfig = {
     HttpClientModule,
     IgoActivityModule.forRoot(),
     IgoErrorModule.forRoot(),
-    IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
-  providers: [],
+  providers: [provideMessage()],
   declarations: [],
-  exports: [
-    IgoActivityModule,
-    IgoErrorModule,
-    IgoLanguageModule,
-    IgoMessageModule
-  ]
+  exports: [IgoActivityModule, IgoErrorModule, IgoLanguageModule]
 })
 export class IgoCoreModule {
   static forRoot(

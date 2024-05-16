@@ -1,4 +1,8 @@
-import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+import {
+  EntityKey,
+  EntityRecord,
+  EntityStoreStrategy
+} from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';

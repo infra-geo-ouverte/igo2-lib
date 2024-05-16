@@ -4,7 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { bearingToAzimuth } from '@turf/helpers';
 import { BehaviorSubject } from 'rxjs';
 
@@ -22,7 +23,7 @@ import { IgoMap } from '../shared/map';
     MatIconModule,
     NgStyle,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class RotationButtonComponent implements AfterContentInit {

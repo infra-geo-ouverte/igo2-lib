@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 import { ObjectUtils } from '@igo2/utils';
 
 import { Subscription, debounceTime, pairwise } from 'rxjs';

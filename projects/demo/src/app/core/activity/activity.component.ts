@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { SpinnerComponent } from '@igo2/common';
+import { SpinnerComponent } from '@igo2/common/spinner';
 import { ActivityService } from '@igo2/core/activity';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';

@@ -6,6 +6,14 @@
   >
     {{ 'igo.geo.directionsForm.toggleActive' | translate }}
   </mat-slide-toggle>
+  <mat-slide-toggle
+    *ngIf="hasOsrmPrivateAccess && twoSourcesAvailable"
+    [checked]="enabledProfileHasAuthorization"
+    [labelPosition]="'before'"
+    (change)="onTogglePrivateModeControl($event.checked)"
+  >
+    {{ 'igo.geo.directionsForm.toggleType' | translate }}
+  </mat-slide-toggle>
 </div>
 
 <igo-directions-buttons

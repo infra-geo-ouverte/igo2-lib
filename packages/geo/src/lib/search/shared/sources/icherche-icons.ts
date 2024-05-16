@@ -1,4 +1,4 @@
-import { ENGINE_ICON, IconSvg } from '@igo2/common';
+import { ENGINE_ICON, IconSvg } from '@igo2/common/icon';
 
 /**
  * Icons mappings to be retrocompatible with iCherche

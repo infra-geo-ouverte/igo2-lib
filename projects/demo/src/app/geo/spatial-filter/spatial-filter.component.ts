@@ -10,7 +10,8 @@ import {
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityKey, EntityStore, PanelComponent } from '@igo2/common';
+import { EntityKey, EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {

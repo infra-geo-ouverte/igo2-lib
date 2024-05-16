@@ -13,7 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
@@ -48,7 +49,7 @@ import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.compo
     OgcFilterTimeComponent,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class OgcFilterFormComponent implements OnInit {

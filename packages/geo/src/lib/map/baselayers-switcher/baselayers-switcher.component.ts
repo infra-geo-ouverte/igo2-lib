@@ -4,9 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer/shared';
@@ -28,7 +28,7 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
     MatIconModule,
     NgFor,
     MiniBaseMapComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {

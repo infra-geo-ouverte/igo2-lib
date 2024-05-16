@@ -4,10 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { userAgent } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
 
@@ -21,7 +21,7 @@ import { BehaviorSubject } from 'rxjs';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 

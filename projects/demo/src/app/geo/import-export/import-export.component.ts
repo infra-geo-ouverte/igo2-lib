@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { WorkspaceStore } from '@igo2/common';
+import { WorkspaceStore } from '@igo2/common/workspace';
 import {
   IMPORT_EXPORT_DIRECTIVES,
   IgoMap,

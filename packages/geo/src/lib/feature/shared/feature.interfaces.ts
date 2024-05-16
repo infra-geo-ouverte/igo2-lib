@@ -4,7 +4,7 @@ import {
   EntityKey,
   EntityStoreOptions,
   EntityStoreStrategyOptions
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';

@@ -19,10 +19,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -51,7 +51,7 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
     MatOptionModule,
     MatSelectModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {

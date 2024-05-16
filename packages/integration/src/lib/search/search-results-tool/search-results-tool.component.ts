@@ -12,17 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityState,
-  EntityStore,
-  FlexibleComponent,
-  FlexibleState,
-  PanelComponent,
-  SanitizeHtmlPipe,
-  ToolComponent,
-  getEntityTitle
-} from '@igo2/common';
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
+import { EntityState, EntityStore, getEntityTitle } from '@igo2/common/entity';
+import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   FEATURE,
   Feature,
@@ -51,7 +47,6 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -86,7 +81,7 @@ import { SearchState } from '../search.state';
     MatBadgeModule,
     FeatureDetailsComponent,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     SanitizeHtmlPipe
   ]
 })

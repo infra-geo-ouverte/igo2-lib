@@ -37,6 +37,105 @@
     },
     "./partial/*": {
       "sass": "./src/style/partial/*.scss"
+    },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./action": {
+      "import": "./action/src/public_api.ts"
+    },
+    "./backdrop": {
+      "import": "./backdrop/src/public_api.ts"
+    },
+    "./badge": {
+      "import": "./badge/src/public_api.ts"
+    },
+    "./clickout": {
+      "import": "./clickout/src/public_api.ts"
+    },
+    "./clone": {
+      "import": "./clone/src/public_api.ts"
+    },
+    "./collapsible": {
+      "import": "./collapsible/src/public_api.ts"
+    },
+    "./color": {
+      "import": "./color/src/public_api.ts"
+    },
+    "./confirm-dialog": {
+      "import": "./confirm-dialog/src/public_api.ts"
+    },
+    "./context-menu": {
+      "import": "./context-menu/src/public_api.ts"
+    },
+    "./custom-html": {
+      "import": "./custom-html/src/public_api.ts"
+    },
+    "./dom": {
+      "import": "./dom/src/public_api.ts"
+    },
+    "./drag-drop": {
+      "import": "./drag-drop/src/public_api.ts"
+    },
+    "./dynamic-component": {
+      "import": "./dynamic-component/src/public_api.ts"
+    },
+    "./entity": {
+      "import": "./entity/src/public_api.ts"
+    },
+    "./flexible": {
+      "import": "./flexible/src/public_api.ts"
+    },
+    "./form": {
+      "import": "./form/src/public_api.ts"
+    },
+    "./home-button": {
+      "import": "./home-button/src/public_api.ts"
+    },
+    "./icon": {
+      "import": "./icon/src/public_api.ts"
+    },
+    "./image": {
+      "import": "./image/src/public_api.ts"
+    },
+    "./interactive-tour": {
+      "import": "./interactive-tour/src/public_api.ts"
+    },
+    "./json-dialog": {
+      "import": "./json-dialog/src/public_api.ts"
+    },
+    "./keyvalue": {
+      "import": "./keyvalue/src/public_api.ts"
+    },
+    "./list": {
+      "import": "./list/src/public_api.ts"
+    },
+    "./panel": {
+      "import": "./panel/src/public_api.ts"
+    },
+    "./select-value-dialog": {
+      "import": "./select-value-dialog/src/public_api.ts"
+    },
+    "./sidenav": {
+      "import": "./sidenav/src/public_api.ts"
+    },
+    "./spinner": {
+      "import": "./spinner/src/public_api.ts"
+    },
+    "./stop-propagation": {
+      "import": "./stop-propagation/src/public_api.ts"
+    },
+    "./table": {
+      "import": "./table/src/public_api.ts"
+    },
+    "./tool": {
+      "import": "./tool/src/public_api.ts"
+    },
+    "./widget": {
+      "import": "./widget/src/public_api.ts"
+    },
+    "./workspace": {
+      "import": "./workspace/src/public_api.ts"
     }
   },
   "dependencies": {

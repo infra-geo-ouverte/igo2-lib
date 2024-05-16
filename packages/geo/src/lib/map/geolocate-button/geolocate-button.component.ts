@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
@@ -22,7 +22,7 @@ import { IgoMap } from '../shared/map';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {

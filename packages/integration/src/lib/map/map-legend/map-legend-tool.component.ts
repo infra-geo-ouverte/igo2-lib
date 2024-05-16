@@ -9,7 +9,8 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   IgoMap,
   Layer,
@@ -20,7 +21,6 @@ import {
   sourceCanSearch
 } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   Observable,
@@ -50,7 +50,7 @@ import { MapState } from './../map.state';
     MatListModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {

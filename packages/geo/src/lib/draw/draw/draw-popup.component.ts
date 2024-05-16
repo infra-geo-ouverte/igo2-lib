@@ -17,14 +17,13 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
 import { getLength } from 'ol/sphere';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap, roundCoordTo } from '../../map/shared';
 import {
@@ -61,7 +60,7 @@ import { DDtoDMS } from '../shared/draw.utils';
     MatOptionModule,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DrawPopupComponent {
