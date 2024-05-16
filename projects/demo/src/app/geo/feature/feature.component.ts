@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntityTableComponent, EntityTableTemplate } from '@igo2/common';
+import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
 import {
   DataSourceService,
   FeatureDataSource,

@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ColorPickerFormFieldComponent } from '@igo2/common';
+import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { FontType } from '../../shared/font.enum';

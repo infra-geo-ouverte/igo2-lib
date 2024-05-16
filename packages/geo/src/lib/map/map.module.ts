@@ -17,30 +17,30 @@ import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
-const DIRECTIVES = [
-  MapBrowserComponent,
-  ZoomButtonComponent,
+export const MAP_DIRECTIVES = [
+  BaseLayersSwitcherComponent,
   GeolocateButtonComponent,
   HomeExtentButtonComponent,
-  RotationButtonComponent,
-  InfoSectionComponent,
-  BaseLayersSwitcherComponent,
-  MiniBaseMapComponent,
-  MapOfflineDirective,
-  OfflineButtonComponent,
-  WakeLockButtonComponent,
-  PointerPositionDirective,
   HoverFeatureDirective,
-  SwipeControlComponent,
+  InfoSectionComponent,
+  MapBrowserComponent,
   MapCenterComponent,
-  MenuButtonComponent
-];
+  MapOfflineDirective,
+  MenuButtonComponent,
+  MiniBaseMapComponent,
+  OfflineButtonComponent,
+  PointerPositionDirective,
+  RotationButtonComponent,
+  SwipeControlComponent,
+  WakeLockButtonComponent,
+  ZoomButtonComponent
+] as const;
 
 /**
  * @deprecated import the components directly or the MAP_DIRECTIVES for the set
  */
 @NgModule({
-  imports: DIRECTIVES,
-  exports: DIRECTIVES
+  imports: [...MAP_DIRECTIVES],
+  exports: [...MAP_DIRECTIVES]
 })
 export class IgoMapModule {}

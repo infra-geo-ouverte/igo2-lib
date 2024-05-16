@@ -1,4 +1,4 @@
-import { ConfirmDialogService } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 

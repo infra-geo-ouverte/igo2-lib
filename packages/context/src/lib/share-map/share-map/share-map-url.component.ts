@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { CustomHtmlComponent } from '@igo2/common';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';

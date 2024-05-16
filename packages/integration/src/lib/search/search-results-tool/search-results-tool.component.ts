@@ -12,16 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityState,
-  EntityStore,
-  FlexibleComponent,
-  FlexibleState,
-  PanelComponent,
-  SanitizeHtmlPipe,
-  ToolComponent,
-  getEntityTitle
-} from '@igo2/common';
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
+import { EntityState, EntityStore, getEntityTitle } from '@igo2/common/entity';
+import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import {

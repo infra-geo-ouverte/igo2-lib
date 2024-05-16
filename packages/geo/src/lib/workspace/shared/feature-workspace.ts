@@ -1,4 +1,4 @@
-import { Workspace, WorkspaceOptions } from '@igo2/common';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 
 import { BehaviorSubject } from 'rxjs';
 

@@ -20,7 +20,7 @@ import {
   EntityRecord,
   EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageScope, StorageService } from '@igo2/core/storage';

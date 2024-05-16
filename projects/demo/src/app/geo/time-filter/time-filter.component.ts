@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { PanelComponent } from '@igo2/common';
+import { PanelComponent } from '@igo2/common/panel';
 import {
   DataSourceService,
   FILTER_DIRECTIVES,

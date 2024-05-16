@@ -7,7 +7,8 @@ import {
   OnInit
 } from '@angular/core';
 
-import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { DragAndDropDirective } from '@igo2/common/drag-drop';
 import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
 

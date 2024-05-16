@@ -1,3 +1,5 @@
+import { Provider } from '@angular/core';
+
 export interface SearchSourceOptions {
   title?: string;
   searchUrl?: string;
@@ -51,4 +53,21 @@ export interface ReverseSearchOptions {
   conf?: number;
   zoom?: number;
   params?: { [key: string]: string };
+}
+
+export interface SearchSourceFeature<KindT extends SearchSourceKind> {
+  kind: KindT;
+  providers: Provider[];
+}
+
+export enum SearchSourceKind {
+  ICherche = 0,
+  IChercheReverse = 1,
+  Cadastre = 2,
+  CoordinatesReverse = 3,
+  ILayer = 4,
+  Nominatim = 5,
+  StoredQueries = 6,
+  StoredQueriesReverse = 7,
+  Workspace = 8
 }

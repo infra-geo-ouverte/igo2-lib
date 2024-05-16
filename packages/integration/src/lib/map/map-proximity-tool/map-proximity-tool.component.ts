@@ -7,11 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
-import {
-  EntityTableComponent,
-  EntityTableTemplate,
-  ToolComponent
-} from '@igo2/common';
+import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -26,7 +23,7 @@ import { MapState } from '../map.state';
 @ToolComponent({
   name: 'map-proximity',
   title: 'igo.integration.tools.closestFeature',
-  icon: 'output_circle'
+  icon: 'radar'
 })
 /**
  * Tool to handle the advanced map tools

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injector } from '@angular/core';
+import { Injector, Provider } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -11,6 +11,7 @@ import {
   IChercheSearchSource
 } from './icherche';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * ICherche search result formatter factory
@@ -25,7 +26,7 @@ export function defaultIChercheSearchResultFormatterFactory(
 /**
  * Function that returns a provider for the ICherche search result formatter
  */
-export function provideDefaultIChercheSearchResultFormatter() {
+export function provideDefaultIChercheSearchResultFormatter(): Provider {
   return {
     provide: IChercheSearchResultFormatter,
     useFactory: defaultIChercheSearchResultFormatterFactory,
@@ -58,7 +59,7 @@ export function ichercheSearchSourceFactory(
 /**
  * Function that returns a provider for the ICherche search source
  */
-export function provideIChercheSearchSource() {
+export function provideIChercheSearchSource(): Provider {
   return {
     provide: SearchSource,
     useFactory: ichercheSearchSourceFactory,
@@ -70,6 +71,16 @@ export function provideIChercheSearchSource() {
       ConfigService,
       IChercheSearchResultFormatter,
       Injector
+    ]
+  };
+}
+
+export function withIChercheSource(): SearchSourceFeature<SearchSourceKind.ICherche> {
+  return {
+    kind: SearchSourceKind.ICherche,
+    providers: [
+      provideIChercheSearchSource(),
+      provideDefaultIChercheSearchResultFormatter()
     ]
   };
 }
@@ -103,5 +114,15 @@ export function provideIChercheReverseSearchSource() {
     useFactory: ichercheReverseSearchSourceFactory,
     multi: true,
     deps: [HttpClient, LanguageService, StorageService, ConfigService, Injector]
+  };
+}
+
+export function withIChercheReverseSource(): SearchSourceFeature<SearchSourceKind.IChercheReverse> {
+  return {
+    kind: SearchSourceKind.IChercheReverse,
+    providers: [
+      provideIChercheReverseSearchSource(),
+      provideDefaultIChercheSearchResultFormatter()
+    ]
   };
 }

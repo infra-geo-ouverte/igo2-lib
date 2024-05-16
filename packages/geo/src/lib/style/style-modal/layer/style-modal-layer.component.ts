@@ -16,7 +16,7 @@ import {
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ColorPickerFormFieldComponent } from '@igo2/common';
+import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { asArray as ColorAsArray } from 'ol/color';

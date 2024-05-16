@@ -7,7 +7,11 @@ import {
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IconSvg, IgoIconComponent, KEYBOARD_ESC_ICON } from '@igo2/common';
+import {
+  IconSvg,
+  IgoIconComponent,
+  KEYBOARD_ESC_ICON
+} from '@igo2/common/icon';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
