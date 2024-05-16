@@ -77,7 +77,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   /**
    * Determine if the export button is shown
    */
-  @Input() exportButton: boolean = true;
+  @Input() exportButton: boolean = false;
 
   /**
    * List of predefined catalogs
