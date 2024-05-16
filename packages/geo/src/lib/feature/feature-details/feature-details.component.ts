@@ -1,3 +1,11 @@
+import {
+  AsyncPipe,
+  JsonPipe,
+  KeyValuePipe,
+  NgFor,
+  NgIf,
+  NgStyle
+} from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -9,12 +17,16 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { getEntityIcon, getEntityTitle } from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
-import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
-import { ConfigService } from '@igo2/core';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
+import type { Toolbox } from '@igo2/common/tool';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 import { Clipboard } from '@igo2/utils';
 
 import { Subject } from 'rxjs';
@@ -28,7 +40,20 @@ import { Feature } from '../shared';
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
   styleUrls: ['./feature-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatIconModule,
+    NgStyle,
+    ImageErrorDirective,
+    AsyncPipe,
+    JsonPipe,
+    KeyValuePipe,
+    IgoLanguageModule,
+    SecureImagePipe
+  ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;
@@ -229,7 +254,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return text;
   }
 
-  filterFeatureProperties(feature) {
+  filterFeatureProperties(feature): { [key: string]: any } {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
     let offlineButtonState;

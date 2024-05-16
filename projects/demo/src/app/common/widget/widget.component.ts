@@ -6,13 +6,20 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 import {
   DynamicComponent,
-  OnUpdateInputs,
+  OnUpdateInputs
+} from '@igo2/common/dynamic-component';
+import {
+  IgoWidgetOutletModule,
   WidgetComponent,
   WidgetService
-} from '@igo2/common';
+} from '@igo2/common/widget';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-salutation-widget',
@@ -23,7 +30,9 @@ import {
     </button>
     <button mat-flat-button (click)="cancel.emit(name)">Dismiss</button>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatButtonModule]
 })
 export class AppSalutationWidgetComponent
   implements OnUpdateInputs, WidgetComponent
@@ -44,7 +53,9 @@ export class AppSalutationWidgetComponent
 @Component({
   selector: 'app-widget',
   templateUrl: './widget.component.html',
-  styleUrls: ['./widget.component.scss']
+  styleUrls: ['./widget.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoWidgetOutletModule]
 })
 export class AppWidgetComponent {
   widget: DynamicComponent<WidgetComponent>;

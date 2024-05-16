@@ -1,5 +1,19 @@
+import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  FloatLabelType,
+  MatFormFieldModule
+} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
@@ -10,13 +24,33 @@ import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared/map';
+import { MapBase } from '../../map';
 import { WktService } from '../../wkt/shared/wkt.service';
+import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 
 @Component({
   selector: 'igo-ogc-filter-form',
   templateUrl: './ogc-filter-form.component.html',
-  styleUrls: ['./ogc-filter-form.component.scss']
+  styleUrls: ['./ogc-filter-form.component.scss'],
+  standalone: true,
+  imports: [
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    NgClass,
+    MatSelectModule,
+    MatOptionModule,
+    NgIf,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgFor,
+    MatButtonModule,
+    MatIconModule,
+    OgcFilterTimeComponent,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class OgcFilterFormComponent implements OnInit {
   ogcFilterOperator = OgcFilterOperator;
@@ -43,7 +77,7 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() currentFilter: any;
 
@@ -148,8 +182,8 @@ export class OgcFilterFormComponent implements OnInit {
       value && value.length > 0
         ? of(this._filterValues(value))
         : this.selectedField$.value
-        ? of(this.selectedField$.value.values)
-        : of([]);
+          ? of(this.selectedField$.value.values)
+          : of([]);
     if (value && value.length >= 1) {
       this.changeProperty(value, pos);
     }
@@ -343,14 +377,14 @@ export class OgcFilterFormComponent implements OnInit {
         return pos && pos === 1
           ? 'lowerBoundary'
           : pos && pos === 2
-          ? 'upperBoundary'
-          : undefined;
+            ? 'upperBoundary'
+            : undefined;
       case OgcFilterOperator.During:
         return pos && pos === 1
           ? 'begin'
           : pos && pos === 2
-          ? 'end'
-          : undefined;
+            ? 'end'
+            : undefined;
       default:
         return;
     }

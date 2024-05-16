@@ -7,7 +7,8 @@ import {
   Self
 } from '@angular/core';
 
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import { Subscription } from 'rxjs';
 
@@ -20,7 +21,8 @@ import { ContextService } from '../shared/context.service';
 import { ContextPermissionsComponent } from './context-permissions.component';
 
 @Directive({
-  selector: '[igoContextPermissionsBinding]'
+  selector: '[igoContextPermissionsBinding]',
+  standalone: true
 })
 export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
   private component: ContextPermissionsComponent;

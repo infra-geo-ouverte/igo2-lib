@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "16.3.0",
+  "version": "17.0.0-next.6",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -19,6 +19,8 @@
     "build": "ng build utils --configuration production && npm run clean-exports",
     "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts utils",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint utils",
+    "lint.fix": "ng lint utils --fix",
     "publish": "npm publish ../../dist/utils",
     "test": "ng test utils --watch=false",
     "watch": "ng build utils --watch"
@@ -33,9 +35,9 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/platform-browser": "^16.2.5"
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/platform-browser": "^17.0.6"
   },
   "engines": {
     "node": ">=18.10.0"

@@ -19,3 +19,9 @@
     display: none;
   }
 }
+
+.sort-alpha {
+  &.--active mat-icon {
+    color: red;
+  }
+}

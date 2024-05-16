@@ -1,3 +1,4 @@
+import { NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,9 +6,16 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { StorageService } from '@igo2/core';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
@@ -16,7 +24,19 @@ import { DetailedContext } from '../shared/context.interface';
   selector: 'igo-context-item',
   templateUrl: './context-item.component.html',
   styleUrls: ['./context-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    NgClass,
+    NgIf,
+    MatButtonModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    MatIconModule,
+    CollapseDirective,
+    IgoLanguageModule
+  ]
 })
 export class ContextItemComponent {
   public typePermission = TypePermission;

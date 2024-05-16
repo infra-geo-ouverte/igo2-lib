@@ -8,7 +8,7 @@ describe('ExampleSeeCodeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ExampleSeeCodeComponent]
+      imports: [ExampleSeeCodeComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ExampleSeeCodeComponent);

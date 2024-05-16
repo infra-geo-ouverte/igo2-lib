@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
+import { PanelComponent } from '@igo2/common/panel';
 import {
   AnyBaseOgcFilterOptions,
   DataSourceService,
+  FILTER_DIRECTIVES,
   IgoMap,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -25,10 +29,22 @@ import {
 
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-ogc-filter',
   templateUrl: './ogc-filter.component.html',
-  styleUrls: ['./ogc-filter.component.scss']
+  styleUrls: ['./ogc-filter.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    FILTER_DIRECTIVES
+  ]
 })
 export class AppOgcFilterComponent {
   public map: IgoMap = new IgoMap({

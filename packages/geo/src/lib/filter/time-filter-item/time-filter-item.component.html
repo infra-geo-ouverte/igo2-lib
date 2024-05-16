@@ -6,8 +6,8 @@
     [target]="filters"
     [collapsed]="filtersCollapsed"
     (click)="toggleFiltersCollapsed()"
-    svgIcon="chevron-up"
   >
+    expand_less
   </mat-icon>
 
   <span
@@ -32,10 +32,8 @@
     "
     (click)="layer.visible = !layer.visible"
   >
-    <mat-icon
-      [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-      [svgIcon]="layer.visible ? 'eye' : 'eye-off'"
-    >
+    <mat-icon [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+      >{{ layer.visible ? 'visibility' : 'visibility_off' }}
     </mat-icon>
   </button>
 </mat-list-item>

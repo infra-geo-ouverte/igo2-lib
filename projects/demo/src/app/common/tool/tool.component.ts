@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,27 +7,35 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
+import { OnUpdateInputs } from '@igo2/common/dynamic-component';
+import { PanelComponent } from '@igo2/common/panel';
 import {
-  OnUpdateInputs,
   Tool,
   ToolComponent,
   ToolService,
-  Toolbox
-} from '@igo2/common';
+  Toolbox,
+  ToolboxComponent
+} from '@igo2/common/tool';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @ToolComponent({
   name: 'demo-salutation',
   title: 'Salutation',
-  icon: 'account',
+  icon: 'person',
   options: { name: 'Jack' }
 })
 @Component({
   selector: 'app-salutation-tool',
   template: ` <p>Hello, my name is {{ name }}.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
   @Input() name: string;
@@ -46,14 +55,26 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 @Component({
   selector: 'app-about-tool',
   template: ` <p>I'm a tool inside a toolbox.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AppAboutToolComponent {}
 
 @Component({
   selector: 'app-tool',
   templateUrl: './tool.component.html',
-  styleUrls: ['./tool.component.scss']
+  styleUrls: ['./tool.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    PanelComponent,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    ToolboxComponent,
+    AsyncPipe
+  ]
 })
 export class AppToolComponent implements OnInit, OnDestroy {
   toolbox: Toolbox = new Toolbox();
@@ -66,9 +87,7 @@ export class AppToolComponent implements OnInit, OnDestroy {
     return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
   }
 
-  constructor(
-    private toolService: ToolService
-  ) {}
+  constructor(private toolService: ToolService) {}
 
   ngOnInit(): void {
     this.toolbox.setToolbar(['demo-salutation', 'demo-about']);

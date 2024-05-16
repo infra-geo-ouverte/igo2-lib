@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import {
   StoredQueriesReverseSearchSource,
   StoredQueriesSearchSource
@@ -38,6 +41,13 @@ export function provideStoredQueriesSearchSource() {
   };
 }
 
+export function withStoredQueriesSource(): SearchSourceFeature<SearchSourceKind.StoredQueries> {
+  return {
+    kind: SearchSourceKind.StoredQueries,
+    providers: [provideStoredQueriesSearchSource()]
+  };
+}
+
 /**
  * StoredQueriesReverse search source factory
  * @ignore
@@ -66,5 +76,12 @@ export function provideStoredQueriesReverseSearchSource() {
     useFactory: storedqueriesReverseSearchSourceFactory,
     multi: true,
     deps: [HttpClient, LanguageService, StorageService, ConfigService]
+  };
+}
+
+export function withStoredQueriesReverseSource(): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
+  return {
+    kind: SearchSourceKind.StoredQueriesReverse,
+    providers: [provideStoredQueriesReverseSearchSource()]
   };
 }

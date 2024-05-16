@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,10 +8,17 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
-import { MessageService, StorageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import { IconService, LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { Observable, Subscription, catchError } from 'rxjs';
@@ -21,6 +29,7 @@ import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
+import { CatalogLibaryItemComponent } from './catalog-library-item.component';
 
 /**
  * Component to browse a list of available catalogs
@@ -29,7 +38,20 @@ import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
   selector: 'igo-catalog-library',
   templateUrl: './catalog-library.component.html',
   styleUrls: ['./catalog-library.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgFor,
+    CatalogLibaryItemComponent,
+    ListItemDirective,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**
@@ -61,6 +83,9 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   }>();
 
   submitDisabled = true;
+
+  layerPlusIcon = LAYER_PLUS_ICON;
+
   private addingCatalog$$: Subscription;
 
   get addedCatalogs(): Catalog[] {
@@ -70,12 +95,22 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
+  get selectedCatalogId() {
+    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
+  }
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
   constructor(
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private iconService: IconService
+  ) {
+    this.iconService.registerSvg(this.layerPlusIcon);
+  }
 
   /**
    * @internal
@@ -83,6 +118,14 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.state.clear();
 
+    if (this.selectedCatalogId) {
+      const selectedCatalog = this.store
+        .all()
+        .find((item) => item.id === this.selectedCatalogId);
+      if (selectedCatalog) {
+        this.onCatalogSelect(selectedCatalog);
+      }
+    }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
       c.id = c.id ?? Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url));
       c.title = c.title === '' || !c.title ? c.url : c.title;
@@ -108,6 +151,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       },
       true
     );
+    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 

@@ -21,35 +21,22 @@
         color="warn"
         (click)="clearFilter()"
       >
-        <mat-icon svgIcon="close"></mat-icon>
+        <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
 
     <div class="actions-container">
       <button
-        *ngIf="!sortedAlpha"
         class="sort-alpha"
+        [class.--active]="sortedAlpha"
         mat-icon-button
         [matTooltip]="
           'igo.context.contextManager.sortAlphabetically' | translate
         "
         matTooltipShowDelay="500"
-        (click)="toggleSort(true)"
+        (click)="toggleSort()"
       >
-        <mat-icon
-          color="primary"
-          svgIcon="sort-alphabetical-variant"
-        ></mat-icon>
-      </button>
-      <button
-        *ngIf="sortedAlpha"
-        class="sort-alpha"
-        mat-icon-button
-        [matTooltip]="'igo.context.contextManager.sortContextOrder' | translate"
-        matTooltipShowDelay="500"
-        (click)="toggleSort(false)"
-      >
-        <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
+        <mat-icon color="primary">sort_by_alpha</mat-icon>
       </button>
 
       <igo-actionbar
@@ -58,7 +45,7 @@
         [iconColor]="color"
         [store]="actionStore"
         [withIcon]="true"
-        icon="plus"
+        icon="add"
         [withTitle]="actionbarMode === 'overlay'"
         [horizontal]="false"
         [mode]="actionbarMode"
@@ -73,7 +60,7 @@
         matTooltipShowDelay="500"
         [matMenuTriggerFor]="accountMenu"
       >
-        <mat-icon color="primary" svgIcon="filter-menu"></mat-icon>
+        <mat-icon color="primary">fitler_alt</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
         <ng-container *ngFor="let user of users">
@@ -140,14 +127,18 @@
     </div>
   </div>
 
-  <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
+  <ng-template
+    ngFor
+    let-groupContexts
+    [ngForOf]="$any(contexts$ | async) | keyvalue"
+  >
     <igo-collapsible
-      *ngIf="groupContexts.value.length && auth.authenticated"
-      [title]="titleMapping[groupContexts.key] | translate"
-      [collapsed]="collapsed[titleMapping[groupContexts.key]]"
-      (toggle)="collapsed[titleMapping[groupContexts.key]] = $event"
+      *ngIf="$any(groupContexts).value.length && auth.authenticated"
+      [title]="titleMapping[$any(groupContexts).key] | translate"
+      [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
+      (toggle)="collapsed[titleMapping[$any(groupContexts).key]] = $any($event)"
     >
-      <ng-template ngFor let-context [ngForOf]="groupContexts.value">
+      <ng-template ngFor let-context [ngForOf]="$any(groupContexts).value">
         <igo-context-item
           igoListItem
           color="accent"
@@ -175,10 +166,10 @@
     </igo-collapsible>
 
     <ng-template
-      *ngIf="groupContexts.value.length && !auth.authenticated"
+      *ngIf="$any(groupContexts).value.length && !auth.authenticated"
       ngFor
       let-context
-      [ngForOf]="groupContexts.value"
+      [ngForOf]="$any(groupContexts).value"
     >
       <igo-context-item
         igoListItem

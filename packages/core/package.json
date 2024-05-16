@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "16.3.0",
+  "version": "17.0.0-next.6",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -20,6 +20,8 @@
     "build": "ng build core --configuration production && npm run clean-exports",
     "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts core",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint core",
+    "lint.fix": "ng lint core --fix",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "test": "ng test core --watch=false",
     "watch": "ng build core --watch && npm run postbuild"
@@ -47,6 +49,51 @@
     },
     "./prebuilt-themes/*": {
       "style": "./theming/prebuilt-themes/*.css"
+    },
+    "./activity": {
+      "import": "./activity/src/public_api.ts"
+    },
+    "./analytics": {
+      "import": "./analytics/src/public_api.ts"
+    },
+    "./config": {
+      "import": "./config/src/public_api.ts"
+    },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./gesture": {
+      "import": "./gesture/src/public_api.ts"
+    },
+    "./language": {
+      "import": "./language/src/public_api.ts"
+    },
+    "./media": {
+      "import": "./media/src/public_api.ts"
+    },
+    "./message": {
+      "import": "./message/src/public_api.ts"
+    },
+    "./monitoring": {
+      "import": "./monitoring/src/public_api.ts"
+    },
+    "./network": {
+      "import": "./network/src/public_api.ts"
+    },
+    "./regex": {
+      "import": "./regex/src/public_api.ts"
+    },
+    "./request": {
+      "import": "./request/src/public_api.ts"
+    },
+    "./route": {
+      "import": "./route/src/public_api.ts"
+    },
+    "./storage": {
+      "import": "./storage/src/public_api.ts"
+    },
+    "./user": {
+      "import": "./user/src/public_api.ts"
     }
   },
   "dependencies": {
@@ -54,15 +101,17 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^16.2.4",
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/platform-browser": "^16.2.5",
-    "@angular/router": "^16.2.5",
+    "@angular/cdk": "^17.0.3",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/platform-browser": "^17.0.6",
+    "@angular/router": "^17.0.6",
     "@igo2/utils": "*",
-    "@sentry/angular-ivy": "^7.61.0",
+    "@sentry/angular-ivy": "^7.87.0",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^17.0.0",
+    "ngx-toastr": "^18.0.0",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {

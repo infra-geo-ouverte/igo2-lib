@@ -1,14 +1,13 @@
-import { DatePipe } from '@angular/common';
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { Action } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
+} from '@igo2/core/storage';
 import { FeatureWorkspace } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -39,8 +38,7 @@ export class FeatureActionsService implements OnDestroy {
     private storageState: StorageState,
     public languageService: LanguageService,
     private toolState: ToolState,
-    private mediaService: MediaService,
-    private datePipe: DatePipe
+    private mediaService: MediaService
   ) {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
@@ -94,8 +92,7 @@ export class FeatureActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState,
-      this.datePipe
+      this.toolState
     );
   }
 }

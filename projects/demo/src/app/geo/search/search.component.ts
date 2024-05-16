@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -6,21 +7,36 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { ActionStore, EntityStore } from '@igo2/common';
-import { MediaService, StorageService } from '@igo2/core';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode
+} from '@igo2/common/action';
+import { CONTEXT_MENU_DIRECTIVES } from '@igo2/common/context-menu';
+import { EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
 import {
   FEATURE,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   GoogleLinks,
   IgoMap,
+  IgoSearchModule,
   LayerOptions,
   LayerService,
+  MapBrowserComponent,
   MapService,
   MapViewOptions,
   Research,
+  SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
-  TileLayer
+  ZoomButtonComponent,
+  provideSearch,
+  withIChercheSource,
+  withWorkspaceSource
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 
@@ -30,14 +46,37 @@ import * as proj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    NgIf,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    CONTEXT_MENU_DIRECTIVES,
+    IgoSearchModule,
+    PanelComponent,
+    SEARCH_RESULTS_DIRECTIVES,
+    ActionbarComponent,
+    FeatureDetailsComponent
+  ],
+  providers: [
+    provideSearch([withIChercheSource(), withWorkspaceSource()], {
+      analytics: true
+    }),
+    SearchState
+  ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
-
+  actionBarMode = ActionbarMode.Context;
   public igoSearchPointerSummaryEnabled: boolean = false;
 
   public termSplitter: string = '|';
@@ -95,7 +134,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer) => this.map.addLayer(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||

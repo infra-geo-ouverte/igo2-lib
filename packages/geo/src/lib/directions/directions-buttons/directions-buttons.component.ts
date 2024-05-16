@@ -1,6 +1,13 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, Input, Optional } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { LanguageService, MessageService, RouteService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
 import { Clipboard } from '@igo2/utils';
 
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -23,7 +30,16 @@ import {
 @Component({
   selector: 'igo-directions-buttons',
   templateUrl: './directions-buttons.component.html',
-  styleUrls: ['./directions-buttons.component.scss']
+  styleUrls: ['./directions-buttons.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    NgIf,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class DirectionsButtonsComponent {
   get activeRoute() {

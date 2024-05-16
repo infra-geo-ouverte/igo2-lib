@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
-import { IgoMap, Layer } from '@igo2/geo';
+import { ToolComponent } from '@igo2/common/tool';
+import { IgoMap, Layer, TimeFilterItemComponent } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-time-filter-tool.animation';
@@ -15,7 +15,9 @@ import { toolSlideInOut } from './active-time-filter-tool.animation';
 @Component({
   selector: 'igo-active-time-filter-tool',
   templateUrl: './active-time-filter-tool.component.html',
-  animations: [toolSlideInOut()]
+  animations: [toolSlideInOut()],
+  standalone: true,
+  imports: [TimeFilterItemComponent]
 })
 export class ActiveTimeFilterToolComponent {
   get map(): IgoMap {

@@ -1,13 +1,13 @@
 <mat-list-item>
   <mat-icon
     matListItemIcon
-    svgIcon="chevron-up"
     igoCollapse
     class="igo-chevron catalog-browser-group-carret"
     [target]="items"
     [collapsed]="collapsed"
     (toggle)="onToggleCollapsed($event)"
   >
+    expand_less
   </mat-icon>
 
   <span
@@ -29,8 +29,8 @@
         [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
         color="primary"
         (click)="$event.stopPropagation()"
-        svgIcon="earth-arrow-right"
       >
+        public
       </mat-icon>
     </button>
 
@@ -46,7 +46,7 @@
         [disabled]="disabled$ | async"
         (click)="onToggleClick($event)"
       >
-        <mat-icon svgIcon="delete"></mat-icon>
+        <mat-icon>delete</mat-icon>
       </button>
     </ng-container>
 
@@ -59,7 +59,7 @@
         [disabled]="disabled$ | async"
         (click)="onToggleClick($event)"
       >
-        <mat-icon svgIcon="plus"></mat-icon>
+        <mat-icon>add</mat-icon>
       </button>
     </ng-template>
   </div>
@@ -73,7 +73,7 @@
     <ng-container *ngIf="isLayer(item)">
       <igo-catalog-browser-layer
         igoListItem
-        [layer]="item"
+        [layer]="$any(item)"
         [resolution]="resolution"
         [map]="map"
         [catalogAllowLegend]="catalogAllowLegend"

@@ -5,17 +5,23 @@ import {
   EntityStore,
   EntityTableButton,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-entity-table',
   templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.scss']
+  styleUrls: ['./entity-table.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);
@@ -38,8 +44,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         title: 'Selected',
         valueAccessor: (entity: object) => {
           return this.store.state.get(entity).selected
-            ? 'radiobox-marked'
-            : 'radiobox-blank';
+            ? 'radio_button_checked'
+            : 'radio_button_unchecked';
         },
         renderer: EntityTableColumnRenderer.Icon
       },
@@ -55,6 +61,11 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'description',
         title: 'Description',
         renderer: EntityTableColumnRenderer.HTML
+      },
+      {
+        name: 'date',
+        title: 'Date',
+        type: 'date'
       },
       {
         name: 'url',
@@ -94,6 +105,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
           id,
           name: `Name ${id}`,
           description: `<b>Description ${id}</b>`,
+          date: new Date(),
           url: 'https://igouverte.org',
           image: 'https://www.igouverte.org/assets/img/NONEXISTINGIMAGE.png'
         };
@@ -102,6 +114,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         id,
         name: `Name ${id}`,
         description: `<b>Description ${id}</b>`,
+        date: new Date(),
         url: 'https://igouverte.org',
         image: 'https://www.igouverte.org/assets/img/Igo_logoavec.png'
       };

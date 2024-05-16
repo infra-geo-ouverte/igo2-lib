@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,8 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Form, getEntityRevision } from '@igo2/common';
-import type { FormComponent } from '@igo2/common';
+import { getEntityRevision } from '@igo2/common/entity';
+import { Form, FormComponent } from '@igo2/common/form';
 import { uuid } from '@igo2/utils';
 
 import { BehaviorSubject } from 'rxjs';
@@ -27,7 +28,9 @@ import { Feature, FeatureMeta } from '../shared/feature.interfaces';
   selector: 'igo-feature-form',
   templateUrl: './feature-form.component.html',
   styleUrls: ['./feature-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [FormComponent, AsyncPipe]
 })
 export class FeatureFormComponent {
   /**

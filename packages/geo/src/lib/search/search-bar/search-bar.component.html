@@ -11,12 +11,11 @@
         placeholder
           ? placeholder
           : (placeholder$ | async)
-          ? (placeholder$.value | translate)
-          : undefined
+            ? (placeholder$.value | translate)
+            : undefined
       "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
-      (touchend)="onKeyup($event)"
     />
     <button
       *ngIf="(empty$ | async) === false"
@@ -26,15 +25,20 @@
       (click)="onClearButtonClick()"
       [matTooltip]="'igo.geo.search.clearSearch' | translate"
     >
-      <mat-icon svgIcon="close"></mat-icon>
+      <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
 
   <mat-divider *ngIf="withDivider" [vertical]="true"></mat-divider>
 
   <div class="search-bar-buttons">
-    <button *ngIf="showSearchButton" mat-icon-button [color]="color">
-      <mat-icon svgIcon="magnify"></mat-icon>
+    <button
+      *ngIf="showSearchButton"
+      mat-icon-button
+      [color]="color"
+      (click)="handleSearch()"
+    >
+      <mat-icon>search</mat-icon>
     </button>
 
     <igo-search-selector

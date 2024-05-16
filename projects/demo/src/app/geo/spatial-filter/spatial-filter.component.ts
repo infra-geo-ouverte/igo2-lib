@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,19 +7,26 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityKey, EntityStore } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { EntityKey, EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import {
   ClusterDataSource,
   DataSourceService,
+  FEATURE_DETAILS_DIRECTIVES,
+  FILTER_DIRECTIVES,
   Feature,
   FeatureMotion,
   IgoMap,
+  IgoQueryModule,
   Layer,
   LayerOptions,
   LayerService,
+  MAP_DIRECTIVES,
   MapViewOptions,
   MeasureLengthUnit,
   OSMDataSource,
@@ -38,7 +46,6 @@ import {
 
 import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
@@ -47,6 +54,9 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 /**
  * Spatial Filter Type
  */
@@ -54,7 +64,20 @@ import { take, takeUntil, tap } from 'rxjs/operators';
   selector: 'app-spatial-filter',
   templateUrl: './spatial-filter.component.html',
   styleUrls: ['./spatial-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    IgoQueryModule,
+    PanelComponent,
+    FILTER_DIRECTIVES,
+    NgIf,
+    FEATURE_DETAILS_DIRECTIVES,
+    AsyncPipe
+  ]
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public map: IgoMap = new IgoMap({
@@ -410,9 +433,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          const ol = dataSource.ol as
-            | olSourceVector<OlGeometry>
-            | olSourceCluster;
+          const ol = dataSource.ol as olSourceVector | olSourceCluster;
           ol.addFeatures(featuresOl);
           olLayer.ol.setStyle(this.defaultStyle);
           this.map.addLayer(olLayer);
@@ -556,7 +577,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           const featuresOl = features.map((feature: Feature) => {
             return featureToOl(feature, this.map.projectionCode);
           });
-          const ol = dataSource.ol as olSourceVector<OlGeometry>;
+          const ol = dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
           if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
             this.map.removeLayer(

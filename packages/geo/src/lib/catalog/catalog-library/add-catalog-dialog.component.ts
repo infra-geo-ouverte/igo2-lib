@@ -1,9 +1,39 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore, Form, FormService } from '@igo2/common';
-import { ConfigService, LanguageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import {
+  Form,
+  FormComponent,
+  FormFieldComponent,
+  FormService
+} from '@igo2/common/form';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -13,7 +43,30 @@ import { Catalog } from '../shared/catalog.abstract';
 @Component({
   selector: 'igo-add-catalog-dialog',
   templateUrl: './add-catalog-dialog.component.html',
-  styleUrls: ['./add-catalog-dialog.component.scss']
+  styleUrls: ['./add-catalog-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatTabsModule,
+    NgFor,
+    MatOptionModule,
+    MatTooltipModule,
+    MatSelectModule,
+    MatListModule,
+    NgIf,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    IgoLanguageModule,
+    FormComponent,
+    FormFieldComponent
+  ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
   predefinedForm$ = new BehaviorSubject<Form>(undefined);

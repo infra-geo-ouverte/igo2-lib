@@ -11,8 +11,7 @@
             [target]="legend"
             [collapsed]="item.collapsed"
             (toggle)="toggleLegendItem($event, item)"
-            svgIcon="chevron-up"
-          >
+            >expand_less
           </mat-icon>
           <span matListItemTitle>{{ computeItemTitle(item) | async }} </span>
         </mat-list-item>
@@ -41,7 +40,7 @@
               <img
                 igoImageError
                 *ngIf="item.imgGraphValue"
-                hideError="true"
+                [hideError]="true"
                 #renderedLegend
                 id="{{ item.title }}"
                 (load)="onLoadImage(item.title)"

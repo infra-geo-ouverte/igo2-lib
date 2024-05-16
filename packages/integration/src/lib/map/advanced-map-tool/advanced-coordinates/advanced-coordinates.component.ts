@@ -1,3 +1,4 @@
+import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -6,18 +7,25 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import {
-  ConfigService,
-  LanguageService,
-  MessageService,
-  StorageScope,
-  StorageService
-} from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
   IgoMap,
   InputProjections,
@@ -29,7 +37,7 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../../map.state';
@@ -40,7 +48,24 @@ import { MapState } from '../../map.state';
 @Component({
   selector: 'igo-advanced-coordinates',
   templateUrl: './advanced-coordinates.component.html',
-  styleUrls: ['./advanced-coordinates.component.scss']
+  styleUrls: ['./advanced-coordinates.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatSlideToggleModule,
+    AsyncPipe,
+    DecimalPipe,
+    IgoLanguageModule
+  ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -53,6 +78,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private inMtmZone: boolean = true;
   private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
+  private formStatus$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private defaultProj: InputProjections;
@@ -107,45 +133,26 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Listen a state of the map, a state of a form, update the coordinates
    */
   ngOnInit(): void {
-    this.mapState$$ = combineLatest([
-      this.map.viewController.state$.pipe(debounceTime(50)),
-      this.form.valueChanges
-    ]).subscribe(() => {
-      this.setScaleValue(this.map);
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(
-        this.defaultProj.code
-      );
-      const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-      const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-      if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-        this.back2quebec();
-      }
-      let zoneChange = false;
-      if (currentMtmZone !== this.currentZones.mtm) {
-        this.currentZones.mtm = currentMtmZone;
-        zoneChange = true;
-      }
-      if (currentUtmZone !== this.currentZones.utm) {
-        this.currentZones.utm = currentUtmZone;
-        zoneChange = true;
-      }
-      if (zoneChange) {
-        this.updateProjectionsZoneChange();
-      }
-      this.checkLambert(this.currentCenterDefaultProj);
-      this.coordinates = this.getCoordinates();
-      this.cdRef.detectChanges();
-      this.storageService.set(
-        'currentProjection',
-        this.inputProj,
-        StorageScope.SESSION
-      );
+    this.mapState$$ = this.map.viewController.state$
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.setScaleValue(this.map);
+        this.updateCoordinates();
+      });
+
+    this.formStatus$$ = this.form.valueChanges.subscribe(() => {
+      this.updateCoordinates();
     });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
     ) as InputProjections;
-    this.inputProj = this.projections$.value[0];
+
+    this.inputProj =
+      this.projections$.value.find(
+        (val) => val.code === this.defaultProj.code
+      ) ?? this.projections$.value[0];
+
     if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
@@ -161,6 +168,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.map.mapCenter$.next(false);
     this.mapState$$.unsubscribe();
+    this.formStatus$$.unsubscribe();
   }
 
   setScaleValue(map: IgoMap) {
@@ -186,6 +194,37 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;
+  }
+
+  updateCoordinates() {
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(
+      this.defaultProj.code
+    );
+    const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+    const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+    if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+      this.back2quebec();
+    }
+    let zoneChange = false;
+    if (currentMtmZone !== this.currentZones.mtm) {
+      this.currentZones.mtm = currentMtmZone;
+      zoneChange = true;
+    }
+    if (currentUtmZone !== this.currentZones.utm) {
+      this.currentZones.utm = currentUtmZone;
+      zoneChange = true;
+    }
+    if (zoneChange) {
+      this.updateProjectionsZoneChange();
+    }
+    this.checkLambert(this.currentCenterDefaultProj);
+    this.coordinates = this.getCoordinates();
+
+    this.storageService.set(
+      'currentProjection',
+      this.inputProj,
+      StorageScope.SESSION
+    );
   }
 
   /**

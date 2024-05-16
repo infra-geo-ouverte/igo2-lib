@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 
 import * as olextent from 'ol/extent';
 

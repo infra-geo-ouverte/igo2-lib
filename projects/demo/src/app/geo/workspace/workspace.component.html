@@ -15,7 +15,7 @@
 
     <ng-container *ngIf="selectedWorkspace$ | async as workspace">
       <igo-entity-table-paginator
-        *ngIf="workspace.inResolutionRange$ | async"
+        *ngIf="$any(workspace).inResolutionRange$ | async"
         [store]="workspace.entityStore"
         [paginatorOptions]="paginatorOptions"
         [entitySortChange$]="entitySortChange$"
@@ -40,7 +40,7 @@
           workspace.entityStore &&
           workspace.meta &&
           workspace.meta.tableTemplate &&
-          (workspace.inResolutionRange$ | async)
+          ($any(workspace).inResolutionRange$ | async)
         "
         class="table-compact table-centered"
         [paginator]="workspacePaginator"
@@ -50,7 +50,7 @@
       >
       </igo-entity-table>
       <mat-card-content
-        *ngIf="(workspace.inResolutionRange$ | async) === false"
+        *ngIf="($any(workspace).inResolutionRange$ | async) === false"
       >
         No data available at this scale. Please zoom in.
       </mat-card-content>

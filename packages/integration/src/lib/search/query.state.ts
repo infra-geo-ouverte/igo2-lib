@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
 import {
   CapabilitiesService,
   CommonVectorStyleOptions,

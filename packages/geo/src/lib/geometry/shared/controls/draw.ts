@@ -20,8 +20,8 @@ import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
   geometryType: Type | string;
-  drawingLayerSource?: OlVectorSource<OlGeometry>;
-  drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  drawingLayerSource?: OlVectorSource;
+  drawingLayer?: OlVectorLayer<OlVectorSource>;
   drawingLayerStyle?: OlStyleLike;
   interactionStyle?: OlStyleLike;
   maxPoints?: number;
@@ -77,7 +77,7 @@ export class DrawControl {
   private olGeometryType: typeof OlGeometry | undefined | string;
   private olInteractionStyle: OlStyleLike;
   private olMap: OlMap;
-  private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olDrawingLayer: OlVectorLayer<OlVectorSource>;
   private olDrawInteraction: OlDraw;
   private olSelectInteraction: OlSelect;
   private olModifyInteraction: OlModify;
@@ -110,7 +110,7 @@ export class DrawControl {
    * OL overlay source
    * @internal
    */
-  get olDrawingLayerSource(): OlVectorSource<OlGeometry> {
+  get olDrawingLayerSource(): OlVectorSource {
     return this.olDrawingLayer.getSource();
   }
 
@@ -143,7 +143,7 @@ export class DrawControl {
   /**
    * Return the drawing layer source
    */
-  getSource(): OlVectorSource<OlGeometry> {
+  getSource(): OlVectorSource {
     return this.olDrawingLayerSource;
   }
 
@@ -169,9 +169,7 @@ export class DrawControl {
   /**
    * Create a drawing source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<
-    OlVectorSource<OlGeometry>
-  > {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource> {
     return new OlVectorLayer({
       source: this.options.drawingLayerSource
         ? this.options.drawingLayerSource

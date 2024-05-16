@@ -8,8 +8,10 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
-import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { MapService } from '@igo2/geo';
 
 import { Subscription } from 'rxjs';
@@ -25,7 +27,9 @@ import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';
 
 @Directive({
-  selector: '[igoContextListBinding]'
+  selector: '[igoContextListBinding]',
+  standalone: true,
+  providers: [ConfirmDialogService]
 })
 export class ContextListBindingDirective implements OnInit, OnDestroy {
   private component: ContextListComponent;

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,16 +7,29 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
+  ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
+  LayerLegendListBindingDirective,
+  LayerLegendListComponent,
+  LayerListBindingDirective,
+  LayerListComponent,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  MetadataButtonComponent,
+  OgcFilterButtonComponent,
   SearchSourceService,
+  StyleModalLayerButtonComponent,
+  TimeFilterButtonComponent,
+  TrackFeatureButtonComponent,
   VectorLayer,
   sourceCanSearch
 } from '@igo2/geo';
@@ -28,6 +42,7 @@ import {
   ImportExportState
 } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
+import { WorkspaceButtonComponent } from '../../workspace/workspace-button/workspace-button.component';
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MapState } from '../map.state';
 
@@ -43,7 +58,27 @@ import { MapState } from '../map.state';
   selector: 'igo-map-tools',
   templateUrl: './map-tools.component.html',
   styleUrls: ['./map-tools.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatTabsModule,
+    NgIf,
+    LayerListComponent,
+    LayerListBindingDirective,
+    StyleModalLayerButtonComponent,
+    MetadataButtonComponent,
+    TrackFeatureButtonComponent,
+    TimeFilterButtonComponent,
+    OgcFilterButtonComponent,
+    ExportButtonComponent,
+    WorkspaceButtonComponent,
+    LayerLegendListComponent,
+    LayerLegendListBindingDirective,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);

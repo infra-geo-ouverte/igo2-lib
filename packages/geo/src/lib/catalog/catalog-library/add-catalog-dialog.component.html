@@ -9,7 +9,7 @@
       *ngIf="predefinedForm$ | async as form"
       [form]="form"
       [formData]="data$ | async"
-      (submitForm)="onPredefinedSubmit($event)"
+      (submitForm)="onPredefinedSubmit($any($event))"
     >
       <div *ngIf="form.fields.length" class="form-container">
         <igo-form-field
@@ -31,7 +31,7 @@
       *ngIf="customForm$ | async as form"
       [form]="form"
       [formData]="customData$ | async"
-      (submitForm)="onCustomSubmit($event)"
+      (submitForm)="onCustomSubmit($any($event))"
     >
       <div *ngIf="form.fields.length" class="form-container">
         <igo-form-field

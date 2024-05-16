@@ -1,9 +1,18 @@
+import { NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ToolComponent } from '@igo2/common';
-import { ConfigService, LanguageService, version } from '@igo2/core';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { InteractiveTourComponent } from '@igo2/common/interactive-tour';
+import { ToolComponent } from '@igo2/common/tool';
+import { ConfigService, version } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
@@ -13,12 +22,24 @@ import { AllEnvironmentOptions } from '../../environment';
 @ToolComponent({
   name: 'about',
   title: 'igo.integration.tools.about',
-  icon: 'help-circle'
+  icon: 'help'
 })
 @Component({
   selector: 'igo-about-tool',
   templateUrl: './about-tool.component.html',
-  styleUrls: ['./about-tool.component.scss']
+  styleUrls: ['./about-tool.component.scss'],
+  standalone: true,
+  imports: [
+    InteractiveTourComponent,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatMenuModule,
+    NgFor,
+    CustomHtmlComponent,
+    IgoLanguageModule
+  ]
 })
 export class AboutToolComponent implements OnInit {
   private configOptions: AllEnvironmentOptions;

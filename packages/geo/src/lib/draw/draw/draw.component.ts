@@ -5,6 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,19 +17,34 @@ import {
   ViewChild
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup
 } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   EntityRecord,
   EntityTableButton,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+} from '@igo2/common/entity';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';
@@ -110,7 +126,28 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   ],
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    EntityTableComponent,
+    MatBadgeModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
   /**
@@ -235,7 +272,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             return [
               {
                 editMode: false,
-                icon: 'pencil',
+                icon: 'edit',
                 color: 'primary',
                 click: () => {
                   this.editLabelDrawing(feature);
@@ -973,7 +1010,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.activeStore.layer.visible = true;
     this.activeStore.source.ol.on(
       'removefeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
+      (event: OlVectorSourceEvent) => {
         const olGeometry = event.feature.getGeometry();
         this.clearLabelsOfOlGeometry(olGeometry);
       }

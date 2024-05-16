@@ -1,19 +1,24 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Action, ActionStore, ActionbarMode } from '@igo2/common';
 import {
-  Media,
-  MediaOrientation,
-  MediaService
-} from '@igo2/core';
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode
+} from '@igo2/common/action';
+import { Media, MediaOrientation, MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-action',
   templateUrl: './action.component.html',
-  styleUrls: ['./action.component.scss']
+  styleUrls: ['./action.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, ActionbarComponent]
 })
 export class AppActionComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
@@ -39,7 +44,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'add',
         title: 'Add',
-        icon: 'plus',
+        icon: 'add',
         tooltip: 'Add Tooltip',
         handler: () => {
           alert('Add!');
@@ -49,7 +54,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'edit',
         title: 'Edit',
-        icon: 'pencil',
+        icon: 'edit',
         tooltip: 'Edit Tooltip',
         args: ['1'],
         handler: (item: string) => {
@@ -68,7 +73,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
         },
         availability: () => this.added$
       }
-    ] satisfies Action[]);
+    ]);
   }
 
   ngOnDestroy(): void {

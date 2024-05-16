@@ -1,7 +1,7 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { Workspace } from '@igo2/common/workspace';
+import type { WorkspaceStore } from '@igo2/common/workspace';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -22,7 +22,8 @@ import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 
 @Directive({
-  selector: '[igoWorkspaceUpdator]'
+  selector: '[igoWorkspaceUpdator]',
+  standalone: true
 })
 export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   private layers$$: Subscription;

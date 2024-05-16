@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,14 +11,18 @@ import {
   Output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
+import { CollapsibleComponent } from '@igo2/common/collapsible';
 import {
   EntityState,
   EntityStore,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreWatcher
-} from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+} from '@igo2/common/entity';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
@@ -27,6 +32,7 @@ import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchSource } from '../shared/sources/source';
 import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { SearchResultsItemComponent } from './search-results-item.component';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -41,7 +47,20 @@ export enum SearchResultMode {
   selector: 'igo-search-results',
   templateUrl: './search-results.component.html',
   styleUrls: ['./search-results.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    ListComponent,
+    NgFor,
+    CollapsibleComponent,
+    NgTemplateOutlet,
+    SearchResultsItemComponent,
+    ListItemDirective,
+    MatTabsModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
   private showResultsCount: boolean = true;

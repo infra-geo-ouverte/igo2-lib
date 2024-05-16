@@ -1,4 +1,10 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared';
@@ -8,7 +14,15 @@ import { Layer } from '../../layer/shared/layers/layer';
   selector: 'igo-export-button',
   templateUrl: './export-button.component.html',
   styleUrls: ['./export-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class ExportButtonComponent {
   @Input()

@@ -1,6 +1,23 @@
+import { NgIf } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+
+import { ColorPickerFormFieldComponent } from '@igo2/common/color';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
@@ -13,7 +30,20 @@ import {
 @Component({
   selector: 'igo-style-modal-layer',
   templateUrl: './style-modal-layer.component.html',
-  styleUrls: ['./style-modal-layer.component.scss']
+  styleUrls: ['./style-modal-layer.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatIconModule,
+    ColorPickerFormFieldComponent,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class StyleModalLayerComponent implements OnInit {
   @Input() confirmFlag: boolean = false;
