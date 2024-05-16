@@ -13,7 +13,7 @@ import { DownloadedPackagesManagerComponent } from './downloaded-packages-manage
 @ToolComponent({
   name: 'packageManager',
   title: 'igo.integration.tools.packageManager',
-  icon: 'cloud-download'
+  icon: 'deployed_code_update'
 })
 @Component({
   selector: 'igo-package-manager-tool',
