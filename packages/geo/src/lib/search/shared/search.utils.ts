@@ -65,7 +65,7 @@ export function featureToSearchResult(
       dataType: FEATURE,
       id: feature.meta.id as string,
       title: feature.meta.title,
-      icon: feature.meta.icon || 'map-marker'
+      icon: feature.meta.icon || 'location_on'
     }
   };
 }

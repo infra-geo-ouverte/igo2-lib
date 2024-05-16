@@ -1,7 +1,7 @@
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
-import { IgoPanelModule } from '@igo2/common';
+import { IgoPanelModule } from '@igo2/common/panel';
 import { IgoContextModule } from '@igo2/context';
 import {
   IgoFeatureModule,

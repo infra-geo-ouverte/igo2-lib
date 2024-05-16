@@ -12,9 +12,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ListComponent, ListItemDirective } from '@igo2/common';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   EMPTY,
@@ -43,7 +43,7 @@ import { Layer } from '../shared/layers/layer';
     LayerLegendItemComponent,
     ListItemDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {

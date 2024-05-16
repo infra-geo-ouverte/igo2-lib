@@ -22,11 +22,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ListComponent, ListItemDirective, PanelComponent } from '@igo2/common';
+import { IconService, IconSvg, MAGNIFY_SCAN_ICON } from '@igo2/common/icon';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { PanelComponent } from '@igo2/common/panel';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olextent from 'ol/extent';
 
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   EMPTY,
@@ -83,7 +85,7 @@ import { LayerListSelectVisibleEnum } from './layer-list.enum';
     NgTemplateOutlet,
     FormsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerListComponent implements OnInit, OnDestroy {
@@ -268,8 +270,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
+  magnifyIcon: IconSvg = MAGNIFY_SCAN_ICON;
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef,
+    private iconService: IconService
+  ) {
+    this.iconService.registerSvg(this.magnifyIcon);
+  }
 
   /**
    * Subscribe to the search term stream and trigger researches

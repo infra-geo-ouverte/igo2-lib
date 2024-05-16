@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
+import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   Catalog,
   CatalogBrowserComponent,
@@ -30,7 +31,6 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalogBrowser',
   title: 'igo.integration.tools.catalog',
-  icon: 'photo-browser',
   parent: 'catalog'
 })
 @Component({

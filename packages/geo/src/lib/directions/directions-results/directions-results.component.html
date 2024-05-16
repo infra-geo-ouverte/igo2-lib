@@ -34,11 +34,8 @@
       *ngFor="let step of activeDirection.steps; let cnt = index"
       igoListItem
     >
-      <mat-icon
-        [ngClass]="formatStep(step, cnt).cssClass"
-        matListItemIcon
-        svgIcon="{{ formatStep(step, cnt).image }}"
-      >
+      <mat-icon [ngClass]="formatStep(step, cnt).cssClass" matListItemIcon
+        >{{ formatStep(step, cnt).image }}
       </mat-icon>
 
       <span class="igo-step-text">

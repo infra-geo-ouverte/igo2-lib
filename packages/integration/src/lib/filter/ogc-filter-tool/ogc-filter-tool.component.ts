@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   OgcFilterableListBindingDirective,
   OgcFilterableListComponent

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import { IgoMap, PrintComponent } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -8,7 +8,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'print',
   title: 'igo.integration.tools.print',
-  icon: 'printer'
+  icon: 'print'
 })
 @Component({
   selector: 'igo-print-tool',

@@ -211,7 +211,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.display_name,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: computeTermSimilarity(term.trim(), data.display_name)
       },
       data: {

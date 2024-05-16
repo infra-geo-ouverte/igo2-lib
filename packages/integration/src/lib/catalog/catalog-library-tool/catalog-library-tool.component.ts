@@ -9,12 +9,13 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ToolComponent } from '@igo2/common';
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { ToolComponent } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
   Catalog,
   CatalogItem,
@@ -42,7 +43,7 @@ import { CsvOutput } from './catalog-library-tool.interface';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: 'layers-plus'
+  icon: LAYER_PLUS_ICON
 })
 @Component({
   selector: 'igo-catalog-library-tool',
@@ -79,6 +80,18 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    */
   @Input() predefinedCatalogs: Catalog[] = [];
 
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
+  get currentTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[1];
+  }
+
+  get lastTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[0];
+  }
+
   constructor(
     private contextService: ContextService,
     private catalogService: CatalogService,
@@ -93,6 +106,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
+    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
+      this.selectedCatalogId = null;
+    }
+
     if (this.store.count === 0) {
       this.loadCatalogs();
     }

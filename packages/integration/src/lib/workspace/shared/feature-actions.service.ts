@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { Action } from '@igo2/common';
+import { Action } from '@igo2/common/action';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import {

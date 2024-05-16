@@ -4,20 +4,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 
 import {
-  Choice,
   ConfirmDialogService,
+  IgoConfirmDialogModule
+} from '@igo2/common/confirm-dialog';
+import {
   FormDialogService,
   FormFieldConfig,
   FormGroupsConfig,
-  IgoConfirmDialogModule,
-  IgoFormDialogModule,
+  IgoFormDialogModule
+} from '@igo2/common/form';
+import {
   IgoJsonDialogModule,
+  JsonDialogService
+} from '@igo2/common/json-dialog';
+import {
+  Choice,
   IgoSelectValueDialogModule,
-  JsonDialogService,
-  SelectValueDialogService
-} from '@igo2/common';
-
-import { SelectValueDialogType } from 'packages/common/src/lib/select-value-dialog/select-value-dialog.enums';
+  SelectValueDialogService,
+  SelectValueDialogType
+} from '@igo2/common/select-value-dialog';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';

@@ -10,7 +10,7 @@ import {
   FormFieldConfig,
   FormGroupComponent,
   FormService
-} from '@igo2/common';
+} from '@igo2/common/form';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 

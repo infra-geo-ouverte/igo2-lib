@@ -1,4 +1,5 @@
 export * from './search.enums';
+export * from './search.provider';
 export * from './search.interfaces';
 export * from './search-pointer-summary.directive';
 export * from './search.service';

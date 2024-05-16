@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 
 import { ContextService } from '../../context-manager/shared/context.service';
@@ -18,7 +18,7 @@ import { BookmarkDialogComponent } from './bookmark-dialog.component';
   templateUrl: './bookmark-button.component.html',
   styleUrls: ['./bookmark-button.component.scss'],
   standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class BookmarkButtonComponent {
   @Input()

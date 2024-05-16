@@ -4,10 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { userAgent } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
 
@@ -21,7 +21,7 @@ import { BehaviorSubject } from 'rxjs';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 
@@ -45,7 +45,7 @@ export class WakeLockButtonComponent {
   }
 
   private noSleep: NoSleep;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('sleep');
+  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('bedtime');
   public visible = false;
 
   constructor(private storageService: StorageService) {
@@ -78,7 +78,7 @@ export class WakeLockButtonComponent {
   private enableWakeLock() {
     this.noSleep.enable();
     this.enabled = true;
-    this.icon$.next('sleep-off');
+    this.icon$.next('bedtime_off');
   }
   /**
    * Let display sleep
@@ -86,7 +86,7 @@ export class WakeLockButtonComponent {
   private disableWakeLock() {
     this.noSleep.disable();
     this.enabled = false;
-    this.icon$.next('sleep');
+    this.icon$.next('bedtime');
   }
 
   toggleWakeLock() {

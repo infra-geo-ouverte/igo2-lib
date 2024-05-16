@@ -12,7 +12,7 @@
       <td
         *ngIf="feature.properties.target === '_blank' && property.key === 'url'"
       >
-        <mat-icon matListItemIcon svgIcon="{{ icon }}"></mat-icon>
+        <mat-icon matListItemIcon>{{ icon }}</mat-icon>
       </td>
 
       <td
@@ -30,7 +30,7 @@
           mat-icon-button
           (click)="copyTextToClipboard(property.value)"
         >
-          <mat-icon svgIcon="content-copy"></mat-icon>
+          <mat-icon>content_copy</mat-icon>
         </button>
       </td>
 
@@ -79,7 +79,7 @@
           mat-icon-button
           (click)="copyTextToClipboard(property.value)"
         >
-          <mat-icon svgIcon="content-copy"></mat-icon>
+          <mat-icon>content_copy</mat-icon>
         </button>
       </td>
 
