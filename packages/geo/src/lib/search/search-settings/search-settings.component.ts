@@ -232,6 +232,50 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   /**
+   * Triggered when the default options is clicked
+   * Only CheckBox type will change
+   * Default Button of a specified setting
+   * @internal
+   */
+  checkDefaultOptions(
+    event,
+    source: SearchSource,
+    setting: SearchSourceSettings
+  ) {
+    event.stopPropagation();
+    setting.allEnabled = true;
+    this.checkUncheckAll(event, source, setting);
+    source.getDefaultOptions().settings.map((defaultSetting) => {
+      if (defaultSetting.title === setting.title) {
+        setting.values.map((value, index) => {
+          value.enabled = defaultSetting.values[index].enabled;
+        });
+      }
+    });
+    this.searchSourceChange.emit(source);
+  }
+
+  /**
+   * Triggered when the default option is clicked in the specified source
+   * @internal
+   */
+  checkMenuDefaultOptions(event, source: SearchSource) {
+    event.stopPropagation();
+    source.settings.map((setting, index) => {
+      setting.allEnabled = true;
+      this.checkUncheckAll(event, source, setting);
+
+      setting.values.map((value, settingsIndex) => {
+        value.enabled =
+          source.getDefaultOptions(true).settings[index].values[
+            settingsIndex
+          ].enabled;
+      });
+    });
+    this.searchSourceChange.emit(source);
+  }
+
+  /**
    * Triggered when a setting is checked (radiobutton style)
    * @internal
    */
