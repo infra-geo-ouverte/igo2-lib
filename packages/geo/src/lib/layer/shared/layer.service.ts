@@ -288,7 +288,13 @@ export class LayerService {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
         if (legacyOption === 'style') {
-          if (layerOptions[legacyOption] instanceof olStyle.Style) {
+          if (
+            layerOptions[legacyOption] instanceof olStyle.Style ||
+            (Array.isArray(layerOptions[legacyOption]) &&
+              layerOptions[legacyOption].every(
+                (r) => r instanceof olStyle.Style
+              ))
+          ) {
             return;
           }
           if (typeof layerOptions[legacyOption] === 'object') {
