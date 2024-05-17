@@ -312,7 +312,7 @@
             <mat-chip-set
               *ngIf="
                 filteredOgcAutocomplete[bundle.id] &&
-                autocompleteDomValueSize <= bundle.maxOptionCountChips
+                (bundle.showChips ?? true)
               "
             >
               <mat-chip

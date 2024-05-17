@@ -40,6 +40,7 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import {
   IgoOgcFilterObject,
+  OgcAutocomplete,
   OgcFilterableDataSource,
   OgcPushButton,
   OgcSelectorBundle,
@@ -106,7 +107,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
   private _currentFilter: any;
   private inputChangeAutocomplete = new Subject<void>();
-  public autocompleteDomValueSize: number;
 
   public ogcFilterOperator = OgcFilterOperator;
 
@@ -544,21 +544,21 @@ export class OgcFilterSelectionComponent implements OnInit {
     for (const bundle of this.datasource.options.ogcFilters.autocomplete
       .bundles) {
       if (bundle.domSelectors) {
-        let domValues;
+        let domValues: DOMValue[];
         for (const domSelector of bundle.domSelectors) {
-          let filterDOM;
-          for (const domOptions of this.configService.getConfig<DOMOptions[]>(
+          let filterDOM: DOMOptions;
+          for (const configDomOptions of this.configService.getConfig<DOMOptions[]>(
             'dom'
           )) {
             if (
-              domSelector.id === domOptions.id ||
-              domSelector.name === domOptions.name
+              domSelector.id === configDomOptions.id ||
+              domSelector.name === configDomOptions.name
             ) {
               filterDOM = {
-                id: domOptions.id,
-                url: domOptions.url,
-                name: domOptions.name,
-                values: domOptions.values
+                id: configDomOptions.id,
+                url: configDomOptions.url,
+                name: configDomOptions.name,
+                values: configDomOptions.values
               };
             }
           }
@@ -569,32 +569,27 @@ export class OgcFilterSelectionComponent implements OnInit {
             : (domValues = filterDOM.values);
 
           if (domValues) {
-            let newBundle = bundle;
+            let newBundle: OgcSelectorBundle = bundle;
             newBundle.selectors = [];
-            let selector;
-            let size = 0;
-            for (const value of domValues) {
-              size++;
+            let selector: OgcAutocomplete;
+            for (const domValue of domValues) {
               selector = {
-                title: value.value,
+                title: domValue.value,
                 enabled:
                   this.autocompleteEnableds &&
-                  this.autocompleteEnableds.includes(value.value)
+                  this.autocompleteEnableds.includes(domValue.value)
                     ? true
                     : false,
                 filters: {
                   operator: domSelector.operator,
                   propertyName: domSelector.propertyName,
-                  expression: value.id
+                  expression: domValue.id
                 }
               };
               newBundle.selectors.push(selector);
             }
-            this.autocompleteDomValueSize === undefined
-              ? (this.autocompleteDomValueSize = size)
-              : undefined;
             this.getAutocompleteGroups()
-              .find((group) => group.ids.includes(newBundle.id))
+              .find((group: SelectorGroup) => group.ids.includes(newBundle.id))
               .computedSelectors.find(
                 (comp) => comp.title === newBundle.title
               ).selectors = newBundle.selectors;
