@@ -21,6 +21,7 @@ import {
 } from '@igo2/common/entity';
 import { IgoIconComponent } from '@igo2/common/icon';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
+import { NetworkService } from '@igo2/core/network';
 import { PackageInfo, PackageManagerService, QuotaService } from '@igo2/geo';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -130,7 +131,8 @@ export class DownloadPackageComponent implements OnInit {
   constructor(
     private packageManagerService: PackageManagerService,
     private quotaService: QuotaService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    public networkService: NetworkService
   ) {
     this.template = {
       selection: true,

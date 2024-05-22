@@ -55,7 +55,10 @@
   <button
     mat-raised-button
     color="primary"
-    [disabled]="!canDownload"
+    [disabled]="
+      !canDownload ||
+      (networkService.currentState() | async).connection === false
+    "
     (click)="downloadSelectedPackage()"
   >
     {{ 'igo.integration.package-manager.download' | translate }}
