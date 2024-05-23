@@ -77,6 +77,14 @@ export class DirectionsService {
 
     /** top | right | bottom | left */
     const margins: [number, number, number, number] = [20, 10, 20, 10];
+    const width = pageWidth - margins[3] - margins[1];
+    const height = pageHeight - margins[0] - margins[2];
+    const imageDimensions: [number, number] = [width, height];
+
+    const { width: pageWidth, height: pageHeight } = doc.internal.pageSize;
+
+    /** top | right | bottom | left */
+    const margins: [number, number, number, number] = [20, 10, 20, 10];
     this.addAttribution(map, doc, margins);
     const width = pageWidth - margins[3] - margins[1];
     const height = pageHeight - margins[0] - margins[2];
