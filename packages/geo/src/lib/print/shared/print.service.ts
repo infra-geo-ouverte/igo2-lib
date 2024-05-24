@@ -924,8 +924,6 @@ export class PrintService {
     const mapOverlayHTML = map.ol
       .getOverlayContainerStopEvent()
       .cloneNode(true) as HTMLElement;
-    // add North Direction to mapOverly
-    await this.addNorthDirection(mapOverlayHTML, position);
 
     // set 'OverlayContainer' size to print size
     mapOverlayHTML.style.width = canvas.width + 'px';
@@ -986,7 +984,7 @@ export class PrintService {
     } else {
       northArrowDimension = 16;
       xPosition = legendPosition === 'topright' ? 10 : width - baseMargins[1];
-      yPosition = legendPosition === 'topright' ? 10 : baseMargins[0];
+      yPosition = baseMargins[0];
       doc.addImage(
         arrawCanvas.toDataURL(),
         xPosition,
