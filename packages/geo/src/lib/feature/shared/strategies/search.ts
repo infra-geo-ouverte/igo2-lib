@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 
 import { DocumentOptions, Document as FlexSearchDocument } from 'flexsearch';
 import { skipWhile } from 'rxjs/operators';

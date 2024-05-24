@@ -74,11 +74,11 @@
         class="igo-icon-button"
         (click)="toggleTopPanel()"
       >
-        <mat-icon
-          [svgIcon]="
-            (topPanelState$ | async) === 'collapsed' ? 'arrow-up' : 'arrow-down'
-          "
-        ></mat-icon>
+        <mat-icon>{{
+          (topPanelState$ | async) === 'collapsed'
+            ? 'arrow_upward'
+            : 'arrow_downward'
+        }}</mat-icon>
       </button>
 
       <button
@@ -101,8 +101,8 @@
           matBadgeColor="accent"
           matBadgeSize="small"
           [matBadgeHidden]="(isSelectedResultOutOfView$ | async) === false"
-          svgIcon="magnify-plus-outline"
-        ></mat-icon>
+          >zoom_in</mat-icon
+        >
       </button>
 
       <igo-feature-details

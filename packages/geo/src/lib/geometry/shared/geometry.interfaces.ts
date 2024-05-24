@@ -1,4 +1,4 @@
-import { FormFieldInputs } from '@igo2/common';
+import { FormFieldInputs } from '@igo2/common/form';
 
 import type { Type } from 'ol/geom/Geometry';
 

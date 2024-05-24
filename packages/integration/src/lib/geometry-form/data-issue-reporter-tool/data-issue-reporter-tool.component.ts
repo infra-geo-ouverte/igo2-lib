@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import { Form, FormService, ToolComponent } from '@igo2/common';
+import { Form, FormService } from '@igo2/common/form';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { IgoMap } from '@igo2/geo';
@@ -24,7 +25,7 @@ interface DataIssueReporterData {
 @ToolComponent({
   name: 'dataIssueReporter',
   title: 'igo.integration.tools.dataIssueReporter',
-  icon: 'message-alert'
+  icon: 'feedback'
 })
 @Component({
   selector: 'igo-issue-reporter-tool',

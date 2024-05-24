@@ -14,13 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  IgoBadgeIconDirective,
-  getEntityIcon,
-  getEntityTitle
-} from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -53,7 +50,7 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
     IgoBadgeIconDirective,
     LayerLegendComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
@@ -271,9 +268,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.getValue()) {
-      return this.isVisible$.getValue() ? '' : 'eye-off';
+      return this.isVisible$.getValue() ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 

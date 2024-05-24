@@ -23,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
@@ -36,7 +37,6 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -64,7 +64,7 @@ import { MapState } from '../../map.state';
     MatSlideToggleModule,
     AsyncPipe,
     DecimalPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
@@ -78,6 +78,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private inMtmZone: boolean = true;
   private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
+  private formStatus$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private defaultProj: InputProjections;
@@ -136,40 +137,22 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(50))
       .subscribe(() => {
         this.setScaleValue(this.map);
-        this.currentCenterDefaultProj = this.map.viewController.getCenter(
-          this.defaultProj.code
-        );
-        const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-        const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-        if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-          this.back2quebec();
-        }
-        let zoneChange = false;
-        if (currentMtmZone !== this.currentZones.mtm) {
-          this.currentZones.mtm = currentMtmZone;
-          zoneChange = true;
-        }
-        if (currentUtmZone !== this.currentZones.utm) {
-          this.currentZones.utm = currentUtmZone;
-          zoneChange = true;
-        }
-        if (zoneChange) {
-          this.updateProjectionsZoneChange();
-        }
-        this.checkLambert(this.currentCenterDefaultProj);
-        this.coordinates = this.getCoordinates();
-        this.cdRef.detectChanges();
-        this.storageService.set(
-          'currentProjection',
-          this.inputProj,
-          StorageScope.SESSION
-        );
+        this.updateCoordinates();
       });
+
+    this.formStatus$$ = this.form.valueChanges.subscribe(() => {
+      this.updateCoordinates();
+    });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
     ) as InputProjections;
-    this.inputProj = this.projections$.value[0];
+
+    this.inputProj =
+      this.projections$.value.find(
+        (val) => val.code === this.defaultProj.code
+      ) ?? this.projections$.value[0];
+
     if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
@@ -185,6 +168,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.map.mapCenter$.next(false);
     this.mapState$$.unsubscribe();
+    this.formStatus$$.unsubscribe();
   }
 
   setScaleValue(map: IgoMap) {
@@ -210,6 +194,37 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;
+  }
+
+  updateCoordinates() {
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(
+      this.defaultProj.code
+    );
+    const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+    const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+    if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+      this.back2quebec();
+    }
+    let zoneChange = false;
+    if (currentMtmZone !== this.currentZones.mtm) {
+      this.currentZones.mtm = currentMtmZone;
+      zoneChange = true;
+    }
+    if (currentUtmZone !== this.currentZones.utm) {
+      this.currentZones.utm = currentUtmZone;
+      zoneChange = true;
+    }
+    if (zoneChange) {
+      this.updateProjectionsZoneChange();
+    }
+    this.checkLambert(this.currentCenterDefaultProj);
+    this.coordinates = this.getCoordinates();
+
+    this.storageService.set(
+      'currentProjection',
+      this.inputProj,
+      StorageScope.SESSION
+    );
   }
 
   /**

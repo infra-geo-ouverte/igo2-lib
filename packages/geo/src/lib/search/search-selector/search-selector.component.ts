@@ -14,7 +14,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -43,7 +44,7 @@ import { SEARCH_TYPES } from '../shared/search.enums';
     MatRadioModule,
     NgFor,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {

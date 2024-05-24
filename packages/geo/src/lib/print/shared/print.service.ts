@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-import { SecureImagePipe } from '@igo2/common';
+import { SecureImagePipe } from '@igo2/common/image';
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -149,17 +149,14 @@ export class PrintService {
       this.addComment(doc, options.comment, baseMargins, verticalSpacing);
     }
 
-    if (options.showProjection === true || options.showScale === true) {
-      this.addProjScale(
-        doc,
-        map,
-        resolution,
-        options.showProjection,
-        options.showScale,
-        baseMargins,
-        verticalSpacing
-      );
-    }
+    this.handleFooter(
+      map,
+      doc,
+      options,
+      resolution,
+      verticalSpacing,
+      baseMargins
+    );
 
     const width = pageWidth - baseMargins[3] - baseMargins[1];
     const height = pageHeight - baseMargins[0] - baseMargins[2];
@@ -190,6 +187,7 @@ export class PrintService {
             width
           );
         }
+
         if (options.legendPosition !== 'none') {
           if (
             ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
@@ -497,50 +495,82 @@ export class PrintService {
   }
 
   /**
-   * Add projection and/or scale to the document
-   * @param  doc - pdf document
+   * Add attribution and/or (projection and/or scale) to the document
    * @param  map - Map of the app
-   * @param  dpi - DPI resolution of the document
-   * @param  projection - Bool to indicate if projection need to be added
-   * @param  scale - Bool to indicate if scale need to be added
+   * @param  doc - pdf document
+   * @param  options - Print options
+   * @param  resolution - cart resolution
    * @param baseMargins - top | right | bottom | left
    * @param verticalSpacing - calculate text position and map height
    */
-  private addProjScale(
-    doc: jsPDF,
+  private async handleFooter(
     map: IgoMap,
-    dpi: number,
-    projection: boolean,
-    scale: boolean,
-    baseMargins: [number, number, number, number],
-    verticalSpacing: number
+    doc: jsPDF,
+    options: PrintOptions,
+    resolution: number,
+    verticalSpacing: number,
+    baseMargins: [number, number, number, number]
   ) {
-    // calculate map image height
-    baseMargins[2] += verticalSpacing;
-    const translate = this.languageService.translate;
-    const projScaleSize = 12;
+    let text: string = '';
+
+    const attributionText: string = this.getAttributionText(map);
+    if (attributionText) {
+      text += attributionText + '. ';
+    }
+    if (options.showProjection === true || options.showScale === true) {
+      text += this.getProjScale(map, options, resolution);
+    }
+
+    if (text) {
+      baseMargins[2] += verticalSpacing;
+    }
+
     const xPosition = baseMargins[3];
     const marginBottom = baseMargins[2];
     // calculate text position Y
     const yPosition =
       doc.internal.pageSize.height - marginBottom + verticalSpacing;
 
+    this.addTextInPdfDoc(
+      doc,
+      text,
+      this.TEXTPDFFONT.commentFont,
+      this.TEXTPDFFONT.commentFontStyle,
+      this.TEXTPDFFONT.commentFontSize,
+      xPosition,
+      yPosition
+    );
+  }
+
+  getAttributionText(map: IgoMap): string {
+    const mapOverlayHtml = map.ol.getOverlayContainerStopEvent() as HTMLElement;
+    const htmlAttribution = mapOverlayHtml
+      .getElementsByClassName('ol-attribution')[0]
+      .cloneNode(true) as HTMLElement;
+    htmlAttribution.getElementsByTagName('button')[0].remove();
+    return htmlAttribution.innerText;
+  }
+
+  private getProjScale(
+    map: IgoMap,
+    options: PrintOptions,
+    dpi: number
+  ): string {
+    const translate = this.languageService.translate;
     let textProjScale: string = '';
-    if (projection === true) {
+    if (options.showProjection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
       textProjScale += projText + ': ' + map.projection;
     }
-    if (scale === true) {
-      if (projection === true) {
+    if (options.showScale === true) {
+      if (options.showProjection === true) {
         textProjScale += '   ';
       }
       const scaleText = translate.instant('igo.geo.printForm.scale');
       const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
-    doc.setFont(this.TEXTPDFFONT.commentFont);
-    doc.setFontSize(projScaleSize);
-    doc.text(textProjScale, xPosition, yPosition);
+    return textProjScale;
   }
 
   /**
@@ -745,7 +775,6 @@ export class PrintService {
       this.mapPrintExtent = map.viewController.getExtent('EPSG:3857');
 
       this.resetOriginalMapSize(map, mapSize, viewResolution);
-
       await this.drawMapControls(map, mapResultCanvas, legendPostion);
 
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
@@ -895,9 +924,8 @@ export class PrintService {
     const mapOverlayHTML = map.ol
       .getOverlayContainerStopEvent()
       .cloneNode(true) as HTMLElement;
-
-    // add map Attribution designe to print
-    await this.addAttribution(mapOverlayHTML);
+    // add North Direction to mapOverly
+    await this.addNorthDirection(mapOverlayHTML, position);
 
     // set 'OverlayContainer' size to print size
     mapOverlayHTML.style.width = canvas.width + 'px';
@@ -918,7 +946,12 @@ export class PrintService {
       scale: 1,
       backgroundColor: null,
       allowTaint: true,
-      useCORS: true
+      useCORS: true,
+      ignoreElements: (element: Element) => {
+        return element instanceof HTMLElement
+          ? element.className.includes('ol-attribution')
+          : false;
+      }
     });
 
     if (canvasOverlayHTML.width !== 0 && canvasOverlayHTML.height !== 0) {
@@ -988,21 +1021,6 @@ export class PrintService {
     this.removeHtmlElement(div);
     if (canvas) {
       return canvas;
-    }
-  }
-
-  private async addAttribution(mapOverlayHTML: HTMLElement): Promise<void> {
-    const HTMLattribution =
-      mapOverlayHTML.getElementsByClassName('ol-attribution')[0];
-    const HTMLButton = HTMLattribution.getElementsByTagName('button')[0];
-    if (!HTMLButton) {
-      return null;
-    }
-    HTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-    const olCollapsed: boolean =
-      HTMLattribution.classList.contains('ol-collapsed');
-    if (olCollapsed) {
-      HTMLattribution.classList.remove('ol-collapsed');
     }
   }
 

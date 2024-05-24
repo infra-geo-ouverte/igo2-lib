@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "17.0.0-next.4",
+  "version": "17.0.0-next.7",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -69,7 +69,7 @@
     "moment": "^2.29.4",
     "ngx-color-picker": "^14.0.0",
     "ngx-indexed-db": "^11.0.2",
-    "ol": "^7.5.2",
+    "ol": "9.1.0",
     "ol-mapbox-style": "^12.0.0",
     "proj4": "^2.9.0",
     "rxjs": "^7.8.0",

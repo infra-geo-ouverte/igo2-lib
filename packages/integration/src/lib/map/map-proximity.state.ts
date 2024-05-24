@@ -135,7 +135,7 @@ export class MapProximityState {
 
             layersToMonitor.map((layerToMonitor) => {
               const layerSource =
-                layerToMonitor.ol.getSource() as olVectorSource<Geometry>;
+                layerToMonitor.ol.getSource() as olVectorSource;
 
               // Mostly for polygon features.
               const olFeaturesAtCoordinate =

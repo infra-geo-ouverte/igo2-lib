@@ -4,6 +4,24 @@ import { EnvironmentOptions } from '@igo2/integration';
 export const environment: EnvironmentOptions = {
   production: false,
   igo: {
+    directionsSources: {
+      osrm: {
+        name: 'OSRM Québec',
+        baseUrl: '/apis/itineraire/route/v1/',
+        profiles: [
+          {
+            name: 'driving'
+          },
+          {
+            name: 'forestier',
+            authorization: {
+              url: '/apis/igo2/user/igo',
+              property: 'hasOsrmPrivateAccess'
+            }
+          }
+        ]
+      }
+    },
     importWithStyle: true,
     projections: [
       {

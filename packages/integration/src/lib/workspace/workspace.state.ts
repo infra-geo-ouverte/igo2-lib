@@ -4,11 +4,10 @@ import {
   EntityRecord,
   EntityState,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy,
-  Widget,
-  Workspace,
-  WorkspaceStore
-} from '@igo2/common';
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
+import { Widget } from '@igo2/common/widget';
+import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
 import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
 

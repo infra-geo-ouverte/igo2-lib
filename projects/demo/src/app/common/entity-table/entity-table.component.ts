@@ -9,7 +9,7 @@ import {
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -44,8 +44,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         title: 'Selected',
         valueAccessor: (entity: object) => {
           return this.store.state.get(entity).selected
-            ? 'radiobox-marked'
-            : 'radiobox-blank';
+            ? 'radio_button_checked'
+            : 'radio_button_unchecked';
         },
         renderer: EntityTableColumnRenderer.Icon
       },

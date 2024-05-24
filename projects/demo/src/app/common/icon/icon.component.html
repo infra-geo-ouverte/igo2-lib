@@ -1,0 +1,59 @@
+<app-doc-viewer title="Icon" subtitle="Common">
+  <section>
+    <p>
+      The <code>icon</code> is a core concept for many packages of the IGO2
+      library. The icon system is base on
+      <a href="https://fonts.google.com/icons" target="_blank"
+        >Google Font - Material Symbol</a
+      >
+      who use font ligature to configure the icon
+    </p>
+  </section>
+
+  <section>
+    <h3>Getting started</h3>
+
+    <h2>Static icon font (Most light in term of data)</h2>
+    In your
+    <code>index.html</code>
+    file, add the variable font stylesheet request to your head tag and
+    <pre><code>{{exampleIndexStaticHtml}}</code></pre>
+
+    <h2>Variable icon font (Alternative)</h2>
+    <ol>
+      <li>
+        In your
+        <code>index.html</code>
+        file, add the variable font stylesheet request to your head tag and
+        <pre><code>{{exampleIndexHtml}}</code></pre>
+      </li>
+      <li>
+        Then add the current class with variable axes configuration to icons in
+        your <code>style.scss</code> file.
+        <pre><code>{{exampleStyleVariable}}</code></pre>
+      </li>
+      <li>
+        Finally, add the icon provider configuration in your main file
+        <code>main.ts</code>
+        <pre><code>{{exampleProvider}}</code></pre>
+      </li>
+    </ol>
+  </section>
+
+  <app-example-viewer title="Icon" codeFolder="common/icon">
+    <p>
+      Enter a name from the
+      <a href="https://fonts.google.com/icons" target="_blank"
+        >Google Font - Material Symbol</a
+      >
+    </p>
+    <div class="field-container">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Icon Name</mat-label>
+        <input matInput type="text" [formControl]="nameControl" />
+      </mat-form-field>
+      <igo-icon icon="equal" class="m-h-12"></igo-icon>
+      <igo-icon [icon]="nameControl.value"></igo-icon>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

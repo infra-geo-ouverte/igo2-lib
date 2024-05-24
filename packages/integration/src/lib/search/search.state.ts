@@ -5,7 +5,7 @@ import {
   EntityStore,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import {
@@ -36,9 +36,7 @@ export interface SearchFeatureMotion {
 /**
  * Service that holds the state of the search module
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SearchState {
   public searchLayerStores: FeatureStore<Feature>[] = [];
   public searchOverlayStyle: CommonVectorStyleOptions = {};
@@ -124,14 +122,16 @@ export class SearchState {
     const wksSource = this.searchSourceService
       .getSources()
       .find((source) => source.getId() === 'workspace');
-    this.workspaceState.store.entities$.subscribe((e) => {
-      const searchableWks = e.filter(
-        (fw) =>
-          fw instanceof FeatureWorkspace &&
-          fw.layer.options.workspace.searchIndexEnabled
-      );
-      this.searchSourceService.setWorkspaces(wksSource, searchableWks);
-    });
+    if (wksSource) {
+      this.workspaceState.store.entities$.subscribe((e) => {
+        const searchableWks = e.filter(
+          (fw) =>
+            fw instanceof FeatureWorkspace &&
+            fw.layer.options.workspace.searchIndexEnabled
+        );
+        this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+      });
+    }
     this.monitorLayerDeletion();
   }
 

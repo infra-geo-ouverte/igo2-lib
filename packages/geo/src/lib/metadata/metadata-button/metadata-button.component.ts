@@ -18,7 +18,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import {
@@ -38,7 +38,7 @@ import { MetadataService } from '../shared/metadata.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule,
+    IgoLanguageModule,
     MatDialogModule
   ]
 })

@@ -21,10 +21,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -58,7 +58,7 @@ import { SearchService } from '../shared/search.service';
     SearchSelectorComponent,
     SearchSettingsComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
@@ -385,6 +385,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (slug.length >= this.minLength || slug.length === 0) {
       this.stream$.next(term);
     }
+  }
+
+  handleSearch(): void {
+    this.doSearch(this.term);
   }
 
   /**
