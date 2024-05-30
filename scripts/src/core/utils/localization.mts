@@ -1,5 +1,5 @@
 import { readdir } from 'fs/promises';
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 import { join } from 'path';
 
 import { PATHS } from '../../config/paths.mts';
