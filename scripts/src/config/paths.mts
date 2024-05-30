@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { readFileContentSync } from '../utils/file-system.utils.mts';
 
@@ -14,8 +15,8 @@ type FolderCaterogy = 'packages' | 'projects' | 'dist' | 'root';
 
 type IPaths = Record<FolderCaterogy, string> & { [index: string]: string };
 
-const ROOT_LEVEL = '../../../';
-const ROOT = resolve(__dirname, ROOT_LEVEL);
+const ROOT_LEVEL = '../../../../';
+const ROOT = resolve(fileURLToPath(import.meta.url), ROOT_LEVEL);
 
 const resolveRoot = (relativePath: string): string => {
   return resolve(ROOT, relativePath);
