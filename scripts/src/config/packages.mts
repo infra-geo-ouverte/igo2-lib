@@ -1,7 +1,12 @@
+import { $ } from 'execa';
 import { readdirSync } from 'fs';
+import { resolve } from 'path';
 import { BehaviorSubject, combineLatest, first, firstValueFrom } from 'rxjs';
 
-import { PATHS, getPackageJson } from './paths';
+import { writeFile2 } from '../utils/file-system.utils.mts';
+import * as log from '../utils/log.mts';
+import { PATHS, getPackageJson } from './paths.mts';
+import { RELEASE_TAGS } from './release.interface.mts';
 
 export type PackageName =
   | 'auth'
@@ -56,4 +61,35 @@ export async function waitOnPackageRelations(
   }
 
   return true;
+}
+
+export function cleanPackageExports(name: string): Promise<void> {
+  const packageJSON = getPackageJson('dist', name);
+  const exports = packageJSON.exports;
+  Object.keys(exports).forEach((key) => {
+    const config = exports[key];
+
+    if (config && typeof config === 'object' && config?.['import']) {
+      delete config.import;
+      exports[key] = config;
+    }
+  });
+  return writeFile2(resolve(PATHS.dist, name, 'package.json'), packageJSON);
+}
+
+export async function publishPackage(
+  name: PackageName,
+  version: string
+): Promise<void> {
+  const tag = RELEASE_TAGS.find((tag) => version.includes(tag));
+
+  let command = `npm publish --provenance --access public`;
+
+  if (tag) {
+    command += ` --tag ${tag}`;
+  }
+  log.info(command);
+
+  // shell true is mandotary to publish on Github Actions
+  await $({ stdio: 'inherit', shell: true, cwd: `dist/${name}` })`${command}`;
 }

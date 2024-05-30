@@ -2,13 +2,13 @@ import { readdir } from 'fs/promises';
 import { join } from 'path';
 import { performance } from 'perf_hooks';
 
-import { PackageName } from '../config/packages';
-import { resolveDist, resolvePackage } from '../config/paths';
-import * as log from '../utils/log';
-import { getDuration } from '../utils/performance.utils';
-import { compileStyle } from '../utils/style.utils';
-import { copyAssets, copyExternalAssets } from './utils/assets';
-import { bundleLocalization } from './utils/localization';
+import { PackageName, cleanPackageExports } from '../config/packages.mts';
+import { resolveDist, resolvePackage } from '../config/paths.mts';
+import * as log from '../utils/log.mts';
+import { getDuration } from '../utils/performance.utils.mts';
+import { compileStyle } from '../utils/style.utils.mts';
+import { copyAssets, copyExternalAssets } from './utils/assets.mts';
+import { bundleLocalization } from './utils/localization.mts';
 
 const packageName: PackageName = 'core';
 const distPath = resolveDist(packageName);
@@ -20,6 +20,9 @@ const baseCmdName = `Postbuild @igo2/${packageName}`;
 (async () => {
   const startTime = performance.now();
   log.startMsg(baseCmdName);
+
+  await cleanPackageExports('core');
+  log.success(`✔ Cleaning package.json exports`);
 
   await prebuiltThemes();
 

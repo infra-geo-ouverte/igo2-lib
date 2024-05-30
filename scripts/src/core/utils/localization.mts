@@ -2,14 +2,14 @@ import { readdir } from 'fs/promises';
 import { merge } from 'lodash';
 import { join } from 'path';
 
-import { PATHS } from '../../config/paths';
+import { PATHS } from '../../config/paths.mts';
 import {
   createFile,
   pathExist,
   readFileContent
-} from '../../utils/file-system.utils';
-import * as log from '../../utils/log';
-import { getDuration } from '../../utils/performance.utils';
+} from '../../utils/file-system.utils.mts';
+import * as log from '../../utils/log.mts';
+import { getDuration } from '../../utils/performance.utils.mts';
 
 const LANGS: { key: string; definitions: { [key: string]: string } }[] = [
   { key: 'fr', definitions: {} },

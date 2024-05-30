@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-import { readFileContentSync } from '../utils/file-system.utils';
+import { readFileContentSync } from '../utils/file-system.utils.mts';
 
 export interface IPackageJson {
   name: string;
