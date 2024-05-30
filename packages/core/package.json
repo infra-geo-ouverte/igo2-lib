@@ -16,9 +16,9 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "prestart": "npm run postbuild",
+    "prestart": "node --import tsx ../../scripts/src/core/prestart.mts",
     "build": "ng build core --configuration production",
-    "postbuild": "node --import tsx ../../scripts/src/core/postbuild-core.mts",
+    "postbuild": "node --import tsx ../../scripts/src/core/postbuild.mts",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
