@@ -41,7 +41,7 @@
     "publish": "node --import tsx scripts/src/publish.mts",
     "pre-release": "node --import tsx scripts/src/pre-release.mts",
     "release": "node --import tsx scripts/src/release.mts",
-    "release.demo": "node --import tsx scripts/src/release/release-demo.mts"
+    "release.demo": "node --import tsx scripts/src/release-demo.mts"
   },
   "dependencies": {
     "@angular/animations": "^17.0.6",
