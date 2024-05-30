@@ -2,11 +2,11 @@ import { cp } from 'fs/promises';
 import { join } from 'path';
 import { performance } from 'perf_hooks';
 
-import { PackageName } from '../../config/packages';
-import { PATHS, resolveDist, resolvePackage } from '../../config/paths';
-import { copyFile } from '../../utils/file-system.utils';
-import * as log from '../../utils/log';
-import { getDuration } from '../../utils/performance.utils';
+import { PackageName } from '../../config/packages.mts';
+import { PATHS, resolveDist, resolvePackage } from '../../config/paths.mts';
+import { copyFile } from '../../utils/file-system.utils.mts';
+import * as log from '../../utils/log.mts';
+import { getDuration } from '../../utils/performance.utils.mts';
 
 const packageName: PackageName = 'core';
 const distPath = resolveDist(packageName);

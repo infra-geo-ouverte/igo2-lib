@@ -25,7 +25,7 @@
     "start.demo": "npm run prestart && npm run start -w demo",
     "build": "ng build",
     "build.demo": "npm run build -w demo",
-    "build.libs": "ts-node scripts/src/build-library.ts",
+    "build.libs": "node --import tsx scripts/src/build-library.mts",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
     "format": "npm run format --workspaces --if-present && npm run format.scripts",
     "format.scripts": "prettier --write ./scripts/src/**/*.{ts,js,json}",
@@ -36,15 +36,12 @@
     "doc": "npm run build.doc && compodoc -s --port 4220",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test.libs": "npm run test --workspace=packages",
-    "circular-deps.check": "madge --circular --extensions ts packages",
     "compodoc": "npx compodoc -p tsconfig.json",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "changelog-current": "conventional-changelog -p angular -r 2",
-    "preversion": "npm run test && npm run e2e",
-    "version": "npm run release.lib && npm run release.ghpages",
-    "postversion": "npm run changelog && git add -u && git push && git push --tags",
-    "release.lib": "ts-node scripts/src/release/release.ts",
-    "release.ghpages": "ts-node scripts/src/release/github-pages.ts"
+    "circular-deps": "madge --circular --extensions ts packages",
+    "publish": "node --import tsx scripts/src/publish.mts",
+    "pre-release": "node --import tsx scripts/src/pre-release.mts",
+    "release": "node --import tsx scripts/src/release.mts",
+    "release.demo": "node --import tsx scripts/src/release/release-demo.mts"
   },
   "dependencies": {
     "@angular/animations": "^17.0.6",
@@ -109,12 +106,15 @@
     "@sentry/types": "^7.87.0",
     "@swc/core": "^1.3.100",
     "@swc/wasm": "^1.3.100",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.5",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/flexsearch": "^0.7.6",
     "@types/geojson": "^7946.0.10",
     "@types/hammerjs": "^2.0.36",
     "@types/jasmine": "~4.3.0",
-    "@types/lodash": "^4.14.195",
+    "@types/lodash-es": "^4.17.0",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
@@ -135,12 +135,20 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "madge": "^6.1.0",
     "ng-packagr": "^17.0.2",
     "prettier": "^3.1.0",
     "sass": "^1.64.0",
-    "ts-node": "^10.9.1",
+    "semantic-release": "^23.0.0",
+    "tsx": "^4.11.0",
     "typescript": "^5.2.2"
+  },
+  "madge": {
+    "detectiveOptions": {
+      "ts": {
+        "skipTypeImports": true
+      }
+    }
   }
 }

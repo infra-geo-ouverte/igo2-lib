@@ -17,12 +17,11 @@
   },
   "scripts": {
     "prestart": "npm run postbuild",
-    "build": "ng build core --configuration production && npm run clean-exports",
-    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts core",
+    "build": "ng build core --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/core/postbuild-core.mts",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
-    "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "test": "ng test core --watch=false",
     "watch": "ng build core --watch && npm run postbuild"
   },
@@ -115,7 +114,6 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "engines": {

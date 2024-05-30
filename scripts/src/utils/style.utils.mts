@@ -1,7 +1,7 @@
 import { compile } from 'sass';
 
-import { PATHS } from '../config/paths';
-import { createFile } from './file-system.utils';
+import { PATHS } from '../config/paths.mts';
+import { createFile } from './file-system.utils.mts';
 
 export async function compileStyle(
   input: string,
