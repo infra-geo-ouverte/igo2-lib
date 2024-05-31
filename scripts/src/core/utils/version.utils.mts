@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-import { PATHS, getPackageJson, resolvePackage } from '../../config/paths';
-import { BUFFER_ENCODING, writeFile2 } from '../../utils/file-system.utils';
-import * as log from '../../utils/log';
+import { PATHS, getPackageJson, resolvePackage } from '../../config/paths.mts';
+import { BUFFER_ENCODING, writeFile2 } from '../../utils/file-system.utils.mts';
+import * as log from '../../utils/log.mts';
 
 /**
  * Permet de changer la version du package et remplacer les dépendendances génériques de "@igo2/*"

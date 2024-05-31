@@ -1,18 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# 
 
-name: complete
+name: Pull Request
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-      - next
   pull_request:
-    branches: 
-      - master
-      - next
+    types: [opened, synchronize]
 
 jobs:
   build:
@@ -23,15 +18,19 @@ jobs:
 
     - uses: actions/checkout@v4
     - name: Use Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-    
+        cache: 'npm'
+  
     - name: Install dependencies
-      run: npm ci
-    
-    - name: Check Quality
-      run: npm run circular-deps.check & npm run lint
+      run: npm ci --no-audit
+      
+    - name: Security
+      run: npm audit --omit dev && npm audit signatures
+
+    - name: Quality
+      run: npm run circular-deps & npm run lint
 
     - name: Test
       run: npm run e2e & npm run test

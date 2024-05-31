@@ -174,6 +174,14 @@ export class PrintFormComponent implements OnInit {
     this.doZipFileField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get showNorth(): boolean {
+    return this.showNorthArrowField.value;
+  }
+  set showNorth(value: boolean) {
+    this.showNorthArrowField.setValue(value, { onlySelf: true });
+  }
+
   get outputFormatField() {
     return (this.form.controls as any).outputFormat as UntypedFormControl;
   }
@@ -214,6 +222,10 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).doZipFile as UntypedFormControl;
   }
 
+  get showNorthArrowField() {
+    return (this.form.controls as any).showNorth as UntypedFormControl;
+  }
+
   get titleField() {
     return (this.form.controls as any).title as UntypedFormControl;
   }
@@ -250,7 +262,8 @@ export class PrintFormComponent implements OnInit {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [{ hidden: this.isPrintService }]
+      doZipFile: [{ hidden: this.isPrintService }],
+      showNorthArrow: false
     });
   }
 

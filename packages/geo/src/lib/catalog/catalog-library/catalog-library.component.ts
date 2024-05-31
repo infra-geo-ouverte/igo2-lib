@@ -14,7 +14,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common/entity';
-import { IconService, LAYER_PLUS_ICON } from '@igo2/common/icon';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -85,8 +84,6 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   submitDisabled = true;
 
-  layerPlusIcon = LAYER_PLUS_ICON;
-
   private addingCatalog$$: Subscription;
 
   get addedCatalogs(): Catalog[] {
@@ -107,11 +104,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog,
-    private iconService: IconService
-  ) {
-    this.iconService.registerSvg(this.layerPlusIcon);
-  }
+    private dialog: MatDialog
+  ) {}
 
   /**
    * @internal

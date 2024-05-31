@@ -176,11 +176,9 @@
       [matTooltip]="'igo.geo.layer.zoomLayer' | translate"
       (click)="zoomLayerExtents(activeLayer)"
     >
-      <mat-icon
-        matBadgeColor="primary"
-        matBadgeSize="medium"
-        [svgIcon]="magnifyIcon.name"
-      ></mat-icon>
+      <mat-icon matBadgeColor="primary" matBadgeSize="medium"
+        >frame_inspect</mat-icon
+      >
     </button>
 
     <ng-container
@@ -340,7 +338,7 @@
       [matTooltip]="'igo.geo.layer.zoomLayers' | translate"
       (click)="zoomLayersExtents(layersChecked)"
     >
-      <mat-icon [svgIcon]="magnifyIcon.name"></mat-icon>
+      <mat-icon>frame_inspect</mat-icon>
     </button>
   </div>
 </igo-panel>

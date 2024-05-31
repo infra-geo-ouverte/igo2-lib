@@ -15,7 +15,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { IgoIconComponent, LAYER_PLUS_ICON } from '@igo2/common/icon';
+import { IgoIconComponent } from '@igo2/common/icon';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
@@ -52,8 +52,6 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public layers: VectorLayer[];
   public res: DetailedContext;
   public listForSwipe: Layer[];
-
-  layerPlusIcon = LAYER_PLUS_ICON;
 
   /**
    * Get an active map state

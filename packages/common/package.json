@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "17.0.0-next.7",
+  "version": "17.0.0-next.10",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -16,12 +16,11 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "build": "ng build common --configuration production && npm run clean-exports",
-    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts common",
+    "build": "ng build common --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/common/postbuild-common.mts",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint common",
     "lint.fix": "ng lint common --fix",
-    "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
     "test": "ng test common --watch=false",
     "watch": "ng build common --watch"
   },
@@ -156,7 +155,6 @@
     "typy": "^3.3.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "engines": {

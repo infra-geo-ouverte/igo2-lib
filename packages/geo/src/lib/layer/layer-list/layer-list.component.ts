@@ -22,7 +22,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IconService, IconSvg, MAGNIFY_SCAN_ICON } from '@igo2/common/icon';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { PanelComponent } from '@igo2/common/panel';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -270,14 +269,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
-  magnifyIcon: IconSvg = MAGNIFY_SCAN_ICON;
 
-  constructor(
-    private elRef: ElementRef,
-    private iconService: IconService
-  ) {
-    this.iconService.registerSvg(this.magnifyIcon);
-  }
+  constructor(private elRef: ElementRef) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
