@@ -25,7 +25,11 @@ import {
 } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {
+  MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
+  MatButtonToggleDefaultOptions,
+  MatButtonToggleModule
+} from '@angular/material/button-toggle';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -147,6 +151,14 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     MatBadgeModule,
     AsyncPipe,
     IgoLanguageModule
+  ],
+  providers: [
+    {
+      provide: MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
+      useValue: {
+        hideSingleSelectionIndicator: true
+      } satisfies MatButtonToggleDefaultOptions
+    }
   ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
