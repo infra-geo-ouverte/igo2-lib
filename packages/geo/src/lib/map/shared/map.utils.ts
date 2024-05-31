@@ -1,8 +1,11 @@
 import { NumberUtils } from '@igo2/utils';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { Coordinate } from 'ol/coordinate';
 import { MAC } from 'ol/has';
 import * as olproj from 'ol/proj';
+
+import { Position } from 'geojson';
 
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
@@ -53,7 +56,7 @@ export function stringToLonLat(
   let projectionStr: string;
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
-  const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?';
+  const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?°?';
   const lonLatPattern = `${lonlatCoord}[\\s,]+${lonlatCoord}`;
   const lonLatRegex = new RegExp(`^${lonLatPattern}$`, 'g');
 
@@ -362,10 +365,7 @@ function convertDMSToDD(
  * @param decimal number of decimals for seconds
  * @returns longitude and latitude in dms
  */
-export function convertDDToDMS(
-  lonLatDD: [number, number],
-  decimal = 3
-): string[] {
+export function convertDDToDMS(lonLatDD: Coordinate, decimal = 3): string[] {
   const lonLatDMS = [];
 
   lonLatDD.forEach((dd) => {
@@ -463,20 +463,20 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
 }
 
 export function roundCoordTo(
-  coord: [number, number],
+  coord: [number, number] | Position | Coordinate,
   decimal = 3
-): [number, number] {
+): Coordinate {
   return [
     NumberUtils.roundToNDecimal(coord[0], decimal),
     NumberUtils.roundToNDecimal(coord[1], decimal)
-  ] as [number, number];
+  ];
 }
 
 export function roundCoordToString(
-  coord: [number, number],
+  coord: [number, number] | Position | Coordinate,
   decimal = 3
 ): [string, string] {
-  return roundCoordTo(coord, decimal).map((r) => r.toString()) as [
+  return roundCoordTo(coord, decimal).map((r) => r.toString() + '°') as [
     string,
     string
   ];

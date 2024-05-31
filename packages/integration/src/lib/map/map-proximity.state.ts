@@ -18,6 +18,7 @@ import {
 } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 
+import { Coordinate } from 'ol/coordinate';
 import GeoJSON from 'ol/format/GeoJSON';
 import Geometry from 'ol/geom/Geometry';
 import olLineString from 'ol/geom/LineString';
@@ -47,7 +48,7 @@ export class MapProximityState {
     new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
-  public currentPositionCoordinate$ = new BehaviorSubject<[number, number]>(
+  public currentPositionCoordinate$ = new BehaviorSubject<Coordinate>(
     undefined
   );
 
