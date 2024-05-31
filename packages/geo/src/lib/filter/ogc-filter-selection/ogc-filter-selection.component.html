@@ -135,7 +135,7 @@
         <h3>{{ bundle.title }}</h3>
         <mat-radio-group formControlName="radioButtons" class="mat-typography">
           <mat-radio-button
-            *ngIf="bundle.unfilterButton"
+            *ngIf="bundle.unfiltered"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate"
             tooltip-position="below"
             matTooltipShowDelay="500"
@@ -199,7 +199,7 @@
         <h3>{{ bundle.title }}</h3>
         <div class="groupsSelector">
           <mat-button
-            *ngIf="bundle.unfilterButton && !bundle.multiple"
+            *ngIf="bundle.unfiltered && !bundle.multiple"
             mat-icon-button
             color="warn"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate"
@@ -292,7 +292,7 @@
         <h3>{{ bundle.title }}</h3>
         <div class="groupsSelector">
           <mat-button
-            *ngIf="bundle.unfilterButton"
+            *ngIf="bundle.unfiltered"
             mat-icon-button
             color="warn"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate"
