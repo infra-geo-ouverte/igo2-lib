@@ -3,7 +3,10 @@ import { RuleConfigSeverity, UserConfig } from '@commitlint/types';
 const Configuration: UserConfig = {
   extends: ['@commitlint/config-conventional'],
   formatter: '@commitlint/format',
-  ignores: [(commit) => commit === ''],
+  ignores: [
+    (message) => message === '',
+    (message) => message.includes('[skip ci]')
+  ],
   defaultIgnores: true,
   rules: {
     'body-max-line-length': [RuleConfigSeverity.Warning, 'always', 120]
