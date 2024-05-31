@@ -42,6 +42,7 @@ import {
 } from '@igo2/geo';
 
 import olFeature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
@@ -734,7 +735,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 currentPos.projection,
                 'EPSG:4326'
               );
-              const coord: [number, number] = roundCoordTo(
+              const coord: Coordinate = roundCoordTo(
                 [currentCoord[0], currentCoord[1]],
                 6
               );
