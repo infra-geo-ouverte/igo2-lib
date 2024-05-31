@@ -547,9 +547,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues: DOMValue[];
         for (const domSelector of bundle.domSelectors) {
           let filterDOM: DOMOptions;
-          for (const configDomOptions of this.configService.getConfig<DOMOptions[]>(
-            'dom'
-          )) {
+          for (const configDomOptions of this.configService.getConfig<
+            DOMOptions[]
+          >('dom')) {
             if (
               domSelector.id === configDomOptions.id ||
               domSelector.name === configDomOptions.name
@@ -769,7 +769,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   autocompleteOptionClick(toggledFilter: string) {
-    this.matAutocomplete.openPanel();
+    requestAnimationFrame(() => {
+      this.matAutocomplete.openPanel();
+    });
     if (this.autocompleteEnableds.includes(toggledFilter)) {
       this.autocompleteEnableds = this.autocompleteEnableds.filter(
         (enabledFilter) => enabledFilter !== toggledFilter
