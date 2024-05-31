@@ -20,6 +20,7 @@ import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
@@ -85,7 +86,7 @@ export class DrawPopupComponent {
   public coordinatesInDD: string;
   public currentCoordinatesUnit: string;
 
-  private longlatDD: [number, number];
+  private longlatDD: Coordinate;
   private labelLength: number;
 
   public polygonCheck = 0; // Count for polygon label types checkboxes

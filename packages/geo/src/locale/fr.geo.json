@@ -372,101 +372,99 @@
         },
         "showNorthArrow": "Afficher la flèche du nord"
       },
-      "directionsForm": {
-        "stopLayer": "Itinéraire - Arrêts",
-        "routeLayer": "Itinéraire - Tracé",
-        "start": "Début",
-        "intermediate": "Intermédiaire",
-        "end": "Fin",
-        "directionsBtn": "Obtenir l'itinéraire",
-        "resetDirectionsBtn": "Supprimer l'itinéraire",
-        "zoomRoute": "Zoomer sur l'itinéraire",
-        "null": "",
-        "directions": "Itinéraire",
-        "raiseStop": "Prioriser l'arrêt",
-        "lowerStop": "Reporter l'arrêt plus loin dans le parcours",
-        "addStop": "Ajouter un arrêt",
-        "clearStop": "Réinitialiser cet arrêt",
-        "moveStop": "Déplacer cet arrêt",
-        "removeStop": "Supprimer l'arrêt",
-        "drivingOptions": "Choix d'itinéraires",
-        "summary": "Résumé de l'itinéraire",
-        "stopsList": "Liste des lieux d'arrêts",
-        "instructions": "Indications",
-        "copy": "Copier l'itinéraire",
-        "geolocate": "Utiliser sa localisation comme point d'arrêt",
-        "link": "Lien",
-        "print": "Imprimer",
-        "dialog": {
-          "copyMsg": "Itinéraire copié dans le presse-papier",
-          "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
-          "copyTitle": "Itinéraire"
+      "directions": {
+        "buttons": {
+          "copyDirections": "Copier l'itinéraire dans le presse-papier",
+          "copyLink": "Copier le lien dans le presse-papier",
+          "downloadDirections": "Télécharger l'itinéraire",
+          "message": {
+            "copyDirections": "Itinéraire copié dans le presse papier",
+            "copyLink": "Lien copié dans le presse papier"
+          },
+          "resetStops": "Réinitialiser les arrêts",
+          "zoomOnRoute": "Cadrer sur l'itinéraire"
         },
-        "toggleActive": "Activer le contrôle d'itinéraire",
-        "toggleType": "Inclure les chemins forestiers",
+        "directions": "Itinéraire",
+        "directionsText": {
+          "link": "Lien",
+          "stopList": "Arrêts",
+          "summary": "Résumé"
+        },
         "forestRoadsWarning": {
           "title": "Avertissement",
           "text": "Certains chemins forestiers peuvent être impraticables ou non carrossables."
+        },
+        "input": {
+          "addStop": "Ajouter une destination",
+          "clearStop": "Réinitialiser l'arrêt",
+          "currentPosition": "Utiliser l'emplacement actuel",
+          "end": "Destination",
+          "intermediate": "Arrêt intermédiaire",
+          "moveStop": "Déplacer l'arrêt",
+          "placeholder": "Cliquez sur la carte ou effectuez une recherche",
+          "removeStop": "Supprimer l'arrêt",
+          "start": "Point de départ"
+        },
+        "layer": {
+          "stops": "Itinéraire - Arrêts",
+          "route": "Itinéraire - Tracé"
+        },
+        "results": {
+          "direction": {
+            "n": "nord",
+            "ne": "nord-est",
+            "e": "est",
+            "se": "sud-est",
+            "s": "sud",
+            "sw": "sud-ouest",
+            "w": "ouest",
+            "nw": "nord-ouest"
+          },
+          "maneuverModifier": {
+            "uturn": "demi-tour",
+            "sharp right": "fortement à droite",
+            "right": "à droite",
+            "slight right": "légèrement à droite",
+            "sharp left": "fortement à gauche",
+            "left": "à gauche",
+            "slight left": "légèrement à gauche",
+            "straight": "tout droit"
+          },
+          "maneuverType": {
+            "arrive": {
+              "lastStep": "Vous êtes arrivé à destination, {{name}}",
+              "intermediate": "Vous êtes arrivé à un point intermédiaire, {{name}}"
+            },
+            "continue": "Continuer sur {{name}}",
+            "depart": "Aller en direction {{maneuverBearing}} sur {{name}}",
+            "end of road": "À la fin de la route, tourner {{maneuverModifier}} sur {{name}}",
+            "exit roundabout": "Continuer sur {{name}}",
+            "fork": {
+              "left": "Garder la gauche sur {{name}}",
+              "right": "Garder la droite sur {{name}}",
+              "else": "Continuer sur {{name}}"
+            },
+            "merge": "Continuer sur {{name}}",
+            "new name": "Continuer en direction {{maneuverBearing}} sur {{name}}",
+            "notification": "",
+            "off ramp": "Prendre la sortie {{maneuverModifier}}",
+            "on ramp": "Prendre l'entrée {{maneuverModifier}}",
+            "rotary": "",
+            "roundabout": "Au rond-point, prendre la sortie vers {{name}}",
+            "roundabout turn": "",
+            "turn": {
+              "straight": "Continuer {{maneuverModifier}} sur {{name}}",
+              "uturn": "Faire {{maneuverModifier}} sur {{name}}",
+              "else": "Tourner {{maneuverModifier}} sur {{name}}"
+            }
+          },
+          "routeOptions": "Choix d'itinéraires",
+          "stepTitleTooltip": "Cadrer sur le lieu"
+        },
+        "toggle": {
+          "activateControl": "Activer les contrôles",
+          "type": "Inclure les chemins forestiers"
         }
-      },
-      "directions": {
-        "uturn": "demi-tour",
-        "sharp right": "fortement à droite",
-        "right": "droite",
-        "slight right": "légèrement à droite",
-        "sharp left": "fortement à gauche",
-        "left": "gauche",
-        "slight left": "légèrement à gauche",
-        "straight": "tout droit",
-        "turn": {
-          "straight": "Continuer sur {{route}}",
-          "uturn": "Faire demi-tour sur {{route}}",
-          "else": "Tourner {{aggregatedDirection}} sur {{route}}"
-        },
-        "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
-        "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
-        "arrive": {
-          "lastStep": "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
-          "intermediate": "Vous atteignez le point intermédiaire sur {{route}}"
-        },
-        "merge": "Continuer sur {{route}}",
-        "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",
-        "off ramp": "Prendre la sortie d'autoroute {{aggregatedDirection}}",
-        "fork": {
-          "left": "Garder la gauche sur {{route}}",
-          "right": "Garder la droite sur {{route}}",
-          "else": "Continuer sur {{route}}"
-        },
-        "end of road": "À la fin de la route, tourner {{translatedModifier}} sur {{route}}",
-        "use lane": "Prendre la voie de ...",
-        "continue": {
-          "notUturn": "Continuer sur {{route}}"
-        },
-        "roundabout": "Au rond-point, prendre la {{exit}}{{cntSuffix}} sortie vers {{route}}",
-        "rotary": "Rond-point rotary ...",
-        "roundabout turn": "Rond-point, prendre la ...",
-        "exit roundabout": "Poursuivre vers {{route}}",
-        "notification": "notification ...",
-        "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
-        "unknown": "???",
-
-        "cntSuffix": {
-          "first": "ère",
-          "secondAndMore": "e"
-        },
-        "modifier": {
-          "prefix": "à "
-        }
-      },
-      "cardinalPoints": {
-        "n": "nord",
-        "ne": "nord-est",
-        "e": "est",
-        "se": "sud-est",
-        "s": "sud",
-        "sw": "sud-ouest",
-        "w": "ouest",
-        "nw": "nord-ouest"
       },
       "search": {
         "placeholder": "Rechercher une localisation ou une couche de données",

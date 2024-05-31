@@ -718,8 +718,8 @@ export class PrintService {
     imageDimensions: [number, number],
     baseMargins: [number, number, number, number]
   ) {
-    const mapSize = map.ol.getSize() as [number, number];
-    const viewResolution = map.ol.getView().getResolution();
+    const mapSize: number[] = map.ol.getSize();
+    const viewResolution: number = map.ol.getView().getResolution();
     const dimensionPixels = this.setMapResolution(
       map,
       imageDimensions,
@@ -811,7 +811,7 @@ export class PrintService {
 
   private resetOriginalMapSize(
     map: IgoMap,
-    initialSize: [number, number],
+    initialSize: number[],
     viewResolution: number
   ) {
     map.ol.setSize(initialSize);
