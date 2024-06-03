@@ -485,7 +485,7 @@ export class OgcFilterSelectionComponent implements OnInit {
             }
           }
           filterDOM.url
-            ? (domValues = (await this.domService.getDom(
+            ? (domValues = (await this.domService.getDomValuesFromURL(
                 filterDOM
               )) as DOMValue[])
             : (domValues = filterDOM.values);
@@ -547,23 +547,23 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues: DOMValue[];
         for (const domSelector of bundle.domSelectors) {
           let filterDOM: DOMOptions;
-          for (const configDomOptions of this.configService.getConfig<
-            DOMOptions[]
-          >('dom')) {
+          for (const configDom of this.configService.getConfig<DOMOptions[]>(
+            'dom'
+          )) {
             if (
-              domSelector.id === configDomOptions.id ||
-              domSelector.name === configDomOptions.name
+              domSelector.id === configDom.id ||
+              domSelector.name === configDom.name
             ) {
               filterDOM = {
-                id: configDomOptions.id,
-                url: configDomOptions.url,
-                name: configDomOptions.name,
-                values: configDomOptions.values
+                id: configDom.id,
+                url: configDom.url,
+                name: configDom.name,
+                values: configDom.values
               };
             }
           }
           filterDOM.url
-            ? (domValues = (await this.domService.getDom(
+            ? (domValues = (await this.domService.getDomValuesFromURL(
                 filterDOM
               )) as DOMValue[])
             : (domValues = filterDOM.values);
@@ -574,16 +574,14 @@ export class OgcFilterSelectionComponent implements OnInit {
             let selector: OgcAutocomplete;
             for (const domValue of domValues) {
               selector = {
-                title: domValue.value,
-                enabled:
-                  this.autocompleteEnableds &&
-                  this.autocompleteEnableds.includes(domValue.value)
-                    ? true
-                    : false,
+                title: domValue.id as string,
+                enabled: this.autocompleteEnableds?.includes(domValue.value)
+                  ? true
+                  : false,
                 filters: {
                   operator: domSelector.operator,
                   propertyName: domSelector.propertyName,
-                  expression: domValue.id
+                  expression: domValue.value
                 }
               };
               newBundle.selectors.push(selector);
@@ -591,29 +589,14 @@ export class OgcFilterSelectionComponent implements OnInit {
             this.getAutocompleteGroups()
               .find((group: SelectorGroup) => group.ids.includes(newBundle.id))
               .computedSelectors.find(
-                (comp) => comp.title === newBundle.title
+                (computedSelector) => computedSelector.title === newBundle.title
               ).selectors = newBundle.selectors;
           }
         }
 
         this.filteredOgcAutocomplete[bundle.id] = new Observable<any[]>();
         this.cdRef.detectChanges();
-        const value = this.form.controls['autocomplete'].value;
-        this.filteredOgcAutocomplete[bundle.id] = of(
-          domValues?.filter((option) => {
-            const filterNormalized = value
-              ? value
-                  .toLowerCase()
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-              : '';
-            const featureNameNormalized = option.value
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            return featureNameNormalized.includes(filterNormalized);
-          })
-        );
+        this.filteredOgcAutocomplete[bundle.id] = of(domValues);
       }
     }
   }
