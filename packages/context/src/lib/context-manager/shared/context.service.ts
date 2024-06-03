@@ -8,13 +8,7 @@ import { LanguageService } from '@igo2/core/language';
 import { Message, MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 import { StorageService } from '@igo2/core/storage';
-import type {
-  AnyLayerOptions,
-  IgoMap,
-  Layer,
-  VectorLayerOptions,
-  VectorTileLayerOptions
-} from '@igo2/geo';
+import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
 import { ExportService } from '@igo2/geo';
 import { ObjectUtils, uuid } from '@igo2/utils';
 
@@ -45,7 +39,8 @@ import {
   ContextServiceOptions,
   ContextsList,
   DetailedContext,
-  ExtraFeatures
+  ExtraFeatures,
+  IContextLayer
 } from './context.interface';
 
 @Injectable({
@@ -464,41 +459,29 @@ export class ContextService {
       tools: []
     };
 
-    let layers = [];
-    if (empty === true) {
-      layers = igoMap.layers$
-        .getValue()
-        .filter(
-          (lay) =>
-            lay.baseLayer === true ||
+    const layers: Layer[] = igoMap.layers$
+      .getValue()
+      .filter((lay) =>
+        empty === true
+          ? lay.baseLayer === true ||
             lay.options.id === 'searchPointerSummaryId'
-        )
-        .sort((a, b) => a.zIndex - b.zIndex);
-    } else {
-      layers = igoMap.layers$
-        .getValue()
-        .filter((lay) => !lay.id.includes('WfsWorkspaceTableDest'))
-        .sort((a, b) => a.zIndex - b.zIndex);
-    }
+          : !lay.id.includes('WfsWorkspaceTableDest')
+      )
+      .sort((a, b) => a.zIndex - b.zIndex);
 
     let i = 0;
     for (const layer of layers) {
-      const layerOptions: AnyLayerOptions = {
+      const layerOptions: LayerOptions = {
         title: layer.options.title,
         zIndex: ++i,
         visible: layer.visible,
         security: layer.options.security,
         opacity: layer.opacity
       };
-      const opts = {
+      const opts: IContextLayer = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         layerOptions,
-        sourceOptions: {
-          type: layer.dataSource.options.type,
-          params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url,
-          queryable: layer.queryable
-        }
+        sourceOptions: layer.dataSource.options
       };
       if (opts.sourceOptions.type) {
         context.layers.push(opts);
@@ -509,7 +492,7 @@ export class ContextService {
       return {
         id: String(tool.id),
         global: tool.global
-      } as Tool;
+      } as any; // the type doesn't match. @TODO Analyze the problematic with the api
     });
 
     return context;
@@ -559,48 +542,23 @@ export class ContextService {
       });
 
     layers.forEach((layer) => {
-      // Do not seem to work properly. layerFound is always undefined.
-      const layerFound = currentContext.layers.find((contextLayer) => {
-        const source = contextLayer.source;
-        return source && layer.id === source.id && !contextLayer.baseLayer;
-      });
-      if (layerFound) {
-        let layerFoundAs = layerFound as
-          | VectorLayerOptions
-          | VectorTileLayerOptions;
-        let layerStyle = layerFoundAs.style;
-        if (layerFoundAs.igoStyle?.styleByAttribute) {
-          layerStyle = undefined;
-        } else if (layerFoundAs.igoStyle?.clusterBaseStyle) {
-          layerStyle = undefined;
-          delete layerFound.sourceOptions[`source`];
-          delete layerFound.sourceOptions[`format`];
-        }
-        delete layerFound.source;
-        const opts: AnyLayerOptions = {
-          ...layerFound,
-          title: layer.options.title,
-          zIndex: layer.zIndex,
-          style: layerStyle,
-          visible: layer.visible,
-          opacity: layer.opacity
-        };
-        context.layers.push(opts);
+      if (!(layer.ol.getSource() instanceof olVectorSource)) {
+        const catalogLayer = layer.options;
+        catalogLayer.zIndex = layer.zIndex;
+        catalogLayer.visible = layer.visible;
+        catalogLayer.opacity = layer.opacity;
+        delete catalogLayer.source;
+        context.layers.push({
+          id: catalogLayer.id,
+          layerOptions: catalogLayer,
+          sourceOptions: catalogLayer.sourceOptions
+        });
       } else {
-        if (!(layer.ol.getSource() instanceof olVectorSource)) {
-          const catalogLayer = layer.options;
-          catalogLayer.zIndex = layer.zIndex;
-          (catalogLayer.visible = layer.visible),
-            (catalogLayer.opacity = layer.opacity);
-          delete catalogLayer.source;
-          context.layers.push(catalogLayer);
-        } else {
-          const extraFeatures = this.getExtraFeatures(layer);
-          extraFeatures.name = layer.options.title;
-          extraFeatures.opacity = layer.opacity;
-          extraFeatures.visible = layer.visible;
-          context.extraFeatures.push(extraFeatures);
-        }
+        const extraFeatures = this.getExtraFeatures(layer);
+        extraFeatures.name = layer.options.title;
+        extraFeatures.opacity = layer.opacity;
+        extraFeatures.visible = layer.visible;
+        context.extraFeatures.push(extraFeatures);
       }
     });
 
