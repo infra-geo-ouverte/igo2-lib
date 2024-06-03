@@ -768,10 +768,12 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  autocompleteOptionClick(toggledFilter: string) {
-    requestAnimationFrame(() => {
-      this.matAutocomplete.openPanel();
-    });
+  toggleAutocompleteOption(event: Event, toggledFilter: string) {
+    event.stopPropagation();
+    this.toggleSelection(toggledFilter);
+  }
+
+  toggleSelection(toggledFilter: string) {
     if (this.autocompleteEnableds.includes(toggledFilter)) {
       this.autocompleteEnableds = this.autocompleteEnableds.filter(
         (enabledFilter) => enabledFilter !== toggledFilter

@@ -311,13 +311,12 @@
             <mat-label>{{ bundle.title }}</mat-label>
             <mat-chip-set
               *ngIf="
-                filteredOgcAutocomplete[bundle.id] &&
-                (bundle.showChips ?? true)
+                filteredOgcAutocomplete[bundle.id] && (bundle.showChips ?? true)
               "
             >
               <mat-chip
                 *ngFor="let autocompleteEnabled of autocompleteEnableds"
-                (removed)="autocompleteOptionClick(autocompleteEnabled)"
+                (removed)="toggleSelection(autocompleteEnabled)"
               >
                 {{ autocompleteEnabled }}
                 <button
@@ -344,22 +343,23 @@
                 "
                 id="mat-option"
                 [matTooltip]="getToolTip(ogcAutocomplete)"
-                (click)="
-                  $event.stopPropagation();
-                  autocompleteOptionClick(ogcAutocomplete.value)
-                "
               >
-                <mat-checkbox
-                  id="mat-checkbox"
-                  color="primary"
-                  [checked]="checkedStatus(ogcAutocomplete.value)"
+                <div
                   (click)="
-                    $event.stopPropagation();
-                    autocompleteOptionClick(ogcAutocomplete.value)
+                    toggleAutocompleteOption($event, ogcAutocomplete.value)
                   "
                 >
-                </mat-checkbox>
-                {{ ogcAutocomplete.value }}
+                  <mat-checkbox
+                    id="mat-checkbox"
+                    color="primary"
+                    [checked]="checkedStatus(ogcAutocomplete.value)"
+                    (click)="
+                      toggleAutocompleteOption($event, ogcAutocomplete.value)
+                    "
+                  >
+                  </mat-checkbox>
+                  {{ ogcAutocomplete.value }}
+                </div>
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
