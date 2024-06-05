@@ -12,8 +12,8 @@ import { DOMOptions, DOMValue } from './dom.interfaces';
 export class DOMService {
   constructor(private http: HttpClient) {}
 
-  async getDom(dom: DOMOptions): Promise<DOMValue[]> {
-    const url = dom.url;
+  async getDomValuesFromURL(domOptions: DOMOptions): Promise<DOMValue[]> {
+    const url = domOptions.url;
     let result: DOMValue[];
 
     await this.http
