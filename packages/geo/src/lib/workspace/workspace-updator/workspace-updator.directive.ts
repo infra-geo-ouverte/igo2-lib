@@ -16,6 +16,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter/shared';
 import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { EditionWorkspaceFactoryService } from '../new-edition-workspace/edition-workspace-factory.service';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
@@ -37,6 +38,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     private wfsWorkspaceService: WfsWorkspaceService,
     private wmsWorkspaceService: WmsWorkspaceService,
     private editionWorkspaceService: EditionWorkspaceService,
+    private editionWorkspaceFactoryService: EditionWorkspaceFactoryService,
     private featureWorkspaceService: FeatureWorkspaceService
   ) {}
 
@@ -93,6 +95,17 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     if (workspace !== undefined) {
       return;
     }
+
+    if (
+      layer.dataSource instanceof WFSDataSource &&
+      layer.dataSource.options.edition?.enabled
+    ) {
+      return this.editionWorkspaceFactoryService.createWFSEditionWorkspace(
+        layer as VectorLayer,
+        this.map
+      );
+    }
+
     if (
       layer.dataSource instanceof WFSDataSource &&
       layer.dataSource.options.edition?.enabled !== true

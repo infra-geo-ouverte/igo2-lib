@@ -82,7 +82,7 @@ export interface EditionOptions {
   messages?: any[];
   addHeaders?: { [key: string]: any };
   modifyHeaders?: { [key: string]: any };
-  modifyProtocol?: string;
+  modifyMethod?: 'post' | 'patch';
   addButton?: boolean;
   modifyButton?: boolean;
   deleteButton?: boolean;
@@ -104,7 +104,6 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
-  send?: boolean;
 }
 
 export interface Legend {
