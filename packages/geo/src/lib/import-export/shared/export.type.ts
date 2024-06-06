@@ -1,16 +1,24 @@
-import { strEnum } from '@igo2/utils';
+export type AnyExportFormat = ExportFormat | ExportFormatLegacy;
 
-export const ExportFormat = strEnum([
-  'URL',
+export const ExportFormat = [
   'GeoJSON',
+  'Excel',
+  'Shapefile',
   'GML',
   'GPX',
   'KML',
-  'Shapefile',
-  'CSVcomma',
-  'CSVsemicolon'
-]);
-export type ExportFormat = keyof typeof ExportFormat;
+  'CSV',
+  'URL'
+] as const;
+export type ExportFormat = (typeof ExportFormat)[number];
 
-export const EncodingFormat = strEnum(['UTF8', 'LATIN1']);
-export type EncodingFormat = keyof typeof EncodingFormat;
+export const ExportFormatLegacy = ['CSVcomma', 'CSVsemicolon'] as const;
+export type ExportFormatLegacy = (typeof ExportFormatLegacy)[number];
+
+export const CsvSeparator = ['auto', 'comma', 'semicolon'] as const;
+export type CsvSeparator = (typeof CsvSeparator)[number];
+
+export type ExportOgreFormat = Extract<
+  AnyExportFormat,
+  'GML' | 'GPX' | 'KML' | 'Shapefile' | 'CSVcomma' | 'CSVsemicolon' | 'CSV'
+>;

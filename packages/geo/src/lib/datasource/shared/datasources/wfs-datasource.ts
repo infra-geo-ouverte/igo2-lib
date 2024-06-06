@@ -1,7 +1,16 @@
+import type { HttpClient } from '@angular/common/http';
+
 import { AuthInterceptor } from '@igo2/auth';
 
+import OlFeature from 'ol/Feature';
+import { Extent } from 'ol/extent';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
+import * as OlProj from 'ol/proj';
+import olProjection from 'ol/proj/Projection';
 import olSourceVector from 'ol/source/Vector';
+
+import { Observable, catchError, map } from 'rxjs';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
@@ -12,13 +21,21 @@ import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 import {
+  buildUrl,
   checkWfsParams,
   defaultFieldNameGeometry,
+  defaultMaxFeatures,
   getFormatFromOptions
 } from './wms-wfs.utils';
 
+interface FetchFeatureOptions {
+  extent: Extent;
+  projection: olProjection;
+  httpClient: HttpClient;
+}
+
 export class WFSDataSource extends DataSource {
-  public declare ol: olSourceVector;
+  declare public ol: olSourceVector;
 
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
@@ -91,5 +108,96 @@ export class WFSDataSource extends DataSource {
 
   public onUnwatch() {
     // empty
+  }
+
+  fetchFeatures({
+    extent,
+    projection,
+    httpClient
+  }: FetchFeatureOptions): Observable<OlFeature<OlGeometry>[]> {
+    const paramsWFS = this.options.paramsWFS;
+    const wfsProj = paramsWFS.srsName
+      ? new olProjection({ code: paramsWFS.srsName })
+      : projection;
+
+    const currentExtent = extent
+      ? OlProj.transformExtent(extent, projection, wfsProj)
+      : undefined;
+    const ogcFilters = this.ogcFilters;
+
+    paramsWFS.srsName = paramsWFS.srsName || projection.getCode();
+    let url = buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
+
+    // Exportation want to fetch without extent/bbox restrictions
+    if (!extent && url.includes('bbox')) {
+      const [baseUrl, params] = url.split('?');
+      const paramSegments = params.split('&');
+      const paramsWithoutBbox = paramSegments.filter(
+        (segment) => !segment.includes('bbox')
+      );
+      url = `${baseUrl}?${paramsWithoutBbox.join('&')}`;
+    }
+
+    let startIndex = 0;
+    if (
+      paramsWFS.version === '2.0.0' &&
+      paramsWFS.maxFeatures > defaultMaxFeatures
+    ) {
+      const nbOfFeature = 1000;
+      while (startIndex < paramsWFS.maxFeatures) {
+        let alteredUrl = url.replace(
+          'count=' + paramsWFS.maxFeatures,
+          'count=' + nbOfFeature
+        );
+        alteredUrl = alteredUrl.replace('startIndex=0', '0');
+        alteredUrl += '&startIndex=' + startIndex;
+        alteredUrl.replace(/&&/g, '&');
+
+        return this._fetchFeatures(wfsProj, alteredUrl, {
+          extent: currentExtent,
+          projection,
+          httpClient
+        }).pipe(
+          map((res) => {
+            startIndex += nbOfFeature;
+            return res;
+          })
+        );
+      }
+    } else {
+      return this._fetchFeatures(wfsProj, url, {
+        extent: currentExtent,
+        projection,
+        httpClient
+      });
+    }
+  }
+
+  private _fetchFeatures(
+    featureProjection: olProjection,
+    url: string,
+    { extent, projection, httpClient }: FetchFeatureOptions
+  ): Observable<OlFeature<OlGeometry>[]> {
+    return httpClient.get(url, { responseType: 'text' }).pipe(
+      map((response) => {
+        return this._parseXmlFeatures(response, projection, featureProjection);
+      }),
+      catchError((e) => {
+        if (extent) this.ol.removeLoadedExtent(extent);
+        throw e;
+      })
+    );
+  }
+
+  private _parseXmlFeatures(
+    xml: string,
+    dataProjection: olProjection,
+    featureProjection: olProjection
+  ): OlFeature<OlGeometry>[] {
+    const features = this.ol.getFormat().readFeatures(xml, {
+      dataProjection,
+      featureProjection
+    }) as OlFeature<OlGeometry>[];
+    return features;
   }
 }

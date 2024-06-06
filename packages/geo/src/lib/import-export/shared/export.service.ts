@@ -1,20 +1,36 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { EntityRecord } from '@igo2/common/entity';
+import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
-import { downloadContent } from '@igo2/utils';
+import { downloadBlob, downloadContent, isIsoDate } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { circular } from 'ol/geom/Polygon';
 
-import { Observable, Observer } from 'rxjs';
-import { encode } from 'windows-1252';
+import { FeatureCollection } from 'geojson';
+import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
+import type { ColInfo, WorkBook } from 'xlsx';
 
+import { ClusterDataSource, WFSDataSource } from '../../datasource';
+import { Feature } from '../../feature';
+import { AnyLayer, VectorLayer } from '../../layer';
+import { IgoMap } from '../../map';
+import {
+  EditionWorkspace,
+  FeatureWorkspace,
+  WfsWorkspace
+} from '../../workspace';
 import {
   ExportInvalidFileError,
   ExportNothingToExportError
 } from './export.errors';
-import { EncodingFormat, ExportFormat } from './export.type';
+import { ExportOptions, GeometryCollection } from './export.interface';
+import { AnyExportFormat, ExportOgreFormat } from './export.type';
+import { isCsvExport } from './export.utils';
 
 const SHAPEFILE_FIELD_MAX_LENGHT = 255;
 
@@ -22,21 +38,27 @@ const SHAPEFILE_FIELD_MAX_LENGHT = 255;
   providedIn: 'root'
 })
 export class ExportService {
-  static ogreFormats = {
+  static ogreFormats: Record<ExportOgreFormat, string> = {
     GML: 'gml',
     GPX: 'gpx',
     KML: 'kml',
     Shapefile: 'ESRI Shapefile',
+    CSV: 'CSV',
+    /** @deprecated use CSV */
     CSVcomma: 'CSVcomma',
+    /** @deprecated use CSV */
     CSVsemicolon: 'CSVsemicolon'
   };
 
-  static noOgreFallbacks = ['GML', 'GPX', 'KML'];
+  static noOgreFallbacks: Partial<AnyExportFormat[]> = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
   private aggregateInComment = true;
 
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    private httpClient: HttpClient
+  ) {
     this.ogreUrl = this.config.getConfig('importExport.url');
     const gpxAggregateInComment = this.config.getConfig(
       'importExport.gpxAggregateInComment'
@@ -48,34 +70,32 @@ export class ExportService {
 
   export(
     olFeatures: OlFeature<OlGeometry>[],
-    format: ExportFormat,
+    options: ExportOptions,
     title: string,
-    encoding: EncodingFormat,
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
-    const exportOlFeatures = this.generateFeature(
+    const exportOlFeatures = this.cleanFeatures(
       olFeatures,
-      format,
+      options.format,
       '_featureStore'
     );
 
     return this.exportAsync(
       exportOlFeatures,
-      format,
+      options,
       title,
-      encoding,
       projectionIn,
       projectionOut
     );
   }
 
-  public generateFeature(
+  public cleanFeatures(
     olFeatures: OlFeature<OlGeometry>[],
-    format: ExportFormat,
+    format: AnyExportFormat,
     excludePrefix = '_'
   ): OlFeature<OlGeometry>[] {
-    if (format === ExportFormat.GPX && this.aggregateInComment) {
+    if (format === 'GPX' && this.aggregateInComment) {
       return this.generateAggregatedFeature(olFeatures);
     }
 
@@ -84,7 +104,7 @@ export class ExportService {
         .getKeys()
         .filter((key: string) => !key.startsWith(excludePrefix));
 
-      if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
+      if (format === 'Shapefile' && olFeature.get('_style')) {
         const style = JSON.stringify(olFeature.get('_style'));
         if (style.length > SHAPEFILE_FIELD_MAX_LENGHT)
           keys = keys.filter((key) => key !== '_style');
@@ -134,13 +154,13 @@ export class ExportService {
 
   private exportAsync(
     olFeatures: OlFeature<OlGeometry>[],
-    format: ExportFormat,
+    options: ExportOptions,
     title: string,
-    encoding: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ): Observable<void> {
-    const doExport = (observer: Observer<void>) => {
+    const { format } = options;
+    return new Observable((observer: Observer<void>) => {
       const nothingToExport = this.nothingToExport(olFeatures, format);
       if (nothingToExport) {
         observer.error(new ExportNothingToExportError());
@@ -153,12 +173,12 @@ export class ExportService {
           if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
             this.exportToFile(
               olFeatures,
-              observer,
               format,
               title,
               projectionIn,
               projectionOut
             );
+            observer.complete();
           } else {
             observer.error(new ExportInvalidFileError());
           }
@@ -166,142 +186,239 @@ export class ExportService {
         }
         this.exportWithOgre(
           olFeatures,
-          observer,
-          format,
+          options,
           title,
-          encoding,
           projectionIn,
           projectionOut
-        );
+        ).subscribe({
+          complete: () => observer.complete(),
+          error: (error) => observer.error(error)
+        });
       } else {
         this.exportToFile(
           olFeatures,
-          observer,
           format,
           title,
           projectionIn,
           projectionOut
         );
+        observer.complete();
       }
-    };
-
-    return new Observable(doExport);
+    });
   }
 
-  protected exportToFile(
+  protected async exportToFile(
     olFeatures: OlFeature<OlGeometry>[],
-    observer: Observer<void>,
-    format: ExportFormat,
+    format: AnyExportFormat,
     title: string,
     projectionIn: string,
     projectionOut: string
   ) {
-    const olFormat = new olformat[format]();
-    const featuresText = olFormat.writeFeatures(olFeatures, {
-      dataProjection: projectionOut,
-      featureProjection: projectionIn,
-      featureType: 'feature',
-      featureNS: 'http://example.com/feature'
-    });
+    const features = this.formatFeatures(
+      olFeatures,
+      format,
+      projectionIn,
+      projectionOut
+    );
 
     const fileName = `${title}.${format.toLowerCase()}`;
+    downloadContent(features, 'attachment/plain;charset=utf-8', fileName);
+  }
 
-    downloadContent(featuresText, 'attachment/plain;charset=utf-8', fileName);
-    observer.complete();
+  private formatFeatures(
+    features: OlFeature<OlGeometry>[],
+    format: AnyExportFormat,
+    projectionIn = 'EPSG:4326',
+    projectionOut = 'EPSG:4326'
+  ) {
+    const formatter = this.getFormatter(format);
+    const cleanFeatures = this.cleanFeatures(features, format, '_featureStore');
+    return formatter.writeFeatures(cleanFeatures, {
+      dataProjection: projectionOut,
+      featureProjection: projectionIn
+    });
+  }
+
+  getFormatter(format: AnyExportFormat) {
+    switch (format) {
+      case 'GPX':
+        return new olformat.GPX();
+      case 'GML':
+        return new olformat.GML();
+      case 'KML':
+        return new olformat.KML();
+      default:
+        return new olformat.GeoJSON();
+    }
+  }
+
+  async exportExcel(map: IgoMap, store: WorkspaceStore, data: ExportOptions) {
+    const { utils, writeFile } = await import('xlsx');
+
+    const workbook = utils.book_new();
+
+    for (const layerName of data.layers) {
+      const layer = map.getLayerById(layerName);
+      const features = await lastValueFrom(
+        this.getFeatures(map, layer, data, store)
+      );
+
+      const formattedFeatures = features?.length
+        ? this.formatFeatures(features, 'GeoJSON')
+        : null;
+      await this.addExcelSheet(layer.title, formattedFeatures, workbook);
+    }
+
+    const title = this.getTitleFromLayers(data.layers, map);
+    writeFile(workbook, `${title}.xlsx`, { compression: true });
+  }
+
+  private getTitleFromLayers(layers: string[], map: IgoMap): string {
+    return layers.length === 1
+      ? this.getLayerTitleFromId(layers[0], map)
+      : 'igo';
+  }
+
+  private getLayerTitleFromId(id: string, map: IgoMap): string {
+    const layer = map.getLayerById(id);
+    return layer.title;
+  }
+
+  private async addExcelSheet(
+    title: string,
+    features: string | null,
+    workbook: WorkBook
+  ): Promise<void> {
+    const { utils } = await import('xlsx');
+
+    const collection: FeatureCollection = features
+      ? JSON.parse(features)
+      : {
+          features: []
+        };
+    const rows = collection.features.map((feature) =>
+      this.formatRecord(feature.properties)
+    );
+
+    const worksheet = utils.json_to_sheet(rows);
+
+    /* calculate column width */
+    if (rows?.length) {
+      worksheet['!cols'] = this.getColumnsInfo(rows);
+    }
+
+    const SHEET_NAME_MAX_LENGTH = 31;
+    let sheetName =
+      title.length >= SHEET_NAME_MAX_LENGTH
+        ? title.substring(0, SHEET_NAME_MAX_LENGTH)
+        : title;
+
+    if (workbook.SheetNames.includes(sheetName)) {
+      sheetName = `${sheetName.substring(0, SHEET_NAME_MAX_LENGTH - 3)}_${workbook.SheetNames.length}`;
+    }
+
+    utils.book_append_sheet(workbook, worksheet, sheetName);
+  }
+
+  private formatRecord(record: Record<string, any>): Record<string, any> {
+    return Object.entries(record).reduce((formatted, [key, value]) => {
+      formatted[key] = this.formatDataType(value);
+      return formatted;
+    }, {});
+  }
+
+  private formatDataType(value: unknown): unknown {
+    switch (true) {
+      case typeof value === 'string': {
+        if (isIsoDate(value as string)) {
+          return new Date(value as string).toLocaleString();
+        }
+
+        return value;
+      }
+      case typeof value === 'object':
+      case value instanceof Array: {
+        return JSON.stringify(value);
+      }
+      default:
+        return value;
+    }
+  }
+
+  private getColumnsInfo(rows: Record<string, any>[]): ColInfo[] {
+    const columns = Object.keys(rows[0]);
+    return columns.map((column) => ({
+      wch: this.getColumnMaxWidth(column, rows)
+    }));
+  }
+
+  private getColumnMaxWidth(
+    column: string,
+    rows: Record<string, any>[]
+  ): number {
+    return rows.reduce(
+      (width, row) => Math.max(width, row[column]?.length ?? 0),
+      column.length
+    );
   }
 
   private exportWithOgre(
     olFeatures: OlFeature<OlGeometry>[],
-    observer: Observer<void>,
-    format: string,
+    { format, csvSeparator = null }: ExportOptions,
     title: string,
-    encodingType: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ) {
-    let featuresText: string = new olformat.GeoJSON().writeFeatures(
-      olFeatures,
-      {
-        dataProjection: projectionOut,
-        featureProjection: projectionIn
-      }
-    );
-
+    const featuresText = new olformat.GeoJSON().writeFeatures(olFeatures, {
+      dataProjection: projectionOut,
+      featureProjection: projectionIn
+    });
     const url = `${this.ogreUrl}/convertJson`;
-    const form = document.createElement('form');
-    form.style.display = 'none';
-    document.body.appendChild(form);
-    form.setAttribute('method', 'post');
-    form.setAttribute('target', '_blank');
-    form.setAttribute('action', url);
 
-    if (encodingType === EncodingFormat.UTF8) {
-      form.acceptCharset = 'UTF-8';
-      form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
-    } else if (encodingType === EncodingFormat.LATIN1) {
-      const enctype = 'ISO-8859-1';
-      const featuresJson = JSON.parse(featuresText);
-      featuresJson.features.map((f) => {
-        const encodedProperties = String.fromCharCode.apply(
-          null,
-          encode(JSON.stringify(f.properties), { mode: 'replacement' })
-        );
-        f.properties = JSON.parse(encodedProperties);
-      });
-      featuresText = JSON.stringify(featuresJson);
-      const encoding = document.createElement('input');
-      encoding.setAttribute('type', 'hidden');
-      encoding.setAttribute('name', 'encoding');
-      encoding.setAttribute('value', enctype);
-      form.appendChild(encoding);
-    }
+    const formData = new FormData();
 
-    if (format === 'CSVsemicolon') {
-      const options = document.createElement('input');
-      options.setAttribute('type', 'hidden');
-      options.setAttribute('name', 'lco');
-      options.setAttribute('value', 'SEPARATOR=SEMICOLON');
-      form.appendChild(options);
-    }
+    formData.append('json', featuresText);
 
-    const geojsonField = document.createElement('input');
-    geojsonField.setAttribute('type', 'hidden');
-    geojsonField.setAttribute('name', 'json');
-    geojsonField.setAttribute('value', featuresText);
-    form.appendChild(geojsonField);
-
-    const outputNameField = document.createElement('input');
     let outputName =
       format === 'Shapefile'
         ? `${title}.zip`
         : `${title}.${format.toLowerCase()}`;
-    if (format === 'CSVcomma' || format === 'CSVsemicolon') {
+    let ogreFormat = ExportService.ogreFormats[format];
+
+    if (isCsvExport(format)) {
       outputName = `${title}.csv`;
+
+      if (format === 'CSVcomma' || format === 'CSVsemicolon') {
+        ogreFormat = 'CSV';
+      }
+
+      formData.append('lco', `SEPARATOR=${csvSeparator}`);
+
+      if (format === 'CSVsemicolon') {
+        formData.append('lco', `SEPARATOR=${csvSeparator}`);
+      }
     }
-    outputName = outputName.replace(' ', '_');
-    outputName = outputName
+
+    formData.append('outputName', this.formatFilename(outputName));
+    formData.append('format', ogreFormat);
+
+    return this.httpClient
+      .post(url, formData, {
+        responseType: 'blob'
+      })
+      .pipe(
+        tap((value) => {
+          downloadBlob(value, outputName);
+        })
+      );
+  }
+
+  private formatFilename(name: string): string {
+    return name
+      .replaceAll(' ', '_')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/’/g, "'");
-    outputNameField.setAttribute('type', 'hidden');
-    outputNameField.setAttribute('name', 'outputName');
-    outputNameField.setAttribute('value', outputName);
-    form.appendChild(outputNameField);
-
-    let ogreFormat = ExportService.ogreFormats[format];
-    if (format === 'CSVcomma' || format === 'CSVsemicolon') {
-      ogreFormat = 'CSV';
-    }
-    const outputFormatField = document.createElement('input');
-    outputFormatField.setAttribute('type', 'hidden');
-    outputFormatField.setAttribute('name', 'format');
-    outputFormatField.setAttribute('value', ogreFormat);
-    form.appendChild(outputFormatField);
-
-    form.submit();
-    document.body.removeChild(form);
-
-    observer.complete();
   }
 
   private nothingToExport(
@@ -322,5 +439,155 @@ export class ExportService {
       return pointOrLine === undefined;
     }
     return false;
+  }
+
+  private getFeaturesFromMap(
+    layer: VectorLayer,
+    options: ExportOptions
+  ): OlFeature[] {
+    const dataSource = layer.dataSource.ol;
+    const extent = layer.map.viewController.getExtent();
+
+    let features: OlFeature[] = options.featureInMapExtent
+      ? dataSource.getFeaturesInExtent(extent)
+      : dataSource.getFeatures();
+
+    if (layer.dataSource instanceof ClusterDataSource) {
+      features = features.flatMap((cluster) => cluster.get('features'));
+    }
+    return features;
+  }
+
+  private getFeaturesFromWorkspace(
+    wks: Workspace,
+    layerName: string,
+    data: ExportOptions
+  ): OlFeature[] {
+    const hasSelection = data.layersWithSelection.indexOf(layerName) !== -1;
+    const isInMapExtent = data.featureInMapExtent;
+    if (hasSelection && isInMapExtent) {
+      // Only export selected feature && into map extent
+      return wks.entityStore.stateView
+        .all()
+        .filter(
+          (e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected
+        )
+        .map((e) => (e.entity as Feature).ol as OlFeature);
+    } else if (hasSelection && !isInMapExtent) {
+      // Only export selected feature &&  (into map extent OR not)
+      return wks.entityStore.stateView
+        .all()
+        .filter((e: EntityRecord<object>) => e.state.selected)
+        .map((e) => (e.entity as Feature).ol as OlFeature);
+    } else if (isInMapExtent) {
+      // Only into map extent
+      return wks.entityStore.stateView
+        .all()
+        .filter((e: EntityRecord<object>) => e.state.inMapExtent)
+        .map((e) => (e.entity as Feature).ol as OlFeature);
+    } else {
+      // All features
+      return wks.entityStore.stateView
+        .all()
+        .map((e) => (e.entity as Feature).ol as OlFeature);
+    }
+  }
+
+  getFeatures(
+    map: IgoMap,
+    layer: AnyLayer,
+    data: ExportOptions,
+    store: WorkspaceStore
+  ): Observable<OlFeature[]> {
+    const projection = map.viewController.getOlProjection();
+    const extent = data.featureInMapExtent
+      ? map.viewController.getExtent()
+      : undefined;
+
+    if (layer.dataSource instanceof WFSDataSource) {
+      return layer.dataSource
+        .fetchFeatures({
+          extent,
+          projection,
+          httpClient: this.httpClient
+        })
+        .pipe(
+          catchError((e) => {
+            throw e;
+          })
+        );
+    }
+    // Filter spatial use external API to make query and use Workspace to store data
+    else if (layer.options.workspace?.enabled) {
+      const wks = this.getWorkspaceByLayerId(layer.id, store);
+      if (wks?.entityStore?.stateView.all().length) {
+        const features = this.getFeaturesFromWorkspace(wks, layer.id, data);
+        return of(features).pipe(
+          catchError((e) => {
+            throw e;
+          })
+        );
+      }
+    } else if (layer instanceof VectorLayer) {
+      return of(this.getFeaturesFromMap(layer, data));
+    }
+
+    return of([]);
+  }
+
+  getWorkspaceByLayerId(id: string, store: WorkspaceStore): Workspace {
+    const wksFromLayerId = store
+      .all()
+      .find(
+        (workspace) =>
+          (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace)
+            .layer.id === id
+      );
+    if (wksFromLayerId) {
+      return wksFromLayerId;
+    }
+    return;
+  }
+
+  getGeomTypes(
+    features: OlFeature[],
+    format?: AnyExportFormat
+  ): GeometryCollection[] {
+    let geomTypes: GeometryCollection[] = [];
+    if (format === 'Shapefile' || format === 'GPX') {
+      features.forEach((olFeature) => {
+        const featureGeomType = olFeature.getGeometry().getType();
+        const currentGeomType = geomTypes.find(
+          (geomType) => geomType.type === featureGeomType
+        );
+        if (currentGeomType) {
+          currentGeomType.features.push(olFeature);
+        } else {
+          geomTypes.push({
+            type: featureGeomType,
+            features: [olFeature]
+          });
+        }
+      });
+    } else {
+      geomTypes = [{ type: null, features: features }];
+    }
+
+    geomTypes.forEach((geomType) => {
+      geomType.features.forEach((feature) => {
+        const radius: number = feature.get('rad');
+        if (radius) {
+          const center4326: Array<number> = [
+            feature.get('longitude'),
+            feature.get('latitude')
+          ];
+          const circle = circular(center4326, radius, 500);
+          circle.transform('EPSG:4326', feature.get('_projection'));
+          feature.setGeometry(circle);
+        }
+      });
+    });
+
+    return geomTypes;
   }
 }
