@@ -26,6 +26,9 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   bindStore(store: FeatureStore) {
+    if (!store && !store.layer && !store.layer.map) {
+      return;
+    }
     super.bindStore(store);
     if (this.active === true) {
       this.watchStore(store);
