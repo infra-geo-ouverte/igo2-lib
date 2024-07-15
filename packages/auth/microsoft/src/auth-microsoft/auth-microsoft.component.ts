@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   Inject,
+  OnInit,
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,11 +21,8 @@ import {
 } from '@azure/msal-angular';
 import {
   AuthenticationResult,
-  InteractionRequiredAuthError,
   InteractionStatus,
-  PopupRequest,
-  PublicClientApplication,
-  SilentRequest
+  PopupRequest
 } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -42,7 +40,7 @@ import {
   standalone: true,
   imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
 })
-export class AuthMicrosoftComponent {
+export class AuthMicrosoftComponent implements OnInit {
   private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -60,67 +58,44 @@ export class AuthMicrosoftComponent {
   ) {
     this.options = this.config.getConfig('auth.microsoft');
 
-    this.msalService.instance = new PublicClientApplication({
-      auth: this.options,
-      cache: {
-        cacheLocation: 'sessionStorage'
-      }
-    });
-
     this.broadcastService = new MsalBroadcastService(
       this.msalService.instance,
       this.msalService
     );
 
     if (this.options?.clientId) {
-      this.broadcastService.inProgress$
-        .pipe(
-          filter(
-            (status: InteractionStatus) => status === InteractionStatus.None
-          ),
-          takeUntil(this._destroying$)
-        )
-        .subscribe(() => {
-          this.checkAccount();
-        });
+      this.broadcastService.inProgress$.pipe(
+        filter(
+          (status: InteractionStatus) => status === InteractionStatus.None
+        ),
+        takeUntil(this._destroying$)
+      );
     } else {
       console.warn('Microsoft authentification needs "clientId" option');
     }
   }
 
-  public loginMicrosoft() {
-    this.msalService
-      .loginPopup({ ...this.getConf().authRequest } as PopupRequest)
-      .subscribe((response: AuthenticationResult) => {
-        this.msalService.instance.setActiveAccount(response.account);
-        this.checkAccount();
-      });
+  ngOnInit() {
+    if (this.options.autoLogin) {
+      this.loginMicrosoft();
+    }
   }
 
-  private checkAccount() {
-    this.msalService.instance
-      .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
-      .then((response: AuthenticationResult) => {
-        const tokenAccess = response.accessToken;
-        const tokenId = response.idToken;
-        this.authService
-          .loginWithToken(tokenAccess, 'microsoft', { tokenId })
-          .subscribe(() => {
-            this.appRef.tick();
-            this.login.emit(true);
-          });
-      })
-      .catch(async (error) => {
-        if (error instanceof InteractionRequiredAuthError) {
-          // fallback to interaction when silent call fails
-          return this.msalService.acquireTokenPopup(
-            this.getConf().authRequest as SilentRequest
-          );
+  public async loginMicrosoft() {
+    await this.msalService.instance.initialize();
+    this.msalService
+      .loginPopup(this.getConf().authRequest as PopupRequest)
+      .subscribe({
+        next: (response: AuthenticationResult) => {
+          this.msalService.instance.setActiveAccount(response.account);
+          const tokenId = response.idToken;
+          this.authService
+            .loginWithToken(response.accessToken, 'microsoft', { tokenId })
+            .subscribe(() => {
+              this.appRef.tick();
+              this.login.emit(true);
+            });
         }
-        console.log(error);
-      })
-      .catch(() => {
-        console.log('Silent token fails');
       });
   }
 

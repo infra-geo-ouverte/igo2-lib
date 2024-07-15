@@ -34,10 +34,16 @@ export const environment: EnvironmentOptions = {
     auth: {
       url: '/apis/users',
       tokenKey: 'testIgo2Lib',
+      allowAnonymous: true,
+      microsoft: {
+        enabled: true,
+        autoLogin: true,
+        clientId: '1b04d52a-2f8f-4078-95dd-6148de183239',
+        redirectUri: '/auth-callback'
+      },
       intern: {
         enabled: true
-      },
-      allowAnonymous: true
+      }
     },
     language: {
       prefix: './locale/'

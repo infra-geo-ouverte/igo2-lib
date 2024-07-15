@@ -6,7 +6,12 @@ import {
   MSAL_INSTANCE,
   MsalService
 } from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import {
+  BrowserCacheLocation,
+  IPublicClientApplication,
+  InteractionType,
+  PublicClientApplication
+} from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
 import { AuthMicrosoftComponent } from './auth-microsoft/auth-microsoft.component';
@@ -24,7 +29,7 @@ export const AUTH_MICROSOFT_DIRECTIVES = [
 
 export function MSALConfigFactory(
   config: ConfigService
-): PublicClientApplication {
+): IPublicClientApplication {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
   if (!msConf) {
     return;
@@ -34,14 +39,13 @@ export function MSALConfigFactory(
   msConf.authority =
     msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
-  const myMsalObj = new PublicClientApplication({
+  const msalInstance = new PublicClientApplication({
     auth: msConf,
     cache: {
-      cacheLocation: 'sessionStorage'
+      cacheLocation: BrowserCacheLocation.LocalStorage
     }
   });
-
-  return myMsalObj;
+  return msalInstance;
 }
 
 export function MSALConfigFactoryb2c(
@@ -72,7 +76,7 @@ export function MSALAngularConfigFactory(): MSPMsalGuardConfiguration {
     interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read'],
-      loginHint: 'todo'
+      domainHint: msConf?.domainHint || ''
     },
     type: 'add'
   };

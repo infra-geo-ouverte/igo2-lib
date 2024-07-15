@@ -19,7 +19,7 @@
         "Username or password invalid": "Username or password invalid"
       },
       "microsoft": {
-        "login": "Sign in with Azure account"
+        "login": "Sign in with M$ EntraID account"
       },
       "microsoftb2c": {
         "login": "Sign in"

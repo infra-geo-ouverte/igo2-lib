@@ -7,6 +7,7 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
+import { MsalService } from '@azure/msal-angular';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
@@ -41,6 +42,7 @@ export class AuthService {
     private config: ConfigService,
     private languageService: LanguageService,
     private messageService: MessageService,
+    @Optional() private msalService: MsalService,
     @Optional() private router: Router
   ) {
     this.authOptions = this.config.getConfig('auth');
@@ -97,10 +99,40 @@ export class AuthService {
   }
 
   logout(): Observable<boolean> {
+    if (this.msalService) {
+      const handleLogout = () => {
+        const logoutRequest = {
+          account: this.msalService.instance.getActiveAccount()
+        };
+
+        this.msalService.logoutPopup(logoutRequest).subscribe({
+          next: () => {
+            this.logoutInternal();
+          },
+          error: (error) => {
+            console.error('Error during logout:', error);
+          }
+        });
+      };
+
+      this.msalService.initialize().subscribe({
+        next: () => {
+          handleLogout();
+        },
+        error: (error) => {
+          console.error('Error during initialization:', error);
+        }
+      });
+    } else {
+      this.logoutInternal();
+    }
+    return of(true);
+  }
+
+  logoutInternal(): void {
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
-    return of(true);
   }
 
   isAuthenticated(): boolean {
@@ -188,10 +220,6 @@ export class AuthService {
             }
           }
           this.authenticate$.next(true);
-        }),
-        catchError((err) => {
-          err.error.caught = true;
-          throw err;
         })
       );
   }

@@ -23,7 +23,7 @@
         "logged": "Connecté avec Google"
       },
       "microsoft": {
-        "login": "Se connecter avec compte Azure"
+        "login": "Se connecter avec compte M$ EntraID"
       },
       "microsoftb2c": {
         "login": "Se connecter"
