@@ -100,11 +100,11 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^17.0.0 || ^18.0.0",
-    "@angular/common": "^17.0.0 || ^18.0.0",
-    "@angular/core": "^17.0.0 || ^18.0.0",
-    "@angular/platform-browser": "^17.0.0 || ^18.0.0",
-    "@angular/router": "^17.0.0 || ^18.0.0",
+    "@angular/cdk": "^17.0.3",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/platform-browser": "^17.0.6",
+    "@angular/router": "^17.0.6",
     "@igo2/utils": "*",
     "@sentry/angular-ivy": "^7.87.0",
     "ngx-indexed-db": "^11.0.2",
