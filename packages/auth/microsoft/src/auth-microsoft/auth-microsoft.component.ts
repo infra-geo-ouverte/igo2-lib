@@ -31,6 +31,7 @@ import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
 } from '../shared/auth-microsoft.interface';
+import { AuthMsalService } from '../shared/auth-msal.service';
 
 @Component({
   selector: 'igo-auth-microsoft',
@@ -49,7 +50,7 @@ export class AuthMicrosoftComponent implements OnInit {
   svgIcon: IconSvg = MICROSOFT_ICON;
 
   constructor(
-    private authService: AuthService,
+    private authService: AuthMsalService,
     private config: ConfigService,
     private appRef: ApplicationRef,
     private msalService: MsalService,
@@ -76,13 +77,13 @@ export class AuthMicrosoftComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authService.initializeMicrosoft(this.msalService);
     if (this.options.autoLogin) {
       this.loginMicrosoft();
     }
   }
 
   public async loginMicrosoft() {
-    await this.msalService.instance.initialize();
     this.msalService
       .loginPopup(this.getConf().authRequest as PopupRequest)
       .subscribe({

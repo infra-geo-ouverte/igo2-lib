@@ -7,7 +7,6 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
-import { MsalService } from '@azure/msal-angular';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
@@ -25,7 +24,7 @@ export class AuthService {
   public redirectUrl: string;
   public languageForce = false;
   private anonymous = false;
-  private authOptions: AuthOptions;
+  public authOptions: AuthOptions;
 
   get hasAuthService() {
     return this.authOptions?.url !== undefined;
@@ -37,13 +36,12 @@ export class AuthService {
   }
 
   constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    @Optional() private msalService: MsalService,
-    @Optional() private router: Router
+    public http: HttpClient,
+    public tokenService: TokenService,
+    public config: ConfigService,
+    public languageService: LanguageService,
+    public messageService: MessageService,
+    @Optional() public router: Router
   ) {
     this.authOptions = this.config.getConfig('auth');
     this.authenticate$.next(this.authenticated);
@@ -99,33 +97,7 @@ export class AuthService {
   }
 
   logout(): Observable<boolean> {
-    if (this.msalService) {
-      const handleLogout = () => {
-        const logoutRequest = {
-          account: this.msalService.instance.getActiveAccount()
-        };
-
-        this.msalService.logoutPopup(logoutRequest).subscribe({
-          next: () => {
-            this.logoutInternal();
-          },
-          error: (error) => {
-            console.error('Error during logout:', error);
-          }
-        });
-      };
-
-      this.msalService.initialize().subscribe({
-        next: () => {
-          handleLogout();
-        },
-        error: (error) => {
-          console.error('Error during initialization:', error);
-        }
-      });
-    } else {
-      this.logoutInternal();
-    }
+    this.logoutInternal();
     return of(true);
   }
 

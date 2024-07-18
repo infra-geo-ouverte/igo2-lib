@@ -1,5 +1,16 @@
-import { AuthFeature, AuthFeatureKind } from '@igo2/auth';
+import { HttpClient } from '@angular/common/http';
+import { Injector, Provider } from '@angular/core';
+import { Router } from '@angular/router';
+
+import {
+  AuthFeature,
+  AuthFeatureKind,
+  AuthService,
+  TokenService
+} from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import {
   MSAL_GUARD_CONFIG,
@@ -21,6 +32,7 @@ import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
 } from './shared/auth-microsoft.interface';
+import { AuthMsalService } from './shared/auth-msal.service';
 
 export const AUTH_MICROSOFT_DIRECTIVES = [
   AuthMicrosoftComponent,
@@ -31,6 +43,10 @@ export function MSALConfigFactory(
   config: ConfigService
 ): IPublicClientApplication {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
+  if (!msConf) {
+    return;
+  }
+
   if (!msConf) {
     return;
   }
@@ -138,4 +154,37 @@ export function withMicrosoftSupport(
       ]
     };
   }
+}
+
+function provideAuthMSALServiceFactory(
+  http: HttpClient,
+  tokenService: TokenService,
+  config: ConfigService,
+  languageService: LanguageService,
+  messageService: MessageService,
+  router: Router,
+  injector: Injector
+): AuthService {
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
+
+  if (!msConf) {
+    return new AuthService(
+      http,
+      tokenService,
+      config,
+      languageService,
+      messageService,
+      router
+    );
+  }
+
+  return new AuthMsalService(
+    http,
+    tokenService,
+    config,
+    languageService,
+    messageService,
+    router,
+    injector.get(MsalService)
+  );
 }
