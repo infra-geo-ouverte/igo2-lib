@@ -66,12 +66,11 @@ export class GeoDBService {
             return this.ngxIndexedDBService.add(this.dbName, geoDBData);
           }
 
-          if (dbObject.regionIDs.includes(regionID)) {
-            return of(dbObject);
+          if (dbObject.regionIDs?.includes(regionID)) {
+            if (dbObject.insertEvent === geoDBData.insertEvent)
+              return of(dbObject);
           }
-
-          dbObject.regionIDs.push(regionID);
-          return this.customUpdate(dbObject);
+          return this.customUpdate(geoDBData);
         })
       )
       .subscribe((response) => {
