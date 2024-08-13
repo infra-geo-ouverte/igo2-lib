@@ -97,9 +97,11 @@ export class ShareMapService {
     for (const contextLayer of contextLayers) {
       if (
         typeof contextLayer.id !== 'undefined' ||
-        typeof contextLayer.source !== 'undefined'
+        typeof (contextLayer as any).source !== 'undefined'
       ) {
-        contextLayersID.push(contextLayer.id || contextLayer.source.id);
+        contextLayersID.push(
+          contextLayer.id || (contextLayer as any).source.id
+        );
       }
     }
 
