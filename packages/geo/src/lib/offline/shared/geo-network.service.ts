@@ -16,7 +16,7 @@ export enum ResponseType {
   Json = 'json'
 }
 export interface SimpleGetOptions {
-  responseType: Type;
+  responseType: ResponseType | Type;
   withCredentials?: boolean;
 }
 @Injectable({

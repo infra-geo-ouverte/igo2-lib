@@ -1,0 +1,13 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  $warn: map.get($theme, warn);
+
+  igo-download-package {
+    .oversized-package {
+      color: mat.get-color-from-palette($warn);
+      font-weight: bold;
+    }
+  }
+}

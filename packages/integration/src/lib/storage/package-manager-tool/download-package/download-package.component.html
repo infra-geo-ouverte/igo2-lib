@@ -1,0 +1,66 @@
+<div class="action-bar">
+  <mat-form-field
+    class="example-form-field"
+    subscriptSizing="dynamic"
+    floatLabel="always"
+  >
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="search"
+      (input)="filterPackages()"
+      [placeholder]="'igo.integration.package-manager.filter' | translate"
+    />
+    @if (search) {
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="search = ''; filterPackages()"
+      >
+        <igo-icon icon="close"></igo-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <button mat-icon-button (click)="refreshPackages()">
+    <igo-icon icon="refresh"></igo-icon>
+  </button>
+</div>
+<div class="table-container">
+  <igo-entity-table
+    #entityTable
+    [store]="store"
+    [template]="template"
+    (entitySortChange)="entitySortChange()"
+  ></igo-entity-table>
+</div>
+
+<div class="action-row">
+  @if (selectedPackage) {
+    <div class="quota">
+      {{ 'igo.integration.package-manager.usage' | translate }}:
+      <span [ngClass]="{ 'oversized-package': !canDownload }">
+        {{ formatPackageSize(selectedPackage.size) }}
+      </span>
+      /
+      {{ formatQuotaSize(spaceLeft$ | async) }}
+    </div>
+  } @else {
+    <div class="quota">
+      {{ 'igo.integration.package-manager.space-left' | translate }}:
+      {{ formatQuotaSize(spaceLeft$ | async) }}
+    </div>
+  }
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="
+      !canDownload ||
+      (networkService.currentState() | async).connection === false
+    "
+    (click)="downloadSelectedPackage()"
+  >
+    {{ 'igo.integration.package-manager.download' | translate }}
+  </button>
+</div>

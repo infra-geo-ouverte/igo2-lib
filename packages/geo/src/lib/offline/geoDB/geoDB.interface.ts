@@ -2,7 +2,7 @@ import { InsertSourceInsertDBEnum } from './geoDB.enums';
 
 export interface GeoDBData {
   url: string;
-  regionID: any;
+  regionIDs: string[];
   object: any;
   compressed: boolean;
   insertSource: InsertSourceInsertDBEnum;
