@@ -9,6 +9,7 @@ import {
   Output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { NavigationStart, Router } from '@angular/router';
 
 import { AuthOptions, AuthService } from '@igo2/auth';
@@ -40,6 +41,7 @@ import { AuthFormOptions } from '../shared';
     AuthFacebookComponent,
     AuthInternComponent,
     MatButtonModule,
+    MatDividerModule,
     IgoLanguageModule
   ]
 })
@@ -120,6 +122,32 @@ export class AuthFormComponent implements OnInit {
   ) {
     this.options = this.config.getConfig('auth');
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
+  }
+
+  get hasExternalProvider(): boolean {
+    return (
+      this.hasGoogle ||
+      this.hasFacebook ||
+      this.hasMicrosoft ||
+      this.hasMicrosoftB2c
+    );
+  }
+
+  get hasGoogle(): boolean {
+    return this.options.google && this.options.google.enabled !== false;
+  }
+
+  get hasMicrosoft(): boolean {
+    return this.options.microsoft && this.options.microsoft.enabled !== false;
+  }
+
+  get hasMicrosoftB2c(): boolean {
+    return (
+      this.options.microsoftb2c && this.options.microsoftb2c.enabled !== false
+    );
+  }
+  get hasFacebook(): boolean {
+    return this.options.facebook && this.options.facebook.enabled !== false;
   }
 
   public ngOnInit() {

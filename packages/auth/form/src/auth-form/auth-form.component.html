@@ -7,36 +7,33 @@
   <div *ngIf="!auth.logged && showLoginDiv" class="login center-block">
     <h1>{{ 'igo.auth.connection' | translate }}</h1>
 
-    <igo-auth-google
-      *ngIf="options.google && options.google.enabled !== false"
-      (login)="onLogin()"
-    >
-    </igo-auth-google>
+    <ng-container *ngIf="!options.intern || options.intern.enabled !== false">
+      <igo-auth-intern
+        [allowAnonymous]="options.allowAnonymous"
+        (login)="onLogin()"
+      >
+      </igo-auth-intern>
 
+      <div *ngIf="hasExternalProvider" class="divider-container">
+        <mat-divider></mat-divider>
+        <span>{{ 'igo.auth.or' | translate }}</span>
+        <mat-divider></mat-divider>
+      </div>
+    </ng-container>
+
+    <igo-auth-google *ngIf="hasGoogle" (login)="onLogin()"></igo-auth-google>
     <igo-auth-microsoft
-      *ngIf="options.microsoft && options.microsoft.enabled !== false"
+      *ngIf="hasMicrosoft"
       (login)="onLogin()"
-    >
-    </igo-auth-microsoft>
-
+    ></igo-auth-microsoft>
     <igo-auth-microsoftb2c
-      *ngIf="options.microsoftb2c && options.microsoftb2c.enabled !== false"
+      *ngIf="hasMicrosoftB2c"
       (login)="onLogin()"
-    >
-    </igo-auth-microsoftb2c>
-
+    ></igo-auth-microsoftb2c>
     <igo-auth-facebook
-      *ngIf="options.facebook && options.facebook.enabled !== false"
+      *ngIf="hasFacebook"
       (login)="onLogin()"
-    >
-    </igo-auth-facebook>
-
-    <igo-auth-intern
-      *ngIf="!options.intern || options.intern.enabled !== false"
-      [allowAnonymous]="options.allowAnonymous"
-      (login)="onLogin()"
-    >
-    </igo-auth-intern>
+    ></igo-auth-facebook>
   </div>
 
   <div

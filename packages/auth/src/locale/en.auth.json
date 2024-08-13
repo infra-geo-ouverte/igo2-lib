@@ -23,7 +23,8 @@
       },
       "microsoftb2c": {
         "login": "Sign in"
-      }
+      },
+      "or": "Or"
     }
   }
 }

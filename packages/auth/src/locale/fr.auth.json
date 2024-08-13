@@ -27,7 +27,8 @@
       },
       "microsoftb2c": {
         "login": "Se connecter"
-      }
+      },
+      "or": "Ou"
     }
   }
 }
