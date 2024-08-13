@@ -245,7 +245,7 @@ export class OgcFilterTimeComponent implements OnInit {
       } else {
         this.endValue = value;
         this.onlyYearEnd = this.endValue.getFullYear();
-        dateStringFromYearNotime = `${this.onlyYearEnd}-01-01`;
+        dateStringFromYearNotime = `${this.onlyYearEnd}-12-31`;
       }
       // call service with string date without time
       this.changeProperty.next({

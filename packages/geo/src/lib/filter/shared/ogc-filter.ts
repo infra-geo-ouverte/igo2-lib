@@ -782,6 +782,17 @@ export class OgcFilterWriter {
         }
       }
 
+      if (
+        ogcFilters.filters &&
+        'operator' in ogcFilters.filters &&
+        ogcFilters.filters.operator.toLowerCase() ===
+          OgcFilterOperator.During.toLowerCase() &&
+        ogcFilters.filters.active &&
+        ogcFilters.interfaceOgcFilters?.length > 0
+      ) {
+        conditions.push(ogcFilters.interfaceOgcFilters[0]);
+      }
+
       if (conditions.length >= 1) {
         filterQueryStringSelector = this.buildFilter(
           conditions.length === 1
