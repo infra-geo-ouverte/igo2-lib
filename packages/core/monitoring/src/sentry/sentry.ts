@@ -25,7 +25,6 @@ export const initSentry = (
   force?: boolean
 ): void => {
   const client = getClient();
-  console.log('init sentry: ', client);
   if (!force && client) {
     return;
   }
