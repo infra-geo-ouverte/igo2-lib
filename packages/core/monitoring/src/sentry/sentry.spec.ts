@@ -1,4 +1,4 @@
-import { BrowserTracing, Replay, getCurrentHub } from '@sentry/angular-ivy';
+import { getClient } from '@sentry/angular';
 
 import { MOCK_SENTRY_OPTIONS } from '../__mocks__/monitoring-mock';
 import { createSentryErrorHandler, initSentry } from './sentry';
@@ -20,17 +20,22 @@ describe('Sentry', () => {
 
   describe('initSentry', () => {
     it('should initialize Sentry with default options', () => {
-      initSentry(options);
-      const client = getCurrentHub().getClient();
+      initSentry(options, true);
+      const client = getClient();
       expect(client).toBeDefined();
     });
 
     it('should initialize Sentry integration with tracing and replay enabled', () => {
-      options = { ...options, enableTracing: true, enableReplay: true };
-      initSentry(options);
-      const client = getCurrentHub().getClient();
-      const replay = client.getIntegration(Replay);
-      const tracing = client.getIntegration(BrowserTracing as any);
+      options = {
+        ...options,
+        tracesSampleRate: 1,
+        replaysSessionSampleRate: 1
+      };
+      initSentry(options, true);
+      const client = getClient();
+      console.log(client);
+      const replay = client.getIntegrationByName('Replay');
+      const tracing = client.getIntegrationByName('BrowserTracing');
       expect(replay).toBeDefined();
       expect(tracing).toBeDefined();
     });
