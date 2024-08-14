@@ -33,7 +33,6 @@ describe('Sentry', () => {
       };
       initSentry(options, true);
       const client = getClient();
-      console.log(client);
       const replay = client.getIntegrationByName('Replay');
       const tracing = client.getIntegrationByName('BrowserTracing');
       expect(replay).toBeDefined();
