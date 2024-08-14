@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, ErrorHandler, FactoryProvider } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { TraceService } from '@sentry/angular-ivy';
+import { TraceService } from '@sentry/angular';
 
 import { MOCK_SENTRY_OPTIONS } from '../__mocks__/monitoring-mock';
 import { SentryMonitoringOptions } from './sentry.interface';
@@ -35,7 +35,7 @@ describe('Provide Sentry monitoring', () => {
   });
 
   it('should provide TraceService if tracing is enabled', () => {
-    options.enableTracing = true;
+    options.tracesSampleRate = 1;
     const providers = provideSentryMonitoring(options);
     const traceServiceProvider = providers.find(
       (p) => p.provide === TraceService
@@ -45,7 +45,7 @@ describe('Provide Sentry monitoring', () => {
   });
 
   it('should provide APP_INITIALIZER to instantiate TraceService if tracing is enabled', () => {
-    options.enableTracing = true;
+    options.tracesSampleRate = 1;
     const providers = provideSentryMonitoring(options);
     const appInitializerProvider = providers.find(
       (p) => p.provide === APP_INITIALIZER
@@ -57,7 +57,8 @@ describe('Provide Sentry monitoring', () => {
   });
 
   it('should not provide TraceService if tracing is not enabled', () => {
-    options.enableTracing = false;
+    options.tracesSampleRate = undefined;
+    options.tracesSampler = undefined;
     const providers = provideSentryMonitoring(options);
     const tracingProviders = providers.filter(
       (p) =>

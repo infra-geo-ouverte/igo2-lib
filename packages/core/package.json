@@ -23,6 +23,7 @@
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
     "test": "ng test core --watch=false",
+    "test.watch": "ng test core",
     "watch": "ng build core --watch && npm run postbuild"
   },
   "exports": {
@@ -106,7 +107,7 @@
     "@angular/platform-browser": "^17.0.6",
     "@angular/router": "^17.0.6",
     "@igo2/utils": "*",
-    "@sentry/angular-ivy": "^7.87.0",
+    "@sentry/angular": "^8.26.0",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^18.0.0",
     "@ngx-translate/core": "^15.0.0",
