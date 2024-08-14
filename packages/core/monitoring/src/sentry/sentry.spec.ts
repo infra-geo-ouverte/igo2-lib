@@ -25,7 +25,7 @@ describe('Sentry', () => {
       expect(client).toBeDefined();
     });
 
-    it('should initialize Sentry integration with tracing and replay enabled', () => {
+    it('should initialize Sentry integration with BrowserTracing and Replay enabled', () => {
       options = {
         ...options,
         tracesSampleRate: 1,
