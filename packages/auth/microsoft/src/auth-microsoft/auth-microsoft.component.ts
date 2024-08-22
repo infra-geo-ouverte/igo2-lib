@@ -91,7 +91,12 @@ export class AuthMicrosoftComponent implements OnInit {
           this.msalService.instance.setActiveAccount(response.account);
           const tokenId = response.idToken;
           this.authService
-            .loginWithToken(response.accessToken, 'microsoft', { tokenId })
+            .loginWithToken(
+              response.accessToken,
+              'microsoft',
+              { tokenId },
+              this.options.applicationId
+            )
             .subscribe(() => {
               this.appRef.tick();
               this.login.emit(true);

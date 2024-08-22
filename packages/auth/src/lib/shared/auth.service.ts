@@ -65,14 +65,16 @@ export class AuthService {
   loginWithToken(
     token: string,
     type: string,
-    infosUser?: IInfosUser
+    infosUser?: IInfosUser,
+    applicationId?: string
   ): Observable<void> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
       token,
       typeConnection: type,
-      infosUser
+      infosUser,
+      applicationId
     };
 
     return this.loginCall(body, myHeader);
