@@ -17,13 +17,16 @@
       "architect": {
         "build": {
           "defaultConfiguration": "developpement",
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "aot": true,
-            "outputPath": "dist/demo",
+            "outputPath": {
+              "base": "dist/demo"
+            },
             "index": "projects/demo/src/index.html",
-            "main": "projects/demo/src/main.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
+            "polyfills": [
+              "projects/demo/src/polyfills.ts"
+            ],
             "tsConfig": "projects/demo/tsconfig.app.json",
             "assets": [
               "projects/demo/src/favicon.ico",
@@ -80,7 +83,8 @@
               "striptags",
               "ts-md5",
               "typy"
-            ]
+            ],
+            "browser": "projects/demo/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -96,8 +100,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -123,9 +125,9 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "outputPath": "dist/ghpages",
+              "outputPath": {
+                "base": "dist/ghpages"
+              },
               "baseHref": "/igo2-lib/",
               "budgets": [
                 {
@@ -145,8 +147,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",

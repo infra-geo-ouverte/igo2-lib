@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { provideMockTranslation } from '@igo2/core/language';
@@ -9,8 +12,12 @@ import { QueryService } from './query.service';
 describe('QueryService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, IgoMessageModule],
-      providers: [QueryService, provideMockTranslation()]
+      imports: [IgoMessageModule],
+      providers: [
+        QueryService,
+        provideMockTranslation(),
+        provideHttpClient(withInterceptorsFromDi())
+      ]
     });
   });
 
