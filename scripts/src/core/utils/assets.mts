@@ -13,10 +13,6 @@ const distPath = resolveDist(packageName);
 
 export async function copyExternalAssets(): Promise<void> {
   const startTime = performance.now();
-  const input = join(PATHS.nodeModules, '@mdi/angular-material/mdi.svg');
-  const output = join(distPath, 'assets/icons/mdi.svg');
-
-  await copyFile(input, output);
 
   const duration = getDuration(startTime);
   log.success(`✔ Copy external asset in ${duration}`);
