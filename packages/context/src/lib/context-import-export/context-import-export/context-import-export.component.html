@@ -29,7 +29,7 @@
         type="file"
         [style.display]="'none'"
         (click)="fileInput.value = null"
-        (change)="importFiles($event.target.files)"
+        (change)="importFiles($any($event.target).files)"
       />
     </div>
   </form>

@@ -7,8 +7,10 @@ import {
   Output
 } from '@angular/core';
 
-import { OnUpdateInputs, WidgetComponent } from '@igo2/common';
+import { OnUpdateInputs } from '@igo2/common/dynamic-component';
+import { WidgetComponent } from '@igo2/common/widget';
 
+import { OgcFilterableItemComponent } from '../../../filter/ogc-filterable-item/ogc-filterable-item.component';
 import { Layer } from '../../../layer/shared/layers/layer';
 import { IgoMap } from '../../../map/shared/map';
 
@@ -16,7 +18,9 @@ import { IgoMap } from '../../../map/shared/map';
   selector: 'igo-ogc-filter',
   templateUrl: './ogc-filter.component.html',
   styleUrls: ['./ogc-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [OgcFilterableItemComponent]
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   @Input() layer: Layer;

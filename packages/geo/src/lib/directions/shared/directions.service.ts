@@ -1,9 +1,12 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 
-import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
+import { ActivityService } from '@igo2/core/activity';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 import { SubjectStatus } from '@igo2/utils';
 
+import { Position } from 'geojson';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -23,9 +26,7 @@ import {
   formatInstruction
 } from './directions.utils';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class DirectionsService {
   constructor(
     private directionsSourceService: DirectionsSourceService,
@@ -37,22 +38,22 @@ export class DirectionsService {
   ) {}
 
   route(
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]>[] {
+  ): Observable<Direction[]> {
     if (coordinates.length === 0) {
       return;
     }
-    return this.directionsSourceService.sources
-      .filter((source: DirectionsSource) => source.enabled)
-      .map((source: DirectionsSource) =>
-        this.routeSource(source, coordinates, directionsOptions)
-      );
+    return this.routeSource(
+      this.directionsSourceService.sources[0],
+      coordinates,
+      directionsOptions
+    );
   }
 
   routeSource(
     source: DirectionsSource,
-    coordinates: [number, number][],
+    coordinates: Position[],
     directionsOptions: DirectionOptions = {}
   ): Observable<Direction[]> {
     const request = source.route(coordinates, directionsOptions);
@@ -71,15 +72,15 @@ export class DirectionsService {
       format: 'Letter',
       unit: 'mm' // default
     });
-    const dimensions = [
-      doc.internal.pageSize.width,
-      doc.internal.pageSize.height
-    ];
-    const margins = [10, 10, 10, 10];
-    const width = dimensions[0];
-    const height = dimensions[1] - margins[0] - margins[2];
-    const size: [number, number] = [width, height];
 
+    const { width: pageWidth, height: pageHeight } = doc.internal.pageSize;
+
+    /** top | right | bottom | left */
+    const margins: [number, number, number, number] = [20, 10, 20, 10];
+    this.addAttribution(map, doc, margins);
+    const width = pageWidth - margins[3] - margins[1];
+    const height = pageHeight - margins[0] - margins[2];
+    const imageDimensions: [number, number] = [width, height];
     const title = `${direction.title} (${formatDistance(
       direction.distance
     )}, ${formatDuration(direction.duration)})`;
@@ -89,10 +90,16 @@ export class DirectionsService {
       align: 'center'
     });
 
-    margins[0] += 20;
     const resolution = 96; // Default is 96
     this.printService
-      .addMap(doc, map, resolution, size, margins, PrintLegendPosition.none)
+      .addMap(
+        doc,
+        map,
+        resolution,
+        imageDimensions,
+        margins,
+        PrintLegendPosition.none
+      )
       .subscribe(async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           await this.addInstructions(doc, direction, title);
@@ -105,6 +112,25 @@ export class DirectionsService {
       });
 
     return status$;
+  }
+
+  private addAttribution(
+    map: IgoMap,
+    doc: jsPDF,
+    margins: [number, number, number, number]
+  ) {
+    const verticalSpacing: number = 5;
+    const attributionText: string = this.printService.getAttributionText(map);
+    if (attributionText) {
+      margins[2] += verticalSpacing;
+      const xPosition = margins[3];
+      const marginBottom = margins[2];
+      // calculate text position Y
+      const yPosition =
+        doc.internal.pageSize.height - marginBottom + verticalSpacing;
+      doc.setFontSize(10);
+      doc.text(attributionText, xPosition, yPosition);
+    }
   }
 
   private async setHTMLTableContent(
@@ -153,7 +179,7 @@ export class DirectionsService {
     for (let index = 0; index < matListItem.length; index++) {
       const element = matListItem[index];
       const icon = element.getElementsByTagName('mat-icon')[0] as HTMLElement;
-      const iconName = icon.getAttribute('data-mat-icon-name') as string;
+      const iconName = icon.innerText;
       const found = iconsArray.some((el) => el.name === iconName);
       if (!found) {
         const iconCanvas = await html2canvas(icon, { scale: 3 });

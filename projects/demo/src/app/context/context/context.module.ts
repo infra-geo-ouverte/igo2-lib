@@ -1,7 +1,7 @@
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
-import { IgoPanelModule } from '@igo2/common';
+import { IgoPanelModule } from '@igo2/common/panel';
 import { IgoContextModule } from '@igo2/context';
 import {
   IgoFeatureModule,
@@ -12,16 +12,13 @@ import {
   IgoQueryModule
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
 import { AppContextRoutingModule } from './context-routing.module';
 import { AppContextComponent } from './context.component';
 
 @NgModule({
-  declarations: [AppContextComponent],
   imports: [
     HttpClientJsonpModule,
     AppContextRoutingModule,
-    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoLayerModule,
@@ -29,7 +26,8 @@ import { AppContextComponent } from './context.component';
     IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
-    IgoContextModule
+    IgoContextModule,
+    AppContextComponent
   ],
   exports: [AppContextComponent]
 })

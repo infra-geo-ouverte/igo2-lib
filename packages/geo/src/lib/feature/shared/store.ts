@@ -1,4 +1,4 @@
-import { EntityKey, EntityStore, getEntityId } from '@igo2/common';
+import { EntityKey, EntityStore, getEntityId } from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import * as olextent from 'ol/extent';

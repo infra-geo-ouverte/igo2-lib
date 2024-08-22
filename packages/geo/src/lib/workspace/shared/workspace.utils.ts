@@ -3,12 +3,12 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions,
   EntityTableButton,
+  EntityTableColumn,
   EntityTableColumnRenderer,
-  EntityTableTemplate,
-  Workspace
-} from '@igo2/common';
-import { EntityTableColumn } from '@igo2/common';
-import { StorageScope } from '@igo2/core';
+  EntityTableTemplate
+} from '@igo2/common/entity';
+import { Workspace } from '@igo2/common/workspace';
+import { StorageScope } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -150,7 +150,7 @@ export function getGeoServiceAction(
           } else {
             return [
               {
-                icon: 'plus',
+                icon: 'add',
                 color: 'primary',
                 click: (row, record) => {
                   addOrRemoveLayer(

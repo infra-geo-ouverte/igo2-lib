@@ -1,14 +1,14 @@
-import { DatePipe } from '@angular/common';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
 
-import { Action, Widget } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
+} from '@igo2/core/storage';
 import { EditionWorkspace, OgcFilterWidget } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -36,12 +36,13 @@ export class EditionActionsService implements OnDestroy {
   }
 
   constructor(
-    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
+    @Optional()
+    @Inject(OgcFilterWidget)
+    private ogcFilterWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private mediaService: MediaService,
-    private toolState: ToolState,
-    private datePipe: DatePipe
+    private toolState: ToolState
   ) {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
@@ -95,8 +96,7 @@ export class EditionActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState,
-      this.datePipe
+      this.toolState
     );
   }
 }

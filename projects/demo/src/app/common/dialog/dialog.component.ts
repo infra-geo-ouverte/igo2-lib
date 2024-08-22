@@ -1,22 +1,47 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 import {
-  Choice,
   ConfirmDialogService,
+  IgoConfirmDialogModule
+} from '@igo2/common/confirm-dialog';
+import {
   FormDialogService,
   FormFieldConfig,
   FormGroupsConfig,
-  JsonDialogService,
-  SelectValueDialogService
-} from '@igo2/common';
+  IgoFormDialogModule
+} from '@igo2/common/form';
+import {
+  IgoJsonDialogModule,
+  JsonDialogService
+} from '@igo2/common/json-dialog';
+import {
+  Choice,
+  IgoSelectValueDialogModule,
+  SelectValueDialogService,
+  SelectValueDialogType
+} from '@igo2/common/select-value-dialog';
 
-import { SelectValueDialogType } from 'packages/common/src/lib/select-value-dialog/select-value-dialog.enums';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss']
+  styleUrls: ['./dialog.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoConfirmDialogModule,
+    IgoSelectValueDialogModule,
+    IgoFormDialogModule,
+    IgoJsonDialogModule,
+    MatButtonModule,
+    MatDividerModule
+  ]
 })
 export class AppDialogComponent {
   constructor(

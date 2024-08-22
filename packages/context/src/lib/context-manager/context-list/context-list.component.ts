@@ -1,3 +1,4 @@
+import { AsyncPipe, KeyValuePipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,11 +9,28 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ActionStore, ActionbarMode } from '@igo2/common';
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode
+} from '@igo2/common/action';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import type { IgoMap } from '@igo2/geo';
 
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
@@ -20,6 +38,7 @@ import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
+import { ContextItemComponent } from '../context-item/context-item.component';
 import {
   ContextProfils,
   ContextServiceOptions,
@@ -33,7 +52,28 @@ import { ContextListControlsEnum } from './context-list.enum';
   selector: 'igo-context-list',
   templateUrl: './context-list.component.html',
   styleUrls: ['./context-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    ActionbarComponent,
+    MatMenuModule,
+    NgFor,
+    MatCheckboxModule,
+    CollapsibleComponent,
+    ContextItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;
@@ -56,24 +96,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  @Input()
-  get selectedContext(): DetailedContext {
-    return this._selectedContext;
-  }
-  set selectedContext(value: DetailedContext) {
-    this._selectedContext = value;
-    this.cdRef.detectChanges();
-  }
-  private _selectedContext: DetailedContext;
+  @Input() selectedContext: DetailedContext;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Input()
   get defaultContextId(): string {
@@ -180,7 +205,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContext'
         ),
-        icon: 'map-outline',
+        icon: 'star',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContextTooltip'
         ),
@@ -193,7 +218,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.contextMap'
         ),
-        icon: 'map-check',
+        icon: 'map',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.contextMapTooltip'
         ),
@@ -338,8 +363,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .toLowerCase();
   }
 
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
+  toggleSort() {
+    this.sortedAlpha = !this.sortedAlpha;
   }
 
   clearFilter() {

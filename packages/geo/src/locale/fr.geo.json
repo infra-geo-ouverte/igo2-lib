@@ -346,7 +346,8 @@
           "bottomright": "Coin bas droit de la carte",
           "newpage": "Sur une nouvelle page",
           "newimage": "Sur une nouvelle image"
-        }
+        },
+        "showNorthArrow": "Afficher la flèche du nord"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",
@@ -378,7 +379,12 @@
           "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
           "copyTitle": "Itinéraire"
         },
-        "toggleActive": "Activer le contrôle d'itinéraire"
+        "toggleActive": "Activer le contrôle d'itinéraire",
+        "toggleType": "Inclure les chemins forestiers",
+        "forestRoadsWarning": {
+          "title": "Avertissement",
+          "text": "Certains chemins forestiers peuvent être impraticables ou non carrossables."
+        }
       },
       "directions": {
         "uturn": "demi-tour",
@@ -511,7 +517,7 @@
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites":"Numéro d'unite"
+            "unites": "Unités (appartements, bureaux, etc.)"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -676,7 +682,7 @@
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
         "polices": "Poste de police",
-        "unites":"Numéro d'unite"
+        "unites": "Numéro d'unite"
       },
       "measure": {
         "dialog": {

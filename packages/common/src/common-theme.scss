@@ -1,11 +1,11 @@
-@use './lib/action/action.theming.scss' as action;
-@use './lib/collapsible/collapsible.theming.scss' as collapsible;
-@use './lib/entity/entity.theming.scss' as entity;
-@use './lib/list/list.theming.scss' as list;
-@use './lib/panel/panel.theming.scss' as panel;
-@use './lib/tool/tool.theming.scss' as tool;
-@use './lib/interactive-tour/interactive-tour.theming.scss' as interactive-tour;
-@use './lib/home-button/home-button.theming.scss' as home-button;
+@use '../action/src/action.theming.scss' as action;
+@use '../collapsible/src/collapsible.theming.scss' as collapsible;
+@use '../entity/src/entity.theming.scss' as entity;
+@use '../list/src/list.theming.scss' as list;
+@use '../panel/src/panel.theming.scss' as panel;
+@use '../tool/src/tool.theming.scss' as tool;
+@use '../interactive-tour/src/interactive-tour.theming.scss' as interactive-tour;
+@use '../home-button/src/home-button.theming.scss' as home-button;
 
 @mixin common-component-themes($theme) {
   @include action.igo-action-theming($theme);

@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import { ILayerSearchResultFormatter, ILayerSearchSource } from './ilayer';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * ILayer search result formatter factory
@@ -60,6 +63,16 @@ export function provideILayerSearchSource() {
       StorageService,
       ConfigService,
       ILayerSearchResultFormatter
+    ]
+  };
+}
+
+export function withILayerSource(): SearchSourceFeature<SearchSourceKind.ILayer> {
+  return {
+    kind: SearchSourceKind.ILayer,
+    providers: [
+      provideILayerSearchSource(),
+      provideILayerSearchResultFormatter()
     ]
   };
 }

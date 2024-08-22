@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import pointOnFeature from '@turf/point-on-feature';
-import { SimpleDocumentSearchResultSetUnit } from 'flexsearch';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { FEATURE } from '../../../feature/shared/feature.enums';
@@ -103,8 +103,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         const termToUse = term;
         fswi.searchDocument
           .search(termToUse, { limit: page * limitValue })
-          .map((i) => {
-            const foundIn: SimpleDocumentSearchResultSetUnit = i;
+          .map((foundIn) => {
             const field = foundIn.field;
             foundIn.result.map((index) => {
               const feature = fswi.index.get(index);
@@ -168,7 +167,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.feature.meta.title,
         titleHtml: titleHtml + subtitleHtml2,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: data.score,
         nextPage:
           resultsCnt % +this.options.params.limit === 0 &&

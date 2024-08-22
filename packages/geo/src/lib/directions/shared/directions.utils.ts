@@ -1,4 +1,4 @@
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 import { NumberUtils, uuid } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -425,7 +425,7 @@ export function formatDuration(duration: number): string {
 export function formatInstruction(
   type,
   modifier,
-  route,
+  route: string = 'Voie',
   direction,
   stepPosition,
   exit,
@@ -434,7 +434,7 @@ export function formatInstruction(
 ) {
   const translate = languageService.translate;
   let directive;
-  let image = 'forward';
+  let image = 'arrow_forward';
   let cssClass = 'rotate-270';
   const translatedDirection = translateBearing(direction, languageService);
   const translatedModifier = translateModifier(modifier, languageService);
@@ -450,27 +450,27 @@ export function formatInstruction(
   }
 
   if (modifier === 'uturn') {
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-90';
   } else if (modifier === 'sharp right') {
-    image = 'subdirectory-arrow-right';
+    image = 'subdirectory_arrow_right';
     cssClass = 'icon-flipped';
   } else if (modifier === 'right') {
-    image = 'subdirectory-arrow-right';
+    image = 'subdirectory_arrow_right';
     cssClass = 'icon-flipped';
   } else if (modifier === 'slight right') {
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-290';
   } else if (modifier === 'straight') {
-    image = 'forward';
+    image = 'arrow_forward';
   } else if (modifier === 'slight left') {
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-250';
   } else if (modifier === 'left') {
-    image = 'subdirectory-arrow-left';
+    image = 'subdirectory_arrow_left';
     cssClass = 'icon-flipped';
   } else if (modifier === 'sharp left') {
-    image = 'subdirectory-arrow-left';
+    image = 'subdirectory_arrow_left';
     cssClass = 'icon-flipped';
   }
 
@@ -493,14 +493,14 @@ export function formatInstruction(
       route,
       translatedDirection
     });
-    image = 'compass';
+    image = 'explore';
     cssClass = '';
   } else if (type === 'depart') {
     directive = translate.instant('igo.geo.directions.depart', {
       route,
       translatedDirection
     });
-    image = 'compass';
+    image = 'explore';
     cssClass = '';
   } else if (type === 'arrive') {
     if (lastStep) {
@@ -514,12 +514,12 @@ export function formatInstruction(
       directive = translate.instant('igo.geo.directions.arrive.intermediate', {
         route
       });
-      image = 'map-marker';
+      image = 'location_on';
       cssClass = '';
     }
   } else if (type === 'merge') {
     directive = translate.instant('igo.geo.directions.merge', { route });
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-270';
   } else if (type === 'on ramp') {
     directive = translate.instant('igo.geo.directions.on ramp', {
@@ -548,7 +548,7 @@ export function formatInstruction(
     directive = translate.instant('igo.geo.directions.continue.notUturn', {
       route
     });
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-270';
   } else if (type === 'roundabout') {
     const cntSuffix =
@@ -560,21 +560,21 @@ export function formatInstruction(
       cntSuffix,
       route
     });
-    image = 'chart-donut';
+    image = 'donut_large';
     cssClass = '';
   } else if (type === 'rotary') {
     directive = translate.instant('igo.geo.directions.rotary');
-    image = 'chart-donut';
+    image = 'donut_large';
     cssClass = '';
   } else if (type === 'roundabout turn') {
     directive = translate.instant('igo.geo.directions.roundabout turn');
-    image = 'chart-donut';
+    image = 'donut_large';
     cssClass = '';
   } else if (type === 'exit roundabout') {
     directive = translate.instant('igo.geo.directions.exit roundabout', {
       route
     });
-    image = 'forward';
+    image = 'arrow_forward';
     cssClass = 'rotate-270';
   } else if (type === 'notification') {
     directive = translate.instant('igo.geo.directions.notification');
@@ -587,9 +587,9 @@ export function formatInstruction(
     directive = translate.instant('igo.geo.directions.unknown');
   }
 
-  image = lastStep ? 'flag-variant' : image;
+  image = lastStep ? 'flag' : image;
   cssClass = lastStep ? '' : cssClass;
-  image = stepPosition === 0 ? 'compass' : image;
+  image = stepPosition === 0 ? 'explore' : image;
   cssClass = stepPosition === 0 ? '' : cssClass;
 
   return { instruction: directive, image, cssClass };

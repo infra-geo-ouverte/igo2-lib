@@ -1,4 +1,5 @@
 export * from './shared';
+export * from './layer.module';
 export * from './layer-item';
 export * from './layer-legend';
 export * from './layer-legend-item';

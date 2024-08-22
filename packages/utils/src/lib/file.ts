@@ -32,3 +32,16 @@ export function downloadFromUri(uri: string, fileName: string) {
 
   document.body.removeChild(element);
 }
+
+/**
+ * Validate if string is valid json object
+ * @param jsonString
+ * @return boolean
+ */
+export function isValidJSON(jsonString: string): boolean {
+  try {
+    return JSON.parse(jsonString) && !!jsonString;
+  } catch (e) {
+    return false;
+  }
+}

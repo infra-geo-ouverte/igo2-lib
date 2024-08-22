@@ -1,6 +1,6 @@
 {
   "name": "@igo2/auth",
-  "version": "16.3.0",
+  "version": "17.0.0-next.17",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -17,13 +17,35 @@
   },
   "scripts": {
     "build": "ng build auth --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/postbuild-library.mts auth",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint auth",
+    "lint.fix": "ng lint auth --fix",
     "test": "ng test auth --watch=false",
+    "test.watch": "ng test auth",
     "watch": "ng build auth --watch"
   },
   "exports": {
     ".": {
       "import": "./src/public_api.ts"
+    },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./facebook": {
+      "import": "./facebook/src/public_api.ts"
+    },
+    "./form": {
+      "import": "./form/src/public_api.ts"
+    },
+    "./google": {
+      "import": "./google/src/public_api.ts"
+    },
+    "./internal": {
+      "import": "./internal/src/public_api.ts"
+    },
+    "./microsoft": {
+      "import": "./microsoft/src/public_api.ts"
     }
   },
   "dependencies": {
@@ -33,14 +55,15 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^16.2.4",
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/forms": "^16.2.5",
-    "@angular/material": "^16.2.4",
-    "@angular/router": "^16.2.5",
+    "@angular/cdk": "^17.0.3",
+    "@angular/common": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/forms": "^17.0.6",
+    "@angular/material": "^17.0.3",
+    "@angular/router": "^17.0.6",
     "@azure/msal-angular": "^3.0.4",
     "@azure/msal-browser": "^3.0.4",
+    "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/utils": "*",
     "rxjs": "^7.8.0"

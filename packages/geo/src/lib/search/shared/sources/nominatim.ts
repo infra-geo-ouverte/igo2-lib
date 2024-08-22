@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
 import { Observable, of } from 'rxjs';
@@ -211,7 +211,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.display_name,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: computeTermSimilarity(term.trim(), data.display_name)
       },
       data: {

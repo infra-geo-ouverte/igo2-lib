@@ -1,11 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TableActionColor, TableDatabase, TableModel } from '@igo2/common';
+import {
+  TableActionColor,
+  TableComponent,
+  TableDatabase,
+  TableModel
+} from '@igo2/common/table';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, TableComponent]
 })
 export class AppTableComponent implements OnInit {
   public database: TableDatabase;
@@ -33,7 +43,7 @@ export class AppTableComponent implements OnInit {
     ],
     actions: [
       {
-        icon: 'file-document',
+        icon: 'description',
         color: TableActionColor.primary,
         click: (row) => this.showName(row.name)
       }

@@ -1,5 +1,4 @@
 import olFormatEsriJSON from 'ol/format/EsriJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import olSourceVector from 'ol/source/Vector';
 
@@ -8,10 +7,10 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceVector<OlGeometry>;
+  public declare ol: olSourceVector;
   public declare options: ArcGISRestDataSourceOptions;
 
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();
     return new olSourceVector({
       attributions: this.options.params.attributions,

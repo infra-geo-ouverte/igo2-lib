@@ -1,27 +1,24 @@
-<h2 mat-dialog-title class="mat-typography">
+<h2 mat-dialog-title>
   {{ 'igo.geo.style.styleModal' | translate }}
 </h2>
 <div mat-dialog-content>
-  <div class="edition-drawing mat-typography">
+  <div class="edit-colorpicker">
     <form class="igo-form" [formGroup]="form">
-      <div
-        class="fill-color-picker mat-typography"
-        *ngIf="linestringOnly !== true"
-      >
-        <span>
-          <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
-          {{ 'igo.geo.style.fill' | translate }}
-        </span>
-        <igo-color-picker-form-field
-          formControlName="fill"
-          (colorChange)="setLayerFillColor($event)"
-        ></igo-color-picker-form-field>
-      </div>
+      <div class="color-picker">
+        <ng-container *ngIf="linestringOnly !== true">
+          <span>
+            <mat-icon class="stroke-palette-icon">format_color_fill</mat-icon>
+            {{ 'igo.geo.style.fill' | translate }}
+          </span>
 
-      <div class="stroke-color-picker mat-typography">
+          <igo-color-picker-form-field
+            formControlName="fill"
+            (colorChange)="setLayerFillColor($event)"
+          ></igo-color-picker-form-field>
+        </ng-container>
+
         <span>
-          <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
-          </mat-icon>
+          <mat-icon class="stroke-palette-icon">border_color</mat-icon>
           {{ 'igo.geo.style.stroke' | translate }}
         </span>
         <igo-color-picker-form-field

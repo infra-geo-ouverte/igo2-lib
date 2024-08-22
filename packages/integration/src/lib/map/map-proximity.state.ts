@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core/storage';
 import {
   FEATURE,
   Feature,
@@ -135,7 +135,7 @@ export class MapProximityState {
 
             layersToMonitor.map((layerToMonitor) => {
               const layerSource =
-                layerToMonitor.ol.getSource() as olVectorSource<Geometry>;
+                layerToMonitor.ol.getSource() as olVectorSource;
 
               // Mostly for polygon features.
               const olFeaturesAtCoordinate =

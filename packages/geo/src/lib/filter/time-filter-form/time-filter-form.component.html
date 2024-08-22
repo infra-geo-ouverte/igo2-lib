@@ -8,9 +8,9 @@
       ></mat-datetimepicker-toggle>
       <mat-datetimepicker
         #datetimePicker
-        type="{{ type }}"
-        openOnFocus="true"
-        timeInterval="5"
+        [type]="type"
+        [openOnFocus]="true"
+        [timeInterval]="5"
       ></mat-datetimepicker>
       <input
         matInput
@@ -36,9 +36,9 @@
         ></mat-datetimepicker-toggle>
         <mat-datetimepicker
           #minDatetimePicker
-          type="{{ type }}"
-          openOnFocus="true"
-          timeInterval="5"
+          [type]="type"
+          [openOnFocus]="true"
+          [timeInterval]="5"
         ></mat-datetimepicker>
         <input
           matInput
@@ -64,9 +64,9 @@
         ></mat-datetimepicker-toggle>
         <mat-datetimepicker
           #maxDatetimePicker
-          type="{{ type }}"
-          openOnFocus="true"
-          timeInterval="5"
+          [type]="type"
+          [openOnFocus]="true"
+          [timeInterval]="5"
         ></mat-datetimepicker>
         <input
           matInput
@@ -187,7 +187,7 @@
       color="primary"
       (click)="playYear($event)"
     >
-      <mat-icon svgIcon="{{ playIcon }}"></mat-icon>
+      <mat-icon>{{ playIcon }}</mat-icon>
     </button>
     <button
       [disabled]="!options.enabled || !layer.visible"
@@ -195,7 +195,7 @@
       color="primary"
       (click)="resetFilter($event)"
     >
-      <mat-icon svgIcon="{{ resetIcon }}"></mat-icon>
+      <mat-icon>{{ resetIcon }}</mat-icon>
     </button>
   </div>
 </div>
@@ -228,6 +228,6 @@
   </mat-slider>
   <p class="date-below">{{ handleSliderTooltip() }}</p>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
-    <mat-icon svgIcon="{{ playIcon }}"></mat-icon>
+    <mat-icon>{{ playIcon }}</mat-icon>
   </button>
 </div>

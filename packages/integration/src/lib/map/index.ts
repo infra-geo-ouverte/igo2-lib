@@ -6,3 +6,4 @@ export * from './map-tool';
 export * from './map-tools';
 export * from './map.state';
 export * from './map-proximity.state';
+export * from './map.directive';

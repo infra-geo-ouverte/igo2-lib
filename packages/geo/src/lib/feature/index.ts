@@ -1,3 +1,4 @@
 export * from './shared';
-export * from './feature-details/feature-details.component';
+export * from './feature.module';
+export * from './feature-details';
 export * from './feature-form/feature-form.component';

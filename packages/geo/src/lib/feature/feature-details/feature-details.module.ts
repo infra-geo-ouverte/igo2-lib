@@ -1,25 +1,18 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-
-import { IgoImageModule, IgoKeyValueModule } from '@igo2/common';
-import { IgoLanguageModule } from '@igo2/core';
 
 import { FeatureDetailsComponent } from './feature-details.component';
 import { FeatureDetailsDirective } from './feature-details.directive';
 
+export const FEATURE_DETAILS_DIRECTIVES = [
+  FeatureDetailsComponent,
+  FeatureDetailsDirective
+] as const;
+
 /**
- * @ignore
+ * @deprecated import the FeatureDetailsComponent, FeatureDetailsDirective directly or the FEATURE_DETAILS_DIRECTIVES for all
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    IgoLanguageModule,
-    IgoKeyValueModule,
-    IgoImageModule
-  ],
-  exports: [FeatureDetailsComponent, FeatureDetailsDirective],
-  declarations: [FeatureDetailsComponent, FeatureDetailsDirective]
+  imports: [...FEATURE_DETAILS_DIRECTIVES],
+  exports: [...FEATURE_DETAILS_DIRECTIVES]
 })
 export class IgoFeatureDetailsModule {}

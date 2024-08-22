@@ -7,14 +7,16 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { AuthInterceptor } from '@igo2/auth';
+import { ActionStore } from '@igo2/common/action';
 import {
-  ActionStore,
   EntityStoreFilterSelectionStrategy,
   EntityTableButton,
   EntityTableColumnRenderer,
   EntityTableTemplate
-} from '@igo2/common';
-import { ConfigService, MessageService, StorageService } from '@igo2/core';
+} from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 
 import olFeature from 'ol/Feature';
 import { FeatureLoader } from 'ol/featureloader';
@@ -306,7 +308,7 @@ export class EditionWorkspaceService {
           return [
             {
               editMode: false,
-              icon: 'pencil',
+              icon: 'edit',
               color: 'primary',
               disabled:
                 layer.dataSource.options.edition.modifyButton === false
@@ -339,7 +341,7 @@ export class EditionWorkspaceService {
             },
             {
               editMode: true,
-              icon: 'alpha-x',
+              icon: 'close',
               color: 'primary',
               disabled: this.loading,
               click: (feature) => {

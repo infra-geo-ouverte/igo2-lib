@@ -1,4 +1,6 @@
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import { Projection } from '../../../map/shared/projection.interfaces';
 import { ProjectionService } from '../../../map/shared/projection.service';
@@ -7,6 +9,7 @@ import {
   CoordinatesSearchResultFormatter
 } from './coordinates';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * Coordinate search result formatter factory
@@ -56,5 +59,15 @@ export function provideCoordinatesReverseSearchSource() {
     useFactory: CoordinatesReverseSearchSourceFactory,
     multi: true,
     deps: [ConfigService, LanguageService, StorageService, ProjectionService]
+  };
+}
+
+export function withCoordinatesReverseSource(): SearchSourceFeature<SearchSourceKind.CoordinatesReverse> {
+  return {
+    kind: SearchSourceKind.CoordinatesReverse,
+    providers: [
+      provideCoordinatesReverseSearchSource(),
+      provideDefaultCoordinatesSearchResultFormatter()
+    ]
   };
 }

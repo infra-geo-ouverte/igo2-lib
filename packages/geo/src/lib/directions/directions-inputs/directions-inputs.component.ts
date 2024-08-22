@@ -1,4 +1,11 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray
+} from '@angular/cdk/drag-drop';
+import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -6,10 +13,20 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
-import { MatAutocomplete } from '@angular/material/autocomplete';
-import { MatOption } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import {
+  MatAutocomplete,
+  MatAutocompleteModule
+} from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olObservable from 'ol/Observable';
 import * as olProj from 'ol/proj';
@@ -30,7 +47,26 @@ import { StopsFeatureStore, StopsStore } from '../shared/store';
 @Component({
   selector: 'igo-directions-inputs',
   templateUrl: './directions-inputs.component.html',
-  styleUrls: ['./directions-inputs.component.scss']
+  styleUrls: ['./directions-inputs.component.scss'],
+  standalone: true,
+  imports: [
+    CdkDropList,
+    NgFor,
+    CdkDrag,
+    NgClass,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    MatOptionModule,
+    CdkDragHandle,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class DirectionsInputsComponent implements OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];

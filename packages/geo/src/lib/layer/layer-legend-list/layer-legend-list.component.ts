@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,6 +8,12 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import {
   BehaviorSubject,
@@ -17,13 +24,27 @@ import {
 } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
+import { LayerLegendItemComponent } from '../layer-legend-item/layer-legend-item.component';
 import { Layer } from '../shared/layers/layer';
 
 @Component({
   selector: 'igo-layer-legend-list',
   templateUrl: './layer-legend-list.component.html',
   styleUrls: ['./layer-legend-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatDividerModule,
+    ListComponent,
+    NgFor,
+    LayerLegendItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;

@@ -8,8 +8,8 @@ import {
   Self
 } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
-import { MediaService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import { MediaService } from '@igo2/core/media';
 import { SubjectStatus } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -43,7 +43,8 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
  * the layer level.
  */
 @Directive({
-  selector: '[igoSearchPointerSummary]'
+  selector: '[igoSearchPointerSummary]',
+  standalone: true
 })
 export class SearchPointerSummaryDirective
   implements OnInit, OnDestroy, AfterContentChecked

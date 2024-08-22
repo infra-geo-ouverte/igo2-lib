@@ -1,15 +1,20 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnInit
 } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
-import { ToolComponent } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import type { WorkspaceStore } from '@igo2/common/workspace';
+import { ContextImportExportComponent } from '@igo2/context';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportOptions,
   IgoMap,
+  ImportExportComponent,
   ProjectionsLimitationsOptions
 } from '@igo2/geo';
 
@@ -25,13 +30,22 @@ import {
 @ToolComponent({
   name: 'importExport',
   title: 'igo.integration.tools.importExport',
-  icon: 'file-move'
+  icon: 'file_save'
 })
 @Component({
   selector: 'igo-import-export-tool',
   templateUrl: './import-export-tool.component.html',
   styleUrls: ['./import-export-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatTabsModule,
+    ImportExportComponent,
+    ContextImportExportComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class ImportExportToolComponent implements OnInit {
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;

@@ -1,15 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { IgoLanguageModule, IgoMessageModule } from '@igo2/core';
+import { provideMockTranslation } from '@igo2/core/language';
+import { IgoMessageModule } from '@igo2/core/message';
 
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, IgoLanguageModule, IgoMessageModule],
-      providers: [AuthService]
+      imports: [HttpClientModule, IgoMessageModule],
+      providers: [AuthService, provideMockTranslation()]
     });
   });
 

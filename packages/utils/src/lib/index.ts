@@ -1,6 +1,7 @@
 export * from './base64';
 export * from './cache.utils';
 export * from './clipboard';
+export * from './compression';
 export * from './change';
 export * from './change.interface';
 export * from './dom.utils';

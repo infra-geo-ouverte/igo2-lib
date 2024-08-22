@@ -16,16 +16,13 @@
     [color]="default ? 'primary' : 'default'"
     (click)="favoriteClick(context)"
   >
-    <mat-icon
-      *ngIf="!context.iconImage"
-      svgIcon="{{
-        context.icon
-          ? context.icon
-          : context.scope === 'public'
-          ? 'earth'
+    <mat-icon *ngIf="!context.iconImage">{{
+      context.icon
+        ? context.icon
+        : context.scope === 'public'
+          ? 'public'
           : 'star'
-      }}"
-    ></mat-icon>
+    }}</mat-icon>
     <img *ngIf="context.iconImage" [src]="context.iconImage" />
   </button>
   <button
@@ -38,7 +35,7 @@
     [color]="default ? 'primary' : 'default'"
     (click)="favoriteClick(context)"
   >
-    <mat-icon svgIcon="star"></mat-icon>
+    <mat-icon>star</mat-icon>
   </button>
   <span matListItemTitle>{{ context.title }}</span>
 
@@ -62,7 +59,7 @@
       [color]="color"
       (click)="save.emit(context)"
     >
-      <mat-icon svgIcon="content-save"></mat-icon>
+      <mat-icon>save</mat-icon>
     </button>
 
     <div #actions class="igo-actions-expand-container">
@@ -76,16 +73,8 @@
         [color]="color"
         (click)="managePermissions.emit(context)"
       >
-        <mat-icon svgIcon="account-arrow-right"></mat-icon>
+        <mat-icon>manage_accounts</mat-icon>
       </button>
-
-      <!--button
-        mat-icon-button
-        [matTooltip]="'igo.context.contextManager.manageTools' | translate"
-        [color]="color"
-        (click)="manageTools.emit(context)">
-        <mat-icon svgIcon="widgets"></mat-icon>
-      </button-->
 
       <button
         *ngIf="!context.imported"
@@ -96,7 +85,7 @@
         [color]="color"
         (click)="clone.emit(context)"
       >
-        <mat-icon svgIcon="content-copy"></mat-icon>
+        <mat-icon>content_copy</mat-icon>
       </button>
 
       <button
@@ -111,7 +100,7 @@
         matTooltipShowDelay="500"
         (click)="edit.emit(context)"
       >
-        <mat-icon svgIcon="pencil"></mat-icon>
+        <mat-icon>edit</mat-icon>
       </button>
 
       <button
@@ -123,7 +112,7 @@
         matTooltipShowDelay="500"
         (click)="hide.emit(context)"
       >
-        <mat-icon svgIcon="eye"></mat-icon>
+        <mat-icon>visibility</mat-icon>
       </button>
 
       <button
@@ -135,7 +124,7 @@
         matTooltipShowDelay="500"
         (click)="show.emit(context)"
       >
-        <mat-icon svgIcon="eye-off"></mat-icon>
+        <mat-icon>visibility_off</mat-icon>
       </button>
 
       <button
@@ -150,7 +139,7 @@
         matTooltipShowDelay="500"
         (click)="delete.emit(context)"
       >
-        <mat-icon svgIcon="delete"></mat-icon>
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
 
@@ -163,7 +152,7 @@
       [collapsed]="collapsed"
       (click)="collapsed = !collapsed"
     >
-      <mat-icon svgIcon="dots-horizontal"></mat-icon>
+      <mat-icon>more_horiz</mat-icon>
     </button>
   </div>
 </mat-list-item>

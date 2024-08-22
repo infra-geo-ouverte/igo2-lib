@@ -22,6 +22,7 @@ export interface PrintOptions {
   showScale?: boolean;
   isPrintService: boolean;
   doZipFile: boolean;
+  showNorthArrow?: boolean;
 }
 
 export interface TextPdfSizeAndMargin {

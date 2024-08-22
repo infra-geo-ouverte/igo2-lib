@@ -208,7 +208,7 @@
             matTooltipClass="material-tooltip"
             (click)="emptySelect()"
           >
-            <mat-icon svgIcon="filter-remove"></mat-icon>
+            <mat-icon>filter_alt_off</mat-icon>
           </mat-button>
           <mat-form-field
             [style.width.%]="bundle.width ? bundle.width : undefined"
@@ -301,35 +301,65 @@
             matTooltipClass="material-tooltip"
             (click)="emptyAutocomplete()"
           >
-            <mat-icon svgIcon="filter-remove"></mat-icon>
+            <mat-icon>filter_alt_off</mat-icon>
           </mat-button>
           <mat-form-field
             *ngIf="filteredOgcAutocomplete[bundle.id]"
+            floatLabel="always"
             [style.width.%]="bundle.width ? bundle.width : undefined"
           >
+            <mat-label>{{ bundle.title }}</mat-label>
+            <mat-chip-set
+              *ngIf="
+                filteredOgcAutocomplete[bundle.id] && (bundle.showChips ?? true)
+              "
+            >
+              <mat-chip
+                *ngFor="let autocompleteEnabled of autocompleteEnableds"
+                (removed)="toggleSelection(autocompleteEnabled)"
+              >
+                {{ autocompleteEnabled }}
+                <button
+                  matChipRemove
+                  [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
             <input
               matInput
               type="text"
               formControlName="autocomplete"
-              #autocomplete
-              class="autocomplete"
+              #input
               [matAutocomplete]="auto"
-              [placeholder]="bundle.title"
+              (input)="onInputChange()"
             />
-            <mat-autocomplete
-              #auto="matAutocomplete"
-              #autocomplete
-              (optionSelected)="autocompleteOptionClick($event.option.value)"
-              [displayWith]="displayFn"
-            >
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
               <mat-option
                 *ngFor="
                   let ogcAutocomplete of filteredOgcAutocomplete[bundle.id]
                     | async
                 "
-                [value]="ogcAutocomplete"
+                id="mat-option"
+                [matTooltip]="getToolTip(ogcAutocomplete)"
               >
-                {{ ogcAutocomplete.value }}
+                <div
+                  (click)="
+                    toggleAutocompleteOption($event, ogcAutocomplete.value)
+                  "
+                >
+                  <mat-checkbox
+                    id="mat-checkbox"
+                    color="primary"
+                    [checked]="checkedStatus(ogcAutocomplete.value)"
+                    (click)="
+                      toggleAutocompleteOption($event, ogcAutocomplete.value)
+                    "
+                  >
+                  </mat-checkbox>
+                  {{ ogcAutocomplete.value }}
+                </div>
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
@@ -346,8 +376,8 @@
   </h3>
   <h3 *ngIf="currentFilter.title">{{ currentFilter.title }}</h3>
   <igo-ogc-filter-time
-    [(datasource)]="datasource"
-    [(currentFilter)]="currentFilter"
+    [datasource]="datasource"
+    [currentFilter]="currentFilter"
     (changeProperty)="changeProperty($event.value, $event.pos)"
   >
   </igo-ogc-filter-time>

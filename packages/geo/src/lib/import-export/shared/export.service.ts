@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import { downloadContent } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -15,6 +15,8 @@ import {
   ExportNothingToExportError
 } from './export.errors';
 import { EncodingFormat, ExportFormat } from './export.type';
+
+const SHAPEFILE_FIELD_MAX_LENGHT = 255;
 
 @Injectable({
   providedIn: 'root'
@@ -78,9 +80,16 @@ export class ExportService {
     }
 
     return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
-      const keys = olFeature
+      let keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith(excludePrefix));
+
+      if (format === ExportFormat.Shapefile && olFeature.get('_style')) {
+        const style = JSON.stringify(olFeature.get('_style'));
+        if (style.length > SHAPEFILE_FIELD_MAX_LENGHT)
+          keys = keys.filter((key) => key !== '_style');
+      }
+
       const properties = keys.reduce(
         (acc: object, key: string) => {
           acc[key] = olFeature.get(key);

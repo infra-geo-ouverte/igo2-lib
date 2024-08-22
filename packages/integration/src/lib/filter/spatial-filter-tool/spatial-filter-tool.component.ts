@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,25 +9,32 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityStore, ToolComponent } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import {
   ClusterDataSource,
   DataSource,
   DataSourceService,
   ExportOptions,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
   Layer,
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
+  SpatialFilterItemComponent,
   SpatialFilterItemType,
   SpatialFilterQueryType,
   SpatialFilterService,
   SpatialFilterThematic,
   SpatialFilterType,
+  SpatialFilterTypeComponent,
   VectorLayer,
   createOverlayMarkerStyle,
   featureToOl,
@@ -35,7 +43,6 @@ import {
 
 import { EventsKey } from 'ol/events';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
@@ -58,7 +65,7 @@ import {
 @ToolComponent({
   name: 'spatialFilter',
   title: 'igo.integration.tools.spatialFilter',
-  icon: 'selection-marker'
+  icon: SELECTION_MARKER_ICON
 })
 /**
  * Spatial Filter Type
@@ -67,7 +74,16 @@ import {
   selector: 'igo-spatial-filter-tool',
   templateUrl: './spatial-filter-tool.component.html',
   styleUrls: ['./spatial-filter-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    SpatialFilterTypeComponent,
+    SpatialFilterItemComponent,
+    PanelComponent,
+    FeatureDetailsComponent,
+    NgIf,
+    AsyncPipe
+  ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {
@@ -477,9 +493,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          const ol = dataSource.ol as
-            | olSourceVector<OlGeometry>
-            | olSourceCluster;
+          const ol = dataSource.ol as olSourceVector | olSourceCluster;
           ol.addFeatures(featuresOl);
           olLayer.ol.setStyle(this.defaultStyle);
           this.map.addLayer(olLayer);
@@ -621,7 +635,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           const featuresOl = features.map((feature) => {
             return featureToOl(feature, this.map.projection);
           });
-          const ol = dataSource.ol as olSourceVector<OlGeometry>;
+          const ol = dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
           if (this.layers.find((layer) => layer.id === olLayer.id)) {
             this.map.removeLayer(

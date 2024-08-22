@@ -2,21 +2,35 @@ import { Component } from '@angular/core';
 
 import {
   DataSourceService,
+  DrawComponent,
   FeatureStore,
   FeatureWithDraw,
   IgoMap,
   LayerOptions,
   LayerService,
+  MapBrowserComponent,
   MapService,
   MapViewOptions,
   OSMDataSource,
-  OSMDataSourceOptions
+  OSMDataSourceOptions,
+  ZoomButtonComponent
 } from '@igo2/geo';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-draw',
   templateUrl: './draw.component.html',
-  styleUrls: ['./draw.component.scss']
+  styleUrls: ['./draw.component.scss'],
+  standalone: true,
+  imports: [
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    DrawComponent,
+    DocViewerComponent,
+    ExampleViewerComponent
+  ]
 })
 export class AppDrawComponent {
   public map: IgoMap = new IgoMap({

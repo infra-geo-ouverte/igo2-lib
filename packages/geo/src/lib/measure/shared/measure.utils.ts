@@ -1,4 +1,4 @@
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';

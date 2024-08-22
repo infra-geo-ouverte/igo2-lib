@@ -1,12 +1,22 @@
+import { AsyncPipe, KeyValuePipe, NgFor, NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { MediaService } from '@igo2/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -23,7 +33,23 @@ import {
 @Component({
   selector: 'igo-print-form',
   templateUrl: './print-form.component.html',
-  styleUrls: ['./print-form.component.scss']
+  styleUrls: ['./print-form.component.scss'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgIf,
+    MatSlideToggleModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatButtonModule,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class PrintFormComponent implements OnInit {
   public form: UntypedFormGroup;
@@ -148,6 +174,14 @@ export class PrintFormComponent implements OnInit {
     this.doZipFileField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get showNorth(): boolean {
+    return this.showNorthArrowField.value;
+  }
+  set showNorth(value: boolean) {
+    this.showNorthArrowField.setValue(value, { onlySelf: true });
+  }
+
   get outputFormatField() {
     return (this.form.controls as any).outputFormat as UntypedFormControl;
   }
@@ -188,6 +222,10 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).doZipFile as UntypedFormControl;
   }
 
+  get showNorthArrowField() {
+    return (this.form.controls as any).showNorth as UntypedFormControl;
+  }
+
   get titleField() {
     return (this.form.controls as any).title as UntypedFormControl;
   }
@@ -224,7 +262,8 @@ export class PrintFormComponent implements OnInit {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [{ hidden: this.isPrintService }]
+      doZipFile: [{ hidden: this.isPrintService }],
+      showNorthArrow: false
     });
   }
 
