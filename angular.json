@@ -190,6 +190,9 @@
               "projects/demo/src/favicon.ico",
               "projects/demo/src/assets"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "codeCoverage": true
           }
         },
