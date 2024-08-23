@@ -24,8 +24,6 @@ export class LongPressDirective {
   @Input() onlyIOS = true;
   @Output() longpress = new EventEmitter();
 
-  constructor() {}
-
   @HostListener('touchstart', ['$event'])
   public touchstart(e: TouchEvent) {
     if (e.touches.length > 1) {

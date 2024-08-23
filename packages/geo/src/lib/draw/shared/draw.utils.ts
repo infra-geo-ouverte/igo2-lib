@@ -23,8 +23,7 @@ import { CoordinatesUnit } from './draw.enum';
 export function createInteractionStyle(
   fillColor?: string,
   strokeColor?: string,
-  strokeWidth?: number,
-  label?: string
+  strokeWidth?: number
 ): Olstyle.Style {
   return new Olstyle.Style({
     stroke: new Olstyle.Stroke({

@@ -20,8 +20,6 @@ export class DrawStyleService {
   private offsetX = 0;
   private offsetY = 0;
 
-  constructor() {}
-
   getFillColor(): string {
     return this.fillColor;
   }

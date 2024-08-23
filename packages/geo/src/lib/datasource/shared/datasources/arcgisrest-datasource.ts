@@ -16,7 +16,7 @@ export class ArcGISRestDataSource extends DataSource {
       attributions: this.options.params.attributions,
       overlaps: false,
       format: esrijsonFormat,
-      url: function (extent, resolution, proj) {
+      url: function (extent) {
         const baseUrl = this.options.url + '/' + this.options.layer + '/query/';
         const geometry = encodeURIComponent(
           '{"xmin":' +
@@ -234,5 +234,7 @@ export class ArcGISRestDataSource extends DataSource {
     return svg;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

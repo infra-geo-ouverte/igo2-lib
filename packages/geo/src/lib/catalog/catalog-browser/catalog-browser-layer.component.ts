@@ -62,9 +62,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$ = new BehaviorSubject<boolean>(
-    false
-  );
+  public layerLegendShown$ = new BehaviorSubject<boolean>(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
   private mouseInsideAdd = false;
@@ -166,7 +164,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     this.onToggleClick(event);
   }
 
-  askForLegend(event) {
+  askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
     this.layerService
       .createAsyncLayer(this.layer.options)

@@ -63,8 +63,6 @@ export class WidgetOutletComponent implements OnDestroy {
    */
   @Output() cancel = new EventEmitter<any>();
 
-  constructor() {}
-
   /**
    * Destroy the current widget and all it's inner subscriptions
    * @internal

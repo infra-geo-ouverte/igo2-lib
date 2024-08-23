@@ -601,23 +601,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  // getButtonStyle(pb: OgcPushButton): {} {
-
-  //   let styles;
-  //   if (pb.color) {
-  //     styles = {
-  //       'background-color': pb.enabled ? `rgba(${pb.color})` : `rgba(255,255,255,0)`
-  //     };
-  //   } else {
-  //     styles = {
-  //       'background-color': pb.enabled ? 'accent': `rgba(255,255,255,0)`,
-  //       'color': pb.enabled ? `rgba(0,0,0,0.9)` : `rgba(33,33,33,0.38)`
-  //     }
-  //   }
-  //   return styles;
-  // }
-
-  getButtonColor(pushButton: OgcPushButton): {} {
+  getButtonColor(pushButton: OgcPushButton) {
     let styles;
     if (pushButton.color && pushButton.enabled) {
       styles = {
@@ -830,10 +814,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   isMoreResults(bundle, type) {
-    let selectorsLength = 0;
-    for (const selectors of bundle.selectors) {
-      selectorsLength++;
-    }
+    const selectorsLength = bundle.selectors.length;
     const index =
       type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
     return selectorsLength > index;
@@ -847,10 +828,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   isLessResults(bundle, type) {
-    let selectorsLength = 0;
-    for (const selectors of bundle.selectors) {
-      selectorsLength++;
-    }
+    const selectorsLength = bundle.selectors.length;
     const index =
       type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
     return this.baseIndex !== index && selectorsLength > this.baseIndex;

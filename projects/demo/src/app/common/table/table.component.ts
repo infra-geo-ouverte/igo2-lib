@@ -51,8 +51,6 @@ export class AppTableComponent implements OnInit {
     selectionCheckbox: true
   };
 
-  constructor() {}
-
   ngOnInit() {
     this.database = new TableDatabase([
       { id: '2', name: 'Name 2', description: 'Hello 2' },

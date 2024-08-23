@@ -316,7 +316,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       this.layer.dataSource.ol
         .getParams()
         .LAYERS.split(',')
-        .map((layer) => (STYLES += this.currentStyle + ','));
+        .map(() => (STYLES += this.currentStyle + ','));
       STYLES = STYLES.slice(0, -1);
       this.layer.dataSource.ol.updateParams({ STYLES });
     }

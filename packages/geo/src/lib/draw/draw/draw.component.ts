@@ -216,8 +216,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private activeDrawControl: DrawControl;
   private drawEnd$$: Subscription;
   private drawSelect$$: Subscription;
-  public selectedFeatures$ =
-    new BehaviorSubject<FeatureWithDraw[]>([]);
+  public selectedFeatures$ = new BehaviorSubject<FeatureWithDraw[]>([]);
   public fillForm: string;
   public strokeForm: string;
   public drawControlIsDisabled = true;
@@ -234,12 +233,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   public radiusFormControl = new UntypedFormControl(1000);
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public radiusFormControlChange$$: Subscription = new Subscription();
-  public predefinedRadius$ = new BehaviorSubject<number>(
-    undefined
-  );
-  public radiusDrawEnd$ = new BehaviorSubject<number>(
-    undefined
-  );
+  public predefinedRadius$ = new BehaviorSubject<number>(undefined);
+  public radiusDrawEnd$ = new BehaviorSubject<number>(undefined);
 
   /**
    * Available measure units for the measure type given
@@ -601,10 +596,9 @@ export class DrawComponent implements OnInit, OnDestroy {
               olGeometry,
               this.map.ol.getView().getProjection().getCode()
             );
-            let measureUnit: any;
             const temp: MeasureLengthUnit = entity.properties
               .measureUnit as MeasureLengthUnit;
-            measureUnit =
+            const measureUnit =
               MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             olGeometryLength = metersToUnit(olGeometryLength, temp);
             const lengthLabel =
@@ -635,10 +629,9 @@ export class DrawComponent implements OnInit, OnDestroy {
               olGeometry,
               this.map.ol.getView().getProjection().getCode()
             );
-            let measureUnit: any;
             const temp: MeasureAreaUnit = entity.properties
               .measureUnit as MeasureAreaUnit;
-            measureUnit =
+            const measureUnit =
               MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
             olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
             const lengthLabel =

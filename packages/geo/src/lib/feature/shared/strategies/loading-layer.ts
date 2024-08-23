@@ -1,7 +1,5 @@
 import { EntityStoreStrategy } from '@igo2/common/entity';
 
-import OlEvent from 'ol/events/Event';
-
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
@@ -73,7 +71,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
 
     this.onSourceChanges(store);
     const olSource = store.layer.ol.getSource();
-    olSource.on('change', (event: OlEvent) => {
+    olSource.on('change', () => {
       this.onSourceChanges(store);
     });
   }
@@ -93,9 +91,6 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach(
-      (entries: [FeatureStore, string]) => {}
-    );
     this.stores$$.clear();
   }
 

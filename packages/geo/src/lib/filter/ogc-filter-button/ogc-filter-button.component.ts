@@ -175,8 +175,6 @@ export class OgcFilterButtonComponent implements OnInit {
 
   public ogcFilterCollapse = false;
 
-  constructor() {}
-
   ngOnInit() {
     this.options = this.layer.dataSource
       .options as OgcFilterableDataSourceOptions;

@@ -80,7 +80,7 @@ export class VectorTileLayer extends Layer {
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
-      xhr.onload = (event) => {
+      xhr.onload = () => {
         if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
           const type = format.getType();
           let source;
@@ -127,7 +127,7 @@ export class VectorTileLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
     super.setMap(map);
   }

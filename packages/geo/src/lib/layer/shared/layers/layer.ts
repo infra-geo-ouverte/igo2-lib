@@ -32,9 +32,7 @@ export abstract class Layer {
   public ol: olLayer<olSource>;
   public olLoadingProblem = false;
   public status$: Subject<SubjectStatus>;
-  public hasBeenVisible$ = new BehaviorSubject<boolean>(
-    undefined
-  );
+  public hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
   private hasBeenVisible$$: Subscription;
   private resolution$$: Subscription;
 
@@ -93,8 +91,7 @@ export abstract class Layer {
   get isInResolutionsRange(): boolean {
     return this.isInResolutionsRange$.value;
   }
-  readonly isInResolutionsRange$ =
-    new BehaviorSubject<boolean>(false);
+  readonly isInResolutionsRange$ = new BehaviorSubject<boolean>(false);
 
   set maxResolution(value: number) {
     this.ol.setMaxResolution(value === 0 ? 0 : value || Infinity);
@@ -207,8 +204,6 @@ export abstract class Layer {
     if (!this.messageService) {
       return;
     }
-    message.title = message.title;
-    message.text = message.text;
     this.messageService.message(message as Message);
   }
 

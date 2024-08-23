@@ -39,6 +39,7 @@ export class DrawState {
       });
     });
     for (let store of this.stores) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       store = new FeatureStore<FeatureWithDraw>([], { map: this.mapState.map });
     }
   }

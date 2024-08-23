@@ -112,6 +112,7 @@ export class ExportService {
       const properties = keys.reduce(
         (acc: object, key: string) => {
           if (key && key !== 'geometry') {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             key === 'id' && olFeature.get('draw')
               ? (comment += key + ':' + olFeature.get('draw') + '   \r\n')
               : (comment += key + ':' + olFeature.get(key) + '   \r\n');

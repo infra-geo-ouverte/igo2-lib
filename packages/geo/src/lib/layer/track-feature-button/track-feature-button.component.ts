@@ -42,8 +42,6 @@ export class TrackFeatureButtonComponent implements OnInit {
 
   public color = 'primary';
 
-  constructor() {}
-
   ngOnInit() {
     this.color = this.trackFeature ? 'primary' : 'basic';
   }

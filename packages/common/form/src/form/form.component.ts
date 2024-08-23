@@ -55,8 +55,6 @@ export class FormComponent implements OnChanges {
     return this.buttons.nativeElement.children.length !== 0;
   }
 
-  constructor() {}
-
   /**
    * Is the entity or the template change, recreate the form or repopulate it.
    * @internal
@@ -101,10 +99,7 @@ export class FormComponent implements OnChanges {
     });
   }
 
-  private updateDataWithFormField(
-    data: Record<string, any>,
-    field: FormField
-  ) {
+  private updateDataWithFormField(data: Record<string, any>, field: FormField) {
     const control = field.control;
     if (!control.disabled) {
       data[field.name] = control.value;

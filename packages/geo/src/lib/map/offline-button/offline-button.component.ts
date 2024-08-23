@@ -28,8 +28,6 @@ export class OfflineButtonComponent implements OnInit {
   @Input() color: string;
   @Input() enabled = false;
 
-  constructor() {}
-
   ngOnInit(): void {
     this.map.forcedOffline$.next(this.enabled);
   }

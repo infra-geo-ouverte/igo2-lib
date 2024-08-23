@@ -14,8 +14,6 @@ export class OverlayService {
     undefined
   ]);
 
-  constructor() {}
-
   setFeatures(features: Feature[], action: OverlayAction = OverlayAction.None) {
     this.features$.next([features, action]);
   }

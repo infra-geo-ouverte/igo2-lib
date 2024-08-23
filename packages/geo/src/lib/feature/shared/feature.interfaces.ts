@@ -74,14 +74,18 @@ export interface FeatureStorePropertyTypeStrategyOptions
   extends FeatureStoreStrategyOptions {
   map: IgoMap;
 }
-export interface FeatureStoreInMapExtentStrategyOptions
-  extends FeatureStoreStrategyOptions {}
 
-export interface FeatureStoreInMapResolutionStrategyOptions
-  extends FeatureStoreStrategyOptions {}
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreInMapExtentStrategyOptions =
+  FeatureStoreStrategyOptions;
 
-export interface FeatureStoreLoadingLayerStrategyOptions
-  extends FeatureStoreStrategyOptions {}
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreInMapResolutionStrategyOptions =
+  FeatureStoreStrategyOptions;
+
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreLoadingLayerStrategyOptions =
+  FeatureStoreStrategyOptions;
 
 export interface FeatureStoreSearchIndexStrategyOptions
   extends EntityStoreStrategyOptions {

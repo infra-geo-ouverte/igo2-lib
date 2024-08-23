@@ -105,7 +105,7 @@ export class ContextService {
     if (this.authService.hasAuthService) {
       this.authService.logged$.subscribe((logged) => {
         if (logged) {
-          this.contexts$.pipe(skip(1), first()).subscribe((c) => {
+          this.contexts$.pipe(skip(1), first()).subscribe(() => {
             this.handleContextsChange();
           });
           this.loadContexts();
@@ -200,7 +200,7 @@ export class ContextService {
 
     const url = this.baseUrl + '/contexts/' + id;
     return this.http.delete<void>(url).pipe(
-      tap((res) => {
+      tap(() => {
         this.contexts$.next(contexts);
       })
     );
@@ -402,7 +402,7 @@ export class ContextService {
           this.addContextToList(_context);
           this.setContext(_context);
         },
-        (err) => {
+        () => {
           if (uri !== this.options.defaultContextUri) {
             this.loadContext(this.options.defaultContextUri);
           }
@@ -590,8 +590,8 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
-          (catalogLayer.visible = layer.visible),
-            (catalogLayer.opacity = layer.opacity);
+          catalogLayer.visible = layer.visible;
+          catalogLayer.opacity = layer.opacity;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {

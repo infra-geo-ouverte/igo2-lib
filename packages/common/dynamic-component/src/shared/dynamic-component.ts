@@ -93,7 +93,7 @@ export class DynamicComponent<C> {
         this.unobserveInput(key);
 
         const inputValue = inputs[key];
-        if (inputs.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
           if (inputValue instanceof Observable) {
             this.observeInput(key, inputValue);
           } else {
@@ -144,7 +144,7 @@ export class DynamicComponent<C> {
     allowedSubscribers.forEach(
       (value: { propName: string; templateName: string }) => {
         const key = value.propName;
-        if (subscribers.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(subscribers, key)) {
           const emitter = instance[key];
           const subscriber = subscribers[key];
           if (Array.isArray(subscriber)) {

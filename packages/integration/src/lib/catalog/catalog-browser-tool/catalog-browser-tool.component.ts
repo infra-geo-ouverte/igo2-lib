@@ -87,7 +87,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
     );
     const authenticate$ = this.authService.authenticate$;
     this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
-      ([record, authenticate]) => {
+      ([record]) => {
         const catalog = record.entity;
         this.catalog = catalog;
         this.loadCatalogItems(this.catalog);

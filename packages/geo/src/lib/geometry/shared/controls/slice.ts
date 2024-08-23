@@ -156,8 +156,8 @@ export class SliceControl {
       interactionStyle: this.options.drawStyle,
       maxPoints: 2
     });
-    this.drawLineStart$$ = this.drawLineControl.start$.subscribe(
-      (olLine: OlLineString) => this.onDrawLineStart(olLine)
+    this.drawLineStart$$ = this.drawLineControl.start$.subscribe(() =>
+      this.onDrawLineStart()
     );
     this.drawLineEnd$$ = this.drawLineControl.end$.subscribe(
       (olLine: OlLineString) => this.onDrawLineEnd(olLine)
@@ -183,7 +183,7 @@ export class SliceControl {
    * Clear the draw source and track the geometry being draw
    * @param olLine Ol linestring or polygon
    */
-  private onDrawLineStart(olLine: OlLineString) {
+  private onDrawLineStart() {
     this.drawLineControl.getSource().clear(true);
   }
 

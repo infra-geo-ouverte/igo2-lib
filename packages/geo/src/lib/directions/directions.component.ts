@@ -29,7 +29,7 @@ import { Feature } from '../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
 import { roundCoordTo, stringToLonLat } from '../map';
 import { QueryService } from '../query/shared/query.service';
-import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { SearchResult } from '../search/shared/search.interfaces';
 import { SearchService } from '../search/shared/search.service';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
@@ -353,12 +353,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
             term,
             this.stopsFeatureStore.layer.map.projection
           );
-          let researches: Research[];
           let isCoord = false;
           if (response.lonLat) {
             isCoord = true;
           }
-          researches = this.searchService.search(term, {
+          const researches = this.searchService.search(term, {
             searchType: 'Feature'
           });
           this.cancelSearch();

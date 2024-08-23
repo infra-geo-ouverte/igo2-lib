@@ -70,6 +70,7 @@ export class QueryService {
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
+    // eslint-disable-next-line prefer-spread
     const flatArray = [].concat.apply([], newLayers);
     return flatArray;
   }
@@ -142,6 +143,7 @@ export class QueryService {
         );
       }
       const observables: any = [];
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         if (this.checkScaleAndResolution(resolution, scale, element)) {
@@ -464,7 +466,6 @@ export class QueryService {
         );
         break;
       case QueryFormat.TEXT:
-        features = this.extractTextData(res);
         break;
       case QueryFormat.HTML:
         features = this.extractHtmlData(
@@ -628,7 +629,7 @@ export class QueryService {
       const wmsParser = new olformat.WMSGetFeatureInfo();
       try {
         features = wmsParser.readFeatures(res);
-      } catch (e) {
+      } catch {
         console.warn(
           'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
         );
@@ -645,7 +646,7 @@ export class QueryService {
     let features = [];
     try {
       features = parser.readFeatures(res);
-    } catch (e) {
+    } catch {
       console.warn('query.service: GML3 is not well supported');
     }
     return features.map((feature) =>
@@ -657,7 +658,7 @@ export class QueryService {
     let features = [];
     try {
       features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
-    } catch (e) {
+    } catch {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
     features.map(
@@ -677,7 +678,9 @@ export class QueryService {
         if (JSON.parse(res).error) {
           return [];
         }
-      } catch (e) {}
+      } catch {
+        // empty catch
+      }
     }
     const parser = new olFormatEsriJSON();
     const features = parser.readFeatures(res);
@@ -685,11 +688,6 @@ export class QueryService {
     return features.map((feature) =>
       this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
     );
-  }
-
-  private extractTextData(res) {
-    // TODO
-    return [];
   }
 
   private extractHtmlData(
@@ -801,7 +799,7 @@ export class QueryService {
     }
 
     switch (datasource.constructor) {
-      case WMSDataSource:
+      case WMSDataSource: {
         const wmsDatasource = datasource as WMSDataSource;
 
         const WMSGetFeatureInfoOptions = {
@@ -838,7 +836,8 @@ export class QueryService {
         //   url = url.replace('&J=', '&Y=');
         // }
         break;
-      case CartoDataSource:
+      }
+      case CartoDataSource: {
         const cartoDatasource = datasource as CartoDataSource;
         const baseUrl =
           'https://' +
@@ -862,8 +861,9 @@ export class QueryService {
 
         url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
         break;
+      }
       case ImageArcGISRestDataSource:
-      case TileArcGISRestDataSource:
+      case TileArcGISRestDataSource: {
         const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
         const deltaX = Math.abs(mapExtent[0] - mapExtent[2]);
         const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
@@ -904,6 +904,7 @@ export class QueryService {
         ];
         url = `${serviceUrl}?${params.join('&')}`;
         break;
+      }
       default:
         break;
     }

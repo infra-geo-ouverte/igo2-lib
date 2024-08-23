@@ -386,7 +386,7 @@ export class VectorLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
     super.setMap(map);
   }
@@ -432,7 +432,7 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public disableTrackFeature(id?: string | number) {
+  public disableTrackFeature() {
     unByKey(this.trackFeatureListenerId);
   }
 

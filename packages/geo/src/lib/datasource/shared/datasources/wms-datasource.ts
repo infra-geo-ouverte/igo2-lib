@@ -70,8 +70,7 @@ export class WMSDataSource extends DataSource {
   get timeFilter(): TimeFilterOptions {
     return (this.options as TimeFilterableDataSourceOptions).timeFilter;
   }
-  readonly timeFilter$ =
-    new BehaviorSubject<TimeFilterOptions>(undefined);
+  readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -294,7 +293,9 @@ export class WMSDataSource extends DataSource {
     return legend;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }
 
 export interface TimeFilterableDataSource extends WMSDataSource {

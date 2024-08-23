@@ -103,9 +103,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private getRoute$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
-  private focusedResult$ = new BehaviorSubject<SearchResult>(
-    undefined
-  );
+  private focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
   private isSelectedResultOutOfView$$: Subscription;
   private abstractFocusedResult: Feature;
@@ -699,56 +697,53 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.getRoute$$.unsubscribe();
       }
       this.getRoute$$ =
-        this.directionState.stopsStore.storeInitialized$.subscribe(
-          (init: boolean) => {
-            if (
-              this.directionState.stopsStore.storeInitialized$.value &&
-              !routingCoordLoaded
-            ) {
-              routingCoordLoaded = true;
-              const stop = this.directionState.stopsStore
-                .all()
-                .find((e) => e.position === 1);
-              let coord;
-              if (this.feature.geometry) {
-                if (this.feature.geometry.type === 'Point') {
-                  coord = [
-                    this.feature.geometry.coordinates[0],
-                    this.feature.geometry.coordinates[1]
-                  ];
-                } else {
-                  const point = pointOnFeature(this.feature.geometry);
-                  coord = [
-                    point.geometry.coordinates[0],
-                    point.geometry.coordinates[1]
-                  ];
-                }
-              }
-              stop.text = this.featureTitle;
-              stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
-              if (this.map.geolocationController.position$.value) {
-                const currentPos =
-                  this.map.geolocationController.position$.value;
-                const stop = this.directionState.stopsStore
-                  .all()
-                  .find((e) => e.position === 0);
-                const currentCoord = olProj.transform(
-                  currentPos.position,
-                  currentPos.projection,
-                  'EPSG:4326'
-                );
-                const coord: [number, number] = roundCoordTo(
-                  [currentCoord[0], currentCoord[1]],
-                  6
-                );
-                stop.text = coord.join(',');
-                stop.coordinates = coord;
-                this.directionState.stopsStore.update(stop);
+        this.directionState.stopsStore.storeInitialized$.subscribe(() => {
+          if (
+            this.directionState.stopsStore.storeInitialized$.value &&
+            !routingCoordLoaded
+          ) {
+            routingCoordLoaded = true;
+            const stop = this.directionState.stopsStore
+              .all()
+              .find((e) => e.position === 1);
+            let coord;
+            if (this.feature.geometry) {
+              if (this.feature.geometry.type === 'Point') {
+                coord = [
+                  this.feature.geometry.coordinates[0],
+                  this.feature.geometry.coordinates[1]
+                ];
+              } else {
+                const point = pointOnFeature(this.feature.geometry);
+                coord = [
+                  point.geometry.coordinates[0],
+                  point.geometry.coordinates[1]
+                ];
               }
             }
+            stop.text = this.featureTitle;
+            stop.coordinates = coord;
+            this.directionState.stopsStore.update(stop);
+            if (this.map.geolocationController.position$.value) {
+              const currentPos = this.map.geolocationController.position$.value;
+              const stop = this.directionState.stopsStore
+                .all()
+                .find((e) => e.position === 0);
+              const currentCoord = olProj.transform(
+                currentPos.position,
+                currentPos.projection,
+                'EPSG:4326'
+              );
+              const coord: [number, number] = roundCoordTo(
+                [currentCoord[0], currentCoord[1]],
+                6
+              );
+              stop.text = coord.join(',');
+              stop.coordinates = coord;
+              this.directionState.stopsStore.update(stop);
+            }
           }
-        );
+        });
     }, 250);
   }
 }

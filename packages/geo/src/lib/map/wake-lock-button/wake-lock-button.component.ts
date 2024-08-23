@@ -66,6 +66,7 @@ export class WakeLockButtonComponent {
         this.enabled = false;
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }
 

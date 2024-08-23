@@ -91,7 +91,7 @@ export class ConfigService<T extends object = Record<string, any>> {
       return true;
     }
 
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve) => {
       this.httpClient
         .get(options.path)
         .pipe(

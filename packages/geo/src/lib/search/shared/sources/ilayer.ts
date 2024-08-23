@@ -52,7 +52,7 @@ export class ILayerSearchResultFormatter {
           newKey = this.languageService.translate.instant(
             'igo.geo.search.ilayer.properties.' + key
           );
-        } catch (e) {
+        } catch {
           newKey = key;
         }
         out[newKey] = value ? value : '';

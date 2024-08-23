@@ -13,8 +13,6 @@ export class FormFieldService {
     FormFieldService.fields[type] = component;
   }
 
-  constructor() {}
-
   /**
    * Return field component by type
    * @param type Field type

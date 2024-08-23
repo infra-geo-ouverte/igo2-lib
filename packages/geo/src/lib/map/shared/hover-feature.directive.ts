@@ -251,9 +251,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * On map singleclick
    */
   private listenToMapClick() {
-    this.singleClickMapListener = this.map.ol.on(
-      'singleclick',
-      (event: OlMapBrowserEvent<any>) => this.onMapSingleClickEvent(event)
+    this.singleClickMapListener = this.map.ol.on('singleclick', () =>
+      this.onMapSingleClickEvent()
     );
   }
 
@@ -287,7 +286,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Trigger clear layer on singleclick.
    * @param event OL map browser singleclick event
    */
-  private onMapSingleClickEvent(event: OlMapBrowserEvent<any>) {
+  private onMapSingleClickEvent() {
     this.clearLayer();
   }
 
@@ -353,7 +352,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               this.pointerHoverFeatureStore.all()[0]?.getProperties()
           ) {
             this.clearLayer();
-            let igoLayer;
             if (layerOL instanceof olLayerVector) {
               const myLayerVector = this.map.getLayerByOlUId(
                 (layerOL as any).ol_uid
@@ -377,7 +375,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               this.setLayerStyleFromOptions(myLayerVector, myLabelOlFeature);
               featuresToLoad.push(myLabelOlFeature);
               this.pointerHoverFeatureStore.load(featuresToLoad);
-              igoLayer = myLayerVector;
               return true;
             }
             if (layerOL instanceof olLayerVectorTile) {
@@ -435,7 +432,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                     this.selectionLayer.changed();
                   }
                 );
-              igoLayer = myLayerVectorTile;
             }
           }
         },

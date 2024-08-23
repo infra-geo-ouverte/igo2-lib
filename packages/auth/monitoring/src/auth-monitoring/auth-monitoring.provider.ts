@@ -24,7 +24,7 @@ export function provideAuthUserMonitoring(
     // Force instantiate Tracing service to avoid require it in any constructor.
     {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {},
+      useFactory: () => () => void 1,
       deps: [AuthMonitoringService],
       multi: true
     }

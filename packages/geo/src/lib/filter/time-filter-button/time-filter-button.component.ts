@@ -68,8 +68,6 @@ export class TimeFilterButtonComponent implements OnInit {
 
   public timeFilterCollapse = false;
 
-  constructor() {}
-
   ngOnInit() {
     this.options = this.layer.dataSource.options as WMSDataSourceOptions;
   }

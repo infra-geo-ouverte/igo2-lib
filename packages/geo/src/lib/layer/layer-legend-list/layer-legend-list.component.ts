@@ -49,11 +49,8 @@ import { Layer } from '../shared/layers/layer';
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
 
-  hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(
-    true
-  );
-  hasVisibleAndNotInRangeLayers$ =
-    new BehaviorSubject<boolean>(true);
+  hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  hasVisibleAndNotInRangeLayers$ = new BehaviorSubject<boolean>(true);
   layersInUi$ = new BehaviorSubject<Layer[]>([]);
   layers$ = new BehaviorSubject<Layer[]>([]);
   showAllLegend = false;
@@ -78,7 +75,6 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
 
-  constructor() {}
   ngOnInit(): void {
     this.change$$ = this.change$
       .pipe(

@@ -58,11 +58,11 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetSubscribers$(): BehaviorSubject<Record<string, (event: any) => void>> {
+  get widgetSubscribers$(): BehaviorSubject<
+    Record<string, (event: any) => void>
+  > {
     return this.workspace.widgetSubscribers$;
   }
-
-  constructor() {}
 
   /**
    * When a widget's component emit the 'cancel' event,

@@ -64,7 +64,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     combineLatest([this.languageService.language$, this.map.layers$]).subscribe(
-      ([language, layers]) => {
+      ([_language, layers]) => {
         const baseLayerOrShownInLayerList = layers
           .filter((l) => l.baseLayer || l.showInLayerList)
           .map((l) => {

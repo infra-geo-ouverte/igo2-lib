@@ -268,7 +268,7 @@ export class TimeFilterFormComponent implements OnInit {
     // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
   }
 
-  handleDateChange(event: any) {
+  handleDateChange() {
     this.setupDateOutput();
     this.applyTypeChange();
 
@@ -280,7 +280,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  handleYearChange(event: any) {
+  handleYearChange() {
     if (this.isRange) {
       this.endListYears = [];
       for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
@@ -296,11 +296,11 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  handleListYearChange(event: any) {
-    this.handleYearChange([this.startYear, this.endYear]);
+  handleListYearChange() {
+    this.handleYearChange();
   }
 
-  handleListYearStartChange(event: any) {
+  handleListYearStartChange() {
     this.change.emit([this.startDate, this.endDate]);
   }
 
@@ -357,7 +357,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  resetFilter(event: any) {
+  resetFilter() {
     this.date = new Date(this.min);
     this.year = this.date.getFullYear();
     if (
@@ -372,7 +372,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  playFilter(event: any) {
+  playFilter() {
     if (this.interval) {
       this.stopFilter();
     } else {
@@ -391,7 +391,7 @@ export class TimeFilterFormComponent implements OnInit {
             that.stopFilter();
           }
 
-          that.handleDateChange({ value: that.date, date: that.date });
+          that.handleDateChange();
         },
         this.timeInterval,
         this
@@ -399,13 +399,13 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  playYear(event: any) {
+  playYear() {
     if (
       this.year + this.mySlider.step >
       this.max.getFullYear() + this.mySlider.step
     ) {
       this.stopFilter();
-      this.resetFilter(event);
+      this.resetFilter();
     }
     if (this.interval) {
       this.stopFilter();
@@ -437,7 +437,7 @@ export class TimeFilterFormComponent implements OnInit {
   handleSliderDateChange(event: any) {
     this.date = new Date(event.value);
     this.setSliderThumbLabel(this.handleSliderTooltip());
-    this.handleDateChange(event);
+    this.handleDateChange();
   }
 
   handleSliderYearChange(event: any) {

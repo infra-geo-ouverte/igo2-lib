@@ -89,5 +89,7 @@ export class WFSDataSource extends DataSource {
     }
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

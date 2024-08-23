@@ -67,9 +67,7 @@ export class AppHoverComponent {
       } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
-    interface WFSDataOptions extends WFSDataSourceOptions {}
-
-    const wfsDatasourcePoint: WFSDataOptions = {
+    const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
       params: {

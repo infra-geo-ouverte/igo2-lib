@@ -12,6 +12,4 @@ export class LayerListToolService {
   public sortedAlphaInitialized = false;
   public onlyVisibleInitialized = false;
   public onlyInRangeInitialized = false;
-
-  constructor() {}
 }

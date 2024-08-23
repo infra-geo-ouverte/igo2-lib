@@ -64,21 +64,8 @@ export function sliceOlGeometry(
   if (olGeometry instanceof OlPolygon) {
     return sliceOlPolygon(olGeometry, olSlicer);
   } else if (olGeometry instanceof OlLineString) {
-    return sliceOlLineString(olGeometry, olSlicer);
+    return [];
   }
-  return [];
-}
-
-/**
- * Slice OL LineString into one or more lines
- * @param olLineString OL line string
- * @param olSlicer Slicing line
- * @returns New OL line strings
- */
-export function sliceOlLineString(
-  olLineString: OlLineString,
-  olSlicer: OlLineString
-): OlLineString[] {
   return [];
 }
 

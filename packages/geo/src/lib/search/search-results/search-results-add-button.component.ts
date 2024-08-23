@@ -72,8 +72,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     'igo.geo.catalog.layer.addToMap'
   );
 
-  public addFeatureToLayerTooltip$ =
-    new BehaviorSubject<string>('igo.geo.search.addToLayer');
+  public addFeatureToLayerTooltip$ = new BehaviorSubject<string>(
+    'igo.geo.search.addToLayer'
+  );
 
   private resolution$$: Subscription;
   private layers$$: Subscription;
@@ -291,9 +292,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   isVisible() {
     if (this.layer?.data?.sourceOptions?.id) {
       const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+
+      this.isVisible$.next(oLayer?.visible ?? false);
     }
   }
 

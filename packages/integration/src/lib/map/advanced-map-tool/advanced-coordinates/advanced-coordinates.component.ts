@@ -69,8 +69,7 @@ import { MapState } from '../../map.state';
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$ = new BehaviorSubject<string>('');
-  public projections$ =
-    new BehaviorSubject<InputProjections[]>([]);
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
@@ -183,14 +182,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   getCoordinates(): string[] {
     this.currentZones.mtm = zoneMtm(this.currentCenterDefaultProj[0]);
     this.currentZones.utm = zoneUtm(this.currentCenterDefaultProj[0]);
-    let coord;
     const code = this.inputProj.code;
     let decimal = 2;
     if (code.includes('EPSG:4326') || code.includes('EPSG:4269')) {
       decimal = 5;
     }
     this.units = code === 'EPSG:4326' || code === 'EPSG:4269';
-    coord = this.map.viewController
+    const coord = this.map.viewController
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;

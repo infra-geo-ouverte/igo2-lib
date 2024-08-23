@@ -66,8 +66,8 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   colorPicker: string;
 
-  onChange: any = () => {};
-  onTouch: any = () => {};
+  onChange: any = () => void 1;
+  onTouch: any = () => void 1;
 
   writeValue(value: string) {
     this.value = value;

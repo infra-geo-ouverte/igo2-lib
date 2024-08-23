@@ -64,8 +64,7 @@ export class SearchPointerSummaryDirective
    */
   private pointerMoveListener;
 
-  private searchPointerSummaryFeatureId =
-    'searchPointerSummaryFeatureId';
+  private searchPointerSummaryFeatureId = 'searchPointerSummaryFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
@@ -188,11 +187,12 @@ export class SearchPointerSummaryDirective
    * @param results SearchResult[]
    * @returns OL style function
    */
-  private computeSummaryClosestFeature(results: SearchResult[]): {} {
+  private computeSummaryClosestFeature(results: SearchResult[]) {
     const closestResultByType = {};
 
     results.map((result) => {
       if (result.data.properties.type && result.data.properties.distance >= 0) {
+        // eslint-disable-next-line no-prototype-builtins
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance =
             closestResultByType[result.data.properties.type].distance;

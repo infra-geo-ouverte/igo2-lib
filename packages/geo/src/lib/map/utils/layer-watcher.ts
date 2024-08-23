@@ -21,7 +21,9 @@ export class LayerWatcher extends Watcher {
     super();
   }
 
-  watch() {}
+  watch() {
+    // empty watch
+  }
 
   unwatch() {
     this.layers.forEach((layer) => this.unwatchLayer(layer), this);

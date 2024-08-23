@@ -17,8 +17,6 @@ import { IgoMap } from './map';
 export class MapService {
   private map: IgoMap;
 
-  constructor() {}
-
   getMap(): IgoMap {
     return this.map;
   }

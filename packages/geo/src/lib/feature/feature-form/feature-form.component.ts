@@ -57,8 +57,6 @@ export class FeatureFormComponent {
 
   @ViewChild('igoForm', { static: true }) igoForm: FormComponent;
 
-  constructor() {}
-
   /**
    * Transform the form data to a feature and emit an event
    * @param event Form submit event

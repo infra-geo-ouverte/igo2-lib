@@ -78,7 +78,7 @@ export class AuthInternComponent {
           this.languageService.translate
             .get('igo.auth.error.' + error.error.message)
             .subscribe((errorMsg) => (this.error = errorMsg));
-        } catch (e) {
+        } catch {
           this.error = error.error.message;
         }
         this.loading = false;

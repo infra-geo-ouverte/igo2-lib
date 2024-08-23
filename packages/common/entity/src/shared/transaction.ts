@@ -61,9 +61,7 @@ export class EntityTransaction {
   get inCommitPhase(): boolean {
     return this.inCommitPhase$.value;
   }
-  readonly inCommitPhase$ = new BehaviorSubject<boolean>(
-    false
-  );
+  readonly inCommitPhase$ = new BehaviorSubject<boolean>(false);
 
   constructor(options: EntityTransactionOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
@@ -177,7 +175,7 @@ export class EntityTransaction {
       catchError(() => of(new Error())),
       tap((result: any) => {
         if (result instanceof Error) {
-          this.onCommitError(operations);
+          this.onCommitError();
         } else {
           this.onCommitSuccess(operations);
         }
@@ -388,7 +386,7 @@ export class EntityTransaction {
    * On commit error, abort transaction
    * @param operations Commited operations
    */
-  private onCommitError(operations: EntityOperation[]) {
+  private onCommitError() {
     this.inCommitPhase$.next(false);
   }
 

@@ -261,7 +261,7 @@ export class StoredQueriesSearchSource
     return features;
   }
 
-  private termSplitter(term: string, fields: StoredQueriesFields[]): {} {
+  private termSplitter(term: string, fields: StoredQueriesFields[]) {
     const splittedTerm = {};
     let remainingTerm = term;
     let cnt = 0;
@@ -579,7 +579,9 @@ export class StoredQueriesReverseSearchSource
     };
   }
 
-  private computeProperties(data: StoredQueriesReverseData): Record<string, any> {
+  private computeProperties(
+    data: StoredQueriesReverseData
+  ): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist

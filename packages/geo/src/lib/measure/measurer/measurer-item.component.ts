@@ -116,8 +116,6 @@ export class MeasurerItemComponent implements OnDestroy {
     return Object.values(MeasureLengthUnit);
   }
 
-  constructor() {}
-
   /**
    * Toggle the auto unit off
    * @internal

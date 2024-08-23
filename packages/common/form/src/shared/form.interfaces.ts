@@ -64,6 +64,7 @@ export interface FormFieldOptions {
   disableSwitch?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface FormFieldInputs {}
 
 export interface FormFieldSelectInputs extends FormFieldInputs {

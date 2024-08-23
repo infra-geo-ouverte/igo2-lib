@@ -227,7 +227,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
         },
-        ngClass: (_tool: Tool, _toolbox: Toolbox) => {
+        ngClass: (_tool: Tool) => {
           return this.toolbox.activeTool$.pipe(
             map((activeTool: Tool) => {
               let toolActivated = false;

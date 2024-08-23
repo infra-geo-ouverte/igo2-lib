@@ -129,14 +129,13 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.contextExportService
       .export(this.res)
       .pipe(take(1))
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
+      .subscribe({
+        error: (error: Error) => this.onFileExportError(error),
+        complete: () => {
           this.onFileExportSuccess();
           this.loading$.next(false);
         }
-      );
+      });
   }
 
   private buildForm() {

@@ -77,11 +77,15 @@ export class EntityStoreStrategy {
    * Do the stataegy activation
    * @internal
    */
-  protected doActivate() {}
+  protected doActivate() {
+    // empty
+  }
 
   /**
    * Do the strategy deactivation
    * @internal
    */
-  protected doDeactivate() {}
+  protected doDeactivate() {
+    // empty
+  }
 }

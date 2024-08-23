@@ -117,7 +117,7 @@ export class Toolbox {
       this.deactivateTool();
       return;
     }
-    const [previous, current] = this.activeToolHistory.splice(-2, 2);
+    const [previous] = this.activeToolHistory.splice(-2, 2);
     this.activateTool(previous);
   }
 

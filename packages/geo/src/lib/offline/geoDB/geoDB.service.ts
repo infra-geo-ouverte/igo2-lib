@@ -135,7 +135,7 @@ export class GeoDBService {
 
   getRegionCountByID(id: number): Observable<number> {
     const subject = new Subject<number>();
-    const dbRequest = this.getRegionByID(id).subscribe((datas) => {
+    this.getRegionByID(id).subscribe((datas) => {
       subject.next(datas.length);
       subject.complete();
     });

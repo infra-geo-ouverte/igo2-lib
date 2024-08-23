@@ -32,7 +32,7 @@ export class MessageService {
     private languageService: LanguageService
   ) {
     this.options = this.configService.getConfig('message');
-    this.languageService.language$.pipe(debounceTime(500)).subscribe((r) => {
+    this.languageService.language$.pipe(debounceTime(500)).subscribe(() => {
       if (this.toastr.toasts.length === 0) {
         this.activeMessageTranslations = [];
       }

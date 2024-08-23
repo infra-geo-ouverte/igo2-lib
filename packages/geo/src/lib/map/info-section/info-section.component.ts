@@ -10,6 +10,4 @@ import { Component, Input } from '@angular/core';
 })
 export class InfoSectionComponent {
   @Input() infoContent = '';
-
-  constructor() {}
 }

@@ -48,7 +48,9 @@ export class TableDataSource extends DataSource<any> {
     );
   }
 
-  disconnect() {}
+  disconnect() {
+    // empty
+  }
 
   getFilteredData(data): any[] {
     if (!this.filter) {

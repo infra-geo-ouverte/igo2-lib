@@ -47,8 +47,6 @@ export class FormGroupComponent {
     return this.group.control;
   }
 
-  constructor() {}
-
   /**
    * Return the number of columns a field should occupy.
    * The maximum allowed is 2, even if the field config says more.

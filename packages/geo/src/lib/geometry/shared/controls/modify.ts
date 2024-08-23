@@ -427,12 +427,6 @@ export class ModifyControl {
   private onTranslateStart(event: OlTranslateEvent) {
     const olGeometry = event.features.item(0).getGeometry() as OlGeometry;
     this.start$.next(olGeometry);
-    this.onTranslateKey = olGeometry.on(
-      'change',
-      (olGeometryEvent: BasicEvent) => {
-        // this.changes$.next(olGeometryEvent.target);
-      }
-    );
   }
 
   /**

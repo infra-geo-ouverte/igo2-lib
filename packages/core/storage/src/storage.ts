@@ -12,8 +12,7 @@ import {
 export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
   protected options?: T;
 
-  public storageChange$ =
-    new BehaviorSubject<StorageServiceEvent>(undefined);
+  public storageChange$ = new BehaviorSubject<StorageServiceEvent>(undefined);
 
   constructor(config: ConfigService) {
     this.options = config.getConfig<T>('storage') || ({ key: 'igo' } as T);
@@ -35,9 +34,9 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
 
     if (value) {
       try {
-        value = JSON.parse(value);
+        return JSON.parse(value);
       } catch {
-        value = value;
+        return value;
       }
     }
 

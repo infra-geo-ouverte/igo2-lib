@@ -55,9 +55,11 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
           if (tracking) {
             this.icon$.next('my_location');
           } else {
-            this.configService.getConfig('geolocate.basic')
-              ? this.icon$.next('my_location')
-              : this.icon$.next('location_searching');
+            this.icon$.next(
+              this.configService.getConfig('geolocate.basic')
+                ? 'my_location'
+                : 'location_searching'
+            );
           }
         }
       );

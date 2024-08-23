@@ -14,5 +14,7 @@ export class OSMDataSource extends DataSource {
     return new olSourceOSM(this.options);
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

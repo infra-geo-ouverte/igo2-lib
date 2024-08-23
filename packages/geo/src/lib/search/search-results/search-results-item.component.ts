@@ -119,18 +119,16 @@ export class SearchResultsItemComponent {
     const element = event.target;
     const type = event.type;
     switch (type) {
-      case 'mouseenter':
+      case 'mouseenter': {
         const hideBtn = element.querySelector('#hide-save-search-result-btn');
-        hideBtn
-          ? hideBtn.setAttribute('id', 'show-save-search-result-btn')
-          : null;
+        hideBtn?.setAttribute('id', 'show-save-search-result-btn');
         break;
-      case 'mouseleave':
+      }
+      case 'mouseleave': {
         const showBtn = element.querySelector('#show-save-search-result-btn');
-        showBtn
-          ? showBtn.setAttribute('id', 'hide-save-search-result-btn')
-          : null;
+        showBtn?.setAttribute('id', 'hide-save-search-result-btn');
         break;
+      }
       default:
         break;
     }

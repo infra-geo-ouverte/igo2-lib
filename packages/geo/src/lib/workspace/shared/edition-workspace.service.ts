@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import {
   HttpClient,
   HttpErrorResponse,
@@ -141,6 +142,8 @@ export class EditionWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
@@ -781,7 +784,6 @@ export class EditionWorkspaceService {
   }
 
   validateFeature(feature, workspace: EditionWorkspace) {
-    let message;
     let key;
     let valid = true;
     workspace.meta.tableTemplate.columns.forEach((column) => {

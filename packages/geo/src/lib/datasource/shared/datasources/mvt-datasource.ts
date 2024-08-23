@@ -32,5 +32,7 @@ export class MVTDataSource extends DataSource {
     return Md5.hashStr(chain) as string;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

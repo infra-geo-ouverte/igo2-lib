@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
@@ -87,7 +87,7 @@ export class CatalogService {
           map((catalogs) =>
             catalogs.map((c: any) => Object.assign(c, c.options))
           ),
-          catchError((_response: HttpErrorResponse) => EMPTY)
+          catchError(() => EMPTY)
         );
       observables$.push(catalogsFromApi$);
     }
@@ -109,13 +109,13 @@ export class CatalogService {
     }
 
     return zip(...observables$).pipe(
+      // eslint-disable-next-line prefer-spread
       map((catalogs: Catalog[][]) => [].concat.apply([], catalogs))
     ) as Observable<Catalog[]>;
   }
 
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
-    let newCatalog: Catalog;
-    newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
+    const newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
     return newCatalog.collectCatalogItems();
   }
 
@@ -785,15 +785,6 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     );
 
-    let abstract;
-    if (
-      capabilities.serviceDescription &&
-      capabilities.serviceDescription.length
-    ) {
-      const regex = /(<([^>]+)>)/gi;
-      abstract = capabilities.serviceDescription.replace(regex, '');
-    }
-
     const items: CatalogItemLayer[] = layers
       .map((layer: ArcGISRestCapabilitiesLayer) => {
         const propertiesToForce = this.computeForcedProperties(
@@ -985,6 +976,7 @@ class CatalogFactory {
     catalogService: CatalogService
   ): Catalog {
     let catalog: Catalog;
+    // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('composite')) {
       catalog = new CompositeCatalog(options, (catalog: Catalog) =>
         catalogService.loadCatalogCompositeLayerItems(catalog)

@@ -172,8 +172,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Observable of selected features
    * @internal
    */
-  public selectedFeatures$ =
-    new BehaviorSubject<FeatureWithMeasure[]>([]);
+  public selectedFeatures$ = new BehaviorSubject<FeatureWithMeasure[]>([]);
 
   /**
    * OL draw source
@@ -434,9 +433,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayDistance(toggle: boolean) {
     this.displayDistance = toggle;
     this.onDisplayDistance();
-    toggle
-      ? this.storageService.set('distanceToggle', true, StorageScope.SESSION)
-      : this.storageService.set('distanceToggle', false, StorageScope.SESSION);
+    this.storageService.set('distanceToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -446,9 +443,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayLines(toggle: boolean) {
     this.displayLines = toggle;
     this.onDisplayLines();
-    toggle
-      ? this.storageService.set('linesToggle', true, StorageScope.SESSION)
-      : this.storageService.set('linesToggle', false, StorageScope.SESSION);
+    this.storageService.set('linesToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -458,9 +453,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayAreas(toggle: boolean) {
     this.displayAreas = toggle;
     this.onDisplayAreas();
-    toggle
-      ? this.storageService.set('areasToggle', true, StorageScope.SESSION)
-      : this.storageService.set('areasToggle', false, StorageScope.SESSION);
+    this.storageService.set('areasToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -752,9 +745,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     this.subscriptions$$.push(
       this.store.count$.subscribe((cnt) => {
-        cnt >= 1
-          ? (this.store.layer.options.showInLayerList = true)
-          : (this.store.layer.options.showInLayerList = false);
+        this.store.layer.options.showInLayerList = cnt >= 1;
       })
     );
   }

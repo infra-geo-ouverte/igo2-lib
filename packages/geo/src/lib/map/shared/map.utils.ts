@@ -79,7 +79,6 @@ export function stringToLonLat(
   const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex = new RegExp(`^${patternDmd}`, 'g');
 
-
   const patternBELL =
     'LAT\\s*[\\s:]*\\s*([-+])?(\\d{1,2})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*LONG\\s*[\\s:]*\\s*([-+])?(\\d{1,3})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*UNC\\s*[\\s:]?\\s*(\\d+)\\s*CONF\\s*[\\s:]?\\s*(\\d{1,3})';
   const bellRegex = new RegExp(`^${patternBELL}?`, 'gi');
@@ -306,7 +305,7 @@ export function stringToLonLat(
 
     try {
       lonLat = olproj.transform(lonLat, source, dest) as [number, number];
-    } catch (e) {
+    } catch {
       return {
         lonLat: undefined,
         message: 'Projection ' + source + ' not supported',
@@ -430,10 +429,7 @@ export function formatScale(scale) {
  * @param dpi DPI
  * @returns Resolution
  */
-export function getResolutionFromScale(
-  scale: number,
-  dpi = 96
-): number {
+export function getResolutionFromScale(scale: number, dpi = 96): number {
   const inchesPerMeter = 39.3701;
   return scale / (inchesPerMeter * dpi);
 }

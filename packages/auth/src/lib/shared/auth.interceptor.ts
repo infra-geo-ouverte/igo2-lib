@@ -65,9 +65,6 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
-    if (element.host === '') {
-      element.href = element.href; // FIX IE11, DO NOT REMOVE
-    }
 
     if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
       return next.handle(req);

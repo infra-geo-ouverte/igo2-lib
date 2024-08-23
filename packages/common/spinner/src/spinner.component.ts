@@ -22,8 +22,6 @@ export class SpinnerComponent {
     return this.shown$.value;
   }
 
-  constructor() {}
-
   show() {
     this.shown = true;
   }

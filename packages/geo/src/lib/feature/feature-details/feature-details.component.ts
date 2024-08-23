@@ -186,7 +186,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
             window.open(fileUrl, '_blank');
             this.cdRef.detectChanges();
           },
-          (error: Error) => {
+          () => {
             this.messageService.error(
               'igo.geo.targetHtmlUrlUnauthorized',
               'igo.geo.targetHtmlUrlUnauthorizedTitle'

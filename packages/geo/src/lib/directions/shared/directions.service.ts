@@ -16,7 +16,6 @@ import { Observable, Subject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintService } from '../../print/shared/print.service';
-import { PrintLegendPosition } from '../../print/shared/print.type';
 import { DirectionsSource } from '../directions-sources/directions-source';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSourceService } from './directions-source.service';
@@ -92,14 +91,7 @@ export class DirectionsService {
 
     const resolution = 96; // Default is 96
     this.printService
-      .addMap(
-        doc,
-        map,
-        resolution,
-        imageDimensions,
-        margins,
-        PrintLegendPosition.none
-      )
+      .addMap(doc, map, resolution, imageDimensions, margins)
       .subscribe(async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           await this.addInstructions(doc, direction, title);
@@ -139,6 +131,7 @@ export class DirectionsService {
     const data = await this.directionsInstruction(direction);
     const table = document.createElement('table');
     const tblBody = document.createElement('tbody');
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
       const row = document.createElement('tr');
@@ -176,6 +169,7 @@ export class DirectionsService {
     const matListItem = matListItems.getElementsByTagName('mat-list-item');
     // convert icon list to base64
     const iconsArray: { name: string; icon: string }[] = [];
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let index = 0; index < matListItem.length; index++) {
       const element = matListItem[index];
       const icon = element.getElementsByTagName('mat-icon')[0] as HTMLElement;

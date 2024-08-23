@@ -110,9 +110,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public importForm: UntypedFormGroup;
   public formats$ = new BehaviorSubject(undefined);
   public encodings$ = new BehaviorSubject(undefined);
-  public exportableLayers$ = new BehaviorSubject<AnyLayer[]>(
-    []
-  );
+  public exportableLayers$ = new BehaviorSubject<AnyLayer[]>([]);
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
@@ -131,8 +129,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$ =
-    new BehaviorSubject<InputProjections[]>([]);
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   private projectionsConstraints: ProjectionsLimitationsOptions;
 
   public popupChecked = false;
@@ -171,9 +168,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Output() selectMode = new EventEmitter<string>();
 
-  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(
-    undefined
-  );
+  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
@@ -618,6 +613,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           url.match(/service=wfs/gi)
             ? this.downloadService.open(lay)
             : window.open(url, '_blank');
@@ -794,10 +790,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                 data.encoding,
                 this.map.projection
               )
-              .subscribe(
-                () => {},
-                (error: Error) => this.onFileExportError(error),
-                () => {
+              .subscribe({
+                error: (error: Error) => this.onFileExportError(error),
+                complete: () => {
                   this.onFileExportSuccess();
 
                   geomType.features.forEach((feature) => {
@@ -806,7 +801,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
                   this.loading$.next(false);
                 }
-              )
+              })
           );
         }
       }
@@ -824,10 +819,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           data.encoding,
           this.map.projection
         )
-        .subscribe(
-          () => {},
-          (error: Error) => this.onFileExportError(error),
-          () => {
+        .subscribe({
+          error: (error: Error) => this.onFileExportError(error),
+          complete: () => {
             this.onFileExportSuccess();
 
             featuresCSV.forEach((feature) => {
@@ -836,7 +830,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
             this.loading$.next(false);
           }
-        );
+        });
     }
   }
 

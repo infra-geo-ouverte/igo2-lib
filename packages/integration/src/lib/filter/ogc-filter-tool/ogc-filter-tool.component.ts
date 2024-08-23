@@ -17,6 +17,4 @@ import {
   standalone: true,
   imports: [OgcFilterableListComponent, OgcFilterableListBindingDirective]
 })
-export class OgcFilterToolComponent {
-  constructor() {}
-}
+export class OgcFilterToolComponent {}

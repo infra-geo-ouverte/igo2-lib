@@ -896,7 +896,7 @@ export class IChercheReverseSearchSource
       case 'arrondissements':
         subtitle = data.properties.municipalite + ' (Arrondissement)';
         break;
-      default:
+      default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         const type = typeSetting.values.find(
           (t) => t.value === data.properties.type
@@ -904,6 +904,7 @@ export class IChercheReverseSearchSource
         if (type) {
           subtitle = this.languageService.translate.instant(type.title);
         }
+      }
     }
     return subtitle;
   }

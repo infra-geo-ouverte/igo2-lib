@@ -99,12 +99,13 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
-      case MVTDataSource:
+      case MVTDataSource: {
         const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
           _layerOptions as VectorTileLayerOptions
         );
         break;
+      }
       default:
         break;
     }
