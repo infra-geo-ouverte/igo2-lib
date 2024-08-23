@@ -76,11 +76,12 @@ export class AuthMicrosoftComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    await this.authService.initializeMicrosoft(this.msalService);
-    if (this.options.autoLogin) {
-      this.loginMicrosoft();
-    }
+  ngOnInit() {
+    this.authService.initializeMicrosoft(this.msalService).then(() => {
+      if (this.options.autoLogin) {
+        this.loginMicrosoft();
+      }
+    });
   }
 
   public async loginMicrosoft() {
