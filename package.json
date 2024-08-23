@@ -79,11 +79,6 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.1",
-    "@angular-eslint/builder": "^18.3.0",
-    "@angular-eslint/eslint-plugin": "^18.3.0",
-    "@angular-eslint/eslint-plugin-template": "^18.3.0",
-    "@angular-eslint/schematics": "^18.3.0",
-    "@angular-eslint/template-parser": "^18.3.0",
     "@angular/cli": "^18.2.1",
     "@angular/compiler-cli": "^18.2.1",
     "@commitlint/cli": "^19.4.0",
@@ -92,10 +87,11 @@
     "@commitlint/types": "^19.0.3",
     "@compodoc/compodoc": "^1.1.15",
     "@cypress/schematic": "^2.5.1",
-    "@sentry/types": "^8.26.0",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.1.0",
+    "@sentry/types": "^8.26.0",
+    "@stylistic/eslint-plugin": "^2.6.4",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/flexsearch": "^0.7.6",
     "@types/geojson": "^7946.0.10",
@@ -104,10 +100,8 @@
     "@types/lodash-es": "^4.17.0",
     "@types/node": "^20.10.0",
     "@types/tinycolor2": "^1.4.4",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "@typescript-eslint/types": "^6.10.0",
     "angular-cli-ghpages": "^2.0.0",
+    "angular-eslint": "18.3.0",
     "conventional-changelog-cli": "^5.0.0",
     "copy-newer": "^2.1.2",
     "cypress": "^13.13.0",
@@ -130,7 +124,8 @@
     "sass": "^1.77.0",
     "semantic-release": "^24.1.0",
     "tsx": "^4.17.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "typescript-eslint": "8.1.0"
   },
   "madge": {
     "detectiveOptions": {
