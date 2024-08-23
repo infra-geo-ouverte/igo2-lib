@@ -349,7 +349,7 @@ export function addDirectionToRoutesFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
   direction: Direction,
   projection: string,
-  active: boolean = false,
+  active = false,
   moveToExtent = false
 ) {
   const geom = direction.geometry.coordinates;
@@ -425,7 +425,7 @@ export function formatDuration(duration: number): string {
 export function formatInstruction(
   type,
   modifier,
-  route: string = 'Voie',
+  route = 'Voie',
   direction,
   stepPosition,
   exit,

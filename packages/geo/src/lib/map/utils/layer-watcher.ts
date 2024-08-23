@@ -8,10 +8,10 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { Layer, LinkedProperties } from '../../layer/shared/layers';
 
 export class LayerWatcher extends Watcher {
-  public propertyChange$: BehaviorSubject<{
+  public propertyChange$ = new BehaviorSubject<{
     event: ObjectEvent;
     layer: Layer;
-  }> = new BehaviorSubject(undefined);
+  }>(undefined);
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];

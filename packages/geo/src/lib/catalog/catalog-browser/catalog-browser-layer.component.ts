@@ -54,20 +54,20 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public inRange$ = new BehaviorSubject<boolean>(true);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
   private isPreview$$: Subscription;
   private resolution$$: Subscription;
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(
+  public layerLegendShown$ = new BehaviorSubject<boolean>(
     false
   );
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() resolution: number;
 

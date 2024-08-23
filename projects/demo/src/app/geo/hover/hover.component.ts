@@ -25,8 +25,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
-  public pointerCoordDelay: number = 0;
-  public pointerHoverFeatureDelay: number = 0;
+  public pointerCoordDelay = 0;
+  public pointerHoverFeatureDelay = 0;
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {

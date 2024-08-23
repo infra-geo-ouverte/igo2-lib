@@ -52,7 +52,7 @@ export class MeasurerItemComponent implements OnDestroy {
    * Measure observable
    * @internal
    */
-  public measure$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  public measure$ = new BehaviorSubject<number>(undefined);
 
   /**
    * Subscription to the measure observable when the auto mode is on
@@ -91,7 +91,7 @@ export class MeasurerItemComponent implements OnDestroy {
   get auto(): boolean {
     return this._auto;
   }
-  private _auto: boolean = false;
+  private _auto = false;
 
   /**
    * Placeholder

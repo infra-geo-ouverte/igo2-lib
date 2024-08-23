@@ -26,12 +26,12 @@ export class SliceControl {
   /**
    * Slice end observable
    */
-  public end$: Subject<OlGeometry[]> = new Subject();
+  public end$ = new Subject<OlGeometry[]>();
 
   /**
    * Slice error, if any
    */
-  public error$: Subject<GeometrySliceError> = new Subject();
+  public error$ = new Subject<GeometrySliceError>();
 
   private olMap: OlMap;
   private olOverlayLayer: OlVectorLayer<OlVectorSource>;

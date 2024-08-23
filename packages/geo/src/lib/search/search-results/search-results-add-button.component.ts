@@ -68,27 +68,27 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
-  public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
+  public tooltip$ = new BehaviorSubject<string>(
     'igo.geo.catalog.layer.addToMap'
   );
 
-  public addFeatureToLayerTooltip$: BehaviorSubject<string> =
-    new BehaviorSubject('igo.geo.search.addToLayer');
+  public addFeatureToLayerTooltip$ =
+    new BehaviorSubject<string>('igo.geo.search.addToLayer');
 
   private resolution$$: Subscription;
   private layers$$: Subscription;
 
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public inRange$ = new BehaviorSubject<boolean>(true);
 
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
 
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
 
   private layersSubcriptions = [];
 
   private lastTimeoutRequest;
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() layer: SearchResult;
 
@@ -107,7 +107,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   /**
    * show hide save search result in layer button
    */
-  @Input() saveSearchResultInLayer: boolean = false;
+  @Input() saveSearchResultInLayer = false;
 
   @Input()
   get color() {
@@ -126,7 +126,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     );
   }
   private mediaService$$: Subscription;
-  public isMobile: boolean = false;
+  public isMobile = false;
   constructor(
     private layerService: LayerService,
     private dialog: MatDialog,
@@ -395,9 +395,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     ];
 
     // set layer id
-    let layerCounterID: number = 0;
+    let layerCounterID = 0;
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-search-layer', ''));
+      const numberId = Number(layer.id.replace('igo-search-layer', ''));
       layerCounterID = Math.max(numberId, layerCounterID);
     }
 
@@ -408,7 +408,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       } as QueryableDataSourceOptions)
       .pipe(take(1))
       .subscribe((dataSource: FeatureDataSource) => {
-        let searchLayer: VectorLayer = new VectorLayer({
+        const searchLayer: VectorLayer = new VectorLayer({
           isIgoInternalLayer: true,
           id: 'igo-search-layer' + ++layerCounterID,
           title: layerTitle,

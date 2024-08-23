@@ -238,9 +238,9 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).legendPosition as UntypedFormControl;
   }
 
-  @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
+  @Output() submit = new EventEmitter<PrintOptions>();
 
-  maxLength: number = 180;
+  maxLength = 180;
 
   constructor(
     private formBuilder: UntypedFormBuilder,

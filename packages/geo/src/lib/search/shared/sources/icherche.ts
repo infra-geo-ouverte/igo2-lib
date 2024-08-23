@@ -530,7 +530,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: IChercheData): { [key: string]: any } {
+  private computeProperties(data: IChercheData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -940,7 +940,7 @@ export class IChercheReverseSearchSource
     };
   }
 
-  private computeProperties(data: IChercheReverseData): { [key: string]: any } {
+  private computeProperties(data: IChercheReverseData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist

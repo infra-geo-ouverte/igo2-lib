@@ -89,21 +89,21 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean = true;
+  @Input() showIcons = true;
 
   /**
    * Determine the top panel default state
    */
-  @Input() topPanelStateDefault: string = 'expanded';
+  @Input() topPanelStateDefault = 'expanded';
 
-  private hasFeatureEmphasisOnSelection: boolean = false;
-  public saveSearchResultInLayer: boolean = false;
+  private hasFeatureEmphasisOnSelection = false;
+  public saveSearchResultInLayer = false;
 
   private showResultsGeometries$$: Subscription;
   private getRoute$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
-  private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
+  private focusedResult$ = new BehaviorSubject<SearchResult>(
     undefined
   );
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
@@ -111,7 +111,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
-  public debouncedEmpty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public debouncedEmpty$ = new BehaviorSubject<boolean>(true);
   private debouncedEmpty$$: Subscription;
 
   /**

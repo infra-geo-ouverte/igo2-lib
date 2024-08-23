@@ -56,7 +56,7 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
-  public importedContext: Array<DetailedContext> = [];
+  public importedContext: DetailedContext[] = [];
   public toolsChanged$ = new Subject<DetailedContext>();
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
@@ -565,7 +565,7 @@ export class ContextService {
         return source && layer.id === source.id && !contextLayer.baseLayer;
       });
       if (layerFound) {
-        let layerFoundAs = layerFound as
+        const layerFoundAs = layerFound as
           | VectorLayerOptions
           | VectorTileLayerOptions;
         let layerStyle = layerFoundAs.style;

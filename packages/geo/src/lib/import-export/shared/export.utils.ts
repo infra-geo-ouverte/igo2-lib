@@ -45,7 +45,7 @@ export function handleNothingToExportError(messageService: MessageService) {
 export function exportToCSV(
   rows: any[][],
   fileName: string,
-  separator: string = ';'
+  separator = ';'
 ) {
   const lines = rows.map((row: any[][], index: number) => row.join(separator));
   const csvContent = lines.join('\n');

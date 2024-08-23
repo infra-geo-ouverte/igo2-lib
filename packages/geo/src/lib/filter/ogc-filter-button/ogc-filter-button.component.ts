@@ -169,7 +169,7 @@ export class OgcFilterButtonComponent implements OnInit {
 
   @Input() map: MapBase;
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
   @Input() header: boolean;
 

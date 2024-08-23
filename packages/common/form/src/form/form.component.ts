@@ -37,17 +37,17 @@ export class FormComponent implements OnChanges {
   /**
    * Input data
    */
-  @Input() formData: { [key: string]: any };
+  @Input() formData: Record<string, any>;
 
   /**
    * Form autocomplete
    */
-  @Input() autocomplete: string = 'off';
+  @Input() autocomplete = 'off';
 
   /**
    * Event emitted when the form is submitted
    */
-  @Output() submitForm = new EventEmitter<{ [key: string]: any }>();
+  @Output() submitForm = new EventEmitter<Record<string, any>>();
 
   @ViewChild('buttons', { static: true }) buttons: ElementRef;
 
@@ -81,7 +81,7 @@ export class FormComponent implements OnChanges {
     this.submitForm.emit(this.getData());
   }
 
-  getData(): { [key: string]: any } {
+  getData(): Record<string, any> {
     const data = {};
     getAllFormFields(this.form).forEach((field: FormField) => {
       this.updateDataWithFormField(data, field);
@@ -89,7 +89,7 @@ export class FormComponent implements OnChanges {
     return data;
   }
 
-  private setData(data: { [key: string]: any }) {
+  private setData(data: Record<string, any>) {
     this.form.fields.forEach((field: FormField) => {
       field.control.setValue(t(data, field.name).safeObject);
     });
@@ -102,7 +102,7 @@ export class FormComponent implements OnChanges {
   }
 
   private updateDataWithFormField(
-    data: { [key: string]: any },
+    data: Record<string, any>,
     field: FormField
   ) {
     const control = field.control;

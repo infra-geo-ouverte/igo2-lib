@@ -17,7 +17,7 @@ export interface EntityOperation<E extends object = object> {
   previous: E | undefined;
   current: E | undefined;
   store?: EntityStore<E>;
-  meta?: { [key: string]: any };
+  meta?: Record<string, any>;
 }
 
 export type EntityTransactionCommitHandler = (
@@ -61,7 +61,7 @@ export class EntityTransaction {
   get inCommitPhase(): boolean {
     return this.inCommitPhase$.value;
   }
-  readonly inCommitPhase$: BehaviorSubject<boolean> = new BehaviorSubject(
+  readonly inCommitPhase$ = new BehaviorSubject<boolean>(
     false
   );
 
@@ -90,7 +90,7 @@ export class EntityTransaction {
   insert(
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(current);
     if (existingOperation !== undefined) {
@@ -113,7 +113,7 @@ export class EntityTransaction {
     previous: object,
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(current);
     if (existingOperation !== undefined) {
@@ -140,7 +140,7 @@ export class EntityTransaction {
   delete(
     previous: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(previous);
     if (existingOperation !== undefined) {
@@ -298,7 +298,7 @@ export class EntityTransaction {
   private doInsert(
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(current),
@@ -325,7 +325,7 @@ export class EntityTransaction {
     previous: object,
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(current),
@@ -350,7 +350,7 @@ export class EntityTransaction {
   private doDelete(
     previous: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(previous),

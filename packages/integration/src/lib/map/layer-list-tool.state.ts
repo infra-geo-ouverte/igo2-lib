@@ -11,14 +11,14 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class LayerListToolState {
-  readonly keyword$: BehaviorSubject<string> = new BehaviorSubject('');
-  readonly sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(
+  readonly keyword$ = new BehaviorSubject<string>('');
+  readonly sortAlpha$ = new BehaviorSubject<boolean>(
     undefined
   );
-  readonly onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(
+  readonly onlyVisible$ = new BehaviorSubject<boolean>(
     undefined
   );
-  readonly selectedTab$: BehaviorSubject<number> = new BehaviorSubject(
+  readonly selectedTab$ = new BehaviorSubject<number>(
     undefined
   );
 

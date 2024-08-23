@@ -26,7 +26,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  entitySortChange$ = new BehaviorSubject<boolean>(false);
 
   public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 

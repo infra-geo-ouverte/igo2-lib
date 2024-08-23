@@ -76,9 +76,9 @@ import {
 export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;
 
-  public projection: string = 'EPSG:4326';
-  public hasOsrmPrivateAccess: boolean = false;
-  public twoSourcesAvailable: boolean = false;
+  public projection = 'EPSG:4326';
+  public hasOsrmPrivateAccess = false;
+  public twoSourcesAvailable = false;
 
   private zoomRoute$$: Subscription;
   private storeEmpty$$: Subscription;
@@ -88,8 +88,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
   private selectedRoute: olInteraction.Select;
-  private focusOnStop: boolean = false;
-  private isTranslating: boolean = false;
+  private focusOnStop = false;
+  private isTranslating = false;
 
   public previousStops: Stop[] = [];
 
@@ -101,10 +101,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
-  @Input() debounce: number = 200;
-  @Input() length: number = 2;
-  @Input() coordRoundedDecimals: number = 6;
-  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input() debounce = 200;
+  @Input() length = 2;
+  @Input() coordRoundedDecimals = 6;
+  @Input() zoomToActiveRoute$ = new Subject<void>();
   @Input() authenticated$: BehaviorSubject<boolean>;
 
   /**
@@ -397,7 +397,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                       sp.type ===
                       (isCoord ? ProposalType.Coord : ProposalType.Text)
                   );
-                  let storedSource = stop.searchProposals.find(
+                  const storedSource = stop.searchProposals.find(
                     (sp) => sp.source === source
                   );
                   if (storedSource) {
@@ -440,7 +440,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRoutes(isOverview: boolean = false) {
+  private getRoutes(isOverview = false) {
     const stopsWithCoordinates = this.stopsStore.view
       .all()
       .filter((stop) => stop.coordinates);

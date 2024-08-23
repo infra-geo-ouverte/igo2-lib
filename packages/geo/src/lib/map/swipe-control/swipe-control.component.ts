@@ -40,7 +40,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * State of draggable action
    */
-  private inDragAction: boolean = false;
+  private inDragAction = false;
 
   /**
    * Listener of toggle from advanced-map-tool

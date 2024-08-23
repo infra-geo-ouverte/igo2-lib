@@ -57,7 +57,7 @@ export class OgcFilterFormComponent implements OnInit {
   filteredValues$: Observable<string[]>;
   filteredFields$: Observable<SourceFieldsOptionsParams[]>;
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+  public ogcFilterOperators$ = new BehaviorSubject<Record<string, any>>(
     undefined
   );
   public igoSpatialSelectors;
@@ -342,7 +342,7 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
-  changeMapExtentGeometry(refresh: boolean = true) {
+  changeMapExtentGeometry(refresh = true) {
     const interfaceOgcFilter =
       this.datasource.options.ogcFilters.interfaceOgcFilters.find(
         (f) => f.filterid === this.currentFilter.filterid

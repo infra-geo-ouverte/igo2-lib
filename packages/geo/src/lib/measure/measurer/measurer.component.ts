@@ -130,62 +130,62 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Whether measure units should be automatically determined
    * @internal
    */
-  public measureUnitsAuto: boolean = false;
+  public measureUnitsAuto = false;
 
   /**
    * Whether display of distances of areas
    * @internal
    */
-  public displayDistance: boolean = true;
+  public displayDistance = true;
 
   /**
    * Whether display of distances of lines
    * @internal
    */
-  public displayLines: boolean = true;
+  public displayLines = true;
 
   /**
    * Whether display of areas
    * @internal
    */
-  public displayAreas: boolean = true;
+  public displayAreas = true;
 
   /**
    * Observable of line boolean
    * @internal
    */
-  public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasLine$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Observable of area boolean
    * @internal
    */
-  public hasArea$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasArea$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Observable of area
    * @internal
    */
-  public measure$: BehaviorSubject<Measure> = new BehaviorSubject({});
+  public measure$ = new BehaviorSubject<Measure>({});
 
   /**
    * Observable of selected features
    * @internal
    */
-  public selectedFeatures$: BehaviorSubject<FeatureWithMeasure[]> =
-    new BehaviorSubject([]);
+  public selectedFeatures$ =
+    new BehaviorSubject<FeatureWithMeasure[]>([]);
 
   /**
    * OL draw source
    * @internal
    */
-  public showTooltips: boolean = true;
+  public showTooltips = true;
 
   /**
    * Whether draw control toggle is disabled or not
    * @internal
    */
-  public drawControlIsDisabled: boolean = true;
+  public drawControlIsDisabled = true;
 
   /**
    * Draw line control
@@ -300,7 +300,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * The minimum length a segment must have to display a tooltip.
    * It also applies to area tooltips.
    */
-  @Input() minSegmentLength: number = 10;
+  @Input() minSegmentLength = 10;
 
   @ViewChild('table', { static: true }) table: EntityTableComponent;
 

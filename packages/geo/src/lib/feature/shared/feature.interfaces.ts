@@ -17,7 +17,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap } from '../../map/shared/map';
 import { FeatureMotion } from './feature.enums';
 
-export interface Feature<P = { [key: string]: any }> {
+export interface Feature<P = Record<string, any>> {
   type: string;
   projection?: string;
   geometry?: FeatureGeometry;
@@ -35,11 +35,11 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
-  style?: { [key: string]: any };
-  alias?: { [key: string]: string };
+  style?: Record<string, any>;
+  alias?: Record<string, string>;
   revision?: number;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
+  excludeAttribute?: string[];
+  excludeAttributeOffline?: string[];
 }
 
 export interface FeatureGeometry {

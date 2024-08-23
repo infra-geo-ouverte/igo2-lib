@@ -12,7 +12,7 @@ import { BehaviorSubject } from 'rxjs';
   imports: [NgClass, MatProgressSpinner, AsyncPipe]
 })
 export class SpinnerComponent {
-  public shown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public shown$ = new BehaviorSubject<boolean>(false);
 
   @Input()
   set shown(value: boolean) {

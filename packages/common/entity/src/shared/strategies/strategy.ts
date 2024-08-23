@@ -25,7 +25,7 @@ export class EntityStoreStrategy {
   get active(): boolean {
     return this.active$.value;
   }
-  readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly active$ = new BehaviorSubject<boolean>(false);
 
   constructor(protected options: EntityStoreStrategyOptions = {}) {
     this.options = options;

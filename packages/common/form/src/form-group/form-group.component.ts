@@ -38,7 +38,7 @@ export class FormGroupComponent {
   /**
    * Field placeholder
    */
-  @Input() errors: { [key: string]: string };
+  @Input() errors: Record<string, string>;
 
   /**
    * Form group control
@@ -73,7 +73,7 @@ export class FormGroupComponent {
    * @returns Number of columns
    * @internal
    */
-  getFieldNgClass(field: FormField): { [key: string]: boolean } {
+  getFieldNgClass(field: FormField): Record<string, boolean> {
     const colspan = this.getFieldColSpan(field);
     return { [`igo-form-field-colspan-${colspan}`]: true };
   }

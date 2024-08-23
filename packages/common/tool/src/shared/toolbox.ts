@@ -11,12 +11,12 @@ export class Toolbox {
   /**
    * Observable of the active tool
    */
-  activeTool$: BehaviorSubject<Tool> = new BehaviorSubject(undefined);
+  activeTool$ = new BehaviorSubject<Tool>(undefined);
 
   /**
    * Ordered list of tool names to display in a toolbar
    */
-  toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+  toolbar$ = new BehaviorSubject<string[]>([]);
 
   /**
    * Observable of the active tool
@@ -100,7 +100,7 @@ export class Toolbox {
    * @param name Tool name
    * @param options Tool options
    */
-  activateTool(name: string, options: { [key: string]: any } = {}) {
+  activateTool(name: string, options: Record<string, any> = {}) {
     const tool = this.getTool(name);
     if (tool === undefined) {
       return;

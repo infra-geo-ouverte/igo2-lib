@@ -119,7 +119,7 @@ export class DirectionsService {
     doc: jsPDF,
     margins: [number, number, number, number]
   ) {
-    const verticalSpacing: number = 5;
+    const verticalSpacing = 5;
     const attributionText: string = this.printService.getAttributionText(map);
     if (attributionText) {
       margins[2] += verticalSpacing;
@@ -141,9 +141,9 @@ export class DirectionsService {
     const tblBody = document.createElement('tbody');
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      var row = document.createElement('tr');
-      var cellImage = document.createElement('td');
-      var cellText = document.createElement('td');
+      const row = document.createElement('tr');
+      const cellImage = document.createElement('td');
+      const cellText = document.createElement('td');
       // icon
       const img = document.createElement('img') as HTMLImageElement;
       img.src = element.icon;
@@ -169,13 +169,13 @@ export class DirectionsService {
 
   private async directionsInstruction(
     direction: Direction
-  ): Promise<Array<{ instruction: string; icon: string; distance: string }>> {
+  ): Promise<{ instruction: string; icon: string; distance: string }[]> {
     const matListItems = this.document
       .getElementsByTagName('igo-directions-results')[0]
       .getElementsByTagName('mat-list')[0];
     const matListItem = matListItems.getElementsByTagName('mat-list-item');
     // convert icon list to base64
-    let iconsArray: Array<{ name: string; icon: string }> = [];
+    const iconsArray: { name: string; icon: string }[] = [];
     for (let index = 0; index < matListItem.length; index++) {
       const element = matListItem[index];
       const icon = element.getElementsByTagName('mat-icon')[0] as HTMLElement;
@@ -187,11 +187,11 @@ export class DirectionsService {
       }
     }
 
-    let formattedDirection: Array<{
+    const formattedDirection: {
       instruction: string;
       icon: string;
       distance: string;
-    }> = [];
+    }[] = [];
     for (let i = 0; i < direction.steps.length; i++) {
       const step = direction.steps[i];
       const instruction = formatInstruction(

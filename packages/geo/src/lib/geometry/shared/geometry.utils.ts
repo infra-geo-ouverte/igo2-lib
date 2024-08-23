@@ -60,7 +60,7 @@ export function createDrawHoleInteractionStyle(): olstyle.Style {
 export function sliceOlGeometry(
   olGeometry: OlLineString | OlPolygon,
   olSlicer: OlLineString
-): Array<OlLineString | OlPolygon> {
+): (OlLineString | OlPolygon)[] {
   if (olGeometry instanceof OlPolygon) {
     return sliceOlPolygon(olGeometry, olSlicer);
   } else if (olGeometry instanceof OlLineString) {

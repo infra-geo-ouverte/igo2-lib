@@ -70,7 +70,7 @@ export class QueryService {
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
-    let flatArray = [].concat.apply([], newLayers);
+    const flatArray = [].concat.apply([], newLayers);
     return flatArray;
   }
 
@@ -124,7 +124,7 @@ export class QueryService {
         );
       }
       const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
-      let observables: any = [];
+      const observables: any = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
         if (this.checkScaleAndResolution(resolution, scale, element)) {
@@ -141,7 +141,7 @@ export class QueryService {
           map((res) => this.extractData(res, layer, options, url))
         );
       }
-      let observables: any = [];
+      const observables: any = [];
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         if (this.checkScaleAndResolution(resolution, scale, element)) {
@@ -255,7 +255,7 @@ export class QueryService {
     gmlRes,
     url,
     layer: Layer
-  ): [FeatureGeometry, { [key: string]: any }] {
+  ): [FeatureGeometry, Record<string, any>] {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
@@ -289,7 +289,7 @@ export class QueryService {
     }
     features.map((feature) => {
       if (queryTileField) {
-        let queryTitleContent = feature.getProperties()[queryTileField];
+        const queryTitleContent = feature.getProperties()[queryTileField];
         if (queryTitleContent) {
           titleContent = !titleContent
             ? queryTitleContent
@@ -433,7 +433,7 @@ export class QueryService {
     options: QueryOptions,
     url: string,
     imposedGeometry?,
-    imposedProperties?: { [key: string]: any }
+    imposedProperties?: Record<string, any>
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
@@ -697,7 +697,7 @@ export class QueryService {
     htmlTarget: QueryHtmlTarget,
     url,
     imposedGeometry?,
-    imposedProperties?: { [key: string]: any }
+    imposedProperties?: Record<string, any>
   ) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
@@ -987,7 +987,7 @@ export class QueryService {
     );
 
     return datasource.options.queryUrls.map((item) => {
-      let data: QueryUrlData = {
+      const data: QueryUrlData = {
         url: item.url
           .replace(/\{bbox\}/g, extent.join(','))
           .replace(/\{x\}/g, options.coordinates[0].toString())

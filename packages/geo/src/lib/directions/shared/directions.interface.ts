@@ -60,7 +60,7 @@ export interface Stop {
 export interface SourceProposal {
   type: ProposalType;
   source: SearchSource;
-  results: { [key: string]: any }[];
+  results: Record<string, any>[];
   meta: SearchMeta;
 }
 

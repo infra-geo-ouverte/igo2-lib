@@ -505,11 +505,11 @@ export class CatalogService {
         ? layer?.DataURL[0].OnlineResource
         : undefined;
 
-    let metadataUrl =
+    const metadataUrl =
       propertiesToForce?.metadataUrl ||
       propertiesToForce?.metadataUrlAll ||
       layerOnlineResource;
-    let metadataAbstract =
+    const metadataAbstract =
       propertiesToForce?.metadataAbstract ||
       propertiesToForce?.metadataAbstractAll ||
       baseAbstract;
@@ -606,7 +606,7 @@ export class CatalogService {
     catalog: Catalog,
     itemListIn: any,
     itemsPrepare: CatalogItem[],
-    loopLevel: number = 0
+    loopLevel = 0
   ) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map(
@@ -663,7 +663,7 @@ export class CatalogService {
 
   private getWMTSItems(
     catalog,
-    capabilities: { [key: string]: any }
+    capabilities: Record<string, any>
   ): CatalogItemLayer[] {
     if (!capabilities) {
       return [];
@@ -689,9 +689,9 @@ export class CatalogService {
         );
         let extern = true;
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           catalog.abstract;
@@ -800,12 +800,12 @@ export class CatalogService {
           layer.name,
           catalog.forcedProperties
         );
-        let baseAbstract = catalog.abstract;
+        const baseAbstract = catalog.abstract;
         let extern = true;
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           baseAbstract;

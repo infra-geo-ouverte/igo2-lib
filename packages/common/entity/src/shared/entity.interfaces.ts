@@ -4,9 +4,7 @@ import { EntityTableColumnRenderer } from './entity.enums';
 
 export type EntityKey = string | number;
 
-export interface EntityState {
-  [key: string]: any;
-}
+export type EntityState = Record<string, any>;
 
 export interface EntityRecord<
   E extends object,
@@ -66,22 +64,16 @@ export interface EntityTableTemplate {
     property: string,
     record: EntityRecord<object>
   ) => any;
-  headerClassFunc?: () => {
-    [key: string]: boolean;
-  };
+  headerClassFunc?: () => Record<string, boolean>;
   rowClassFunc?: (
     entity: object,
     record: EntityRecord<object>
-  ) => {
-    [key: string]: boolean;
-  };
+  ) => Record<string, boolean>;
   cellClassFunc?: (
     entity: object,
     column: EntityTableColumn,
     record: EntityRecord<object>
-  ) => {
-    [key: string]: boolean;
-  };
+  ) => Record<string, boolean>;
 }
 
 export interface EntityTableColumnValidation {
@@ -108,15 +100,13 @@ export interface EntityTableColumn {
   sort?: boolean;
   type?: string;
   multiple?: boolean;
-  domainValues?: Array<SelectOption>;
+  domainValues?: SelectOption[];
   relation?: TableRelation;
   tooltip?: string;
   cellClassFunc?: (
     entity: object,
     record: EntityRecord<object>
-  ) => {
-    [key: string]: boolean;
-  };
+  ) => Record<string, boolean>;
   step?: number;
   icon?: string;
   onBlur?: (event: Event) => void;

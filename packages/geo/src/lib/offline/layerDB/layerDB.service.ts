@@ -20,7 +20,7 @@ export class LayerDBService {
    * @returns
    */
   update(layerDBData: LayerDBData): Observable<any> {
-    const subject: Subject<LayerDBData> = new Subject();
+    const subject = new Subject<LayerDBData>();
     this.ngxIndexedDBService
       .getByID(this.dbName, layerDBData.layerId)
       .pipe(
@@ -41,7 +41,7 @@ export class LayerDBService {
   }
 
   private customUpdate(layerDBData: LayerDBData): Observable<LayerDBData> {
-    const subject: Subject<LayerDBData> = new Subject();
+    const subject = new Subject<LayerDBData>();
     const deleteRequest = this.ngxIndexedDBService.deleteByKey(
       this.dbName,
       layerDBData.layerId

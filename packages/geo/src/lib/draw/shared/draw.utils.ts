@@ -138,7 +138,7 @@ export function DDtoDMS(
       (val: [number, number]) => convertDDToDMS(val, 2)
     ]
   ]);
-  let conversion = conversionMapper.get(unit);
+  const conversion = conversionMapper.get(unit);
 
   return conversion ? conversion(value) : undefined;
 }

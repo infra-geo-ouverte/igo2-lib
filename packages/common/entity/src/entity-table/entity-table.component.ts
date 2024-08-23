@@ -73,14 +73,12 @@ import {
 } from '../shared';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 
-interface CellData {
-  [key: string]: {
+type CellData = Record<string, {
     value: any;
-    class: { [key: string]: boolean };
+    class: Record<string, boolean>;
     isUrl: boolean;
     isImg: boolean;
-  };
-}
+  }>;
 
 interface RowData {
   record: EntityRecord<object, EntityState>;
@@ -128,7 +126,7 @@ interface RowData {
   ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  entitySortChange$ = new BehaviorSubject<boolean>(false);
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
@@ -150,8 +148,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Observable of the selection,s state
    * @internal
    */
-  readonly selectionState$: BehaviorSubject<EntityTableSelectionState> =
-    new BehaviorSubject(undefined);
+  readonly selectionState$ =
+    new BehaviorSubject<EntityTableSelectionState>(undefined);
 
   /**
    * Subscription to the store's selection
@@ -203,13 +201,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Whether nulls should be first when sorting
    */
   @Input()
-  sortNullsFirst: boolean = false;
+  sortNullsFirst = false;
 
   /**
    * Show the table paginator or not. False by default.
    */
   @Input()
-  withPaginator: boolean = false;
+  withPaginator = false;
 
   /**
    * Paginator options
@@ -232,10 +230,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Event emitted when the table sort is changed.
    */
-  @Output() entitySortChange: EventEmitter<{
+  @Output() entitySortChange = new EventEmitter<{
     column: EntityTableColumn;
     direction: string;
-  }> = new EventEmitter(undefined);
+  }>(undefined);
 
   /**
    * Table headers
@@ -478,7 +476,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       } else if (column.type === 'date') {
         if (column.visible !== false) {
           if (item[key]) {
-            let date = moment(item[key]);
+            const date = moment(item[key]);
             item[key] = date.utc().format('YYYY-MM-DD');
             this.formGroup.setControl(
               column.name,
@@ -841,7 +839,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         typeof value === 'string'
           ? (list_id = value.match(/[\w.-]+/g).map(Number))
           : (list_id = value);
-        let list_option = [];
+        const list_option = [];
 
         column.domainValues.forEach((option) => {
           if (list_id.includes(option.id)) {
@@ -901,7 +899,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     } else if (column.type === 'date') {
       if (this.isEdition(record)) {
         if (value) {
-          let date = moment(value);
+          const date = moment(value);
           value = date.format();
           this.formGroup.controls[column.name].setValue(value);
         }
@@ -960,7 +958,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getTableClass(): { [key: string]: boolean } {
+  getTableClass(): Record<string, boolean> {
     return {
       'igo-entity-table-with-selection': this.selection
     };
@@ -971,7 +969,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getHeaderClass(): { [key: string]: boolean } {
+  getHeaderClass(): Record<string, boolean> {
     const func = this.template.headerClassFunc;
     if (func instanceof Function) {
       return func();
@@ -985,7 +983,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getRowClass(record: EntityRecord<object>): { [key: string]: boolean } {
+  getRowClass(record: EntityRecord<object>): Record<string, boolean> {
     const entity = record.entity;
     const func = this.template.rowClassFunc;
     if (func instanceof Function) {
@@ -1004,7 +1002,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   getCellClass(
     record: EntityRecord<object>,
     column: EntityTableColumn
-  ): { [key: string]: boolean } {
+  ): Record<string, boolean> {
     const entity = record.entity;
     const cls = {};
 

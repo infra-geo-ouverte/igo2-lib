@@ -114,7 +114,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  @Input() measure = false;
 
   /**
    * Whether draw control should be active or not
@@ -135,7 +135,7 @@ export class GeometryFormFieldInputComponent
       this.toggleControl();
     }
   }
-  private _drawControlIsActive: boolean = true;
+  private _drawControlIsActive = true;
 
   /**
    * Whether freehand draw control should be active or not
@@ -180,7 +180,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  @Input() controlOptions: Record<string, any> = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)

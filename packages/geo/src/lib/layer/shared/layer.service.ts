@@ -386,7 +386,7 @@ export class LayerService {
     }
   }
 
-  createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
+  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
     return this.layerDBService.getAll().pipe(
       concatMap((res) => {
         const idbLayers =

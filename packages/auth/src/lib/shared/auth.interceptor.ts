@@ -114,7 +114,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   alterUrlWithKeyAuth(url: string): string {
     const hostWithKey = this.handleHostsAuthByKey(url);
-    let interceptedUrl = url;
+    const interceptedUrl = url;
     if (hostWithKey) {
       const urlDecomposed = interceptedUrl.split(/[?&]/);
       let urlWithKeyAdded = urlDecomposed.shift();
@@ -148,8 +148,8 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
-        var keyAdded = new RegExp(replace, 'gm');
+        const replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
+        const keyAdded = new RegExp(replace, 'gm');
         if (!keyAdded.test(reqUrl)) {
           hostWithKey = {
             key: hostWithAuthByKey.keyProperty,

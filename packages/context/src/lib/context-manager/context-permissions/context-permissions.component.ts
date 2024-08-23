@@ -109,10 +109,10 @@ export class ContextPermissionsComponent implements OnInit {
   public formControl = new UntypedFormControl();
   formValueChanges$$: Subscription;
 
-  @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
-  @Output() removePermission: EventEmitter<ContextPermission> =
-    new EventEmitter();
-  @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
+  @Output() addPermission = new EventEmitter<ContextPermission>();
+  @Output() removePermission =
+    new EventEmitter<ContextPermission>();
+  @Output() scopeChanged = new EventEmitter<Context>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,

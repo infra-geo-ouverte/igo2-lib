@@ -36,8 +36,8 @@ export class OgcFilterTimeSliderComponent implements OnInit {
   @ViewChild(MatSlider) slider: MatSlider;
 
   interval;
-  sliderValue: number = 1;
-  calculatedStep: number = 0;
+  sliderValue = 1;
+  calculatedStep = 0;
   readonly _defaultDisplayFormat: string = 'DD/MM/YYYY HH:mm A';
   readonly _defaultSliderInterval: number = 2000;
   public playIcon = 'play_circle';

@@ -16,7 +16,7 @@ import { version } from './version';
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigService<T extends object = { [key: string]: any }> {
+export class ConfigService<T extends object = Record<string, any>> {
   private config: T | null;
   private httpClient: HttpClient;
   private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));

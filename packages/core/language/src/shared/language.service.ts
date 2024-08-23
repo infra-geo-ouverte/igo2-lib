@@ -8,7 +8,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 })
 export class LanguageService {
   private language: string;
-  readonly language$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  readonly language$ = new BehaviorSubject<string>(undefined);
 
   constructor(public translate: TranslateService) {
     this.language = this.translate.getBrowserLang();

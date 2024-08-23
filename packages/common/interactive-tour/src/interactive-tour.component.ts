@@ -39,7 +39,7 @@ export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
    */
-  @Input() tourToStart: string = '';
+  @Input() tourToStart = '';
   @Input() styleButton: 'icon' | 'raised';
   @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
 

@@ -15,7 +15,7 @@ export interface Research {
   source: SearchSource;
 }
 
-export interface SearchResult<T = { [key: string]: any }> {
+export interface SearchResult<T = Record<string, any>> {
   data: T;
   source: SearchSource;
   meta: SearchMeta;

@@ -26,13 +26,13 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public legend: Legend[];
-  public legendCollapsed: boolean = true;
-  public firstLoadComponent: boolean = true;
+  public legendCollapsed = true;
+  public firstLoadComponent = true;
   public map: MapBase;
   public ol: olLayer<olSource>;
-  public olLoadingProblem: boolean = false;
+  public olLoadingProblem = false;
   public status$: Subject<SubjectStatus>;
-  public hasBeenVisible$: BehaviorSubject<boolean> = new BehaviorSubject(
+  public hasBeenVisible$ = new BehaviorSubject<boolean>(
     undefined
   );
   private hasBeenVisible$$: Subscription;
@@ -93,8 +93,8 @@ export abstract class Layer {
   get isInResolutionsRange(): boolean {
     return this.isInResolutionsRange$.value;
   }
-  readonly isInResolutionsRange$: BehaviorSubject<boolean> =
-    new BehaviorSubject(false);
+  readonly isInResolutionsRange$ =
+    new BehaviorSubject<boolean>(false);
 
   set maxResolution(value: number) {
     this.ol.setMaxResolution(value === 0 ? 0 : value || Infinity);
@@ -127,7 +127,7 @@ export abstract class Layer {
   get visible(): boolean {
     return this.visible$.value;
   }
-  readonly visible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  readonly visible$ = new BehaviorSubject<boolean>(undefined);
 
   get displayed(): boolean {
     return this.visible && this.isInResolutionsRange;

@@ -27,7 +27,7 @@ import { IgoMap } from '../shared/map';
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('my_location');
+  readonly icon$ = new BehaviorSubject<string>('my_location');
 
   @Input()
   get map(): IgoMap {

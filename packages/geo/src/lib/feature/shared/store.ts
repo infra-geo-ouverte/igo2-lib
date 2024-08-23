@@ -167,9 +167,9 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   }
 
   setLayerExtent(): void {
-    let features = this.entities$.getValue();
-    let extent = olextent.createEmpty() as MapExtent;
-    let olFeatures = [];
+    const features = this.entities$.getValue();
+    const extent = olextent.createEmpty() as MapExtent;
+    const olFeatures = [];
 
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));

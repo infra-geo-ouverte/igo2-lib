@@ -14,8 +14,8 @@ import { GeoDBData } from './geoDB.interface';
 })
 export class GeoDBService {
   readonly dbName: string = 'geoData';
-  public collisionsMap: Map<number, string[]> = new Map();
-  public _newData: number = 0;
+  public collisionsMap = new Map<number, string[]>();
+  public _newData = 0;
   private compression = new Compression();
 
   constructor(private ngxIndexedDBService: NgxIndexedDBService) {}
@@ -41,7 +41,7 @@ export class GeoDBService {
     }
     let compress = false;
 
-    const subject: Subject<GeoDBData> = new Subject();
+    const subject = new Subject<GeoDBData>();
     let object$: Observable<any> = of(object);
     if (object instanceof Blob) {
       object$ = this.compression.compressBlob(object);
@@ -89,7 +89,7 @@ export class GeoDBService {
   }
 
   private customUpdate(geoDBData: GeoDBData): Observable<GeoDBData> {
-    const subject: Subject<GeoDBData> = new Subject();
+    const subject = new Subject<GeoDBData>();
     const deleteRequest = this.ngxIndexedDBService.deleteByKey(
       this.dbName,
       geoDBData.url
@@ -134,7 +134,7 @@ export class GeoDBService {
   }
 
   getRegionCountByID(id: number): Observable<number> {
-    const subject: Subject<number> = new Subject();
+    const subject = new Subject<number>();
     const dbRequest = this.getRegionByID(id).subscribe((datas) => {
       subject.next(datas.length);
       subject.complete();

@@ -50,7 +50,7 @@ import {
 export class ImportExportToolComponent implements OnInit {
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
-  @Input() selectFirstProj: boolean = false;
+  @Input() selectFirstProj = false;
 
   /**
    * Map to measure on
@@ -65,7 +65,7 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   @Input() importExportType: ImportExportType = ImportExportType.layer;
-  @Input() importExportShowBothType: boolean = true;
+  @Input() importExportShowBothType = true;
 
   constructor(
     private mapState: MapState,

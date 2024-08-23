@@ -22,11 +22,11 @@ import { IgoMap } from '../shared/map';
   ]
 })
 export class OfflineButtonComponent implements OnInit {
-  btnStyle: string = 'onlineStyle';
+  btnStyle = 'onlineStyle';
 
   @Input() map: IgoMap;
   @Input() color: string;
-  @Input() enabled: boolean = false;
+  @Input() enabled = false;
 
   constructor() {}
 

@@ -105,7 +105,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   public iterator = 1;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
+  public selectedFeature$ = new BehaviorSubject<Feature>(
     undefined
   );
 

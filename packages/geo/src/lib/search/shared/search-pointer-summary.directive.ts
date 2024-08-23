@@ -57,24 +57,24 @@ export class SearchPointerSummaryDirective
   private store$$: Subscription;
   private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
-  private hasPointerReverseSearchSource: boolean = false;
+  private hasPointerReverseSearchSource = false;
 
   /**
    * Listener to the pointer move event
    */
   private pointerMoveListener;
 
-  private searchPointerSummaryFeatureId: string =
+  private searchPointerSummaryFeatureId =
     'searchPointerSummaryFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoSearchPointerSummaryDelay: number = 1000;
+  @Input() igoSearchPointerSummaryDelay = 1000;
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoSearchPointerSummaryEnabled: boolean = false;
+  @Input() igoSearchPointerSummaryEnabled = false;
 
   @HostListener('mouseleave')
   mouseleave() {

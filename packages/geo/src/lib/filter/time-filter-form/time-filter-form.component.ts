@@ -71,9 +71,9 @@ export class TimeFilterFormComponent implements OnInit {
   public endYear: any;
   public initStartYear: any;
   public initEndYear: any;
-  public listYears: Array<string> = [];
-  public startListYears: Array<string> = [];
-  public endListYears: Array<string> = [];
+  public listYears: string[] = [];
+  public startListYears: string[] = [];
+  public endListYears: string[] = [];
 
   @Input()
   set currentValue(value: string) {
@@ -98,9 +98,9 @@ export class TimeFilterFormComponent implements OnInit {
   public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
-  @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
+  @Output() change = new EventEmitter<Date | [Date, Date]>();
   @Output()
-  yearChange: EventEmitter<string | [string, string]> = new EventEmitter();
+  yearChange = new EventEmitter<string | [string, string]>();
   @ViewChild(MatSlider) mySlider;
 
   get type(): TimeFilterType {

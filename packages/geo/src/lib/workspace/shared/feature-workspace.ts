@@ -11,7 +11,7 @@ export interface FeatureWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class FeatureWorkspace extends Workspace {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(
     true
   );
 

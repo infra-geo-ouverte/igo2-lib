@@ -8,6 +8,6 @@ export interface ClusterDataSourceOptions extends FeatureDataSourceOptions {
   source?: olSourceVector;
   ol?: olSourceVector;
   pathOffline?: string;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
+  excludeAttribute?: string[];
+  excludeAttributeOffline?: string[];
 }

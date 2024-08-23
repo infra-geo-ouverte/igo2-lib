@@ -50,7 +50,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
-    const limit: Number = 5;
+    const limit = 5;
 
     return {
       title: 'igo.geo.search.workspace.name',
@@ -191,7 +191,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return allowedFieldsAndAlias;
   }
 
-  private computeProperties(data: WorkspaceData): { [key: string]: any } {
+  private computeProperties(data: WorkspaceData): Record<string, any> {
     if (!data.feature.geometry) {
       return Object.assign(
         { type: data.layer.title + '.' + data.field },

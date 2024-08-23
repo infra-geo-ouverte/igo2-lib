@@ -46,12 +46,12 @@ export class WidgetOutletComponent implements OnDestroy {
   /**
    * Widget inputs
    */
-  @Input() inputs: { [key: string]: any };
+  @Input() inputs: Record<string, any>;
 
   /**
    * Widget subscribers
    */
-  @Input() subscribers: { [key: string]: (event: any) => void } = {};
+  @Input() subscribers: Record<string, (event: any) => void> = {};
 
   /**
    * Event emitted when the widget emits 'complete'
@@ -79,7 +79,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * @returns Combined subscribers
    * @internal
    */
-  getEffectiveSubscribers(): { [key: string]: (event: any) => void } {
+  getEffectiveSubscribers(): Record<string, (event: any) => void> {
     const subscribers = Object.assign({}, this.subscribers);
 
     // Base subscribers

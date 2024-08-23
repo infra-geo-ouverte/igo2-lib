@@ -158,10 +158,10 @@ export class StoredQueriesSearchSource
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
-  /* eslint-disable max-len */
+
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
-  /* eslint-disable max-len */
+
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
@@ -364,7 +364,7 @@ export class StoredQueriesSearchSource
     };
   }
 
-  private computeProperties(data: StoredQueriesData): { [key: string]: any } {
+  private computeProperties(data: StoredQueriesData): Record<string, any> {
     const properties = Object.assign(
       {},
       ObjectUtils.removeKeys(
@@ -387,7 +387,7 @@ export class StoredQueriesSearchSource
  */
 
 // EXAMPLE CALLS
-/* eslint-disable max-len */
+
 // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
 //
 
@@ -579,9 +579,7 @@ export class StoredQueriesReverseSearchSource
     };
   }
 
-  private computeProperties(data: StoredQueriesReverseData): {
-    [key: string]: any;
-  } {
+  private computeProperties(data: StoredQueriesReverseData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist

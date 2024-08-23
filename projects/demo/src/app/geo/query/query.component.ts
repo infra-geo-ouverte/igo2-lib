@@ -204,7 +204,7 @@ export class AppQueryComponent {
   }
 
   addFeatures(dataSource: FeatureDataSource): void {
-    const feature1: olFeature<olLineString> = new olFeature({
+    const feature1 = new olFeature<olLineString>({
       name: 'feature1',
       geometry: new olLineString([
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
@@ -213,14 +213,14 @@ export class AppQueryComponent {
       ])
     });
 
-    const feature2: olFeature<olPoint> = new olFeature({
+    const feature2 = new olFeature<olPoint>({
       name: 'feature2',
       geometry: new olPoint(
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
       )
     });
 
-    const feature3: olFeature<olPolygon> = new olFeature({
+    const feature3 = new olFeature<olPolygon>({
       name: 'feature3',
       geometry: new olPolygon([
         [

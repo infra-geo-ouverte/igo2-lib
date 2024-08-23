@@ -29,7 +29,7 @@ export class ContextEditComponent {
   }
   private _context: Context;
 
-  @Output() submitForm: EventEmitter<Context> = new EventEmitter();
+  @Output() submitForm = new EventEmitter<Context>();
 
   constructor(private cd: ChangeDetectorRef) {}
 

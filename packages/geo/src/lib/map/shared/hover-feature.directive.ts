@@ -65,16 +65,16 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
   private singleClickMapListener;
 
-  private hoverFeatureId: string = 'hoverFeatureId';
+  private hoverFeatureId = 'hoverFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoHoverFeatureDelay: number = 1000;
+  @Input() igoHoverFeatureDelay = 1000;
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoHoverFeatureEnabled: boolean = false;
+  @Input() igoHoverFeatureEnabled = false;
 
   @HostListener('mouseout')
   mouseout() {
@@ -361,7 +361,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               if (!this.canProcessHover(myLayerVector)) {
                 return;
               }
-              let localOlFeature = this.handleRenderFeature(mapFeature);
+              const localOlFeature = this.handleRenderFeature(mapFeature);
               this.setLayerStyleFromOptions(myLayerVector, localOlFeature);
               const featuresToLoad = [localOlFeature];
               localOlFeature.set('_isLabel', false);
@@ -413,7 +413,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                       this.clearLayer();
                       return;
                     }
-                    let localOlFeature = this.handleRenderFeature(feature);
+                    const localOlFeature = this.handleRenderFeature(feature);
                     localOlFeature.set('_isLabel', false);
                     const myLabelOlFeature = new OlFeature();
                     myLabelOlFeature.setProperties(

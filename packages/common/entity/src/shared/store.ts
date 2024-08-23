@@ -80,7 +80,7 @@ export class EntityStore<
   get pristine(): boolean {
     return this._pristine;
   }
-  private _pristine: boolean = true;
+  private _pristine = true;
 
   /**
    * Strategies
@@ -128,7 +128,7 @@ export class EntityStore<
    * Set this store's entities
    * @param entities Entities
    */
-  load(entities: E[], pristine: boolean = true) {
+  load(entities: E[], pristine = true) {
     this._index = this.generateIndex(entities);
     this._pristine = pristine;
     this.next();
@@ -212,7 +212,7 @@ export class EntityStore<
    */
   addStrategy(
     strategy: EntityStoreStrategy,
-    activate: boolean = false
+    activate = false
   ): EntityStore {
     const existingStrategy = this.strategies.find(
       (_strategy: EntityStoreStrategy) => {

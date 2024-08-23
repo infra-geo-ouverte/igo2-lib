@@ -31,17 +31,17 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   imports: [MatPaginatorModule]
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
-  public disabled: boolean = false;
-  public hidePageSize: boolean = false;
-  public pageIndex: number = 0;
-  public pageSize: number = 50;
+  public disabled = false;
+  public hidePageSize = false;
+  public pageIndex = 0;
+  public pageSize = 50;
   public pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
-  public showFirstLastButtons: boolean = true;
+  public showFirstLastButtons = true;
   private count$$: Subscription;
   private entitySortChange$$: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
-  @Input() entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(
+  @Input() entitySortChange$ = new BehaviorSubject<boolean>(
     false
   );
   /**
@@ -60,7 +60,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
    */
   @Output() page: EventEmitter<PageEvent>;
 
-  public length: number = 0;
+  public length = 0;
 
   /**
    * Paginator emitted.
@@ -150,7 +150,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   }
 
   rangeLabel = (page: number, pageSize: number, length: number) => {
-    const of: BehaviorSubject<string> = new BehaviorSubject('');
+    const of = new BehaviorSubject<string>('');
 
     this.paginationLabelTranslation$$.push(
       this.languageService.translate

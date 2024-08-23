@@ -117,7 +117,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
   public autocompleteEnableds$ = new BehaviorSubject<string[]>([]);
-  public filteredOgcAutocomplete: { [key: string]: Observable<any[]> } = {};
+  public filteredOgcAutocomplete: Record<string, Observable<any[]>> = {};
 
   public applyFiltersTimeout;
 
@@ -435,7 +435,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private initAutocompleteEnableds() {
-    let enabled = [];
+    const enabled = [];
     this.currentAutocompleteGroup.computedSelectors.forEach((compSelect) => {
       compSelect.selectors?.forEach((selector) => {
         if (selector.enabled) {
@@ -491,7 +491,7 @@ export class OgcFilterSelectionComponent implements OnInit {
             : (domValues = filterDOM.values);
 
           if (domValues) {
-            let newBundle = bundle;
+            const newBundle = bundle;
             newBundle.selectors = [];
             let selector;
             for (const value of domValues) {
@@ -569,7 +569,7 @@ export class OgcFilterSelectionComponent implements OnInit {
             : (domValues = filterDOM.values);
 
           if (domValues) {
-            let newBundle: OgcSelectorBundle = bundle;
+            const newBundle: OgcSelectorBundle = bundle;
             newBundle.selectors = [];
             let selector: OgcAutocomplete;
             for (const domValue of domValues) {

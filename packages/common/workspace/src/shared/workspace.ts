@@ -20,14 +20,12 @@ export class Workspace<E extends object = object> {
   /**
    * Observable of the selected widget's inputs
    */
-  readonly widgetInputs$ = new BehaviorSubject<{ [key: string]: any }>({});
+  readonly widgetInputs$ = new BehaviorSubject<Record<string, any>>({});
 
   /**
    * Observable of the selected widget's subscribers
    */
-  readonly widgetSubscribers$ = new BehaviorSubject<{
-    [key: string]: (event: any) => void;
-  }>({});
+  readonly widgetSubscribers$ = new BehaviorSubject<Record<string, (event: any) => void>>({});
 
   /**
    * Subscription to the selected entity
@@ -37,7 +35,7 @@ export class Workspace<E extends object = object> {
   /**
    * State change that trigger an update of the actions availability
    */
-  private change: Subject<void> = new Subject();
+  private change = new Subject<void>();
 
   /**
    * Subscription to state changes
@@ -61,7 +59,7 @@ export class Workspace<E extends object = object> {
   /**
    * Workspace title
    */
-  get meta(): { [key: string]: any } {
+  get meta(): Record<string, any> {
     return this.options.meta || {};
   }
 
@@ -102,7 +100,7 @@ export class Workspace<E extends object = object> {
   get active(): boolean {
     return this.active$.value;
   }
-  readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly active$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Activate the workspace. By doing that, the workspace will observe
@@ -148,8 +146,8 @@ export class Workspace<E extends object = object> {
    */
   activateWidget(
     widget: Widget,
-    inputs: { [key: string]: any } = {},
-    subscribers: { [key: string]: (event: any) => void } = {}
+    inputs: Record<string, any> = {},
+    subscribers: Record<string, (event: any) => void> = {}
   ) {
     this.widget$.next(widget);
     this.widgetInputs$.next(inputs);

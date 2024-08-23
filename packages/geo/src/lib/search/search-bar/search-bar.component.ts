@@ -75,11 +75,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     'ArrowLeft'
   ];
 
-  readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject(
+  readonly placeholder$ = new BehaviorSubject<string>(
     'igo.geo.search.placeholder'
   );
 
-  readonly empty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  readonly empty$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Subscription to the ssearch bar term
@@ -89,7 +89,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Search term stream
    */
-  private stream$: BehaviorSubject<string> = new BehaviorSubject('');
+  private stream$ = new BehaviorSubject<string>('');
 
   /**
    * Subscription to the search term stream
@@ -107,7 +107,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = false;
+  public showSearchButton = false;
 
   /**
    * List of available search types
@@ -126,7 +126,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get searchType(): string {
     return this.searchType$.value;
   }
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
+  readonly searchType$ = new BehaviorSubject<string>(
     undefined
   );
 
@@ -155,7 +155,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get term(): string {
     return this.term$.value;
   }
-  readonly term$: BehaviorSubject<string> = new BehaviorSubject('');
+  readonly term$ = new BehaviorSubject<string>('');
 
   /**
    * Whether this component is disabled
@@ -167,10 +167,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get disabled(): boolean {
     return this.disabled$.value;
   }
-  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly disabled$ = new BehaviorSubject<boolean>(false);
 
-  @Input() pointerSummaryEnabled: boolean = false;
-  @Input() searchResultsGeometryEnabled: boolean = false;
+  @Input() pointerSummaryEnabled = false;
+  @Input() searchResultsGeometryEnabled = false;
 
   /**
    * When reverse coordinates status change
@@ -201,7 +201,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() color = 'primary';
 
-  @Input() termSplitter: string = '|';
+  @Input() termSplitter = '|';
 
   /**
    * Debounce time between each keystroke

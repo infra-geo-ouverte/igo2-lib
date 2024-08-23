@@ -65,12 +65,12 @@ import {
   ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
   /**
    * Observable of the legend items
    */
-  legendItems$: BehaviorSubject<Legend[]> = new BehaviorSubject([]);
+  legendItems$ = new BehaviorSubject<Legend[]>([]);
 
   /**
    * Subscription to the map's resolution
@@ -104,7 +104,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * List of size of images displayed
    */
-  public imagesHeight: { [srcKey: string]: number } = {};
+  public imagesHeight: Record<string, number> = {};
 
   /**
    * Layer

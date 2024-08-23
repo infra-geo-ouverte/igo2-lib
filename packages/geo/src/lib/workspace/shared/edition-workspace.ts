@@ -29,7 +29,7 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(
     true
   );
 

@@ -19,7 +19,7 @@ import { SpatialFilterThematic } from './spatial-filter.interface';
   providedIn: 'root'
 })
 export class SpatialFilterService {
-  public baseUrl: string = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
+  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
 
   /*
    * Type association with URL

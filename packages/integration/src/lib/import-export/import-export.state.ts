@@ -21,11 +21,11 @@ export enum ImportExportMode {
   providedIn: 'root'
 })
 export class ImportExportState {
-  readonly importExportType$: BehaviorSubject<ImportExportType> =
-    new BehaviorSubject(ImportExportType.layer);
-  readonly selectedMode$: BehaviorSubject<ImportExportMode> =
-    new BehaviorSubject(ImportExportMode.import);
-  readonly exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
+  readonly importExportType$ =
+    new BehaviorSubject<ImportExportType>(ImportExportType.layer);
+  readonly selectedMode$ =
+    new BehaviorSubject<ImportExportMode>(ImportExportMode.import);
+  readonly exportOptions$ = new BehaviorSubject<ExportOptions>(
     undefined
   );
 

@@ -33,7 +33,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: Layer[] = [];
 
-  @Input() removeLayersOnContextChange: boolean = true;
+  @Input() removeLayersOnContextChange = true;
 
   get map(): IgoMap {
     return this.component.map;

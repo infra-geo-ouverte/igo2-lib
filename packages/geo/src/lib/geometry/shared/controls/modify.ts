@@ -45,17 +45,17 @@ export class ModifyControl {
   /**
    * Modify start observable
    */
-  public start$: Subject<OlGeometry> = new Subject();
+  public start$ = new Subject<OlGeometry>();
 
   /**
    * Modify end observable
    */
-  public end$: Subject<OlGeometry> = new Subject();
+  public end$ = new Subject<OlGeometry>();
 
   /**
    * Geometry changes observable
    */
-  public changes$: Subject<OlGeometry> = new Subject();
+  public changes$ = new Subject<OlGeometry>();
 
   private olMap: OlMap;
   private olOverlayLayer: OlVectorLayer<any>;
@@ -63,17 +63,17 @@ export class ModifyControl {
   private onModifyStartKey: any;
   private onModifyEndKey: any;
   private onModifyKey: any;
-  private olModifyInteractionIsActive: boolean = false;
+  private olModifyInteractionIsActive = false;
   private olTranslateInteraction: OlTranslate;
   private onTranslateStartKey: any;
   private onTranslateEndKey: any;
   private onTranslateKey: any;
-  private olTranslateInteractionIsActive: boolean = false;
+  private olTranslateInteractionIsActive = false;
   private olDrawInteraction: OlDraw;
   private onDrawStartKey: any;
   private onDrawEndKey: any;
   private onDrawKey: any;
-  private olDrawInteractionIsActive: boolean = false;
+  private olDrawInteractionIsActive = false;
 
   private mousePosition: [number, number];
 
@@ -113,12 +113,12 @@ export class ModifyControl {
   /**
    * Whether a modify control should be available
    */
-  private modify: boolean = true;
+  private modify = true;
 
   /**
    * Whether a translate control should be available
    */
-  private translate: boolean = true;
+  private translate = true;
 
   constructor(private options: ModifyControlOptions) {
     if (options.modify !== undefined) {

@@ -40,7 +40,7 @@ export class TrackFeatureButtonComponent implements OnInit {
     return this.layer.options;
   }
 
-  public color: string = 'primary';
+  public color = 'primary';
 
   constructor() {}
 

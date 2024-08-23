@@ -24,7 +24,7 @@ import { WfsActionsService } from './shared/wfs-actions.service';
   providedIn: 'root'
 })
 export class WorkspaceState implements OnDestroy {
-  public workspacePanelExpanded: boolean = false;
+  public workspacePanelExpanded = false;
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);

@@ -45,7 +45,7 @@ export class ILayerSearchResultFormatter {
 
     const property = Object.entries(data.properties)
       .filter(([key]) => allowedKey.indexOf(key) !== -1)
-      .reduce((out: { [key: string]: any }, entries: [string, any]) => {
+      .reduce((out: Record<string, any>, entries: [string, any]) => {
         const [key, value] = entries;
         let newKey;
         try {

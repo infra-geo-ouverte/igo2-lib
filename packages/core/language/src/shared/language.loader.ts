@@ -17,7 +17,7 @@ export class LanguageLoader implements LanguageLoaderBase {
     handler: HttpBackend,
     private configService: ConfigService,
     private prefix?: string | string[],
-    private suffix: string = '.json'
+    private suffix = '.json'
   ) {
     this.httpClient = new HttpClient(handler);
   }

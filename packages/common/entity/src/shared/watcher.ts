@@ -35,7 +35,7 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * Component inner state
    */
-  private innerStateIndex = new Map<EntityKey, { [key: string]: any }>();
+  private innerStateIndex = new Map<EntityKey, Record<string, any>>();
 
   /**
    * Subscription to the store's entities

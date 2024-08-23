@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
   imports: [NgIf]
 })
 export class InfoSectionComponent {
-  @Input() infoContent: string = '';
+  @Input() infoContent = '';
 
   constructor() {}
 }

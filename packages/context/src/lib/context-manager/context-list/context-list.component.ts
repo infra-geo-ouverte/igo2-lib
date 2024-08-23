@@ -78,7 +78,7 @@ import { ContextListControlsEnum } from './context-list.enum';
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
+  contexts$ = new BehaviorSubject<ContextsList>(
     this.contextsInitial
   );
 
@@ -158,7 +158,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   get term(): string {
     return this._term;
   }
-  public _term: string = '';
+  public _term = '';
 
   get sortedAlpha(): boolean {
     return this._sortedAlpha;

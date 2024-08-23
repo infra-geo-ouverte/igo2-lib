@@ -21,7 +21,7 @@ export class ToolState {
     return this.toolService.toolbox;
   }
 
-  public openSidenav$: BehaviorSubject<boolean> = new BehaviorSubject(
+  public openSidenav$ = new BehaviorSubject<boolean>(
     undefined
   );
 
@@ -32,7 +32,7 @@ export class ToolState {
 
   toolToActivateFromOptions(toolToActivate: {
     tool: string;
-    options: { [key: string]: any };
+    options: Record<string, any>;
   }) {
     if (!toolToActivate) {
       return;

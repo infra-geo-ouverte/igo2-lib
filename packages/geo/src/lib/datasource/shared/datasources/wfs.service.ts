@@ -70,8 +70,8 @@ export class WFSService extends DataService {
     nb: number = defaultMaxFeatures,
     epsgCode: string = defaultEpsg,
     propertyName?: string,
-    startIndex: number = 0,
-    forceDefaultOutputFormat: boolean = false
+    startIndex = 0,
+    forceDefaultOutputFormat = false
   ): Observable<any> {
     const queryStringValues = formatWFSQueryString(
       dataSourceOptions,

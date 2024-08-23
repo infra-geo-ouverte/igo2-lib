@@ -91,7 +91,7 @@ export function findDiff(str1: string, str2: string) {
 export function computeTermSimilarity(
   from,
   to,
-  caseSensitive: boolean = false
+  caseSensitive = false
 ): number {
   if (!from || !to) {
     return 0;

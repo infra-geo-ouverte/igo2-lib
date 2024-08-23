@@ -41,8 +41,8 @@ export class PrintService {
   zipFile: JSZip;
   nbFileToProcess: number;
   activityId: string;
-  mapPrintExtent: Array<number>;
-  imgSizeAdded: Array<number>;
+  mapPrintExtent: number[];
+  imgSizeAdded: number[];
 
   TEXTPDFFONT = {
     titleFont: 'times',
@@ -144,7 +144,7 @@ export class PrintService {
       baseMargins[0] += 5; // cumulative marg top for next elem to place in pdf doc. 5 is a fix it could be adjust
     }
 
-    const verticalSpacing: number = 5;
+    const verticalSpacing = 5;
     if (options.comment !== undefined && options.comment !== '') {
       this.addComment(doc, options.comment, baseMargins, verticalSpacing);
     }
@@ -232,7 +232,7 @@ export class PrintService {
     const x = baseMargins[3];
     const y = docHeight - baseMargins[0] - height;
 
-    let pdf_extents = [x, y, x + width, y + height];
+    const pdf_extents = [x, y, x + width, y + height];
     for (let i = 0; i < pdf_extents.length; i++) {
       pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
     }
@@ -346,7 +346,7 @@ export class PrintService {
    */
   async getLayersLegendImage(
     map,
-    format: string = 'png',
+    format = 'png',
     doZipFile: boolean,
     resolution: number
   ) {
@@ -480,7 +480,7 @@ export class PrintService {
     textFontSize: number,
     textMarginLeft: number,
     textMarginTop: number,
-    isComment: boolean = false
+    isComment = false
   ) {
     doc.setFont(textFont, textFontStyle);
     doc.setFontSize(textFontSize);
@@ -511,7 +511,7 @@ export class PrintService {
     verticalSpacing: number,
     baseMargins: [number, number, number, number]
   ) {
-    let text: string = '';
+    let text = '';
 
     const attributionText: string = this.getAttributionText(map);
     if (attributionText) {
@@ -557,7 +557,7 @@ export class PrintService {
     dpi: number
   ): string {
     const translate = this.languageService.translate;
-    let textProjScale: string = '';
+    let textProjScale = '';
     if (options.showProjection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
       textProjScale += projText + ': ' + map.projection;
@@ -582,7 +582,7 @@ export class PrintService {
   private async addLegend(
     doc: jsPDF,
     map: IgoMap,
-    margins: Array<number>,
+    margins: number[],
     resolution: number
   ) {
     // Get html code for the legend
@@ -857,7 +857,7 @@ export class PrintService {
   }
 
   async drawMap(
-    size: Array<number>,
+    size: number[],
     mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
     const mapResultCanvas = document.createElement('canvas');
@@ -966,10 +966,10 @@ export class PrintService {
     baseMargins: [number, number, number, number],
     legendPosition: PrintLegendPosition,
     width: number,
-    yPosition: number = 0
+    yPosition = 0
   ) {
-    let xPosition: number = 0;
-    let northArrowDimension: number = 0;
+    let xPosition = 0;
+    let northArrowDimension = 0;
     if (doc instanceof CanvasRenderingContext2D) {
       northArrowDimension = 50;
       xPosition =

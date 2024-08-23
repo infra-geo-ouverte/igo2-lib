@@ -72,7 +72,7 @@ export class MapViewController extends MapController {
   /**
    * Current state index
    */
-  private stateIndex: number = 0;
+  private stateIndex = 0;
 
   /**
    * Whether the view controller should keep the view's state history
@@ -351,7 +351,7 @@ export class MapViewController extends MapController {
   private setExtent(
     extent: MapExtent,
     action: MapViewAction,
-    animation: boolean = true
+    animation = true
   ) {
     const olView = this.olView;
     olView.cancelAnimations();

@@ -28,8 +28,8 @@ import { IgoMap } from '../shared/map';
 })
 export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);
-  public azimuthRounded: number = 0;
-  public rotationRounded: number = 0;
+  public azimuthRounded = 0;
+  public rotationRounded = 0;
   readonly currentStyle$ = new BehaviorSubject<{}>({
     transform: 'rotate(0rad)'
   });

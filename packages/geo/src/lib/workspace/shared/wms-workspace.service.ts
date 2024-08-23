@@ -116,7 +116,7 @@ export class WmsWorkspaceService {
         OgcFilterableDataSourceOptions {}
 
     let wks;
-    let wksLayerOption: GeoWorkspaceOptions = {
+    const wksLayerOption: GeoWorkspaceOptions = {
       printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,
