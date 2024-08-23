@@ -183,6 +183,7 @@ export class GeoDBService {
       this.dbName,
       'regionID',
       keyRange,
+      undefined,
       mode
     );
     return request;

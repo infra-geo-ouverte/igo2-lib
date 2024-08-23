@@ -148,14 +148,14 @@
     "@floating-ui/utils": "^0.2.0",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "angular-shepherd": "17.0.0",
+    "angular-shepherd": "^18.0.0",
     "ngx-color": "^9.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "tinycolor2": "^1.6.0",
     "typy": "^3.3.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "~5.5.4"
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"

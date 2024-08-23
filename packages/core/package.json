@@ -115,7 +115,7 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "~5.5.4"
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
