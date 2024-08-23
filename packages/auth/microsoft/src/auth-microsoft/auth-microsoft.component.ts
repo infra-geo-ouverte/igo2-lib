@@ -76,8 +76,8 @@ export class AuthMicrosoftComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.authService.initializeMicrosoft(this.msalService);
+  async ngOnInit() {
+    await this.authService.initializeMicrosoft(this.msalService);
     if (this.options.autoLogin) {
       this.loginMicrosoft();
     }

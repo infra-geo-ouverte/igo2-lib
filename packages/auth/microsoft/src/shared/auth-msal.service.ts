@@ -64,7 +64,7 @@ export class AuthMsalService extends AuthService {
     });
   }
 
-  public initializeMicrosoft(msalService: MsalService) {
+  public async initializeMicrosoft(msalService: MsalService) {
     this.msalService = msalService;
 
     this.msalService.instance = new PublicClientApplication({
@@ -74,6 +74,6 @@ export class AuthMsalService extends AuthService {
       }
     });
 
-    this.msalService.instance.initialize();
+    await this.msalService.instance.initialize();
   }
 }
