@@ -56,7 +56,7 @@ module.exports = tseslint.config(
       'no-useless-escape': 'warn',
 
       'no-unused-vars': 'off',
-      semi: 'warn',
+      semi: 'off',
       'semi-spacing': 'warn'
     }
   },
