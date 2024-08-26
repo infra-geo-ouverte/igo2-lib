@@ -16,7 +16,6 @@ import { default as JSZip } from 'jszip';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
-import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
@@ -271,13 +270,7 @@ export class PrintService {
   getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
     return new Observable((observer) => {
       let html = '';
-      const legends = getLayersLegends(map.layers, {
-        resolution: map.viewController.getResolution(),
-        extent: map.viewController.getExtent(),
-        projection: map.viewController.getOlProjection().getCode(),
-        // scale: map.viewController.getScale(resolution),
-        size: map.ol.getSize()
-      } as LegendMapViewOptions);
+      const legends = getLayersLegends(map.layers);
 
       if (legends.filter((l) => l.display === true).length === 0) {
         observer.next(html);
