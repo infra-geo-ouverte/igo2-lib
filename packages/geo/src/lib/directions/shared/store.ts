@@ -15,9 +15,7 @@ import {
  * stops.
  */
 export class StopsStore extends EntityStore<Stop> {
-  public storeInitialized$ = new BehaviorSubject<boolean>(
-    false
-  );
+  public storeInitialized$ = new BehaviorSubject<boolean>(false);
 
   public clearStops() {
     this.storeInitialized$.next(false);

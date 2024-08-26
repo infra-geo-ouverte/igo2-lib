@@ -108,9 +108,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   public iterator = 1;
 
-  public selectedFeature$ = new BehaviorSubject<Feature>(
-    undefined
-  );
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 

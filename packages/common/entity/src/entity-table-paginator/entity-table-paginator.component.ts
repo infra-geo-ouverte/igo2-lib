@@ -41,9 +41,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   private entitySortChange$$: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
-  @Input() entitySortChange$ = new BehaviorSubject<boolean>(
-    false
-  );
+  @Input() entitySortChange$ = new BehaviorSubject<boolean>(false);
   /**
    * Entity store
    */

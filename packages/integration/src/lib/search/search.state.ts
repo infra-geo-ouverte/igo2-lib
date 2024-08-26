@@ -56,31 +56,19 @@ export class SearchState {
     focus: FeatureMotion.None
   };
 
-  readonly searchTermSplitter$ = new BehaviorSubject<string>(
-    '|'
-  );
+  readonly searchTermSplitter$ = new BehaviorSubject<string>('|');
 
-  readonly searchTerm$ = new BehaviorSubject<string>(
-    undefined
-  );
+  readonly searchTerm$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchType$ = new BehaviorSubject<string>(
-    undefined
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchDisabled$ = new BehaviorSubject<boolean>(
-    false
-  );
+  readonly searchDisabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchResultsGeometryEnabled$ =
-    new BehaviorSubject<boolean>(false);
+  readonly searchResultsGeometryEnabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchSettingsChange$ =
-    new BehaviorSubject<boolean>(undefined);
+  readonly searchSettingsChange$ = new BehaviorSubject<boolean>(undefined);
 
-  readonly selectedResult$ = new BehaviorSubject<SearchResult>(
-    undefined
-  );
+  readonly selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
 
   /**
    * Store that holds the search results

@@ -25,7 +25,9 @@ export class Workspace<E extends object = object> {
   /**
    * Observable of the selected widget's subscribers
    */
-  readonly widgetSubscribers$ = new BehaviorSubject<Record<string, (event: any) => void>>({});
+  readonly widgetSubscribers$ = new BehaviorSubject<
+    Record<string, (event: any) => void>
+  >({});
 
   /**
    * Subscription to the selected entity

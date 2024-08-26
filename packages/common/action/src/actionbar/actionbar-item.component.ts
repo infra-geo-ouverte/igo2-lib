@@ -46,16 +46,13 @@ import { Action } from '../shared/action.interfaces';
 export class ActionbarItemComponent implements OnInit, OnDestroy {
   readonly disabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly checkCondition$ = new BehaviorSubject<boolean>(
-    undefined
-  );
+  readonly checkCondition$ = new BehaviorSubject<boolean>(undefined);
 
   readonly tooltip$ = new BehaviorSubject<string>(undefined);
 
   readonly noDisplay$ = new BehaviorSubject<boolean>(false);
 
-  readonly ngClass$ =
-    new BehaviorSubject<Record<string, boolean>>({});
+  readonly ngClass$ = new BehaviorSubject<Record<string, boolean>>({});
 
   private ngClass$$: Subscription;
 

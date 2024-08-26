@@ -29,9 +29,7 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace {
-  readonly inResolutionRange$ = new BehaviorSubject<boolean>(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): ImageLayer | VectorLayer {
     return this.options.layer;

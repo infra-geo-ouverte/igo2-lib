@@ -44,9 +44,7 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Observable of filter clauses
    */
-  private filters$ = new BehaviorSubject<EntityFilterClause[]>(
-    []
-  );
+  private filters$ = new BehaviorSubject<EntityFilterClause[]>([]);
 
   /**
    * Filters index
@@ -64,9 +62,7 @@ export class EntityView<E extends object, V extends object = E> {
   get getKey(): (V) => EntityKey {
     return this.getKey$.value;
   }
-  private getKey$ = new BehaviorSubject<(V) => EntityKey>(
-    undefined
-  );
+  private getKey$ = new BehaviorSubject<(V) => EntityKey>(undefined);
 
   /**
    * Number of entities

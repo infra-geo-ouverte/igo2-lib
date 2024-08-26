@@ -73,12 +73,15 @@ import {
 } from '../shared';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 
-type CellData = Record<string, {
+type CellData = Record<
+  string,
+  {
     value: any;
     class: Record<string, boolean>;
     isUrl: boolean;
     isImg: boolean;
-  }>;
+  }
+>;
 
 interface RowData {
   record: EntityRecord<object, EntityState>;
@@ -148,8 +151,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Observable of the selection,s state
    * @internal
    */
-  readonly selectionState$ =
-    new BehaviorSubject<EntityTableSelectionState>(undefined);
+  readonly selectionState$ = new BehaviorSubject<EntityTableSelectionState>(
+    undefined
+  );
 
   /**
    * Subscription to the store's selection

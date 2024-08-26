@@ -88,11 +88,7 @@ export function findDiff(str1: string, str2: string) {
  * @param caseSensitive boolean
  * @returns number
  */
-export function computeTermSimilarity(
-  from,
-  to,
-  caseSensitive = false
-): number {
+export function computeTermSimilarity(from, to, caseSensitive = false): number {
   if (!from || !to) {
     return 0;
   }

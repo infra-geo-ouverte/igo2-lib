@@ -54,9 +54,7 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
   ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
-  readonly value$ = new BehaviorSubject<GeoJSONGeometry>(
-    undefined
-  );
+  readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
 
   private value$$: Subscription;
 
@@ -97,9 +95,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get geometryType(): Type {
     return this.geometryType$.value;
   }
-  readonly geometryType$ = new BehaviorSubject<Type>(
-    undefined
-  );
+  readonly geometryType$ = new BehaviorSubject<Type>(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed

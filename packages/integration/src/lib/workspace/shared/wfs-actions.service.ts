@@ -24,9 +24,7 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
 export class WfsActionsService implements OnDestroy {
   public maximize$: BehaviorSubject<boolean>;
 
-  selectOnlyCheckCondition$ = new BehaviorSubject<boolean>(
-    false
-  );
+  selectOnlyCheckCondition$ = new BehaviorSubject<boolean>(false);
   // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;

@@ -3,9 +3,9 @@ import { Observable, Observer } from 'rxjs';
 import { CompressedData } from './compressedData.interface';
 
 function getNumber(v: number, endposition: number, length: number) {
-   const mask = (1 << length) - 1;
+  const mask = (1 << length) - 1;
   return (v >> endposition) & mask;
- }
+}
 
 export class Compression {
   private base64Index = new Map<string, number>();
@@ -63,7 +63,7 @@ export class Compression {
   }
 
   decompressBlob(compressedData: CompressedData): Blob {
-       const object = compressedData.object;
+    const object = compressedData.object;
     const length = compressedData.length;
     const decompressed: string = this.decompressStringBase64(object, length);
     const byteCharacters = atob(decompressed);
@@ -73,11 +73,11 @@ export class Compression {
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: compressedData.type });
-       return blob;
+    return blob;
   }
 
   private compressStringBase64(s: string): string {
-       let out = '';
+    let out = '';
     let bits = 16;
     let chr = 0;
     let rem = 0;
@@ -97,11 +97,11 @@ export class Compression {
     if (s.length % 8 !== 0) {
       out += String.fromCharCode(chr);
     }
-       return String.fromCharCode(9731) + out;
+    return String.fromCharCode(9731) + out;
   }
 
   private decompressStringBase64(c: string, length: number): string {
-       if (!c) {
+    if (!c) {
       return;
     }
 
@@ -130,5 +130,5 @@ export class Compression {
       }
     }
     return out;
-     }
+  }
 }

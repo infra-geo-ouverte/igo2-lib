@@ -58,8 +58,7 @@ export class FormFieldSelectComponent implements OnInit {
   get choices(): FormFieldSelectChoice[] {
     return this.choices$.value;
   }
-  readonly choices$ =
-    new BehaviorSubject<FormFieldSelectChoice[]>([]);
+  readonly choices$ = new BehaviorSubject<FormFieldSelectChoice[]>([]);
 
   /**
    * If the select allow multiple selections

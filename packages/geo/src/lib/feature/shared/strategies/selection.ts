@@ -191,9 +191,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection
-        map((features: Feature[][]) =>
-          features.reduce((a, b) => a.concat(b))
-        )
+        map((features: Feature[][]) => features.reduce((a, b) => a.concat(b)))
       )
       .subscribe((features: Feature[]) => this.onSelectFromStore(features));
   }

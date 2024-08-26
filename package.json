@@ -28,6 +28,7 @@
     "build.demo": "npm run build -w demo",
     "build.libs": "node --import tsx scripts/src/build-library.mts",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
+    "format.check": "prettier packages projects scripts --check --config .prettierrc",
     "format": "npm run format --workspaces --if-present && npm run format.scripts",
     "format.scripts": "prettier --write ./scripts/src/**/*.{ts,js,json}",
     "lint": "ng lint",

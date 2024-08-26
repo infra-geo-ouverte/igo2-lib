@@ -11,9 +11,7 @@ export interface WfsWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class WfsWorkspace extends Workspace {
-  readonly inResolutionRange$ = new BehaviorSubject<boolean>(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): VectorLayer {
     return this.options.layer;

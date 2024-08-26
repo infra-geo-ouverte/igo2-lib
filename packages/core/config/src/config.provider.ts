@@ -8,7 +8,9 @@ import {
 import { ConfigOptions } from './config.interface';
 import { ConfigService } from './config.service';
 
-export const CONFIG_OPTIONS = new InjectionToken<ConfigOptions>('configOptions');
+export const CONFIG_OPTIONS = new InjectionToken<ConfigOptions>(
+  'configOptions'
+);
 
 export function provideConfig(options: ConfigOptions): EnvironmentProviders {
   return makeEnvironmentProviders([

@@ -126,9 +126,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get searchType(): string {
     return this.searchType$.value;
   }
-  readonly searchType$ = new BehaviorSubject<string>(
-    undefined
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Event emitted when the pointer summary is activated by the searchbar setting

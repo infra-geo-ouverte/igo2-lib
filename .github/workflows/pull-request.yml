@@ -13,27 +13,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: The branch or tag ref that triggered the workflow run.
-      run: echo ${GITHUB_REF#refs/*/}
+      - name: The branch or tag ref that triggered the workflow run.
+        run: echo ${GITHUB_REF#refs/*/}
 
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci --no-audit
+      - name: Install dependencies
+        run: npm ci --no-audit
 
-    - name: Security
-      run: npm audit --omit dev && npm audit signatures
+      - name: Security
+        run: npm audit --omit dev && npm audit signatures
 
-    - name: Quality
-      run: npm run circular-deps & npm run lint & npx prettier . --check
+      - name: Quality
+        run: npm run circular-deps & npm run lint & npm run format.check
 
-    - name: Test
-      run: npm run e2e & npm run test
+      - name: Test
+        run: npm run e2e & npm run test
 
-    - name: Build
-      run: npm run build.libs
+      - name: Build
+        run: npm run build.libs

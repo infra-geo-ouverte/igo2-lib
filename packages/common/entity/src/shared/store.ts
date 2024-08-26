@@ -210,10 +210,7 @@ export class EntityStore<
    * @param strategy Entity store strategy
    * @returns Entity store
    */
-  addStrategy(
-    strategy: EntityStoreStrategy,
-    activate = false
-  ): EntityStore {
+  addStrategy(strategy: EntityStoreStrategy, activate = false): EntityStore {
     const existingStrategy = this.strategies.find(
       (_strategy: EntityStoreStrategy) => {
         return strategy.constructor === _strategy.constructor;

@@ -21,9 +21,7 @@ export class ToolState {
     return this.toolService.toolbox;
   }
 
-  public openSidenav$ = new BehaviorSubject<boolean>(
-    undefined
-  );
+  public openSidenav$ = new BehaviorSubject<boolean>(undefined);
 
   constructor(
     private toolService: ToolService,

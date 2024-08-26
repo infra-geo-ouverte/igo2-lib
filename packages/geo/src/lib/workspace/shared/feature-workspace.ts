@@ -11,9 +11,7 @@ export interface FeatureWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class FeatureWorkspace extends Workspace {
-  readonly inResolutionRange$ = new BehaviorSubject<boolean>(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): VectorLayer {
     return this.options.layer;

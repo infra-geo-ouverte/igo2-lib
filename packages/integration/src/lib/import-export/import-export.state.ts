@@ -21,13 +21,13 @@ export enum ImportExportMode {
   providedIn: 'root'
 })
 export class ImportExportState {
-  readonly importExportType$ =
-    new BehaviorSubject<ImportExportType>(ImportExportType.layer);
-  readonly selectedMode$ =
-    new BehaviorSubject<ImportExportMode>(ImportExportMode.import);
-  readonly exportOptions$ = new BehaviorSubject<ExportOptions>(
-    undefined
+  readonly importExportType$ = new BehaviorSubject<ImportExportType>(
+    ImportExportType.layer
   );
+  readonly selectedMode$ = new BehaviorSubject<ImportExportMode>(
+    ImportExportMode.import
+  );
+  readonly exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
 
   setImportExportType(type: ImportExportType) {
     this.importExportType$.next(type);

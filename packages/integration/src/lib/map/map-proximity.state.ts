@@ -45,8 +45,9 @@ export class MapProximityState {
     new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
-  public currentPositionCoordinate$ =
-    new BehaviorSubject<[number, number]>(undefined);
+  public currentPositionCoordinate$ = new BehaviorSubject<[number, number]>(
+    undefined
+  );
 
   get map(): IgoMap {
     return this.mapState.map;
