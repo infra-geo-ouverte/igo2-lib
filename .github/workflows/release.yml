@@ -11,7 +11,8 @@ on:
       - ^[0-9]+(.[0-9]+)?.x$
 
 jobs:
-  build:
+  release:
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       id-token: write # to enable use of OIDC for npm provenance
