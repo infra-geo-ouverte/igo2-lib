@@ -10,16 +10,16 @@
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $foreground: map.get($theme, foreground);
-  $darker-contrast: mat.get-color-from-palette($primary, darker-contrast);
-  $lighter-contrast: mat.get-color-from-palette($primary, lighter-contrast);
+  $darker-contrast: mat.m2-get-color-from-palette($primary, darker-contrast);
+  $lighter-contrast: mat.m2-get-color-from-palette($primary, lighter-contrast);
 
   igo-toolbox {
     &.color-primary > igo-actionbar:not(.with-title) {
       box-shadow: unset;
-      background-color: mat.get-color-from-palette($primary);
+      background-color: mat.m2-get-color-from-palette($primary);
       #lowChevron,
       #topChevron {
-        background-color: mat.get-color-from-palette($primary);
+        background-color: mat.m2-get-color-from-palette($primary);
         color: white;
       }
     }
@@ -58,7 +58,7 @@
           & > #lowChevron,
           & > #topChevron {
             &:hover {
-              background-color: mat.get-color-from-palette($accent, lighter);
+              background-color: mat.m2-get-color-from-palette($accent, lighter);
               color: black;
             }
           }
@@ -71,7 +71,7 @@
 
       mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
         &:hover {
-          background-color: mat.get-color-from-palette($accent, lighter);
+          background-color: mat.m2-get-color-from-palette($accent, lighter);
         }
 
         &.tool-activated,
@@ -89,7 +89,7 @@
 }
 
 @mixin density($theme) {
-  $density: mat.get-density-config($theme);
+  $density: mat.m2-get-density-config($theme);
   $theme: map.merge(
     $theme,
     (

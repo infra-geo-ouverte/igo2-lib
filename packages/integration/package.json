@@ -33,16 +33,17 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.6",
-    "@angular/core": "^17.0.6",
+    "@angular/common": "^18.0.0",
+    "@angular/core": "^18.0.0",
     "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
+    "@turf/point-on-feature": "^6.5.0",
     "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.5.29",
+    "jspdf-autotable": "^3.8.0",
     "rxjs": "^7.8.0"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }

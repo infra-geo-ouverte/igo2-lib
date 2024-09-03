@@ -16,8 +16,8 @@
 
 @mixin mat-button-toggle($theme) {
   $accent: map.get($theme, accent);
-  $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
-  $density: mat.get-density-config($theme);
+  $dark: mat.m2-define-palette(mat.$m2-grey-palette, 800, 700, 900);
+  $density: mat.m2-get-density-config($theme);
 
   $theme: map.merge(
     $theme,
@@ -32,8 +32,8 @@
     color: black !important;
 
     &.mat-button-toggle-checked {
-      background-color: mat.get-color-from-palette($accent);
-      color: mat.get-color-from-palette($dark);
+      background-color: mat.m2-get-color-from-palette($accent);
+      color: mat.m2-get-color-from-palette($dark);
     }
   }
 }

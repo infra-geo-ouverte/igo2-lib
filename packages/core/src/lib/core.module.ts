@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { IgoActivityModule } from '@igo2/core/activity';
@@ -40,16 +43,15 @@ const dbConfig: DBConfig = {
   ]
 };
 @NgModule({
+  declarations: [],
+  exports: [IgoActivityModule, IgoErrorModule, IgoLanguageModule],
   imports: [
     CommonModule,
-    HttpClientModule,
     IgoActivityModule.forRoot(),
     IgoErrorModule.forRoot(),
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
-  providers: [provideMessage()],
-  declarations: [],
-  exports: [IgoActivityModule, IgoErrorModule, IgoLanguageModule]
+  providers: [provideMessage(), provideHttpClient(withInterceptorsFromDi())]
 })
 export class IgoCoreModule {
   static forRoot(

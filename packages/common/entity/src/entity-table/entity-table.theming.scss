@@ -13,16 +13,16 @@
   igo-entity-table
     table.igo-entity-table-with-selection
     tr.igo-entity-table-row-highlighted {
-    background-color: mat.get-color-from-palette($primary, A100);
-    color: mat.get-color-from-palette($primary, default-contrast);
+    background-color: mat.m2-get-color-from-palette($primary, A100);
+    color: mat.m2-get-color-from-palette($primary, default-contrast);
   }
   igo-entity-table .mat-mdc-table thead {
-    background-color: mat.get-color-from-palette($background, background);
+    background-color: mat.m2-get-color-from-palette($background, background);
   }
 }
 
 @mixin density($theme) {
-  $density: mat.get-density-config($theme);
+  $density: mat.m2-get-density-config($theme);
 
   $theme: map.merge(
     $theme,
