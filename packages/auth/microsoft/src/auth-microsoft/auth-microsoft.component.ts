@@ -119,7 +119,7 @@ export class AuthMicrosoftComponent {
         }
         console.log(error);
       })
-      .catch((error) => {
+      .catch(() => {
         console.log('Silent token fails');
       });
   }

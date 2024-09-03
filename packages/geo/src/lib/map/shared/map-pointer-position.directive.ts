@@ -42,7 +42,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   /**
    * Delay before emitting an event
    */
-  @Input() pointerPositionDelay: number = 1000;
+  @Input() pointerPositionDelay = 1000;
 
   /**
    * Event emitted when the pointer move, delayed by pointerMoveDelay

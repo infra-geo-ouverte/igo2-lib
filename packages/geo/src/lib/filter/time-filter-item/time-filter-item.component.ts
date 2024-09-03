@@ -39,13 +39,13 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
 
-  filtersCollapsed: boolean = false;
+  filtersCollapsed = false;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   @Input() layer: Layer;
 

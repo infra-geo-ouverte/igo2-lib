@@ -30,6 +30,4 @@ export class ZoomButtonComponent {
   get maxZoom(): number {
     return this.map.viewController.olView.getMaxZoom();
   }
-
-  constructor() {}
 }

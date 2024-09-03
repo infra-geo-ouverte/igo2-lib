@@ -23,7 +23,7 @@ export interface SimpleGetOptions {
   providedIn: 'root'
 })
 export class GeoNetworkService {
-  private networkOnline: boolean = true;
+  private networkOnline = true;
   constructor(
     private http: HttpClient,
     public geoDBService: GeoDBService,

@@ -114,7 +114,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  @Input() measure = false;
 
   /**
    * Whether draw control should be active or not
@@ -135,7 +135,7 @@ export class GeometryFormFieldInputComponent
       this.toggleControl();
     }
   }
-  private _drawControlIsActive: boolean = true;
+  private _drawControlIsActive = true;
 
   /**
    * Whether freehand draw control should be active or not
@@ -180,7 +180,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  @Input() controlOptions: Record<string, any> = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -339,18 +339,18 @@ export class GeometryFormFieldInputComponent
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  registerOnChange(fn: Function) {
+  registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
-  private onChange: any = () => {};
+  private onChange: any = () => void 1;
 
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  registerOnTouched(fn: Function) {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  private onTouched: any = () => {};
+  private onTouched: any = () => void 1;
 
   /**
    * Implemented as part of ControlValueAccessor.
@@ -491,7 +491,6 @@ export class GeometryFormFieldInputComponent
    * @param olGeometry OL geometry
    */
   private setOlGeometry(olGeometry: OlGeometry | undefined) {
-    let value;
     if (olGeometry === undefined) {
       return;
     }
@@ -501,10 +500,10 @@ export class GeometryFormFieldInputComponent
       olGeometry = this.circleToPoint(olGeometry);
     }
 
-    value = this.olGeoJSON.writeGeometryObject(olGeometry, {
+    const value = this.olGeoJSON.writeGeometryObject(olGeometry, {
       featureProjection: this.map.projection,
       dataProjection: 'EPSG:4326'
-    });
+    }) as any;
     if (olGeometry.get('radius')) {
       value.radius = olGeometry.get('radius');
       olGeometry.set('radius', value.radius);

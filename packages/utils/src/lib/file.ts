@@ -41,7 +41,7 @@ export function downloadFromUri(uri: string, fileName: string) {
 export function isValidJSON(jsonString: string): boolean {
   try {
     return JSON.parse(jsonString) && !!jsonString;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

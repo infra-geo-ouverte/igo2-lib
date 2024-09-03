@@ -22,8 +22,7 @@ export class MeasureFormatPipe implements PipeTransform {
   transform(
     value: number,
     unit: MeasureAreaUnit | MeasureLengthUnit,
-    unitAbbr: boolean = false,
-    decimal: number = 1
+    unitAbbr = false
   ): number {
     let out;
     if (Object.values(MeasureAreaUnit).indexOf(unit as MeasureAreaUnit) >= 0) {

@@ -116,7 +116,7 @@ export class SearchService {
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions,
-    asPointerSummary: boolean = false
+    asPointerSummary = false
   ) {
     const reverseSourceFonction = asPointerSummary
       ? sourceCanReverseSearchAsSummary

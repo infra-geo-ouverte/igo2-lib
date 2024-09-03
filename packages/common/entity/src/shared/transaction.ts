@@ -17,7 +17,7 @@ export interface EntityOperation<E extends object = object> {
   previous: E | undefined;
   current: E | undefined;
   store?: EntityStore<E>;
-  meta?: { [key: string]: any };
+  meta?: Record<string, any>;
 }
 
 export type EntityTransactionCommitHandler = (
@@ -61,9 +61,7 @@ export class EntityTransaction {
   get inCommitPhase(): boolean {
     return this.inCommitPhase$.value;
   }
-  readonly inCommitPhase$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  readonly inCommitPhase$ = new BehaviorSubject<boolean>(false);
 
   constructor(options: EntityTransactionOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
@@ -90,7 +88,7 @@ export class EntityTransaction {
   insert(
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(current);
     if (existingOperation !== undefined) {
@@ -113,7 +111,7 @@ export class EntityTransaction {
     previous: object,
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(current);
     if (existingOperation !== undefined) {
@@ -140,7 +138,7 @@ export class EntityTransaction {
   delete(
     previous: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     const existingOperation = this.getOperationByEntity(previous);
     if (existingOperation !== undefined) {
@@ -177,7 +175,7 @@ export class EntityTransaction {
       catchError(() => of(new Error())),
       tap((result: any) => {
         if (result instanceof Error) {
-          this.onCommitError(operations);
+          this.onCommitError();
         } else {
           this.onCommitSuccess(operations);
         }
@@ -298,7 +296,7 @@ export class EntityTransaction {
   private doInsert(
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(current),
@@ -325,7 +323,7 @@ export class EntityTransaction {
     previous: object,
     current: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(current),
@@ -350,7 +348,7 @@ export class EntityTransaction {
   private doDelete(
     previous: object,
     store?: EntityStore<object>,
-    meta?: { [key: string]: any }
+    meta?: Record<string, any>
   ) {
     this.addOperation({
       key: this.getKey(previous),
@@ -388,7 +386,7 @@ export class EntityTransaction {
    * On commit error, abort transaction
    * @param operations Commited operations
    */
-  private onCommitError(operations: EntityOperation[]) {
+  private onCommitError() {
     this.inCommitPhase$.next(false);
   }
 

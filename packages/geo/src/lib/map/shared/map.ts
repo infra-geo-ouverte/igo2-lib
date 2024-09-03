@@ -186,7 +186,7 @@ export class IgoMap implements MapBase {
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.layerWatcher.subscribe(() => {}, null);
+      this.layerWatcher.subscribe(() => void 1, null);
     } else {
       this.layerWatcher.unsubscribe();
     }
@@ -334,7 +334,7 @@ export class IgoMap implements MapBase {
    * @param layer Layer to add
    * @param push DEPRECATED
    */
-  addLayer(layer: Layer, push = true) {
+  addLayer(layer: Layer) {
     this.addLayers([layer]);
   }
 
@@ -343,7 +343,7 @@ export class IgoMap implements MapBase {
    * @param layers Layers to add
    * @param push DEPRECATED
    */
-  addLayers(layers: Layer[], push = true) {
+  addLayers(layers: Layer[]) {
     let offsetZIndex = 0;
     let offsetBaseLayerZIndex = 0;
     const addedLayers = layers

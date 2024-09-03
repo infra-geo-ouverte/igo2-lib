@@ -5,8 +5,8 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
   standalone: true
 })
 export class ImageErrorDirective {
-  @Input() errorImageUrl: string = './assets/igo2/common/images/na.png';
-  @Input() hideError: boolean = false;
+  @Input() errorImageUrl = './assets/igo2/common/images/na.png';
+  @Input() hideError = false;
 
   constructor(private el: ElementRef) {}
 

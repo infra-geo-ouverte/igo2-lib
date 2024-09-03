@@ -99,12 +99,13 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
-      case MVTDataSource:
+      case MVTDataSource: {
         const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
           _layerOptions as VectorTileLayerOptions
         );
         break;
+      }
       default:
         break;
     }
@@ -386,7 +387,7 @@ export class LayerService {
     }
   }
 
-  createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
+  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
     return this.layerDBService.getAll().pipe(
       concatMap((res) => {
         const idbLayers =

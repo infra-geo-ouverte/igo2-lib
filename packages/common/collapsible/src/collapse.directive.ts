@@ -33,7 +33,7 @@ export class CollapseDirective {
   }
   private _collapsed = false;
 
-  @Output() toggle: EventEmitter<boolean> = new EventEmitter();
+  @Output() toggle = new EventEmitter<boolean>();
 
   @HostListener('click')
   click() {

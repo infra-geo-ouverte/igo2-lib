@@ -26,7 +26,9 @@ export function generateIdFromSourceOptions(
     arcgisrest: generateArcgisRestIdFromSourceOptions,
     imagearcgisrest: generateArcgisRestIdFromSourceOptions,
     tilearcgisrest: generateArcgisRestIdFromSourceOptions,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     osm: (_options: AnyDataSourceOptions) => 'OSM',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     tiledebug: (_options: AnyDataSourceOptions) => 'tiledebug'
   };
   const generator = generators[options.type] || generateId;
@@ -79,7 +81,7 @@ export function generateFeatureIdFromSourceOptions(
   options: WMTSDataSourceOptions
 ) {
   if (!options.url) {
-    return generateId(options);
+    return generateId();
   }
   const url = standardizeUrl(options.url);
   const chain = 'feature' + url;
@@ -93,7 +95,7 @@ export function generateFeatureIdFromSourceOptions(
  */
 export function generateWfsIdFromSourceOptions(options: WFSDataSourceOptions) {
   if (!options.url || !options.params) {
-    return generateId(options);
+    return generateId();
   }
   const url = standardizeUrl(options.url);
   const chain = 'wfs' + url + options.params.featureTypes;
@@ -117,7 +119,7 @@ export function generateArcgisRestIdFromSourceOptions(
  * Generate a unique id
  * @returns A uuid
  */
-export function generateId(_options: AnyDataSourceOptions) {
+export function generateId() {
   return uuid();
 }
 

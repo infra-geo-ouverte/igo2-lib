@@ -177,7 +177,8 @@
             "lintFilePatterns": [
               "projects/demo/src/**/*.ts",
               "projects/demo/src/**/*.html"
-            ]
+            ],
+            "eslintConfig": "projects/demo/eslint.config.js"
           }
         },
         "test": {
@@ -259,7 +260,8 @@
             "lintFilePatterns": [
               "packages/auth/**/*.ts",
               "packages/auth/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/auth/eslint.config.js"
           }
         }
       }
@@ -305,7 +307,8 @@
             "lintFilePatterns": [
               "packages/common/**/*.ts",
               "packages/common/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/common/eslint.config.js"
           }
         }
       }
@@ -351,7 +354,8 @@
             "lintFilePatterns": [
               "packages/core/**/*.ts",
               "packages/core/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/core/eslint.config.js"
           }
         }
       }
@@ -397,7 +401,8 @@
             "lintFilePatterns": [
               "packages/geo/**/*.ts",
               "packages/geo/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/geo/eslint.config.js"
           }
         }
       }
@@ -427,7 +432,8 @@
             "lintFilePatterns": [
               "packages/utils/**/*.ts",
               "packages/utils/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/utils/eslint.config.js"
           }
         },
         "test": {
@@ -483,7 +489,8 @@
             "lintFilePatterns": [
               "packages/context/**/*.ts",
               "packages/context/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/context/eslint.config.js"
           }
         }
       }
@@ -519,17 +526,15 @@
             "lintFilePatterns": [
               "packages/integration/**/*.ts",
               "packages/integration/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/integration/eslint.config.js"
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics",
-      "@schematics/angular"
-    ],
+    "schematicCollections": ["@schematics/angular"],
     "cache": {
       "enabled": false,
       "environment": "all"

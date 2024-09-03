@@ -20,7 +20,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   ol?: olSourceVector | olSource;
   refreshIntervalSec?: number;
   contentDependentLegend?: boolean;
-  excludeAttribute?: Array<string>;
+  excludeAttribute?: string[];
 }
 
 export interface WMSDataSourceOptionsParams {

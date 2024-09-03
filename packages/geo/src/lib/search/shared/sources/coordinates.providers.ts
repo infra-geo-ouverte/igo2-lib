@@ -39,8 +39,7 @@ export function provideDefaultCoordinatesSearchResultFormatter() {
 export function CoordinatesReverseSearchSourceFactory(
   config: ConfigService,
   languageService: LanguageService,
-  storageService: StorageService,
-  _projectionService: ProjectionService
+  storageService: StorageService
 ) {
   return new CoordinatesReverseSearchSource(
     config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),

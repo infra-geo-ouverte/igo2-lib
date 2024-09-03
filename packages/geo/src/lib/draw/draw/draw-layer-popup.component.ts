@@ -29,7 +29,7 @@ export interface DialogData {
   ]
 })
 export class DrawLayerPopupComponent {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
 
   constructor(public dialogRef: MatDialogRef<DrawLayerPopupComponent>) {}
 

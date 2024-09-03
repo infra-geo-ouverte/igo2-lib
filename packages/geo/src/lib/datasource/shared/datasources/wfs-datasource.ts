@@ -82,12 +82,14 @@ export class WFSDataSource extends DataSource {
     return vectorSource;
   }
 
-  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

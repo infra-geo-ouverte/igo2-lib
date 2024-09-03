@@ -2,7 +2,9 @@ export enum TypeCapabilities {
   wms = 'wms',
   wmts = 'wmts',
   arcgisrest = 'esriJSON',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   imagearcgisrest = 'esriJSON',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   tilearcgisrest = 'esriJSON'
 }
 

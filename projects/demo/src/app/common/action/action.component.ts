@@ -23,7 +23,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppActionComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
 
-  private added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private added$ = new BehaviorSubject<boolean>(false);
 
   get actionbarMode(): ActionbarMode {
     const media: Media = this.mediaService.media$.value;

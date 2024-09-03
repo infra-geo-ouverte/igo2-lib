@@ -36,7 +36,7 @@ export const provideSentryMonitoring = (
     // Force instantiate TraceService to avoid require it in any constructor.
     tracingEnabled && {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {},
+      useFactory: () => () => void 1,
       deps: [TraceService],
       multi: true
     }

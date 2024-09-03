@@ -16,11 +16,6 @@ export function createOverlayMarkerStyle({
   markerColor?: string | number[];
   markerOutlineColor?: string | number[];
 } = {}): olstyle.Style {
-  let iconColor;
-  let svgIconColor;
-  let svgOutlineColor;
-  let svg;
-
   const newColor = ColorAsArray(markerColor).slice(0);
   const newOutlineColor = ColorAsArray(markerOutlineColor).slice(0);
 
@@ -32,12 +27,9 @@ export function createOverlayMarkerStyle({
     opacity = newColor[3];
   }
 
-  svgIconColor = `"rgba(${newColor[0]},${newColor[1]},${newColor[2]},${opacity})"`;
-  iconColor = markerColor;
-
-  svgOutlineColor = `"rgb(${newOutlineColor[0]},${newOutlineColor[1]},${newOutlineColor[2]})"`;
-
-  svg =
+  const svgIconColor = `"rgba(${newColor[0]},${newColor[1]},${newColor[2]},${opacity})"`;
+  const svgOutlineColor = `"rgb(${newOutlineColor[0]},${newOutlineColor[1]},${newOutlineColor[2]})"`;
+  const svg =
     'data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="36" width="36" viewBox="0 0 36 36">' +
     '<path fill=' +
     svgIconColor +

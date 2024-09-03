@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Extent } from 'ol/extent';
@@ -345,7 +346,7 @@ export class OgcFilterWriter {
     propertyName?: string,
     defaultOperatorsType?: OgcFilterOperatorType
   ) {
-    let effectiveOperators: {} = {};
+    let effectiveOperators = {};
     let allowedOperators;
     let fieldsHasSpatialOperator: boolean;
     let includeContains: boolean;
@@ -906,7 +907,7 @@ export class OgcFilterWriter {
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;
     } else {
-      layersOrTypenames.split(',').forEach((layerOrTypenames) => {
+      layersOrTypenames.split(',').forEach(() => {
         appliedFilter = `${appliedFilter}(${processedFilter.replace(
           'filter=',
           ''

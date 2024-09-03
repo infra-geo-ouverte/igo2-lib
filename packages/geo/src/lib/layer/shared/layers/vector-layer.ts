@@ -386,7 +386,7 @@ export class VectorLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
     super.setMap(map);
   }
@@ -432,7 +432,7 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public disableTrackFeature(id?: string | number) {
+  public disableTrackFeature() {
     unByKey(this.trackFeatureListenerId);
   }
 
@@ -476,7 +476,7 @@ export class VectorLayer extends Layer {
         (this.previousOgcFilters && this.previousOgcFilters !== ogcFilters)
       ) {
         vectorSource.removeLoadedExtent(this.previousLoadExtent);
-        for (let xhr of this.xhrAccumulator) {
+        for (const xhr of this.xhrAccumulator) {
           xhr.abort();
         }
       }
@@ -626,7 +626,7 @@ export class VectorLayer extends Layer {
       const format = vectorSource.getFormat();
       const type = format.getType();
 
-      let responseType = type;
+      const responseType = type;
       const onError = () => {
         vectorSource.removeLoadedExtent(extent);
         failure();

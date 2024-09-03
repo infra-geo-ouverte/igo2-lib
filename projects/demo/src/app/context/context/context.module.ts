@@ -8,7 +8,6 @@ import {
   IgoLayerModule,
   IgoMapModule,
   IgoMetadataModule,
-  IgoOverlayModule,
   IgoQueryModule
 } from '@igo2/geo';
 
@@ -23,7 +22,6 @@ import { AppContextComponent } from './context.component';
     IgoMapModule,
     IgoLayerModule,
     IgoMetadataModule,
-    IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
     IgoContextModule,

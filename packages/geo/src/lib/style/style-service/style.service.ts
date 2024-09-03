@@ -52,7 +52,7 @@ export class StyleService {
    * @returns
    */
   createStyle(
-    options: { [key: string]: any },
+    options: Record<string, any>,
     feature?: RenderFeature | OlFeature<OlGeometry>,
     resolution?: number
   ) {

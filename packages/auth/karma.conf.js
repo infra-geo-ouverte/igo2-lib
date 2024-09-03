@@ -29,8 +29,8 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [
         { type: 'html', subdir: 'report-html' },
-        { type: 'text-summary', file: 'report-summary.txt' },
-      ],
+        { type: 'text-summary', file: 'report-summary.txt' }
+      ]
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,

@@ -18,6 +18,4 @@ export class CustomHtmlComponent {
     this._html = value;
   }
   private _html = '';
-
-  constructor() {}
 }

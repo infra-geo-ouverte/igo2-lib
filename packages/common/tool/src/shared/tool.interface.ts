@@ -7,7 +7,7 @@ export interface Tool {
   icon?: string | IconSvg;
   tooltip?: string;
   global?: boolean;
-  options?: { [key: string]: any };
+  options?: Record<string, any>;
 
   parent?: string;
   children?: string[];

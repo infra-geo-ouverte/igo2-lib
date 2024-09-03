@@ -15,8 +15,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 export class HomeButtonComponent {
   @Output() unselectButton = new EventEmitter<any>();
 
-  constructor() {}
-
   onUnselectButtonClick() {
     this.unselectButton.emit();
   }

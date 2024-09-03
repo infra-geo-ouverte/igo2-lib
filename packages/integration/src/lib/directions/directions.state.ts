@@ -19,7 +19,7 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
-  public zoomToActiveRoute$: Subject<void> = new Subject();
+  public zoomToActiveRoute$ = new Subject<void>();
 
   /**
    * Store that holds the stop
@@ -38,7 +38,7 @@ export class DirectionState {
 
   public stepFeatureStore: StepFeatureStore;
 
-  public debounceTime: number = 200;
+  public debounceTime = 200;
 
   constructor(private mapState: MapState) {
     this.stopsFeatureStore = new StopsFeatureStore([], {

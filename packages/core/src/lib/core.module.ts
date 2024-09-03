@@ -62,6 +62,4 @@ export class IgoCoreModule {
       providers: [provideConfig(options), provideTranslation()]
     };
   }
-
-  constructor() {}
 }
