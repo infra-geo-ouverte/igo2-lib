@@ -21,10 +21,9 @@ export class MeasureState {
       map: this.mapState.map
     });
 
-    this.mapState.map.layers$.subscribe((layers) => {
-      if (
-        layers.filter((l) => l.id?.startsWith('igo-measures-')).length === 0
-      ) {
+    this.mapState.map.layerController.all$.subscribe((layers) => {
+      const hasMeasure = layers.some((l) => l.id?.startsWith('igo-measures-'));
+      if (!hasMeasure) {
         this.store.deleteMany(this.store.all());
         this.mapState.map.ol
           .getOverlays()

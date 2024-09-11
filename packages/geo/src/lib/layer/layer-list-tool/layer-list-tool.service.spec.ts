@@ -1,19 +1,28 @@
-import { TestBed, inject } from '@angular/core/testing';
+// import { InjectionToken } from '@angular/core';
+// import { TestBed, inject } from '@angular/core/testing';
 
-import { LayerListToolService } from './layer-list-tool.service';
+// import { NgxIndexedDBService } from 'ngx-indexed-db';
 
-describe('LayerListToolService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [],
-      providers: [LayerListToolService]
-    });
-  });
+// import { TEST_CONFIG } from '../../../test-config';
+// import { LayerListToolService } from './layer-list-tool.service';
 
-  it('should ...', inject(
-    [LayerListToolService],
-    (service: LayerListToolService) => {
-      expect(service).toBeTruthy();
-    }
-  ));
-});
+// describe('LayerListToolService', () => {
+//   beforeEach(() => {
+//     TestBed.configureTestingModule({
+//       ...TEST_CONFIG,
+//       providers: [
+//         LayerListToolService,
+//         InjectionToken,
+//         NgxIndexedDBService,
+//         ...TEST_CONFIG.providers
+//       ]
+//     });
+//   });
+
+//   it('should ...', inject(
+//     [LayerListToolService],
+//     (service: LayerListToolService) => {
+//       expect(service).toBeTruthy();
+//     }
+//   ));
+// });

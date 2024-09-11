@@ -48,11 +48,11 @@
           </igo-panel>
 
           <igo-panel title="Layers" class="h-100 w-100">
-            <igo-layer-list igoLayerListBinding [map]="map">
-              <ng-template #igoLayerItemToolbar let-layer="layer">
+            <igo-layer-viewer [map]="map">
+              <ng-template #customBottomActions let-layer="layer">
                 <igo-metadata-button [layer]="layer"></igo-metadata-button>
               </ng-template>
-            </igo-layer-list>
+            </igo-layer-viewer>
           </igo-panel>
         </div>
       </mat-grid-tile>

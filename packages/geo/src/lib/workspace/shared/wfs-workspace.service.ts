@@ -21,6 +21,7 @@ import {
 import {
   GeoWorkspaceOptions,
   LayerService,
+  LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
@@ -99,8 +100,25 @@ export class WfsWorkspaceService {
     const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
+    const id = layer.id + '.FeatureStore';
+
+    if (!layer.link) {
+      layer.options.linkedLayers.links = [
+        {
+          syncedDelete: true,
+          linkedIds: [id],
+          properties: [LinkedProperties.VISIBLE]
+        }
+      ];
+      layer.createLink();
+    }
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
+        id,
+        linkedLayers: {
+          linkId: id
+        },
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {

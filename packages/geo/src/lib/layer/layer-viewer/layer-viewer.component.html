@@ -1,0 +1,96 @@
+<igo-layer-list-tool
+  floatLabel="auto"
+  [viewerOptions]="layerViewerOptions"
+  [term]="options?.filterAndSortOptions?.keyword"
+  [mode]="mode"
+  (addedLayer)="createGroup($event)"
+  (modeChange)="toggleSelectionMode($event)"
+  (searchChange)="onSearchChange($event)"
+  (visibilityOnlyChange)="onVisibilityOnlyChange()"
+>
+</igo-layer-list-tool>
+
+<ng-container *ngIf="mode === 'selection'">
+  <mat-divider></mat-divider>
+  <div class="header-item active-background">
+    <mat-checkbox
+      class="select-all-checkbox"
+      [color]="isAllSelected() ? 'primary' : 'accent'"
+      (change)="toggleAllRows()"
+      [checked]="isAllSelected()"
+      [indeterminate]="!isAllSelected() && layerController.selected.length > 0"
+    >
+      {{
+        isAllSelected()
+          ? ('igo.geo.layer.deselectAll' | translate)
+          : ('igo.geo.layer.selectAll' | translate)
+      }}
+    </mat-checkbox>
+
+    <button mat-icon-button color="warn" (click)="toggleSelectionMode(false)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</ng-container>
+<mat-divider></mat-divider>
+
+<div class="layer-view">
+  <ng-container
+    *ngIf="
+      layers?.length > 0 ||
+        unavailableLayers?.length > 0 ||
+        baselayers?.length > 0;
+      else showEmptyList
+    "
+  >
+    <div class="layer-list-container">
+      <igo-layer-unavailable-list
+        *ngIf="unavailableLayers?.length"
+        [layersOptions]="unavailableLayers"
+      ></igo-layer-unavailable-list>
+
+      <igo-layer-list
+        [controller]="map.layerController"
+        [layers]="layers"
+        [viewerOptions]="layerViewerOptions"
+        [isDragDropDisabled]="isDragDropDisabled"
+        [isDesktop]="isDesktop"
+      ></igo-layer-list>
+
+      <div *ngIf="!excludeBaseLayers && baselayers?.length">
+        <mat-divider></mat-divider>
+        <igo-layer-list
+          [controller]="map.layerController"
+          [layers]="baselayers"
+          [viewerOptions]="layerViewerOptions"
+          [isDragDropDisabled]="true"
+          [isDesktop]="isDesktop"
+        ></igo-layer-list>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #showEmptyList>
+    <ng-content select="[emptyList]"></ng-content>
+  </ng-template>
+</div>
+
+<igo-layer-viewer-bottom-actions
+  *ngIf="layerController.hasSelection"
+  [map]="map"
+  [viewerOptions]="layerViewerOptions"
+  [controller]="layerController"
+  [searchTerm]="keyword$.value"
+  (layerChange)="onLayerChange()"
+>
+  <ng-container
+    *ngIf="
+      layerController.selected.length === 1 &&
+      isLayerItem(layerController.selected[0])
+    "
+    [ngTemplateOutlet]="customBottomActions"
+    [ngTemplateOutletContext]="{ layer: layerController.selected[0] }"
+  ></ng-container>
+</igo-layer-viewer-bottom-actions>
+
+<ng-content></ng-content>

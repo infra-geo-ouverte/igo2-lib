@@ -29,7 +29,7 @@ import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
-import { Layer, VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
+import { VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
@@ -52,7 +52,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     new EntityStore<OlFeature<OlGeometry>>([]);
   private lastTimeoutRequest;
   private store$$: Subscription;
-  private layers$$: Subscription;
 
   private selectionLayer: olLayerVectorTile;
   private selectionMVT = {};
@@ -114,13 +113,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         this.subscribeToPointerStore();
         this.listenToMapClick();
       });
-
-    // To handle context change without using the contextService.
-    this.layers$$ = this.map.layers$.subscribe((layers: Layer[]) => {
-      if (this.store && !layers.find((l) => l.id === 'hoverFeatureId')) {
-        this.initStore();
-      }
-    });
   }
 
   /**
@@ -222,7 +214,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unlistenToMapSingleClick();
-    this.layers$$?.unsubscribe();
   }
 
   /**

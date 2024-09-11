@@ -15,7 +15,9 @@
       <mat-grid-tile>
         <div class="flex align-start h-100 w-100">
           <igo-panel title="Layers" class="w-100">
-            <igo-time-filter-list [layers]="map.layers"></igo-time-filter-list>
+            <igo-time-filter-list
+              [layers]="map.layerController.all"
+            ></igo-time-filter-list>
           </igo-panel>
         </div>
       </mat-grid-tile>

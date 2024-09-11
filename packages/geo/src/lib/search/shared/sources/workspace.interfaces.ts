@@ -1,5 +1,5 @@
 import { Feature } from '../../../feature/shared/feature.interfaces';
-import { Layer } from '../../../layer/shared/layers/layer';
+import { Layer } from '../../../layer';
 
 export interface WorkspaceData {
   index: any;

@@ -4,8 +4,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnDestroy,
-  OnInit,
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -17,14 +15,20 @@ import {
 } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { FormDialogService } from '@igo2/common/form';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-
-import { LayerListControlsOptions } from './layer-list-tool.interface';
+import { LayerSearchComponent } from '../layer-search/layer-search.component';
+import {
+  LayerToolMode,
+  LayerViewerOptions
+} from '../layer-viewer/layer-viewer.interface';
+import { LayerGroup } from '../shared/layers/layer-group';
+import { LayerListToolService } from './layer-list-tool.service';
 
 @Component({
   selector: 'igo-layer-list-tool',
@@ -33,103 +37,53 @@ import { LayerListControlsOptions } from './layer-list-tool.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    FormsModule,
+    NgIf,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,
     MatTooltipModule,
-    NgIf,
     MatButtonModule,
+    MatMenuModule,
     MatIconModule,
     MatBadgeModule,
     IgoBadgeIconDirective,
-    IgoLanguageModule
-  ]
+    IgoLanguageModule,
+    LayerSearchComponent
+  ],
+  providers: [LayerListToolService, FormDialogService]
 })
-export class LayerListToolComponent implements OnInit, OnDestroy {
-  public onlyVisible$ = new BehaviorSubject<boolean>(false);
-  public sortAlpha$ = new BehaviorSubject<boolean>(false);
-  public term$ = new BehaviorSubject<string>(undefined);
-  onlyVisible$$: Subscription;
-  sortAlpha$$: Subscription;
-  term$$: Subscription;
-
-  @Input() layersAreAllVisible = true;
-
+export class LayerListToolComponent {
+  @Input({ required: true }) mode: LayerToolMode;
+  @Input() viewerOptions: LayerViewerOptions;
   @Input() floatLabel: FloatLabelType = 'auto';
+  @Input() onlyVisible: boolean;
+  @Input() term: string;
 
-  @Input()
-  set onlyVisible(value: boolean) {
-    this.onlyVisible$.next(value);
-  }
-  get onlyVisible(): boolean {
-    return this.onlyVisible$.value;
-  }
+  @Output() searchChange = new EventEmitter<string>();
+  @Output() visibilityOnlyChange = new EventEmitter<boolean>();
+  @Output() modeChange = new EventEmitter<boolean>();
+  @Output() addedLayer = new EventEmitter<LayerGroup>();
 
-  @Input()
-  set sortAlpha(value: boolean) {
-    this.sortAlpha$.next(value);
-  }
-  get sortAlpha(): boolean {
-    return this.sortAlpha$.value;
+  get selectionActive(): boolean {
+    return this.mode === 'selection';
   }
 
-  @Input()
-  set term(value: string) {
-    this.term$.next(value);
-  }
-  get term(): string {
-    return this.term$.value;
-  }
+  constructor(private layerListToolService: LayerListToolService) {}
 
-  public selectionMode = false;
-
-  @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
-  @Output() selection = new EventEmitter<boolean>();
-
-  ngOnInit(): void {
-    this.term$$ = this.term$.subscribe((keyword) => {
-      this.appliedFilterAndSort.emit({
-        keyword,
-        onlyVisible: this.onlyVisible,
-        sortAlpha: this.sortAlpha
-      });
-    });
-
-    this.onlyVisible$$ = this.onlyVisible$.subscribe((onlyVisible) => {
-      this.appliedFilterAndSort.emit({
-        keyword: this.term,
-        onlyVisible,
-        sortAlpha: this.sortAlpha
-      });
-    });
-    this.sortAlpha$$ = this.sortAlpha$.subscribe((sortAlpha) => {
-      this.appliedFilterAndSort.emit({
-        keyword: this.term,
-        onlyVisible: this.onlyVisible,
-        sortAlpha
-      });
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.onlyVisible$$.unsubscribe();
-    this.sortAlpha$$.unsubscribe();
-    this.term$$.unsubscribe();
-  }
-
-  clearTerm() {
-    this.term = undefined;
-  }
-  toggleSortAlpha() {
-    this.sortAlpha = !this.sortAlpha;
-  }
-
-  toggleOnlyVisible() {
-    this.onlyVisible = !this.onlyVisible;
+  handleTermChange(value: string | undefined): void {
+    this.searchChange.emit(value);
   }
 
   toggleSelectionMode() {
-    this.selectionMode = !this.selectionMode;
-    this.selection.emit(this.selectionMode);
+    this.modeChange.emit(!this.selectionActive);
+  }
+
+  createGroup(): void {
+    this.layerListToolService.createGroup().subscribe((group) => {
+      if (!group) {
+        return;
+      }
+      this.addedLayer.emit(group);
+    });
   }
 }

@@ -1,17 +1,12 @@
-<igo-layer-list
+<igo-layer-viewer
   class="mapDetailsList"
   *ngIf="(layers$ | async).length; else empty"
   [map]="map"
-  igoLayerListBinding
+  [options]="layerViewerOptions"
   [excludeBaseLayers]="excludeBaseLayers"
-  [layerFilterAndSortOptions]="layerFilterAndSortOptions"
-  [expandLegendOfVisibleLayers]="expandLegendOfVisibleLayers"
-  [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
-  [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-  [queryBadge]="queryBadge"
+  [isDesktop]="isDesktop"
 >
-  <ng-template #igoLayerItemToolbar let-layer="layer">
-    <!-- <igo-download-button [layer]="layer"></igo-download-button> -->
+  <ng-template #customBottomActions let-layer="layer">
     <igo-workspace-button [layer]="layer"></igo-workspace-button>
     <igo-export-button
       [layer]="layer"
@@ -31,7 +26,7 @@
     ></igo-track-feature-button>
     <igo-metadata-button [layer]="layer"></igo-metadata-button>
   </ng-template>
-</igo-layer-list>
+</igo-layer-viewer>
 
 <ng-template #empty>
   <mat-list *ngIf="delayedShowEmptyMapContent">

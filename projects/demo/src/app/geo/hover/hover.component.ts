@@ -65,7 +65,7 @@ export class AppHoverComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
 
     const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
@@ -128,7 +128,9 @@ export class AppHoverComponent {
             }
           }
         };
-        this.map.addLayer(this.layerService.createLayer(layerOptions));
+        this.map.layerController.add(
+          this.layerService.createLayer(layerOptions)
+        );
       });
   }
 }

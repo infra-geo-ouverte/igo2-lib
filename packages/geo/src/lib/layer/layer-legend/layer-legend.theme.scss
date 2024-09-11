@@ -1,0 +1,30 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+  @include density($theme);
+}
+
+@mixin color($theme) {
+  $primary: map.get($theme, primary);
+
+  igo-layer-legend img:after {
+    border-top-color: mat.m2-get-color-from-palette($primary);
+  }
+}
+
+@mixin density($theme) {
+  $density: mat.m2-get-density-config($theme);
+
+  $theme: map.merge(
+    $theme,
+    (
+      density: $density - 3
+    )
+  );
+
+  igo-layer-legend {
+    @include mat.form-field-density($theme);
+  }
+}
