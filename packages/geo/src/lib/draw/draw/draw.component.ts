@@ -367,14 +367,6 @@ export class DrawComponent implements OnInit, OnDestroy {
               );
             })
         );
-
-        this.subscriptions$$.push(
-          store.count$.subscribe((cnt) => {
-            cnt >= 1
-              ? (this.activeStore.layer.options.showInLayerList = true)
-              : (this.activeStore.layer.options.showInLayerList = false);
-          })
-        );
       });
       this.onLayerChange(this.activeDrawingLayer);
     }
@@ -392,6 +384,9 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    if (this.activeStore.count === 0) {
+      this.activeStore.map.layerController.remove(this.activeDrawingLayer);
+    }
     this.allLayers.forEach((layer) => (layer.opacity = 1));
     this.activeStore.state.updateAll({ selected: false });
     this.deactivateDrawControl();
@@ -441,14 +436,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
           this.selectedFeatures$.next(records.map((record) => record.entity));
         })
-    );
-
-    this.subscriptions$$.push(
-      this.activeStore.count$.subscribe((cnt) => {
-        cnt >= 1
-          ? (this.activeStore.layer.options.showInLayerList = true)
-          : (this.activeStore.layer.options.showInLayerList = false);
-      })
     );
   }
 
@@ -1280,7 +1267,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   get allLayers() {
-    return this.map.layers.filter((layer) =>
+    return this.map.layerController.all.filter((layer) =>
       String(layer.id).includes('igo-draw-layer')
     );
   }

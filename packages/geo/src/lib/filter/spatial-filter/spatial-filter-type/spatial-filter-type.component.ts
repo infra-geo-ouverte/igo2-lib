@@ -20,7 +20,7 @@ import { EntityStore } from '@igo2/common/entity';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Feature } from '../../../feature';
-import { Layer } from '../../../layer';
+import { AnyLayer } from '../../../layer';
 import { MeasureLengthUnit } from '../../../measure';
 import {
   SpatialFilterQueryType,
@@ -51,14 +51,7 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
   ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
-  @Input()
-  get store(): EntityStore<Feature> {
-    return this._store;
-  }
-  set store(store: EntityStore<Feature>) {
-    this._store = store;
-  }
-  private _store: EntityStore<Feature>;
+  @Input() store: EntityStore<Feature>;
 
   public queryType: string[] = [
     'Arrond',
@@ -84,7 +77,7 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   @Input() zone: Feature;
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
   public type: SpatialFilterType;
 

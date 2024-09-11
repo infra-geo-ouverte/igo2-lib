@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { DownloadDataSourceOptions } from '../shared/download.interface';
 import { DownloadService } from '../shared/download.service';
 
@@ -25,28 +25,14 @@ import { DownloadService } from '../shared/download.service';
   ]
 })
 export class DownloadButtonComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  private _layer: Layer;
+  @Input() layer: Layer;
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
+  @Input() color = 'primary';
 
   constructor(private downloadService: DownloadService) {}
 
-  openDownload(layer: Layer) {
-    this.downloadService.open(layer);
+  openDownload() {
+    this.downloadService.open(this.layer);
   }
 
   get options(): DownloadDataSourceOptions {

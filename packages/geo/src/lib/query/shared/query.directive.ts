@@ -23,6 +23,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
+import { Layer, isLayerGroup, isLayerItem } from '../../layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
@@ -155,7 +156,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
 
     const resolution = this.map.ol.getView().getResolution();
-    const queryLayers = this.map.layers.filter(layerIsQueryable);
+    const queryLayers = this.map.layerController.all.filter(
+      layerIsQueryable
+    ) as Layer[];
     queries$.push(
       ...this.queryService.query(queryLayers, {
         coordinates: event.coordinate as [number, number],
@@ -197,7 +200,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
         (featureOL: OlFeature, layerOL: any) => {
-          const layer = this.map.getLayerById(layerOL.values_._layer.id);
+          const layer = this.map.layerController.getById(
+            layerOL.values_._layer.id
+          );
+          if (isLayerGroup(layer) || !layer.displayed) {
+            return;
+          }
           if (
             (layer.dataSource.options as QueryableDataSourceOptions)
               .queryFormatAsWms
@@ -261,10 +269,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     } else if (event.type === 'boxend') {
       const target = event.target as any;
       const dragExtent = target.getGeometry().getExtent();
-      this.map.layers
+      this.map.layerController.all
         .filter(layerIsQueryable)
-        .filter((layer) => layer instanceof VectorLayer && layer.visible)
-        .map((layer) => {
+        .filter(
+          (layer) =>
+            isLayerItem(layer) && layer instanceof VectorLayer && layer.visible
+        )
+        .map((layer: Layer) => {
           const featuresOL = layer.dataSource.ol as olVectorSource;
           featuresOL.forEachFeatureIntersectingExtent(
             dragExtent,

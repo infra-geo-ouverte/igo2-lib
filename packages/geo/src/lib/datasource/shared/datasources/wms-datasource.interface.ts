@@ -1,9 +1,9 @@
 import type { ServerType } from 'ol/source/wms';
 
-import { OgcFiltersOptions } from '../../../filter';
-import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
-import { DataSourceOptions } from './datasource.interface';
-import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
+import type { OgcFiltersOptions } from '../../../filter';
+import type { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
+import type { DataSourceOptions } from './datasource.interface';
+import type { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';

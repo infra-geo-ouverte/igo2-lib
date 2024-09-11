@@ -134,7 +134,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer) => this.map.addLayer(layer));
+      .subscribe((layer) => this.map.layerController.add(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||

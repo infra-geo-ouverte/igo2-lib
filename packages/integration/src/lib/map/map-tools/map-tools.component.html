@@ -4,19 +4,14 @@
   (selectedTabChange)="tabChanged($event)"
 >
   <mat-tab [label]="'igo.integration.tools.layers' | translate">
-    <igo-layer-list
-      *ngIf="(layers$ | async).length !== 0; else emptyLayers"
-      igoLayerListBinding
-      [excludeBaseLayers]="excludeBaseLayers"
-      [layerFilterAndSortOptions]="layerFilterAndSortOptions"
-      [expandLegendOfVisibleLayers]="expandLegendOfVisibleLayers"
-      [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
-      [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-      [queryBadge]="queryBadge"
+    <igo-layer-viewer
+      [options]="layerViewerOptions"
       [map]="map"
+      [excludeBaseLayers]="excludeBaseLayers"
+      [isDesktop]="isDesktop"
       (appliedFilterAndSort)="onLayerListChange($event)"
     >
-      <ng-template #igoLayerItemToolbar let-layer="layer">
+      <ng-template #customBottomActions let-layer="layer">
         <igo-style-modal-layer-button
           *ngIf="isStyleEditButton(layer)"
           [layer]="layer"
@@ -45,7 +40,11 @@
         ></igo-export-button>
         <igo-workspace-button [layer]="layer"></igo-workspace-button>
       </ng-template>
-    </igo-layer-list>
+
+      <ng-container ngProjectAs="[emptyList]">
+        <ng-template [ngTemplateOutlet]="emptyLayers"></ng-template>
+      </ng-container>
+    </igo-layer-viewer>
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.legend' | translate">

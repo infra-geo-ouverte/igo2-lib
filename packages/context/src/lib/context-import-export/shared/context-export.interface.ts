@@ -1,6 +1,6 @@
-import { Layer } from '@igo2/geo';
+import { AnyLayer } from '@igo2/geo';
 
 export interface ContextExportOptions {
-  layer: Layer[];
+  layer: AnyLayer[];
   name: string;
 }

@@ -62,7 +62,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$ = new BehaviorSubject<boolean>(false);
+  public layerLegendShown$ = new BehaviorSubject(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
   private mouseInsideAdd = false;
@@ -111,7 +111,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
       this.addedLayerIsPreview.emit(value)
     );
 
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
 
@@ -257,10 +257,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   isVisible() {
     if (this.layer?.id) {
-      const oLayer = this.map.getLayerById(this.layer?.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+      const layer = this.map.layerController.getById(this.layer?.id);
+      this.isVisible$.next(layer?.displayed);
     }
   }
 

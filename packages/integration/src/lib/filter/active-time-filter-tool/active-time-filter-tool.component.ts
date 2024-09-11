@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
-import { IgoMap, Layer, TimeFilterItemComponent } from '@igo2/geo';
+import { IgoMap, Layer, TimeFilterItemComponent, isLayerItem } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-time-filter-tool.animation';
@@ -25,8 +25,8 @@ export class ActiveTimeFilterToolComponent {
   }
 
   get layer(): Layer {
-    for (const lay of this.map.layers) {
-      if (lay.options.active === true) {
+    for (const lay of this.map.layerController.all) {
+      if (isLayerItem(lay) && this.map.layerController.isSelected(lay)) {
         return lay;
       }
     }

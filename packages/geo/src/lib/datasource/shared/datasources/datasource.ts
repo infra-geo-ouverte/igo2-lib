@@ -14,6 +14,7 @@ export abstract class DataSource {
 
   get saveableOptions(): Partial<DataSourceOptions> {
     return {
+      id: this.options.id,
       type: this.options.type,
       url: this.options.url
     };

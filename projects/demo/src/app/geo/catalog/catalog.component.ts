@@ -4,18 +4,17 @@ import { EntityRecord, EntityStore } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
 import { StorageService } from '@igo2/core/storage';
 import {
+  AnyLayerOptions,
   Catalog,
   CatalogBrowserComponent,
   CatalogItem,
   CatalogLibaryComponent,
   CatalogService,
   IgoMap,
-  LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapService,
-  MapViewOptions,
-  TileLayer
+  MapViewOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -65,16 +64,20 @@ export class AppCatalogComponent implements OnInit {
    * @internal
    */
   ngOnInit(): void {
-    this.layerService
-      .createAsyncLayer({
+    const layers: AnyLayerOptions[] = [
+      {
         title: 'OSM',
-        baseLayer: true,
-        visible: true,
         sourceOptions: {
           type: 'osm'
-        }
-      } satisfies LayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+        },
+        baseLayer: true,
+        visible: true
+      }
+    ];
+
+    this.layerService
+      .createLayers(layers)
+      .subscribe((layers) => this.map.layerController.add(...layers));
 
     this.loadCatalogs();
 
