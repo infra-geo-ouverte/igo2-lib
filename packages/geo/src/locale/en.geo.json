@@ -224,6 +224,23 @@
         "drawFeature": ""
       },
       "layer": {
+        "layer": "Layer",
+        "name": "Layer name",
+        "group": {
+          "name": "Group name",
+          "create": "Create group",
+          "rename": "Rename group",
+          "hide": "Hide group",
+          "hideChildren": "Hided by a group",
+          "show": "Show group"
+        },
+        "type": {
+          "raster": "Raster",
+          "vector": "Vector",
+          "measure": "Measure",
+          "draw": "Drawing"
+        },
+        "rename": "Rename layer",
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "hideSelectedLayers": "Hide selected layers",

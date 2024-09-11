@@ -13,7 +13,7 @@ import OlRenderFeature from 'ol/render/Feature';
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import type { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap } from '../../map/shared/map';
 import { FeatureMotion } from './feature.enums';
 

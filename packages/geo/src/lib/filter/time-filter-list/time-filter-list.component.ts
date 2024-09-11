@@ -1,14 +1,9 @@
 import { NgFor } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { AnyLayer } from '../../layer';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
 
@@ -26,15 +21,5 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
   ]
 })
 export class TimeFilterListComponent {
-  @Input()
-  get layers(): Layer[] {
-    return this._layers;
-  }
-  set layers(value: Layer[]) {
-    this._layers = value;
-    this.cdRef.detectChanges();
-  }
-  private _layers: Layer[] = [];
-
-  constructor(private cdRef: ChangeDetectorRef) {}
+  @Input() layers: AnyLayer[] = [];
 }

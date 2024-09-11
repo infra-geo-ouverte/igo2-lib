@@ -28,7 +28,7 @@ import {
   Feature,
   FeatureGeometry
 } from '../../feature/shared/feature.interfaces';
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { MapExtent } from '../../map/shared/map.interface';
 import {
   QueryFormat,
@@ -47,8 +47,8 @@ import {
 })
 export class QueryService {
   public queryEnabled = true;
-  public defaultFeatureCount = 20; // default feature count
-  public featureCount = 20; // feature count
+  public defaultFeatureCount = 20;
+  public featureCount = 20;
 
   private previousMessageIds = [];
 
@@ -64,15 +64,15 @@ export class QueryService {
       });
     }
 
-    const newLayers = layers
-      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) => this.queryLayer(layer, options));
+    const queries$ = layers
+      .filter((layer) => layer.displayed === true)
+      .map((layer) => this.queryLayer(layer, options));
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
     // eslint-disable-next-line prefer-spread
-    const flatArray = [].concat.apply([], newLayers);
-    return flatArray;
+    const flattenedQueries$ = [].concat.apply([], queries$);
+    return flattenedQueries$;
   }
 
   queryLayer(
@@ -80,7 +80,7 @@ export class QueryService {
     options: QueryOptions
   ): Observable<Feature[]> | Observable<Feature[]>[] {
     const url = this.getQueryUrl(
-      layer.dataSource,
+      layer.dataSource as QueryableDataSource,
       options,
       false,
       layer.map.viewController.getExtent()
@@ -98,7 +98,7 @@ export class QueryService {
     ) {
       if (typeof url === 'string') {
         const urlGml = this.getQueryUrl(
-          layer.dataSource,
+          layer.dataSource as QueryableDataSource,
           options,
           true
         ) as string;
@@ -124,8 +124,12 @@ export class QueryService {
           })
         );
       }
-      const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
-      const observables: any = [];
+      const urlGmls = this.getQueryUrl(
+        layer.dataSource as QueryableDataSource,
+        options,
+        true
+      );
+      const observables: Observable<Feature[]>[] = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
         if (this.checkScaleAndResolution(resolution, scale, element)) {

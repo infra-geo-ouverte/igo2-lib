@@ -11,6 +11,7 @@ import {
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 
+import { isLayerItem } from '../../layer';
 import {
   Layer,
   LayerOptions,
@@ -87,7 +88,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     if (this.disabled) {
       return;
     }
-    this.map.changeBaseLayer(baseLayer);
+    this.map.layerController.selectBaseLayer(baseLayer);
     this.appRef.tick();
   }
 
@@ -105,7 +106,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleBaseLayerChanged(baselayer: Layer) {
-    this.basemap.removeAllLayers();
+    this.basemap.layerController.reset();
 
     const options: any = Object.assign(
       Object.create(baselayer.options),
@@ -117,7 +118,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     );
 
     const layer = this.layerService.createLayer(options);
-    this.basemap.addLayer(layer);
+    this.basemap.layerController.add(layer);
     this.handleLinkedBaseLayer(layer);
   }
 
@@ -132,9 +133,11 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
       // search for child layers
       links.map((link: LayersLinkProperties) => {
         link.linkedIds.map((linkedId: string) => {
-          const layerToApply: Layer = this.map.layers.find(
-            (layer: Layer) => layer.options.linkedLayers?.linkId === linkedId
-          );
+          const layerToApply = this.map.layerController.all.find(
+            (layer) =>
+              isLayerItem(layer) &&
+              layer.options.linkedLayers?.linkId === linkedId
+          ) as Layer;
           if (layerToApply) {
             const linkedLayerOptions: LayerOptions = Object.assign(
               Object.create(layerToApply.options),
@@ -146,7 +149,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
                 baseLayer: false
               } as LayerOptions
             );
-            this.basemap.addLayer(
+            this.basemap.layerController.add(
               this.layerService.createLayer(linkedLayerOptions)
             );
           }

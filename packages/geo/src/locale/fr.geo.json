@@ -224,6 +224,22 @@
         "drawFeature": ""
       },
       "layer": {
+        "layer": "Couche",
+        "name": "Nom de la couche",
+        "group": {
+          "name": "Nom du groupe",
+          "create": "Créer un groupe",
+          "rename": "Renommer le groupe",
+          "hide": "Masquer le groupe",
+          "hideChildren": "Masquer par un groupe",
+          "show": "Afficher le groupe"
+        },
+        "type": {
+          "raster": "Imagerie",
+          "vector": "Vectoriel",
+          "measure": "Mesure",
+          "draw": "Dessin"
+        },
         "hideLayer": "Masquer la couche",
         "hideSelectedLayers": "Masquer les couches sélectionnées",
         "notInResolution": "La couche n'est pas visible à l'échelle active. Veuillez zoomer ou dézoomer pour la visualiser.",

@@ -127,7 +127,7 @@ export class AppWorkspaceComponent implements OnInit {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -162,7 +162,9 @@ export class AppWorkspaceComponent implements OnInit {
           visible: true,
           source: dataSource
         };
-        this.map.addLayer(this.layerService.createLayer(layerOptions));
+        this.map.layerController.add(
+          this.layerService.createLayer(layerOptions)
+        );
       });
   }
 

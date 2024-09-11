@@ -174,6 +174,17 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.zoomRoute$$.unsubscribe();
     this.authenticated$$.unsubscribe();
     this.freezeStores();
+
+    if (this.stopsFeatureStore.empty) {
+      this.stopsFeatureStore.map.layerController.remove(
+        this.stopsFeatureStore.layer
+      );
+    }
+    if (this.routesFeatureStore.empty) {
+      this.routesFeatureStore.map.layerController.remove(
+        this.routesFeatureStore.layer
+      );
+    }
   }
 
   private freezeStores() {

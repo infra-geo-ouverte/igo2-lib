@@ -122,7 +122,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   @Input() stores: FeatureStore<Feature>[] = [];
 
   get allLayers() {
-    return this.map.layers.filter((layer) =>
+    return this.map.layerController.all.filter((layer) =>
       String(layer.id).includes('igo-search-layer')
     );
   }
@@ -146,12 +146,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       }
     });
     if (this.layer.meta.dataType === 'Layer') {
-      this.added =
-        this.map.layers.findIndex(
-          (lay) => lay.id === this.layer.data.sourceOptions.id
-        ) !== -1;
+      this.added = !!this.map.layerController.getBySourceId(
+        this.layer.data.sourceOptions.id
+      );
     }
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(
@@ -212,6 +211,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
+        clearTimeout(this.lastTimeoutRequest);
         if (this.isPreview$.value) {
           this.remove();
           this.isPreview$.next(false);
@@ -257,10 +257,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
     this.layersSubcriptions.push(
       this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
+        if (!layer) {
+          return;
+        }
         if (event.type === 'click') {
           this.map.layersAddedByClick$.next([layer]);
         }
-        this.map.addLayer(layer);
+        this.map.layerController.add(layer);
       })
     );
   }
@@ -277,8 +280,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       return undefined;
     }
 
-    const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
-    this.map.removeLayer(oLayer);
+    const layer = this.map.layerController.getBySourceId(
+      this.layer.data.sourceOptions.id
+    );
+    if (!layer) {
+      return;
+    }
+    this.map.layerController.remove(layer);
   }
 
   isInResolutionsRange(resolution: number) {
@@ -291,7 +299,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   isVisible() {
     if (this.layer?.data?.sourceOptions?.id) {
-      const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
+      const oLayer = this.map.layerController.getBySourceId(
+        this.layer.data.sourceOptions.id
+      );
 
       this.isVisible$.next(oLayer?.visible ?? false);
     }

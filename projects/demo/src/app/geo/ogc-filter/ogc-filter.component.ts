@@ -22,7 +22,6 @@ import {
   VectorLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions,
-  WFSDataSourceOptionsParams,
   WMSDataSource,
   WMSDataSourceOptions
 } from '@igo2/geo';
@@ -69,7 +68,7 @@ export class AppOgcFilterComponent {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -136,7 +135,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasource)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (PropertyIsEqualTo OR Intersects polygon)',
             source: dataSource,
@@ -186,7 +185,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P2D)',
             id: '1',
@@ -244,7 +243,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTime)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: PT4H)',
             id: '2',
@@ -303,7 +302,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeMonth)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P1M)',
             id: '3',
@@ -362,7 +361,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeYear)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P1Y)',
             id: '4',
@@ -420,7 +419,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeInterval)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Interval from Now, Step: P1D)',
             id: '5',
@@ -478,7 +477,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeRestrictedToStep)
       .subscribe((dataSource: WFSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, RestrictToStep, Step: P1M)',
             id: '6',
@@ -530,7 +529,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource(wmsOgcFilterOptions)
       .subscribe((dataSource: WMSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Inondations (During)',
             source: dataSource
@@ -677,13 +676,13 @@ export class AppOgcFilterComponent {
         version: '1.1.0',
         outputFormat: 'geojson',
         outputFormatDownload: 'shp'
-      } satisfies WFSDataSourceOptionsParams
+      }
     };
 
     this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
       .subscribe((dataSource: WMSDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title:
               'Filterable WMS layers with predefined filters (push buttons)',

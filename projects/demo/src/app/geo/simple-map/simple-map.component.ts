@@ -3,14 +3,10 @@ import { Component } from '@angular/core';
 
 import { Media, MediaService } from '@igo2/core/media';
 import {
-  DataSourceService,
   IgoMap,
-  LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
-  MapViewOptions,
-  OSMDataSource,
-  OSMDataSourceOptions
+  MapViewOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -50,23 +46,20 @@ export class AppSimpleMapComponent {
   }
 
   constructor(
-    private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mediaService: MediaService
   ) {
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource,
-            visible: true,
-            baseLayer: true
-          } satisfies LayerOptions)
-        );
+    this.layerService
+      .createAsyncLayer({
+        title: 'OSM',
+        sourceOptions: {
+          type: 'osm'
+        },
+        visible: true,
+        baseLayer: true
+      })
+      .subscribe((layer) => {
+        this.map.layerController.add(layer);
       });
   }
 

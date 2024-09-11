@@ -85,7 +85,7 @@ export class AppQueryComponent {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -106,7 +106,7 @@ export class AppQueryComponent {
         }
       } as QueryableDataSourceOptions)
       .subscribe((dataSource: DataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'WMS',
             source: dataSource
@@ -127,7 +127,7 @@ export class AppQueryComponent {
         }
       } as QueryableDataSourceOptions)
       .subscribe((dataSource: DataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'WMS html with a pre call in GML',
             source: dataSource
@@ -156,7 +156,7 @@ export class AppQueryComponent {
           }
         }
       } as ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -168,7 +168,7 @@ export class AppQueryComponent {
         ]
       } as FeatureDataSourceOptions)
       .subscribe((dataSource: FeatureDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Vector layer',
             source: dataSource
@@ -198,7 +198,9 @@ export class AppQueryComponent {
           source: 'ahocevar'
         }
       } as VectorTileLayerOptions)
-      .subscribe((layer: VectorTileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: VectorTileLayer) =>
+        this.map.layerController.add(layer)
+      );
   }
 
   addFeatures(dataSource: FeatureDataSource): void {

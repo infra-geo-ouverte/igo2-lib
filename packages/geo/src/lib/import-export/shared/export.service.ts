@@ -23,7 +23,7 @@ import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
-import { AnyLayer, VectorLayer } from '../../layer';
+import { Layer, VectorLayer, isLayerGroup } from '../../layer';
 import { IgoMap } from '../../map';
 import {
   EditionWorkspace,
@@ -261,7 +261,10 @@ export class ExportService {
     const workBook = await createExcelWorkBook();
 
     for (const layerName of data.layers) {
-      const layer = map.getLayerById(layerName);
+      const layer = map.layerController.getById(layerName);
+      if (isLayerGroup(layer)) {
+        continue;
+      }
       const features = await lastValueFrom(
         this.getFeatures(map, layer, data, store)
       );
@@ -293,7 +296,7 @@ export class ExportService {
   }
 
   private getLayerTitleFromId(id: string, map: IgoMap): string {
-    const layer = map.getLayerById(id);
+    const layer = map.layerController.getById(id);
     return layer.title;
   }
 
@@ -457,7 +460,7 @@ export class ExportService {
 
   getFeatures(
     map: IgoMap,
-    layer: AnyLayer,
+    layer: Layer,
     data: ExportOptions,
     store: WorkspaceStore
   ): Observable<OlFeature[]> {

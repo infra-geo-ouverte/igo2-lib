@@ -55,7 +55,6 @@ export class SearchPointerSummaryDirective
     new EntityStore<SearchResult>([]);
   private lastTimeoutRequest;
   private store$$: Subscription;
-  private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
   private hasPointerReverseSearchSource = false;
 
@@ -114,16 +113,6 @@ export class SearchPointerSummaryDirective
         this.initStore();
         this.subscribeToPointerStore();
       });
-
-    // To handle context change without using the contextService.
-    this.layers$$ = this.map.layers$.subscribe((layers) => {
-      if (
-        this.store &&
-        !layers.find((l) => l.id === 'searchPointerSummaryId')
-      ) {
-        this.initStore();
-      }
-    });
   }
 
   /**
@@ -167,7 +156,6 @@ export class SearchPointerSummaryDirective
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unsubscribeReverseSearch();
-    this.layers$$?.unsubscribe();
   }
 
   /**
