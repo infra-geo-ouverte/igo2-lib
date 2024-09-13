@@ -205,7 +205,6 @@ export class VectorLayer extends Layer {
           this.customLoader(
             vectorSource,
             url,
-            this.authInterceptor,
             extent,
             resolution,
             proj,
@@ -486,6 +485,7 @@ export class VectorLayer extends Layer {
       this.previousOgcFilters = ogcFilters;
 
       paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
+
       const url = buildUrl(
         options,
         currentExtent,
@@ -509,7 +509,6 @@ export class VectorLayer extends Layer {
           alteredUrl.replace(/&&/g, '&');
           this.getFeatures(
             vectorSource,
-            interceptor,
             currentExtent,
             wfsProj,
             proj,
@@ -522,7 +521,6 @@ export class VectorLayer extends Layer {
       } else {
         this.getFeatures(
           vectorSource,
-          interceptor,
           currentExtent,
           wfsProj,
           proj,
@@ -538,7 +536,6 @@ export class VectorLayer extends Layer {
    * Custom loader to get feature from a WFS datasource
    * @internal
    * @param vectorSource the vector source to be created
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param dataProjection the projection of the retrieved data
    * @param featureProjection the projection of the created features
@@ -548,7 +545,6 @@ export class VectorLayer extends Layer {
    */
   private getFeatures(
     vectorSource: olSourceVector,
-    interceptor: AuthInterceptor,
     extent: Extent,
     dataProjection: olProjection,
     featureProjection: olProjection,
@@ -557,20 +553,22 @@ export class VectorLayer extends Layer {
     failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+    const alteredUrlWithKeyAuth = this.authInterceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
     }
+
     xhr.open('GET', modifiedUrl);
-    if (interceptor) {
-      interceptor.interceptXhr(xhr, modifiedUrl);
+    if (this.authInterceptor) {
+      this.authInterceptor.interceptXhr(xhr, modifiedUrl);
     }
     const onError = () => {
       vectorSource.removeLoadedExtent(extent);
       failure();
     };
     xhr.onerror = onError;
+
     xhr.onload = () => {
       if (xhr.status === 200 && xhr.responseText.length > 0) {
         const features = vectorSource
@@ -598,7 +596,6 @@ export class VectorLayer extends Layer {
    * @internal
    * @param vectorSource the vector source to be created
    * @param url the url string or function to retrieve the data
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
    * @param projection the projection to retrieve the data
@@ -606,7 +603,6 @@ export class VectorLayer extends Layer {
   private customLoader(
     vectorSource: olSourceVector,
     url: string,
-    interceptor: AuthInterceptor,
     extent: Extent,
     resolution: number,
     projection: olProjection,
@@ -616,7 +612,8 @@ export class VectorLayer extends Layer {
     const xhr = new XMLHttpRequest();
     let modifiedUrl = url;
     if (typeof url !== 'function') {
-      const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+      const alteredUrlWithKeyAuth =
+        this.authInterceptor.alterUrlWithKeyAuth(url);
       if (alteredUrlWithKeyAuth) {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
@@ -685,8 +682,8 @@ export class VectorLayer extends Layer {
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
-      if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl as string);
+      if (this.authInterceptor) {
+        this.authInterceptor.interceptXhr(xhr, modifiedUrl as string);
       }
 
       const onError = () => {
@@ -735,7 +732,6 @@ export class VectorLayer extends Layer {
    * @internal
    * @param vectorSource the vector source to be created
    * @param layerID the url string or function to retrieve the data
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
    * @param projection the projection to retrieve the data

@@ -14,6 +14,11 @@ export function downloadContent(
   downloadFromUri(uri, fileName);
 }
 
+export function downloadBlob(blob: Blob, fileName: string) {
+  const url = window.URL.createObjectURL(blob);
+  downloadFromUri(url, fileName);
+}
+
 /**
  * Trigger download of a file
  *

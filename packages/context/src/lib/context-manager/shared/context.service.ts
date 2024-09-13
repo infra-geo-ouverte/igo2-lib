@@ -623,7 +623,7 @@ export class ContextService {
       const source = layer.ol.getSource() as olVectorSource;
       olFeatures = source.getFeatures();
     }
-    const cleanedOlFeatures = this.exportService.generateFeature(
+    const cleanedOlFeatures = this.exportService.cleanFeatures(
       olFeatures,
       'GeoJSON',
       '_featureStore'

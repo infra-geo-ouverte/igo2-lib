@@ -7,6 +7,7 @@ import { MessageService } from '@igo2/core/message';
 import { downloadContent } from '@igo2/utils';
 
 import { ExportNothingToExportError } from './export.errors';
+import { AnyExportFormat, ExportFormatLegacy } from './export.type';
 
 export function handleFileExportError(
   error: Error,
@@ -71,4 +72,9 @@ export function entitiesToRowData(
       return valueAccessor(entity, column.name);
     });
   });
+}
+
+export function isCsvExport(format: AnyExportFormat): boolean {
+  const legacyCsv: Partial<ExportFormatLegacy>[] = ['CSVsemicolon', 'CSVcomma'];
+  return format === 'CSV' || legacyCsv.includes(format as ExportFormatLegacy);
 }

@@ -6,12 +6,12 @@
   },
   "allowedNonPeerDependencies": [
     "nosleep.js",
-    "windows-1252",
     "ts-cacheable",
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect",
-    "@turf/point-on-feature"
+    "@turf/point-on-feature",
+    "xlsx"
   ],
   "assets": [
     { "input": "", "glob": "**/*.them*.scss", "output": "" },

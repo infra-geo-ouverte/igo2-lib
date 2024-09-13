@@ -146,7 +146,11 @@ export class OgcFilterWriter {
         filterAssembly = this.bundleFilter(filters, options);
       }
     } else {
-      return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      if (extent && proj) {
+        return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      } else {
+        return undefined;
+      }
     }
 
     const wfsOptions: WriteGetFeatureOptions = {

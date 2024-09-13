@@ -9,7 +9,6 @@ import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
-  ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
   FeatureWorkspace,
@@ -122,7 +121,7 @@ export function getWorkspaceActions(
             layers: [ws.layer.id],
             featureInMapExtent: filterStrategy.active,
             layersWithSelection
-          } as ExportOptions
+          }
         });
       },
       args: [workspace]
