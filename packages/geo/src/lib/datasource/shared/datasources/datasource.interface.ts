@@ -1,5 +1,4 @@
 import type { Type } from 'ol/geom/Geometry';
-import olSource from 'ol/source/Source';
 
 import { Encoders, Preset, Tokenizer } from 'flexsearch';
 
@@ -25,8 +24,8 @@ export interface DataSourceOptions {
   optionsFromCapabilities?: boolean;
   optionsFromApi?: boolean;
   _layerOptionsFromSource?: Record<string, string>;
+  url?: string;
   id?: string;
-  ol?: olSource;
   minZoom?: number;
   maxZoom?: number;
   minDate?: string;
