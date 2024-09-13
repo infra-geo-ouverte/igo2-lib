@@ -45,7 +45,8 @@ import {
   ContextServiceOptions,
   ContextsList,
   DetailedContext,
-  ExtraFeatures
+  ExtraFeatures,
+  IContextLayer
 } from './context.interface';
 
 @Injectable({
@@ -481,24 +482,11 @@ export class ContextService {
         .sort((a, b) => a.zIndex - b.zIndex);
     }
 
-    let i = 0;
     for (const layer of layers) {
-      const layerOptions: AnyLayerOptions = {
-        title: layer.options.title,
-        zIndex: ++i,
-        visible: layer.visible,
-        security: layer.options.security,
-        opacity: layer.opacity
-      };
-      const opts = {
+      const opts: IContextLayer = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions,
-        sourceOptions: {
-          type: layer.dataSource.options.type,
-          params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url,
-          queryable: layer.queryable
-        }
+        layerOptions: layer.saveableOptions,
+        sourceOptions: layer.dataSource.saveableOptions
       };
       if (opts.sourceOptions.type) {
         context.layers.push(opts);

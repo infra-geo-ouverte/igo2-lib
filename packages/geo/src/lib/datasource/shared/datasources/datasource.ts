@@ -12,6 +12,13 @@ export abstract class DataSource {
   public ol: olSource | olVectorSource | olClusterSource;
   private legend: Legend[];
 
+  get saveableOptions(): Partial<DataSourceOptions> {
+    return {
+      type: this.options.type,
+      url: this.options.url
+    };
+  }
+
   constructor(
     public options: DataSourceOptions = {},
     protected dataService?: DataService

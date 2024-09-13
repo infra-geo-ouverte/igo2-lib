@@ -30,6 +30,14 @@ export class TileArcGISRestDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
+  get saveableOptions(): Partial<TileArcGISRestDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   protected createOlSource(): olSourceTileArcGISRest {
     return new olSourceTileArcGISRest(this.options as Options);
   }

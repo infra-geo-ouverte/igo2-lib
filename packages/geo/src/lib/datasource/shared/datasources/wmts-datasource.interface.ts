@@ -1,5 +1,3 @@
-import olSourceWMTS from 'ol/source/WMTS';
-
 import { DataSourceOptions } from './datasource.interface';
 
 export interface WMTSDataSourceOptions extends DataSourceOptions {
@@ -12,5 +10,4 @@ export interface WMTSDataSourceOptions extends DataSourceOptions {
   matrixSet?: string;
   url?: string;
   urls?: string[];
-  ol?: olSourceWMTS;
 }
