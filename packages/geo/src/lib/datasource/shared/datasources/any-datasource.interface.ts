@@ -28,3 +28,12 @@ export type AnyDataSourceOptions =
   | TileArcGISRestDataSourceOptions
   | MVTDataSourceOptions
   | ClusterDataSourceOptions;
+
+export type AnyDataSourceOptionsWithParams =
+  | FeatureDataSourceOptions
+  | WFSDataSourceOptions
+  | WMSDataSourceOptions
+  | CartoDataSourceOptions
+  | ArcGISRestDataSourceOptions
+  | ArcGISRestImageDataSourceOptions
+  | TileArcGISRestDataSourceOptions;

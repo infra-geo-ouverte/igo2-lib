@@ -50,6 +50,8 @@ import {
 import { LayerItemComponent } from '../layer-item/layer-item.component';
 import { LayerListToolComponent } from '../layer-list-tool/layer-list-tool.component';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
+import { LayerService } from '../shared/layer.service';
+import { AnyLayerOptions } from '../shared/layers';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties } from '../shared/layers/layer.interface';
 import {
@@ -264,13 +266,20 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return LayerListDisplacement;
   }
 
+  get unavailableLayers(): AnyLayerOptions[] {
+    return this.layerService.unavailableLayers;
+  }
+
   public toggleOpacity = false;
 
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef,
+    private layerService: LayerService
+  ) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -997,5 +1006,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     return layersList;
+  }
+
+  deleteUnavailableLayer(anyLayerOptions: AnyLayerOptions) {
+    this.layerService.deleteUnavailableLayers(anyLayerOptions);
   }
 }

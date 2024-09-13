@@ -26,6 +26,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
+import { AnyLayerOptions } from '../shared';
 import { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
 
@@ -131,6 +132,22 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() changeDetection;
 
+  @Input() unavailableLayer: AnyLayerOptions;
+
+  get unavailableLayerTitle(): string | undefined {
+    if (
+      this.unavailableLayer.sourceOptions &&
+      'params' in this.unavailableLayer.sourceOptions
+    ) {
+      return this.unavailableLayer.sourceOptions.params.LAYERS;
+    } else if (
+      this.unavailableLayer.sourceOptions &&
+      'layer' in this.unavailableLayer?.sourceOptions
+    ) {
+      return this.unavailableLayer.sourceOptions.layer;
+    }
+  }
+
   get opacity() {
     return this.layer.opacity * 100;
   }
@@ -148,7 +165,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Output() action: EventEmitter<Layer> = new EventEmitter<Layer>(undefined);
+  @Output() action: EventEmitter<Layer | AnyLayerOptions> = new EventEmitter<
+    Layer | AnyLayerOptions
+  >(undefined);
   @Output() checkbox = new EventEmitter<{
     layer: Layer;
     check: boolean;
@@ -162,46 +181,48 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (
-      this.layer.visible &&
-      this.expandLegendIfVisible &&
-      this.layer.firstLoadComponent === true
-    ) {
-      this.layer.firstLoadComponent = false;
-      this.layer.legendCollapsed = false;
-    }
-    this.toggleLegend(this.layer.legendCollapsed);
-    this.updateQueryBadge();
+    if (!this.unavailableLayer) {
+      if (
+        this.layer.visible &&
+        this.expandLegendIfVisible &&
+        this.layer.firstLoadComponent === true
+      ) {
+        this.layer.firstLoadComponent = false;
+        this.layer.legendCollapsed = false;
+      }
+      this.toggleLegend(this.layer.legendCollapsed);
+      this.updateQueryBadge();
 
-    const resolution$ = this.layer.map.viewController.resolution$;
-    this.resolution$$ = resolution$.subscribe(() => {
-      this.onResolutionChange();
-    });
-    this.tooltipText = this.computeTooltip();
-
-    this.network$$ = this.networkService
-      .currentState()
-      .subscribe((state: ConnectionState) => {
-        this.state = state;
+      const resolution$ = this.layer.map.viewController.resolution$;
+      this.resolution$$ = resolution$.subscribe(() => {
         this.onResolutionChange();
       });
+      this.tooltipText = this.computeTooltip();
 
-    this.layers$$ = this.layers$.subscribe(() => {
-      if (this.layer && this.layer.options.active) {
-        this.layerTool$.next(true);
-        this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+      this.network$$ = this.networkService
+        .currentState()
+        .subscribe((state: ConnectionState) => {
+          this.state = state;
+          this.onResolutionChange();
+        });
+
+      this.layers$$ = this.layers$.subscribe(() => {
+        if (this.layer && this.layer.options.active) {
+          this.layerTool$.next(true);
+          this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+        }
+      });
+
+      if (this.changeDetection) {
+        this.changeDetection.subscribe(() => this.cdRef.detectChanges());
       }
-    });
-
-    if (this.changeDetection) {
-      this.changeDetection.subscribe(() => this.cdRef.detectChanges());
     }
   }
 
   ngOnDestroy() {
-    this.resolution$$.unsubscribe();
-    this.network$$.unsubscribe();
-    this.layers$$.unsubscribe();
+    this.resolution$$?.unsubscribe();
+    this.network$$?.unsubscribe();
+    this.layers$$?.unsubscribe();
   }
 
   toggleLegend(collapsed: boolean) {
@@ -281,5 +302,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   public check() {
     this.layerCheck = !this.layerCheck;
     this.checkbox.emit({ layer: this.layer, check: this.layerCheck });
+  }
+
+  deleteUnavailableLayer(anyLayerOptions: AnyLayerOptions) {
+    this.action.emit(anyLayerOptions);
   }
 }
