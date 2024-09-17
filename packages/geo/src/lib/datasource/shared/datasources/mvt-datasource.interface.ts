@@ -1,5 +1,3 @@
-import olSourceVectorTile from 'ol/source/VectorTile';
-
 import { DataSourceOptions } from './datasource.interface';
 
 export interface MVTDataSourceOptions extends DataSourceOptions {
@@ -7,7 +5,6 @@ export interface MVTDataSourceOptions extends DataSourceOptions {
   projection?: string;
   attributions?: string | string[];
   format?: any;
-  ol?: olSourceVectorTile;
   url?: string;
   pathOffline?: string;
   excludeAttribute?: string[];

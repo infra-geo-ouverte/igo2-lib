@@ -1,7 +1,6 @@
-import olSource from 'ol/source/Source';
-import olSourceVector from 'ol/source/Vector';
 import type { ServerType } from 'ol/source/wms';
 
+import { OgcFiltersOptions } from '../../../filter';
 import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
@@ -17,10 +16,11 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   resolutions?: number[];
   serverType?: ServerType;
   ratio?: number;
-  ol?: olSourceVector | olSource;
   refreshIntervalSec?: number;
   contentDependentLegend?: boolean;
-  excludeAttribute?: string[];
+  excludeAttribute?: Array<string>;
+  ogcFilters?: OgcFiltersOptions;
+  timeFilter?: TimeFilterOptions;
 }
 
 export interface WMSDataSourceOptionsParams {

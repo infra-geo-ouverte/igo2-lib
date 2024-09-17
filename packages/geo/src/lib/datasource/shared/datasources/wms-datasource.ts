@@ -72,6 +72,14 @@ export class WMSDataSource extends DataSource {
   }
   readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
 
+  get saveableOptions(): Partial<WMSDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.params
+    };
+  }
+
   constructor(
     public options: WMSDataSourceOptions,
     protected wfsService: WFSService

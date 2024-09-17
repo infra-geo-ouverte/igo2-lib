@@ -46,7 +46,7 @@ export abstract class Layer {
   }
 
   get id(): string {
-    return this.options.id || this.dataSource.id;
+    return String(this.options.id || this.dataSource.id);
   }
 
   get alias(): string {
@@ -136,6 +136,16 @@ export abstract class Layer {
 
   get showInLayerList(): boolean {
     return this.options.showInLayerList !== false;
+  }
+
+  get saveableOptions(): Partial<LayerOptions> {
+    return {
+      title: this.options.title,
+      zIndex: this.zIndex,
+      visible: this.visible,
+      security: this.options.security,
+      opacity: this.opacity
+    };
   }
 
   constructor(

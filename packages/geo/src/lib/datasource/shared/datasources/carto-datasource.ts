@@ -29,6 +29,14 @@ export class CartoDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
+  get saveableOptions(): Partial<CartoDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   protected createOlSource(): olSourceCarto {
     const crossOrigin = this.options.crossOrigin
       ? this.options.crossOrigin

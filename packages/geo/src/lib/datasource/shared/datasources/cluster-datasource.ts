@@ -9,6 +9,14 @@ export class ClusterDataSource extends FeatureDataSource {
   public declare options: ClusterDataSourceOptions;
   public declare ol: olSourceCluster;
 
+  get saveableOptions(): Partial<ClusterDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   protected createOlSource(): olSourceCluster {
     this.options.format = this.getSourceFormatFromOptions(this.options);
     this.options.source = super.createOlSource();

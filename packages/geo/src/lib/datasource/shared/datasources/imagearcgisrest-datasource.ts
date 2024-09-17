@@ -29,6 +29,14 @@ export class ImageArcGISRestDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
+  get saveableOptions(): Partial<ArcGISRestImageDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   protected createOlSource(): ImageArcGISRest {
     const params =
       this.options.layer === undefined
