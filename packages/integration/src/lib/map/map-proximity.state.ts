@@ -27,6 +27,7 @@ import { BehaviorSubject, Subscription, combineLatest, interval } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../map/map.state';
+import { Coordinate } from 'ol/coordinate';
 
 /**
  * Service that holds the state of the direction module
@@ -45,7 +46,7 @@ export class MapProximityState {
     new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
-  public currentPositionCoordinate$ = new BehaviorSubject<[number, number]>(
+  public currentPositionCoordinate$ = new BehaviorSubject<Coordinate>(
     undefined
   );
 

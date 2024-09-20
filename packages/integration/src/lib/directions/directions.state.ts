@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   AnyLayerOptions,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from '@igo2/geo';
@@ -36,7 +36,7 @@ export class DirectionState {
    */
   public routesFeatureStore: RoutesFeatureStore;
 
-  public stepFeatureStore: StepFeatureStore;
+  public stepFeatureStore: StepsFeatureStore;
 
   public debounceTime = 200;
 
@@ -49,7 +49,7 @@ export class DirectionState {
       map: this.mapState.map
     });
 
-    this.stepFeatureStore = new StepFeatureStore([], {
+    this.stepFeatureStore = new StepsFeatureStore([], {
       map: this.mapState.map
     });
 

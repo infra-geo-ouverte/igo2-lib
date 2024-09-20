@@ -55,6 +55,7 @@ import { DirectionState } from '../../directions/directions.state';
 import { MapState } from '../../map/map.state';
 import { ToolState } from '../../tool/tool.state';
 import { SearchState } from '../search.state';
+import { Coordinate } from 'ol/coordinate';
 
 /**
  * Tool to browse the search results
@@ -734,7 +735,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 currentPos.projection,
                 'EPSG:4326'
               );
-              const coord: [number, number] = roundCoordTo(
+              const coord: Coordinate = roundCoordTo(
                 [currentCoord[0], currentCoord[1]],
                 6
               );

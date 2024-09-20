@@ -10,7 +10,7 @@ import {
   MapService,
   MapViewOptions,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore,
   TileLayer,
@@ -62,13 +62,13 @@ export class AppDirectionsComponent {
   public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
     map: this.map
   });
-  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
+  public stepsFeatureStore: StepsFeatureStore = new StepsFeatureStore([], {
     map: this.map
   });
   public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
     map: this.map
   });
-  public zoomToActiveRoute$ = new Subject<void>();
+  public zoomOnActiveRoute$ = new Subject<void>();
 
   public authenticated$: BehaviorSubject<boolean>;
 

@@ -9,7 +9,7 @@ import {
   IgoDirectionsModule,
   IgoMap,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from '@igo2/geo';
@@ -65,7 +65,7 @@ export class DirectionsToolComponent implements OnInit {
    * step store
    * @internal
    */
-  get stepFeatureStore(): StepFeatureStore {
+  get stepFeatureStore(): StepsFeatureStore {
     return this.directionState.stepFeatureStore;
   }
 
@@ -73,7 +73,7 @@ export class DirectionsToolComponent implements OnInit {
    * step store
    * @internal
    */
-  get zoomToActiveRoute$(): Subject<void> {
+  get zoomOnActiveRoute$(): Subject<void> {
     return this.directionState.zoomToActiveRoute$;
   }
 
