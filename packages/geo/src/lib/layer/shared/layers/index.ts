@@ -1,5 +1,7 @@
 export * from './layer';
+export * from './layer-base';
 export * from './layer.interface';
+export * from './legend.interface';
 export * from './image-layer';
 export * from './image-layer.interface';
 export * from './tile-layer';
@@ -10,3 +12,5 @@ export * from './vectortile-layer';
 export * from './vectortile-layer.interface';
 export * from './any-layer';
 export * from './any-layer.interface';
+export * from './layer-group.interface';
+export * from './layer-group';

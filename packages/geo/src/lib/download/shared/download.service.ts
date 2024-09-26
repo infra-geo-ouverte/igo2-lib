@@ -10,7 +10,7 @@ import {
   OgcFilterWriter,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared';
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 
 @Injectable({
   providedIn: 'root'

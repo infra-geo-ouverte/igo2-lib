@@ -66,7 +66,7 @@ export class WmsWorkspaceService {
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
       !layer.options.workspace ||
-      map.layers.find(
+      map.layerController.all.find(
         (lay) => lay.id === layer.id + '.WfsWorkspaceTableDest'
       ) ||
       layer.dataSource.options.edition

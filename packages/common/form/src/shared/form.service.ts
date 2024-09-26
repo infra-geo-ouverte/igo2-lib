@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import {
+  FormControlState,
+  UntypedFormBuilder,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 
 import {
   Form,
@@ -44,8 +49,8 @@ export class FormService {
 
   field(config: FormFieldConfig): FormField {
     const options = config.options || {};
-    const state = {
-      value: '',
+    const state: FormControlState<unknown> = {
+      value: options.initialValue ?? '',
       disabled: options.disabled
     };
     const control = this.formBuilder.control(state);

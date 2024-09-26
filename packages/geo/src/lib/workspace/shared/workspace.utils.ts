@@ -107,7 +107,7 @@ export function addOrRemoveLayer(
     });
   } else if (action === 'remove') {
     const addedLayerId = generateIdFromSourceOptions(so.sourceOptions);
-    map.removeLayer(map.layers.find((l) => l.id === addedLayerId));
+    map.removeLayer(map.layerController.all.find((l) => l.id === addedLayerId));
   }
 }
 

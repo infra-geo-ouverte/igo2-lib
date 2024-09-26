@@ -4,7 +4,7 @@
     (blur)="delayedHide(0)"
     [type]="isPassword ? (hide ? 'password' : 'text') : 'text'"
     [required]="isPassword ? 'true' : required"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder | translate"
     [formControl]="formControl"
     (change)="delayedHide()"
   />

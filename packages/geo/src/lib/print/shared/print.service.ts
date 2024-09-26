@@ -245,7 +245,7 @@ export class PrintService {
     baseMargins: [number, number, number, number]
   ) {
     if (
-      map.layers.find(
+      map.layerController.all.find(
         (layer) => layer.visible && layer.id.startsWith('igo-measures-')
       )
     ) {
@@ -270,7 +270,7 @@ export class PrintService {
   getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
     return new Observable((observer) => {
       let html = '';
-      const legends = getLayersLegends(map.layers);
+      const legends = getLayersLegends(map.layerController.all);
 
       if (legends.filter((l) => l.display === true).length === 0) {
         observer.next(html);

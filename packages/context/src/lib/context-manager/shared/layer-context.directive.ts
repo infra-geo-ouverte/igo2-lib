@@ -3,18 +3,17 @@ import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 import { ConfigService } from '@igo2/core/config';
 import { RouteService } from '@igo2/core/route';
 import {
-  Layer,
-  LayerOptions,
   LayerService,
   MapBrowserComponent,
   StyleListService,
-  StyleService
+  StyleService,
+  isLayerGroupOptions
 } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
+import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
-import { Subscription, merge } from 'rxjs';
-import { buffer, debounceTime, filter, first } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { debounceTime, filter, first } from 'rxjs/operators';
 
 import {
   addImportedFeaturesStyledToMap,
@@ -31,7 +30,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
   private queryParams: any;
 
-  private contextLayers: Layer[] = [];
+  private contextLayers: AnyLayer[] = [];
 
   @Input() removeLayersOnContextChange = true;
 
@@ -76,29 +75,24 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (context.layers === undefined) {
       return;
     }
+
     if (this.removeLayersOnContextChange === true) {
-      this.map.removeAllLayers();
+      this.map.layerController.reset();
     } else {
-      this.map.removeLayers(this.contextLayers);
+      this.map.removeLayer(...this.contextLayers);
     }
     this.contextLayers = [];
-
     this.layerService.unavailableLayers = [];
-    const layersAndIndex$ = merge(
-      ...context.layers.map((layerOptions: LayerOptions) => {
-        return this.layerService.createAsyncLayer(layerOptions, context.uri);
-      })
-    );
 
-    layersAndIndex$
-      .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))
-      .subscribe((layers: Layer[]) => {
+    const importExportOptions = this.configService.getConfig('importExport');
+
+    this.layerService
+      .createLayers(context.layers, context.uri)
+      .subscribe((layers) => {
         this.handleAddLayers(layers);
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            const importExportOptions =
-              this.configService.getConfig('importExport');
             if (!importExportOptions?.importWithStyle) {
               addImportedFeaturesToMap(featureCollection, this.map);
             } else {
@@ -116,22 +110,35 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     this.layerService
       .createAsyncIdbLayers(context.uri)
       .pipe(debounceTime(500))
-      .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
+      .subscribe((layers) => this.handleAddLayers(layers));
   }
 
-  private handleAddLayers(layers: Layer[]) {
-    layers = layers
-      .filter((layer: Layer) => layer !== undefined)
+  private getFlattenOptions(options: AnyLayerOptions[]): AnyLayerOptions[] {
+    return options.reduce((accumulator, option) => {
+      if (isLayerGroupOptions(option)) {
+        const children = option.children
+          ? this.getFlattenOptions(option.children)
+          : [];
+        accumulator.push(option, ...children);
+      } else {
+        accumulator.push(option);
+      }
+      return accumulator;
+    }, []);
+  }
+
+  private handleAddLayers(layers: (AnyLayer | undefined)[]) {
+    const layersFiltrered = layers
+      .filter((layer) => layer)
       .map((layer) => {
         layer.visible = this.computeLayerVisibilityFromUrl(layer);
-
         return layer;
       });
-    this.contextLayers.concat(layers);
-    this.map.addLayers(layers);
+    this.contextLayers.concat(layersFiltrered);
+    this.map.addLayer(...layersFiltrered);
   }
 
-  private computeLayerVisibilityFromUrl(layer: Layer): boolean {
+  private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {
     const params = this.queryParams;
     const currentContext = this.contextService.context$.value.uri;
     const currentLayerid: string = layer.id;

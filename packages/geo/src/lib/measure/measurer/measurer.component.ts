@@ -392,6 +392,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    if (this.store.count === 0) {
+      this.store.map.layerController.remove(this.store.layer);
+    }
+
     this.setActiveMeasureType(undefined);
     this.deactivateModifyControl();
     this.freezeStore();
@@ -644,7 +648,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private initStore() {
     const store = this.store;
 
-    const layer = new VectorLayer({
+    let layer = new VectorLayer({
       title: this.languageService.translate.instant(
         'igo.geo.measure.layerTitle'
       ),
@@ -655,11 +659,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       style: createMeasureLayerStyle(),
       showInLayerList: true,
       exportable: true,
+      visible: true,
       browsable: false,
       workspace: { enabled: false }
     });
-    tryBindStoreLayer(store, layer);
-    store.layer.visible = true;
+    layer = tryBindStoreLayer(store, layer);
+
     layer.visible$.subscribe((visible) => {
       const elements: HTMLCollectionOf<Element> =
         this.document.getElementsByClassName('igo-map-tooltip-measure');
@@ -740,12 +745,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         } else {
           this.hasLine$.next(false);
         }
-      })
-    );
-
-    this.subscriptions$$.push(
-      this.store.count$.subscribe((cnt) => {
-        this.store.layer.options.showInLayerList = cnt >= 1;
       })
     );
   }
@@ -1073,19 +1072,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Show the map tooltips of a geoemtry
-   */
-  private showTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
-    getTooltipsOfOlGeometry(olGeometry).forEach(
-      (olTooltip: OlOverlay | undefined) => {
-        if (this.shouldShowTooltip(olTooltip)) {
-          this.map.ol.addOverlay(olTooltip);
-        }
-      }
-    );
-  }
-
-  /**
    * Clear the tooltips of an OL geometrys
    * @param olGeometry OL geometry with tooltips
    */
@@ -1105,15 +1091,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private updateTooltipsOfOlSource(olSource: OlVectorSource) {
     olSource.forEachFeature((olFeature: OlFeature) => {
       this.updateTooltipsOfOlGeometry(olFeature.getGeometry() as any);
-    });
-  }
-
-  /**
-   * Show the map tooltips of all the geometries of a source
-   */
-  private showTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.showTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 

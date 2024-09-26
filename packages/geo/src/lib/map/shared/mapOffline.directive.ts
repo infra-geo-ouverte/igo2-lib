@@ -1,12 +1,12 @@
 import { AfterViewInit, Directive } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
-import { ConnectionState, NetworkService } from '@igo2/core/network';
+import { NetworkService } from '@igo2/core/network';
 
 import { combineLatest } from 'rxjs';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
-import { Layer } from '../../layer/shared/layers/layer';
+import { AnyLayer, isLayerGroup } from '../../layer';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
 import { IgoMap } from './map';
 
@@ -64,8 +64,8 @@ export class MapOfflineDirective implements AfterViewInit {
     combineLatest([
       this.networkService.currentState(),
       this.map.forcedOffline$,
-      this.map.layers$
-    ]).subscribe((bunch: [ConnectionState, boolean, Layer[]]) => {
+      this.map.layerController.all$
+    ]).subscribe((bunch) => {
       const online = bunch[0].connection;
       const forcedOffline = bunch[1];
       const layers = bunch[2];
@@ -76,7 +76,7 @@ export class MapOfflineDirective implements AfterViewInit {
   private handleNonOfflinableLayerResolution(
     online: boolean,
     forcedOffline: boolean,
-    layer: Layer
+    layer: AnyLayer
   ) {
     if (!online || forcedOffline) {
       layer.maxResolution = 0;
@@ -88,9 +88,12 @@ export class MapOfflineDirective implements AfterViewInit {
   private handleLayersOnlineState(
     online: boolean,
     forcedOffline: boolean,
-    layers: Layer[]
+    layers: AnyLayer[]
   ) {
     layers.forEach((layer) => {
+      if (isLayerGroup(layer)) {
+        return;
+      }
       let offlinableByUrlSourceOptions;
       if (layer.isIgoInternalLayer) {
         return;

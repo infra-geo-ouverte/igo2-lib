@@ -114,16 +114,6 @@ export class SearchPointerSummaryDirective
         this.initStore();
         this.subscribeToPointerStore();
       });
-
-    // To handle context change without using the contextService.
-    this.layers$$ = this.map.layers$.subscribe((layers) => {
-      if (
-        this.store &&
-        !layers.find((l) => l.id === 'searchPointerSummaryId')
-      ) {
-        this.initStore();
-      }
-    });
   }
 
   /**

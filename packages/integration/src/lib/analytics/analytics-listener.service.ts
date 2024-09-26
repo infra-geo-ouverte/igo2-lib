@@ -5,10 +5,10 @@ import { AnalyticsService } from '@igo2/core/analytics';
 import {
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
-  Layer,
   TileArcGISRestDataSourceOptions,
   WMSDataSourceOptions,
-  WMTSDataSourceOptions
+  WMTSDataSourceOptions,
+  isLayerGroup
 } from '@igo2/geo';
 
 import { skip } from 'rxjs/operators';
@@ -82,16 +82,20 @@ export class AnalyticsListenerService {
    * Listener for adding layers to the map
    */
   listenLayer() {
-    this.mapState.map.layersAddedByClick$.subscribe((layers: Layer[]) => {
+    this.mapState.map.layersAddedByClick$.subscribe((layers) => {
       if (!layers) {
         return;
       }
 
-      layers.map((layer) => {
+      layers.forEach((layer) => {
         let wmsParams: string;
         let wmtsParams: string;
         let xyzParams: string;
         let restParams: string;
+
+        if (isLayerGroup(layer)) {
+          return;
+        }
 
         switch (layer.dataSource.options.type) {
           case 'wms': {

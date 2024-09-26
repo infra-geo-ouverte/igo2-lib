@@ -25,7 +25,8 @@ import {
 import { debounce } from 'rxjs/operators';
 
 import { LayerLegendItemComponent } from '../layer-legend-item/layer-legend-item.component';
-import { Layer } from '../shared/layers/layer';
+import { AnyLayer } from '../shared';
+import { isBaseLayer, isLayerItem } from '../utils';
 
 @Component({
   selector: 'igo-layer-legend-list',
@@ -48,23 +49,17 @@ import { Layer } from '../shared/layers/layer';
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
-
   hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(true);
   hasVisibleAndNotInRangeLayers$ = new BehaviorSubject<boolean>(true);
-  layersInUi$ = new BehaviorSubject<Layer[]>([]);
-  layers$ = new BehaviorSubject<Layer[]>([]);
+  layersInUi$ = new BehaviorSubject<AnyLayer[]>([]);
+  layers$ = new BehaviorSubject<AnyLayer[]>([]);
   showAllLegend = false;
+
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
-  @Input()
-  set layers(value: Layer[]) {
-    this._layers = value;
-    this.next();
-  }
-  get layers(): Layer[] {
-    return this._layers;
-  }
-  private _layers: Layer[];
+
+  @Input() layers: AnyLayer[];
+
   @Input() excludeBaseLayers = false;
 
   @Input() updateLegendOnResolutionChange = false;
@@ -74,6 +69,8 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   @Input() showAllLegendsValue = false;
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
+
+  isLayerItem = isLayerItem;
 
   ngOnInit(): void {
     this.change$$ = this.change$
@@ -88,20 +85,16 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
         this.hasVisibleOrInRangeLayers$.next(
           this.layers
             .slice(0)
-            .filter((layer) => layer.baseLayer !== true)
-            .filter(
-              (layer) =>
-                layer.visible$.value && layer.isInResolutionsRange$.value
-            ).length > 0
+            .filter((layer) => !isBaseLayer(layer))
+            .filter((layer) => layer.visible && layer.isInResolutionsRange)
+            .length > 0
         );
         this.hasVisibleAndNotInRangeLayers$.next(
           this.layers
             .slice(0)
-            .filter((layer) => layer.baseLayer !== true)
-            .filter(
-              (layer) =>
-                layer.visible$.value && !layer.isInResolutionsRange$.value
-            ).length > 0
+            .filter((layer) => !isBaseLayer(layer))
+            .filter((layer) => layer.visible && !layer.isInResolutionsRange)
+            .length > 0
         );
 
         this.layersInUi$.next(
@@ -110,7 +103,7 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
             .filter(
               (layer) =>
                 layer.showInLayerList !== false &&
-                (!this.excludeBaseLayers || !layer.baseLayer)
+                (!this.excludeBaseLayers || !isBaseLayer(layer))
             )
         );
       });
@@ -122,16 +115,16 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   private next() {
     this.change$.next();
   }
-  private computeShownLayers(layers: Layer[]) {
+  private computeShownLayers(layers: AnyLayer[]) {
     let shownLayers = layers.filter(
-      (layer: Layer) => layer.visible && layer.isInResolutionsRange
+      (layer) => layer.visible && layer.isInResolutionsRange
     );
     if (this.showAllLegendsValue) {
       shownLayers = layers;
     }
     return this.sortLayersByZindex(shownLayers);
   }
-  private sortLayersByZindex(layers: Layer[]) {
+  private sortLayersByZindex(layers: AnyLayer[]) {
     return layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
   }
 

@@ -11,6 +11,7 @@ import {
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 
+import { isLayerItem } from '../../layer';
 import {
   Layer,
   LayerOptions,
@@ -105,7 +106,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleBaseLayerChanged(baselayer: Layer) {
-    this.basemap.removeAllLayers();
+    this.basemap.layerController.reset();
 
     const options: any = Object.assign(
       Object.create(baselayer.options),
@@ -132,9 +133,11 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
       // search for child layers
       links.map((link: LayersLinkProperties) => {
         link.linkedIds.map((linkedId: string) => {
-          const layerToApply: Layer = this.map.layers.find(
-            (layer: Layer) => layer.options.linkedLayers?.linkId === linkedId
-          );
+          const layerToApply = this.map.layerController.all.find(
+            (layer) =>
+              isLayerItem(layer) &&
+              layer.options.linkedLayers?.linkId === linkedId
+          ) as Layer;
           if (layerToApply) {
             const linkedLayerOptions: LayerOptions = Object.assign(
               Object.create(layerToApply.options),

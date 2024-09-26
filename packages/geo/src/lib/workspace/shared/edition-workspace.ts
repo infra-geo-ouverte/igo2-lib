@@ -100,7 +100,9 @@ export class EditionWorkspace extends Workspace {
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point as any);
 
-    this.map.removeLayer(this.olDrawingLayer);
+    if (this.olDrawingLayer) {
+      this.map.removeLayer(this.olDrawingLayer);
+    }
 
     this.olDrawingLayer = new VectorLayer({
       id: 'igo-draw-layer',

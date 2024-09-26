@@ -4,8 +4,6 @@ import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
 
-// import { BehaviorSubject } from 'rxjs';
-
 /**
  * Service that holds the state of the map module
  */
@@ -13,7 +11,6 @@ import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
   providedIn: 'root'
 })
 export class MapState {
-  // public mapCenter$ = new BehaviorSubject<boolean>(false);
   get showAllLegendsValue(): boolean {
     return this._legendToolShowAll;
   }

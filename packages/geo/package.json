@@ -22,6 +22,7 @@
     "lint": "ng lint geo",
     "lint.fix": "ng lint geo --fix",
     "test": "ng test geo --watch=false",
+    "test.watch": "ng test geo",
     "watch": "ng build geo --watch"
   },
   "exports": {

@@ -122,7 +122,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   @Input() stores: FeatureStore<Feature>[] = [];
 
   get allLayers() {
-    return this.map.layers.filter((layer) =>
+    return this.map.layerController.all.filter((layer) =>
       String(layer.id).includes('igo-search-layer')
     );
   }
@@ -147,11 +147,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     });
     if (this.layer.meta.dataType === 'Layer') {
       this.added =
-        this.map.layers.findIndex(
+        this.map.layerController.all.findIndex(
           (lay) => lay.id === this.layer.data.sourceOptions.id
         ) !== -1;
     }
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(

@@ -30,7 +30,7 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
 import { default as moment } from 'moment';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
@@ -58,10 +58,6 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
-  @Input() layer: Layer;
-
-  @Input() options: TimeFilterOptions;
-
   public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
@@ -74,6 +70,14 @@ export class TimeFilterFormComponent implements OnInit {
   public listYears: string[] = [];
   public startListYears: string[] = [];
   public endListYears: string[] = [];
+
+  public interval: any;
+  public playIcon = 'play-circle';
+  public resetIcon = 'replay';
+
+  @Input() layer: Layer;
+
+  @Input() options: TimeFilterOptions;
 
   @Input()
   set currentValue(value: string) {
@@ -93,10 +97,6 @@ export class TimeFilterFormComponent implements OnInit {
       }
     }
   }
-
-  public interval: any;
-  public playIcon = 'play_circle';
-  public resetIcon = 'replay';
 
   @Output() change = new EventEmitter<Date | [Date, Date]>();
   @Output()

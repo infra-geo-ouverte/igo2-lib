@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.layer-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.header-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 16px;
+
+  mat-checkbox {
+    margin-left: -16px;
+  }
+}

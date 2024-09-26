@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import {
-  AnyLayerOptions,
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
@@ -54,23 +53,15 @@ export class DirectionState {
     });
 
     this.mapState.map.ol.once('rendercomplete', () => {
-      this.stopsFeatureStore.empty$.subscribe((empty) => {
-        if (this.stopsFeatureStore.layer?.options) {
-          (
-            this.stopsFeatureStore.layer.options as AnyLayerOptions
-          ).showInLayerList = !empty;
-        }
-      });
-      this.routesFeatureStore.empty$.subscribe((empty) => {
-        if (this.routesFeatureStore.layer?.options) {
-          (
-            this.routesFeatureStore.layer.options as AnyLayerOptions
-          ).showInLayerList = !empty;
-        }
-      });
+      this.stopsFeatureStore.empty$.subscribe((empty) =>
+        this.toggleLayer(this.stopsFeatureStore, empty)
+      );
+      this.routesFeatureStore.empty$.subscribe((empty) =>
+        this.toggleLayer(this.routesFeatureStore, empty)
+      );
     });
 
-    this.mapState.map.layers$.subscribe(() => {
+    this.mapState.map.layerController.all$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
         this.stopsStore.deleteMany(this.stopsStore.all());
         this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
@@ -79,5 +70,19 @@ export class DirectionState {
         this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       }
     });
+  }
+
+  private toggleLayer(
+    store: RoutesFeatureStore | StopsFeatureStore,
+    isEmpty: boolean
+  ) {
+    if (!store.layer) {
+      return;
+    }
+    const layerId = store.layer.id;
+    const layerController = store.map.layerController;
+    isEmpty
+      ? layerController.removeSystemToTree(layerId)
+      : layerController.addSystemToTree(layerId);
   }
 }

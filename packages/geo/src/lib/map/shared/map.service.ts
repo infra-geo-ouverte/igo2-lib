@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { IgoMap } from './map';
+import { MapBase } from './map.abstract';
 
 /**
  * MapService
@@ -15,13 +15,13 @@ import { IgoMap } from './map';
   providedIn: 'root'
 })
 export class MapService {
-  private map: IgoMap;
+  private map: MapBase;
 
-  getMap(): IgoMap {
+  getMap(): MapBase {
     return this.map;
   }
 
-  setMap(map: IgoMap) {
+  setMap(map: MapBase) {
     this.map = map;
   }
 }

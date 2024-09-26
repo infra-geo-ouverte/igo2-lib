@@ -1,0 +1,24 @@
+<button
+  mat-icon-button
+  [ngClass]="{
+    disabled: disabled,
+    'out-of-range': !inResolutionsRange,
+    'visibility-hidden': !layer.visible
+  }"
+  [color]="layer.visible ? 'primary' : 'default'"
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="tooltip ?? defaultTooltip | translate"
+  (click)="toggle($event)"
+>
+  <igo-icon
+    [icon]="
+      disabled && layer.visible
+        ? circleSmallIcon
+        : layer.visible
+          ? 'visibility'
+          : 'visibility_off'
+    "
+    iconPositionEnd
+  />
+</button>

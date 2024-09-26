@@ -3,40 +3,49 @@ import { Message } from '@igo2/core/message';
 import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
-import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
-import { DataSource } from '../../../datasource/shared/datasources/datasource';
+import {
+  AnyDataSourceOptions,
+  DataSource
+} from '../../../datasource/shared/datasources';
 import { MapExtent } from '../../../map/shared/map.interface';
 import { LegendOptions } from './legend.interface';
 
-export interface LayerOptions {
+export interface LayerOptions extends BaseLayerOptions {
   isIgoInternalLayer?: boolean; // useful when mapOffline directive set the resolution of the layers.
   source?: DataSource;
   sourceOptions?: AnyDataSourceOptions;
-  title?: string;
-  id?: string;
   alias?: string;
   security?: LayerSecurityOptions;
   baseLayer?: boolean;
-  opacity?: number;
-  visible?: boolean;
-  extent?: MapExtent;
-  zIndex?: number;
   messages?: Message[];
-  minResolution?: number;
-  maxResolution?: number;
   minScaleDenom?: number;
   maxScaleDenom?: number;
-  showInLayerList?: boolean;
   removable?: boolean;
   workspace?: GeoWorkspaceOptions;
   legendOptions?: LegendOptions;
   ol?: olLayer<olSource>;
   tooltip?: TooltipContent;
   _internal?: Record<string, string>;
-  active?: boolean;
-  check?: boolean;
   linkedLayers?: LayersLink;
   showButtonZoomToExtent?: boolean;
+}
+
+export interface BaseLayerOptions {
+  id?: string | number;
+  /**
+   * An unique identifier calculated client side
+   * The name prop provide a way to have a unique identifier between all layers
+   **/
+  name?: string;
+  title?: string;
+  opacity?: number;
+  visible?: boolean;
+  extent?: MapExtent;
+  zIndex?: number;
+  minResolution?: number;
+  maxResolution?: number;
+  showInLayerList?: boolean;
+  parentId?: string;
 }
 
 export interface LayerSecurityOptions {
@@ -83,12 +92,6 @@ export enum LinkedProperties {
   TIMEFILTER = 'timeFilter'
 }
 
-export interface GroupLayers {
-  title: string;
-  layers?: LayerOptions;
-  collapsed?: boolean;
-}
-
 export interface TooltipContent {
   type?: TooltipType;
   text?: string;
@@ -98,3 +101,4 @@ export enum TooltipType {
   ABSTRACT = 'abstract',
   CUSTOM = 'custom'
 }
+export type LayerType = 'vector' | 'raster' | 'group';

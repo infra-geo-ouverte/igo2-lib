@@ -64,6 +64,9 @@
               "includePaths": ["node_modules"]
             },
             "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "allowedCommonJsDependencies": [
               "@turf",
               "bowser",
@@ -189,6 +192,9 @@
             "tsConfig": "projects/demo/tsconfig.spec.json",
             "karmaConfig": "projects/demo/karma.conf.js",
             "styles": ["projects/demo/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "scripts": [],
             "assets": [
               "projects/demo/src/favicon.ico",
@@ -535,10 +541,6 @@
   },
   "cli": {
     "schematicCollections": ["@schematics/angular"],
-    "cache": {
-      "enabled": false,
-      "environment": "all"
-    },
     "analytics": false
   }
 }

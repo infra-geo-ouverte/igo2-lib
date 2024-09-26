@@ -12,15 +12,18 @@ import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { Layer, LinkedProperties } from '../../layer/shared/layers';
-import type { MapBase } from '../shared/map.abstract';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { Layer } from '../../layer/shared/layers/layer';
+import { LinkedProperties } from '../../layer/shared/layers/layer.interface';
+import { isLayerGroup, isLayerItem } from '../../layer/utils/layer.utils';
+import { MapViewController } from './controllers';
 
 export function getLinkedLayersOptions(layer: Layer) {
   return layer.options.linkedLayers;
 }
 
-export function getIgoLayerByLinkId(map: MapBase, id: string) {
-  return map.layers.find((l) => l.options.linkedLayers?.linkId === id);
+export function getIgoLayerByLinkId(layers: Layer[], id: string) {
+  return layers.find((l) => l.options.linkedLayers?.linkId === id);
 }
 
 export function layerHasLinkWithProperty(
@@ -49,7 +52,7 @@ export function layerHasLinkDeletion(layer: Layer): boolean {
 }
 
 export function getRootParentByProperty(
-  map: MapBase,
+  layers: AnyLayer[],
   layer: Layer,
   property: LinkedProperties
 ): Layer {
@@ -58,7 +61,7 @@ export function getRootParentByProperty(
   let hasParentLayer = true;
   while (hasParentLayer) {
     layerToUse = parentLayer;
-    parentLayer = getDirectParentLayerByProperty(map, layerToUse, property);
+    parentLayer = getDirectParentLayerByProperty(layers, layerToUse, property);
     hasParentLayer = parentLayer ? true : false;
   }
   if (!hasParentLayer) {
@@ -70,13 +73,16 @@ export function getRootParentByProperty(
 }
 
 export function getDirectParentLayerByProperty(
-  map: MapBase,
+  layers: AnyLayer[],
   layer: Layer,
   property: LinkedProperties
 ): Layer {
   if (layer?.options.linkedLayers?.linkId) {
     const currentLinkId = layer.options.linkedLayers.linkId;
-    const parents = map.layers.filter((pl) => {
+    const parents = layers.filter((pl) => {
+      if (isLayerGroup(pl)) {
+        return false;
+      }
       const linkedLayers = pl.options.linkedLayers;
       if (linkedLayers && linkedLayers.links) {
         const a = linkedLayers.links.find(
@@ -86,7 +92,7 @@ export function getDirectParentLayerByProperty(
         );
         return a;
       }
-    });
+    }) as Layer[];
     if (parents.length > 1) {
       console.warn(`Your layer ${
         layer.title || layer.id
@@ -100,7 +106,7 @@ export function getDirectParentLayerByProperty(
 }
 
 export function getDirectChildLayersByProperty(
-  map: MapBase,
+  layers: AnyLayer[],
   layer: Layer,
   property: LinkedProperties
 ): Layer[] {
@@ -112,33 +118,41 @@ export function getDirectChildLayersByProperty(
         linkedIds = linkedIds.concat(link.linkedIds);
       });
   }
-  return linkedIds.map((lid) => getIgoLayerByLinkId(map, lid));
+  const layerItems = layers.filter((layer) => isLayerItem(layer)) as Layer[];
+  return linkedIds.map((lid) => getIgoLayerByLinkId(layerItems, lid));
 }
 
 export function getAllChildLayersByProperty(
-  map: MapBase,
+  layers: AnyLayer[],
   layer: Layer,
-  knownChildLayers: Layer[],
+  knownChildLayers: AnyLayer[],
   property: LinkedProperties
-): Layer[] {
-  const childLayers = getDirectChildLayersByProperty(map, layer, property);
+): AnyLayer[] {
+  const childLayers = getDirectChildLayersByProperty(layers, layer, property);
   childLayers.map((cl) => {
     knownChildLayers.push(cl);
-    const directChildLayers = getDirectChildLayersByProperty(map, cl, property);
+    const directChildLayers = getDirectChildLayersByProperty(
+      layers,
+      cl,
+      property
+    );
     if (directChildLayers) {
-      getAllChildLayersByProperty(map, cl, knownChildLayers, property);
+      getAllChildLayersByProperty(layers, cl, knownChildLayers, property);
     }
   });
   return knownChildLayers;
 }
 
-export function getRootParentByDeletion(map: MapBase, layer: Layer): Layer {
+export function getRootParentByDeletion(
+  layer: Layer,
+  layers: AnyLayer[]
+): Layer {
   let layerToUse = layer;
   let parentLayer = layerToUse;
   let hasParentLayer = true;
   while (hasParentLayer) {
     layerToUse = parentLayer;
-    parentLayer = getDirectParentLayerByDeletion(map, layerToUse);
+    parentLayer = getDirectParentLayerByDeletion(layerToUse, layers);
     hasParentLayer = parentLayer ? true : false;
   }
   if (!hasParentLayer) {
@@ -150,20 +164,23 @@ export function getRootParentByDeletion(map: MapBase, layer: Layer): Layer {
 }
 
 export function getDirectParentLayerByDeletion(
-  map: MapBase,
-  layer: Layer
+  layer: Layer,
+  layers: AnyLayer[]
 ): Layer {
   if (layer.options.linkedLayers?.linkId) {
     const currentLinkId = layer.options.linkedLayers.linkId;
-    const parents = map.layers.filter((pl) => {
-      const linkedLayers = pl.options.linkedLayers;
+    const parents = layers.filter((parent) => {
+      if (isLayerGroup(parent)) {
+        return false;
+      }
+      const linkedLayers = parent.options.linkedLayers;
       if (linkedLayers && linkedLayers.links) {
         const a = linkedLayers.links.find(
           (l) => l.linkedIds.includes(currentLinkId) && l.syncedDelete
         );
         return a;
       }
-    });
+    }) as Layer[];
     if (parents.length > 1) {
       console.warn(`Your layer ${
         layer.title || layer.id
@@ -176,40 +193,44 @@ export function getDirectParentLayerByDeletion(
   }
 }
 
-export function getDirectChildLayersByDeletion(
-  map: MapBase,
+function getDirectChildLayersByDeletion(
+  layers: AnyLayer[],
   layer: Layer
 ): Layer[] {
-  let linkedIds = [];
-  if (layer?.options.linkedLayers?.links) {
-    layer.options.linkedLayers.links
-      .filter((l) => l.syncedDelete)
-      .map((link) => {
-        linkedIds = linkedIds.concat(link.linkedIds);
-      });
-  }
-  return linkedIds.map((lid) => getIgoLayerByLinkId(map, lid));
+  const layerItems = layers.filter((layer) => isLayerItem(layer)) as Layer[];
+  return layer.options.linkedLayers?.links
+    ?.filter((l) => l.syncedDelete)
+    .reduce((childLayer, link) => {
+      const linkedLayers = link.linkedIds.reduce((linkedLayers, id) => {
+        const linkedLayer = getIgoLayerByLinkId(layerItems, id);
+        if (linkedLayer) {
+          linkedLayers.push(linkedLayer);
+        }
+        return linkedLayers;
+      }, []);
+      return childLayer.concat(linkedLayers);
+    }, []);
 }
 
 export function getAllChildLayersByDeletion(
-  map: MapBase,
+  layers: AnyLayer[],
   layer: Layer,
   knownChildLayers: Layer[]
 ): Layer[] {
-  const childLayers = getDirectChildLayersByDeletion(map, layer);
+  const childLayers = getDirectChildLayersByDeletion(layers, layer);
   childLayers.map((cl) => {
     knownChildLayers.push(cl);
-    const directChildLayers = getDirectChildLayersByDeletion(map, cl);
+    const directChildLayers = getDirectChildLayersByDeletion(layers, cl);
     if (directChildLayers) {
-      getAllChildLayersByDeletion(map, cl, knownChildLayers);
+      getAllChildLayersByDeletion(layers, cl, knownChildLayers);
     }
   });
   return knownChildLayers;
 }
 
 export function initLayerSyncFromRootParentLayers(
-  map: MapBase,
-  layers: Layer[]
+  mapLayers: AnyLayer[],
+  layers: AnyLayer[]
 ) {
   const rootLayersByProperty = {};
   const keys = Object.keys(LinkedProperties);
@@ -217,11 +238,15 @@ export function initLayerSyncFromRootParentLayers(
     rootLayersByProperty[LinkedProperties[k]] = [];
   });
   layers
-    .filter((l) => getLinkedLayersOptions(l))
-    .map((l) => {
+    .filter((l) => isLayerItem(l) && getLinkedLayersOptions(l))
+    .map((l: Layer) => {
       keys.map((key) => {
         const k = LinkedProperties[key];
-        const plbp = getRootParentByProperty(map, l, k as LinkedProperties);
+        const plbp = getRootParentByProperty(
+          mapLayers,
+          l,
+          k as LinkedProperties
+        );
         const layers = rootLayersByProperty[k];
         const layersId = layers.map((l) => l.id);
         if (plbp && !layersId.includes(plbp.id)) {
@@ -231,14 +256,15 @@ export function initLayerSyncFromRootParentLayers(
     });
   Object.keys(rootLayersByProperty).map((k) => {
     const layers = rootLayersByProperty[k];
-    layers.map((l: Layer) => l.ol.notify(k, undefined));
+    layers.map((l) => l.ol.notify(k, undefined));
   });
 }
 
 export function handleLayerPropertyChange(
-  map: MapBase,
+  layers: AnyLayer[],
   propertyChange: ObjectEvent,
-  initiatorIgoLayer: Layer
+  initiatorIgoLayer: Layer,
+  viewController: MapViewController
 ) {
   if (!propertyChange) {
     return;
@@ -270,7 +296,7 @@ export function handleLayerPropertyChange(
     getLinkedLayersOptions(initiatorIgoLayer);
   if (initiatorLinkedLayersOptions) {
     let rootParentByProperty = getRootParentByProperty(
-      map,
+      layers,
       initiatorIgoLayer,
       key as LinkedProperties
     );
@@ -280,7 +306,7 @@ export function handleLayerPropertyChange(
 
     const clbp = [rootParentByProperty];
     getAllChildLayersByProperty(
-      map,
+      layers,
       rootParentByProperty,
       clbp,
       key as LinkedProperties
@@ -301,7 +327,7 @@ export function handleLayerPropertyChange(
         if (isLayerProperty) {
           l.ol.set(key, newValue, true);
           if (key === 'visible') {
-            l.visible$.next(newValue);
+            l.visible = newValue;
           }
           if (key === 'minResolution' || key === 'maxResolution') {
             resolutionPropertyHasChanged = true;
@@ -323,7 +349,7 @@ export function handleLayerPropertyChange(
                   (initiatorIgoLayer.dataSource.options as any)
                     .fieldNameGeometry,
                   undefined,
-                  map.viewController.getOlProjection()
+                  viewController.getOlProjection()
                 );
               } else if (initiatorIgoLayerSourceType === 'wms') {
                 appliedOgcFilter = (
@@ -351,7 +377,7 @@ export function handleLayerPropertyChange(
       }
     });
     if (resolutionPropertyHasChanged) {
-      map.viewController.resolution$.next(map.viewController.resolution$.value);
+      viewController.resolution$.next(viewController.resolution$.value);
     }
   }
 }

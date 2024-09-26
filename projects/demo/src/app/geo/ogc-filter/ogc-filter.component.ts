@@ -22,7 +22,6 @@ import {
   VectorLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions,
-  WFSDataSourceOptionsParams,
   WMSDataSource,
   WMSDataSourceOptions
 } from '@igo2/geo';
@@ -499,7 +498,7 @@ export class AppOgcFilterComponent {
         );
       });
 
-    const wmsOgcFilterOptions: WMSOptions = {
+    const wmsOgcFilterOptions: WMSDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       optionsFromCapabilities: false,
@@ -538,11 +537,7 @@ export class AppOgcFilterComponent {
         );
       });
 
-    interface WMSOptions
-      extends WMSDataSourceOptions,
-        OgcFilterableDataSourceOptions {}
-
-    const filterableWMSwithPushButtons: WMSOptions = {
+    const filterableWMSwithPushButtons: WMSDataSourceOptions = {
       type: 'wms',
       url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
       urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -681,7 +676,7 @@ export class AppOgcFilterComponent {
         version: '1.1.0',
         outputFormat: 'geojson',
         outputFormatDownload: 'shp'
-      } satisfies WFSDataSourceOptionsParams
+      }
     };
 
     this.dataSourceService

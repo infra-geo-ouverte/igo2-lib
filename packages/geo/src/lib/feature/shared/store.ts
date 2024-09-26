@@ -7,8 +7,9 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { Document } from 'flexsearch';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources';
-import { VectorLayer } from '../../layer/shared';
-import { IgoMap, MapExtent } from '../../map/shared';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../map/shared/map';
+import { MapExtent } from '../../map/shared/map.interface';
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import {

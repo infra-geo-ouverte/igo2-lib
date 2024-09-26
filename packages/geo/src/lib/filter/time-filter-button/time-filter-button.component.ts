@@ -15,7 +15,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { IgoMap } from '../../map/shared/map';
 import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
 
@@ -58,7 +58,7 @@ export class TimeFilterButtonComponent implements OnInit {
       this.options = this.layer.dataSource.options as WMSDataSourceOptions;
     }
   }
-  private _layer;
+  private _layer: Layer;
 
   @Input() map: IgoMap;
 
