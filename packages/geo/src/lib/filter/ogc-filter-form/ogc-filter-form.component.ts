@@ -204,6 +204,7 @@ export class OgcFilterFormComponent implements OnInit {
   private _filterValues(value: string): string[] {
     const keywordRegex = new RegExp(
       value
+        .replace(/[.*+?^${}()|[\]\\]/g, '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''),

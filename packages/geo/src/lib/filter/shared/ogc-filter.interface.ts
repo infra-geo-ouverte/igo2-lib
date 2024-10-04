@@ -85,6 +85,7 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfiltered?: boolean;
+  showChips?: boolean; // true by default for autocomplete
   selectors?:
     | OgcPushButton[]
     | OgcCheckbox[]

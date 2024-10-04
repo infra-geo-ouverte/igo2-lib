@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { TraceService } from '@sentry/angular-ivy';
+import { TraceService } from '@sentry/angular';
 
 import { createSentryErrorHandler, initSentry } from './sentry';
 import { SentryMonitoringOptions } from './sentry.interface';

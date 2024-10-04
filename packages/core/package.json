@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "17.0.0-next.6",
+  "version": "17.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -16,14 +16,14 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "prestart": "npm run postbuild",
-    "build": "ng build core --configuration production && npm run clean-exports",
-    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts core",
+    "prestart": "node --import tsx ../../scripts/src/core/prestart.mts",
+    "build": "ng build core --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/core/postbuild.mts",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
-    "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "test": "ng test core --watch=false",
+    "test.watch": "ng test core",
     "watch": "ng build core --watch && npm run postbuild"
   },
   "exports": {
@@ -107,7 +107,7 @@
     "@angular/platform-browser": "^17.0.6",
     "@angular/router": "^17.0.6",
     "@igo2/utils": "*",
-    "@sentry/angular-ivy": "^7.87.0",
+    "@sentry/angular": "^8.26.0",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^18.0.0",
     "@ngx-translate/core": "^15.0.0",
@@ -115,7 +115,6 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "engines": {

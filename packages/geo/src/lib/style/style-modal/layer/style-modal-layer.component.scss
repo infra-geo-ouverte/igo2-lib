@@ -7,46 +7,25 @@ h2 {
   padding: 10px;
 }
 
-.fill-field,
-.stroke-field {
-  width: 130px;
-}
+.color-picker {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  grid-gap: 16px;
+  margin-bottom: 16px;
 
-.fill-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 8px;
-  }
-}
+  span {
+    display: flex;
+    align-items: center;
 
-.stroke-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 35px;
+    mat-icon {
+      margin-right: 8px;
+    }
   }
 }
 
-.box {
-  width: 25px;
-  height: 25px;
-}
-
-.edition-drawing {
+.edit-colorpicker {
   padding: 10px 0;
-}
-
-.igo-input-container .mat-mdc-form-field + .mat-form-field {
-  margin-left: 8px;
-}
-
-.igo-form-input-box {
-  width: 150px;
 }
 
 button {
