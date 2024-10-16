@@ -186,7 +186,13 @@ export class Linked {
   private handleChange = (change: LayerWatcherChange) => {
     const isMasterChage = change.layer.id === this.layer.id;
 
-    let children = this.children;
+    let children = this.childrenByProperty.get(
+      change.event.key as LinkedProperties
+    );
+    if (!children?.length && isMasterChage) {
+      return;
+    }
+
     if (!isMasterChage) {
       children = children.filter((n) => n.id !== change.layer.id);
       children.push(this.layer);
