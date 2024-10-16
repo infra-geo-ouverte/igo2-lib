@@ -7,6 +7,7 @@ import { DirectionsSourceOptions } from '../directions/directions-sources/direct
 import { DrawOptions } from '../draw/shared/draw.interface';
 import { SpatialFilterOptions } from '../filter/shared/spatial-filter.interface';
 import { ImportExportServiceOptions } from '../import-export/shared/import.interface';
+import { LayerConfig } from '../layer';
 import { HomeExtentButtonOptions } from '../map/home-extent-button/home-extent-button.interface';
 import { GeolocationOptions } from '../map/shared/controllers/geolocation.interface';
 import { Projection } from '../map/shared/projection.interfaces';
@@ -26,6 +27,7 @@ export interface EnvironmentOptions {
     contextListFile?: string;
     defaultContextUri?: string;
   };
+  layer?: LayerConfig;
   depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
   dom?: DOMOptions[];

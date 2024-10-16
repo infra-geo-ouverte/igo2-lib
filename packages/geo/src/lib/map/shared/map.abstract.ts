@@ -1,6 +1,5 @@
 import { SubjectStatus } from '@igo2/utils';
 
-import { ObjectEvent } from 'ol/Object';
 import { Layer as OlLayer } from 'ol/layer';
 import { Projection } from 'ol/proj';
 import { Source } from 'ol/source';
@@ -9,7 +8,9 @@ import { Map } from 'ol';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources';
-import { Layer } from '../../layer/shared/layers/layer';
+import { LayerController } from '../../layer/shared/layer-controller';
+import type { AnyLayer } from '../../layer/shared/layers/any-layer';
+import type { Layer } from '../../layer/shared/layers/layer';
 import { Overlay } from '../../overlay/shared/overlay';
 import {
   MapGeolocationController,
@@ -20,14 +21,14 @@ import {
   MapExtent,
   MapViewOptions
 } from '../shared/map.interface';
+import { LayerWatcher, LayerWatcherChange } from '../utils';
 
 export abstract class MapBase {
   ol: Map;
   forcedOffline$: BehaviorSubject<boolean>;
-  layers$: BehaviorSubject<Layer[]>;
-  layersAddedByClick$: BehaviorSubject<Layer[]>;
+  layersAddedByClick$: BehaviorSubject<AnyLayer[]>;
   status$: Subject<SubjectStatus>;
-  propertyChange$: Subject<{ event: ObjectEvent; layer: Layer }>;
+  propertyChange$: Subject<LayerWatcherChange>;
   overlay: Overlay;
   queryResultsOverlay: Overlay;
   searchResultsOverlay: Overlay;
@@ -37,9 +38,10 @@ export abstract class MapBase {
   mapCenter$: BehaviorSubject<boolean>;
   selectedFeatures$: BehaviorSubject<Layer[]>;
   bufferDataSource: FeatureDataSource;
+  layerWatcher: LayerWatcher;
 
   // Getter
-  layers: Layer[];
+  layerController: LayerController;
   projection: string;
   viewProjection: Projection;
   projectionCode: string;
@@ -53,19 +55,15 @@ export abstract class MapBase {
   abstract getExtent(projection?: string | Projection): MapExtent;
   abstract getZoom(): number;
   abstract changeBaseLayer(baseLayer: Layer): void;
-  abstract getBaseLayers(): Layer[];
-  abstract getLayerById(id: string): Layer | undefined;
-  abstract getLayerByAlias(alias: string): Layer;
-  abstract getLayerByOlUId(olUId: string): Layer;
-  abstract getLayerByOlLayer(olLayer: OlLayer<Source>): Layer;
-  abstract addLayer(layer: Layer, push: boolean): void;
-  abstract addLayers(layers: Layer[], push?: boolean): void;
-  abstract removeLayer(layer: Layer): void;
-  abstract removeLayers(layers: Layer[]): void;
+  abstract getBaseLayers(): AnyLayer[];
+  abstract getLayerById(id: string): AnyLayer | undefined;
+  abstract getLayerByAlias(alias: string): AnyLayer;
+  abstract getLayerByOlUId(olUId: string): AnyLayer;
+  abstract getLayerByOlLayer(olLayer: OlLayer<Source>): AnyLayer;
+  /** @deprecated */
+  abstract addLayer(...layers: AnyLayer[]): void;
+  /** @deprecated */
+  abstract removeLayer(...layers: AnyLayer[]): void;
+  /** @deprecated */
   abstract removeAllLayers(): void;
-  abstract raiseLayer(layer: Layer): void;
-  abstract raiseLayers(layers: Layer[]): void;
-  abstract lowerLayer(layer: Layer): void;
-  abstract lowerLayers(layers: Layer[]): void;
-  abstract moveLayer(layer: Layer, from: number, to: number): void;
 }

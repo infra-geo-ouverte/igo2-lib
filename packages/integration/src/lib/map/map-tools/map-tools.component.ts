@@ -1,6 +1,7 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
@@ -12,18 +13,21 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common/tool';
+import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
 import {
+  AnyLayer,
   ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
   LayerLegendListBindingDirective,
   LayerLegendListComponent,
-  LayerListBindingDirective,
-  LayerListComponent,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  LayerViewerComponent,
+  LayerViewerOptions,
   MetadataButtonComponent,
   OgcFilterButtonComponent,
   SearchSourceService,
@@ -63,8 +67,8 @@ import { MapState } from '../map.state';
   imports: [
     MatTabsModule,
     NgIf,
-    LayerListComponent,
-    LayerListBindingDirective,
+    NgTemplateOutlet,
+    LayerViewerComponent,
     StyleModalLayerButtonComponent,
     MetadataButtonComponent,
     TrackFeatureButtonComponent,
@@ -81,7 +85,8 @@ import { MapState } from '../map.state';
   ]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
-  layers$ = new BehaviorSubject<Layer[]>([]);
+  isDesktop: boolean;
+  layers$ = new BehaviorSubject<AnyLayer[]>([]);
   showAllLegendsValue$ = new BehaviorSubject<boolean>(false);
 
   private resolution$$: Subscription;
@@ -136,19 +141,15 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge = false;
 
-  get visibleOrInRangeLayers$(): Observable<Layer[]> {
+  get visibleOrInRangeLayers$(): Observable<AnyLayer[]> {
     return this.layers$.pipe(
-      map((layers) =>
-        layers.filter(
-          (layer) => layer.visible$.value && layer.isInResolutionsRange$.value
-        )
-      )
+      map((layers) => layers.filter((layer) => layer.displayed))
     );
   }
 
-  get visibleLayers$(): Observable<Layer[]> {
+  get visibleLayers$(): Observable<AnyLayer[]> {
     return this.layers$.pipe(
-      map((layers) => layers.filter((layer) => layer.visible$.value))
+      map((layers) => layers.filter((layer) => layer.visible))
     );
   }
 
@@ -177,6 +178,20 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return filterSortOptions;
   }
 
+  private _layerViewerOptions: Partial<LayerViewerOptions>;
+  get layerViewerOptions(): LayerViewerOptions {
+    return {
+      filterAndSortOptions: this.layerFilterAndSortOptions,
+      legend: {
+        showForVisibleLayers: this.expandLegendOfVisibleLayers,
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
+        updateOnResolutionChange: this.updateLegendOnResolutionChange
+      },
+      queryBadge: this.queryBadge,
+      ...this._layerViewerOptions
+    };
+  }
+
   @ViewChild('tabGroup', { static: true }) tabGroup;
 
   get searchToolInToolbar(): boolean {
@@ -202,24 +217,24 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     public mapState: MapState,
     private searchSourceService: SearchSourceService,
-    private importExportState: ImportExportState
-  ) {}
+    private importExportState: ImportExportState,
+    private configService: ConfigService,
+    public mediaService: MediaService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this._layerViewerOptions = this.configService.getConfig('layer');
+  }
 
   ngOnInit(): void {
+    this.handleMedia();
     this.selectedTab();
     this.resolution$$ = combineLatest([
-      this.map.layers$,
+      this.map.layerController.all$,
       this.map.viewController.resolution$
     ])
       .pipe(debounceTime(10))
-      .subscribe((bunch: [Layer[], number]) => {
-        this.layers$.next(
-          bunch[0].filter(
-            (layer) =>
-              layer.showInLayerList !== false &&
-              (!this.excludeBaseLayers || !layer.baseLayer)
-          )
-        );
+      .subscribe(([layers]) => {
+        this.layers$.next(layers);
       });
 
     if (this.allowShowAllLegends) {
@@ -263,13 +278,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   public tabChanged(tab: MatTabChangeEvent) {
     this.layerListToolState.setSelectedTab(tab.index);
-    this.layers$.next(
-      this.map.layers.filter(
-        (layer) =>
-          layer.showInLayerList !== false &&
-          (!this.excludeBaseLayers || !layer.baseLayer)
-      )
-    );
+    this.layers$.next(this.map.layerController.all);
   }
 
   onLayerListChange(appliedFilters: LayerListControlsOptions) {
@@ -372,5 +381,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       }
     }
     return false;
+  }
+
+  private handleMedia(): void {
+    this.mediaService.media$.subscribe((result) => {
+      this.isDesktop = result === Media.Desktop;
+      this.cdr.detectChanges();
+    });
   }
 }

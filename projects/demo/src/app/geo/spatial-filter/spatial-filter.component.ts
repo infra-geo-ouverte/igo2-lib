@@ -41,6 +41,7 @@ import {
   VectorLayer,
   createOverlayMarkerStyle,
   featureToOl,
+  isLayerGroup,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -151,7 +152,10 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    for (const layer of this.map.layers) {
+    for (const layer of this.map.layerController.all) {
+      if (isLayerGroup(layer)) {
+        return;
+      }
       if (
         layer.title &&
         layer.title.includes(
@@ -211,7 +215,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   }
 
   clearMap(): void {
-    this.map.removeLayers(this.layers);
+    this.map.removeLayer(...this.layers);
     this.layers = [];
     this.activeLayers = [];
     this.thematicLength = 0;
@@ -477,7 +481,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
           }
 
-          const olLayer: Layer = this.layerService.createLayer({
+          const olLayer = this.layerService.createLayer({
             isIgoInternalLayer: true,
             title: (features[0].meta.title +
               ' ' +
@@ -496,9 +500,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           });
           const ol: olSourceCluster = dataSource.ol;
           ol.getSource().addFeatures(featuresOl);
-          if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
+          if (this.layers.find((layer) => layer.id === olLayer.id)) {
             this.map.removeLayer(
-              this.layers.find((layer: Layer) => layer.id === olLayer.id)
+              this.layers.find((layer) => layer.id === olLayer.id)
             );
             i = i - 1;
             olLayer.title = (features[0].meta.title +
@@ -560,7 +564,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         } as QueryableDataSourceOptions)
         .pipe(take(1))
         .subscribe((dataSource: QueryableDataSource) => {
-          const olLayer: Layer = this.layerService.createLayer({
+          const olLayer = this.layerService.createLayer({
             isIgoInternalLayer: true,
             title: (features[0].meta.title +
               ' ' +
@@ -577,9 +581,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           });
           const ol = dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
-          if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
+          if (this.layers.find((layer) => layer.id === olLayer.id)) {
             this.map.removeLayer(
-              this.layers.find((layer: Layer) => layer.id === olLayer.id)
+              this.layers.find((layer) => layer.id === olLayer.id)
             );
             i = i - 1;
             olLayer.title = (features[0].meta.title +

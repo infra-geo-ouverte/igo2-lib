@@ -19,11 +19,10 @@ import { SpinnerComponent } from '@igo2/common/spinner';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { Layer, VectorLayer } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
+import { type AnyLayer, type IgoMap, VectorLayer } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
@@ -64,8 +63,8 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
   public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
-  public layerList: Layer[];
-  public userControlledLayerList: Layer[];
+  public layerList: AnyLayer[];
+  public userControlledLayerList: AnyLayer[];
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
@@ -93,12 +92,12 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
-    this.layers$$ = this.map.layers$.subscribe(() => {
-      this.layerList = this.contextService.getContextLayers(this.map);
-      this.userControlledLayerList = this.layerList.filter(
-        (layer) => layer.showInLayerList
-      );
-    });
+    this.layers$$ = this.map.layerController.layers$
+      .pipe(filter((layers) => !!layers))
+      .subscribe((layers) => {
+        this.layerList = layers;
+        this.userControlledLayerList = layers;
+      });
   }
 
   importFiles(files: File[]) {

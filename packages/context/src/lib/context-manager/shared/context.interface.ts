@@ -1,8 +1,7 @@
 import { Tool } from '@igo2/common/tool';
 import { Message } from '@igo2/core/message';
 import {
-  AnyDataSourceOptions,
-  LayerOptions,
+  AnyLayerOptions,
   MapAttributionOptions,
   MapExtent,
   MapScaleLineOptions,
@@ -37,10 +36,11 @@ export type ExtraFeatures = FeatureCollection & {
   opacity: number;
   visible: boolean;
 };
+
 export interface DetailedContext extends Context {
   base?: string;
   map?: ContextMap;
-  layers?: LayerOptions[];
+  layers?: AnyLayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
   message?: Message;
@@ -98,14 +98,4 @@ export interface ContextProfils {
   name: string;
   title: string;
   childs?: ContextProfils[];
-}
-
-export interface IContextLayer {
-  id?: string;
-  layerId?: number;
-  contextId?: number;
-  layerOptions?:
-    | LayerOptions
-    | Pick<LayerOptions, 'title' | 'zIndex' | 'visible' | 'security'>;
-  sourceOptions?: AnyDataSourceOptions;
 }

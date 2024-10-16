@@ -1,0 +1,7 @@
+igo-list {
+  height: auto;
+
+  ::ng-deep mat-list {
+    padding-bottom: 0;
+  }
+}

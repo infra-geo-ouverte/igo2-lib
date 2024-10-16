@@ -14,7 +14,7 @@
   @include draw-theme.igo-draw-theming($theme);
   @include feature-theme.igo-feature-theming($theme);
   @include filter-theme.igo-filter-theming($theme);
-  @include layer-theme.igo-layer-theming($theme);
+  @include layer-theme.themes($theme);
   @include map-theme.igo-map-theming($theme);
   @include measure-theme.igo-measure-theming($theme);
   @include search-theme.theme($theme);

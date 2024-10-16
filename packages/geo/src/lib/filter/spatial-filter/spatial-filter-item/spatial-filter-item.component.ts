@@ -54,7 +54,7 @@ import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { Layer, VectorLayer } from '../../../layer/shared';
+import { AnyLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
@@ -226,9 +226,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
-  @Input() allLayers: Layer[] = [];
+  @Input() allLayers: AnyLayer[] = [];
 
   @Input()
   get thematicLength(): number {

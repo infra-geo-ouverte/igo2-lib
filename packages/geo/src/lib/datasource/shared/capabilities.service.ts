@@ -16,10 +16,6 @@ import {
   TimeFilterStyle,
   TimeFilterType
 } from '../../filter/shared/time-filter.enum';
-import {
-  ItemStyleOptions,
-  LegendOptions
-} from '../../layer/shared/layers/legend.interface';
 import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import {
@@ -31,14 +27,15 @@ import {
   TypeCapabilities,
   TypeCapabilitiesStrings
 } from './capabilities.interface';
-import {
-  ArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions,
-  CartoDataSourceOptions,
-  TileArcGISRestDataSourceOptions,
-  WMSDataSourceOptions,
-  WMTSDataSourceOptions
-} from './datasources';
+import { ArcGISRestDataSourceOptions } from './datasources/arcgisrest-datasource.interface';
+import { CartoDataSourceOptions } from './datasources/carto-datasource.interface';
+import { ArcGISRestImageDataSourceOptions } from './datasources/imagearcgisrest-datasource.interface';
+import { TileArcGISRestDataSourceOptions } from './datasources/tilearcgisrest-datasource.interface';
+import { WMSDataSourceOptions } from './datasources/wms-datasource.interface';
+import { WMTSDataSourceOptions } from './datasources/wmts-datasource.interface';
+
+type ItemStyleOptions = any;
+type LegendOptions = any;
 
 @Injectable({
   providedIn: 'root'

@@ -2,6 +2,8 @@ import OlLayer from 'ol/layer/Layer';
 import OlSource from 'ol/source/Source';
 
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { Layer } from '../../layer/shared/layers/layer';
+import { isLayerGroup } from '../../layer/utils/layer.utils';
 import { QueryableDataSource } from './query.interfaces';
 
 /**
@@ -10,6 +12,9 @@ import { QueryableDataSource } from './query.interfaces';
  * @returns True if the layer s squeryable
  */
 export function layerIsQueryable(layer: AnyLayer): boolean {
+  if (isLayerGroup(layer)) {
+    return false;
+  }
   const dataSource = layer.dataSource as QueryableDataSource;
   return dataSource.options.queryable === true;
 }
@@ -29,7 +34,7 @@ export function olLayerIsQueryable(olLayer: OlLayer<OlSource>): boolean {
  * @param layer Layer
  * @returns True if the layer's feature is queryable
  */
-export function layerFeatureIsQueryable(layer: AnyLayer): boolean {
+export function layerFeatureIsQueryable(layer: Layer): boolean {
   const dataSource = layer.dataSource as QueryableDataSource;
   return dataSource.options.queryLayerFeatures !== undefined
     ? dataSource.options.queryLayerFeatures === true

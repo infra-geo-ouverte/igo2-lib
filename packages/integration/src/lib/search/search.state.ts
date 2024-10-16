@@ -124,7 +124,7 @@ export class SearchState {
   }
 
   private monitorLayerDeletion() {
-    this.mapState.map.layers$.subscribe((layers) => {
+    this.mapState.map.layerController.all$.subscribe((layers) => {
       this.searchLayerStores.forEach((store) => {
         const layer = layers.find((l) => l.id === store.layer.id);
         if (!layer) {

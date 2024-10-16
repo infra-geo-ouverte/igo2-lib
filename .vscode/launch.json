@@ -21,6 +21,20 @@
       "url": "http://127.0.0.1:4201",
       "webRoot": "${workspaceFolder}/projects/igo2",
       "sourceMaps": true
-    }
+    },
+    {
+      "name": "test",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.watch",
+      "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "name": "test.common",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.common",
+      "url": "http://localhost:9876/debug.html"
+    },
   ]
 }

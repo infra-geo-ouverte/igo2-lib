@@ -1,0 +1,13 @@
+:host {
+  .visibility-hidden,
+  .out-of-range,
+  .disabled {
+    visibility: visible !important;
+  }
+}
+
+mat-icon {
+  &[matBadge] ::ng-deep .mat-badge-content {
+    font-size: 12px;
+  }
+}

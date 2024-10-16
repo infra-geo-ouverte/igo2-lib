@@ -4,7 +4,7 @@ import { ObjectUtils } from '@igo2/utils';
 import { Subscription, debounceTime, pairwise } from 'rxjs';
 
 import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
-import { Layer } from '../../../layer/shared/layers/layer';
+import { AnyLayer } from '../../../layer';
 import { IgoMap } from '../../../map/shared/map';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { GeoServiceDefinition } from '../../../utils/propertyTypeDetector/propertyTypeDetector.interface';
@@ -91,7 +91,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesPropertiesState(store);
     this.states$$.push(
-      this.map.layers$
+      this.map.layerController.all$
         .pipe(debounceTime(250), pairwise())
         .subscribe(([prevLayers, currentLayers]) => {
           let prevLayersId;
@@ -111,8 +111,11 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
     );
   }
 
-  private updateEntitiesPropertiesState(store: FeatureStore, layers?: Layer[]) {
-    const layersId = this.map.layers.map((l) => l.id);
+  private updateEntitiesPropertiesState(
+    store: FeatureStore,
+    layers?: AnyLayer[]
+  ) {
+    const layersId = this.map.layerController.all.map((l) => l.id);
     let entities: Feature[] = [];
     if (layers) {
       entities = store.entities$.value;

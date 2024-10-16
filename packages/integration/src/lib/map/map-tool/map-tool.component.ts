@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common/tool';
@@ -6,16 +12,18 @@ import {
   ContextListBindingDirective,
   ContextListComponent
 } from '@igo2/context';
+import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
 import {
   ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
-  LayerListBindingDirective,
-  LayerListComponent,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  LayerViewerComponent,
+  LayerViewerOptions,
   MetadataButtonComponent,
   OgcFilterButtonComponent,
   TimeFilterButtonComponent,
@@ -46,20 +54,21 @@ import { MapState } from './../map.state';
   standalone: true,
   imports: [
     MatTabsModule,
-    LayerListComponent,
-    LayerListBindingDirective,
     WorkspaceButtonComponent,
     ExportButtonComponent,
     OgcFilterButtonComponent,
     TimeFilterButtonComponent,
     TrackFeatureButtonComponent,
     MetadataButtonComponent,
+    LayerViewerComponent,
     ContextListComponent,
     ContextListBindingDirective,
     IgoLanguageModule
   ]
 })
-export class MapToolComponent {
+export class MapToolComponent implements OnInit {
+  isDesktop: boolean;
+
   @Input() toggleLegendOnVisibilityChange = false;
 
   @Input() expandLegendOfVisibleLayers = false;
@@ -103,11 +112,34 @@ export class MapToolComponent {
     return filterSortOptions;
   }
 
+  private _layerViewerOptions: Partial<LayerViewerOptions>;
+  get layerViewerOptions(): LayerViewerOptions {
+    return {
+      filterAndSortOptions: this.layerFilterAndSortOptions,
+      legend: {
+        showForVisibleLayers: this.expandLegendOfVisibleLayers,
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
+        updateOnResolutionChange: this.updateLegendOnResolutionChange
+      },
+      queryBadge: this.queryBadge,
+      ...this._layerViewerOptions
+    };
+  }
+
   constructor(
     private mapState: MapState,
     private toolState: ToolState,
-    private importExportState: ImportExportState
-  ) {}
+    private importExportState: ImportExportState,
+    private configService: ConfigService,
+    public mediaService: MediaService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this._layerViewerOptions = this.configService.getConfig('layer');
+  }
+
+  ngOnInit(): void {
+    this.handleMedia();
+  }
 
   activateExport(layer: Layer) {
     let id = layer.id;
@@ -120,5 +152,12 @@ export class MapToolComponent {
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  private handleMedia(): void {
+    this.mediaService.media$.subscribe((result) => {
+      this.isDesktop = result === Media.Desktop;
+      this.cdr.detectChanges();
+    });
   }
 }

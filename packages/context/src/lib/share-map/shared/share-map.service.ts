@@ -1,8 +1,8 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService } from '@igo2/core/route';
-import { Layer, WMSDataSourceOptions } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
+import { WMSDataSourceOptions, isLayerItem } from '@igo2/geo';
+import type { IgoMap, Layer } from '@igo2/geo';
 
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
@@ -61,7 +61,9 @@ export class ShareMapService {
 
     let visibleKey = this.route.options.visibleOnLayersKey;
     let invisibleKey = this.route.options.visibleOffLayersKey;
-    const layers = map.layers;
+    const layers = map.layerController.all.filter((layer) =>
+      isLayerItem(layer)
+    ) as Layer[];
 
     const visibleLayers = layers.filter(
       (lay) => lay.visible && !lay.isIgoInternalLayer
@@ -97,9 +99,11 @@ export class ShareMapService {
     for (const contextLayer of contextLayers) {
       if (
         typeof contextLayer.id !== 'undefined' ||
-        typeof contextLayer.source !== 'undefined'
+        typeof (contextLayer as any).source !== 'undefined'
       ) {
-        contextLayersID.push(contextLayer.id || contextLayer.source.id);
+        contextLayersID.push(
+          contextLayer.id || (contextLayer as any).source.id
+        );
       }
     }
 

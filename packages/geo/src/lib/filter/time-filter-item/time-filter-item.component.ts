@@ -11,8 +11,8 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { Layer } from '../../layer';
 import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
-import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterService } from '../shared/time-filter.service';
 import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.component';
 

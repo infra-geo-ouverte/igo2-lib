@@ -12,6 +12,7 @@ export * from './number-utils';
 export * from './strenum';
 export * from './string-utils';
 export * from './theme.utils';
+export * from './tree';
 export * from './user-agent';
 export * from './uuid';
 export * from './watcher';
