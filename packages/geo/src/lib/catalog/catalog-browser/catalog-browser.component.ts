@@ -197,7 +197,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         this.map.layersAddedByClick$.next(layers);
       }
       this.store.state.updateMany(catalogLayers, { added: true });
-      this.map.addLayer(...layers);
+      this.map.addLayer(...layers.filter(Boolean));
     });
   }
 

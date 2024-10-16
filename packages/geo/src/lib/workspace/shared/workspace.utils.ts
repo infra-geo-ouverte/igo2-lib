@@ -102,6 +102,9 @@ export function addOrRemoveLayer(
   });
   if (action === 'add') {
     layerService.createAsyncLayer(so).subscribe((layer) => {
+      if (!layer) {
+        return;
+      }
       map.layersAddedByClick$.next([layer]);
       map.addLayer(layer);
     });

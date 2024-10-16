@@ -258,6 +258,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
     this.layersSubcriptions.push(
       this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
+        if (!layer) {
+          return;
+        }
         if (event.type === 'click') {
           this.map.layersAddedByClick$.next([layer]);
         }
