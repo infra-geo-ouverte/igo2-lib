@@ -36,6 +36,7 @@ export class AnalyticsService {
     (() => {
       this.paq.push(['setTrackerUrl', url + '.php']);
       this.paq.push(['setSiteId', this.options.id]);
+      this.paq.push(['setSecureCookie', location.protocol === 'https:']);
       const g = document.createElement('script');
       const s = document.getElementsByTagName('script')[0];
       g.type = 'text/javascript';
