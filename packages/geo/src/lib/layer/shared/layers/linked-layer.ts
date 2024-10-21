@@ -16,6 +16,7 @@ import { LayersLinkProperties, LinkedProperties } from './layer.interface';
 export class Linked {
   children: Layer[] = [];
   watcher = new LayerWatcher();
+  bidirectionnalChildren: Layer[] = [];
   private childrenByProperty = new Map<LinkedProperties, Layer[]>();
   private disabledProperties: LinkedProperties[] = [];
 
@@ -63,6 +64,10 @@ export class Linked {
 
     this.getLayerLinks(layer).forEach((link) => {
       if (link.bidirectionnal) {
+        if (this.bidirectionnalChildren.includes(layer)) {
+          return;
+        }
+        this.bidirectionnalChildren.push(layer);
         this.watcher.watchLayer(layer);
       }
 
@@ -71,6 +76,18 @@ export class Linked {
         if (layers.includes(layer)) {
           return;
         }
+
+        // We have a property displayed for layer out of resolution or in a group
+        // If the visiblity is linked, we need to reflect the displayed value
+        if (property === LinkedProperties.VISIBLE && !layer.showInLayerList) {
+          const layersDisplayed =
+            this.childrenByProperty.get(LinkedProperties.DISPLAYED) ?? [];
+          this.childrenByProperty.set(
+            LinkedProperties.DISPLAYED,
+            layersDisplayed.concat(layer)
+          );
+        }
+
         this.childrenByProperty.set(property, layers.concat(layer));
 
         if (layer[property] !== this.layer[property]) {
@@ -138,20 +155,32 @@ export class Linked {
     return this.childrenByProperty.get(property);
   }
 
-  disable(property: LinkedProperties): void {
-    if (this.disabledProperties.includes(property)) {
-      return;
-    }
-    this.disabledProperties.push(property);
+  disable(...properties: LinkedProperties[]): void {
+    properties.forEach((property) => {
+      if (this.disabledProperties.includes(property)) {
+        return;
+      }
+      this.disabledProperties.push(property);
+    });
+
+    this.bidirectionnalChildren.forEach((layer) => {
+      this.watcher.unwatchLayer(layer);
+    });
   }
 
-  enable(property: LinkedProperties): void {
-    const index = this.disabledProperties.findIndex(
-      (disableProperty) => disableProperty === property
-    );
-    if (index > -1) {
-      this.disabledProperties.splice(index, 1);
-    }
+  enable(...properties: LinkedProperties[]): void {
+    properties.forEach((property) => {
+      const index = this.disabledProperties.findIndex(
+        (disableProperty) => disableProperty === property
+      );
+      if (index > -1) {
+        this.disabledProperties.splice(index, 1);
+      }
+    });
+
+    this.bidirectionnalChildren.forEach((layer) => {
+      this.watcher.watchLayer(layer);
+    });
   }
 
   move(layer: Layer, parent?: LayerGroup): void {
@@ -186,9 +215,8 @@ export class Linked {
   private handleChange = (change: LayerWatcherChange) => {
     const isMasterChage = change.layer.id === this.layer.id;
 
-    let children = this.childrenByProperty.get(
-      change.event.key as LinkedProperties
-    );
+    let children =
+      this.childrenByProperty.get(change.event.key as LinkedProperties) ?? [];
     if (!children?.length && isMasterChage) {
       return;
     }
@@ -198,8 +226,26 @@ export class Linked {
       children.push(this.layer);
     }
 
+    if (change.event.key === LinkedProperties.DISPLAYED && isMasterChage) {
+      return this.handleDisplayChange(change, children);
+    }
+
     handleLayerPropertyChange(children, change, this.map.viewController);
   };
+
+  private handleDisplayChange(change: LayerWatcherChange, children: Layer[]) {
+    const affectedProperties = [
+      LinkedProperties.DISPLAYED,
+      LinkedProperties.VISIBLE
+    ];
+    this.disable(...affectedProperties);
+    children.forEach((child) => {
+      if (!child.showInLayerList) {
+        child.visible = !!change.event.value;
+      }
+    });
+    this.enable(...affectedProperties);
+  }
 
   private findChildren(
     layers: AnyLayer[],

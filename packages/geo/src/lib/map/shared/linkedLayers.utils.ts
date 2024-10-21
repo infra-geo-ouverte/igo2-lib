@@ -300,10 +300,19 @@ export function handleLayerPropertyChange(
       if (change.layer && l && getUid(change.layer.ol) !== getUid(l?.ol)) {
         const lLayerType = l.options.source.options.type;
         if (isLayerProperty) {
-          l.ol.set(key, newValue, true);
           if (key === 'visible') {
+            // Exception for layer not in list when the changed layer have a group not displayed
+            if (
+              newValue &&
+              change.layer.showInLayerList &&
+              change.layer.parent &&
+              !change.layer.parent.displayed
+            ) {
+              newValue = change.layer.displayed;
+            }
             l.visible = newValue;
           }
+          l.ol.set(key, newValue, true);
           if (key === 'minResolution' || key === 'maxResolution') {
             resolutionPropertyHasChanged = true;
           }

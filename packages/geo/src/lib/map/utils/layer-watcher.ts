@@ -54,7 +54,8 @@ export class LayerWatcher extends Watcher {
         LinkedProperties.OPACITY,
         LinkedProperties.MINRESOLUTION,
         LinkedProperties.MAXRESOLUTION,
-        LinkedProperties.ZINDEX
+        LinkedProperties.ZINDEX,
+        LinkedProperties.DISPLAYED
       ].includes(change.event.key as any)
     ) {
       return;

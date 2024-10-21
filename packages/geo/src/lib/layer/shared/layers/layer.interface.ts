@@ -86,6 +86,7 @@ export interface LayersLinkProperties {
 export enum LinkedProperties {
   OPACITY = 'opacity',
   VISIBLE = 'visible',
+  DISPLAYED = 'displayed',
   OGCFILTERS = 'ogcFilters',
   MINRESOLUTION = 'minResolution',
   MAXRESOLUTION = 'maxResolution',
