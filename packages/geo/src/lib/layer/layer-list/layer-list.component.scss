@@ -1,6 +1,6 @@
 igo-layer-group,
 igo-layer-item {
-  ::ng-deep .list-actions {
+  ::ng-deep .list-secondary-actions {
     button {
       visibility: hidden;
 
@@ -11,7 +11,7 @@ igo-layer-item {
   }
 
   &:hover {
-    ::ng-deep .list-actions {
+    ::ng-deep .list-secondary-actions {
       button {
         visibility: visible;
       }
@@ -32,7 +32,7 @@ igo-layer-item {
 .--not-desktop {
   igo-layer-group,
   igo-layer-item {
-    ::ng-deep .list-actions {
+    ::ng-deep .list-secondary-actions {
       button {
         visibility: visible !important;
       }

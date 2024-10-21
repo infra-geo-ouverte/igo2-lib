@@ -158,11 +158,11 @@ export class Tree<T> {
     return indexList;
   }
 
-  private getAncestorAtPosition(to: number[]) {
-    if (!to.length) {
+  private getAncestorAtPosition(position: number[]) {
+    if (!position.length) {
       return this._data;
     }
-    const node = this.getNodeByPosition(to);
+    const node = this.getNodeByPosition(position);
     return this.getChildren(node);
   }
 
@@ -204,7 +204,7 @@ export class Tree<T> {
     return node;
   }
 
-  private getNodeByPosition(indexes: number[]): T {
+  getNodeByPosition(indexes: number[]): T {
     if (indexes.length > 1) {
       return indexes.reduce((previousValue: T, index) => {
         const ancestor = previousValue

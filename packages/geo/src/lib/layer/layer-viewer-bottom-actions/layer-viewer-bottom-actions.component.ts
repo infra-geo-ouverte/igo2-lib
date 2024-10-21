@@ -158,24 +158,6 @@ export class LayerViewerBottomActionsComponent {
     this.map.layerController.lower(...this.selected);
   }
 
-  private isLowerable(layer: AnyLayer): boolean {
-    if (isBaseLayer(layer)) {
-      return false;
-    }
-    const recipient = this.controller.getLayerRecipient(layer);
-    const index = recipient.findIndex((lay) => lay.id === layer.id);
-    return index < recipient.length - 1;
-  }
-
-  private isRaisable(layer: AnyLayer): boolean {
-    if (isBaseLayer(layer)) {
-      return false;
-    }
-    const recipient = this.controller.getLayerRecipient(layer);
-    const index = recipient.findIndex((lay) => lay.id === layer.id);
-    return index > 0;
-  }
-
   changeOpacity(event: MatSliderChange): void {
     this.opacity = event.value;
   }
@@ -185,6 +167,30 @@ export class LayerViewerBottomActionsComponent {
       layer.visible = !layer.visible;
     });
     this.layerChange.emit();
+  }
+
+  private isLowerable(layer: AnyLayer): boolean {
+    if (isBaseLayer(layer)) {
+      return false;
+    }
+    const recipient = this.getRecipientOfVisibleLayer(layer);
+    const index = recipient.findIndex((lay) => lay.id === layer.id);
+    return index < recipient.length - 1;
+  }
+
+  private isRaisable(layer: AnyLayer): boolean {
+    if (isBaseLayer(layer)) {
+      return false;
+    }
+    const recipient = this.getRecipientOfVisibleLayer(layer);
+    const index = recipient.findIndex((lay) => lay.id === layer.id);
+    return index > 0;
+  }
+
+  private getRecipientOfVisibleLayer(layer: AnyLayer): AnyLayer[] {
+    return [...this.controller.getLayerRecipient(layer)].filter(
+      (layer) => layer.showInLayerList
+    );
   }
 
   private isLayerRemovable(layer: AnyLayer): boolean {

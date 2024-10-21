@@ -210,16 +210,33 @@ export class LayerController extends LayerSelectionModel {
 
   raise(...layers: AnyLayer[]): void {
     const position = this.getPosition(layers[0]);
-    let index = position.pop();
-    this.moveTo(position.concat(--index), ...layers);
+    const nextPosition = this.findLowestVisiblePostion(position, -1);
+    this.moveTo(nextPosition, ...layers);
     this._internalMove();
   }
 
   lower(...layers: AnyLayer[]): void {
     const position = this.getPosition(layers[layers.length - 1]);
-    const index = position.pop();
-    this.moveTo(position.concat(index + 2), ...layers); // +2 because we use moveBefore
+    const nextPosition = this.findLowestVisiblePostion(position, 2); // +2 because we use moveBefore
+    this.moveTo(nextPosition, ...layers);
     this._internalMove();
+  }
+
+  /**
+   * We got non visible layer in the tree like LinkedLayer. We want the next visible layer in tree
+   */
+  private findLowestVisiblePostion(
+    position: number[],
+    increment: number
+  ): number[] {
+    const index = position.pop();
+    let nextPosition = position.concat(index + increment);
+    const layer = this.tree.getNodeByPosition(nextPosition);
+    if (layer && !layer.showInLayerList) {
+      const nextIndex = increment > 1 ? 1 : increment;
+      return this.findLowestVisiblePostion(nextPosition, nextIndex);
+    }
+    return nextPosition;
   }
 
   /** Reset all except SystemLayer */

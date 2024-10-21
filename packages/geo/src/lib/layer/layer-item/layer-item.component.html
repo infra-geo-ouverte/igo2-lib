@@ -19,18 +19,20 @@
   </div>
 
   <div class="list-actions">
-    <button
-      *ngIf="viewerOptions.mode !== 'selection'"
-      class="actions-button"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.moreOptions' | translate"
-      mat-icon-button
-      color="primary"
-      (click)="toggleLayerTool()"
-    >
-      <mat-icon>more_horiz</mat-icon>
-    </button>
+    <div class="list-secondary-actions">
+      <button
+        *ngIf="viewerOptions.mode !== 'selection'"
+        class="actions-button"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.layer.moreOptions' | translate"
+        mat-icon-button
+        color="primary"
+        (click)="toggleLayerTool()"
+      >
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+    </div>
 
     <igo-layer-visibility-button
       [layer]="layer"
