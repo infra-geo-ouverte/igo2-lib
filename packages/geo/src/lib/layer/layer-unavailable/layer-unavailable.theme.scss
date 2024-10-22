@@ -1,0 +1,19 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+}
+
+@mixin color($theme) {
+  $background: map.get($theme, background);
+
+  igo-layer-unavailable {
+    .unavailable-layer {
+      background-color: mat.m2-get-color-from-palette(
+        $background,
+        disabled-list-option
+      );
+    }
+  }
+}

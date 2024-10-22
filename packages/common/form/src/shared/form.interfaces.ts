@@ -56,6 +56,7 @@ export interface FormField<T extends FormFieldInputs = FormFieldInputs>
 }
 
 export interface FormFieldOptions {
+  initialValue?: unknown;
   validator?: ValidatorFn;
   disabled?: boolean;
   visible?: boolean;

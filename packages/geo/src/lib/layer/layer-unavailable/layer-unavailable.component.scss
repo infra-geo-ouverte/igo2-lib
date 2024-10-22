@@ -1,0 +1,27 @@
+:host {
+  mat-list-item {
+    padding-left: 1px;
+  }
+
+  ::ng-deep {
+    .mdc-list-item__content {
+      display: flex;
+      align-items: center;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+
+    .mat-mdc-list-item-title {
+      font-size: 12px !important;
+    }
+
+    .mdc-list-item__end {
+      margin-left: 8px;
+      margin-right: 4px;
+    }
+  }
+}
+
+.align-disabled-button-with-tooltip {
+  display: inline-block;
+}

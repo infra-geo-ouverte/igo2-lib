@@ -13,7 +13,8 @@ import {
 } from '../../datasource/shared/datasources';
 import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared';
-import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
+import { isLayerItem } from '../../layer';
+import { AnyLayer, ImageLayer, Layer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
@@ -41,9 +42,9 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$
+    this.layers$$ = this.map.layerController.all$
       .pipe(debounceTime(50))
-      .subscribe((layers: Layer[]) => this.onLayersChange(layers));
+      .subscribe((layers) => this.onLayersChange(layers));
   }
 
   ngOnDestroy() {
@@ -51,11 +52,11 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     this.entities$$.map((entities) => entities.unsubscribe());
   }
 
-  private onLayersChange(layers: Layer[]) {
-    const editableLayers = layers.filter((layer: Layer) =>
-      this.layerIsEditable(layer)
-    );
-    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
+  private onLayersChange(layers: AnyLayer[]) {
+    const editableLayers = layers.filter(
+      (layer) => isLayerItem(layer) && this.layerIsEditable(layer)
+    ) as Layer[];
+    const editableLayersIds = editableLayers.map((layer) => layer.id);
 
     const workspacesToAdd = editableLayers
       .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))

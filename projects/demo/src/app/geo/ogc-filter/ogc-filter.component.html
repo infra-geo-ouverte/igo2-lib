@@ -15,7 +15,10 @@
       <mat-grid-tile>
         <div class="flex align-start h-100 w-100 overflow-y-auto">
           <igo-panel title="Layers">
-            <igo-ogc-filterable-list [map]="map" [layers]="map.layers">
+            <igo-ogc-filterable-list
+              [map]="map"
+              [layers]="map.layerController.all"
+            >
             </igo-ogc-filterable-list>
           </igo-panel>
         </div>

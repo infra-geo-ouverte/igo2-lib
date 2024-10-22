@@ -61,6 +61,10 @@ export class FormComponent implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     const formData = changes.formData;
+    if (formData.firstChange && formData.currentValue == null) {
+      return;
+    }
+
     if (formData && formData.currentValue !== formData.previousValue) {
       if (formData.currentValue === undefined) {
         this.clear();

@@ -38,12 +38,18 @@ import {
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleService } from '../../style/style-service/style.service';
-import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
+  computeMVTOptionsOnHover,
+  isLayerGroupOptions
+} from '../utils/layer.utils';
+import {
+  AnyLayer,
+  AnyLayerItemOptions,
   AnyLayerOptions,
   ImageLayer,
   ImageLayerOptions,
   Layer,
+  LayerGroupOptions,
   LayerOptions,
   TileLayer,
   TileLayerOptions,
@@ -52,12 +58,13 @@ import {
   VectorTileLayer,
   VectorTileLayerOptions
 } from './layers';
+import { LayerGroup } from './layers/layer-group';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LayerService {
-  public unavailableLayers: AnyLayerOptions[] = [];
+  public unavailableLayers: AnyLayerItemOptions[] = [];
 
   constructor(
     private http: HttpClient,
@@ -69,22 +76,28 @@ export class LayerService {
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
-  createLayer(layerOptions: AnyLayerOptions): Layer {
-    if (!layerOptions.source) {
-      return;
-    }
+  createLayers(
+    layersOption: AnyLayerOptions[],
+    contextUri?: string
+  ): Observable<(AnyLayer | undefined)[]> {
+    const arrayObsLayers = layersOption.map((option) => {
+      return isLayerGroupOptions(option)
+        ? this.createAsyncGroup(option)
+        : this.createAsyncLayer(option, contextUri);
+    });
 
-    if (
-      layerOptions.source.options &&
-      layerOptions.source.options._layerOptionsFromSource
-    ) {
+    return combineLatest(arrayObsLayers);
+  }
+
+  createLayer(layerOptions: AnyLayerItemOptions): Layer {
+    if (layerOptions.source?.options?._layerOptionsFromSource) {
       layerOptions = ObjectUtils.mergeDeep(
         layerOptions.source.options._layerOptionsFromSource,
         layerOptions || {}
       );
     }
 
-    let layer;
+    let layer: Layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
@@ -120,10 +133,10 @@ export class LayerService {
   }
 
   createAsyncLayer(
-    _layerOptions: AnyLayerOptions,
+    options: AnyLayerItemOptions,
     detailedContextUri?: string
-  ): Observable<Layer> {
-    const layerOptions = computeMVTOptionsOnHover(_layerOptions);
+  ): Observable<Layer | undefined> {
+    const layerOptions = computeMVTOptionsOnHover(options);
     if (layerOptions.source) {
       return new Observable((d) => d.next(this.createLayer(layerOptions)));
     }
@@ -145,6 +158,27 @@ export class LayerService {
           return this.createLayer(Object.assign(layerOptions, { source }));
         })
       );
+  }
+
+  createAsyncGroup(
+    options: LayerGroupOptions,
+    detailedContextUri?: string
+  ): Observable<LayerGroup> {
+    if (!options.children?.length) {
+      return of(this.createGroup(null, options));
+    }
+
+    return this.createLayers(options.children, detailedContextUri).pipe(
+      map((layers) => this.createGroup(layers.filter(Boolean), options))
+    );
+  }
+
+  private createGroup(
+    layers: AnyLayer[],
+    options: LayerGroupOptions
+  ): LayerGroup {
+    const group = new LayerGroup(layers, options);
+    return group;
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
@@ -193,7 +227,6 @@ export class LayerService {
       layerOptions.igoStyle.igoStyleObject &&
       layerOptions.idbInfo?.storeToIdb
     ) {
-      // temporary fix todo : handle it with geostyler.
       style = this.styleService.parseStyle(
         'style',
         layerOptions.igoStyle.igoStyleObject
@@ -423,7 +456,7 @@ export class LayerService {
     );
   }
 
-  deleteUnavailableLayers(anyLayerOptions: AnyLayerOptions) {
+  deleteUnavailableLayers(anyLayerOptions: AnyLayerItemOptions) {
     const anyLayerSourceOptions = anyLayerOptions.sourceOptions;
     const index = this.unavailableLayers.findIndex((item) => {
       const baseSourceOptions = item.sourceOptions;

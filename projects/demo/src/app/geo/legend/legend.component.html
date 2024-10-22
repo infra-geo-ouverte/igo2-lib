@@ -12,7 +12,7 @@
 
     <igo-panel title="Legends">
       <igo-layer-legend-list
-        [layers]="map.layers"
+        [layers]="map.layerController.all"
         [excludeBaseLayers]="true"
         [allowShowAllLegends]="true"
         [updateLegendOnResolutionChange]="false"

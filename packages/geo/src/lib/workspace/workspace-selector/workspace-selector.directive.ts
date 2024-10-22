@@ -23,7 +23,8 @@ import {
 } from '../../datasource/shared/datasources';
 import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared';
-import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
+import { isLayerGroup } from '../../layer';
+import { AnyLayer, ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
@@ -59,9 +60,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$
+    this.layers$$ = this.map.layerController.all$
       .pipe(debounceTime(50))
-      .subscribe((layers: Layer[]) => this.onLayersChange(layers));
+      .subscribe((layers) => this.onLayersChange(layers));
 
     this.featureWorkspaceService.ws$.subscribe((ws) => {
       this.changeWorkspace.emit(ws);
@@ -93,11 +94,11 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     this.entities$$.map((entities) => entities.unsubscribe());
   }
 
-  private onLayersChange(layers: Layer[]) {
-    const editableLayers = layers.filter((layer: Layer) =>
+  private onLayersChange(layers: AnyLayer[]) {
+    const editableLayers = layers.filter((layer) =>
       this.layerIsEditable(layer)
     );
-    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
+    const editableLayersIds = editableLayers.map((layer) => layer.id);
 
     const workspacesToAdd = editableLayers
       .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))
@@ -187,7 +188,10 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     return;
   }
 
-  private layerIsEditable(layer: Layer): boolean {
+  private layerIsEditable(layer: AnyLayer): boolean {
+    if (isLayerGroup(layer)) {
+      return false;
+    }
     const dataSource = layer.dataSource;
     if (dataSource instanceof WFSDataSource) {
       return true;

@@ -1,0 +1,9 @@
+<igo-list [navigation]="false" [selection]="false">
+  <igo-layer-unavailable
+    *ngFor="let layer of layersOptions"
+    igoListItem
+    [layerOptions]="layer"
+    (remove)="deleteUnavailableLayer($event)"
+  >
+  </igo-layer-unavailable>
+</igo-list>

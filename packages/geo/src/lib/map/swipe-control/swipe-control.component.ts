@@ -4,7 +4,7 @@ import { getRenderPixel } from 'ol/render';
 
 import { Subscription } from 'rxjs';
 
-import { Layer } from '../../layer/shared';
+import { Layer } from '../../layer';
 import { IgoMap } from '../shared/map';
 
 /**

@@ -15,14 +15,8 @@
       <mat-grid-tile>
         <div class="flex align-start h-100 w-100">
           <igo-panel title="Layers" class="w-100">
-            <igo-layer-list
-              [map]="map"
-              [layers]="map.layers"
-              [expandLegendOfVisibleLayers]="false"
-              [queryBadge]="true"
-              [excludeBaseLayers]="true"
-            >
-              <ng-template #igoLayerItemToolbar let-layer="layer">
+            <igo-layer-viewer [map]="map" [options]="layerViewerOptions">
+              <ng-template #customBottomActions let-layer="layer">
                 <igo-metadata-button [layer]="layer"></igo-metadata-button>
                 <igo-download-button [layer]="layer"></igo-download-button>
                 <igo-ogc-filter-button
@@ -38,7 +32,7 @@
                   [trackFeature]="true"
                 ></igo-track-feature-button>
               </ng-template>
-            </igo-layer-list>
+            </igo-layer-viewer>
           </igo-panel>
         </div>
       </mat-grid-tile>

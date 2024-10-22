@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  AnyDataSourceOptions,
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
   TileArcGISRestDataSourceOptions,
@@ -123,5 +124,22 @@ export class OptionsApiService extends OptionsService {
         }
       )
     );
+  }
+
+  private handleSourceOptions<T extends AnyDataSourceOptions>(res: {
+    sourceOptions: T;
+    layerOptions: Record<string, string>;
+  }): T {
+    if (!res || !res.sourceOptions) {
+      return {} as T;
+    }
+    if (res.layerOptions) {
+      res.sourceOptions._layerOptionsFromSource = res.layerOptions;
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { sourceOptions, layerOptions, ...restOptions } = res;
+      res.sourceOptions._layerOptionsFromSource = restOptions;
+    }
+    return res.sourceOptions;
   }
 }

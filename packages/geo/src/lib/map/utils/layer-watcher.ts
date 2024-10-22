@@ -1,20 +1,36 @@
 import { SubjectStatus, Watcher } from '@igo2/utils';
 
-import { ObjectEvent } from 'ol/Object';
+import BaseObject, { ObjectEvent } from 'ol/Object';
+import LayerGroup from 'ol/layer/Group';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  fromEvent,
+  merge
+} from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Layer, LinkedProperties } from '../../layer/shared/layers';
+import type { AnyLayer } from '../../layer/shared/layers/any-layer';
+import type { Layer } from '../../layer/shared/layers/layer';
+import { LinkedProperties } from '../../layer/shared/layers/linked/linked-layer.interface';
+
+export interface LayerWatcherChange {
+  event: LayerWatcherEvent;
+  layer: Layer;
+}
+
+type LayerWatcherEvent = Pick<ObjectEvent, 'key' | 'oldValue'> & {
+  value: unknown;
+};
 
 export class LayerWatcher extends Watcher {
-  public propertyChange$ = new BehaviorSubject<{
-    event: ObjectEvent;
-    layer: Layer;
-  }>(undefined);
+  public propertyChange$ = new BehaviorSubject<LayerWatcherChange>(undefined);
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];
+  private subscriptionsByLayerId = new Map<string, Subscription[]>();
   private subscriptions: Subscription[] = [];
 
   constructor() {
@@ -29,7 +45,7 @@ export class LayerWatcher extends Watcher {
     this.layers.forEach((layer) => this.unwatchLayer(layer), this);
   }
 
-  setPropertyChange(change: ObjectEvent, layer: Layer) {
+  setPropertyChange(change: LayerWatcherChange) {
     if (
       ![
         LinkedProperties.TIMEFILTER,
@@ -37,24 +53,26 @@ export class LayerWatcher extends Watcher {
         LinkedProperties.VISIBLE,
         LinkedProperties.OPACITY,
         LinkedProperties.MINRESOLUTION,
-        LinkedProperties.MAXRESOLUTION
-      ].includes(change.key as any)
+        LinkedProperties.MAXRESOLUTION,
+        LinkedProperties.ZINDEX,
+        LinkedProperties.DISPLAYED
+      ].includes(change.event.key as any)
     ) {
       return;
     }
-    this.propertyChange$.next({ event: change, layer });
+    this.propertyChange$.next(change);
   }
 
-  watchLayer(layer: Layer) {
+  watchLayer(layer: AnyLayer) {
     if (layer.status$ === undefined) {
       return;
     }
-    layer.ol.on('propertychange', (evt) => this.setPropertyChange(evt, layer));
-    layer.dataSource.ol.on('propertychange', (evt) =>
-      this.setPropertyChange(evt, layer)
-    );
 
-    this.layers.push(layer);
+    if (layer.ol instanceof LayerGroup) {
+      return;
+    }
+
+    this._watchLayer(layer as Layer);
 
     const layer$$ = layer.status$
       .pipe(distinctUntilChanged())
@@ -80,12 +98,55 @@ export class LayerWatcher extends Watcher {
     this.subscriptions.push(layer$$);
   }
 
-  unwatchLayer(layer: Layer) {
-    layer.ol.un('propertychange', (evt) => this.setPropertyChange(evt, layer));
-    layer.dataSource.ol.un('propertychange', (evt) =>
-      this.setPropertyChange(evt, layer)
+  private _watchLayer(layer: Layer) {
+    const displayed$: Observable<LayerWatcherChange> = layer.displayed$.pipe(
+      map((value) => ({
+        event: {
+          key: 'displayed',
+          oldValue: !value,
+          value: layer.displayed
+        },
+        layer
+      }))
     );
+    const subscription = merge(
+      this.createOlEventObservable(layer.ol, layer),
+      this.createOlEventObservable(layer.dataSource.ol, layer),
+      displayed$
+    ).subscribe((change) => this.setPropertyChange(change));
+
+    this.layers.push(layer);
+    this.subscriptionsByLayerId.set(layer.id, [subscription]);
+  }
+
+  private createOlEventObservable(
+    target: BaseObject,
+    layer: Layer
+  ): Observable<LayerWatcherChange> {
+    return fromEvent<ObjectEvent>(target, 'propertychange').pipe(
+      map((change) => ({
+        event: { ...change, value: target.get(change.key) },
+        layer
+      }))
+    );
+  }
+
+  unwatchLayer(layer: AnyLayer) {
+    if (layer.ol instanceof LayerGroup) {
+      return;
+    }
+
+    this._unwatchLayer(layer as Layer);
+  }
+
+  private _unwatchLayer(layer: Layer) {
     layer.status$.next(SubjectStatus.Done);
+
+    this.subscriptionsByLayerId.get(layer.id)?.forEach((sub$) => {
+      sub$.unsubscribe();
+      this.subscriptionsByLayerId.delete(layer.id);
+    });
+
     const index = this.layers.indexOf(layer);
     if (index >= 0) {
       const status = (layer as any).watcher.status;

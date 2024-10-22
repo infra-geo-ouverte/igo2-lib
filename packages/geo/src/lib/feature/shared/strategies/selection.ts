@@ -460,8 +460,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * features.
    */
   private addOverlayLayer() {
-    if (this.overlayStore.layer.map === undefined) {
-      this.map.addLayer(this.overlayStore.layer);
+    const layer = this.overlayStore.layer;
+    if (!this.map.layerController.getById(layer.id)) {
+      this.map.layerController.add(layer);
     }
   }
 

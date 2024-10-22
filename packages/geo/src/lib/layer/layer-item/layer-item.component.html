@@ -1,15 +1,14 @@
-<ng-container *ngIf="!unavailableLayer; else showUnavailableLayer">
-  <mat-list-item class="igo-layer-list-item">
+<div class="igo-layer-list-item">
+  <div class="layer-content">
     <mat-checkbox
-      *ngIf="selectionMode"
-      class="layerCheck"
-      matListItemIcon
-      (change)="check()"
-      [checked]="layerCheck"
+      *ngIf="viewerOptions.mode === 'selection'"
+      [checked]="selected"
+      [disabled]="selectionDisabled"
+      (change)="handleSelect($event)"
     >
     </mat-checkbox>
+    <ng-content></ng-content>
     <span
-      matListItemTitle
       class="igo-layer-title"
       [matTooltip]="tooltipText"
       matTooltipShowDelay="500"
@@ -17,59 +16,12 @@
     >
       {{ layer.title }}
     </span>
+  </div>
 
-    <div matListItemMeta>
+  <div class="list-actions">
+    <div class="list-secondary-actions">
       <button
-        *ngIf="!selectionMode"
-        mat-icon-button
-        [color]="layer.visible ? 'primary' : 'default'"
-        collapsibleButton
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="eyeTooltip | translate"
-        (click)="toggleVisibility($event)"
-      >
-        <mat-icon
-          aria-hidden="false"
-          matBadge="?"
-          matBadgeColor="accent"
-          matBadgeSize="small"
-          matBadgePosition="after"
-          [matBadgeHidden]="queryBadgeHidden$ | async"
-          [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-          >{{ (layer.visible$ | async) ? 'visibility' : 'visibility_off' }}
-        </mat-icon>
-      </button>
-
-      <button
-        *ngIf="selectionMode"
-        class="selection-eye"
-        mat-icon-button
-        [color]="layer.visible ? 'primary' : 'default'"
-        collapsibleButton
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="
-          layer.visible
-            ? ('igo.geo.layer.hideLayer' | translate)
-            : ('igo.geo.layer.showLayer' | translate)
-        "
-        (click)="toggleVisibility($event)"
-      >
-        <mat-icon
-          aria-hidden="false"
-          matBadge="?"
-          matBadgeColor="accent"
-          matBadgeSize="small"
-          matBadgePosition="after"
-          [matBadgeHidden]="queryBadgeHidden$ | async"
-          [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-          >{{ layer.visible ? 'visibility' : 'visibility_off' }}
-        </mat-icon>
-      </button>
-
-      <button
-        *ngIf="!selectionMode"
+        *ngIf="viewerOptions.mode !== 'selection'"
         class="actions-button"
         tooltip-position="below"
         matTooltipShowDelay="500"
@@ -81,54 +33,24 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
     </div>
-  </mat-list-item>
 
-  <div #legend class="igo-layer-legend-container">
-    <igo-layer-legend
-      *ngIf="showLegend$ | async"
+    <igo-layer-visibility-button
       [layer]="layer"
-      [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-    >
-    </igo-layer-legend>
+      [tooltip]="visibilityTooltip"
+      [disabled]="isDisabled"
+      [inResolutionsRange]="layer.isInResolutionsRange$ | async"
+      [showQueryBadge]="(queryBadgeHidden$ | async) === false"
+      (visibilityChange)="handleVisibilityChange($event)"
+    ></igo-layer-visibility-button>
   </div>
-</ng-container>
+</div>
 
-<ng-template #showUnavailableLayer>
-  <mat-list-item
-    class="igo-layer-list-item unavailable-layer"
-    *ngIf="unavailableLayerTitle"
+<div *ngIf="showLegend$ | async" class="igo-layer-legend-container">
+  <igo-layer-legend
+    [layer]="layer"
+    [updateLegendOnResolutionChange]="
+      viewerOptions.legend.updateOnResolutionChange
+    "
   >
-    <span
-      matListItemTitle
-      class="igo-layer-title"
-      [matTooltip]="unavailableLayerTitle"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-    >
-      {{ unavailableLayerTitle }}
-    </span>
-    <div matListItemMeta>
-      <div
-        class="align-disabled-button-with-tooltip"
-        [matTooltip]="'igo.geo.layer.unavailableLayer' | translate"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-      >
-        <button mat-icon-button disabled="true">
-          <mat-icon aria-hidden="false" color="warn" svgIcon="alert-outline">
-          </mat-icon>
-        </button>
-      </div>
-      <button
-        mat-icon-button
-        color="warn"
-        [matTooltip]="'igo.geo.layer.deleteLayer' | translate"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        (click)="deleteUnavailableLayer(unavailableLayer)"
-      >
-        <mat-icon aria-hidden="false" svgIcon="delete"> </mat-icon>
-      </button>
-    </div>
-  </mat-list-item>
-</ng-template>
+  </igo-layer-legend>
+</div>

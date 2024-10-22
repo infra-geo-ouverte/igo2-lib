@@ -17,7 +17,7 @@ import type { ColInfo, WorkBook } from 'xlsx';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
-import { AnyLayer, VectorLayer } from '../../layer';
+import { Layer, VectorLayer, isLayerGroup } from '../../layer';
 import { IgoMap } from '../../map';
 import {
   EditionWorkspace,
@@ -261,6 +261,9 @@ export class ExportService {
 
     for (const layerName of data.layers) {
       const layer = map.getLayerById(layerName);
+      if (isLayerGroup(layer)) {
+        continue;
+      }
       const features = await lastValueFrom(
         this.getFeatures(map, layer, data, store)
       );
@@ -497,7 +500,7 @@ export class ExportService {
 
   getFeatures(
     map: IgoMap,
-    layer: AnyLayer,
+    layer: Layer,
     data: ExportOptions,
     store: WorkspaceStore
   ): Observable<OlFeature[]> {

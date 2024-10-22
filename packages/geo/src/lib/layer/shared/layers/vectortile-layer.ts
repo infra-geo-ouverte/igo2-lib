@@ -6,12 +6,14 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
-import { IgoMap } from '../../../map/shared/map';
+import type { MapBase } from '../../../map/shared/map.abstract';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
+import { LayerType } from './layer.interface';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 
 export class VectorTileLayer extends Layer {
+  type: LayerType = 'vector';
   public declare dataSource: MVTDataSource;
   public declare options: VectorTileLayerOptions;
   public declare ol: olLayerVectorTile;
@@ -123,12 +125,17 @@ export class VectorTileLayer extends Layer {
     };
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
       this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
+  }
+
+  remove(soft?: boolean): void {
+    this.watcher.unsubscribe();
+    super.remove(soft);
   }
 }

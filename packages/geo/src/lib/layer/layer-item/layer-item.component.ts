@@ -1,19 +1,18 @@
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  Renderer2
+  Output
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,9 +24,10 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
-import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
-import { AnyLayerOptions } from '../shared';
-import { Layer } from '../shared/layers/layer';
+import { LayerLegendComponent } from '../layer-legend';
+import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
+import { LayerVisibilityButtonComponent } from '../layer-visibility-button';
+import type { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
 
 @Component({
@@ -47,106 +47,35 @@ import { TooltipType } from '../shared/layers/layer.interface';
     NgClass,
     LayerLegendComponent,
     AsyncPipe,
-    IgoLanguageModule
+    IgoLanguageModule,
+    LayerVisibilityButtonComponent
   ]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
-  public focusedCls = 'igo-layer-item-focused';
-
-  @Input()
-  get activeLayer() {
-    return this._activeLayer;
-  }
-  set activeLayer(value) {
-    if (
-      value &&
-      this.layer &&
-      value.id === this.layer.id &&
-      !this.selectionMode
-    ) {
-      this.layerTool$.next(true);
-      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-    } else {
-      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
-    }
-  }
-  private _activeLayer;
-
-  layerTool$ = new BehaviorSubject<boolean>(false);
-
-  showLegend$ = new BehaviorSubject<boolean>(true);
-
-  inResolutionRange$ = new BehaviorSubject<boolean>(true);
-
-  queryBadgeHidden$ = new BehaviorSubject<boolean>(true);
-
+  showLegend$ = new BehaviorSubject(true);
+  inResolutionRange$ = new BehaviorSubject(true);
+  queryBadgeHidden$ = new BehaviorSubject(true);
   tooltipText: string;
-
   state: ConnectionState;
-
-  @Input()
-  get selectAll() {
-    return this._selectAll;
-  }
-  set selectAll(value: boolean) {
-    this._selectAll = value;
-    if (value === true) {
-      this.layerCheck = true;
-    }
-  }
-  private _selectAll = false;
-
-  @Input() layerCheck;
 
   private resolution$$: Subscription;
   private network$$: Subscription;
-  private layers$$: Subscription;
 
-  layers$: BehaviorSubject<Layer> = new BehaviorSubject<Layer>(undefined);
+  @Input({ required: true }) layer: Layer;
 
-  @Input()
-  get layer() {
-    return this._layer;
-  }
-  set layer(value) {
-    this._layer = value;
-    this.layers$.next(value);
-  }
-  private _layer;
+  /** Pass the visibility to trigger change detection */
+  @Input({ required: true }) visible: boolean;
 
-  @Input() toggleLegendOnVisibilityChange = false;
+  @Input() selected: boolean;
+  @Input() selectionDisabled: boolean;
 
-  @Input() expandLegendIfVisible = false;
+  @Input() viewerOptions: LayerViewerOptions;
 
-  @Input() updateLegendOnResolutionChange = false;
+  @Output() action = new EventEmitter<Layer>();
+  @Output() selectChange = new EventEmitter<boolean>();
+  @Output() visibilityChange = new EventEmitter<Event>(undefined);
 
-  @Input() orderable = true;
-
-  @Input() lowerDisabled = false;
-
-  @Input() raiseDisabled = false;
-
-  @Input() queryBadge = false;
-
-  @Input() selectionMode;
-
-  @Input() changeDetection;
-
-  @Input() unavailableLayer: AnyLayerOptions;
-
-  get unavailableLayerTitle(): string | undefined {
-    if (
-      this.unavailableLayer.sourceOptions &&
-      'params' in this.unavailableLayer.sourceOptions
-    ) {
-      return this.unavailableLayer.sourceOptions.params.LAYERS;
-    } else if (
-      this.unavailableLayer.sourceOptions &&
-      'layer' in this.unavailableLayer?.sourceOptions
-    ) {
-      return this.unavailableLayer.sourceOptions.layer;
-    }
-  }
+  @HostBinding('class.disabled') isDisabled: boolean;
 
   get opacity() {
     return this.layer.opacity * 100;
@@ -155,74 +84,56 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.layer.opacity = opacity / 100;
   }
 
-  get eyeTooltip() {
-    if (this.inResolutionRange$.getValue() === false) {
+  get visibilityTooltip() {
+    if (
+      this.viewerOptions.mode !== 'selection' &&
+      this.inResolutionRange$.getValue() === false
+    ) {
       return 'igo.geo.layer.notInResolution';
     } else {
-      return this.layer.visible
-        ? 'igo.geo.layer.hideLayer'
-        : 'igo.geo.layer.showLayer';
+      return this.layer.visible && this.isDisabled
+        ? 'igo.geo.layer.group.hideChildren'
+        : this.layer.visible
+          ? 'igo.geo.layer.hideLayer'
+          : 'igo.geo.layer.showLayer';
     }
   }
 
-  @Output() action: EventEmitter<Layer | AnyLayerOptions> = new EventEmitter<
-    Layer | AnyLayerOptions
-  >(undefined);
-  @Output() checkbox = new EventEmitter<{
-    layer: Layer;
-    check: boolean;
-  }>();
-
-  constructor(
-    private networkService: NetworkService,
-    private renderer: Renderer2,
-    private elRef: ElementRef,
-    private cdRef: ChangeDetectorRef
-  ) {}
+  constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
-    if (!this.unavailableLayer) {
-      if (
-        this.layer.visible &&
-        this.expandLegendIfVisible &&
-        this.layer.firstLoadComponent === true
-      ) {
-        this.layer.firstLoadComponent = false;
-        this.layer.legendCollapsed = false;
-      }
-      this.toggleLegend(this.layer.legendCollapsed);
-      this.updateQueryBadge();
+    this.layer.displayed$.subscribe((displayed) => {
+      this.isDisabled = !displayed;
+    });
+    if (
+      this.layer.visible &&
+      this.viewerOptions?.legend?.showForVisibleLayers &&
+      this.layer.firstLoadComponent === true
+    ) {
+      this.layer.firstLoadComponent = false;
+      this.layer.legendCollapsed = false;
+    }
 
-      const resolution$ = this.layer.map.viewController.resolution$;
-      this.resolution$$ = resolution$.subscribe(() => {
+    this.toggleLegend(this.layer.legendCollapsed);
+    this.updateQueryBadge();
+
+    const resolution$ = this.layer.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe(() => {
+      this.onResolutionChange();
+    });
+    this.tooltipText = this.computeTooltip();
+
+    this.network$$ = this.networkService
+      .currentState()
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
         this.onResolutionChange();
       });
-      this.tooltipText = this.computeTooltip();
-
-      this.network$$ = this.networkService
-        .currentState()
-        .subscribe((state: ConnectionState) => {
-          this.state = state;
-          this.onResolutionChange();
-        });
-
-      this.layers$$ = this.layers$.subscribe(() => {
-        if (this.layer && this.layer.options.active) {
-          this.layerTool$.next(true);
-          this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-        }
-      });
-
-      if (this.changeDetection) {
-        this.changeDetection.subscribe(() => this.cdRef.detectChanges());
-      }
-    }
   }
 
   ngOnDestroy() {
     this.resolution$$?.unsubscribe();
     this.network$$?.unsubscribe();
-    this.layers$$?.unsubscribe();
   }
 
   toggleLegend(collapsed: boolean) {
@@ -234,13 +145,15 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.toggleLegend(this.showLegend$.value);
   }
 
-  toggleVisibility(event: Event) {
+  handleVisibilityChange(event: Event) {
     event.stopPropagation();
-    this.layer.visible = !this.layer.visible;
-    if (this.toggleLegendOnVisibilityChange) {
+
+    if (this.viewerOptions.legend.showOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
     }
     this.updateQueryBadge();
+
+    this.visibilityChange.emit(event);
   }
 
   computeTooltip(): string {
@@ -274,7 +187,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     const inResolutionRange = this.layer.isInResolutionsRange;
     if (
       inResolutionRange === false &&
-      this.updateLegendOnResolutionChange === true
+      this.viewerOptions.legend.updateOnResolutionChange === true
     ) {
       this.toggleLegend(true);
     }
@@ -283,28 +196,17 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private updateQueryBadge() {
     const hidden =
-      this.queryBadge === false ||
+      this.viewerOptions.queryBadge === false ||
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);
   }
 
   toggleLayerTool() {
-    this.layerTool$.next(!this.layerTool$.getValue());
-    if (this.layerTool$.getValue() === true) {
-      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-    } else {
-      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
-    }
     this.action.emit(this.layer);
   }
 
-  public check() {
-    this.layerCheck = !this.layerCheck;
-    this.checkbox.emit({ layer: this.layer, check: this.layerCheck });
-  }
-
-  deleteUnavailableLayer(anyLayerOptions: AnyLayerOptions) {
-    this.action.emit(anyLayerOptions);
+  handleSelect(event: MatCheckboxChange): void {
+    this.selectChange.emit(event.checked);
   }
 }
