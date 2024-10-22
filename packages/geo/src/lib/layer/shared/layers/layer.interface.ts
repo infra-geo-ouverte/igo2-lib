@@ -3,12 +3,13 @@ import { Message } from '@igo2/core/message';
 import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
-import {
+import type {
   AnyDataSourceOptions,
   DataSource
 } from '../../../datasource/shared/datasources';
-import { MapExtent } from '../../../map/shared/map.interface';
-import { LegendOptions } from './legend.interface';
+import type { MapExtent } from '../../../map/shared/map.interface';
+import type { LegendOptions } from './legend.interface';
+import type { LayersLink } from './linked/linked-layer.interface';
 
 export interface LayerOptions extends BaseLayerOptions {
   isIgoInternalLayer?: boolean; // useful when mapOffline directive set the resolution of the layers.
@@ -68,30 +69,6 @@ export interface GeoWorkspaceOptions {
 export interface GeoWorkspaceQueryOptions {
   mapQueryOnOpenTab?: boolean;
   tabQuery?: boolean;
-}
-
-export interface LayersLink {
-  linkId: string;
-  /** Default value is true */
-  showInMiniBaseMap?: boolean;
-  links?: LayersLinkProperties[];
-}
-export interface LayersLinkProperties {
-  bidirectionnal?: boolean;
-  linkedIds: string[];
-  syncedDelete: boolean;
-  properties: LinkedProperties[];
-}
-
-export enum LinkedProperties {
-  OPACITY = 'opacity',
-  VISIBLE = 'visible',
-  DISPLAYED = 'displayed',
-  OGCFILTERS = 'ogcFilters',
-  MINRESOLUTION = 'minResolution',
-  MAXRESOLUTION = 'maxResolution',
-  ZINDEX = 'zIndex',
-  TIMEFILTER = 'timeFilter'
 }
 
 export interface TooltipContent {

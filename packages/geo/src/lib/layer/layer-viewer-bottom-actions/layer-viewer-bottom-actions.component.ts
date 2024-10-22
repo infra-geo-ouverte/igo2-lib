@@ -15,8 +15,14 @@ import * as olextent from 'ol/extent';
 
 import type { MapBase } from '../../map/shared/map.abstract';
 import { LayerListToolService } from '../layer-list-tool';
+import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerController } from '../shared/layer-controller';
-import { AnyLayer, LayerGroup } from '../shared/layers';
+import type { AnyLayer, LayerGroup } from '../shared/layers';
+import {
+  LinkedProperties,
+  isLayerLinked,
+  isLayerLinkedTogether
+} from '../shared/layers/linked';
 import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 
 @Component({
@@ -44,6 +50,7 @@ export class LayerViewerBottomActionsComponent {
   @Input({ required: true }) map: MapBase;
   @Input({ required: true }) controller: LayerController;
   @Input({ required: true }) searchTerm: string;
+  @Input() viewerOptions: LayerViewerOptions;
 
   @Output() layerChange = new EventEmitter();
 
@@ -78,7 +85,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   get canRename(): boolean {
-    if (this.selected.length > 1) {
+    if (!this.viewerOptions.group.canRename || this.selected.length > 1) {
       return false;
     }
 
@@ -175,7 +182,21 @@ export class LayerViewerBottomActionsComponent {
     }
     const recipient = this.getRecipientOfVisibleLayer(layer);
     const index = recipient.findIndex((lay) => lay.id === layer.id);
-    return index < recipient.length - 1;
+    if (index >= recipient.length - 1) {
+      return false;
+    }
+
+    if (isLayerLinked(layer)) {
+      const layerBelow = recipient[index + 1];
+      return !isLayerLinkedTogether(
+        layer,
+        layerBelow,
+        this.controller.layersFlattened,
+        LinkedProperties.ZINDEX
+      );
+    }
+
+    return true;
   }
 
   private isRaisable(layer: AnyLayer): boolean {
@@ -184,7 +205,21 @@ export class LayerViewerBottomActionsComponent {
     }
     const recipient = this.getRecipientOfVisibleLayer(layer);
     const index = recipient.findIndex((lay) => lay.id === layer.id);
-    return index > 0;
+    if (index <= 0) {
+      return false;
+    }
+
+    if (isLayerLinked(layer)) {
+      const layerAbove = recipient[index - 1];
+      return !isLayerLinkedTogether(
+        layer,
+        layerAbove,
+        this.controller.layersFlattened,
+        LinkedProperties.ZINDEX
+      );
+    }
+
+    return true;
   }
 
   private getRecipientOfVisibleLayer(layer: AnyLayer): AnyLayer[] {

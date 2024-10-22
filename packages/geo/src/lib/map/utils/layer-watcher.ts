@@ -14,7 +14,7 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import type { AnyLayer } from '../../layer/shared/layers/any-layer';
 import type { Layer } from '../../layer/shared/layers/layer';
-import { LinkedProperties } from '../../layer/shared/layers/layer.interface';
+import { LinkedProperties } from '../../layer/shared/layers/linked/linked-layer.interface';
 
 export interface LayerWatcherChange {
   event: LayerWatcherEvent;

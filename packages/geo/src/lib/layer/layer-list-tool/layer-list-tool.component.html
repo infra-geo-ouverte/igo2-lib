@@ -24,7 +24,7 @@
   </button>
 
   <button
-    *ngIf="viewerOptions?.group"
+    *ngIf="viewerOptions?.group?.canCreate"
     mat-icon-button
     [disabled]="!viewerOptions.group.enable"
     [matTooltip]="'igo.geo.layer.group.create' | translate"

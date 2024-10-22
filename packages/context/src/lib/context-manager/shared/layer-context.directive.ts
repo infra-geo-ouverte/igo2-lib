@@ -7,7 +7,8 @@ import {
   MapBrowserComponent,
   StyleListService,
   StyleService,
-  isLayerGroupOptions
+  isLayerGroupOptions,
+  sortLayersByZindex
 } from '@igo2/geo';
 import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
@@ -134,8 +135,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         layer.visible = this.computeLayerVisibilityFromUrl(layer);
         return layer;
       });
-    this.contextLayers.concat(layersFiltrered);
-    this.map.addLayer(...layersFiltrered);
+
+    const layersSorted = sortLayersByZindex(layersFiltrered, 'asc');
+    this.contextLayers.concat(layersSorted);
+    this.map.addLayer(...layersSorted);
   }
 
   private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {

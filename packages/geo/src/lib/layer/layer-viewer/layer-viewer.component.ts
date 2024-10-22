@@ -37,7 +37,11 @@ import {
   ImageLayerOptions,
   LayerGroup
 } from '../shared/layers';
-import { isLayerGroup, isLayerItem } from '../utils/layer.utils';
+import {
+  isLayerGroup,
+  isLayerItem,
+  sortLayersByZindex
+} from '../utils/layer.utils';
 import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
 
 @Component({
@@ -207,7 +211,7 @@ export class LayerViewerComponent implements OnInit {
 
   private computeLayers(layers: AnyLayer[], keyword: string): AnyLayer[] {
     let layersOut = this.filterLayers([...layers], keyword);
-    return this.sortLayersByZindex(layersOut);
+    return sortLayersByZindex(layersOut, 'desc');
   }
 
   private filterLayers(layers: AnyLayer[], keyword: string): AnyLayer[] {
@@ -277,17 +281,5 @@ export class LayerViewerComponent implements OnInit {
 
   private normalizeString(value: string): string {
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-
-  /** Recursive */
-  private sortLayersByZindex(layers: AnyLayer[]): AnyLayer[] {
-    return layers
-      .sort((layer1, layer2) => layer2.zIndex - layer1.zIndex)
-      .map((layer) => {
-        if (isLayerGroup(layer)) {
-          this.sortLayersByZindex([...layer.children]);
-        }
-        return layer;
-      });
   }
 }

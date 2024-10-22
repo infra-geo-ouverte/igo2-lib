@@ -16,14 +16,10 @@ import type { Layer } from '../../layer/shared/layers/layer';
 import {
   LayersLinkProperties,
   LinkedProperties
-} from '../../layer/shared/layers/layer.interface';
+} from '../../layer/shared/layers/linked/linked-layer.interface';
 import { isLayerGroup, isLayerItem } from '../../layer/utils/layer.utils';
 import { MapViewController } from '../../map/shared/controllers/view';
 import { LayerWatcherChange } from '../utils/layer-watcher';
-
-export function isLinkMaster(layer: Layer): boolean {
-  return !!layer.options.linkedLayers?.links;
-}
 
 export function getRootParentByProperty(
   layers: AnyLayer[],

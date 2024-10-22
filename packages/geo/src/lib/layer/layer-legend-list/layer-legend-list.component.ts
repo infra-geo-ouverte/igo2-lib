@@ -25,8 +25,8 @@ import {
 import { debounce } from 'rxjs/operators';
 
 import { LayerLegendItemComponent } from '../layer-legend-item/layer-legend-item.component';
-import { AnyLayer } from '../shared';
-import { isBaseLayer, isLayerItem } from '../utils';
+import { AnyLayer } from '../shared/layers/any-layer';
+import { isBaseLayer, isLayerItem, sortLayersByZindex } from '../utils';
 
 @Component({
   selector: 'igo-layer-legend-list',
@@ -119,10 +119,7 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
     if (this.showAllLegendsValue) {
       shownLayers = layers;
     }
-    return this.sortLayersByZindex(shownLayers);
-  }
-  private sortLayersByZindex(layers: AnyLayer[]) {
-    return layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
+    return sortLayersByZindex(shownLayers, 'desc');
   }
 
   toggleShowAllLegends(toggle: boolean) {

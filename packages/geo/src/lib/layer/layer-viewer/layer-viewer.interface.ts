@@ -4,6 +4,8 @@ export interface LayerConfig {
   group?: {
     enable: boolean;
     maxHierarchyLevel?: number;
+    canCreate?: boolean;
+    canRename?: boolean;
   };
 }
 

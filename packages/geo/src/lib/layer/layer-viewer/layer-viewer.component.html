@@ -78,6 +78,7 @@
 <igo-layer-viewer-bottom-actions
   *ngIf="layerController.hasSelection"
   [map]="map"
+  [viewerOptions]="layerViewerOptions"
   [controller]="layerController"
   [searchTerm]="keyword$.value"
   (layerChange)="onLayerChange()"

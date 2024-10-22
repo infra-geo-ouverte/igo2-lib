@@ -7,20 +7,19 @@ import { Source } from 'ol/source';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource, Legend } from '../../../datasource/shared/datasources';
-import { isLinkMaster } from '../../../map/shared/linkedLayers.utils';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import {
-  isLayerItem,
   isLayerLinked,
-  isSaveableLayer
-} from '../../utils/layer.utils';
+  isLinkMaster
+} from '../../shared/layers/linked/linked-layer.utils';
+import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
 import { AnyLayer } from './any-layer';
 import { LayerBase, LayerGroupBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
 import { type LayerOptions } from './layer.interface';
-import { Linked } from './linked-layer';
+import { Linked } from './linked/linked-layer';
 
 export abstract class Layer extends LayerBase {
   declare dataSource: DataSource;

@@ -9,16 +9,12 @@ import {
 } from 'rxjs';
 
 import { type MapBase } from '../../map/shared/map.abstract';
-import {
-  isBaseLayer,
-  isLayerGroup,
-  isLayerItem,
-  isLayerLinked
-} from '../utils/layer.utils';
+import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 import { LayerSelectionModel } from './layer-selection';
 import type { AnyLayer } from './layers/any-layer';
 import type { Layer } from './layers/layer';
 import type { LayerGroup } from './layers/layer-group';
+import { isLayerLinked } from './layers/linked/linked-layer.utils';
 
 // Below 10 is reserved for BaseLayer
 const ZINDEX_MIN = 10;
@@ -212,31 +208,14 @@ export class LayerController extends LayerSelectionModel {
     const position = this.getPosition(layers[0]);
     const nextPosition = this.findLowestVisiblePostion(position, -1);
     this.moveTo(nextPosition, ...layers);
-    this._internalMove();
+    this.handleMove(layers, null, true);
   }
 
   lower(...layers: AnyLayer[]): void {
     const position = this.getPosition(layers[layers.length - 1]);
     const nextPosition = this.findLowestVisiblePostion(position, 2); // +2 because we use moveBefore
     this.moveTo(nextPosition, ...layers);
-    this._internalMove();
-  }
-
-  /**
-   * We got non visible layer in the tree like LinkedLayer. We want the next visible layer in tree
-   */
-  private findLowestVisiblePostion(
-    position: number[],
-    increment: number
-  ): number[] {
-    const index = position.pop();
-    let nextPosition = position.concat(index + increment);
-    const layer = this.tree.getNodeByPosition(nextPosition);
-    if (layer && !layer.showInLayerList) {
-      const nextIndex = increment > 1 ? 1 : increment;
-      return this.findLowestVisiblePostion(nextPosition, nextIndex);
-    }
-    return nextPosition;
+    this.handleMove(layers, null, true);
   }
 
   /** Reset all except SystemLayer */
@@ -274,13 +253,34 @@ export class LayerController extends LayerSelectionModel {
     return layer.parent ? this.tree.getChildren(layer.parent) : this.treeLayers;
   }
 
-  private handleMove(layers: AnyLayer[], parent?: LayerGroup): void {
+  /**
+   * We got non visible layer in the tree like LinkedLayer. We want the next visible layer in tree
+   */
+  private findLowestVisiblePostion(
+    position: number[],
+    increment: number
+  ): number[] {
+    const index = position.pop();
+    let nextPosition = position.concat(index + increment);
+    const layer = this.tree.getNodeByPosition(nextPosition);
+    if (layer && !layer.showInLayerList) {
+      const nextIndex = increment > 1 ? 1 : increment;
+      return this.findLowestVisiblePostion(nextPosition, nextIndex);
+    }
+    return nextPosition;
+  }
+
+  private handleMove(
+    layers: AnyLayer[],
+    parent?: LayerGroup,
+    keepCurrentParent?: boolean
+  ): void {
     if (!layers?.length) {
       return;
     }
 
     layers.forEach((layer) => {
-      layer.moveTo(parent);
+      layer.moveTo(keepCurrentParent ? layer.parent : parent);
     });
     this._internalMove();
   }

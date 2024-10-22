@@ -1,3 +1,4 @@
+export * from './linked';
 export * from './layer';
 export * from './layer-base';
 export * from './layer.interface';

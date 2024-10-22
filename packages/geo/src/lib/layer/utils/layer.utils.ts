@@ -8,6 +8,8 @@ import type {
   VectorTileLayerOptions
 } from '../shared/layers';
 
+type SortDirection = 'asc' | 'desc';
+
 export function isLayerGroupOptions(
   option: AnyLayerOptions
 ): option is LayerGroupOptions {
@@ -36,95 +38,6 @@ function isInternalLayer(layer: AnyLayer): boolean {
   return layer.isIgoInternalLayer;
 }
 
-export function isLayerLinked(layer: AnyLayer): layer is Layer {
-  return isLayerItem(layer) && !!layer.options.linkedLayers;
-}
-
-export function isLayerLinkedParent(layer: AnyLayer): layer is Layer {
-  return (
-    isLayerItem(layer) &&
-    !!layer.options.linkedLayers &&
-    !!layer.options.linkedLayers.links
-  );
-}
-
-export function isLayerLinkedOptions(
-  options: AnyLayerOptions
-): options is AnyLayerItemOptions {
-  return isLayerItemOptions(options) && !!options.linkedLayers;
-}
-
-export function isBaseLayerLinked(
-  layer: AnyLayer,
-  allLayers: AnyLayer[]
-): layer is Layer {
-  if (!isLayerItem(layer)) {
-    return;
-  }
-
-  const linkedParent = getLinkedLayerParent(layer, allLayers);
-  return linkedParent && isBaseLayer(linkedParent);
-}
-
-export function getLinkedLayerParent(
-  layer: Layer,
-  layers: AnyLayer[]
-): AnyLayer | undefined {
-  if (!layer.options.linkedLayers) {
-    return;
-  }
-
-  return layers.find((list_layer) => _isLinkedParent(layer, list_layer));
-}
-
-export function getLinkedLayerParentIndex(
-  layer: Layer,
-  layers: AnyLayer[]
-): number {
-  if (!layer.options.linkedLayers) {
-    return;
-  }
-
-  return layers.findIndex((list_layer) => _isLinkedParent(layer, list_layer));
-}
-
-function _isLinkedParent(layer: Layer, layerToCheck: AnyLayer): boolean {
-  if (!isLayerItem(layerToCheck)) {
-    return;
-  }
-  const links = layerToCheck.options.linkedLayers?.links;
-  if (links) {
-    return links.some((link) =>
-      link.linkedIds.includes(layer.options.linkedLayers.linkId)
-    );
-  }
-
-  return false;
-}
-
-export function getLinkedLayerOptionsParent(
-  options: AnyLayerItemOptions,
-  layersOptions: AnyLayerOptions[]
-): AnyLayerItemOptions | undefined {
-  if (!options.linkedLayers) {
-    return;
-  }
-
-  return layersOptions.find((list_options) => {
-    if (!isLayerItemOptions(list_options)) {
-      return;
-    }
-    const links = list_options.linkedLayers?.links;
-    if (links) {
-      return links.some((link) =>
-        link.linkedIds.includes(options.linkedLayers.linkId)
-      );
-    }
-
-    return false;
-  });
-}
-
 export function computeMVTOptionsOnHover(layerOptions: AnyLayerItemOptions) {
   const vectorTileLayerOptions = layerOptions as VectorTileLayerOptions;
   if (
@@ -150,4 +63,27 @@ export function isSaveableLayer(layer: Layer): boolean {
   if (layer.options.sourceOptions?.type) {
     return true;
   }
+}
+
+/** Recursive */
+export function sortLayersByZindex(
+  layers: AnyLayer[],
+  direction: SortDirection
+): AnyLayer[] {
+  return layers
+    .sort(direction === 'desc' ? sortLayerByZIndexDesc : sortLayerByZIndexAsc)
+    .map((layer) => {
+      if (isLayerGroup(layer)) {
+        sortLayersByZindex([...layer.children], direction);
+      }
+      return layer;
+    });
+}
+
+function sortLayerByZIndexDesc(layer1: AnyLayer, layer2: AnyLayer) {
+  return layer2.zIndex - layer1.zIndex;
+}
+
+function sortLayerByZIndexAsc(layer1: AnyLayer, layer2: AnyLayer) {
+  return layer1.zIndex - layer2.zIndex;
 }
