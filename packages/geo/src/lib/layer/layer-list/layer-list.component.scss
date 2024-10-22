@@ -1,34 +1,3 @@
-igo-layer-group,
-igo-layer-item {
-  ::ng-deep .list-secondary-actions {
-    button {
-      visibility: hidden;
-
-      &.disabled {
-        visibility: visible;
-      }
-    }
-  }
-
-  &:hover {
-    ::ng-deep .list-secondary-actions {
-      button {
-        visibility: visible;
-      }
-    }
-  }
-
-  &.disabled {
-    ::ng-deep {
-      .igo-layer-title,
-      .list-actions,
-      .group-actions {
-        opacity: 0.54;
-      }
-    }
-  }
-}
-
 .--not-desktop {
   igo-layer-group,
   igo-layer-item {
