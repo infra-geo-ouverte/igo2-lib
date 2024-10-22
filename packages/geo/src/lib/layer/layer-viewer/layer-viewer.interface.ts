@@ -7,6 +7,10 @@ export interface LayerConfig {
     canCreate?: boolean;
     canRename?: boolean;
   };
+  /** Représente l'icon en préfix au titre qui affiche le type de source */
+  typeIcon?: {
+    disableTooltip?: boolean;
+  };
 }
 
 export interface LayerViewerOptions extends LayerConfig {

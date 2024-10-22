@@ -32,6 +32,8 @@
         [matTooltip]="
           'igo.geo.layer.type.' + getLayerType(node.data) | translate
         "
+        [matTooltipShowDelay]="1000"
+        [matTooltipDisabled]="viewerOptions.typeIcon?.disableTooltip"
       >
         <button
           mat-icon-button
