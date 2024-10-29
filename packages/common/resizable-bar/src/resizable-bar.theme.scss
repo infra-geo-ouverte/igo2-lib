@@ -1,0 +1,23 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+}
+
+@mixin color($theme) {
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $accent-color: mat.m2-get-color-from-palette($accent);
+
+  igo-resizable-bar {
+    .expand-btn {
+      color: mat.m2-get-color-from-palette($primary);
+      background-color: white;
+    }
+
+    .resize-item {
+      background-color: $accent-color;
+    }
+  }
+}
