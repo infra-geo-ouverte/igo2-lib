@@ -3,6 +3,8 @@
 @use '../entity/src/entity.theming.scss' as entity;
 @use '../list/src/list.theming.scss' as list;
 @use '../panel/src/panel.theming.scss' as panel;
+@use '../resizable-bar/src/resizable-bar.theme.scss' as resizable-bar;
+
 @use '../tool/src/tool.theming.scss' as tool;
 @use '../interactive-tour/src/interactive-tour.theming.scss' as interactive-tour;
 @use '../home-button/src/home-button.theming.scss' as home-button;
@@ -12,6 +14,7 @@
   @include collapsible.igo-collapsible-theming($theme);
   @include entity.igo-entity-theming($theme);
   @include list.igo-list-theming($theme);
+  @include resizable-bar.theme($theme);
   @include panel.theme($theme);
   @include tool.igo-tool-theming($theme);
   @include interactive-tour.theme($theme);
