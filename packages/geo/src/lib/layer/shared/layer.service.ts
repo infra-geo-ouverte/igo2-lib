@@ -57,10 +57,10 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
-    private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
-    private layerDBService: LayerDBService,
-    @Optional() private authInterceptor: AuthInterceptor
+    @Optional() private geoNetworkService?: GeoNetworkService,
+    @Optional() private layerDBService?: LayerDBService,
+    @Optional() private authInterceptor?: AuthInterceptor
   ) {}
 
   createLayer(layerOptions: AnyLayerOptions): Layer {
@@ -204,7 +204,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -225,7 +225,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -240,7 +240,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -388,7 +388,7 @@ export class LayerService {
   }
 
   createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
-    return this.layerDBService.getAll().pipe(
+    return this.layerDBService?.getAll().pipe(
       concatMap((res) => {
         const idbLayers =
           contextUri !== '*'

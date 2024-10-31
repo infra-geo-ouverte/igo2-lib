@@ -112,10 +112,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         }
       });
 
-    this.layerService
-      .createAsyncIdbLayers(context.uri)
-      .pipe(debounceTime(500))
-      .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
+    if (this.configService.getConfig('offline')?.enable) {
+      this.layerService
+        .createAsyncIdbLayers(context.uri)
+        .pipe(debounceTime(500))
+        .subscribe((layers) => this.handleAddLayers(layers));
+    }
   }
 
   private handleAddLayers(layers: Layer[]) {
