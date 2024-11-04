@@ -41,7 +41,8 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
+import type { IgoMap, MapExtent } from '../../../map/shared';
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBData } from '../../../offline/layerDB/layerDB.interface';
@@ -53,7 +54,7 @@ import {
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
-import { VectorLayerOptions } from './vector-layer.interface';
+import type { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
   private previousLoadExtent: Extent;

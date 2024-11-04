@@ -2,12 +2,12 @@ import { uuid } from '@igo2/utils';
 
 import { Md5 } from 'ts-md5';
 
-import { WFSDataSourceOptions } from '../datasource/shared/datasources';
-import { AnyDataSourceOptions } from '../datasource/shared/datasources/any-datasource.interface';
-import { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
-import { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
-import { WMTSDataSourceOptions } from '../datasource/shared/datasources/wmts-datasource.interface';
-import { ArcGISRestDataSourceOptions } from './../datasource/shared/datasources/arcgisrest-datasource.interface';
+import type { AnyDataSourceOptions } from '../datasource/shared/datasources/any-datasource.interface';
+import type { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
+import type { WFSDataSourceOptions } from '../datasource/shared/datasources/wfs-datasource.interface';
+import type { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
+import type { WMTSDataSourceOptions } from '../datasource/shared/datasources/wmts-datasource.interface';
+import type { ArcGISRestDataSourceOptions } from './../datasource/shared/datasources/arcgisrest-datasource.interface';
 
 /**
  * Generate a id from it's datasource options.

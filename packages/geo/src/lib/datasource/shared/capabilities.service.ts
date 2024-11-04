@@ -20,7 +20,7 @@ import {
   ItemStyleOptions,
   LegendOptions
 } from '../../layer/shared/layers/legend.interface';
-import { MapService } from '../../map/shared/map.service';
+import type { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import {
   QueryFormat,
