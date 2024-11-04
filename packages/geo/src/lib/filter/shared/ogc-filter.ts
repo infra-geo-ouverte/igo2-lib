@@ -11,6 +11,7 @@ import olProjection from 'ol/proj/Projection';
 import { default as moment } from 'moment';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { parseDateOperation } from './filter.utils';
 import { OgcFilterOperator, OgcFilterOperatorType } from './ogc-filter.enum';
 import {
   AnyBaseOgcFilterOptions,
@@ -933,58 +934,11 @@ export class OgcFilterWriter {
       value.toLowerCase().includes('now') ||
       value.toLowerCase().includes('today')
     ) {
-      return this.parseDateOperation(value);
+      return parseDateOperation(value);
     } else if (moment(value).isValid()) {
       return value;
     } else {
       return undefined;
-    }
-  }
-  /**
-   * this function to parse date with specific format
-   * exemple 'today + 1 days' or 'now + 1 years'
-   * @param value string date
-   * @returns date
-   */
-  private parseDateOperation(value: string): string {
-    const operationSplitted = value.toLowerCase().split(' ');
-    const leftOperand = operationSplitted[0];
-    const operator = ['+', '-'].includes(operationSplitted[1])
-      ? operationSplitted[1]
-      : undefined;
-    const rightOperand = /^[0-9]*$/.test(operationSplitted[2])
-      ? operationSplitted[2]
-      : undefined;
-    const rightUnitOperand = (
-      ['years', 'months', 'weeks', 'days', 'hours', 'seconds'].includes(
-        operationSplitted[3]
-      )
-        ? operationSplitted[3]
-        : undefined
-    ) as moment.DurationInputArg2;
-
-    if (!operator || !rightUnitOperand || !rightOperand) {
-      return leftOperand === 'now'
-        ? moment().format()
-        : moment().endOf('day').format();
-    }
-
-    if (operator === '+') {
-      return leftOperand === 'now'
-        ? moment().add(parseInt(rightOperand, 10), rightUnitOperand).format()
-        : moment()
-            .endOf('day')
-            .add(parseInt(rightOperand, 10), rightUnitOperand)
-            .format();
-    } else {
-      return leftOperand === 'now'
-        ? moment()
-            .subtract(parseInt(rightOperand, 10), rightUnitOperand)
-            .format()
-        : moment()
-            .endOf('day')
-            .subtract(parseInt(rightOperand, 10), rightUnitOperand)
-            .format();
     }
   }
 }

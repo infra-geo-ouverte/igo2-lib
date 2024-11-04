@@ -25,7 +25,8 @@ import {
   checkWfsParams,
   defaultFieldNameGeometry,
   defaultMaxFeatures,
-  getFormatFromOptions
+  getFormatFromOptions,
+  getSaveableOgcParams
 } from './wms-wfs.utils';
 
 interface FetchFeatureOptions {
@@ -48,7 +49,10 @@ export class WFSDataSource extends DataSource {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,
-      params: this.options.params
+      params: this.options.params,
+      ...(this.ogcFilters && {
+        ogcFilters: getSaveableOgcParams(this.ogcFilters)
+      })
     };
   }
 
