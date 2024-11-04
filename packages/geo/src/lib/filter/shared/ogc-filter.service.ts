@@ -3,8 +3,14 @@ import { Injectable } from '@angular/core';
 import olProjection from 'ol/proj/Projection';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { searchFilter } from './filter.utils';
 import { OgcFilterWriter } from './ogc-filter';
-import { OgcFilterableDataSource } from './ogc-filter.interface';
+import {
+  AnyBaseOgcFilterOptions,
+  IgoLogicalArrayOptions,
+  OgcFilterableDataSource,
+  OgcInterfaceFilterOptions
+} from './ogc-filter.interface';
 
 @Injectable()
 export class OGCFilterService {
@@ -33,6 +39,17 @@ export class OGCFilterService {
             options.ogcFilters.filters,
             options.paramsWFS.fieldNameGeometry
           );
+      } else {
+        const mergedInterfaceOgcFilters = this.mergeInterfaceFilters(
+          options.ogcFilters.filters,
+          options.ogcFilters.interfaceOgcFilters
+        );
+
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            mergedInterfaceOgcFilters,
+            options.paramsWFS.fieldNameGeometry
+          );
       }
     }
   }
@@ -55,6 +72,17 @@ export class OGCFilterService {
             options.ogcFilters.filters,
             options.fieldNameGeometry
           );
+      } else {
+        const mergedInterfaceOgcFilters = this.mergeInterfaceFilters(
+          options.ogcFilters.filters,
+          options.ogcFilters.interfaceOgcFilters
+        );
+
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            mergedInterfaceOgcFilters,
+            options.paramsWFS.fieldNameGeometry
+          );
       }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
@@ -72,5 +100,23 @@ export class OGCFilterService {
       options.ogcFilters.interfaceOgcFilters = [];
       options.filtered = false;
     }
+  }
+
+  private mergeInterfaceFilters(
+    filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions,
+    interfaceOgcFilters: OgcInterfaceFilterOptions[]
+  ) {
+    return interfaceOgcFilters.map((interfaceOgc) => {
+      const filter = searchFilter(
+        filters,
+        'propertyName',
+        interfaceOgc.propertyName
+      );
+
+      if (filter) {
+        return { ...interfaceOgc, filterid: filter.filterid };
+      }
+      return interfaceOgc;
+    });
   }
 }

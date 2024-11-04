@@ -23,7 +23,8 @@ import {
 import {
   checkWfsParams,
   defaultFieldNameGeometry,
-  formatWFSQueryString
+  formatWFSQueryString,
+  getSaveableOgcParams
 } from './wms-wfs.utils';
 
 export interface TimeFilterableDataSource extends WMSDataSource {
@@ -74,9 +75,15 @@ export class WMSDataSource extends DataSource {
 
   get saveableOptions(): Partial<WMSDataSourceOptions> {
     const baseOptions = super.saveableOptions;
+
     return {
       ...baseOptions,
-      params: this.params
+      params: this.params,
+      ...(this.ogcFilters && {
+        ogcFilters: getSaveableOgcParams(this.ogcFilters)
+      })
+      // TODO: On veut enregistrer la valeur seulement si l'utilisateur fait une modification.
+      // timeFilter: { value: this.timeFilter?.value }
     };
   }
 
