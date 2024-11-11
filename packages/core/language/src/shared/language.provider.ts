@@ -29,9 +29,14 @@ const TIMEOUT_DURATION = 5000;
 /**
  * Make sure you only call this method in the root module of your application, most of the time called AppModule.
  */
-export function provideTranslation(loader?: Provider): EnvironmentProviders {
+export function provideTranslation(
+  defaultLanguage?: string | undefined,
+  loader?: Provider
+): EnvironmentProviders {
   return makeEnvironmentProviders([
-    importProvidersFrom(TranslateModule.forRoot(setTranslationConfig(loader))),
+    importProvidersFrom(
+      TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
+    ),
     {
       provide: APP_INITIALIZER,
       useFactory: (languageService: LanguageService) => () => {
@@ -53,9 +58,10 @@ export function provideTranslation(loader?: Provider): EnvironmentProviders {
 }
 
 export const setTranslationConfig = (
-  loader?: Provider
+  loader?: Provider,
+  defaultLanguage?: string
 ): TranslateModuleConfig => ({
-  defaultLanguage: 'fr',
+  defaultLanguage: defaultLanguage,
   loader: loader ?? DEFAULT_LANGUAGE_LOADER,
   missingTranslationHandler: {
     provide: MissingTranslationHandler,
