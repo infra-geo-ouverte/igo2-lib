@@ -90,7 +90,7 @@
     "@cypress/schematic": "^2.5.1",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.1.0",
+    "@semantic-release/github": "^11.0.1",
     "@sentry/types": "^8.26.0",
     "@stylistic/eslint-plugin": "^2.6.4",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
