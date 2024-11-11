@@ -97,7 +97,6 @@
     }
   },
   "dependencies": {
-    "@ngx-translate/core": "^15.0.0",
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
