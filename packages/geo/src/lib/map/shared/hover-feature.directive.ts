@@ -222,7 +222,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unlistenToMapSingleClick();
-    this.layers$$.unsubscribe();
+    this.layers$$?.unsubscribe();
   }
 
   /**
@@ -261,7 +261,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   unsubscribeToPointerStore() {
-    this.store$$.unsubscribe();
+    this.store$$?.unsubscribe();
   }
 
   /**
