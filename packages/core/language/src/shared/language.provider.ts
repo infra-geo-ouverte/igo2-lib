@@ -18,25 +18,34 @@ import {
 import { first } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-import { LanguageLoaderBase } from './language.interface';
-import { LanguageLoader } from './language.loader';
+import { LanguageLoaderBase, LanguageOptions } from './language.interface';
+import {
+  LanguageLoader,
+  LanguageLoaderWithAsyncConfig
+} from './language.loader';
 import { LanguageService } from './language.service';
 import { IgoMissingTranslationHandler } from './missing-translation.guard';
 
 // 5 seconds
 const TIMEOUT_DURATION = 5000;
 
+export interface TranslationFeature<KindT extends TranslationFeatureKind> {
+  kind: KindT;
+  providers: (Provider | EnvironmentProviders)[];
+}
+
+export enum TranslationFeatureKind {
+  Translation = 0
+}
+
 /**
  * Make sure you only call this method in the root module of your application, most of the time called AppModule.
  */
 export function provideTranslation(
-  defaultLanguage?: string | undefined,
-  loader?: Provider
+  featureConfig: TranslationFeature<TranslationFeatureKind.Translation>
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
-    importProvidersFrom(
-      TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
-    ),
+    ...featureConfig.providers,
     {
       provide: APP_INITIALIZER,
       useFactory: (languageService: LanguageService) => () => {
@@ -57,6 +66,43 @@ export function provideTranslation(
   ]);
 }
 
+export function withStaticConfig(
+  options: LanguageOptions,
+  defaultLanguage?: string | undefined
+): TranslationFeature<TranslationFeatureKind.Translation> {
+  const loader: Provider = {
+    provide: TranslateLoader,
+    useFactory: (http: HttpBackend) => languageLoaderWithStatic(http, options),
+    deps: [HttpBackend]
+  };
+  return {
+    kind: TranslationFeatureKind.Translation,
+    providers: [
+      importProvidersFrom(
+        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
+      )
+    ]
+  };
+}
+
+export function withAsyncConfig(
+  defaultLanguage?: string | undefined
+): TranslationFeature<TranslationFeatureKind.Translation> {
+  const loader: Provider = {
+    provide: TranslateLoader,
+    useFactory: languageLoaderWithAsync,
+    deps: [HttpBackend, ConfigService]
+  };
+  return {
+    kind: TranslationFeatureKind.Translation,
+    providers: [
+      importProvidersFrom(
+        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
+      )
+    ]
+  };
+}
+
 export const setTranslationConfig = (
   loader?: Provider,
   defaultLanguage?: string
@@ -69,12 +115,25 @@ export const setTranslationConfig = (
   }
 });
 
-export const DEFAULT_LANGUAGE_LOADER: Provider = {
+function languageLoaderWithStatic(
+  http: HttpBackend,
+  options?: LanguageOptions
+) {
+  return new LanguageLoader(http, options);
+}
+
+export const LANGUAGE_LOADER: Provider = {
   provide: TranslateLoader,
-  useFactory: defaultLanguageLoader,
+  useFactory: languageLoaderWithAsync,
   deps: [HttpBackend, ConfigService]
 };
 
-function defaultLanguageLoader(http: HttpBackend, config?: ConfigService) {
-  return new LanguageLoader(http, config, undefined, undefined);
+function languageLoaderWithAsync(http: HttpBackend, config?: ConfigService) {
+  return new LanguageLoaderWithAsyncConfig(http, config, undefined, undefined);
 }
+
+export const DEFAULT_LANGUAGE_LOADER: Provider = {
+  provide: TranslateLoader,
+  useFactory: languageLoaderWithAsync,
+  deps: [HttpBackend, ConfigService]
+};

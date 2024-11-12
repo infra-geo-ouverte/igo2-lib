@@ -3,9 +3,18 @@ import { HttpBackend, HttpClient } from '@angular/common/http';
 import { ConfigService } from '@igo2/core/config';
 import { ObjectUtils } from '@igo2/utils';
 
-import { BehaviorSubject, first, forkJoin, map, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  first,
+  forkJoin,
+  map,
+  of,
+  switchMap,
+  tap
+} from 'rxjs';
 
-import { LanguageLoaderBase } from './language.interface';
+import { LanguageLoaderBase, LanguageOptions } from './language.interface';
 
 export class LanguageLoader implements LanguageLoaderBase {
   private httpClient: HttpClient;
@@ -13,47 +22,71 @@ export class LanguageLoader implements LanguageLoaderBase {
   private _isLoaded$ = new BehaviorSubject<boolean>(null);
   isLoaded$ = this._isLoaded$.asObservable();
 
+  suffix = '.json';
+  prefix?: string | string[];
+  options: LanguageOptions;
+
+  constructor(handler: HttpBackend, options: LanguageOptions) {
+    this.httpClient = new HttpClient(handler);
+    this.options = options;
+  }
+
+  public getTranslation(lang: string): Observable<any> {
+    const igoLocale$ = this.httpClient.get(`locale/libs_locale/${lang}.json`);
+    if (!this.prefix) {
+      const prefix = this.options.prefix;
+      this.prefix = !prefix || Array.isArray(prefix) ? prefix : [prefix];
+    }
+
+    if (!this.prefix || this.prefix.length === 0) {
+      this._isLoaded$.next(true);
+      return this.options.ignoreLibsLocale ? of(undefined) : igoLocale$;
+    }
+
+    const appLocale$ = (this.prefix as string[]).map((prefix) =>
+      this.httpClient.get(`${prefix}${lang}${this.suffix}`)
+    );
+
+    const locale$ = [...appLocale$];
+
+    if (!this.options.ignoreLibsLocale) {
+      locale$.unshift(igoLocale$);
+    }
+
+    return forkJoin(locale$).pipe(
+      map((translations) => {
+        return translations.reduce(
+          (acc, current) => ObjectUtils.mergeDeep(acc, current),
+          {}
+        );
+      }),
+      tap(() => {
+        this._isLoaded$.next(true);
+      })
+    );
+  }
+}
+
+export class LanguageLoaderWithAsyncConfig extends LanguageLoader {
   constructor(
     handler: HttpBackend,
     private configService: ConfigService,
-    private prefix?: string | string[],
-    private suffix = '.json'
+    prefix?: string | string[],
+    suffix = '.json'
   ) {
-    this.httpClient = new HttpClient(handler);
+    super(handler, undefined);
+    this.prefix = prefix;
+    this.suffix = suffix;
   }
 
-  public getTranslation(lang: string): any {
-    const igoLocale$ = this.httpClient.get(`locale/libs_locale/${lang}.json`);
+  public getTranslation(lang: string): Observable<any> {
     return this.configService.isLoaded$.pipe(
       first((isLoaded) => isLoaded),
       switchMap(() => {
-        if (this.configService && !this.prefix) {
-          const prefix = this.configService.getConfig('language.prefix');
-          this.prefix = !prefix || Array.isArray(prefix) ? prefix : [prefix];
-        }
+        this.options =
+          this.configService.getConfig<LanguageOptions>('language');
 
-        if (!this.prefix || this.prefix.length === 0) {
-          this._isLoaded$.next(true);
-          return igoLocale$;
-        }
-
-        const appLocale$ = (this.prefix as string[]).map((prefix) =>
-          this.httpClient.get(`${prefix}${lang}${this.suffix}`)
-        );
-
-        const locale$ = forkJoin([igoLocale$, ...appLocale$]);
-
-        return locale$.pipe(
-          map((translations) => {
-            return translations.reduce(
-              (acc, current) => ObjectUtils.mergeDeep(acc, current),
-              {}
-            );
-          }),
-          tap(() => {
-            this._isLoaded$.next(true);
-          })
-        );
+        return super.getTranslation(lang);
       })
     );
   }
