@@ -7,7 +7,11 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { IgoActivityModule } from '@igo2/core/activity';
 import { ConfigOptions, provideConfig } from '@igo2/core/config';
-import { IgoLanguageModule, provideTranslation } from '@igo2/core/language';
+import {
+  IgoLanguageModule,
+  provideTranslation,
+  withAsyncConfig
+} from '@igo2/core/language';
 import { provideMessage } from '@igo2/core/message';
 import { IgoErrorModule } from '@igo2/core/request';
 
@@ -27,7 +31,7 @@ export class IgoCoreModule {
   ): ModuleWithProviders<IgoCoreModule> {
     return {
       ngModule: IgoCoreModule,
-      providers: [provideConfig(options), provideTranslation()]
+      providers: [provideConfig(options), provideTranslation(withAsyncConfig())]
     };
   }
 }

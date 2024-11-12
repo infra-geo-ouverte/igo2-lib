@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 export interface LanguageOptions {
   prefix?: string | string[];
+  ignoreLibsLocale?: boolean;
 }
 
 export abstract class LanguageLoaderBase implements TranslateLoader {
