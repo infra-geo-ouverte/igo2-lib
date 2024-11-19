@@ -122,10 +122,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the coords format setting is changed
    */
   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+
   /**
-   * test
+   * Map to add layer
    */
   @Input() map: IgoMap;
+
   /**
    * Search term
    */
@@ -499,31 +501,34 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
 
   selectFirstElement() {
-    // look for the two highest score results
-    const results = this.store.all().sort((res1, res2) => {
-      return (res1.meta.score - res2.meta.score) * -1;
-    });
+    const results = this.store.all();
+    // find the highest result score
+    const result = results.reduce(
+      (max: SearchResult, result) =>
+        result.meta.score > max.meta.score ? result : max,
+      results[0]
+    );
 
-    //Take the first element (feature or layer) to make a focus or view it on the map
-    if (results.length) {
-      const result = results[0];
-      this.store.state.update(result, { focused: true, selected: true }, true);
+    if (!result) {
+      return;
+    }
 
-      if (result.meta.dataType === FEATURE) {
-        const feature = (result as SearchResult<Feature>).data;
-        this.map.searchResultsOverlay.setFeatures(
-          [feature] satisfies Feature[],
-          FeatureMotion.Default
-        );
-      } else if (result.meta.dataType === LAYER) {
-        const layerOptions = (result as SearchResult<LayerOptions>).data;
-        if (layerOptions.sourceOptions.optionsFromApi === undefined) {
-          layerOptions.sourceOptions.optionsFromApi = true;
-        }
-        this.layerService.createAsyncLayer(result.data).subscribe((layer) => {
-          this.map.addLayer(layer);
-        });
+    this.store.state.update(result, { focused: true, selected: true }, true);
+
+    if (result.meta.dataType === FEATURE) {
+      const feature = (result as SearchResult<Feature>).data;
+      this.map.searchResultsOverlay.setFeatures(
+        [feature] satisfies Feature[],
+        FeatureMotion.Default
+      );
+    } else if (result.meta.dataType === LAYER) {
+      const layerOptions = (result as SearchResult<LayerOptions>).data;
+      if (layerOptions.sourceOptions.optionsFromApi === undefined) {
+        layerOptions.sourceOptions.optionsFromApi = true;
       }
+      this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
+        this.map.addLayer(layer);
+      });
     }
   }
 }
