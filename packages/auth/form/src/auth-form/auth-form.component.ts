@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { NavigationStart, Router } from '@angular/router';
 
-import { AuthOptions, AuthService } from '@igo2/auth';
+import { AuthOptions, AuthService, AuthType } from '@igo2/auth';
 import { AuthFacebookComponent } from '@igo2/auth/facebook';
 import { AuthGoogleComponent } from '@igo2/auth/google';
 import { AuthInternComponent } from '@igo2/auth/internal';
@@ -25,7 +25,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import { filter } from 'rxjs/operators';
 
-import { AuthFormOptions } from '../shared';
+import { AuthFormOptions } from '../public_api';
 
 @Component({
   selector: 'igo-auth-form',
@@ -138,7 +138,11 @@ export class AuthFormComponent implements OnInit {
   }
 
   get hasMicrosoft(): boolean {
-    return this.options.microsoft && this.options.microsoft.enabled !== false;
+    return this.auth.authType === AuthType.MicrosoftIntranet;
+  }
+
+  get hasMspExtranet(): boolean {
+    return this.auth.authType === AuthType.MspExtranet;
   }
 
   get hasMicrosoftB2c(): boolean {

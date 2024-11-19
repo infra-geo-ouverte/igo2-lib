@@ -4,6 +4,7 @@ export * from './clipboard';
 export * from './compression';
 export * from './change';
 export * from './change.interface';
+export * from './cookie.utils';
 export * from './date.utils';
 export * from './dom.utils';
 export * from './files';

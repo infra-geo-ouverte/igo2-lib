@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
+import { AuthType } from './auth-type.enum';
 import { AuthOptions, IInfosUser, User } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
@@ -23,8 +24,10 @@ export class AuthService {
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   public languageForce = false;
-  private anonymous = false;
   public authOptions: AuthOptions;
+  public authType: AuthType = AuthType.Intern;
+
+  private anonymous = false;
 
   get hasAuthService() {
     return this.authOptions?.url !== undefined;
@@ -153,6 +156,22 @@ export class AuthService {
     return this.http.patch<User>(this.authOptions?.url, user);
   }
 
+  translateError(prefix: string, error: any): Observable<string> {
+    return new Observable((observer) => {
+      try {
+        this.languageService.translate
+          .get(prefix + error.error.message)
+          .subscribe((errorMsg) => {
+            observer.next(errorMsg);
+            observer.complete();
+          });
+      } catch (e) {
+        if (error.error) observer.next(error.error.message);
+        observer.complete();
+      }
+    });
+  }
+
   private encodePassword(password: string) {
     return Base64.encode(password);
   }
@@ -178,7 +197,7 @@ export class AuthService {
     return false;
   }
 
-  private loginCall(body, headers) {
+  protected loginCall(body, headers) {
     return this.http
       .post(`${this.authOptions?.url}/login`, body, { headers })
       .pipe(
@@ -190,7 +209,9 @@ export class AuthService {
               this.languageService.setLanguage(tokenDecoded.user.locale);
             }
             if (tokenDecoded.user.isExpired) {
-              this.messageService.alert('igo.auth.error.Password expired');
+              this.messageService.alert(
+                'igo.auth.error.intern.Password expired'
+              );
             }
           }
           this.authenticate$.next(true);

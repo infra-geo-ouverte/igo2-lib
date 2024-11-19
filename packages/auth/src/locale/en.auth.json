@@ -11,18 +11,36 @@
       "deconnection": "You are logged out.",
       "home": "Return to the home page",
       "error": {
-        "Password expired": "Password expired",
-        "Maximun logins exceeded": "Maximum logins exceeded",
-        "Login lockout": "Maximum number of attempts exceeded. Your account is locked.",
-        "Wrong password": "Wrong password",
-        "Invalid username": "Invalid username",
-        "Username or password invalid": "Username or password invalid"
+        "intern": {
+          "Password expired": "Password expired",
+          "Maximun logins exceeded": "Maximum logins exceeded",
+          "Login lockout": "Maximum number of attempts exceeded. Your account is locked.",
+          "Wrong password": "Wrong password",
+          "Invalid username": "Invalid username",
+          "Username or password invalid": "Username or password invalid"
+        },
+        "microsoft": {
+          "Invalid Microsoft Id token": "Invalid session",
+          "Invalid Application Id": "Invalid application",
+          "Onpremisessamaccountname missing": "User identifier missing",
+          "Invalid Microsoft Access token": "Invalid session",
+          "Invalid intranet authorization": "Invalid authorization",
+          "Invalid intranet authorization response": "Invalid authorization response"
+        },
+        "mspextranet": {
+          "Invalid portal token id": "Invalid portal session",
+          "Invalid extranet authorization": "Invalid extranet authorization",
+          "Invalid extranet authorization response": "Invalid extranet authorization response"
+        }
       },
       "microsoft": {
         "login": "Sign in"
       },
       "microsoftb2c": {
         "login": "Sign in"
+      },
+      "mspextranet": {
+        "login": "Sign in with extranet portal"
       },
       "or": "Or"
     }

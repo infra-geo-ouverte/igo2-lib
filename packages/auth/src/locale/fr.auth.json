@@ -11,12 +11,27 @@
       "deconnection": "Vous êtes déconnecté",
       "home": "Retourner à la page d'accueil",
       "error": {
-        "Password expired": "Votre mot de passe est expiré",
-        "Maximun logins exceeded": "Nombre maximal de connexions dépassé",
-        "Login lockout": "Nombre maximal d'essais dépassés. Votre compte est verrouillé.",
-        "Wrong password": "Mot de passe incorrect",
-        "Invalid username": "Utilisateur invalide",
-        "Username or password invalid": "Utilisateur ou mot de passe invalide"
+        "intern": {
+          "Password expired": "Votre mot de passe est expiré",
+          "Maximun logins exceeded": "Nombre maximal de connexions dépassé",
+          "Login lockout": "Nombre maximal d'essais dépassés. Votre compte est verrouillé.",
+          "Wrong password": "Mot de passe incorrect",
+          "Invalid username": "Utilisateur invalide",
+          "Username or password invalid": "Utilisateur ou mot de passe invalide"
+        },
+        "microsoft": {
+          "Invalid Microsoft Id token": "Session invalide",
+          "Invalid Application Id": "Application invalide",
+          "Onpremisessamaccountname missing": "Identifiant utilisateur manquant",
+          "Invalid Microsoft Access token": "Session invalide",
+          "Invalid intranet authorization": "Authorization invalide",
+          "Invalid intranet authorization response": "Réponse d'authorization invalide"
+        },
+        "mspextranet": {
+          "Invalid portal token id": "Session portail invalide",
+          "Invalid extranet authorization": "Authorization extranet invalide",
+          "Invalid extranet authorization response": "Réponse d'authorization extranet invalide"
+        }
       },
       "google": {
         "login": "Se connecter avec Google",
@@ -27,6 +42,9 @@
       },
       "microsoftb2c": {
         "login": "Se connecter"
+      },
+      "mspextranet": {
+        "login": "Se connecter avec portail extranet"
       },
       "or": "Ou"
     }

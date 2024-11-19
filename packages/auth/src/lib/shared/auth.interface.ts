@@ -56,6 +56,13 @@ export interface AuthMicrosoftb2cOptionsAuthority {
   authority: string;
 }
 
+export interface MspAuthExtranetOptions {
+  enabled: boolean;
+  contextCookieName?: string;
+  autoLogin?: boolean;
+  logoutUrl?: string;
+}
+
 export interface AuthOptions {
   url?: string;
   tokenKey?: string;
@@ -68,6 +75,7 @@ export interface AuthOptions {
   google?: AuthGoogleOptions;
   microsoft?: AuthMicrosoftOptions;
   microsoftb2c?: AuthMicrosoftb2cOptions;
+  mspextranet?: MspAuthExtranetOptions;
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];

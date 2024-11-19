@@ -16,10 +16,9 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
@@ -34,7 +33,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinner,
+    MatProgressSpinnerModule,
     NgIf,
     IgoLanguageModule
   ]
@@ -57,7 +56,6 @@ export class AuthInternComponent {
 
   constructor(
     public auth: AuthService,
-    private languageService: LanguageService,
     fb: UntypedFormBuilder
   ) {
     this.form = fb.group({
@@ -73,14 +71,10 @@ export class AuthInternComponent {
         this.login.emit(true);
         this.loading = false;
       },
-      (error: any) => {
-        try {
-          this.languageService.translate
-            .get('igo.auth.error.' + error.error.message)
-            .subscribe((errorMsg) => (this.error = errorMsg));
-        } catch {
-          this.error = error.error.message;
-        }
+      (err: any) => {
+        this.auth
+          .translateError('igo.auth.error.intern.', err)
+          .subscribe((translatedErrorMsg) => (this.error = translatedErrorMsg));
         this.loading = false;
       }
     );

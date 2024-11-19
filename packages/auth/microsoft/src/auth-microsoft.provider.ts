@@ -19,8 +19,10 @@ import {
 } from '@azure/msal-angular';
 import {
   BrowserCacheLocation,
+  ILoggerCallback,
   IPublicClientApplication,
   InteractionType,
+  LogLevel,
   PublicClientApplication
 } from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
@@ -59,10 +61,41 @@ export function MSALConfigFactory(
     auth: msConf,
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage
+    },
+    system: {
+      loggerOptions: {
+        loggerCallback,
+        piiLoggingEnabled: false,
+        logLevel: LogLevel.Warning
+      }
     }
   });
   return msalInstance;
 }
+
+const loggerCallback: ILoggerCallback = (
+  level: LogLevel,
+  message: string,
+  containsPii: boolean
+) => {
+  if (containsPii) {
+    return;
+  }
+  switch (level) {
+    case LogLevel.Error:
+      console.error(message);
+      break;
+    case LogLevel.Info:
+      console.info(message);
+      break;
+    case LogLevel.Verbose:
+      console.debug(message);
+      break;
+    case LogLevel.Warning:
+      console.warn(message);
+      break;
+  }
+};
 
 export function MSALConfigFactoryb2c(
   config: ConfigService
@@ -115,7 +148,8 @@ export function MSALAngularConfigFactoryb2c(
 }
 
 export function withMicrosoftSupport(
-  type?: string
+  type: 'b2c' | 'default',
+  serviceFactory: IMsalServiceFactory = msalServiceFactory
 ): AuthFeature<AuthFeatureKind.Microsoft> {
   if (type === 'b2c') {
     return {
@@ -150,21 +184,47 @@ export function withMicrosoftSupport(
           deps: [ConfigService],
           multi: true
         },
-        MsalService
+        MsalService,
+        {
+          provide: AuthService,
+          useFactory: serviceFactory,
+          deps: [
+            HttpClient,
+            TokenService,
+            ConfigService,
+            LanguageService,
+            MessageService,
+            Router,
+            Injector,
+            MSAL_GUARD_CONFIG
+          ]
+        }
       ]
     };
   }
 }
 
-function provideAuthMSALServiceFactory(
+export type IMsalServiceFactory = (
   http: HttpClient,
   tokenService: TokenService,
   config: ConfigService,
   languageService: LanguageService,
   messageService: MessageService,
   router: Router,
-  injector: Injector
-): AuthService {
+  injector: Injector,
+  msalGuardConfig: MSPMsalGuardConfiguration[]
+) => AuthService;
+
+const msalServiceFactory: IMsalServiceFactory = (
+  http: HttpClient,
+  tokenService: TokenService,
+  config: ConfigService,
+  languageService: LanguageService,
+  messageService: MessageService,
+  router: Router,
+  injector: Injector,
+  msalGuardConfig: MSPMsalGuardConfiguration[]
+) => {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
 
   if (!msConf) {
@@ -185,6 +245,7 @@ function provideAuthMSALServiceFactory(
     languageService,
     messageService,
     router,
-    injector.get(MsalService)
+    injector.get(MsalService),
+    msalGuardConfig
   );
-}
+};

@@ -30,6 +30,10 @@
       *ngIf="hasMicrosoftB2c"
       (login)="onLogin()"
     ></igo-auth-microsoftb2c>
+    <msp-auth-extranet
+      *ngIf="hasMspExtranet"
+      (login)="onLogin()"
+    ></msp-auth-extranet>
     <igo-auth-facebook
       *ngIf="hasFacebook"
       (login)="onLogin()"

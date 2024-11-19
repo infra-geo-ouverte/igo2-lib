@@ -1,8 +1,5 @@
-<button
-  class="microsoft-login-button"
-  mat-raised-button
-  (click)="loginMicrosoft()"
->
+<button class="microsoft-login-button" mat-raised-button (click)="loginUser()">
   <igo-icon [icon]="svgIcon"></igo-icon>
   {{ 'igo.auth.microsoft.login' | translate }}
 </button>
+<mat-error *ngIf="error">{{ error }}</mat-error>
