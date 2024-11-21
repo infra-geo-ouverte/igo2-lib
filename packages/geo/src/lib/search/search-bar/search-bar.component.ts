@@ -499,14 +499,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * When the user clicks on the magnifying glass and
    * this find the first object on the map
    */
-
   selectFirstElement() {
     const results = this.store.all();
     // find the highest result score
-    const result = results.reduce(
-      (max: SearchResult, result) =>
-        result.meta.score > max.meta.score ? result : max,
-      results[0]
+    const result = results.reduce((highest: SearchResult, current) =>
+      current.meta.score > highest.meta.score ? current : highest
     );
 
     if (!result) {
@@ -515,19 +512,30 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.store.state.update(result, { focused: true, selected: true }, true);
 
-    if (result.meta.dataType === FEATURE) {
+    if (this.map) {
+      this.handleMap(this.map, result);
+    }
+  }
+
+  private handleMap(
+    map: IgoMap,
+    result: SearchResult<Record<string, any>>
+  ): void {
+    const { dataType } = result.meta;
+
+    if (dataType === FEATURE) {
       const feature = (result as SearchResult<Feature>).data;
-      this.map.searchResultsOverlay.setFeatures(
+      map.searchResultsOverlay.setFeatures(
         [feature] satisfies Feature[],
         FeatureMotion.Default
       );
-    } else if (result.meta.dataType === LAYER) {
+    } else if (dataType === LAYER) {
       const layerOptions = (result as SearchResult<LayerOptions>).data;
       if (layerOptions.sourceOptions.optionsFromApi === undefined) {
         layerOptions.sourceOptions.optionsFromApi = true;
       }
       this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
-        this.map.addLayer(layer);
+        map.addLayer(layer);
       });
     }
   }
