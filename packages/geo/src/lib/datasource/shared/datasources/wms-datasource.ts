@@ -39,7 +39,12 @@ export class WMSDataSource extends DataSource {
   declare public ol: olSourceImageWMS;
 
   get params(): any {
-    return this.options.params as any;
+    return this.options.params;
+  }
+
+  set stylesParams(value: string) {
+    this.options.params.STYLES = value;
+    this.ol.updateParams({ value });
   }
 
   get queryTitle(): string {

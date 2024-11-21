@@ -314,6 +314,15 @@ export class CapabilitiesService {
       queryable = false;
     }
 
+    if (baseOptions.params.STYLES) {
+      const style = legendOptions?.stylesAvailable?.find(
+        (style) => style.name === baseOptions.params.STYLES
+      );
+      if (!style) {
+        delete baseOptions.params.STYLES;
+      }
+    }
+
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
