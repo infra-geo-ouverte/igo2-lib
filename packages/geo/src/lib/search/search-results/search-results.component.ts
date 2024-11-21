@@ -236,8 +236,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
         );
       })
     );
-    console.log('return this store ',this.store.stateView.all$() );
-
   }
 
   /**
