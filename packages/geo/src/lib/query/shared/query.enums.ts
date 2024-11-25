@@ -16,9 +16,11 @@ export enum QueryFormatMimeType {
   JSON = 'application/json',
   GEOJSON = 'application/geojson',
   GEOJSON2 = 'geojson',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   ESRIJSON = 'application/json',
   TEXT = 'text/plain',
   HTML = 'text/html',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   HTMLGML2 = 'text/html'
 }
 

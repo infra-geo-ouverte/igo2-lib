@@ -19,7 +19,8 @@ import proj4 from 'proj4';
 import { BehaviorSubject, Subject, pairwise, skipWhile } from 'rxjs';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { Layer, VectorLayer } from '../../layer/shared/layers';
+import type { Layer } from '../../layer/shared/layers';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { Overlay } from '../../overlay/shared/overlay';
 import { LayerWatcher } from '../utils/layer-watcher';
 import { MapGeolocationController } from './controllers/geolocation';
@@ -186,7 +187,7 @@ export class IgoMap implements MapBase {
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.layerWatcher.subscribe(() => {}, null);
+      this.layerWatcher.subscribe(() => void 1, null);
     } else {
       this.layerWatcher.unsubscribe();
     }
@@ -334,7 +335,7 @@ export class IgoMap implements MapBase {
    * @param layer Layer to add
    * @param push DEPRECATED
    */
-  addLayer(layer: Layer, push = true) {
+  addLayer(layer: Layer) {
     this.addLayers([layer]);
   }
 
@@ -343,7 +344,7 @@ export class IgoMap implements MapBase {
    * @param layers Layers to add
    * @param push DEPRECATED
    */
-  addLayers(layers: Layer[], push = true) {
+  addLayers(layers: Layer[]) {
     let offsetZIndex = 0;
     let offsetBaseLayerZIndex = 0;
     const addedLayers = layers

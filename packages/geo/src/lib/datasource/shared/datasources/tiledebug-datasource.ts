@@ -17,5 +17,7 @@ export class TileDebugDataSource extends DataSource {
     return new TileDebug(baseOptions);
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

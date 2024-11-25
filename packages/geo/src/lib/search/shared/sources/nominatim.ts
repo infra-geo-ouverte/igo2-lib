@@ -228,7 +228,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: NominatimData): { [key: string]: any } {
+  private computeProperties(data: NominatimData): Record<string, any> {
     return {
       display_name: data.display_name,
       place_id: data.place_id,

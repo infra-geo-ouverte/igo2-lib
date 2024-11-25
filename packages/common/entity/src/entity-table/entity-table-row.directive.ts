@@ -38,12 +38,12 @@ export class EntityTableRowDirective {
   /**
    * Whether clicking a row should select it (if selection is true)
    */
-  @Input() selectOnClick: boolean = true;
+  @Input() selectOnClick = true;
 
   /**
    * Whether the selected row should be highlighted
    */
-  @Input() highlightSelection: boolean = true;
+  @Input() highlightSelection = true;
 
   /**
    * Whether a row is selected

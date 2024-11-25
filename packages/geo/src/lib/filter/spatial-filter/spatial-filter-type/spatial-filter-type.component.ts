@@ -98,8 +98,6 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
-  constructor() {}
-
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = this.spatialType.Predefined;
@@ -110,7 +108,7 @@ export class SpatialFilterTypeComponent implements OnInit {
     this.eventType.emit(this.type);
   }
 
-  onTypeChange(event) {
+  onTypeChange() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = SpatialFilterType.Predefined;
     }

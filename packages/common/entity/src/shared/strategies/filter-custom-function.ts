@@ -14,7 +14,7 @@ export class EntityStoreFilterCustomFuncStrategy extends EntityStoreStrategy {
   /**
    * Store / filter ids map
    */
-  private filters: Map<EntityStore, string> = new Map();
+  private filters = new Map<EntityStore, string>();
 
   /**
    * Bind this strategy to a store and start filtering it

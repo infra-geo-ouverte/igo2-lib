@@ -1,6 +1,6 @@
 import { AlternateConfigOptions, DeprecatedOptions } from './config.interface';
 
-export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
+export const CONFIG_DEPRECATED: Record<string, DeprecatedOptions> = {
   showMenuButton: {
     alternativeKey: 'menu.button.visible',
     mayBeRemoveIn: new Date('2024-06-06')

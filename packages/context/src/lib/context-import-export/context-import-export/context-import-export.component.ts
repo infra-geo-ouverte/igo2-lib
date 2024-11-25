@@ -61,7 +61,7 @@ import {
 export class ContextImportExportComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
-  public inputProj: string = 'EPSG:4326';
+  public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public layerList: Layer[];
@@ -69,7 +69,7 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
-  public activeImportExport: string = 'import';
+  public activeImportExport = 'import';
 
   private layers$$: Subscription;
 
@@ -129,14 +129,13 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.contextExportService
       .export(this.res)
       .pipe(take(1))
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
+      .subscribe({
+        error: (error: Error) => this.onFileExportError(error),
+        complete: () => {
           this.onFileExportSuccess();
           this.loading$.next(false);
         }
-      );
+      });
   }
 
   private buildForm() {

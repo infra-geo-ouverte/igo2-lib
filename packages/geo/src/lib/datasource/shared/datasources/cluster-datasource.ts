@@ -19,5 +19,7 @@ export class ClusterDataSource extends FeatureDataSource {
     return uuid();
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

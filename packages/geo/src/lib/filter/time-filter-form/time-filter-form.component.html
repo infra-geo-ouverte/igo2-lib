@@ -21,7 +21,7 @@
         [min]="min"
         [max]="max"
         readonly="readonly"
-        (dateChange)="handleDateChange($event)"
+        (dateChange)="handleDateChange()"
       />
     </mat-form-field>
   </div>
@@ -50,7 +50,7 @@
           [max]="getRangeMaxDate()"
           readonly="readonly"
           (input)="(startDate)"
-          (dateChange)="handleDateChange($event)"
+          (dateChange)="handleDateChange()"
         />
       </mat-form-field>
     </div>
@@ -77,7 +77,7 @@
           [min]="getRangeMinDate()"
           [max]="max"
           readonly="readonly"
-          (dateChange)="handleDateChange($event)"
+          (dateChange)="handleDateChange()"
         />
       </mat-form-field>
     </div>
@@ -90,7 +90,7 @@
       <mat-select
         placeholder="{{ 'igo.geo.timeFilter.date' | translate }}"
         [(ngModel)]="year"
-        (selectionChange)="handleYearChange($event)"
+        (selectionChange)="handleYearChange()"
       >
         <mat-option [value]="year" *ngFor="let year of listYears">{{
           year
@@ -105,7 +105,7 @@
         <mat-select
           placeholder="{{ 'igo.geo.timeFilter.startDate' | translate }}"
           [(ngModel)]="startYear"
-          (selectionChange)="handleYearChange($event)"
+          (selectionChange)="handleYearChange()"
         >
           <mat-option
             [value]="startYear"
@@ -121,7 +121,7 @@
         <mat-select
           placeholder="{{ 'igo.geo.timeFilter.endDate' | translate }}"
           [(ngModel)]="endYear"
-          (selectionChange)="handleYearChange($event)"
+          (selectionChange)="handleYearChange()"
         >
           <mat-option [value]="endYear" *ngFor="let endYear of endListYears">{{
             endYear
@@ -185,7 +185,7 @@
       [disabled]="!options.enabled || !layer.visible"
       mat-icon-button
       color="primary"
-      (click)="playYear($event)"
+      (click)="playYear()"
     >
       <mat-icon>{{ playIcon }}</mat-icon>
     </button>
@@ -193,7 +193,7 @@
       [disabled]="!options.enabled || !layer.visible"
       mat-icon-button
       color="primary"
-      (click)="resetFilter($event)"
+      (click)="resetFilter()"
     >
       <mat-icon>{{ resetIcon }}</mat-icon>
     </button>
@@ -227,7 +227,7 @@
     />
   </mat-slider>
   <p class="date-below">{{ handleSliderTooltip() }}</p>
-  <button mat-icon-button color="primary" (click)="playFilter($event)">
+  <button mat-icon-button color="primary" (click)="playFilter()">
     <mat-icon>{{ playIcon }}</mat-icon>
   </button>
 </div>

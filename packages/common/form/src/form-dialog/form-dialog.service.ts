@@ -17,7 +17,7 @@ export class FormDialogService {
   public open(
     formDialogConfig?: FormDialogFormConfig,
     options?: FormDialogOptions
-  ): Observable<{ [key: string]: any }> {
+  ): Observable<Record<string, any>> {
     const data: FormDialogData = {
       formFieldConfigs: formDialogConfig.formFieldConfigs,
       formGroupsConfigs: formDialogConfig.formGroupsConfigs,

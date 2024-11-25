@@ -36,12 +36,12 @@ $bluedark-palette: (
   )
 );
 
-$primary: mat.define-palette($bluedark-palette, 500);
-$accent: mat.define-palette($bluedark-palette, 200);
-$warn: mat.define-palette(mat.$red-palette);
+$primary: mat.m2-define-palette($bluedark-palette, 500);
+$accent: mat.m2-define-palette($bluedark-palette, 200);
+$warn: mat.m2-define-palette(mat.$m2-red-palette);
 $typography: typography.$igo-typography;
 
-$theme: mat.define-light-theme(
+$theme: mat.m2-define-light-theme(
   (
     color: (
       primary: $primary,

@@ -529,7 +529,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: IChercheData): { [key: string]: any } {
+  private computeProperties(data: IChercheData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -895,7 +895,7 @@ export class IChercheReverseSearchSource
       case 'arrondissements':
         subtitle = data.properties.municipalite + ' (Arrondissement)';
         break;
-      default:
+      default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         const type = typeSetting.values.find(
           (t) => t.value === data.properties.type
@@ -903,6 +903,7 @@ export class IChercheReverseSearchSource
         if (type) {
           subtitle = this.languageService.translate.instant(type.title);
         }
+      }
     }
     return subtitle;
   }
@@ -939,7 +940,7 @@ export class IChercheReverseSearchSource
     };
   }
 
-  private computeProperties(data: IChercheReverseData): { [key: string]: any } {
+  private computeProperties(data: IChercheReverseData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist

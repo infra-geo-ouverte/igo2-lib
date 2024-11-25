@@ -287,14 +287,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   );
 
   // For geometry form field input
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
-  drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<
+  value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
+  drawGuide$ = new BehaviorSubject<number>(null);
+  overlayStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<
+  >(undefined);
+  drawStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
@@ -320,7 +320,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
-  public buffer: number = 0;
+  public buffer = 0;
   public radiusFormControl = new UntypedFormControl();
   public bufferFormControl = new UntypedFormControl();
 

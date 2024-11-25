@@ -10,7 +10,7 @@ import { Toolbox } from './toolbox';
   providedIn: 'root'
 })
 export class ToolService {
-  static tools: { [key: string]: Tool } = {};
+  static tools: Record<string, Tool> = {};
 
   /**
    * Toolbox that holds main tools

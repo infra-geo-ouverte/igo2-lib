@@ -110,9 +110,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public importForm: UntypedFormGroup;
   public formats$ = new BehaviorSubject(undefined);
   public encodings$ = new BehaviorSubject(undefined);
-  public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
-    []
-  );
+  public exportableLayers$ = new BehaviorSubject<AnyLayer[]>([]);
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
@@ -131,22 +129,21 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$: BehaviorSubject<InputProjections[]> =
-    new BehaviorSubject([]);
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   private projectionsConstraints: ProjectionsLimitationsOptions;
 
-  public popupChecked: boolean = false;
+  public popupChecked = false;
 
-  private previousLayerSpecs$: BehaviorSubject<
+  private previousLayerSpecs$ = new BehaviorSubject<
     {
       id: string;
       visible: boolean;
       opacity: number;
       queryable: boolean;
     }[]
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
-  @Input() selectFirstProj: boolean = false;
+  @Input() selectFirstProj = false;
 
   @Input() map: IgoMap;
 
@@ -171,9 +168,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Output() selectMode = new EventEmitter<string>();
 
-  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
-    undefined
-  );
+  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
@@ -557,7 +552,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  handlePopup(preCheck: boolean = true): boolean {
+  handlePopup(preCheck = true): boolean {
     const p1 = window.open('', 'popup', 'width=1, height=1');
     p1.close();
     const p2 = window.open('', 'popup', 'width=1, height=1');
@@ -586,9 +581,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.handlePopup();
     }
 
-    let geomTypesCSV: { geometryType: string; features: any[] }[] = [];
-    let featuresCSV: any[] = [];
-    let filename: string = '';
+    const geomTypesCSV: { geometryType: string; features: any[] }[] = [];
+    const featuresCSV: any[] = [];
+    let filename = '';
 
     for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
@@ -618,6 +613,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           url.match(/service=wfs/gi)
             ? this.downloadService.open(lay)
             : window.open(url, '_blank');
@@ -704,7 +700,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         geomType.features.forEach((feature) => {
           const radius: number = feature.get('rad');
           if (radius) {
-            const center4326: Array<number> = [
+            const center4326: number[] = [
               feature.get('longitude'),
               feature.get('latitude')
             ];
@@ -794,10 +790,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                 data.encoding,
                 this.map.projection
               )
-              .subscribe(
-                () => {},
-                (error: Error) => this.onFileExportError(error),
-                () => {
+              .subscribe({
+                error: (error: Error) => this.onFileExportError(error),
+                complete: () => {
                   this.onFileExportSuccess();
 
                   geomType.features.forEach((feature) => {
@@ -806,7 +801,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
                   this.loading$.next(false);
                 }
-              )
+              })
           );
         }
       }
@@ -824,10 +819,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           data.encoding,
           this.map.projection
         )
-        .subscribe(
-          () => {},
-          (error: Error) => this.onFileExportError(error),
-          () => {
+        .subscribe({
+          error: (error: Error) => this.onFileExportError(error),
+          complete: () => {
             this.onFileExportSuccess();
 
             featuresCSV.forEach((feature) => {
@@ -836,7 +830,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
             this.loading$.next(false);
           }
-        );
+        });
     }
   }
 
@@ -844,8 +838,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const titleRow = currentFeature.clone();
     const headerRow = currentFeature.clone();
     const emptyRow = currentFeature.clone();
-    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
-    let firstKeyPrevious: string = '';
+    const previousFeatureKeys: string[] = previousFeature.getKeys();
+    let firstKeyPrevious = '';
     for (const key in previousFeatureKeys) {
       if (previousFeatureKeys[key] !== 'geometry') {
         firstKeyPrevious = previousFeatureKeys[key];
@@ -853,15 +847,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
     }
 
-    const currentFeatureKeys: Array<string> = currentFeature.getKeys();
-    let firstKeyCurrent: string = '';
+    const currentFeatureKeys: string[] = currentFeature.getKeys();
+    let firstKeyCurrent = '';
     for (const key in currentFeatureKeys) {
       if (currentFeatureKeys[key] !== 'geometry') {
         firstKeyCurrent = currentFeatureKeys[key];
         break;
       }
     }
-    const allKeys: Array<string> = currentFeature.getKeys();
+    const allKeys: string[] = currentFeature.getKeys();
     previousFeatureKeys.forEach((previousKey) => {
       if (allKeys.includes(previousKey) && previousKey !== firstKeyPrevious) {
         allKeys.push(previousKey);
@@ -869,7 +863,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     });
     allKeys.unshift(firstKeyPrevious);
 
-    let firstKeyAll: string = '';
+    let firstKeyAll = '';
     for (const key in allKeys) {
       if (allKeys[key] !== 'geometry') {
         firstKeyAll = allKeys[key];
@@ -1003,7 +997,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     handleFileImportError(file, error, this.messageService, this.fileSizeMb);
   }
 
-  private onPopupBlockedError(preCheck: boolean = true) {
+  private onPopupBlockedError(preCheck = true) {
     this.loading$.next(false);
     const extraMessage = preCheck
       ? 'igo.geo.export.popupBlocked.selectAgain'

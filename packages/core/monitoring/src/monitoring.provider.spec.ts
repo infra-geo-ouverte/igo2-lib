@@ -1,16 +1,11 @@
-import { BaseEnvironmentOptions } from '../../environment/src/public_api';
 import { MOCK_MONITORING_OPTIONS } from './__mocks__/monitoring-mock';
 import { MONITORING_OPTIONS, provideMonitoring } from './monitoring.provider';
 import { MonitoringOptions } from './shared';
 
 describe('Provide Monitoring', () => {
-  let environment: BaseEnvironmentOptions;
   let options: MonitoringOptions;
 
   beforeEach(() => {
-    environment = {
-      production: true
-    };
     options = { ...MOCK_MONITORING_OPTIONS };
   });
 

@@ -27,5 +27,5 @@ export class PanelComponent {
   }
   private _withHeader = true;
 
-  @Input() cursorPointer: boolean = false;
+  @Input() cursorPointer = false;
 }

@@ -29,6 +29,4 @@ export class OgcFilterableListComponent {
   @Input() layers: Layer[];
 
   @Input() map: MapBase;
-
-  constructor() {}
 }

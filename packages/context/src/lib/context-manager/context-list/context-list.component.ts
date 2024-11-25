@@ -78,9 +78,7 @@ import { ContextListControlsEnum } from './context-list.enum';
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
-    this.contextsInitial
-  );
+  contexts$ = new BehaviorSubject<ContextsList>(this.contextsInitial);
 
   change$ = new ReplaySubject<void>(1);
 
@@ -158,7 +156,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   get term(): string {
     return this._term;
   }
-  public _term: string = '';
+  public _term = '';
 
   get sortedAlpha(): boolean {
     return this._sortedAlpha;
@@ -303,11 +301,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
         return true;
       case ContextListControlsEnum.never:
         return false;
-      default:
+      default: {
         let totalLength = this.contexts.ours.length;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.contexts.public
           ? (totalLength += this.contexts.public.length)
           : (totalLength += 0);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.contexts.shared
           ? (totalLength += this.contexts.shared.length)
           : (totalLength += 0);
@@ -315,6 +315,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           return true;
         }
         return false;
+      }
     }
   }
 

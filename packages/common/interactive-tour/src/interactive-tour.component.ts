@@ -39,7 +39,7 @@ export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
    */
-  @Input() tourToStart: string = '';
+  @Input() tourToStart = '';
   @Input() styleButton: 'icon' | 'raised';
   @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
 
@@ -93,9 +93,7 @@ export class InteractiveTourComponent {
 
   get showTourButton(): boolean {
     // 2 conditions to show: have Tour on tool in Config file and if we are in mobile displayInMobile= true
-    let haveTour: boolean;
-    haveTour = this.isToolHaveTour;
-    if (haveTour === false) {
+    if (this.isToolHaveTour === false) {
       return false;
     }
 
