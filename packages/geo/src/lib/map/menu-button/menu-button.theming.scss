@@ -11,10 +11,10 @@
 
   igo-menu-button > button#menu-button {
     color: $app-background-color;
-    background-color: mat.get-color-from-palette($primary);
+    background-color: mat.m2-get-color-from-palette($primary);
   }
   igo-menu-button > button#menu-button.menu-button-white-background {
-    color: mat.get-color-from-palette($primary);
+    color: mat.m2-get-color-from-palette($primary);
     background-color: $app-background-color;
   }
 }

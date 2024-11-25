@@ -58,11 +58,11 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
-    private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
-    private layerDBService: LayerDBService,
-    private geostylerStyleService: GeostylerService,
-    @Optional() private authInterceptor: AuthInterceptor
+    @Optional() private geoNetworkService?: GeoNetworkService,
+    @Optional() private layerDBService?: LayerDBService,
+    @Optional() private authInterceptor?: AuthInterceptor,
+    @Optional() private geostylerStyleService?: GeostylerService
   ) {}
 
   createLayer(layerOptions: AnyLayerOptions): Layer {
@@ -101,12 +101,13 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
-      case MVTDataSource:
+      case MVTDataSource: {
         const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
           _layerOptions as VectorTileLayerOptions
         );
         break;
+      }
       default:
         break;
     }
@@ -237,7 +238,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -258,7 +259,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -273,7 +274,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -426,8 +427,8 @@ export class LayerService {
     }
   }
 
-  createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
-    return this.layerDBService.getAll().pipe(
+  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
+    return this.layerDBService?.getAll().pipe(
       concatMap((res) => {
         const idbLayers =
           contextUri !== '*'

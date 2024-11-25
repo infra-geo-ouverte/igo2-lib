@@ -40,9 +40,7 @@ export class TrackFeatureButtonComponent implements OnInit {
     return this.layer.options;
   }
 
-  public color: string = 'primary';
-
-  constructor() {}
+  public color = 'primary';
 
   ngOnInit() {
     this.color = this.trackFeature ? 'primary' : 'basic';
@@ -50,7 +48,7 @@ export class TrackFeatureButtonComponent implements OnInit {
 
   toggleTrackFeature() {
     if (this.trackFeature) {
-      this.layer.disableTrackFeature(this.layer.options.trackFeature);
+      this.layer.disableTrackFeature();
       this.color = 'basic';
     } else {
       this.layer.enableTrackFeature(this.layer.options.trackFeature);

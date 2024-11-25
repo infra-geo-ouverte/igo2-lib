@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class ClonePipe implements PipeTransform {
-  transform(value: any, args?: any): any {
+  transform(value: any): any {
     if (value === undefined) {
       return value;
     }

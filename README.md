@@ -52,18 +52,18 @@ Require:
 | >= 16.x      | >= 18.10.0   |
 | >= 1.15.x    | >= 16.19.x   |
 | >= 1.13.x    | >= 14, <= 16 |
-|  1.5.x       | >= 12, <= 14 |
+| 1.5.x        | >= 12, <= 14 |
 | < 1.5.x      | >= 8, <= 11  |
 | 0.x.x        | >= 6, <= 10  |
 
 If you want to develop in IGO2 Library, it can be installed by:
 
-1.  Clone  current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
 2.  Navigate to the folder igo2-lib : `cd igo2-lib/`
 3.  Install dependencies by running `npm install`
-3.  Build librairies: `npm run build.libs`
-4.  Start form npm `npm start.demo` (or you can run the VsCode config (`Launch Demo`))
-5.  Open your browser at http://localhost:4200/
+4.  Build librairies: `npm run build.libs`
+5.  Start form npm `npm start.demo` (or you can run the VsCode config (`Launch Demo`))
+6.  Open your browser at http://localhost:4200/
 
 ### Build
 

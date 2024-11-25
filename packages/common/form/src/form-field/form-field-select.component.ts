@@ -46,7 +46,7 @@ import {
   ]
 })
 export class FormFieldSelectComponent implements OnInit {
-  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly disabled$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Select input choices
@@ -58,13 +58,12 @@ export class FormFieldSelectComponent implements OnInit {
   get choices(): FormFieldSelectChoice[] {
     return this.choices$.value;
   }
-  readonly choices$: BehaviorSubject<FormFieldSelectChoice[]> =
-    new BehaviorSubject([]);
+  readonly choices$ = new BehaviorSubject<FormFieldSelectChoice[]>([]);
 
   /**
    * If the select allow multiple selections
    */
-  @Input() multiple: boolean = false;
+  @Input() multiple = false;
 
   /**
    * The field's form control
@@ -79,12 +78,12 @@ export class FormFieldSelectComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: { [key: string]: string };
+  @Input() errors: Record<string, string>;
 
   /**
    * Wheter a disable switch should be available
    */
-  @Input() disableSwitch: boolean = false;
+  @Input() disableSwitch = false;
 
   /**
    * Whether the field is required

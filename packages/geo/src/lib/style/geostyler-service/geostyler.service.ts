@@ -2,11 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { LegendRenderer } from 'geostyler-legend';
 import { OlStyleParser as OpenLayersParser } from 'geostyler-openlayers-parser';
-import {
-  Style as GeostylerStyle,
-  IconSymbolizer,
-  WriteStyleResult
-} from 'geostyler-style';
+import { IconSymbolizer, Style, WriteStyleResult } from 'geostyler-style';
 import { Observable, from, map, tap } from 'rxjs';
 
 import { StyleSourceType } from '../shared';
@@ -41,12 +37,12 @@ export class GeostylerService {
    * @param Observable geostyler WriteStyleResult
    * @returns
    */
-  public geostylerToOl(options: GeostylerStyle): Observable<WriteStyleResult> {
+  public geostylerToOl(options: Style): Observable<WriteStyleResult> {
     return this.geostylerTo(options, StyleSourceType.OpenLayers);
   }
 
   private geostylerTo(
-    options: GeostylerStyle,
+    options: Style,
     destStyle: StyleSourceType
   ): Observable<WriteStyleResult> {
     let parser;
@@ -61,7 +57,7 @@ export class GeostylerService {
   }
 
   public geostylerStyleToLegend(
-    style: GeostylerStyle,
+    style: Style,
     type: GeostylerLegendType = GeostylerLegendType.SVG,
     width?: number,
     height?: number
@@ -70,13 +66,12 @@ export class GeostylerService {
   }
 
   public geostylerStylesToLegend(
-    styles: GeostylerStyle[],
+    styles: Style[],
     type: GeostylerLegendType = GeostylerLegendType.SVG,
     width?: number,
     height?: number
   ): Observable<string> {
-    const layerDescriptors: GeostylerStyle[] =
-      this.transferLayersToLegend(styles);
+    const layerDescriptors = this.transferLayersToLegend(styles);
 
     const nbOfRules = styles.reduce(
       (partialSum, style) => partialSum + style.rules.length,
@@ -116,18 +111,19 @@ export class GeostylerService {
     );
   }
 
-  private transferLayersToLegend(styles: GeostylerStyle[]) {
+  private transferLayersToLegend(styles: Style[]): Style[] {
     const _styles = [...styles];
-    const layerDescriptorsList: GeostylerStyle[] = [];
+    const layerDescriptorsList: Style[] = [];
     _styles.forEach((_stylesItem) => {
       const descriptorLayerRulesAdapted = [];
-      let descriptorLayerName = _stylesItem.name;
+      const descriptorLayerName = _stylesItem.name;
       _stylesItem.rules.map((styleRule) => {
-        var styleRuleSymbolizersAdapted = [];
+        const styleRuleSymbolizersAdapted = [];
         styleRule.symbolizers.map((styleRuleSymbolizer) => {
           switch (styleRuleSymbolizer.kind) {
             case 'Icon':
               (styleRuleSymbolizer as IconSymbolizer).size = 15;
+              break;
             default:
               break;
           }
@@ -140,7 +136,7 @@ export class GeostylerService {
           )
         });
       });
-      const styleNoRadius: any = {
+      const styleNoRadius: Style = {
         name: descriptorLayerName,
         rules: descriptorLayerRulesAdapted
       };

@@ -45,8 +45,8 @@ import {
   ]
 })
 export class FormFieldTextComponent implements OnInit {
-  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  hide: boolean = true;
+  disabled$ = new BehaviorSubject<boolean>(false);
+  hide = true;
   private lastTimeoutRequest;
 
   /**
@@ -67,12 +67,12 @@ export class FormFieldTextComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: { [key: string]: string };
+  @Input() errors: Record<string, string>;
 
   /**
    * Wheter a disable switch should be available
    */
-  @Input() disableSwitch: boolean = false;
+  @Input() disableSwitch = false;
 
   /**
    * Whether the field is required
@@ -112,7 +112,7 @@ export class FormFieldTextComponent implements OnInit {
     this.hide = !this.hide;
     this.delayedHide();
   }
-  delayedHide(delayMS: number = 10000) {
+  delayedHide(delayMS = 10000) {
     if (this.isPassword && !this.hide) {
       if (this.lastTimeoutRequest) {
         clearTimeout(this.lastTimeoutRequest);

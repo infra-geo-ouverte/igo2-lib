@@ -94,8 +94,8 @@ export function formatWFSQueryString(
   count?: number,
   epsg?: string,
   properties?: string,
-  startIndex: number = 0,
-  forceDefaultOutputFormat: boolean = false
+  startIndex = 0,
+  forceDefaultOutputFormat = false
 ): { name: string; value: string }[] {
   const versionWfs200 = '2.0.0'; // not the same usage as defaultWfsVersion.
   const url = dataSourceOptions.urlWfs;

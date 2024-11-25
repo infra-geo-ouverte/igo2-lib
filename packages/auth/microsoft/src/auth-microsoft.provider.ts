@@ -67,11 +67,7 @@ export function MSALConfigFactoryb2c(
   return myMsalObj;
 }
 
-export function MSALAngularConfigFactory(
-  config: ConfigService
-): MSPMsalGuardConfiguration {
-  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
-
+export function MSALAngularConfigFactory(): MSPMsalGuardConfiguration {
   return {
     interactionType: InteractionType.Popup,
     authRequest: {

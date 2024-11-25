@@ -10,7 +10,7 @@ export interface MVTDataSourceOptions extends DataSourceOptions {
   ol?: olSourceVectorTile;
   url?: string;
   pathOffline?: string;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
+  excludeAttribute?: string[];
+  excludeAttributeOffline?: string[];
   featureClass?: string;
 }

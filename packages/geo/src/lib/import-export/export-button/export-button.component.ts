@@ -43,8 +43,6 @@ export class ExportButtonComponent {
   }
   private _color = 'primary';
 
-  constructor() {}
-
   get options(): DataSourceOptions {
     if (!this.layer) {
       return;

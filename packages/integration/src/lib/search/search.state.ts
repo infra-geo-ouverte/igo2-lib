@@ -56,31 +56,19 @@ export class SearchState {
     focus: FeatureMotion.None
   };
 
-  readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(
-    '|'
-  );
+  readonly searchTermSplitter$ = new BehaviorSubject<string>('|');
 
-  readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchTerm$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  readonly searchDisabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchResultsGeometryEnabled$: BehaviorSubject<boolean> =
-    new BehaviorSubject(false);
+  readonly searchResultsGeometryEnabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchSettingsChange$: BehaviorSubject<boolean> =
-    new BehaviorSubject(undefined);
+  readonly searchSettingsChange$ = new BehaviorSubject<boolean>(undefined);
 
-  readonly selectedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
-    undefined
-  );
+  readonly selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
 
   /**
    * Store that holds the search results
@@ -138,7 +126,7 @@ export class SearchState {
   private monitorLayerDeletion() {
     this.mapState.map.layers$.subscribe((layers) => {
       this.searchLayerStores.forEach((store) => {
-        let layer = layers.find((l) => l.id === store.layer.id);
+        const layer = layers.find((l) => l.id === store.layer.id);
         if (!layer) {
           const index = this.searchLayerStores.indexOf(store);
           this.searchLayerStores.splice(index, 1);

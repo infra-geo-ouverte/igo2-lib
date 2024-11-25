@@ -34,8 +34,6 @@ export class AppEntitySelectorComponent implements OnInit, OnDestroy {
     new BehaviorSubject<DemoEntity>(undefined);
   public entityIsSelected: boolean;
 
-  constructor() {}
-
   ngOnInit(): void {
     this.store.load([
       { id: '2', name: 'Name 2', description: '<b>Description 2</b>' },

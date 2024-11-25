@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -33,7 +36,6 @@ describe('SearchSettingsComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        HttpClientModule,
         CommonModule,
         MatTooltipModule,
         MatIconModule,
@@ -51,7 +53,8 @@ describe('SearchSettingsComponent', () => {
         provideMockTranslation(),
         provideDefaultIChercheSearchResultFormatter(),
         provideDefaultCoordinatesSearchResultFormatter(),
-        provideILayerSearchResultFormatter()
+        provideILayerSearchResultFormatter(),
+        provideHttpClient(withInterceptorsFromDi())
       ]
     }).compileComponents();
   }));

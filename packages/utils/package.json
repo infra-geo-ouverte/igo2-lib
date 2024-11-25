@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "17.0.0-next.6",
+  "version": "18.0.0-next.5",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -16,12 +16,11 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "build": "ng build utils --configuration production && npm run clean-exports",
-    "clean-exports": "ts-node ../../scripts/src/core/clean-exports.ts utils",
+    "build": "ng build utils --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/postbuild-library.mts utils",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint utils",
     "lint.fix": "ng lint utils --fix",
-    "publish": "npm publish ../../dist/utils",
     "test": "ng test utils --watch=false",
     "watch": "ng build utils --watch"
   },
@@ -31,15 +30,15 @@
     }
   },
   "dependencies": {
-    "bowser": "^2.10.0",
+    "bowser": "^2.11.0",
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.6",
-    "@angular/core": "^17.0.6",
-    "@angular/platform-browser": "^17.0.6"
+    "@angular/common": "^18.0.0",
+    "@angular/core": "^18.0.0",
+    "@angular/platform-browser": "^18.0.0"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }

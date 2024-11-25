@@ -33,7 +33,7 @@ export function addLayerAndFeaturesToMap(
   contextUri: string,
   layerTitle: string,
   layerService: LayerService,
-  storeToIdb: boolean = false
+  storeToIdb = false
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -48,7 +48,7 @@ export function addLayerAndFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
   let randomStyle;
-  let editable: boolean = false;
+  let editable = false;
   if (
     olFeatures[0].getKeys().includes('_style') ||
     olFeatures[0].getKeys().includes('_mapTitle')
@@ -84,7 +84,7 @@ export function addLayerAndFeaturesStyledToMap(
   layerId?: string,
   imposedSourceOptions?,
   imposedLayerOptions?,
-  zoomTo: boolean = true
+  zoomTo = true
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)

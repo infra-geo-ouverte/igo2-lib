@@ -42,7 +42,7 @@ import {
   ]
 })
 export class FormFieldTextareaComponent implements OnInit {
-  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  disabled$ = new BehaviorSubject<boolean>(false);
 
   /**
    * The field's form control
@@ -57,12 +57,12 @@ export class FormFieldTextareaComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: { [key: string]: string };
+  @Input() errors: Record<string, string>;
 
   /**
    * Wheter a disable switch should be available
    */
-  @Input() disableSwitch: boolean = false;
+  @Input() disableSwitch = false;
 
   /**
    * Whether the field is required

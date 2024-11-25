@@ -79,7 +79,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup: boolean = true;
+  @Input() toggleCollapsedGroup = true;
 
   constructor(
     private layerService: LayerService,

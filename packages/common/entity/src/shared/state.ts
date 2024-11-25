@@ -132,7 +132,7 @@ export class EntityStateManager<
     entities.forEach((entity: E) => {
       const currentState = this.get(entity);
       const changes = keys.reduce(
-        (acc: { [key: string]: boolean }, key: string) => {
+        (acc: Record<string, boolean>, key: string) => {
           acc[key] = currentState[key] || false;
           return acc;
         },

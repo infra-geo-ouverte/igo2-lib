@@ -5,6 +5,6 @@
   $primary: map.get($theme, primary);
 
   igo-layer-legend img:after {
-    border-top-color: mat.get-color-from-palette($primary);
+    border-top-color: mat.m2-get-color-from-palette($primary);
   }
 }

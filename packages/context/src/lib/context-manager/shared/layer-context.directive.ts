@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
@@ -26,8 +25,7 @@ import { ContextService } from './context.service';
 
 @Directive({
   selector: '[igoLayerContext]',
-  standalone: true,
-  providers: [HttpClientModule]
+  standalone: true
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
@@ -35,7 +33,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: Layer[] = [];
 
-  @Input() removeLayersOnContextChange: boolean = true;
+  @Input() removeLayersOnContextChange = true;
 
   get map(): IgoMap {
     return this.component.map;
@@ -86,7 +84,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     this.contextLayers = [];
 
     const layersAndIndex$ = merge(
-      ...context.layers.map((layerOptions: LayerOptions, index: number) => {
+      ...context.layers.map((layerOptions: LayerOptions) => {
         return this.layerService.createAsyncLayer(layerOptions, context.uri);
       })
     );
@@ -114,10 +112,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         }
       });
 
-    this.layerService
-      .createAsyncIdbLayers(context.uri)
-      .pipe(debounceTime(500))
-      .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
+    if (this.configService.getConfig('offline')?.enable) {
+      this.layerService
+        .createAsyncIdbLayers(context.uri)
+        .pipe(debounceTime(500))
+        .subscribe((layers) => this.handleAddLayers(layers));
+    }
   }
 
   private handleAddLayers(layers: Layer[]) {
@@ -125,7 +125,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       .filter((layer: Layer) => layer !== undefined)
       .map((layer) => {
         layer.visible = this.computeLayerVisibilityFromUrl(layer);
-        layer.zIndex = layer.zIndex;
 
         return layer;
       });

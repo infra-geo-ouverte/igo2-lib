@@ -1,3 +1,1 @@
-export interface RegexOptions {
-  [key: string]: any;
-}
+export type RegexOptions = Record<string, any>;

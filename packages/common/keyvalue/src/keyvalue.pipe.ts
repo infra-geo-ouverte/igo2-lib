@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class KeyValuePipe implements PipeTransform {
-  transform(value: any, args?: any): any {
+  transform(value: any): any {
     const keyValues = [];
     Object.getOwnPropertyNames(value).forEach((key: string) =>
       keyValues.push({ key, value: value[key] })

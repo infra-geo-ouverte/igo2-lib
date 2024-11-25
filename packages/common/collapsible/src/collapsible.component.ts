@@ -31,5 +31,5 @@ export class CollapsibleComponent {
   }
   private _collapsed = false;
 
-  @Output() toggle: EventEmitter<boolean> = new EventEmitter();
+  @Output() toggle = new EventEmitter<boolean>();
 }

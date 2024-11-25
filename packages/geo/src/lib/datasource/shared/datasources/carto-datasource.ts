@@ -119,5 +119,7 @@ export class CartoDataSource extends DataSource {
     }
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

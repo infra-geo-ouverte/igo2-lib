@@ -64,12 +64,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whter to query features or not
    */
-  @Input() queryFeatures: boolean = false;
+  @Input() queryFeatures = false;
 
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesHitTolerance: number = 0;
+  @Input() queryFeaturesHitTolerance = 0;
 
   /**
    * Feature query hit tolerance
@@ -79,7 +79,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whether all query should complete before emitting an event
    */
-  @Input() waitForAllQueries: boolean = true;
+  @Input() waitForAllQueries = true;
 
   /**
    * Event emitted when a query (or all queries) complete

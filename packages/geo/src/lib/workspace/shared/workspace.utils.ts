@@ -122,7 +122,7 @@ export function getGeoServiceAction(
       tooltip: '',
       renderer: EntityTableColumnRenderer.ButtonGroup,
       valueAccessor: (entity: Feature, record: EntityRecord<Feature>) => {
-        let geoServiceProperties = record.state.geoService;
+        const geoServiceProperties = record.state.geoService;
         if (
           geoServiceProperties &&
           geoServiceProperties.haveGeoServiceProperties &&

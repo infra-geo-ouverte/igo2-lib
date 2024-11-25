@@ -17,6 +17,4 @@ export class BackdropComponent {
     this._shown = value;
   }
   private _shown: boolean;
-
-  constructor() {}
 }

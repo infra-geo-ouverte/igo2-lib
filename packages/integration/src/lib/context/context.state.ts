@@ -18,7 +18,7 @@ export class ContextState {
   /**
    * Observable of the active context
    */
-  context$: BehaviorSubject<DetailedContext> = new BehaviorSubject(undefined);
+  context$ = new BehaviorSubject<DetailedContext>(undefined);
 
   constructor(
     private contextService: ContextService,

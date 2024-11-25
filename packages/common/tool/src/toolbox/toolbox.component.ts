@@ -38,7 +38,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Observable of the active tool
    */
-  activeTool$: BehaviorSubject<Tool> = new BehaviorSubject(undefined);
+  activeTool$ = new BehaviorSubject<Tool>(undefined);
 
   get isActive(): boolean {
     return !!this.activeTool$.value;
@@ -52,12 +52,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Observable of he anmation state
    */
-  animation$: BehaviorSubject<string> = new BehaviorSubject('none');
+  animation$ = new BehaviorSubject<string>('none');
 
   /**
    * Observable of the toolbar
    */
-  toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+  toolbar$ = new BehaviorSubject<string[]>([]);
 
   /**
    * Whether the Toolbar should display actions' titles
@@ -96,7 +96,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Whether the toolbox should animate the first tool entering
    */
-  @Input() animate: boolean = false;
+  @Input() animate = false;
 
   /**
    * Color of Toolbox
@@ -164,7 +164,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @returns Tool inputs
    * @internal
    */
-  getToolInputs(tool: Tool): { [key: string]: any } {
+  getToolInputs(tool: Tool): Record<string, any> {
     return tool.options || {};
   }
 
@@ -227,7 +227,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
         },
-        ngClass: (_tool: Tool, _toolbox: Toolbox) => {
+        ngClass: (_tool: Tool) => {
           return this.toolbox.activeTool$.pipe(
             map((activeTool: Tool) => {
               let toolActivated = false;

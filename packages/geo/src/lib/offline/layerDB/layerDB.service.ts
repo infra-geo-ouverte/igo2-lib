@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject, of } from 'rxjs';
@@ -6,13 +6,11 @@ import { concatMap, first } from 'rxjs/operators';
 
 import { LayerDBData } from './layerDB.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LayerDBService {
   readonly dbName: string = 'layerData';
 
-  constructor(private ngxIndexedDBService: NgxIndexedDBService) {}
+  constructor(@Optional() private ngxIndexedDBService: NgxIndexedDBService) {}
 
   /**
    * This method allow to update the stored layer into the indexeddb (layerData)
@@ -20,14 +18,14 @@ export class LayerDBService {
    * @returns
    */
   update(layerDBData: LayerDBData): Observable<any> {
-    const subject: Subject<LayerDBData> = new Subject();
+    const subject = new Subject<LayerDBData>();
     this.ngxIndexedDBService
-      .getByID(this.dbName, layerDBData.layerId)
+      ?.getByID(this.dbName, layerDBData.layerId)
       .pipe(
         first(),
         concatMap((dbObject: LayerDBData) => {
           if (!dbObject) {
-            return this.ngxIndexedDBService.add(this.dbName, layerDBData);
+            return this.ngxIndexedDBService?.add(this.dbName, layerDBData);
           } else {
             return this.customUpdate(layerDBData);
           }
@@ -41,8 +39,8 @@ export class LayerDBService {
   }
 
   private customUpdate(layerDBData: LayerDBData): Observable<LayerDBData> {
-    const subject: Subject<LayerDBData> = new Subject();
-    const deleteRequest = this.ngxIndexedDBService.deleteByKey(
+    const subject = new Subject<LayerDBData>();
+    const deleteRequest = this.ngxIndexedDBService?.deleteByKey(
       this.dbName,
       layerDBData.layerId
     );
@@ -50,7 +48,7 @@ export class LayerDBService {
       .pipe(
         concatMap((isDeleted) =>
           isDeleted
-            ? this.ngxIndexedDBService.add(this.dbName, layerDBData)
+            ? this.ngxIndexedDBService?.add(this.dbName, layerDBData)
             : of(undefined)
         )
       )
@@ -69,7 +67,7 @@ export class LayerDBService {
    * @returns
    */
   getByID(layerId: string): Observable<LayerDBData> {
-    return this.ngxIndexedDBService.getByID(this.dbName, layerId);
+    return this.ngxIndexedDBService?.getByID(this.dbName, layerId);
   }
 
   /**
@@ -78,7 +76,7 @@ export class LayerDBService {
    * @returns
    */
   deleteByKey(layerId: string): Observable<boolean> {
-    return this.ngxIndexedDBService.deleteByKey(this.dbName, layerId);
+    return this.ngxIndexedDBService?.deleteByKey(this.dbName, layerId);
   }
 
   /**
@@ -87,6 +85,6 @@ export class LayerDBService {
    * @returns
    */
   getAll(): Observable<LayerDBData[]> {
-    return this.ngxIndexedDBService.getAll(this.dbName);
+    return this.ngxIndexedDBService?.getAll(this.dbName);
   }
 }
