@@ -5,8 +5,6 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
 
 @Injectable()
 export class TimeFilterService {
-  constructor() {}
-
   filterByDate(
     datasource: WMSDataSource | TileArcGISRestDataSource,
     date: Date | [Date, Date]

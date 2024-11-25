@@ -34,43 +34,43 @@ export class DrawControl {
   /**
    * Draw start observable
    */
-  public start$: Subject<OlGeometry> = new Subject();
+  public start$ = new Subject<OlGeometry>();
 
   /**
    * Draw end observable
    */
-  public end$: Subject<OlGeometry> = new Subject();
+  public end$ = new Subject<OlGeometry>();
 
   /**
    * Draw changes observable (while drawing)
    */
-  public changes$: Subject<any> = new Subject();
+  public changes$ = new Subject<any>();
 
   /**
    * Draw modify observable (modify drawn features)
    */
-  public modify$: Subject<OlGeometry> = new Subject();
+  public modify$ = new Subject<OlGeometry>();
 
   /**
    * Draw select observable (modify drawn features)
    */
-  public select$: Subject<any> = new Subject();
+  public select$ = new Subject<any>();
 
   /**
    * Draw abort observable (abort drawn features)
    */
-  public abort$: Subject<any> = new Subject();
+  public abort$ = new Subject<any>();
 
   /**
    * Freehand mode observable (defaults to false)
    */
-  freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  freehand$ = new BehaviorSubject<boolean>(false);
   /**
    * Observables from predefined radius (defaults to false and undefined)
    */
-  ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
-  radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  ispredefinedRadius$ = new BehaviorSubject<boolean>(false);
+  predefinedRadius$ = new BehaviorSubject<number>(undefined);
+  radiusDrawEnd$ = new BehaviorSubject<number>(undefined);
 
   private keyDown$$: Subscription;
 

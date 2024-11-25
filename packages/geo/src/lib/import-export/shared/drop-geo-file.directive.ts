@@ -37,8 +37,8 @@ export class DropGeoFileDirective
   extends DragAndDropDirective
   implements OnInit, OnDestroy
 {
-  protected filesDropped: EventEmitter<File[]> = new EventEmitter();
-  protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
+  protected filesDropped = new EventEmitter<File[]>();
+  protected filesInvalid = new EventEmitter<File[]>();
   private epsgCode$$: Subscription[] = [];
   private filesDropped$$: Subscription;
 

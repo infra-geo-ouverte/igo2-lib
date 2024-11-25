@@ -10,13 +10,6 @@ const getOptions = (
 });
 
 describe('isTracingEnabled', () => {
-  it('should return true if enableTracing is true', () => {
-    const options: SentryMonitoringOptions = getOptions({
-      enableTracing: true
-    });
-    expect(isTracingEnabled(options)).toBe(true);
-  });
-
   it('should return true if tracesSampleRate is set', () => {
     const options: SentryMonitoringOptions = getOptions({
       tracesSampleRate: 0.5

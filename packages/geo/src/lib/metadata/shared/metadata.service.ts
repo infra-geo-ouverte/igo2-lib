@@ -6,8 +6,6 @@ import { MetadataOptions } from './metadata.interface';
   providedIn: 'root'
 })
 export class MetadataService {
-  constructor() {}
-
   open(metadata: MetadataOptions) {
     if (metadata.extern) {
       window.open(metadata.url, '_blank');

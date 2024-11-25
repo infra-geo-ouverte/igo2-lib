@@ -13,14 +13,14 @@
   igo-interactive-tour {
     button {
       &.tour-button-tool-icon {
-        color: mat.get-color-from-palette($primary, darker-contrast);
+        color: mat.m2-get-color-from-palette($primary, darker-contrast);
 
         &:hover {
-          background-color: mat.get-color-from-palette(
+          background-color: mat.m2-get-color-from-palette(
             $primary,
             default-contrast
           );
-          color: mat.get-color-from-palette($primary);
+          color: mat.m2-get-color-from-palette($primary);
         }
       }
     }

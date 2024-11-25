@@ -58,7 +58,7 @@ export class AboutToolComponent implements OnInit {
   set html(value: string) {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
-  private _discoverTitleInLocale: string = 'IGO';
+  private _discoverTitleInLocale = 'IGO';
   public discoverTitleInLocale$: Observable<string> = of(
     this._discoverTitleInLocale
   );
@@ -75,7 +75,7 @@ export class AboutToolComponent implements OnInit {
   @Input() trainingGuideURLs;
 
   public effectiveVersion: string;
-  private _html: string = 'igo.integration.aboutTool.html';
+  private _html = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
   private baseUrlProfil;

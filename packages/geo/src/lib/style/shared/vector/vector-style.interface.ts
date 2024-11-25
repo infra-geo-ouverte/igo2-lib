@@ -10,12 +10,12 @@ export interface FeatureCommonVectorStyleOptions
 }
 
 export interface IgoStyle extends IgoStyleBase {
-  clusterBaseStyle?: { [key: string]: any } | olStyle | olStyle[];
+  clusterBaseStyle?: Record<string, any> | olStyle | olStyle[];
 }
 export interface IgoStyleBase {
   editable?: boolean;
   hoverStyle?: StyleByAttribute;
-  igoStyleObject?: { [key: string]: any };
+  igoStyleObject?: Record<string, any>;
   mapboxStyle?: MapboxStyle;
   styleByAttribute?: StyleByAttribute;
 }
@@ -37,16 +37,16 @@ export interface CommonVectorStyleOptions {
 }
 
 export interface StyleByAttribute {
-  anchor?: Array<[number, number]>;
+  anchor?: [number, number][];
   type?: string;
   attribute?: string;
-  data?: Array<any>;
-  fill?: Array<string>;
-  stroke?: Array<string>;
-  width?: Array<number>;
-  radius?: Array<number>;
-  icon?: Array<string>;
-  scale?: Array<number>;
+  data?: any[];
+  fill?: string[];
+  stroke?: string[];
+  width?: number[];
+  radius?: number[];
+  icon?: string[];
+  scale?: number[];
   label?: IgoLabel;
   baseStyle?: { [key: string]: any; allo?: string };
   hoverStyle?: StyleByAttribute;
@@ -54,12 +54,12 @@ export interface StyleByAttribute {
 
 export interface CreateStyle {
   igoLabel?: IgoLabel;
-  igoStyle?: { [key: string]: any };
+  igoStyle?: Record<string, any>;
 }
 
 export interface IgoLabel {
   attribute: string;
-  style?: { [key: string]: any };
+  style?: Record<string, any>;
   minResolution?: number;
   maxResolution?: number;
   minScaleDenom?: number;

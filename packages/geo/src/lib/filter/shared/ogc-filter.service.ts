@@ -8,8 +8,6 @@ import { OgcFilterableDataSource } from './ogc-filter.interface';
 
 @Injectable()
 export class OGCFilterService {
-  constructor() {}
-
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
     const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(
       filterString,

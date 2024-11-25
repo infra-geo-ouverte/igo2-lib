@@ -169,13 +169,11 @@ export class OgcFilterButtonComponent implements OnInit {
 
   @Input() map: MapBase;
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
   @Input() header: boolean;
 
   public ogcFilterCollapse = false;
-
-  constructor() {}
 
   ngOnInit() {
     this.options = this.layer.dataSource

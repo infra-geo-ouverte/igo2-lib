@@ -32,7 +32,7 @@ export interface LayerOptions {
   legendOptions?: LegendOptions;
   ol?: olLayer<olSource>;
   tooltip?: TooltipContent;
-  _internal?: { [key: string]: string };
+  _internal?: Record<string, string>;
   active?: boolean;
   check?: boolean;
   linkedLayers?: LayersLink;

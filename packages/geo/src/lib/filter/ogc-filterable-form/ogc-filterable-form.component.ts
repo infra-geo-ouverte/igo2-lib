@@ -58,6 +58,4 @@ export class OgcFilterableFormComponent {
   }
 
   public color = 'primary';
-
-  constructor() {}
 }

@@ -26,7 +26,7 @@ import { TooltipType } from '../shared/layers/layer.interface';
   imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   tooltipText: string;
 
@@ -37,7 +37,7 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
 
   @Input() layer: Layer;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
   constructor(private networkService: NetworkService) {}
 

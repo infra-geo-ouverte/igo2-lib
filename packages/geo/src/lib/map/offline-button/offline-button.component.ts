@@ -22,13 +22,11 @@ import { IgoMap } from '../shared/map';
   ]
 })
 export class OfflineButtonComponent implements OnInit {
-  btnStyle: string = 'onlineStyle';
+  btnStyle = 'onlineStyle';
 
   @Input() map: IgoMap;
   @Input() color: string;
-  @Input() enabled: boolean = false;
-
-  constructor() {}
+  @Input() enabled = false;
 
   ngOnInit(): void {
     this.map.forcedOffline$.next(this.enabled);

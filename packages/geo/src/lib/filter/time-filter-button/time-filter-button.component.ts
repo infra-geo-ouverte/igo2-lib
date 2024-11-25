@@ -62,13 +62,11 @@ export class TimeFilterButtonComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   public timeFilterCollapse = false;
-
-  constructor() {}
 
   ngOnInit() {
     this.options = this.layer.dataSource.options as WMSDataSourceOptions;

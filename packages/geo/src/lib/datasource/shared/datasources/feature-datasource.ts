@@ -41,7 +41,9 @@ export class FeatureDataSource extends DataSource {
     return format;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 
   get queryTitle(): string {
     return (this.options as any).queryTitle

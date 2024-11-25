@@ -3,12 +3,6 @@ import { IconSvg } from './icon.interface';
 /**
  * Source: https://pictogrammers.com/library/mdi/
  */
-export const MAGNIFY_SCAN_ICON: IconSvg = {
-  name: 'magnify-scan',
-  svg: `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>magnify-scan</title><path d="M17 22V20H20V17H22V20.5C22 20.89 21.84 21.24 21.54 21.54C21.24 21.84 20.89 22 20.5 22H17M7 22H3.5C3.11 22 2.76 21.84 2.46 21.54C2.16 21.24 2 20.89 2 20.5V17H4V20H7V22M17 2H20.5C20.89 2 21.24 2.16 21.54 2.46C21.84 2.76 22 3.11 22 3.5V7H20V4H17V2M7 2V4H4V7H2V3.5C2 3.11 2.16 2.76 2.46 2.46C2.76 2.16 3.11 2 3.5 2H7M10.5 6C13 6 15 8 15 10.5C15 11.38 14.75 12.2 14.31 12.9L17.57 16.16L16.16 17.57L12.9 14.31C12.2 14.75 11.38 15 10.5 15C8 15 6 13 6 10.5C6 8 8 6 10.5 6M10.5 8C9.12 8 8 9.12 8 10.5C8 11.88 9.12 13 10.5 13C11.88 13 13 11.88 13 10.5C13 9.12 11.88 8 10.5 8Z" /></svg>
-`
-};
 
 export const MICROSOFT_ICON: IconSvg = {
   name: 'microsoft',
@@ -41,10 +35,4 @@ export const SELECTION_MARKER_ICON: IconSvg = {
 export const PRESENTATION_PLAY_ICON: IconSvg = {
   name: 'presentation-play',
   svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>presentation-play</title><path d="M2,3H10A2,2 0 0,1 12,1A2,2 0 0,1 14,3H22V5H21V16H15.25L17,22H15L13.25,16H10.75L9,22H7L8.75,16H3V5H2V3M5,5V14H19V5H5M11.85,11.85C11.76,11.94 11.64,12 11.5,12A0.5,0.5 0 0,1 11,11.5V7.5A0.5,0.5 0 0,1 11.5,7C11.64,7 11.76,7.06 11.85,7.15L13.25,8.54C13.57,8.86 13.89,9.18 13.89,9.5C13.89,9.82 13.57,10.14 13.25,10.46L11.85,11.85Z" /></svg>`
-};
-
-
-export const LAYER_PLUS_ICON: IconSvg = {
-  name: 'layers-plus',
-  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>layers-plus</title><path d="M17,14H19V17H22V19H19V22H17V19H14V17H17V14M11,16L2,9L11,2L20,9L11,16M11,18.54L12,17.75V18C12,18.71 12.12,19.39 12.35,20L11,21.07L2,14.07L3.62,12.81L11,18.54Z" /></svg>`
 };

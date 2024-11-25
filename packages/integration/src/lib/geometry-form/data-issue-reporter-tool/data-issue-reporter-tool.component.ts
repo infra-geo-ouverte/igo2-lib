@@ -48,7 +48,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   form$ = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$ = new BehaviorSubject<Record<string, any>>(undefined);
 
   submitDisabled = true;
 
@@ -64,7 +64,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     combineLatest([this.languageService.language$, this.map.layers$]).subscribe(
-      ([language, layers]) => {
+      ([_language, layers]) => {
         const baseLayerOrShownInLayerList = layers
           .filter((l) => l.baseLayer || l.showInLayerList)
           .map((l) => {

@@ -48,9 +48,7 @@ import { SEARCH_TYPES } from '../shared/search.enums';
   ]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Subscription to the search type

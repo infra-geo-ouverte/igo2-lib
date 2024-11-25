@@ -63,7 +63,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  entitySortChange$ = new BehaviorSubject<boolean>(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
     pageSize: 5, // Number of items to display on a page.
     pageSizeOptions: [1, 5, 10, 15, 30, 50, 100], // The set of provided page size options to display to the user.

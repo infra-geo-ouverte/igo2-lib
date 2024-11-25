@@ -64,5 +64,7 @@ export class TileArcGISRestDataSource extends DataSource {
     return [{ html: htmlString }];
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

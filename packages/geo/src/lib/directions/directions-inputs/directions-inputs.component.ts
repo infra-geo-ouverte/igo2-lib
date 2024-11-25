@@ -72,14 +72,14 @@ export class DirectionsInputsComponent implements OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
   public stopWithHover: Stop;
-  public stopIsDragged: boolean = false;
+  public stopIsDragged = false;
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() projection: string;
-  @Input() coordRoundedDecimals: number = 6;
+  @Input() coordRoundedDecimals = 6;
 
-  @Input() debounce: number = 200;
-  @Input() length: number = 2;
+  @Input() debounce = 200;
+  @Input() length = 2;
 
   @Output() stopInputHasFocus: EventEmitter<boolean> =
     new EventEmitter<boolean>(false);

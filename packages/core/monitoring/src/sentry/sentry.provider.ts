@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { TraceService } from '@sentry/angular-ivy';
+import { TraceService } from '@sentry/angular';
 
 import { createSentryErrorHandler, initSentry } from './sentry';
 import { SentryMonitoringOptions } from './sentry.interface';
@@ -36,7 +36,7 @@ export const provideSentryMonitoring = (
     // Force instantiate TraceService to avoid require it in any constructor.
     tracingEnabled && {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {},
+      useFactory: () => () => void 1,
       deps: [TraceService],
       multi: true
     }

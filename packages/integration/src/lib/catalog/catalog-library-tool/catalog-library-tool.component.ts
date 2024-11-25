@@ -10,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common/entity';
-import { LAYER_PLUS_ICON } from '@igo2/common/icon';
 import { ToolComponent } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { LanguageService } from '@igo2/core/language';
@@ -42,7 +41,7 @@ import { CsvOutput } from './catalog-library-tool.interface';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: LAYER_PLUS_ICON
+  icon: 'library_add'
 })
 @Component({
   selector: 'igo-catalog-library-tool',
@@ -72,7 +71,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed: boolean = false;
+  @Input() addCatalogAllowed = false;
 
   /**
    * Determine if the export button is shown

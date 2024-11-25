@@ -114,7 +114,7 @@ export class AuthMicrosoftb2cComponent {
           );
         }
       })
-      .catch((error) => {
+      .catch(() => {
         console.log('Silent token fails');
       });
   }
