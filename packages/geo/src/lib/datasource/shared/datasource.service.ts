@@ -34,6 +34,7 @@ import {
   WFSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
+  WMSDataSourceOptionsParams,
   WMTSDataSource,
   WMTSDataSourceOptions,
   WebSocketDataSource,
@@ -225,12 +226,30 @@ export class DataSourceService {
         const optionsMerged = options.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
+
+        if (optionsMerged?.params) {
+          optionsMerged.params = this.normalizeParams(optionsMerged.params);
+        }
+
         return new WMSDataSource(optionsMerged, this.wfsDataSourceService);
       }),
       catchError(() => {
         return of(undefined);
       })
     );
+  }
+
+  private normalizeParams(
+    params: WMSDataSourceOptionsParams
+  ): WMSDataSourceOptionsParams {
+    const uppercasedParams: Partial<WMSDataSourceOptionsParams> = {};
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        uppercasedParams[key.toUpperCase()] = params[key];
+      }
+    }
+
+    return uppercasedParams as WMSDataSourceOptionsParams;
   }
 
   private createWMTSDataSource(
