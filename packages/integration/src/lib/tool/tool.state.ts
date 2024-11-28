@@ -30,7 +30,7 @@ export class ToolState {
 
   toolToActivateFromOptions(toolToActivate: {
     tool: string;
-    options: Record<string, any>;
+    options: ExportOptions;
   }) {
     if (!toolToActivate) {
       return;

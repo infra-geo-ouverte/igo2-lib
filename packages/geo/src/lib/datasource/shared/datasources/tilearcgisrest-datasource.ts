@@ -7,8 +7,8 @@ import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 
 export class TileArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceTileArcGISRest;
-  public declare options: TileArcGISRestDataSourceOptions;
+  declare public ol: olSourceTileArcGISRest;
+  declare public options: TileArcGISRestDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;

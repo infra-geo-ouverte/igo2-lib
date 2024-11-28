@@ -12,9 +12,9 @@ import { ImageLayerOptions } from './image-layer.interface';
 import { Layer } from './layer';
 
 export class ImageLayer extends Layer {
-  public declare dataSource: WMSDataSource | ImageArcGISRestDataSource;
-  public declare options: ImageLayerOptions;
-  public declare ol: olLayerImage<olSourceImage>;
+  declare public dataSource: WMSDataSource | ImageArcGISRestDataSource;
+  declare public options: ImageLayerOptions;
+  declare public ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 

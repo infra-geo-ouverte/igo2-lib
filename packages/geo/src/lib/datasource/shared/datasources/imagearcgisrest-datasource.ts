@@ -6,8 +6,8 @@ import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
 
 export class ImageArcGISRestDataSource extends DataSource {
-  public declare ol: ImageArcGISRest;
-  public declare options: ArcGISRestImageDataSourceOptions;
+  declare public ol: ImageArcGISRest;
+  declare public options: ArcGISRestImageDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
