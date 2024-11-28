@@ -12,6 +12,6 @@
     "e2e.local": "ng run demo:e2e:local",
     "test": "ng test demo --watch=false --browsers=ChromeHeadless",
     "test.watch": "ng test demo",
-    "circular-deps.check": "madge --circular --extensions ts ./src"
+    "circular-deps": "madge --circular --extensions ts ./src"
   }
 }

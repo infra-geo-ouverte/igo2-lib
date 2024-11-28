@@ -94,7 +94,7 @@ export class AnalyticsListenerService {
         let restParams: string;
 
         switch (layer.dataSource.options.type) {
-          case 'wms':
+          case 'wms': {
             const wmsDataSource = layer.dataSource
               .options as WMSDataSourceOptions;
             const wmsLayerName: string = wmsDataSource.params.LAYERS;
@@ -106,7 +106,8 @@ export class AnalyticsListenerService {
               url: wmsUrl
             });
             break;
-          case 'wmts':
+          }
+          case 'wmts': {
             const wmtsDataSource = layer.dataSource
               .options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
@@ -120,9 +121,10 @@ export class AnalyticsListenerService {
               matrixSet
             });
             break;
+          }
           case 'arcgisrest':
           case 'tilearcgisrest':
-          case 'imagearcgisrest':
+          case 'imagearcgisrest': {
             const restDataSource = layer.options.sourceOptions as
               | ArcGISRestDataSourceOptions
               | TileArcGISRestDataSourceOptions
@@ -136,6 +138,7 @@ export class AnalyticsListenerService {
               url: restUrl
             });
             break;
+          }
           case 'xyz':
             /* const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
             const xyzName: string = layer.title;

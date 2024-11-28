@@ -39,7 +39,7 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
 
         this.layersVisibility$$ = combineLatest(
           shownLayers.map((layer: Layer) => layer.visible$)
-        ).subscribe((r) => {
+        ).subscribe(() => {
           this.component.change$.next();
         });
       });

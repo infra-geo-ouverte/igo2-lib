@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
-import { LAYER_PLUS_ICON } from '@igo2/common/icon';
 import { ToolComponent } from '@igo2/common/tool';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
@@ -22,7 +21,7 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: LAYER_PLUS_ICON
+  icon: 'library_add'
 })
 @Component({
   selector: 'igo-catalog-library-tool',
@@ -43,7 +42,7 @@ export class CatalogLibraryToolComponent implements OnInit {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed: boolean = false;
+  @Input() addCatalogAllowed = false;
 
   /**
    * List of predefined catalogs

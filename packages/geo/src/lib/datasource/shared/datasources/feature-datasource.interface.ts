@@ -16,8 +16,8 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   url?: string;
   pathOffline?: string;
   preload?: PreloadOptions;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
+  excludeAttribute?: string[];
+  excludeAttributeOffline?: string[];
 
   ol?: olSourceVector | olSource;
 }

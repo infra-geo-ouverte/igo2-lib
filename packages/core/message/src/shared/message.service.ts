@@ -15,8 +15,8 @@ interface ActiveMessageTranslation {
   id: number;
   titleKey: string;
   textKey: string;
-  textInterpolateParams?: Object;
-  titleInterpolateParams?: Object;
+  textInterpolateParams?: object;
+  titleInterpolateParams?: object;
 }
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class MessageService {
     private languageService: LanguageService
   ) {
     this.options = this.configService.getConfig('message');
-    this.languageService.language$.pipe(debounceTime(500)).subscribe((r) => {
+    this.languageService.language$.pipe(debounceTime(500)).subscribe(() => {
       if (this.toastr.toasts.length === 0) {
         this.activeMessageTranslations = [];
       }
@@ -203,10 +203,10 @@ export class MessageService {
 
   success(
     text: string,
-    title: string = 'igo.core.message.success',
+    title = 'igo.core.message.success',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'success',
@@ -220,10 +220,10 @@ export class MessageService {
 
   error(
     text: string,
-    title: string = 'igo.core.message.error',
+    title = 'igo.core.message.error',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'error',
@@ -237,10 +237,10 @@ export class MessageService {
 
   info(
     text: string,
-    title: string = 'igo.core.message.info',
+    title = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'info',
@@ -254,10 +254,10 @@ export class MessageService {
 
   alert(
     text: string,
-    title: string = 'igo.core.message.alert',
+    title = 'igo.core.message.alert',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'alert',
@@ -271,10 +271,10 @@ export class MessageService {
 
   show(
     text: string,
-    title: string = 'igo.core.message.info',
+    title = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'show',
@@ -291,8 +291,8 @@ export class MessageService {
     text: string,
     title: string,
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: Object,
-    titleInterpolateParams?: Object
+    textInterpolateParams?: object,
+    titleInterpolateParams?: object
   ): ActiveToast<any> {
     const translatedTextInterpolateParams = { ...textInterpolateParams };
     const translatedTitlenterpolateParams = { ...titleInterpolateParams };

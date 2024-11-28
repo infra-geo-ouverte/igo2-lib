@@ -22,7 +22,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppAuthFormComponent implements OnInit, OnDestroy {
-  public logged: boolean = false;
+  public logged = false;
   public logged$$: Subscription;
   constructor(private _authService: AuthService) {}
 

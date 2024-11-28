@@ -46,14 +46,14 @@ import { LayerListControlsOptions } from './layer-list-tool.interface';
   ]
 })
 export class LayerListToolComponent implements OnInit, OnDestroy {
-  public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public term$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  public onlyVisible$ = new BehaviorSubject<boolean>(false);
+  public sortAlpha$ = new BehaviorSubject<boolean>(false);
+  public term$ = new BehaviorSubject<string>(undefined);
   onlyVisible$$: Subscription;
   sortAlpha$$: Subscription;
   term$$: Subscription;
 
-  @Input() layersAreAllVisible: boolean = true;
+  @Input() layersAreAllVisible = true;
 
   @Input() floatLabel: FloatLabelType = 'auto';
 

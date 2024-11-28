@@ -107,6 +107,8 @@ export class WmsWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
@@ -116,7 +118,7 @@ export class WmsWorkspaceService {
         OgcFilterableDataSourceOptions {}
 
     let wks;
-    let wksLayerOption: GeoWorkspaceOptions = {
+    const wksLayerOption: GeoWorkspaceOptions = {
       printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,

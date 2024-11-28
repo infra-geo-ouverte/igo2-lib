@@ -11,21 +11,21 @@ import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources
 import { TileDebugDataSource } from '../../../datasource/shared/datasources/tiledebug-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
-import { IgoMap } from '../../../map/shared/map';
+import type { IgoMap } from '../../../map/shared/map';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 
 export class TileLayer extends Layer {
-  public declare dataSource:
+  declare public dataSource:
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
     | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
-  public declare options: TileLayerOptions;
-  public declare ol: olLayerTile<olSourceTile>;
+  declare public options: TileLayerOptions;
+  declare public ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 
@@ -72,7 +72,7 @@ export class TileLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
     super.setMap(map);
   }

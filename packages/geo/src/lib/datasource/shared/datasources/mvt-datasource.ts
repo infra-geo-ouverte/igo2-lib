@@ -10,8 +10,8 @@ import { DataSource } from './datasource';
 import { MVTDataSourceOptions } from './mvt-datasource.interface';
 
 export class MVTDataSource extends DataSource {
-  public declare options: MVTDataSourceOptions;
-  public declare ol: olSourceVectorTile;
+  declare public options: MVTDataSourceOptions;
+  declare public ol: olSourceVectorTile;
 
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
@@ -32,5 +32,7 @@ export class MVTDataSource extends DataSource {
     return Md5.hashStr(chain) as string;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

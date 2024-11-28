@@ -3,9 +3,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
-    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "downlevelIteration": true,
+    "esModuleInterop": true,
     "importHelpers": true,
     "sourceMap": true,
     "declaration": false,

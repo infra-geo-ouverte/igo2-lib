@@ -56,7 +56,7 @@ export class ShareMapApiComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.auth.authenticate$.subscribe((auth) => {
+    this.auth.authenticate$.subscribe(() => {
       const decodeToken = this.auth.decodeToken();
       this.userId = decodeToken?.user?.id.toString();
       this.buildForm();
@@ -92,7 +92,7 @@ export class ShareMapApiComponent implements OnInit {
     this.shareMapService
       .updateContextShared(this.map, inputs, this.idContextShared)
       .subscribe(
-        (rep) => {
+        () => {
           this.messageService.success(
             'igo.context.contextManager.dialog.saveMsg',
             'igo.context.contextManager.dialog.saveTitle',

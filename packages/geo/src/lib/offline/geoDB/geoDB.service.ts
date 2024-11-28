@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 
 import { Compression } from '@igo2/utils';
 
@@ -9,16 +9,17 @@ import { concatMap, first, map, take } from 'rxjs/operators';
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
 import { GeoDBData } from './geoDB.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GeoDBService {
   readonly dbName: string = 'geoData';
-  public collisionsMap: Map<number, string[]> = new Map();
-  public _newData: number = 0;
+  public collisionsMap = new Map<number, string[]>();
+  public _newData = 0;
   private compression = new Compression();
 
-  constructor(private ngxIndexedDBService: NgxIndexedDBService) {}
+  constructor(
+    @Optional()
+    private ngxIndexedDBService: NgxIndexedDBService
+  ) {}
 
   /**
    * Only blob can be compressed
@@ -41,7 +42,7 @@ export class GeoDBService {
     }
     let compress = false;
 
-    const subject: Subject<GeoDBData> = new Subject();
+    const subject = new Subject<GeoDBData>();
     let object$: Observable<any> = of(object);
     if (object instanceof Blob) {
       object$ = this.compression.compressBlob(object);
@@ -60,12 +61,12 @@ export class GeoDBService {
             insertSource,
             insertEvent
           };
-          return this.ngxIndexedDBService.getByID(this.dbName, url);
+          return this.ngxIndexedDBService?.getByID(this.dbName, url);
         }),
         concatMap((dbObject: GeoDBData) => {
           if (!dbObject) {
             this._newData++;
-            return this.ngxIndexedDBService.add(this.dbName, geoDBData);
+            return this.ngxIndexedDBService?.add(this.dbName, geoDBData);
           } else {
             const currentRegionID = dbObject.regionID;
             if (currentRegionID !== regionID) {
@@ -89,8 +90,8 @@ export class GeoDBService {
   }
 
   private customUpdate(geoDBData: GeoDBData): Observable<GeoDBData> {
-    const subject: Subject<GeoDBData> = new Subject();
-    const deleteRequest = this.ngxIndexedDBService.deleteByKey(
+    const subject = new Subject<GeoDBData>();
+    const deleteRequest = this.ngxIndexedDBService?.deleteByKey(
       this.dbName,
       geoDBData.url
     );
@@ -98,7 +99,7 @@ export class GeoDBService {
       .pipe(
         concatMap((isDeleted) =>
           isDeleted
-            ? this.ngxIndexedDBService.add(this.dbName, geoDBData)
+            ? this.ngxIndexedDBService?.add(this.dbName, geoDBData)
             : of(undefined)
         )
       )
@@ -112,7 +113,7 @@ export class GeoDBService {
   }
 
   get(url: string): Observable<any> {
-    return this.ngxIndexedDBService.getByID(this.dbName, url).pipe(
+    return this.ngxIndexedDBService?.getByID(this.dbName, url).pipe(
       map((data: GeoDBData) => {
         if (data) {
           const object = data.object;
@@ -126,16 +127,16 @@ export class GeoDBService {
   }
 
   getByID(url: string): Observable<any> {
-    return this.ngxIndexedDBService.getByID(this.dbName, url);
+    return this.ngxIndexedDBService?.getByID(this.dbName, url);
   }
 
   deleteByKey(url: string): Observable<any> {
-    return this.ngxIndexedDBService.deleteByKey(this.dbName, url);
+    return this.ngxIndexedDBService?.deleteByKey(this.dbName, url);
   }
 
   getRegionCountByID(id: number): Observable<number> {
-    const subject: Subject<number> = new Subject();
-    const dbRequest = this.getRegionByID(id).subscribe((datas) => {
+    const subject = new Subject<number>();
+    this.getRegionByID(id).subscribe((datas) => {
       subject.next(datas.length);
       subject.complete();
     });
@@ -148,7 +149,7 @@ export class GeoDBService {
     }
 
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
-    const dbRequest = this.ngxIndexedDBService.getAllByIndex(
+    const dbRequest = this.ngxIndexedDBService?.getAllByIndex(
       this.dbName,
       'regionID',
       IDBKey
@@ -162,14 +163,14 @@ export class GeoDBService {
     }
 
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
-    const dbRequest = this.ngxIndexedDBService.getAllByIndex(
+    const dbRequest = this.ngxIndexedDBService?.getAllByIndex(
       this.dbName,
       'regionID',
       IDBKey
     );
     dbRequest.subscribe((datas: GeoDBData[]) => {
       datas.forEach((data) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
+        this.ngxIndexedDBService?.deleteByKey(this.dbName, data.url);
       });
     });
     return dbRequest;
@@ -179,10 +180,11 @@ export class GeoDBService {
     keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0),
     mode: DBMode = DBMode.readonly
   ) {
-    const request = this.ngxIndexedDBService.openCursorByIndex(
+    const request = this.ngxIndexedDBService?.openCursorByIndex(
       this.dbName,
       'regionID',
       keyRange,
+      undefined,
       mode
     );
     return request;
@@ -201,7 +203,7 @@ export class GeoDBService {
     for (const [regionID, collisions] of this.collisionsMap) {
       for (const url of collisions) {
         this.ngxIndexedDBService
-          .getByKey(this.dbName, url)
+          ?.getByKey(this.dbName, url)
           .pipe(take(1))
           .subscribe((dbObject: GeoDBData) => {
             const updatedObject = dbObject;

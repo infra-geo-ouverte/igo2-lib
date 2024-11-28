@@ -79,11 +79,12 @@ export class DataSourceService {
       case 'wfs':
         dataSource = this.createWFSDataSource(context as WFSDataSourceOptions);
         break;
-      case 'wms':
+      case 'wms': {
         const wmsContext = context as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
         dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
+      }
       case 'wmts':
         dataSource = this.createWMTSDataSource(
           context as WMTSDataSourceOptions

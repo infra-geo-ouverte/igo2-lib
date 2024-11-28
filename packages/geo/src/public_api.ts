@@ -24,7 +24,6 @@ export * from './lib/map/map.module';
 export * from './lib/measure/measure.module';
 export * from './lib/measure/measurer/measurer.module';
 export * from './lib/metadata/metadata.module';
-export * from './lib/overlay/overlay.module';
 export * from './lib/print/print.module';
 export * from './lib/query/query.module';
 export * from './lib/search/search.module';

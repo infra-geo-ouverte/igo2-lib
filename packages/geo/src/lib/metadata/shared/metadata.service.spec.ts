@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { MetadataService } from './metadata.service';
@@ -6,8 +9,8 @@ import { MetadataService } from './metadata.service';
 describe('MetadataService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [MetadataService]
+      imports: [],
+      providers: [MetadataService, provideHttpClient(withInterceptorsFromDi())]
     });
   });
 

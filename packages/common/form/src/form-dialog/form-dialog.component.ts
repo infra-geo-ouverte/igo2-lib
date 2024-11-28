@@ -47,7 +47,7 @@ import { FormDialogData } from './form-dialog.interface';
 })
 export class FormDialogComponent {
   form$ = new BehaviorSubject<Form>(undefined);
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$ = new BehaviorSubject<Record<string, any>>(undefined);
   constructor(
     public languageService: LanguageService,
     public dialogRef: MatDialogRef<FormDialogComponent>,
@@ -62,8 +62,8 @@ export class FormDialogComponent {
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
     this.data$ = this.data.data$;
 
-    let fields: FormField<FormFieldInputs>[] = [];
-    let groups: FormFieldGroup[] = [];
+    const fields: FormField<FormFieldInputs>[] = [];
+    const groups: FormFieldGroup[] = [];
     this.data.formFieldConfigs?.map((config) =>
       fields.push(this.formService.field(config))
     );
@@ -81,7 +81,7 @@ export class FormDialogComponent {
     this.form$.next(form);
   }
 
-  onSubmit(data: { [key: string]: any }) {
+  onSubmit(data: Record<string, any>) {
     const form = this.form$.getValue();
     if (form.control.valid) {
       this.dialogRef.close(data);
