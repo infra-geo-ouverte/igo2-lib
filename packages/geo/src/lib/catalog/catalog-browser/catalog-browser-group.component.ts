@@ -67,13 +67,13 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Whether all the layers of the group are added
    * @internal
    */
-  added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  preview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  added$ = new BehaviorSubject<boolean>(false);
+  preview$ = new BehaviorSubject<boolean>(false);
   /**
    * Whether the toggle button is disabled
    * @internal
    */
-  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  disabled$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Catalog
@@ -90,7 +90,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Whether the group is collapsed
    */
-  @Input() collapsed: boolean = true;
+  @Input() collapsed = true;
 
   @Input() resolution: number;
 
@@ -99,7 +99,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Whether the group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsed: boolean = true;
+  @Input() toggleCollapsed = true;
 
   /**
    * Parent catalog's items store state. Groups share a unique

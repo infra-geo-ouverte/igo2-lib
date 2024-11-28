@@ -25,13 +25,13 @@ export class DrawState {
     this.mapState.map.layers$.subscribe(() => {
       this.layersID.forEach((layerId) => {
         if (!this.mapState.map.getLayerById(layerId)) {
-          let deletedStore = this.stores.find(
+          const deletedStore = this.stores.find(
             (store) => store.layer.id === layerId
           );
           deletedStore.deleteMany(deletedStore.all());
           this.stores.splice(this.stores.indexOf(deletedStore, 0), 1);
           this.layersID.splice(this.layersID.indexOf(layerId, 0), 1);
-          let drawControlIndex = this.drawControls.findIndex(
+          const drawControlIndex = this.drawControls.findIndex(
             (dc) => dc[0] === layerId
           );
           this.drawControls.splice(drawControlIndex, 1);
@@ -39,6 +39,7 @@ export class DrawState {
       });
     });
     for (let store of this.stores) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       store = new FeatureStore<FeatureWithDraw>([], { map: this.mapState.map });
     }
   }

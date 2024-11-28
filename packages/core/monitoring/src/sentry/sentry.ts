@@ -1,16 +1,15 @@
 import {
   BrowserOptions,
-  BrowserTracing,
-  Replay,
   SentryErrorHandler,
+  browserTracingIntegration,
   createErrorHandler,
-  getCurrentHub,
+  getClient,
   init,
-  instrumentAngularRouting
-} from '@sentry/angular-ivy';
+  replayIntegration
+} from '@sentry/angular';
 
 import { SentryMonitoringOptions } from './sentry.interface';
-import { isTracingEnabled } from './sentry.utils';
+import { isReplayEnabled, isTracingEnabled } from './sentry.utils';
 
 export const createSentryErrorHandler = (
   options: SentryMonitoringOptions
@@ -21,23 +20,20 @@ export const createSentryErrorHandler = (
   });
 };
 
-export const initSentry = (options: SentryMonitoringOptions): void => {
-  const client = getCurrentHub().getClient();
-  if (client) {
+export const initSentry = (
+  options: SentryMonitoringOptions,
+  force?: boolean
+): void => {
+  const client = getClient();
+  if (!force && client) {
     return;
   }
 
-  const tracingEnabled = isTracingEnabled(options);
   const baseConfig: BrowserOptions = {
-    dsn: options.dsn,
-    environment: options.environment,
-    release: options.release,
+    ...options,
     integrations: [
-      tracingEnabled &&
-        new BrowserTracing({
-          routingInstrumentation: instrumentAngularRouting
-        }),
-      options.enableReplay && new Replay()
+      isTracingEnabled(options) && browserTracingIntegration(),
+      isReplayEnabled(options) && replayIntegration()
     ].filter(Boolean)
   };
 

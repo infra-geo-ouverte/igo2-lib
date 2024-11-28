@@ -68,9 +68,9 @@ export class ContextFormComponent implements OnInit {
   private _disabled = false;
 
   // TODO: replace any by ContextOptions or Context
-  @Output() submitForm: EventEmitter<any> = new EventEmitter();
-  @Output() clone: EventEmitter<any> = new EventEmitter();
-  @Output() delete: EventEmitter<any> = new EventEmitter();
+  @Output() submitForm = new EventEmitter<any>();
+  @Output() clone = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,

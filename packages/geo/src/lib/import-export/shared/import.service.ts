@@ -156,14 +156,14 @@ export class ImportService {
           projectionOut
         );
         observer.next(features);
-      } catch (e) {
+      } catch {
         observer.error(new ImportUnreadableFileError());
       }
 
       observer.complete();
     };
 
-    reader.onerror = (evt) => {
+    reader.onerror = () => {
       observer.error(new ImportUnreadableFileError());
     };
 

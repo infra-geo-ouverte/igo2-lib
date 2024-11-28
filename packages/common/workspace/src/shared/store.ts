@@ -9,7 +9,7 @@ import { Workspace } from './workspace';
  * workspaces.
  */
 export class WorkspaceStore extends EntityStore<Workspace> {
-  activeWorkspace$: BehaviorSubject<Workspace> = new BehaviorSubject(undefined);
+  activeWorkspace$ = new BehaviorSubject<Workspace>(undefined);
 
   /**
    * Activate the an workspace workspace and deactivate the one currently active

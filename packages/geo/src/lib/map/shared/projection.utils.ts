@@ -29,7 +29,6 @@ export function zoneMtm(lon: number): number {
  */
 export function zoneUtm(lon: number): number {
   let lonMin = -180;
-  const lonMax = 180;
   const deltaLon = 6;
   let zone = 1;
   while (Math.abs(lon - lonMin) > deltaLon) {
@@ -93,7 +92,7 @@ export function detectFileEPSG(options: {
         return;
       }
 
-      reader.onload = (e) => {
+      reader.onload = () => {
         if (
           file.name.toLowerCase().endsWith('.geojson') ||
           file.name.toLowerCase().endsWith('.json')

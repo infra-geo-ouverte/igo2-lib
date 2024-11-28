@@ -46,7 +46,7 @@ import {
   ]
 })
 export class StyleModalLayerComponent implements OnInit {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
 

@@ -35,7 +35,7 @@ import { BehaviorSubject } from 'rxjs';
  * and replace it by a WakeLock API implementation.
  */
 export class WakeLockButtonComponent {
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
   @Input()
   get enabled(): boolean {
     return this.storageService.get('wakeLockEnabled') as boolean;
@@ -45,7 +45,7 @@ export class WakeLockButtonComponent {
   }
 
   private noSleep: NoSleep;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('bedtime');
+  readonly icon$ = new BehaviorSubject<string>('bedtime');
   public visible = false;
 
   constructor(private storageService: StorageService) {

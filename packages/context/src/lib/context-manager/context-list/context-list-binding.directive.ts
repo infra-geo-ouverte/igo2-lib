@@ -185,9 +185,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         permissions.push(p.name);
       }
     }
-    this.component.showHidden
-      ? this.contextService.loadContexts(permissions, true)
-      : this.contextService.loadContexts(permissions, false);
+
+    this.contextService.loadContexts(permissions, this.component.showHidden);
   }
 
   @HostListener('showHiddenContexts')
@@ -280,9 +279,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
             }
           }
 
-          this.component.showHidden
-            ? this.contextService.loadContexts(permissions, true)
-            : this.contextService.loadContexts(permissions, false);
+          this.contextService.loadContexts(
+            permissions,
+            this.component.showHidden
+          );
         });
       }
     });

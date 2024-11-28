@@ -67,8 +67,8 @@ import {
   ]
 })
 export class SearchSettingsComponent implements OnInit {
-  public hasPointerReverseSearchSource: boolean = false;
-  public searchSourcesAllEnabled: boolean = false;
+  public hasPointerReverseSearchSource = false;
+  public searchSourcesAllEnabled = false;
 
   public buffer = [];
   public lastKeyTime = Date.now();
@@ -79,9 +79,9 @@ export class SearchSettingsComponent implements OnInit {
     return this.mediaService.isTouchScreen();
   }
 
-  @Input() pointerSummaryEnabled: boolean = false;
-  @Input() searchResultsGeometryEnabled: boolean = false;
-  @Input() reverseSearchCoordsFormatEnabled: boolean = false;
+  @Input() pointerSummaryEnabled = false;
+  @Input() searchResultsGeometryEnabled = false;
+  @Input() reverseSearchCoordsFormatEnabled = false;
 
   /**
    * Event emitted when the enabled search source changes

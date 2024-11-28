@@ -24,7 +24,7 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   private component: ContextEditComponent;
   private editedContext$$: Subscription;
 
-  @Output() submitSuccessed: EventEmitter<Context> = new EventEmitter();
+  @Output() submitSuccessed = new EventEmitter<Context>();
 
   @HostListener('submitForm', ['$event'])
   onEdit(context: Context) {

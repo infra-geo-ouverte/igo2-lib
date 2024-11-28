@@ -8,8 +8,6 @@ import { OgcFilterableDataSource } from './ogc-filter.interface';
 export class OGCFilterTimeService {
   readonly defaultStepMillisecond = 60000;
 
-  constructor() {}
-
   step(datasource: OgcFilterableDataSource, currentFilter): string {
     return datasource.options.stepDate
       ? datasource.options.stepDate

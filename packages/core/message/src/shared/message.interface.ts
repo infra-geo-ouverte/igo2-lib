@@ -11,8 +11,8 @@ export interface Message {
   type?: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
-  textInterpolateParams?: Object;
-  titleInterpolateParams?: Object;
+  textInterpolateParams?: object;
+  titleInterpolateParams?: object;
   showIcon?: boolean;
 }
 

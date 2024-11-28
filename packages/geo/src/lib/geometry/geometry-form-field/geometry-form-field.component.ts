@@ -54,9 +54,7 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
   ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
-  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(
-    undefined
-  );
+  readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
 
   private value$$: Subscription;
 
@@ -97,14 +95,12 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get geometryType(): Type {
     return this.geometryType$.value;
   }
-  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(
-    undefined
-  );
+  readonly geometryType$ = new BehaviorSubject<Type>(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
    */
-  @Input() geometryTypeField: boolean = false;
+  @Input() geometryTypeField = false;
 
   /**
    * Available geometry types
@@ -114,7 +110,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Whether a draw guide field should be displayed
    */
-  @Input() drawGuideField: boolean = false;
+  @Input() drawGuideField = false;
 
   /**
    * The drawGuide around the mouse pointer to help drawing
@@ -126,22 +122,22 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get drawGuide(): number {
     return this.drawGuide$.value;
   }
-  readonly drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
+  readonly drawGuide$ = new BehaviorSubject<number>(0);
 
   /**
    * Draw guide placeholder
    */
-  @Input() drawGuidePlaceholder: string = '';
+  @Input() drawGuidePlaceholder = '';
 
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  @Input() measure = false;
 
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  @Input() controlOptions: Record<string, any> = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)

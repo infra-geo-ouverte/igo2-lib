@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -7,7 +8,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Media, MediaService } from '@igo2/core/media';
+import { MediaService } from '@igo2/core/media';
 
 import { Subscription } from 'rxjs';
 
@@ -120,7 +121,8 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -128,8 +130,8 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
     // Since this component supports different sizes
     // on mobile, force a redraw when the media changes
-    this.mediaService$$ = this.mediaService.media$.subscribe(
-      (media: Media) => (this.state = this.state)
+    this.mediaService$$ = this.mediaService.media$.subscribe(() =>
+      this.cdr.markForCheck()
     );
   }
 

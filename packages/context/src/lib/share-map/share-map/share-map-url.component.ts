@@ -58,7 +58,7 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mapState$$ = combineLatest([
       this.map.viewController.state$,
       this.map.status$
-    ]).subscribe((c) => {
+    ]).subscribe(() => {
       this.resetUrl();
       this.cdRef.detectChanges();
     });
@@ -72,7 +72,7 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mapState$$.unsubscribe();
   }
 
-  resetUrl(values: any = {}) {
+  resetUrl() {
     this.url = this.shareMapService.getUrlWithoutApi(
       this.map,
       this.publicShareOption

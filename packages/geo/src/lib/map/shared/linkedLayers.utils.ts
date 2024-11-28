@@ -76,7 +76,7 @@ export function getDirectParentLayerByProperty(
 ): Layer {
   if (layer?.options.linkedLayers?.linkId) {
     const currentLinkId = layer.options.linkedLayers.linkId;
-    let parents = map.layers.filter((pl) => {
+    const parents = map.layers.filter((pl) => {
       const linkedLayers = pl.options.linkedLayers;
       if (linkedLayers && linkedLayers.links) {
         const a = linkedLayers.links.find(
@@ -121,7 +121,7 @@ export function getAllChildLayersByProperty(
   knownChildLayers: Layer[],
   property: LinkedProperties
 ): Layer[] {
-  let childLayers = getDirectChildLayersByProperty(map, layer, property);
+  const childLayers = getDirectChildLayersByProperty(map, layer, property);
   childLayers.map((cl) => {
     knownChildLayers.push(cl);
     const directChildLayers = getDirectChildLayersByProperty(map, cl, property);
@@ -155,7 +155,7 @@ export function getDirectParentLayerByDeletion(
 ): Layer {
   if (layer.options.linkedLayers?.linkId) {
     const currentLinkId = layer.options.linkedLayers.linkId;
-    let parents = map.layers.filter((pl) => {
+    const parents = map.layers.filter((pl) => {
       const linkedLayers = pl.options.linkedLayers;
       if (linkedLayers && linkedLayers.links) {
         const a = linkedLayers.links.find(
@@ -196,7 +196,7 @@ export function getAllChildLayersByDeletion(
   layer: Layer,
   knownChildLayers: Layer[]
 ): Layer[] {
-  let childLayers = getDirectChildLayersByDeletion(map, layer);
+  const childLayers = getDirectChildLayersByDeletion(map, layer);
   childLayers.map((cl) => {
     knownChildLayers.push(cl);
     const directChildLayers = getDirectChildLayersByDeletion(map, cl);

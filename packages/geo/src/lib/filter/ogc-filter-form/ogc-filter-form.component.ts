@@ -57,7 +57,7 @@ export class OgcFilterFormComponent implements OnInit {
   filteredValues$: Observable<string[]>;
   filteredFields$: Observable<SourceFieldsOptionsParams[]>;
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+  public ogcFilterOperators$ = new BehaviorSubject<Record<string, any>>(
     undefined
   );
   public igoSpatialSelectors;
@@ -154,7 +154,7 @@ export class OgcFilterFormComponent implements OnInit {
       this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
     );
     this.updateValuesList();
-    this.selectedField$.subscribe((f) => {
+    this.selectedField$.subscribe(() => {
       this.ogcFilterOperators$.next(this.allowedOperators);
       if (
         Object.keys(this.allowedOperators).indexOf(
@@ -204,6 +204,7 @@ export class OgcFilterFormComponent implements OnInit {
   private _filterValues(value: string): string[] {
     const keywordRegex = new RegExp(
       value
+        .replace(/[.*+?^${}()|[\]\\]/g, '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''),
@@ -341,7 +342,7 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
-  changeMapExtentGeometry(refresh: boolean = true) {
+  changeMapExtentGeometry(refresh = true) {
     const interfaceOgcFilter =
       this.datasource.options.ogcFilters.interfaceOgcFilters.find(
         (f) => f.filterid === this.currentFilter.filterid

@@ -158,7 +158,7 @@ export class SearchSource {
           }
         });
         break;
-      case 'checkbox':
+      case 'checkbox': {
         let confValue = '';
         setting.values
           .filter((s) => s.available !== false)
@@ -172,6 +172,7 @@ export class SearchSource {
           [setting.name]: confValue
         });
         break;
+      }
     }
 
     if (saveInStorage && this.storageService) {

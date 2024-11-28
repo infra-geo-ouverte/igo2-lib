@@ -60,7 +60,7 @@ export class InteractiveTourService {
       this.interactiveTourLoader.getTourOptionData(toolName);
 
     if (stepConfig?.conditions) {
-      for (const condition of stepConfig?.conditions) {
+      for (const condition of stepConfig.conditions) {
         if (document.querySelector(condition) === null) {
           return true;
         }

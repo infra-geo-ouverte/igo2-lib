@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { RouteServiceOptions } from './route.interface';
 
-export let ROUTE_SERVICE_OPTIONS = new InjectionToken<RouteServiceOptions>(
+export const ROUTE_SERVICE_OPTIONS = new InjectionToken<RouteServiceOptions>(
   'routeServiceOptions'
 );
 

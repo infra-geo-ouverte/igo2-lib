@@ -173,7 +173,7 @@ export class ShareMapService {
         let addedLayer = '';
         let layerVersion: string;
         switch (layer.dataSource.options.type.toLowerCase()) {
-          case 'wms':
+          case 'wms': {
             const datasourceOptions = layer.dataSource
               .options as WMSDataSourceOptions;
             addedLayer = encodeURIComponent(datasourceOptions.params.LAYERS);
@@ -182,6 +182,7 @@ export class ShareMapService {
                 ? layerVersion
                 : datasourceOptions.params.VERSION;
             break;
+          }
           case 'wmts':
           case 'arcgisrest':
           case 'imagearcgisrest':

@@ -31,12 +31,12 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**
    * The dynamic component inputs
    */
-  @Input() inputs: { [key: string]: any } = {};
+  @Input() inputs: Record<string, any> = {};
 
   /**
    * The subscribers to the dynamic component outputs
    */
-  @Input() subscribers: { [key: string]: (event: any) => void } = {};
+  @Input() subscribers: Record<string, (event: any) => void> = {};
 
   /**
    * The dynamic component

@@ -54,22 +54,22 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
-  public delayedShowEmptyMapContent: boolean = false;
+  public delayedShowEmptyMapContent = false;
 
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  layers$ = new BehaviorSubject<Layer[]>([]);
+  showAllLegendsValue$ = new BehaviorSubject<boolean>(false);
   change$ = new ReplaySubject<void>(1);
 
   private resolution$$: Subscription;
   private visibleOrInRangeLayers$$: Subscription;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() allowShowAllLegends = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() showAllLegendsValue = false;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
@@ -169,9 +169,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(
         (value) => {
-          value.length === 0
-            ? (visibleOrInRangeLayers = false)
-            : (visibleOrInRangeLayers = true);
+          visibleOrInRangeLayers = value.length === 0 ? false : true;
         }
       );
 

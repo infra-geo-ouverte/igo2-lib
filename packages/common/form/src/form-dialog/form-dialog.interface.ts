@@ -12,7 +12,7 @@ export interface FormDialogData
   extends FormDialogOptions,
     FormDialogFormConfig {}
 export interface FormDialogOptions extends MatDialogConfig {
-  data$?: BehaviorSubject<{ [key: string]: any }>;
+  data$?: BehaviorSubject<Record<string, any>>;
   title?: string;
   processButtonText?: string;
   cancelButtonText?: string;

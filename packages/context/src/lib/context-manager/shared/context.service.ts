@@ -56,7 +56,7 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
-  public importedContext: Array<DetailedContext> = [];
+  public importedContext: DetailedContext[] = [];
   public toolsChanged$ = new Subject<DetailedContext>();
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
@@ -105,7 +105,7 @@ export class ContextService {
     if (this.authService.hasAuthService) {
       this.authService.logged$.subscribe((logged) => {
         if (logged) {
-          this.contexts$.pipe(skip(1), first()).subscribe((c) => {
+          this.contexts$.pipe(skip(1), first()).subscribe(() => {
             this.handleContextsChange();
           });
           this.loadContexts();
@@ -200,7 +200,7 @@ export class ContextService {
 
     const url = this.baseUrl + '/contexts/' + id;
     return this.http.delete<void>(url).pipe(
-      tap((res) => {
+      tap(() => {
         this.contexts$.next(contexts);
       })
     );
@@ -402,7 +402,7 @@ export class ContextService {
           this.addContextToList(_context);
           this.setContext(_context);
         },
-        (err) => {
+        () => {
           if (uri !== this.options.defaultContextUri) {
             this.loadContext(this.options.defaultContextUri);
           }
@@ -565,7 +565,7 @@ export class ContextService {
         return source && layer.id === source.id && !contextLayer.baseLayer;
       });
       if (layerFound) {
-        let layerFoundAs = layerFound as
+        const layerFoundAs = layerFound as
           | VectorLayerOptions
           | VectorTileLayerOptions;
         let layerStyle = layerFoundAs.style;
@@ -590,8 +590,8 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
-          (catalogLayer.visible = layer.visible),
-            (catalogLayer.opacity = layer.opacity);
+          catalogLayer.visible = layer.visible;
+          catalogLayer.opacity = layer.opacity;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
@@ -623,7 +623,7 @@ export class ContextService {
       const source = layer.ol.getSource() as olVectorSource;
       olFeatures = source.getFeatures();
     }
-    const cleanedOlFeatures = this.exportService.generateFeature(
+    const cleanedOlFeatures = this.exportService.cleanFeatures(
       olFeatures,
       'GeoJSON',
       '_featureStore'

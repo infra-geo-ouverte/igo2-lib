@@ -7,8 +7,6 @@ import * as olproj from 'ol/proj';
   providedIn: 'root'
 })
 export class WktService {
-  constructor() {}
-
   public wktToFeature(wkt, wktProj, featureProj) {
     return new olWKT().readFeature(wkt, {
       dataProjection: wktProj,
@@ -16,8 +14,8 @@ export class WktService {
     });
   }
   public extentToWkt(epsgTO, extent, extentProj) {
-    let currentExtent = olproj.transformExtent(extent, extentProj, epsgTO);
-    currentExtent = this.roundCoordinateArray(currentExtent, epsgTO, 0);
+    const currentExtent = olproj.transformExtent(extent, extentProj, epsgTO);
+    this.roundCoordinateArray(currentExtent, epsgTO, 0);
     const wktPoly = `POLYGON((
       ${extent[0]} ${extent[1]},
       ${extent[0]} ${extent[3]},
