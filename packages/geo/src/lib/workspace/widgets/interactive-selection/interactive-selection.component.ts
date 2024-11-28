@@ -207,7 +207,7 @@ export class InteractiveSelectionFormComponent
     )
       .pipe(pairwise())
       .subscribe(([previous, current]) => {
-        let currentValues = current;
+        const currentValues = current;
         if (previous?.action !== current.action) {
           currentValues.buffer = undefined;
         }
@@ -291,8 +291,8 @@ export class InteractiveSelectionFormComponent
       })
       .filter((f) => f);
 
-    let selectedStateToApply: boolean = false;
-    let exclusive: boolean = false;
+    let selectedStateToApply = false;
+    let exclusive = false;
     if (intersectingFeatures.length) {
       if ([SelectionAction.New, SelectionAction.Add].includes(data.action)) {
         selectedStateToApply = true;
@@ -312,7 +312,9 @@ export class InteractiveSelectionFormComponent
     );
   }
 
-  clearForm() {
+  clear() {
+    const featureStore = this.workspace.entityStore as FeatureStore;
+    featureStore.state.updateAll({ selected: false });
     this.form$.value.control.reset();
     this.setAction(SelectionAction.Add);
     this.data$.next(
