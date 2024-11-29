@@ -35,7 +35,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppFormComponent implements OnInit, OnDestroy {
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
-  data$: BehaviorSubject<object> = new BehaviorSubject<{ [key: string]: any }>(
+  data$: BehaviorSubject<object> = new BehaviorSubject<Record<string, any>>(
     undefined
   );
 

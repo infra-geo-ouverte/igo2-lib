@@ -1,2 +1,3 @@
-@forward './lib/search/search-bar/search-bar.theming.scss' as search-bar-* show search-bar-color,
+@forward './lib/search/search-bar/search-bar.theming.scss' as search-bar-* show
+    search-bar-color,
   search-bar-density, search-bar-theme;

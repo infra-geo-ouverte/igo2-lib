@@ -754,7 +754,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
     if (this.calendarTypeYear) {
       if (this.filterOriginConfig.end === 'today') {
-        let todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
+        const todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
         maxDefaultISOString = `${todayDateStringNoTime.substring(0, 4)}-01-01`;
       } else {
         maxDefaultISOString = `${this.filterOriginConfig.end.substring(0, 4)}-01-01`;

@@ -7,7 +7,7 @@
 }
 
 @mixin density($theme) {
-  $density: mat.get-density-config($theme);
+  $density: mat.m2-get-density-config($theme);
   $theme: map.merge(
     $theme,
     (
@@ -22,11 +22,11 @@
 }
 
 @mixin typography($theme) {
-  $typography: mat.get-typography-config($theme);
+  $typography: mat.m2-get-typography-config($theme);
 
   igo-actionbar-item {
     mat-checkbox label {
-      font-size: mat.font-size($typography, body-1);
+      font-size: mat.m2-font-size($typography, body-1);
     }
   }
 }

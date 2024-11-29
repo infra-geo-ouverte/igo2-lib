@@ -1,5 +1,4 @@
 import OlMap from 'ol/Map';
-import OlMapEvent from 'ol/MapEvent';
 import { ObjectEvent } from 'ol/Object';
 import OlView from 'ol/View';
 import * as oleasing from 'ol/easing';
@@ -72,7 +71,7 @@ export class MapViewController extends MapController {
   /**
    * Current state index
    */
-  private stateIndex: number = 0;
+  private stateIndex = 0;
 
   /**
    * Whether the view controller should keep the view's state history
@@ -128,9 +127,7 @@ export class MapViewController extends MapController {
   setupObservers() {
     if (this.stateHistory === true) {
       this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) =>
-          this.onMoveEnd(event)
-        ) as EventsKey
+        this.olMap.on('moveend', () => this.onMoveEnd()) as EventsKey
       );
     }
 
@@ -351,7 +348,7 @@ export class MapViewController extends MapController {
   private setExtent(
     extent: MapExtent,
     action: MapViewAction,
-    animation: boolean = true
+    animation = true
   ) {
     const olView = this.olView;
     olView.cancelAnimations();
@@ -426,7 +423,7 @@ export class MapViewController extends MapController {
    * On move end, get the view state and record it.
    * @param event Map event
    */
-  private onMoveEnd(event: OlMapEvent) {
+  private onMoveEnd() {
     const resolution = this.getResolution();
     if (this.resolution$.value !== resolution) {
       this.resolution$.next(resolution);

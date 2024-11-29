@@ -8,9 +8,17 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 })
 export class LanguageService {
   private language: string;
-  readonly language$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  readonly language$ = new BehaviorSubject<string>(undefined);
 
   constructor(public translate: TranslateService) {
+    if (
+      !this.translate.defaultLang ||
+      !this.matchLanguage(this.translate.defaultLang)
+    ) {
+      this.setBrowserLanguage();
+    }
+  }
+  private setBrowserLanguage() {
     this.language = this.translate.getBrowserLang();
     const lang = this.getLanguage();
     this.translate.setDefaultLang(lang);
@@ -18,11 +26,15 @@ export class LanguageService {
   }
 
   public getLanguage(): string {
-    return this.language.match(/en|fr/) ? this.language : 'en';
+    return this.matchLanguage(this.language) ? this.language : 'en';
+  }
+
+  private matchLanguage(lang: string): boolean {
+    return !!lang.match(/en|fr/);
   }
 
   public setLanguage(language: string) {
-    this.language = language.match(/en|fr/) ? language : 'en';
+    this.language = this.matchLanguage(language) ? language : 'en';
     combineLatest([
       this.translate.use(this.language),
       this.translate.reloadLang(this.language)

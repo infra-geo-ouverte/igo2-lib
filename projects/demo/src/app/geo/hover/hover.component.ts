@@ -25,8 +25,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
-  public pointerCoordDelay: number = 0;
-  public pointerHoverFeatureDelay: number = 0;
+  public pointerCoordDelay = 0;
+  public pointerHoverFeatureDelay = 0;
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -67,9 +67,7 @@ export class AppHoverComponent {
       } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
-    interface WFSDataOptions extends WFSDataSourceOptions {}
-
-    const wfsDatasourcePoint: WFSDataOptions = {
+    const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
       params: {

@@ -48,7 +48,7 @@ export class DirectionsButtonsComponent {
       .find((route) => route.properties.active);
   }
   @Input() contextUri: string;
-  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input() zoomToActiveRoute$ = new Subject<void>();
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;

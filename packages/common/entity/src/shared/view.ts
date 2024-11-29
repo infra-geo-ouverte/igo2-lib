@@ -44,14 +44,12 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Observable of filter clauses
    */
-  private filters$: BehaviorSubject<EntityFilterClause[]> = new BehaviorSubject(
-    []
-  );
+  private filters$ = new BehaviorSubject<EntityFilterClause[]>([]);
 
   /**
    * Filters index
    */
-  private filterIndex: Map<string, EntityFilterClause> = new Map();
+  private filterIndex = new Map<string, EntityFilterClause>();
 
   /**
    * Observable of a sort clause
@@ -64,9 +62,7 @@ export class EntityView<E extends object, V extends object = E> {
   get getKey(): (V) => EntityKey {
     return this.getKey$.value;
   }
-  private getKey$: BehaviorSubject<(V) => EntityKey> = new BehaviorSubject(
-    undefined
-  );
+  private getKey$ = new BehaviorSubject<(V) => EntityKey>(undefined);
 
   /**
    * Number of entities

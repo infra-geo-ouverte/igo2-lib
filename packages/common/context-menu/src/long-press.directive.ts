@@ -20,11 +20,9 @@ import { userAgent } from '@igo2/utils';
 })
 export class LongPressDirective {
   private touchTimeout: any;
-  @Input() touchDuration: number = 400;
-  @Input() onlyIOS: boolean = true;
+  @Input() touchDuration = 400;
+  @Input() onlyIOS = true;
   @Output() longpress = new EventEmitter();
-
-  constructor() {}
 
   @HostListener('touchstart', ['$event'])
   public touchstart(e: TouchEvent) {

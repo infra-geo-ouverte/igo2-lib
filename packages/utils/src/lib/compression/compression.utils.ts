@@ -3,10 +3,8 @@ import { Observable, Observer } from 'rxjs';
 import { CompressedData } from './compressedData.interface';
 
 function getNumber(v: number, endposition: number, length: number) {
-  /* tslint:disable:no-bitwise*/
   const mask = (1 << length) - 1;
   return (v >> endposition) & mask;
-  /* tslint:enable:no-bitwise*/
 }
 
 export class Compression {
@@ -65,7 +63,6 @@ export class Compression {
   }
 
   decompressBlob(compressedData: CompressedData): Blob {
-    /* tslint:disable:no-bitwise*/
     const object = compressedData.object;
     const length = compressedData.length;
     const decompressed: string = this.decompressStringBase64(object, length);
@@ -76,12 +73,10 @@ export class Compression {
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: compressedData.type });
-    /* tslint:enable:no-bitwise*/
     return blob;
   }
 
   private compressStringBase64(s: string): string {
-    /* tslint:disable:no-bitwise*/
     let out = '';
     let bits = 16;
     let chr = 0;
@@ -102,12 +97,10 @@ export class Compression {
     if (s.length % 8 !== 0) {
       out += String.fromCharCode(chr);
     }
-    /* tslint:enable:no-bitwise*/
     return String.fromCharCode(9731) + out;
   }
 
   private decompressStringBase64(c: string, length: number): string {
-    /* tslint:disable:no-bitwise*/
     if (!c) {
       return;
     }
@@ -137,6 +130,5 @@ export class Compression {
       }
     }
     return out;
-    /* tslint:enable:no-bitwise*/
   }
 }

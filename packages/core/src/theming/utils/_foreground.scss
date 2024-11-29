@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 
 @function theme-foreground($palette) {
-  $color: mat.get-color-from-palette($palette, 500);
+  $color: mat.m2-get-color-from-palette($palette, 500);
   @return (
     base: $color,
     divider: rgba($color, 0.12),

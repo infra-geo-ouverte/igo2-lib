@@ -68,14 +68,13 @@ import { MapState } from '../../map.state';
   ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
-  public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
-  public projections$: BehaviorSubject<InputProjections[]> =
-    new BehaviorSubject([]);
+  public formattedScale$ = new BehaviorSubject<string>('');
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
   public center: boolean;
-  private inMtmZone: boolean = true;
+  private inMtmZone = true;
   private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
   private formStatus$$: Subscription;
@@ -83,7 +82,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private defaultProj: InputProjections;
   private currentZones = { utm: undefined, mtm: undefined };
-  public units: boolean = true;
+  public units = true;
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -183,14 +182,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   getCoordinates(): string[] {
     this.currentZones.mtm = zoneMtm(this.currentCenterDefaultProj[0]);
     this.currentZones.utm = zoneUtm(this.currentCenterDefaultProj[0]);
-    let coord;
     const code = this.inputProj.code;
     let decimal = 2;
     if (code.includes('EPSG:4326') || code.includes('EPSG:4269')) {
       decimal = 5;
     }
     this.units = code === 'EPSG:4326' || code === 'EPSG:4269';
-    coord = this.map.viewController
+    const coord = this.map.viewController
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;
@@ -412,7 +410,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Push the MTM in the array of systeme of coordinates
    * @param projections Array of the InputProjections
    */
-  private pushMtm(projections: Array<InputProjections>): void {
+  private pushMtm(projections: InputProjections[]): void {
     if (this.projectionsConstraints.mtm) {
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;

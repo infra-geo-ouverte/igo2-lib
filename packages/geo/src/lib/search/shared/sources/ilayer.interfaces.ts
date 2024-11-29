@@ -4,7 +4,7 @@ import { QueryableDataSourceOptions } from './../../../query/shared/query.interf
 import { SearchSourceOptions } from './source.interfaces';
 
 export interface ILayerSearchSourceOptions extends SearchSourceOptions {
-  queryFormat?: { [key: string]: string | { urls: string[] } };
+  queryFormat?: Record<string, string | { urls: string[] }>;
 }
 
 export interface ILayerServiceResponse {
@@ -44,5 +44,5 @@ interface QueryWMSDataSourceOptions
 export interface ILayerItemResponse extends ImageLayerOptions {
   title: string;
   sourceOptions: QueryWMSDataSourceOptions;
-  properties: { [key: string]: any };
+  properties: Record<string, any>;
 }

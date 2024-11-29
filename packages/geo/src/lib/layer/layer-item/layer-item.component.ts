@@ -71,13 +71,13 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
   private _activeLayer;
 
-  layerTool$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  layerTool$ = new BehaviorSubject<boolean>(false);
 
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  showLegend$ = new BehaviorSubject<boolean>(true);
 
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
-  queryBadgeHidden$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  queryBadgeHidden$ = new BehaviorSubject<boolean>(true);
 
   tooltipText: string;
 
@@ -113,19 +113,19 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
   private _layer;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendIfVisible: boolean = false;
+  @Input() expandLegendIfVisible = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() orderable: boolean = true;
+  @Input() orderable = true;
 
-  @Input() lowerDisabled: boolean = false;
+  @Input() lowerDisabled = false;
 
-  @Input() raiseDisabled: boolean = false;
+  @Input() raiseDisabled = false;
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
   @Input() selectionMode;
 

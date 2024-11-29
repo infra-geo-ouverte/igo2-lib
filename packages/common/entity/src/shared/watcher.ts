@@ -35,7 +35,7 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * Component inner state
    */
-  private innerStateIndex = new Map<EntityKey, { [key: string]: any }>();
+  private innerStateIndex = new Map<EntityKey, Record<string, any>>();
 
   /**
    * Subscription to the store's entities
@@ -90,8 +90,8 @@ export class EntityStoreWatcher<E extends object> {
   private setupObservers() {
     this.teardownObservers();
 
-    this.entities$$ = this.store.entities$.subscribe((entities: E[]) =>
-      this.onEntitiesChange(entities)
+    this.entities$$ = this.store.entities$.subscribe(() =>
+      this.onEntitiesChange()
     );
 
     this.state$$ = this.store.state.change$
@@ -116,7 +116,7 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * When the entities change, always trigger the changes detection
    */
-  private onEntitiesChange(entities: E[]) {
+  private onEntitiesChange() {
     this.detectChanges();
   }
 

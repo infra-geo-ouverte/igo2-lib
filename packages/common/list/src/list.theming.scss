@@ -10,26 +10,26 @@
     [igolistitem] {
       &[color='primary'] {
         &.igo-list-item-selected > mat-list-item {
-          background-color: mat.get-color-from-palette($primary);
-          color: mat.get-color-from-palette($primary, default-contrast);
+          background-color: mat.m2-get-color-from-palette($primary);
+          color: mat.m2-get-color-from-palette($primary, default-contrast);
         }
         &:not(.igo-list-item-disabled):hover > mat-list-item,
         &.igo-list-item-focused > mat-list-item {
-          background-color: mat.get-color-from-palette($primary, lighter);
-          color: mat.get-color-from-palette($primary, default-contrast);
+          background-color: mat.m2-get-color-from-palette($primary, lighter);
+          color: mat.m2-get-color-from-palette($primary, default-contrast);
         }
       }
 
       &[color='accent'] {
         &.igo-list-item-selected > mat-list-item {
-          background-color: mat.get-color-from-palette($accent);
-          color: mat.get-color-from-palette($accent, default-contrast);
+          background-color: mat.m2-get-color-from-palette($accent);
+          color: mat.m2-get-color-from-palette($accent, default-contrast);
         }
 
         &:not(.igo-list-item-disabled):hover > mat-list-item,
         &.igo-list-item-focused > mat-list-item {
-          background-color: mat.get-color-from-palette($accent, lighter);
-          color: mat.get-color-from-palette($accent, default-contrast);
+          background-color: mat.m2-get-color-from-palette($accent, lighter);
+          color: mat.m2-get-color-from-palette($accent, default-contrast);
         }
       }
 
@@ -41,7 +41,7 @@
 }
 
 @mixin density($theme) {
-  $density: mat.get-density-config($theme);
+  $density: mat.m2-get-density-config($theme);
 
   $theme: map.merge(
     $theme,

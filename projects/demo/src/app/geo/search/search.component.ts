@@ -77,9 +77,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
-  public igoSearchPointerSummaryEnabled: boolean = false;
+  public igoSearchPointerSummaryEnabled = false;
 
-  public termSplitter: string = '|';
+  public termSplitter = '|';
 
   public map: IgoMap = new IgoMap({
     overlay: true,

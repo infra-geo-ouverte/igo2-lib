@@ -91,16 +91,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
   orderable = true;
   thresholdToFilterAndSort = 5;
 
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
+  layers$ = new BehaviorSubject<Layer[]>([]);
 
   change$ = new ReplaySubject<void>(1);
 
-  showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  showToolbar$ = new BehaviorSubject<boolean>(false);
 
   public layerTool: boolean;
 
-  public hideSelectedLayers: boolean = true;
-  activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+  public hideSelectedLayers = true;
+  activeLayer$ = new BehaviorSubject<Layer>(undefined);
 
   layersChecked: Layer[] = [];
   public selection: boolean;
@@ -112,11 +112,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {})
   templateLayerToolbar: TemplateRef<any>;
 
-  @Input() layersAreAllVisible: boolean = true;
+  @Input() layersAreAllVisible = true;
 
-  @Input() ogcButton: boolean = true;
+  @Input() ogcButton = true;
 
-  @Input() timeButton: boolean = true;
+  @Input() timeButton = true;
 
   @Input()
   get map(): IgoMap {
@@ -150,15 +150,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() layerFilterAndSortOptions: LayerListControlsOptions = {};
 
-  @Input() excludeBaseLayers: boolean = false;
+  @Input() excludeBaseLayers = false;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
   @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
 
@@ -458,7 +458,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   moveActiveLayer(
     activeLayer: Layer,
     actiontype: LayerListDisplacement,
-    fromUi: boolean = false
+    fromUi = false
   ) {
     const sortedLayersToMove = [];
     getRootParentByProperty(this.map, activeLayer, LinkedProperties.ZINDEX);
@@ -538,7 +538,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  raiseLayers(layers: Layer[], fromUi: boolean = true) {
+  raiseLayers(layers: Layer[], fromUi = true) {
     const layersToRaise = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -622,7 +622,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  lowerLayers(layers: Layer[], fromUi: boolean = true) {
+  lowerLayers(layers: Layer[], fromUi = true) {
     const layersToLower = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -831,8 +831,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
   get statusSelectedLayersCheck(): LayerListSelectVisibleEnum {
     let statusSelectedLayers: LayerListSelectVisibleEnum =
       LayerListSelectVisibleEnum.NULL;
-    let findTrue: boolean = false;
-    let findFalse: boolean = false;
+    let findTrue = false;
+    let findFalse = false;
 
     if (this.layersChecked.length === 0) {
       statusSelectedLayers = LayerListSelectVisibleEnum.NULL;

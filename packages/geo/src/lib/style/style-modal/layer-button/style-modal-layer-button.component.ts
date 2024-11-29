@@ -29,7 +29,7 @@ export class StyleModalLayerButtonComponent {
     setTimeout(() => {
       // open the dialog box used to style features
       const data: LayerMatDialogData = { layer: this.layer };
-      const dialogRef = this.dialog.open(StyleModalLayerComponent, {
+      this.dialog.open(StyleModalLayerComponent, {
         disableClose: false,
         data,
         autoFocus: false

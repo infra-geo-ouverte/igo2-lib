@@ -44,18 +44,15 @@ import { Action } from '../shared/action.interfaces';
   ]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
-  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly disabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(
-    undefined
-  );
+  readonly checkCondition$ = new BehaviorSubject<boolean>(undefined);
 
-  readonly tooltip$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  readonly tooltip$ = new BehaviorSubject<string>(undefined);
 
-  readonly noDisplay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly noDisplay$ = new BehaviorSubject<boolean>(false);
 
-  readonly ngClass$: BehaviorSubject<{ [key: string]: boolean }> =
-    new BehaviorSubject({});
+  readonly ngClass$ = new BehaviorSubject<Record<string, boolean>>({});
 
   private ngClass$$: Subscription;
 
@@ -123,7 +120,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the action button is clicked
    */
-  @Output() trigger: EventEmitter<Action> = new EventEmitter();
+  @Output() trigger = new EventEmitter<Action>();
 
   /**
    * @internal
@@ -138,7 +135,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     if (this.action.ngClass !== undefined) {
       this.ngClass$$ = this.action
         .ngClass(...args)
-        .subscribe((ngClass: { [key: string]: boolean }) =>
+        .subscribe((ngClass: Record<string, boolean>) =>
           this.updateNgClass(ngClass)
         );
     }
@@ -222,7 +219,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     this.trigger.emit(this.action);
   }
 
-  private updateNgClass(ngClass: { [key: string]: boolean }) {
+  private updateNgClass(ngClass: Record<string, boolean>) {
     this.ngClass$.next(Object.assign({}, this.ngClass$.value, ngClass));
   }
 

@@ -213,7 +213,6 @@ export function featureFromOl(
     : olFeature.get(idColumn)
       ? olFeature.get(idColumn)
       : uuid();
-  const newFeature = olFeature.get('_newFeature');
 
   return {
     type: FEATURE,

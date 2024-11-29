@@ -23,7 +23,7 @@ export interface DrawingStyle {
   stroke?: string;
 }
 
-export interface FeatureWithDraw extends Feature<FeatureWithDrawProperties> {}
+export type FeatureWithDraw = Feature<FeatureWithDrawProperties>;
 
 export interface FeatureWithDrawProperties {
   id: string;

@@ -12,20 +12,20 @@
 
   igo-layer-item {
     &.igo-layer-item-focused > mat-list-item {
-      background-color: mat.get-color-from-palette($accent, lighter);
-      color: mat.get-color-from-palette($primary, default-contrast);
+      background-color: mat.m2-get-color-from-palette($accent, lighter);
+      color: mat.m2-get-color-from-palette($primary, default-contrast);
     }
 
     button {
       &:not(.mat-primary) {
         mat-icon {
-          color: mat.get-color-from-palette($foreground, base);
+          color: mat.m2-get-color-from-palette($foreground, base);
         }
       }
 
       mat-icon {
         &.disabled {
-          color: mat.get-color-from-palette($foreground, disabled);
+          color: mat.m2-get-color-from-palette($foreground, disabled);
         }
       }
     }

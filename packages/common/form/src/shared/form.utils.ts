@@ -22,7 +22,7 @@ export function formControlIsRequired(control: AbstractControl): boolean {
   return false;
 }
 
-export function getDefaultErrorMessages(): { [key: string]: string } {
+export function getDefaultErrorMessages(): Record<string, string> {
   return {
     required: 'igo.common.form.errors.required',
     email: 'igo.common.form.errors.email'
@@ -31,7 +31,7 @@ export function getDefaultErrorMessages(): { [key: string]: string } {
 
 export function getControlErrorMessage(
   control: AbstractControl,
-  messages: { [key: string]: string }
+  messages: Record<string, string>
 ): string {
   const errors = control.errors || {};
   const errorKeys = Object.keys(errors);

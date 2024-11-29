@@ -17,6 +17,4 @@ import {
   standalone: true,
   imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
 })
-export class TimeFilterToolComponent {
-  constructor() {}
-}
+export class TimeFilterToolComponent {}

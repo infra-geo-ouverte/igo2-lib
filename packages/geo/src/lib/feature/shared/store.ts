@@ -8,7 +8,7 @@ import { Document } from 'flexsearch';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared';
-import { IgoMap, MapExtent } from '../../map/shared';
+import type { IgoMap, MapExtent } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import {
@@ -167,9 +167,9 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   }
 
   setLayerExtent(): void {
-    let features = this.entities$.getValue();
-    let extent = olextent.createEmpty() as MapExtent;
-    let olFeatures = [];
+    const features = this.entities$.getValue();
+    const extent = olextent.createEmpty() as MapExtent;
+    const olFeatures = [];
 
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));

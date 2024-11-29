@@ -9,16 +9,12 @@ export interface TableColumn {
   html?: boolean;
 }
 
-export type RowClassFunc = (row: any) => {
-  [key: string]: string;
-};
+export type RowClassFunc = (row: any) => Record<string, string>;
 
 export type CellClassFunc = (
   row: any,
   column: TableColumn
-) => {
-  [key: string]: string;
-};
+) => Record<string, string>;
 
 export type ClickAction = (item: any) => void;
 

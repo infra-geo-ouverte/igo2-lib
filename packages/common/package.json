@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "17.0.0",
+  "version": "18.0.0-next.7",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -141,23 +141,23 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.6",
-    "@angular/core": "^17.0.6",
-    "@angular/material": "^17.0.3",
-    "@angular/platform-browser": "^17.0.6",
-    "@floating-ui/utils": "^0.1.4",
+    "@angular/common": "^18.0.0",
+    "@angular/core": "^18.0.0",
+    "@angular/material": "^18.0.0",
+    "@angular/platform-browser": "^18.0.0",
+    "@floating-ui/utils": "^0.2.0",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "angular-shepherd": "17.0.0",
+    "angular-shepherd": "^18.0.0",
     "ngx-color": "^9.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "tinycolor2": "^1.6.0",
     "typy": "^3.3.0"
   },
   "devDependencies": {
-    "typescript": "^5.1.6"
+    "typescript": "~5.5.4"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }

@@ -3,7 +3,7 @@
 
 @mixin igo-draw-theming($theme) {
   $foreground: map.get($theme, foreground);
-  $typography: mat.get-typography-config($theme);
+  $typography: mat.m2-get-typography-config($theme);
 
   igo-draw-popup-component,
   igo-draw-popup-component,
@@ -17,15 +17,15 @@
     }
 
     .igo-map-tooltip-draw {
-      color: mat.get-color-from-palette($foreground, text);
+      color: mat.m2-get-color-from-palette($foreground, text);
       font-weight: bold;
-      font-size: mat.font-size($typography, subtitle-1);
+      font-size: mat.m2-font-size($typography, subtitle-1);
     }
   }
 
   igo-draw-popup-component {
     h1 {
-      font-size: mat.font-size($typography, headline-4);
+      font-size: mat.m2-font-size($typography, headline-4);
       font-family: Roboto, 'Helvetica Neue', sans-serif;
     }
   }

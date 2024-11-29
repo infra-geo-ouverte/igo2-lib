@@ -12,9 +12,7 @@ import { InsertSourceInsertDBEnum } from './geoDB.enums';
 import { DatasToIDB, GeoDBData } from './geoDB.interface';
 import { GeoDBService } from './geoDB.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ConfigFileToGeoDBService {
   constructor(
     private http: HttpClient,

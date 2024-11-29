@@ -12,15 +12,13 @@ import { FontType } from '../shared/font.enum';
 export class DrawStyleService {
   private fillColor = 'rgba(255,255,255,0.4)';
   private strokeColor = 'rgba(143,7,7,1)';
-  private strokeWidth: number = 1;
+  private strokeWidth = 1;
   private labelsAreShown = true;
   private icon: string;
-  private fontSize: string = '15';
+  private fontSize = '15';
   private fontStyle: string = FontType.Arial.toString();
-  private offsetX: number = 0;
-  private offsetY: number = 0;
-
-  constructor() {}
+  private offsetX = 0;
+  private offsetY = 0;
 
   getFillColor(): string {
     return this.fillColor;
@@ -104,7 +102,7 @@ export class DrawStyleService {
     icon?: string
   ): OlStyle.Style {
     let style;
-    let labelsAreOffset: boolean = false;
+    let labelsAreOffset = false;
     const geom = feature.getGeometry();
 
     if (geom instanceof OlPoint) {

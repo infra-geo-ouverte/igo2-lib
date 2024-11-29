@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 
@@ -19,15 +19,13 @@ export interface SimpleGetOptions {
   responseType: ResponseType | Type;
   withCredentials?: boolean;
 }
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GeoNetworkService {
-  private networkOnline: boolean = true;
+  private networkOnline = true;
   constructor(
     private http: HttpClient,
-    public geoDBService: GeoDBService,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    @Optional() public geoDBService?: GeoDBService
   ) {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.networkOnline = state.connection;
@@ -76,7 +74,7 @@ export class GeoNetworkService {
   }
 
   private getOffline(url: string): Observable<any> {
-    return this.geoDBService.get(url);
+    return this.geoDBService?.get(url);
   }
 
   public isOnline() {

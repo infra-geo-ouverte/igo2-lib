@@ -45,7 +45,7 @@ import { MapState } from '../../map.state';
   ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
-  public swipe: boolean = false;
+  public swipe = false;
   public layerList: Layer[];
   public userControlledLayerList: Layer[];
   public form: UntypedFormGroup;

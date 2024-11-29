@@ -27,10 +27,10 @@ executor('Publish demo on Github', async () => {
   await $$`npm run build.ghpages -w demo`;
 
   await writeFile2(
-    'dist/ghpages/_config.yml',
+    'dist/ghpages/browser/_config.yml',
     "include: ['_default.json', '_contexts.json', '_base.json']",
     false
   );
 
-  await $$`npx ngh --dir=dist/ghpages --no-silent=false --message=${version}`;
+  await $$`npx ngh --dir=dist/ghpages/browser --no-silent=false --message=${version}`;
 });

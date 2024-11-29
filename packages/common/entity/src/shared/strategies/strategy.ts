@@ -25,7 +25,7 @@ export class EntityStoreStrategy {
   get active(): boolean {
     return this.active$.value;
   }
-  readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly active$ = new BehaviorSubject<boolean>(false);
 
   constructor(protected options: EntityStoreStrategyOptions = {}) {
     this.options = options;
@@ -77,11 +77,15 @@ export class EntityStoreStrategy {
    * Do the stataegy activation
    * @internal
    */
-  protected doActivate() {}
+  protected doActivate() {
+    // empty
+  }
 
   /**
    * Do the strategy deactivation
    * @internal
    */
-  protected doDeactivate() {}
+  protected doDeactivate() {
+    // empty
+  }
 }

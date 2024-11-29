@@ -50,7 +50,7 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetInputs$(): BehaviorSubject<{ [key: string]: any }> {
+  get widgetInputs$(): BehaviorSubject<Record<string, any>> {
     return this.workspace.widgetInputs$;
   }
 
@@ -58,13 +58,11 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetSubscribers$(): BehaviorSubject<{
-    [key: string]: (event: any) => void;
-  }> {
+  get widgetSubscribers$(): BehaviorSubject<
+    Record<string, (event: any) => void>
+  > {
     return this.workspace.widgetSubscribers$;
   }
-
-  constructor() {}
 
   /**
    * When a widget's component emit the 'cancel' event,

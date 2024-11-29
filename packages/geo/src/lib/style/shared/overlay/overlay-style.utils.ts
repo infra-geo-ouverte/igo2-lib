@@ -90,7 +90,7 @@ export function createOverlayDefaultStyle({
 
 function createBufferStyle(
   strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
-  strokeWidth: number = 2,
+  strokeWidth = 2,
   fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
   bufferRadius?
 ): olstyle.Style {

@@ -49,14 +49,11 @@ import { Layer } from '../shared/layers/layer';
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
 
-  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
-  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> =
-    new BehaviorSubject(true);
-  layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegend: boolean = false;
+  hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  hasVisibleAndNotInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  layersInUi$ = new BehaviorSubject<Layer[]>([]);
+  layers$ = new BehaviorSubject<Layer[]>([]);
+  showAllLegend = false;
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
   @Input()
@@ -68,17 +65,16 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
     return this._layers;
   }
   private _layers: Layer[];
-  @Input() excludeBaseLayers: boolean = false;
+  @Input() excludeBaseLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() allowShowAllLegends = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() showAllLegendsValue = false;
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
 
-  constructor() {}
   ngOnInit(): void {
     this.change$$ = this.change$
       .pipe(

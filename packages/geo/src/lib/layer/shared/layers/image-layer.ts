@@ -6,15 +6,15 @@ import olSourceImage from 'ol/source/Image';
 
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
-import { IgoMap } from '../../../map/shared/map';
+import type { IgoMap } from '../../../map/shared/map';
 import { ImageWatcher } from '../../utils/image-watcher';
 import { ImageLayerOptions } from './image-layer.interface';
 import { Layer } from './layer';
 
 export class ImageLayer extends Layer {
-  public declare dataSource: WMSDataSource | ImageArcGISRestDataSource;
-  public declare options: ImageLayerOptions;
-  public declare ol: olLayerImage<olSourceImage>;
+  declare public dataSource: WMSDataSource | ImageArcGISRestDataSource;
+  declare public options: ImageLayerOptions;
+  declare public ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 
@@ -52,7 +52,7 @@ export class ImageLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
     super.setMap(map);
   }

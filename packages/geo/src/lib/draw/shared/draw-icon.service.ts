@@ -6,7 +6,7 @@ import { ConfigService } from '@igo2/core/config';
   providedIn: 'root'
 })
 export class DrawIconService {
-  protected icons: Array<string>;
+  protected icons: string[];
 
   constructor(protected config: ConfigService) {
     this.getIconsList();
