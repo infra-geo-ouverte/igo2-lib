@@ -7,8 +7,8 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceVector;
-  public declare options: ArcGISRestDataSourceOptions;
+  declare public ol: olSourceVector;
+  declare public options: ArcGISRestDataSourceOptions;
 
   protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();

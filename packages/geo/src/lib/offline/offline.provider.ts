@@ -1,6 +1,6 @@
-import { Provider } from '@angular/core';
+import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
-import { CONFIG_TOKEN, DBConfig, NgxIndexedDBService } from 'ngx-indexed-db';
+import { DBConfig, provideIndexedDb } from 'ngx-indexed-db';
 
 import { ConfigFileToGeoDBService, GeoDBService } from './geoDB';
 import { LayerDBService } from './layerDB';
@@ -39,9 +39,9 @@ const dbConfig: DBConfig = {
 
 export function provideOffline(
   options: IOfflineOptions | undefined
-): Provider[] {
+): EnvironmentProviders {
   if (!options?.enable) {
-    return [];
+    return;
   }
 
   const dbConfigFormatted = {};
@@ -49,12 +49,11 @@ export function provideOffline(
     Object.assign(dbConfigFormatted, { [config.name]: dbConfig });
   }
 
-  return [
-    { provide: CONFIG_TOKEN, useValue: dbConfigFormatted },
-    NgxIndexedDBService,
+  return makeEnvironmentProviders([
+    provideIndexedDb(dbConfig),
     LayerDBService,
     GeoDBService,
     GeoNetworkService,
     ConfigFileToGeoDBService
-  ];
+  ]);
 }

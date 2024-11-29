@@ -12,9 +12,9 @@ import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 
 export class VectorTileLayer extends Layer {
-  public declare dataSource: MVTDataSource;
-  public declare options: VectorTileLayerOptions;
-  public declare ol: olLayerVectorTile;
+  declare public dataSource: MVTDataSource;
+  declare public options: VectorTileLayerOptions;
+  declare public ol: olLayerVectorTile;
 
   private watcher: TileWatcher;
 

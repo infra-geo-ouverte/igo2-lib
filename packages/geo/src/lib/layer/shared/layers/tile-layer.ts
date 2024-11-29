@@ -17,15 +17,15 @@ import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 
 export class TileLayer extends Layer {
-  public declare dataSource:
+  declare public dataSource:
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
     | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
-  public declare options: TileLayerOptions;
-  public declare ol: olLayerTile<olSourceTile>;
+  declare public options: TileLayerOptions;
+  declare public ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 
