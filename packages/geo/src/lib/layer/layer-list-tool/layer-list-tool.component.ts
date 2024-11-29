@@ -19,9 +19,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoBadgeIconDirective } from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { LayerListControlsOptions } from './layer-list-tool.interface';
@@ -42,18 +42,18 @@ import { LayerListControlsOptions } from './layer-list-tool.interface';
     MatIconModule,
     MatBadgeModule,
     IgoBadgeIconDirective,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerListToolComponent implements OnInit, OnDestroy {
-  public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public term$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  public onlyVisible$ = new BehaviorSubject<boolean>(false);
+  public sortAlpha$ = new BehaviorSubject<boolean>(false);
+  public term$ = new BehaviorSubject<string>(undefined);
   onlyVisible$$: Subscription;
   sortAlpha$$: Subscription;
   term$$: Subscription;
 
-  @Input() layersAreAllVisible: boolean = true;
+  @Input() layersAreAllVisible = true;
 
   @Input() floatLabel: FloatLabelType = 'auto';
 

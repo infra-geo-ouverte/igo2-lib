@@ -8,9 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { CollapseDirective } from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -48,7 +48,7 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     MatCheckboxModule,
     FormsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [OGCFilterService]
 })
@@ -59,9 +59,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
-  public hasSelector: boolean = false;
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public hasSelector = false;
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
   private ogcFilterWriter;
 
@@ -69,7 +69,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
 
   @Input() map: MapBase;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);

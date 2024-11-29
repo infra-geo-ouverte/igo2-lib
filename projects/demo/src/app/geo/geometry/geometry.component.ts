@@ -10,7 +10,7 @@ import {
   FormFieldConfig,
   FormGroupComponent,
   FormService
-} from '@igo2/common';
+} from '@igo2/common/form';
 import {
   DataSourceService,
   IgoMap,
@@ -62,9 +62,9 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
 
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$ = new BehaviorSubject<Record<string, any>>(undefined);
 
-  submitDisabled: boolean = true;
+  submitDisabled = true;
 
   private valueChanges$$: Subscription;
 
@@ -175,7 +175,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }): void {
+  onSubmit(data: Record<string, any>): void {
     alert(JSON.stringify(data));
   }
 }

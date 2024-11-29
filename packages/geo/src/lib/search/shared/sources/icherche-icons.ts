@@ -1,11 +1,9 @@
-import { ENGINE_ICON, IconSvg } from '@igo2/common';
+import { ENGINE_ICON, IconSvg } from '@igo2/common/icon';
 
 /**
  * Icons mappings to be retrocompatible with iCherche
  */
-export const ICHERCHE_ICONS: {
-  [key: string]: string | IconSvg;
-} = {
+export const ICHERCHE_ICONS: Record<string, string | IconSvg> = {
   'map-marker': 'location_on',
   city: 'location_city',
   'flag-triangle': 'flag',

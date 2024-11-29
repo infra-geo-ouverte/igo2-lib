@@ -11,16 +11,10 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class LayerListToolState {
-  readonly keyword$: BehaviorSubject<string> = new BehaviorSubject('');
-  readonly sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(
-    undefined
-  );
-  readonly onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(
-    undefined
-  );
-  readonly selectedTab$: BehaviorSubject<number> = new BehaviorSubject(
-    undefined
-  );
+  readonly keyword$ = new BehaviorSubject<string>('');
+  readonly sortAlpha$ = new BehaviorSubject<boolean>(undefined);
+  readonly onlyVisible$ = new BehaviorSubject<boolean>(undefined);
+  readonly selectedTab$ = new BehaviorSubject<number>(undefined);
 
   setKeyword(keyword: string) {
     this.keyword$.next(keyword);

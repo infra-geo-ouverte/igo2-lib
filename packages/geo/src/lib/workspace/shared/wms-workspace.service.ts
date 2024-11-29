@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ActionStore } from '@igo2/common/action';
+import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 
@@ -106,6 +107,8 @@ export class WmsWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
@@ -115,7 +118,7 @@ export class WmsWorkspaceService {
         OgcFilterableDataSourceOptions {}
 
     let wks;
-    let wksLayerOption: GeoWorkspaceOptions = {
+    const wksLayerOption: GeoWorkspaceOptions = {
       printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,

@@ -1,7 +1,11 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { ActionStore, ActionbarComponent, ActionbarMode } from '@igo2/common';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode
+} from '@igo2/common/action';
 import { Media, MediaOrientation, MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
@@ -19,7 +23,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppActionComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
 
-  private added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private added$ = new BehaviorSubject<boolean>(false);
 
   get actionbarMode(): ActionbarMode {
     const media: Media = this.mediaService.media$.value;

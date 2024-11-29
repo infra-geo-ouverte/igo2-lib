@@ -3,11 +3,11 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions,
   EntityTableButton,
+  EntityTableColumn,
   EntityTableColumnRenderer,
-  EntityTableTemplate,
-  Workspace
-} from '@igo2/common';
-import { EntityTableColumn } from '@igo2/common';
+  EntityTableTemplate
+} from '@igo2/common/entity';
+import { Workspace } from '@igo2/common/workspace';
 import { StorageScope } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
@@ -122,7 +122,7 @@ export function getGeoServiceAction(
       tooltip: '',
       renderer: EntityTableColumnRenderer.ButtonGroup,
       valueAccessor: (entity: Feature, record: EntityRecord<Feature>) => {
-        let geoServiceProperties = record.state.geoService;
+        const geoServiceProperties = record.state.geoService;
         if (
           geoServiceProperties &&
           geoServiceProperties.haveGeoServiceProperties &&

@@ -12,12 +12,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { CustomHtmlComponent } from '@igo2/common';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, combineLatest } from 'rxjs';
 
 import { ShareMapService } from '../shared/share-map.service';
@@ -34,7 +34,7 @@ import { ShareMapService } from '../shared/share-map.service';
     MatIconModule,
     NgIf,
     CustomHtmlComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
@@ -58,7 +58,7 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mapState$$ = combineLatest([
       this.map.viewController.state$,
       this.map.status$
-    ]).subscribe((c) => {
+    ]).subscribe(() => {
       this.resetUrl();
       this.cdRef.detectChanges();
     });
@@ -72,7 +72,7 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mapState$$.unsubscribe();
   }
 
-  resetUrl(values: any = {}) {
+  resetUrl() {
     this.url = this.shareMapService.getUrlWithoutApi(
       this.map,
       this.publicShareOption

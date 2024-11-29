@@ -15,9 +15,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
@@ -48,7 +48,7 @@ import {
     MatButtonModule,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class PrintFormComponent implements OnInit {
@@ -174,6 +174,14 @@ export class PrintFormComponent implements OnInit {
     this.doZipFileField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get showNorth(): boolean {
+    return this.showNorthArrowField.value;
+  }
+  set showNorth(value: boolean) {
+    this.showNorthArrowField.setValue(value, { onlySelf: true });
+  }
+
   get outputFormatField() {
     return (this.form.controls as any).outputFormat as UntypedFormControl;
   }
@@ -214,6 +222,10 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).doZipFile as UntypedFormControl;
   }
 
+  get showNorthArrowField() {
+    return (this.form.controls as any).showNorth as UntypedFormControl;
+  }
+
   get titleField() {
     return (this.form.controls as any).title as UntypedFormControl;
   }
@@ -226,9 +238,9 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).legendPosition as UntypedFormControl;
   }
 
-  @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
+  @Output() submit = new EventEmitter<PrintOptions>();
 
-  maxLength: number = 180;
+  maxLength = 180;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -250,7 +262,8 @@ export class PrintFormComponent implements OnInit {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [{ hidden: this.isPrintService }]
+      doZipFile: [{ hidden: this.isPrintService }],
+      showNorthArrow: false
     });
   }
 

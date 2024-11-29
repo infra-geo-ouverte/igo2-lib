@@ -15,13 +15,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { SpinnerComponent } from '@igo2/common';
+import { SpinnerComponent } from '@igo2/common/spinner';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -55,13 +55,13 @@ import {
     MatDividerModule,
     NgFor,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextImportExportComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
-  public inputProj: string = 'EPSG:4326';
+  public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public layerList: Layer[];
@@ -69,7 +69,7 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
-  public activeImportExport: string = 'import';
+  public activeImportExport = 'import';
 
   private layers$$: Subscription;
 
@@ -129,14 +129,13 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.contextExportService
       .export(this.res)
       .pipe(take(1))
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
+      .subscribe({
+        error: (error: Error) => this.onFileExportError(error),
+        complete: () => {
           this.onFileExportSuccess();
           this.loading$.next(false);
         }
-      );
+      });
   }
 
   private buildForm() {

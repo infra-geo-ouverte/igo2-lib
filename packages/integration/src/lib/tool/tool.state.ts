@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ToolService, Toolbox } from '@igo2/common';
+import { ToolService, Toolbox } from '@igo2/common/tool';
 import { ExportOptions } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
@@ -21,9 +21,7 @@ export class ToolState {
     return this.toolService.toolbox;
   }
 
-  public openSidenav$: BehaviorSubject<boolean> = new BehaviorSubject(
-    undefined
-  );
+  public openSidenav$ = new BehaviorSubject<boolean>(undefined);
 
   constructor(
     private toolService: ToolService,
@@ -32,7 +30,7 @@ export class ToolState {
 
   toolToActivateFromOptions(toolToActivate: {
     tool: string;
-    options: { [key: string]: any };
+    options: ExportOptions;
   }) {
     if (!toolToActivate) {
       return;

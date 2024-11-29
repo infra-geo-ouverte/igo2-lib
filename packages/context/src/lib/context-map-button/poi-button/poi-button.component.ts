@@ -8,8 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService, StopPropagationDirective } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 
@@ -17,7 +19,6 @@ import * as oleasing from 'ol/easing';
 import olPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -38,7 +39,7 @@ import { PoiService } from './shared/poi.service';
     MatIconModule,
     MatDividerModule,
     NgFor,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [PoiService]
 })

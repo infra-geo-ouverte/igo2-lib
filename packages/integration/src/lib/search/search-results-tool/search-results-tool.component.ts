@@ -12,17 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityState,
-  EntityStore,
-  FlexibleComponent,
-  FlexibleState,
-  PanelComponent,
-  SanitizeHtmlPipe,
-  ToolComponent,
-  getEntityTitle
-} from '@igo2/common';
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
+import { EntityState, EntityStore, getEntityTitle } from '@igo2/common/entity';
+import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   FEATURE,
   Feature,
@@ -51,7 +47,6 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -86,7 +81,7 @@ import { SearchState } from '../search.state';
     MatBadgeModule,
     FeatureDetailsComponent,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     SanitizeHtmlPipe
   ]
 })
@@ -94,29 +89,27 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean = true;
+  @Input() showIcons = true;
 
   /**
    * Determine the top panel default state
    */
-  @Input() topPanelStateDefault: string = 'expanded';
+  @Input() topPanelStateDefault = 'expanded';
 
-  private hasFeatureEmphasisOnSelection: boolean = false;
-  public saveSearchResultInLayer: boolean = false;
+  private hasFeatureEmphasisOnSelection = false;
+  public saveSearchResultInLayer = false;
 
   private showResultsGeometries$$: Subscription;
   private getRoute$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
-  private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
-    undefined
-  );
+  private focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
   private isSelectedResultOutOfView$$: Subscription;
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
-  public debouncedEmpty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public debouncedEmpty$ = new BehaviorSubject<boolean>(true);
   private debouncedEmpty$$: Subscription;
 
   /**
@@ -704,56 +697,53 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.getRoute$$.unsubscribe();
       }
       this.getRoute$$ =
-        this.directionState.stopsStore.storeInitialized$.subscribe(
-          (init: boolean) => {
-            if (
-              this.directionState.stopsStore.storeInitialized$.value &&
-              !routingCoordLoaded
-            ) {
-              routingCoordLoaded = true;
-              const stop = this.directionState.stopsStore
-                .all()
-                .find((e) => e.position === 1);
-              let coord;
-              if (this.feature.geometry) {
-                if (this.feature.geometry.type === 'Point') {
-                  coord = [
-                    this.feature.geometry.coordinates[0],
-                    this.feature.geometry.coordinates[1]
-                  ];
-                } else {
-                  const point = pointOnFeature(this.feature.geometry);
-                  coord = [
-                    point.geometry.coordinates[0],
-                    point.geometry.coordinates[1]
-                  ];
-                }
-              }
-              stop.text = this.featureTitle;
-              stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
-              if (this.map.geolocationController.position$.value) {
-                const currentPos =
-                  this.map.geolocationController.position$.value;
-                const stop = this.directionState.stopsStore
-                  .all()
-                  .find((e) => e.position === 0);
-                const currentCoord = olProj.transform(
-                  currentPos.position,
-                  currentPos.projection,
-                  'EPSG:4326'
-                );
-                const coord: [number, number] = roundCoordTo(
-                  [currentCoord[0], currentCoord[1]],
-                  6
-                );
-                stop.text = coord.join(',');
-                stop.coordinates = coord;
-                this.directionState.stopsStore.update(stop);
+        this.directionState.stopsStore.storeInitialized$.subscribe(() => {
+          if (
+            this.directionState.stopsStore.storeInitialized$.value &&
+            !routingCoordLoaded
+          ) {
+            routingCoordLoaded = true;
+            const stop = this.directionState.stopsStore
+              .all()
+              .find((e) => e.position === 1);
+            let coord;
+            if (this.feature.geometry) {
+              if (this.feature.geometry.type === 'Point') {
+                coord = [
+                  this.feature.geometry.coordinates[0],
+                  this.feature.geometry.coordinates[1]
+                ];
+              } else {
+                const point = pointOnFeature(this.feature.geometry);
+                coord = [
+                  point.geometry.coordinates[0],
+                  point.geometry.coordinates[1]
+                ];
               }
             }
+            stop.text = this.featureTitle;
+            stop.coordinates = coord;
+            this.directionState.stopsStore.update(stop);
+            if (this.map.geolocationController.position$.value) {
+              const currentPos = this.map.geolocationController.position$.value;
+              const stop = this.directionState.stopsStore
+                .all()
+                .find((e) => e.position === 0);
+              const currentCoord = olProj.transform(
+                currentPos.position,
+                currentPos.projection,
+                'EPSG:4326'
+              );
+              const coord: [number, number] = roundCoordTo(
+                [currentCoord[0], currentCoord[1]],
+                6
+              );
+              stop.text = coord.join(',');
+              stop.coordinates = coord;
+              this.directionState.stopsStore.update(stop);
+            }
           }
-        );
+        });
     }, 250);
   }
 }

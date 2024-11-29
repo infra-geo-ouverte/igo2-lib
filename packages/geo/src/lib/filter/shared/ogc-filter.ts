@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Extent } from 'ol/extent';
@@ -145,7 +146,11 @@ export class OgcFilterWriter {
         filterAssembly = this.bundleFilter(filters, options);
       }
     } else {
-      return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      if (extent && proj) {
+        return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      } else {
+        return undefined;
+      }
     }
 
     const wfsOptions: WriteGetFeatureOptions = {
@@ -345,7 +350,7 @@ export class OgcFilterWriter {
     propertyName?: string,
     defaultOperatorsType?: OgcFilterOperatorType
   ) {
-    let effectiveOperators: {} = {};
+    let effectiveOperators = {};
     let allowedOperators;
     let fieldsHasSpatialOperator: boolean;
     let includeContains: boolean;
@@ -782,6 +787,17 @@ export class OgcFilterWriter {
         }
       }
 
+      if (
+        ogcFilters.filters &&
+        'operator' in ogcFilters.filters &&
+        ogcFilters.filters.operator.toLowerCase() ===
+          OgcFilterOperator.During.toLowerCase() &&
+        ogcFilters.filters.active &&
+        ogcFilters.interfaceOgcFilters?.length > 0
+      ) {
+        conditions.push(ogcFilters.interfaceOgcFilters[0]);
+      }
+
       if (conditions.length >= 1) {
         filterQueryStringSelector = this.buildFilter(
           conditions.length === 1
@@ -895,7 +911,7 @@ export class OgcFilterWriter {
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;
     } else {
-      layersOrTypenames.split(',').forEach((layerOrTypenames) => {
+      layersOrTypenames.split(',').forEach(() => {
         appliedFilter = `${appliedFilter}(${processedFilter.replace(
           'filter=',
           ''
@@ -913,12 +929,62 @@ export class OgcFilterWriter {
   public parseFilterOptionDate(value: string, defaultValue?: string): string {
     if (!value) {
       return defaultValue;
-    } else if (value === 'today') {
-      return undefined;
+    } else if (
+      value.toLowerCase().includes('now') ||
+      value.toLowerCase().includes('today')
+    ) {
+      return this.parseDateOperation(value);
     } else if (moment(value).isValid()) {
       return value;
     } else {
       return undefined;
+    }
+  }
+  /**
+   * this function to parse date with specific format
+   * exemple 'today + 1 days' or 'now + 1 years'
+   * @param value string date
+   * @returns date
+   */
+  private parseDateOperation(value: string): string {
+    const operationSplitted = value.toLowerCase().split(' ');
+    const leftOperand = operationSplitted[0];
+    const operator = ['+', '-'].includes(operationSplitted[1])
+      ? operationSplitted[1]
+      : undefined;
+    const rightOperand = /^[0-9]*$/.test(operationSplitted[2])
+      ? operationSplitted[2]
+      : undefined;
+    const rightUnitOperand = (
+      ['years', 'months', 'weeks', 'days', 'hours', 'seconds'].includes(
+        operationSplitted[3]
+      )
+        ? operationSplitted[3]
+        : undefined
+    ) as moment.DurationInputArg2;
+
+    if (!operator || !rightUnitOperand || !rightOperand) {
+      return leftOperand === 'now'
+        ? moment().format()
+        : moment().endOf('day').format();
+    }
+
+    if (operator === '+') {
+      return leftOperand === 'now'
+        ? moment().add(parseInt(rightOperand, 10), rightUnitOperand).format()
+        : moment()
+            .endOf('day')
+            .add(parseInt(rightOperand, 10), rightUnitOperand)
+            .format();
+    } else {
+      return leftOperand === 'now'
+        ? moment()
+            .subtract(parseInt(rightOperand, 10), rightUnitOperand)
+            .format()
+        : moment()
+            .endOf('day')
+            .subtract(parseInt(rightOperand, 10), rightUnitOperand)
+            .format();
     }
   }
 }

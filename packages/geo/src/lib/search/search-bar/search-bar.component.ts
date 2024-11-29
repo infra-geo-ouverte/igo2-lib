@@ -21,10 +21,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -58,7 +58,7 @@ import { SearchService } from '../shared/search.service';
     SearchSelectorComponent,
     SearchSettingsComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
@@ -75,11 +75,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     'ArrowLeft'
   ];
 
-  readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject(
+  readonly placeholder$ = new BehaviorSubject<string>(
     'igo.geo.search.placeholder'
   );
 
-  readonly empty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  readonly empty$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Subscription to the ssearch bar term
@@ -89,7 +89,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Search term stream
    */
-  private stream$: BehaviorSubject<string> = new BehaviorSubject('');
+  private stream$ = new BehaviorSubject<string>('');
 
   /**
    * Subscription to the search term stream
@@ -107,7 +107,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = false;
+  public showSearchButton = false;
 
   /**
    * List of available search types
@@ -126,9 +126,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get searchType(): string {
     return this.searchType$.value;
   }
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Event emitted when the pointer summary is activated by the searchbar setting
@@ -155,7 +153,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get term(): string {
     return this.term$.value;
   }
-  readonly term$: BehaviorSubject<string> = new BehaviorSubject('');
+  readonly term$ = new BehaviorSubject<string>('');
 
   /**
    * Whether this component is disabled
@@ -167,10 +165,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get disabled(): boolean {
     return this.disabled$.value;
   }
-  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  readonly disabled$ = new BehaviorSubject<boolean>(false);
 
-  @Input() pointerSummaryEnabled: boolean = false;
-  @Input() searchResultsGeometryEnabled: boolean = false;
+  @Input() pointerSummaryEnabled = false;
+  @Input() searchResultsGeometryEnabled = false;
 
   /**
    * When reverse coordinates status change
@@ -201,7 +199,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() color = 'primary';
 
-  @Input() termSplitter: string = '|';
+  @Input() termSplitter = '|';
 
   /**
    * Debounce time between each keystroke
@@ -385,6 +383,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (slug.length >= this.minLength || slug.length === 0) {
       this.stream$.next(term);
     }
+  }
+
+  handleSearch(): void {
+    this.doSearch(this.term);
   }
 
   /**

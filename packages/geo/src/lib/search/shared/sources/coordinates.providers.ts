@@ -9,6 +9,7 @@ import {
   CoordinatesSearchResultFormatter
 } from './coordinates';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * Coordinate search result formatter factory
@@ -38,8 +39,7 @@ export function provideDefaultCoordinatesSearchResultFormatter() {
 export function CoordinatesReverseSearchSourceFactory(
   config: ConfigService,
   languageService: LanguageService,
-  storageService: StorageService,
-  _projectionService: ProjectionService
+  storageService: StorageService
 ) {
   return new CoordinatesReverseSearchSource(
     config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),
@@ -58,5 +58,15 @@ export function provideCoordinatesReverseSearchSource() {
     useFactory: CoordinatesReverseSearchSourceFactory,
     multi: true,
     deps: [ConfigService, LanguageService, StorageService, ProjectionService]
+  };
+}
+
+export function withCoordinatesReverseSource(): SearchSourceFeature<SearchSourceKind.CoordinatesReverse> {
+  return {
+    kind: SearchSourceKind.CoordinatesReverse,
+    providers: [
+      provideCoordinatesReverseSearchSource(),
+      provideDefaultCoordinatesSearchResultFormatter()
+    ]
   };
 }

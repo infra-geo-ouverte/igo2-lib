@@ -35,8 +35,9 @@ import {
   EntityTableColumnRenderer,
   EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
 import OlFeature from 'ol/Feature';
@@ -45,7 +46,6 @@ import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 import * as olStyle from 'ol/style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -95,7 +95,7 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
     MatTooltipModule,
     EntityTableComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
@@ -287,14 +287,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   );
 
   // For geometry form field input
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
-  drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<
+  value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
+  drawGuide$ = new BehaviorSubject<number>(null);
+  overlayStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<
+  >(undefined);
+  drawStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
@@ -320,7 +320,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
-  public buffer: number = 0;
+  public buffer = 0;
   public radiusFormControl = new UntypedFormControl();
   public bufferFormControl = new UntypedFormControl();
 

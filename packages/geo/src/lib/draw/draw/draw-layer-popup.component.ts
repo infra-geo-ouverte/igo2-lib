@@ -8,7 +8,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 export interface DialogData {
   label: string;
@@ -25,11 +25,11 @@ export interface DialogData {
     MatInputModule,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DrawLayerPopupComponent {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
 
   constructor(public dialogRef: MatDialogRef<DrawLayerPopupComponent>) {}
 

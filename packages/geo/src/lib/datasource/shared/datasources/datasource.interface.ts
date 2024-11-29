@@ -24,7 +24,7 @@ export interface DataSourceOptions {
     | 'cluster';
   optionsFromCapabilities?: boolean;
   optionsFromApi?: boolean;
-  _layerOptionsFromSource?: { [key: string]: string };
+  _layerOptionsFromSource?: Record<string, string>;
   id?: string;
   ol?: olSource;
   minZoom?: number;
@@ -80,9 +80,10 @@ export interface EditionOptions {
   hasGeometry: boolean;
   addWithDraw?: boolean;
   messages?: any[];
-  addHeaders?: { [key: string]: any };
-  modifyHeaders?: { [key: string]: any };
+  addHeaders?: Record<string, any>;
+  modifyHeaders?: Record<string, any>;
   modifyMethod?: 'post' | 'patch';
+  modifyProtocol?: string;
   addButton?: boolean;
   modifyButton?: boolean;
   deleteButton?: boolean;
@@ -111,7 +112,7 @@ export interface Legend {
   display?: boolean;
   url?: string;
   html?: string;
-  style?: { [key: string]: string | number };
+  style?: Record<string, string | number>;
   title?: string;
   currentStyle?: string;
   imgGraphValue?: string;

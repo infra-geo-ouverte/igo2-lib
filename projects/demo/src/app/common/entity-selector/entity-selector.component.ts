@@ -1,7 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntitySelectorComponent, EntityStore } from '@igo2/common';
+import { EntitySelectorComponent, EntityStore } from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -33,8 +33,6 @@ export class AppEntitySelectorComponent implements OnInit, OnDestroy {
   public selectedEntity$: BehaviorSubject<DemoEntity> =
     new BehaviorSubject<DemoEntity>(undefined);
   public entityIsSelected: boolean;
-
-  constructor() {}
 
   ngOnInit(): void {
     this.store.load([

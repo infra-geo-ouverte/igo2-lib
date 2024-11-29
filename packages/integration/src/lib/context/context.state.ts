@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Tool, ToolService } from '@igo2/common';
+import { Tool, ToolService } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { LanguageService } from '@igo2/core/language';
 
@@ -18,7 +18,7 @@ export class ContextState {
   /**
    * Observable of the active context
    */
-  context$: BehaviorSubject<DetailedContext> = new BehaviorSubject(undefined);
+  context$ = new BehaviorSubject<DetailedContext>(undefined);
 
   constructor(
     private contextService: ContextService,

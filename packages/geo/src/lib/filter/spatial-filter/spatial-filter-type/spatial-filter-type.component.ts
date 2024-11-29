@@ -16,9 +16,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { EntityStore } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Feature } from '../../../feature';
 import { Layer } from '../../../layer';
@@ -48,7 +47,7 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
     MatButtonToggleModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
@@ -99,8 +98,6 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
-  constructor() {}
-
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = this.spatialType.Predefined;
@@ -111,7 +108,7 @@ export class SpatialFilterTypeComponent implements OnInit {
     this.eventType.emit(this.type);
   }
 
-  onTypeChange(event) {
+  onTypeChange() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = SpatialFilterType.Predefined;
     }

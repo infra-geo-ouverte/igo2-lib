@@ -5,9 +5,9 @@ import {
   OnInit
 } from '@angular/core';
 
-import { LAYER_PLUS_ICON, ToolComponent } from '@igo2/common';
-import { EntityStore } from '@igo2/common';
-import { StorageService } from '@igo2/core/storage';
+import { EntityStore } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 
 import { take } from 'rxjs/operators';
@@ -21,7 +21,7 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
-  icon: LAYER_PLUS_ICON
+  icon: 'library_add'
 })
 @Component({
   selector: 'igo-catalog-library-tool',
@@ -42,12 +42,24 @@ export class CatalogLibraryToolComponent implements OnInit {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed: boolean = false;
+  @Input() addCatalogAllowed = false;
 
   /**
    * List of predefined catalogs
    */
   @Input() predefinedCatalogs: Catalog[] = [];
+
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
+  get currentTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[1];
+  }
+
+  get lastTool() {
+    return this.toolState.toolbox.getCurrentPreviousToolName()[0];
+  }
 
   constructor(
     private catalogService: CatalogService,
@@ -60,6 +72,10 @@ export class CatalogLibraryToolComponent implements OnInit {
    * @internal
    */
   ngOnInit() {
+    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
+      this.selectedCatalogId = null;
+    }
+
     if (this.store.count === 0) {
       this.loadCatalogs();
     }

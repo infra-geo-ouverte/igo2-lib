@@ -1,6 +1,5 @@
 import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -9,6 +8,8 @@ import {
   Output
 } from '@angular/core';
 import {
+  FormControl,
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
@@ -27,30 +28,24 @@ import {
 } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  ConfirmDialogService,
-  CustomHtmlComponent,
-  EntityRecord,
-  SpinnerComponent,
-  Workspace
-} from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { EntityRecord } from '@igo2/common/entity';
+import { SpinnerComponent } from '@igo2/common/spinner';
+import type { WorkspaceStore } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
-import { strEnum } from '@igo2/utils';
 
+import type { default as OlFeature } from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
-import { circular } from 'ol/geom/Polygon';
-import olClusterSource from 'ol/source/Cluster';
-import olVectorSource from 'ol/source/Vector';
 
-import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, lastValueFrom } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { DownloadService } from '../../download/shared/download.service';
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -63,15 +58,18 @@ import { computeProjectionsConstraints } from '../../map/shared';
 import { IgoMap } from '../../map/shared/map';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { StyleService } from '../../style/style-service/style.service';
-import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
-import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
-import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
-import { ExportOptions } from '../shared/export.interface';
+import { ExportOptions, GeometryCollection } from '../shared/export.interface';
 import { ExportService } from '../shared/export.service';
-import { EncodingFormat, ExportFormat } from '../shared/export.type';
+import {
+  AnyExportFormat,
+  CsvSeparator,
+  ExportFormat,
+  ExportFormatLegacy
+} from '../shared/export.type';
 import {
   handleFileExportError,
-  handleFileExportSuccess
+  handleFileExportSuccess,
+  isCsvExport
 } from '../shared/export.utils';
 import { ImportExportServiceOptions } from '../shared/import.interface';
 import { ImportService } from '../shared/import.service';
@@ -80,6 +78,7 @@ import {
   handleFileImportSuccess
 } from '../shared/import.utils';
 
+type SelectMode = 'import' | 'export';
 @Component({
   selector: 'igo-import-export',
   templateUrl: './import-export.component.html',
@@ -103,26 +102,25 @@ import {
     MatInputModule,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [ConfirmDialogService]
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: UntypedFormGroup;
   public importForm: UntypedFormGroup;
-  public formats$ = new BehaviorSubject(undefined);
-  public encodings$ = new BehaviorSubject(undefined);
-  public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
-    []
-  );
+  public formats$ = new BehaviorSubject<ExportFormat[]>(undefined);
+  public exportableLayers$ = new BehaviorSubject<AnyLayer[]>([]);
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
 
+  csvSeparators = CsvSeparator;
+  isCsvExport = isCsvExport;
+
   private layers$$: Subscription;
   private exportableLayers$$: Subscription;
   private formats$$: Subscription;
-  private encodings$$: Subscription;
   private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
 
@@ -133,22 +131,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$: BehaviorSubject<InputProjections[]> =
-    new BehaviorSubject([]);
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   private projectionsConstraints: ProjectionsLimitationsOptions;
 
-  public popupChecked: boolean = false;
+  public popupChecked = false;
+  private configFormats: AnyExportFormat[];
 
-  private previousLayerSpecs$: BehaviorSubject<
+  private previousLayerSpecs$ = new BehaviorSubject<
     {
       id: string;
       visible: boolean;
       opacity: number;
       queryable: boolean;
     }[]
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
-  @Input() selectFirstProj: boolean = false;
+  @Input() selectFirstProj = false;
 
   @Input() map: IgoMap;
 
@@ -169,13 +167,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
    */
   @Input() store: WorkspaceStore;
 
-  @Input() selectedMode = 'import';
+  @Input() selectedMode: SelectMode = 'import';
 
-  @Output() selectMode = new EventEmitter<string>();
+  @Output() selectMode = new EventEmitter<SelectMode>();
 
-  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
-    undefined
-  );
+  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
@@ -212,7 +208,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private styleService: StyleService,
     private formBuilder: UntypedFormBuilder,
     private config: ConfigService,
-    private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
     private downloadService: DownloadService,
     private layerService: LayerService,
@@ -261,11 +256,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.formLayer$$ = this.form
       .get('format')
       .valueChanges.subscribe((format) => {
-        const ogreFormats = Object.keys(ExportService.ogreFormats);
         if (
           !this.popupChecked &&
           this.form.get('layers').value?.length > 1 &&
-          (ogreFormats.indexOf(format) >= 0 || format === ExportFormat.URL)
+          this.isOgreOrLink(format)
         ) {
           if (!this.handlePopup(true)) {
             this.form.patchValue({ format: undefined }, { emitEvent: false });
@@ -283,10 +277,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         const layers = selectedLayers.map((l) => this.map.getLayerById(l));
         this.computeFormats(layers);
 
-        if (
-          Object.keys(this.formats$.value).indexOf(this.form.value.format) ===
-          -1
-        ) {
+        if (this.formats$.value.indexOf(this.form.value.format) === -1) {
           this.form.patchValue({ format: undefined });
         }
 
@@ -322,18 +313,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.formats$$ = this.formats$
       .pipe(skipWhile((formats) => !formats))
       .subscribe((formats) => {
-        if (Object.keys(formats).length === 1) {
-          this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
-        }
-      });
-
-    this.encodings$$ = this.encodings$
-      .pipe(skipWhile((encodings) => !encodings))
-      .subscribe((encodings) => {
-        if (Object.keys(encodings).length === 1) {
-          this.form.patchValue({
-            encoding: encodings[Object.keys(encodings)[0]]
-          });
+        if (formats.length === 1) {
+          this.form.patchValue({ format: formats[0] });
         }
       });
 
@@ -344,18 +325,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.form.patchValue({ layers: layers[0].id });
         }
       });
-
-    this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
-      if (
-        format === ExportFormat.CSVcomma ||
-        format === ExportFormat.CSVsemicolon
-      ) {
-        this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
-      } else {
-        this.form.patchValue({ encoding: EncodingFormat.UTF8 });
-      }
-      this.cdRef.detectChanges();
-    });
 
     if (this.selectFirstProj) {
       if (this.projections$.value.length === 0) {
@@ -459,26 +428,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.projections$.next(configProjection.concat(projections));
   }
 
-  private getWorkspaceByLayerId(id: string): Workspace {
-    const wksFromLayerId = this.store
-      .all()
-      .find(
-        (workspace) =>
-          (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace)
-            .layer.id === id
-      );
-    if (wksFromLayerId) {
-      return wksFromLayerId;
-    }
-    return;
-  }
-
   public getLayerTitleById(id): string {
     return this.map.getLayerById(id)?.title;
   }
 
   layerHasSelectedFeatures(layer: Layer): boolean {
-    const wksFromLayer = this.getWorkspaceByLayerId(layer.id);
+    const wksFromLayer = this.exportService.getWorkspaceByLayerId(
+      layer.id,
+      this.store
+    );
     if (wksFromLayer) {
       const recs = wksFromLayer.entityStore.stateView.firstBy(
         (record: EntityRecord<Feature>) => {
@@ -519,7 +477,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.layers$$.unsubscribe();
     this.exportableLayers$$.unsubscribe();
     this.formats$$.unsubscribe();
-    this.encodings$$.unsubscribe();
     this.formLayer$$.unsubscribe();
     if (this.exportOptions$$) {
       this.exportOptions$$.unsubscribe();
@@ -559,7 +516,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  handlePopup(preCheck: boolean = true): boolean {
+  handlePopup(preCheck = true): boolean {
     const p1 = window.open('', 'popup', 'width=1, height=1');
     p1.close();
     const p2 = window.open('', 'popup', 'width=1, height=1');
@@ -574,202 +531,65 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return this.popupAllowed;
   }
 
-  handleExportFormSubmit(data: ExportOptions) {
+  private isOgreOrLink(format: AnyExportFormat | null): boolean {
+    const ogreFormats = Object.keys(ExportService.ogreFormats);
+    return ogreFormats.indexOf(format) >= 0 || format === 'URL';
+  }
+
+  async handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
 
-    const ogreFormats = Object.keys(ExportService.ogreFormats);
     if (
       !this.popupChecked &&
       data.layers.length > 1 &&
-      (ogreFormats.indexOf(data.format) >= 0 ||
-        data.format === ExportFormat.URL) &&
+      this.isOgreOrLink(data.format) &&
       !this.popupAllowed
     ) {
       this.handlePopup();
     }
 
-    let geomTypesCSV: { geometryType: string; features: any[] }[] = [];
-    let featuresCSV: any[] = [];
-    let filename: string = '';
+    const isCSV = isCsvExport(data.format);
 
-    for (const [layerIndex, layer] of data.layers.entries()) {
-      const lay = this.map.getLayerById(layer);
-      if (
-        !(
-          data.format === ExportFormat.CSVsemicolon ||
-          data.format === ExportFormat.CSVcomma
-        ) ||
-        !data.combineLayers ||
-        data.layers.length === 1
-      ) {
-        filename = lay.title;
+    if (data.format === 'Excel') {
+      try {
+        await this.exportService.exportExcel(this.map, this.store, data);
+        this.loading$.next(false);
+        return this.onFileExportSuccess();
+      } catch (error) {
+        this.onFileExportError(error);
+        throw error;
+      }
+    }
+
+    let fileName = '';
+
+    for (const layerId of data.layers) {
+      this.loading$.next(true);
+      const layer = this.map.getLayerById(layerId);
+      const features = await lastValueFrom(
+        this.exportService.getFeatures(this.map, layer, data, this.store)
+      ).catch((error) => {
+        this.onFileExportError(error);
+        throw error;
+      });
+      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      if (!isCSV || !data.combineLayers || data.layers.length === 1) {
+        fileName = layer.title;
         if (data.name) {
-          filename = data.name;
+          fileName = data.name;
         }
       } else {
-        filename = this.languageService.translate.instant(
+        fileName = this.languageService.translate.instant(
           'igo.geo.export.combinedLayers'
         );
       }
-      const dSOptions: DataSourceOptions = lay.dataSource.options;
-      if (
-        data.format === ExportFormat.URL &&
-        dSOptions.download &&
-        (dSOptions.download.url || dSOptions.download.dynamicUrl)
-      ) {
-        setTimeout(() => {
-          // better look an feel
-          const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
-          url.match(/service=wfs/gi)
-            ? this.downloadService.open(lay)
-            : window.open(url, '_blank');
-          this.loading$.next(false);
-        }, 500);
-        return;
-      }
-      const wks = this.getWorkspaceByLayerId(layer);
-      let olFeatures;
-      if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
-        if (
-          data.layersWithSelection.indexOf(layer) !== -1 &&
-          data.featureInMapExtent
-        ) {
-          // Only export selected feature && into map extent
-          olFeatures = wks.entityStore.stateView
-            .all()
-            .filter(
-              (e: EntityRecord<object>) =>
-                e.state.inMapExtent && e.state.selected
-            )
-            .map((e) => (e.entity as Feature).ol);
-        } else if (
-          data.layersWithSelection.indexOf(layer) !== -1 &&
-          !data.featureInMapExtent
-        ) {
-          // Only export selected feature &&  (into map extent OR not)
-          olFeatures = wks.entityStore.stateView
-            .all()
-            .filter((e: EntityRecord<object>) => e.state.selected)
-            .map((e) => (e.entity as Feature).ol);
-        } else if (data.featureInMapExtent) {
-          // Only into map extent
-          olFeatures = wks.entityStore.stateView
-            .all()
-            .filter((e: EntityRecord<object>) => e.state.inMapExtent)
-            .map((e) => (e.entity as Feature).ol);
-        } else {
-          // All features
-          olFeatures = wks.entityStore.stateView
-            .all()
-            .map((e) => (e.entity as Feature).ol);
-        }
-      } else {
-        const ol = lay.dataSource.ol as olVectorSource | olClusterSource;
-        if (data.featureInMapExtent) {
-          olFeatures = ol.getFeaturesInExtent(
-            lay.map.viewController.getExtent()
-          );
-        } else {
-          olFeatures = ol.getFeatures();
-        }
-        if (lay.dataSource instanceof ClusterDataSource) {
-          olFeatures = olFeatures.flatMap((cluster: any) =>
-            cluster.get('features')
-          );
-        }
+
+      if (data.format === 'URL') {
+        this.handleUrlExport(layer);
       }
 
-      let geomTypes: { geometryType: string; features: any[] }[] = [];
-      if (
-        data.format === ExportFormat.Shapefile ||
-        data.format === ExportFormat.GPX
-      ) {
-        olFeatures.forEach((olFeature) => {
-          const featureGeomType = olFeature.getGeometry().getType();
-          const currentGeomType = geomTypes.find(
-            (geomType) => geomType.geometryType === featureGeomType
-          );
-          if (currentGeomType) {
-            currentGeomType.features.push(olFeature);
-          } else {
-            geomTypes.push({
-              geometryType: featureGeomType,
-              features: [olFeature]
-            });
-          }
-        });
-      } else {
-        geomTypes = [{ geometryType: '', features: olFeatures }];
-      }
-
-      geomTypes.forEach((geomType) => {
-        geomType.features.forEach((feature) => {
-          const radius: number = feature.get('rad');
-          if (radius) {
-            const center4326: Array<number> = [
-              feature.get('longitude'),
-              feature.get('latitude')
-            ];
-            const circle = circular(center4326, radius, 500);
-            circle.transform('EPSG:4326', feature.get('_projection'));
-            feature.setGeometry(circle);
-          }
-        });
-      });
-
-      if (data.format === ExportFormat.GPX) {
-        const gpxFeatureCnt = geomTypes.length;
-        geomTypes = geomTypes.filter((geomType) =>
-          ['LineString', 'Point'].includes(geomType.geometryType)
-        );
-        const gpxFeatureCntPointOrPoly = geomTypes.length;
-        if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
-          this.messageService.error(
-            'igo.geo.export.gpx.error.poly.text',
-            'igo.geo.export.gpx.error.poly.title',
-            { timeOut: 20000 }
-          );
-        }
-      } else if (
-        (data.format === ExportFormat.CSVsemicolon ||
-          data.format === ExportFormat.CSVcomma) &&
-        data.combineLayers
-      ) {
-        geomTypes.forEach((geomType) => geomTypesCSV.push(geomType));
-
-        if (layerIndex !== data.layers.length - 1) {
-          continue;
-        } else {
-          let previousFeature = undefined;
-          geomTypesCSV.forEach((geomType) => {
-            geomType.features.forEach((currentFeature) => {
-              if (data.separator) {
-                if (previousFeature) {
-                  if (
-                    currentFeature.get('_featureStore').layer.options.title !==
-                    previousFeature.get('_featureStore').layer.options.title
-                  ) {
-                    const titleEmptyRows = this.createTitleEmptyRows(
-                      previousFeature,
-                      currentFeature
-                    );
-                    featuresCSV.push(titleEmptyRows[2]);
-                    featuresCSV.push(titleEmptyRows[0]);
-                    featuresCSV.push(titleEmptyRows[1]);
-                  }
-                } else {
-                  const titleEmptyRows = this.createTitleEmptyRows(
-                    currentFeature,
-                    currentFeature
-                  );
-                  featuresCSV.push(titleEmptyRows[0]);
-                }
-              }
-              featuresCSV.push(currentFeature);
-              previousFeature = currentFeature;
-            });
-          });
-        }
+      if (data.format === 'GPX') {
+        this.validateGpxExport(geomTypes);
       }
 
       if (geomTypes.length === 0) {
@@ -779,75 +599,136 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           'igo.geo.export.nothing.title',
           { timeOut: 20000 }
         );
-      } else {
-        if (
-          !(
-            data.format === ExportFormat.CSVsemicolon ||
-            data.format === ExportFormat.CSVcomma
-          ) ||
-          !data.combineLayers
-        ) {
-          geomTypes.map((geomType) =>
-            this.exportService
-              .export(
-                geomType.features,
-                data.format,
-                filename + geomType.geometryType,
-                data.encoding,
-                this.map.projection
-              )
-              .subscribe(
-                () => {},
-                (error: Error) => this.onFileExportError(error),
-                () => {
-                  this.onFileExportSuccess();
-
-                  geomType.features.forEach((feature) => {
-                    this.circleToPoint(feature);
-                  });
-
-                  this.loading$.next(false);
-                }
-              )
-          );
-        }
       }
-    }
-    if (
-      (data.format === ExportFormat.CSVsemicolon ||
-        data.format === ExportFormat.CSVcomma) &&
-      data.combineLayers
-    ) {
-      this.exportService
-        .export(
-          featuresCSV,
-          data.format,
-          filename,
-          data.encoding,
-          this.map.projection
-        )
-        .subscribe(
-          () => {},
-          (error: Error) => this.onFileExportError(error),
-          () => {
-            this.onFileExportSuccess();
 
-            featuresCSV.forEach((feature) => {
-              this.circleToPoint(feature);
-            });
-
-            this.loading$.next(false);
+      if (!isCSV || !data.combineLayers) {
+        geomTypes.forEach((geomType) => {
+          if (geomType.type) {
+            fileName += geomType.type;
           }
-        );
+          this.handleExport(geomType.features, data, fileName);
+        });
+      }
+      this.loading$.next(false);
     }
+
+    if (isCSV) {
+      this.handleCsvExport(data, fileName);
+    }
+  }
+
+  private handleUrlExport(layer: Layer): void {
+    const { download = null }: DataSourceOptions = layer.dataSource.options;
+    if (download?.url || download?.dynamicUrl) {
+      setTimeout(() => {
+        const url = download.url ?? download.dynamicUrl;
+        url.match(/service=wfs/gi)
+          ? this.downloadService.open(layer)
+          : window.open(url, '_blank');
+        this.loading$.next(false);
+      }, 500);
+      return;
+    }
+  }
+
+  private validateGpxExport(geomTypes: GeometryCollection[]): void {
+    const gpxFeatureCnt = geomTypes.length;
+    geomTypes = geomTypes.filter((geomType) =>
+      ['LineString', 'Point'].includes(geomType.type)
+    );
+    const gpxFeatureCntPointOrPoly = geomTypes.length;
+    if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
+      this.messageService.error(
+        'igo.geo.export.gpx.error.poly.text',
+        'igo.geo.export.gpx.error.poly.title',
+        { timeOut: 20000 }
+      );
+    }
+  }
+
+  private async handleCsvExport(data: ExportOptions, fileName: string) {
+    const featuresCSV = [];
+
+    if (data.combineLayers) {
+      let previousFeature = undefined;
+      const geomTypes = await this.getAllLayerGeomTypes(data);
+      geomTypes.forEach((geomType) => {
+        geomType.features.forEach((currentFeature) => {
+          if (data.separator) {
+            if (previousFeature) {
+              if (
+                currentFeature.get('_featureStore').layer.options.title !==
+                previousFeature.get('_featureStore').layer.options.title
+              ) {
+                const titleEmptyRows = this.createTitleEmptyRows(
+                  previousFeature,
+                  currentFeature
+                );
+                featuresCSV.push(titleEmptyRows[2]);
+                featuresCSV.push(titleEmptyRows[0]);
+                featuresCSV.push(titleEmptyRows[1]);
+              }
+            } else {
+              const titleEmptyRows = this.createTitleEmptyRows(
+                currentFeature,
+                currentFeature
+              );
+              featuresCSV.push(titleEmptyRows[0]);
+            }
+          }
+          featuresCSV.push(currentFeature);
+          previousFeature = currentFeature;
+        });
+      });
+    }
+
+    this.handleExport(featuresCSV, data, fileName);
+  }
+
+  private handleExport(
+    features: OlFeature<OlGeometry>[],
+    options: ExportOptions,
+    fileName: string
+  ) {
+    this.exportService
+      .export(features, options, fileName, this.map.projectionCode)
+      .subscribe({
+        error: (error: Error) => this.onFileExportError(error),
+        complete: () => {
+          this.onFileExportSuccess();
+
+          features.forEach((feature) => {
+            this.circleToPoint(feature);
+          });
+
+          this.loading$.next(false);
+        }
+      });
+  }
+
+  private async getAllLayerGeomTypes(
+    data: ExportOptions
+  ): Promise<GeometryCollection[]> {
+    return data.layers.reduce(async (typesPromise, layerId) => {
+      const types = await typesPromise;
+      const layer = this.map.getLayerById(layerId);
+      const features = await lastValueFrom(
+        this.exportService.getFeatures(this.map, layer, data, this.store)
+      ).catch((error) => {
+        this.onFileExportError(error);
+        throw error;
+      });
+      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      return types.concat(geomTypes);
+    }, Promise.resolve([]));
   }
 
   private createTitleEmptyRows(previousFeature, currentFeature) {
     const titleRow = currentFeature.clone();
     const headerRow = currentFeature.clone();
     const emptyRow = currentFeature.clone();
-    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
-    let firstKeyPrevious: string = '';
+    const previousFeatureKeys: string[] = previousFeature.getKeys();
+    let firstKeyPrevious = '';
     for (const key in previousFeatureKeys) {
       if (previousFeatureKeys[key] !== 'geometry') {
         firstKeyPrevious = previousFeatureKeys[key];
@@ -855,15 +736,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
     }
 
-    const currentFeatureKeys: Array<string> = currentFeature.getKeys();
-    let firstKeyCurrent: string = '';
+    const currentFeatureKeys: string[] = currentFeature.getKeys();
+    let firstKeyCurrent = '';
     for (const key in currentFeatureKeys) {
       if (currentFeatureKeys[key] !== 'geometry') {
         firstKeyCurrent = currentFeatureKeys[key];
         break;
       }
     }
-    const allKeys: Array<string> = currentFeature.getKeys();
+    const allKeys: string[] = currentFeature.getKeys();
     previousFeatureKeys.forEach((previousKey) => {
       if (allKeys.includes(previousKey) && previousKey !== firstKeyPrevious) {
         allKeys.push(previousKey);
@@ -871,7 +752,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     });
     allKeys.unshift(firstKeyPrevious);
 
-    let firstKeyAll: string = '';
+    let firstKeyAll = '';
     for (const key in allKeys) {
       if (allKeys[key] !== 'geometry') {
         firstKeyAll = allKeys[key];
@@ -926,7 +807,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return titleEmptyRows;
   }
 
-  private circleToPoint(feature) {
+  private circleToPoint(feature: OlFeature) {
     const radius: number = feature.get('rad');
 
     if (radius) {
@@ -944,28 +825,35 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       inputProj: ['', [Validators.required]]
     });
 
+    const form = this.formBuilder.group({
+      format: ['', [Validators.required]],
+      layers: [[], [Validators.required]],
+      layersWithSelection: [[]],
+      combineLayers: [true, [Validators.required]],
+      separator: [false, [Validators.required]],
+      featureInMapExtent: [false, [Validators.required]]
+    });
+
     if (this.forceNaming) {
-      this.form = this.formBuilder.group({
-        format: ['', [Validators.required]],
-        layers: [[], [Validators.required]],
-        layersWithSelection: [[]],
-        encoding: [EncodingFormat.UTF8, [Validators.required]],
-        combineLayers: [true, [Validators.required]],
-        separator: [false, [Validators.required]],
-        featureInMapExtent: [false, [Validators.required]],
-        name: ['', [Validators.required]]
-      });
-    } else {
-      this.form = this.formBuilder.group({
-        format: ['', [Validators.required]],
-        layers: [[], [Validators.required]],
-        layersWithSelection: [[]],
-        encoding: [EncodingFormat.UTF8, [Validators.required]],
-        combineLayers: [true, [Validators.required]],
-        separator: [false, [Validators.required]],
-        featureInMapExtent: [false, [Validators.required]]
-      });
+      form.addControl('name', new FormControl('', [Validators.required]));
     }
+
+    form
+      .get('format')
+      .valueChanges.subscribe((format: ExportFormat) =>
+        this.handleCsvForm(form, format)
+      );
+
+    this.form = form;
+  }
+
+  private handleCsvForm(form: FormGroup, format: ExportFormat): void {
+    format === 'CSV'
+      ? form.addControl(
+          'csvSeparator',
+          new FormControl('auto', [Validators.required])
+        )
+      : form.removeControl('csvSeparator');
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
@@ -1005,7 +893,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     handleFileImportError(file, error, this.messageService, this.fileSizeMb);
   }
 
-  private onPopupBlockedError(preCheck: boolean = true) {
+  private onPopupBlockedError(preCheck = true) {
     this.loading$.next(false);
     const extraMessage = preCheck
       ? 'igo.geo.export.popupBlocked.selectAgain'
@@ -1028,29 +916,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.forceNaming =
       forceNamingConfig !== undefined ? forceNamingConfig : false;
 
+    this.configFormats = this.config.getConfig('importExport.formats');
     this.computeFormats();
-    this.loadEncodings();
-  }
-
-  public encodingDefaultValue(format: ExportFormat) {
-    if (
-      format === ExportFormat.CSVcomma ||
-      format === ExportFormat.CSVsemicolon
-    ) {
-      this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
-      return EncodingFormat.LATIN1;
-    } else {
-      this.form.patchValue({ encoding: EncodingFormat.UTF8 });
-      return EncodingFormat.UTF8;
-    }
-  }
-
-  private loadEncodings() {
-    this.encodings$.next(EncodingFormat);
   }
 
   private computeFormats(layers?: AnyLayer[]) {
-    let appliedformats: string[] = Object.keys(ExportFormat);
+    let appliedformats: ExportFormat[] = [...ExportFormat];
     const formatsType = {
       onlyUrl: false,
       onlyVector: false,
@@ -1058,7 +929,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       customList: false
     };
     const customList = [];
-    if (layers && layers.length) {
+    if (layers?.length) {
       layers.forEach((layer) => {
         if (!layer) {
           return;
@@ -1087,6 +958,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           formatsType.onlyVector = true;
         }
       });
+      const hasUrl = this.formats$.value.includes('URL');
 
       if (formatsType.onlyUrl === true && formatsType.onlyVector === false) {
         appliedformats = ['URL'];
@@ -1095,11 +967,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         formatsType.onlyUrl === false
       ) {
         this.computeFormats(); // reset
-        if (ExportFormat.URL in this.formats$.value) {
-          const keys = Object.keys(this.formats$.value).filter(
+        if (hasUrl) {
+          appliedformats = [...this.formats$.value].filter(
             (key) => key !== 'URL'
           );
-          appliedformats = keys;
         }
       } else if (
         formatsType.vectorAndUrl === true &&
@@ -1107,24 +978,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         formatsType.onlyVector === false
       ) {
         this.computeFormats(); // reset
-        if (!(ExportFormat.URL in this.formats$.value)) {
-          const keys = Object.keys(this.formats$.value);
+        if (!hasUrl) {
+          const keys = [...this.formats$.value];
           keys.push('URL');
           appliedformats = keys;
         }
       }
     }
-    const configImportExportFormats = this.config.getConfig(
-      'importExport.formats'
-    );
-    if (configImportExportFormats) {
-      const validatedListFormat = this.validateListFormat(
-        configImportExportFormats
-      );
-      appliedformats = appliedformats.filter((af) =>
-        validatedListFormat.includes(af)
-      );
-    }
+
+    appliedformats = this.getAvailableFormats(appliedformats);
+
     if (formatsType.customList) {
       let commonFormats;
       const layersWithCustomFormats = [];
@@ -1140,7 +1003,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         appliedformats.includes(value)
       );
       if (finalFormats.length > 0) {
-        this.formats$.next(strEnum(finalFormats));
+        this.formats$.next(finalFormats);
 
         if (layers && layers.length) {
           if (layers.length > 1) {
@@ -1161,64 +1024,60 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
       return;
     } else {
-      this.formats$.next(strEnum(appliedformats));
+      this.formats$.next(appliedformats);
     }
   }
 
-  private validateListFormat(formats: string[]): string[] {
+  private getAvailableFormats(layerFormats: ExportFormat[]): ExportFormat[] {
+    if (!this.configFormats) {
+      return layerFormats;
+    }
+    const availableFormats = this.validateListFormat(this.configFormats);
+    return layerFormats.filter((layerFormat) =>
+      availableFormats.includes(layerFormat)
+    );
+  }
+
+  private validateListFormat(formats: AnyExportFormat[]): ExportFormat[] {
+    const allUppercaseFormats = [...ExportFormat, ...ExportFormatLegacy].map(
+      (f) => f.toUpperCase()
+    );
+
     return formats
       .filter((format) => {
-        if (
-          format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.CSVsemicolon.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.GML.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.KML.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.Shapefile.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.URL.toUpperCase()
-        ) {
+        if (allUppercaseFormats.includes(format.toUpperCase())) {
           return format;
         }
       })
       .map((format) => {
-        if (format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase()) {
-          format = ExportFormat.CSVcomma;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.CSVsemicolon.toUpperCase()) {
-          format = ExportFormat.CSVsemicolon;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.GML.toUpperCase()) {
-          format = ExportFormat.GML;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.GPX.toUpperCase()) {
-          format = ExportFormat.GPX;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase()) {
-          format = ExportFormat.GeoJSON;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.KML.toUpperCase()) {
-          format = ExportFormat.KML;
-          return format;
-        }
-        if (format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
-          format = ExportFormat.Shapefile;
-          return format;
-        }
-
-        if (format.toUpperCase() === ExportFormat.URL.toUpperCase()) {
-          format = ExportFormat.URL;
-          return format;
+        const csvFormats: string[] = (
+          ['CSV', 'CSVcomma', 'CSVsemicolon'] satisfies AnyExportFormat[]
+        ).map((f) => f.toUpperCase());
+        if (csvFormats.includes(format.toUpperCase())) {
+          return 'CSV';
+        } else if (this.compareString<ExportFormat>('Excel', format)) {
+          return 'Excel';
+        } else if (this.compareString<ExportFormat>('GML', format)) {
+          return 'GML';
+        } else if (this.compareString<ExportFormat>('GPX', format)) {
+          return 'GPX';
+        } else if (this.compareString<ExportFormat>('GeoJSON', format)) {
+          return 'GeoJSON';
+        } else if (this.compareString<ExportFormat>('KML', format)) {
+          return 'KML';
+        } else if (this.compareString<ExportFormat>('Shapefile', format)) {
+          return 'Shapefile';
+        } else if (this.compareString<ExportFormat>('URL', format)) {
+          return 'URL';
         }
       });
   }
 
-  public modeChanged(mode) {
+  private compareString<T extends string>(value1: T, value2: string): boolean {
+    return value1.toUpperCase() === value2.toUpperCase();
+  }
+
+  public modeChanged(mode: SelectMode) {
     this.selectMode.emit(mode);
   }
 

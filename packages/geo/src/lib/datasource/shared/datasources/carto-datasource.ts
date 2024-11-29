@@ -6,8 +6,8 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class CartoDataSource extends DataSource {
-  public declare ol: olSourceCarto;
-  public declare options: CartoDataSourceOptions;
+  declare public ol: olSourceCarto;
+  declare public options: CartoDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -119,5 +119,7 @@ export class CartoDataSource extends DataSource {
     }
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

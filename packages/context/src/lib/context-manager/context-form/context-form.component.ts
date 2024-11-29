@@ -12,10 +12,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Clipboard, ObjectUtils } from '@igo2/utils';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { Context } from '../shared/context.interface';
 
@@ -33,7 +32,7 @@ import { Context } from '../shared/context.interface';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextFormComponent implements OnInit {
@@ -69,9 +68,9 @@ export class ContextFormComponent implements OnInit {
   private _disabled = false;
 
   // TODO: replace any by ContextOptions or Context
-  @Output() submitForm: EventEmitter<any> = new EventEmitter();
-  @Output() clone: EventEmitter<any> = new EventEmitter();
-  @Output() delete: EventEmitter<any> = new EventEmitter();
+  @Output() submitForm = new EventEmitter<any>();
+  @Output() clone = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,

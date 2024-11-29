@@ -63,7 +63,9 @@ export class NetworkService implements OnDestroy {
     try {
       this.offlineSubscription.unsubscribe();
       this.onlineSubscription.unsubscribe();
-    } catch (e) {}
+    } catch {
+      // empty
+    }
   }
 
   currentState(reportState = true): Observable<ConnectionState> {

@@ -7,15 +7,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import {
-  CustomHtmlComponent,
-  InteractiveTourComponent,
-  ToolComponent
-} from '@igo2/common';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { InteractiveTourComponent } from '@igo2/common/interactive-tour';
+import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 
@@ -40,7 +38,7 @@ import { AllEnvironmentOptions } from '../../environment';
     MatMenuModule,
     NgFor,
     CustomHtmlComponent,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AboutToolComponent implements OnInit {
@@ -60,7 +58,7 @@ export class AboutToolComponent implements OnInit {
   set html(value: string) {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
-  private _discoverTitleInLocale: string = 'IGO';
+  private _discoverTitleInLocale = 'IGO';
   public discoverTitleInLocale$: Observable<string> = of(
     this._discoverTitleInLocale
   );
@@ -77,7 +75,7 @@ export class AboutToolComponent implements OnInit {
   @Input() trainingGuideURLs;
 
   public effectiveVersion: string;
-  private _html: string = 'igo.integration.aboutTool.html';
+  private _html = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
   private baseUrlProfil;

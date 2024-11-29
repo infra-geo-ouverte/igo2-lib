@@ -9,7 +9,7 @@ import {
   EntityTablePaginatorOptions,
   EntityTableTemplate,
   getEntityProperty
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -26,7 +26,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  entitySortChange$ = new BehaviorSubject<boolean>(false);
 
   public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 
@@ -93,8 +93,6 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
       }
     ]
   };
-
-  constructor() {}
 
   ngOnInit(): void {
     const ids: number[] = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];

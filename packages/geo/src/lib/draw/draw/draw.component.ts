@@ -25,7 +25,11 @@ import {
 } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {
+  MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
+  MatButtonToggleDefaultOptions,
+  MatButtonToggleModule
+} from '@angular/material/button-toggle';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -42,8 +46,9 @@ import {
   EntityTableColumnRenderer,
   EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';
@@ -60,7 +65,6 @@ import OlVectorSource from 'ol/source/Vector';
 import { getDistance, getLength } from 'ol/sphere';
 import * as OlStyle from 'ol/style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first, skip } from 'rxjs/operators';
 
@@ -146,7 +150,15 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     EntityTableComponent,
     MatBadgeModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
+  ],
+  providers: [
+    {
+      provide: MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
+      useValue: {
+        hideSingleSelectionIndicator: true
+      } satisfies MatButtonToggleDefaultOptions
+    }
   ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
@@ -198,36 +210,31 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fontStyle: string;
 
   public activeStore: FeatureStore<FeatureWithDraw>;
-  private layerCounterID: number = 0;
-  public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
+  private layerCounterID = 0;
+  public draw$ = new BehaviorSubject<Draw>({}); // Observable of draw
   private activeDrawingLayerSource = new OlVectorSource();
   private activeDrawControl: DrawControl;
   private drawEnd$$: Subscription;
   private drawSelect$$: Subscription;
-  public selectedFeatures$: BehaviorSubject<FeatureWithDraw[]> =
-    new BehaviorSubject([]);
+  public selectedFeatures$ = new BehaviorSubject<FeatureWithDraw[]>([]);
   public fillForm: string;
   public strokeForm: string;
-  public drawControlIsDisabled: boolean = true;
-  public drawControlIsActive: boolean = false;
+  public drawControlIsDisabled = true;
+  public drawControlIsActive = false;
   public labelsAreShown: boolean;
   public freehandMode = false;
   private subscriptions$$: Subscription[] = [];
 
-  public position: string = 'bottom';
+  public position = 'bottom';
   public form: UntypedFormGroup;
-  public icons: Array<string>;
+  public icons: string[];
   public icon: string;
 
   public radiusFormControl = new UntypedFormControl(1000);
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public radiusFormControlChange$$: Subscription = new Subscription();
-  public predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(
-    undefined
-  );
-  public radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(
-    undefined
-  );
+  public predefinedRadius$ = new BehaviorSubject<number>(undefined);
+  public radiusDrawEnd$ = new BehaviorSubject<number>(undefined);
 
   /**
    * Available measure units for the measure type given
@@ -237,7 +244,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
   private numberOfDrawings: number;
-  public isCreatingNewLayer: boolean = false;
+  public isCreatingNewLayer = false;
   private currGeometryType = this.geometryType.Point as any;
 
   @ViewChild('selectedLayer') select;
@@ -331,7 +338,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         if (layer.id !== this.activeDrawingLayer.id) {
           layer.opacity = 0;
         }
-        let store = this.stores.find((s) => s.layer.id === layer.id);
+        const store = this.stores.find((s) => s.layer.id === layer.id);
 
         this.subscriptions$$.push(
           store.stateView
@@ -564,7 +571,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       if (entityId === olGeometryId) {
         if (entity.properties.labelType === LabelType.Coordinates) {
-          let longLat = DDtoDMS(
+          const longLat = DDtoDMS(
             [entity.properties.longitude, entity.properties.latitude],
             entity.properties.measureUnit as CoordinatesUnit
           );
@@ -574,7 +581,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           );
         } else if (entity.properties.labelType === LabelType.Length) {
           if (olGeometry instanceof OlCircle) {
-            let circularPolygon = fromCircle(olGeometry, 10000);
+            const circularPolygon = fromCircle(olGeometry, 10000);
             const radius = metersToUnit(
               this.getRadius(circularPolygon),
               entity.properties.measureUnit as MeasureLengthUnit
@@ -589,13 +596,12 @@ export class DrawComponent implements OnInit, OnDestroy {
               olGeometry,
               this.map.ol.getView().getProjection().getCode()
             );
-            let measureUnit: any;
             const temp: MeasureLengthUnit = entity.properties
               .measureUnit as MeasureLengthUnit;
-            measureUnit =
+            const measureUnit =
               MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             olGeometryLength = metersToUnit(olGeometryLength, temp);
-            let lengthLabel =
+            const lengthLabel =
               olGeometry instanceof Polygon
                 ? 'P: ' +
                   olGeometryLength.toFixed(2).toString() +
@@ -606,7 +612,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           }
         } else if (entity.properties.labelType === LabelType.Area) {
           if (olGeometry instanceof OlCircle) {
-            let circularPolygon = fromCircle(olGeometry, 10000);
+            const circularPolygon = fromCircle(olGeometry, 10000);
             let circleArea = measureOlGeometryArea(
               circularPolygon,
               this.map.ol.getView().getProjection().getCode()
@@ -623,10 +629,9 @@ export class DrawComponent implements OnInit, OnDestroy {
               olGeometry,
               this.map.ol.getView().getProjection().getCode()
             );
-            let measureUnit: any;
             const temp: MeasureAreaUnit = entity.properties
               .measureUnit as MeasureAreaUnit;
-            measureUnit =
+            const measureUnit =
               MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
             olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
             const lengthLabel =
@@ -717,8 +722,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     feature?: FeatureWithDraw
   ) {
     let rad: number;
-    let center4326: Array<number>;
-    let point4326: Array<number>;
+    let center4326: number[];
+    let point4326: number[];
     let lon4326: number;
     let lat4326: number;
 
@@ -957,7 +962,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public createLayer(newTitle?, isNewLayer?) {
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-draw-layer', ''));
+      const numberId = Number(layer.id.replace('igo-draw-layer', ''));
       this.layerCounterID = Math.max(numberId, this.layerCounterID);
     }
     this.activeDrawingLayer = new VectorLayer({
@@ -1032,7 +1037,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   ) {
     if (this.selectedFeatures$.value.length > 0 && !isAnIcon) {
       this.selectedFeatures$.value.forEach((feature) => {
-        let olFeature = featureToOl(
+        const olFeature = featureToOl(
           feature,
           this.map.ol.getView().getProjection().getCode()
         );
@@ -1289,7 +1294,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   updateActiveLayer() {
-    let currLayer = this.allLayers.find(
+    const currLayer = this.allLayers.find(
       (layer) => layer.title === this.activeDrawingLayer.title
     );
     return currLayer ? currLayer : this.allLayers[0];

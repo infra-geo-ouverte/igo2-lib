@@ -1,11 +1,14 @@
 import { AuthEnvironmentOptions } from '@igo2/auth/environment';
-import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common';
+import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common/environment';
 import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import {
   BaseEnvironmentOptions,
   EnvironmentOptions as CoreEnvironmentOptions
 } from '@igo2/core/environment';
-import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
+import {
+  EnvironmentOptions as GeoEnvironmentOptions,
+  IOfflineOptions
+} from '@igo2/geo';
 
 export type AllEnvironmentOptions = AuthEnvironmentOptions &
   CommonEnvironmentOptions &
@@ -35,4 +38,5 @@ export interface AppOptions {
     enabled?: boolean;
     path?: string;
   };
+  offline?: IOfflineOptions;
 }

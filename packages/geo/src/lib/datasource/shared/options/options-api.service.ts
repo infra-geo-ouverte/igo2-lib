@@ -57,7 +57,7 @@ export class OptionsApiService extends OptionsService {
       map(
         (res: {
           sourceOptions: WMSDataSourceOptions;
-          layerOptions: { [keys: string]: string };
+          layerOptions: Record<string, string>;
         }) => {
           if (!res || !res.sourceOptions) {
             return {} as WMSDataSourceOptions;
@@ -108,7 +108,7 @@ export class OptionsApiService extends OptionsService {
             | ArcGISRestDataSourceOptions
             | ArcGISRestImageDataSourceOptions
             | TileArcGISRestDataSourceOptions;
-          layerOptions: { [keys: string]: string };
+          layerOptions: Record<string, string>;
         }) => {
           if (!res || !res.sourceOptions) {
             return {} as

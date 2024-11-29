@@ -1,0 +1,105 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin igo-toolbox-theming($theme) {
+  @include color($theme);
+  @include density($theme);
+}
+
+@mixin color($theme) {
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $foreground: map.get($theme, foreground);
+  $darker-contrast: mat.m2-get-color-from-palette($primary, darker-contrast);
+  $lighter-contrast: mat.m2-get-color-from-palette($primary, lighter-contrast);
+
+  igo-toolbox {
+    &.color-primary > igo-actionbar:not(.with-title) {
+      box-shadow: unset;
+      background-color: mat.m2-get-color-from-palette($primary);
+      #lowChevron,
+      #topChevron {
+        background-color: mat.m2-get-color-from-palette($primary);
+        color: white;
+      }
+    }
+
+    &.color-grey > igo-actionbar:not(.with-title) {
+      box-shadow: unset;
+      background-color: #737475;
+      #lowChevron,
+      #topChevron {
+        background-color: #737475;
+        color: white;
+      }
+    }
+
+    &.color-primary,
+    &.color-grey {
+      & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
+        .mat-mdc-list-item.mdc-list-item--with-leading-avatar {
+          color: white;
+          &:hover {
+            color: black;
+          }
+
+          &.tool-activated,
+          &.children-tool-activated {
+            background-color: white;
+            color: black;
+          }
+        }
+      }
+    }
+
+    > igo-actionbar {
+      &:not(.with-title) {
+        > mat-list {
+          & > #lowChevron,
+          & > #topChevron {
+            &:hover {
+              background-color: mat.m2-get-color-from-palette($accent, lighter);
+              color: black;
+            }
+          }
+
+          mat-list-item {
+            color: $lighter-contrast;
+          }
+        }
+      }
+
+      mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
+        &:hover {
+          background-color: mat.m2-get-color-from-palette($accent, lighter);
+        }
+
+        &.tool-activated,
+        &.children-tool-activated {
+          color: $lighter-contrast;
+          background-color: $darker-contrast;
+
+          button {
+            cursor: default;
+          }
+        }
+      }
+    }
+  }
+}
+
+@mixin density($theme) {
+  $density: mat.m2-get-density-config($theme);
+  $theme: map.merge(
+    $theme,
+    (
+      density: $density - 2
+    )
+  );
+
+  igo-toolbox {
+    igo-actionbar-item {
+      @include mat.list-density($theme);
+    }
+  }
+}

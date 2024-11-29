@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   TimeFilterListBindingDirective,
   TimeFilterListComponent
@@ -17,6 +17,4 @@ import {
   standalone: true,
   imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
 })
-export class TimeFilterToolComponent {
-  constructor() {}
-}
+export class TimeFilterToolComponent {}

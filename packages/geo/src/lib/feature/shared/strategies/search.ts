@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 
 import { DocumentOptions, Document as FlexSearchDocument } from 'flexsearch';
 import { skipWhile } from 'rxjs/operators';
@@ -93,9 +93,6 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach(
-      (entries: [FeatureStore, string]) => {}
-    );
     this.stores$$.clear();
   }
 
@@ -155,7 +152,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
         });
       }
     }
-    store.index.forEach((value, key) => {
+    store.index.forEach((value) => {
       const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
       columnsToNotIndex.map((c) => delete propertiesToIndex[c]);
       if (Object.keys(propertiesToIndex).length) {

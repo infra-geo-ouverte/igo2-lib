@@ -1,9 +1,24 @@
-import { ImportProvidersSource, Provider } from '@angular/core';
+import {
+  EnvironmentProviders,
+  importProvidersFrom,
+  makeEnvironmentProviders
+} from '@angular/core';
 
-import { TranslateModule } from '@ngx-translate/core';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule
+} from '@ngx-translate/core';
 
-export function provideMockRootTranslation(
-  loader?: Provider
-): ImportProvidersSource {
-  return TranslateModule.forRoot();
+export function provideMockTranslation(): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useClass: TranslateFakeLoader
+        }
+      })
+    )
+  ]);
 }

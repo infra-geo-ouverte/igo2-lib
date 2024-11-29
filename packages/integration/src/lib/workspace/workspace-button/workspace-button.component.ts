@@ -10,9 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { IgoLanguageModule } from '@igo2/core/language';
 import type { Layer } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
 import { WorkspaceState } from '../workspace.state';
@@ -29,15 +29,15 @@ import { WorkspaceState } from '../workspace.state';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
-  public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasWorkspace$ = new BehaviorSubject<boolean>(false);
   private hasWorkspace$$: Subscription;
 
   private _layer: Layer;
-  private layer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+  private layer$ = new BehaviorSubject<Layer>(undefined);
   @Input()
   set layer(value: Layer) {
     this._layer = value;
@@ -48,7 +48,7 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
     return this._layer;
   }
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
   constructor(private workspaceState: WorkspaceState) {}
 

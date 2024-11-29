@@ -13,18 +13,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityStore,
-  IconService,
-  LAYER_PLUS_ICON,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { StorageService } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
@@ -55,7 +50,7 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
@@ -72,7 +67,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed: boolean = false;
+  @Input() addCatalogAllowed = false;
 
   /**
    * Determine if the form to add a catalog is allowed
@@ -89,8 +84,6 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   submitDisabled = true;
 
-  layerPlusIcon = LAYER_PLUS_ICON;
-
   private addingCatalog$$: Subscription;
 
   get addedCatalogs(): Catalog[] {
@@ -100,15 +93,19 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
+  get selectedCatalogId() {
+    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
+  }
+  set selectedCatalogId(id) {
+    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+  }
+
   constructor(
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog,
-    private iconService: IconService
-  ) {
-    this.iconService.registerSvg(this.layerPlusIcon);
-  }
+    private dialog: MatDialog
+  ) {}
 
   /**
    * @internal
@@ -116,6 +113,14 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.state.clear();
 
+    if (this.selectedCatalogId) {
+      const selectedCatalog = this.store
+        .all()
+        .find((item) => item.id === this.selectedCatalogId);
+      if (selectedCatalog) {
+        this.onCatalogSelect(selectedCatalog);
+      }
+    }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
       c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
       c.title = c.title === '' || !c.title ? c.url : c.title;
@@ -141,6 +146,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       },
       true
     );
+    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 

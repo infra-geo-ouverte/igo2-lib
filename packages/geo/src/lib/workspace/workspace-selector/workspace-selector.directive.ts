@@ -11,7 +11,7 @@ import {
   Workspace,
   WorkspaceSelectorComponent,
   WorkspaceStore
-} from '@igo2/common';
+} from '@igo2/common/workspace';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';

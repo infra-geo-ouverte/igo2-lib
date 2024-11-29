@@ -20,19 +20,15 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import {
-  ImageErrorDirective,
-  SecureImagePipe,
-  getEntityIcon,
-  getEntityTitle
-} from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
+import type { Toolbox } from '@igo2/common/tool';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 import { Clipboard } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -55,7 +51,7 @@ import { Feature } from '../shared';
     AsyncPipe,
     JsonPipe,
     KeyValuePipe,
-    TranslateModule,
+    IgoLanguageModule,
     SecureImagePipe
   ]
 })
@@ -174,7 +170,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   openSecureUrl(value) {
     let url: string;
     const regexDepot = new RegExp(
-      this.configService?.getConfig('depot.url') + '.*?(?="|$)'
+      this.configService?.getConfig('depot.url') + '.*?(?=\\s|$)'
     );
 
     if (regexDepot.test(value)) {
@@ -190,7 +186,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
             window.open(fileUrl, '_blank');
             this.cdRef.detectChanges();
           },
-          (error: Error) => {
+          () => {
             this.messageService.error(
               'igo.geo.targetHtmlUrlUnauthorized',
               'igo.geo.targetHtmlUrlUnauthorizedTitle'
@@ -200,7 +196,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     } else {
       let url = value;
       if (this.isEmbeddedLink(value)) {
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.innerHTML = value;
         url = div.children[0].getAttribute('href');
       }
@@ -258,7 +254,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return text;
   }
 
-  filterFeatureProperties(feature): { [key: string]: any } {
+  filterFeatureProperties(feature): Record<string, any> {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
     let offlineButtonState;

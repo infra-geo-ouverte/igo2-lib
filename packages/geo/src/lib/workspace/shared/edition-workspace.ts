@@ -1,6 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
 
-import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
+import { EntityRecord } from '@igo2/common/entity';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 
 import Collection from 'ol/Collection';
@@ -28,9 +29,7 @@ interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace<Feature> {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): ImageLayer | VectorLayer {
     return this.options.layer;

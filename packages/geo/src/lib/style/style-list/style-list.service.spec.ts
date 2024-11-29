@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { StyleListService } from './style-list.service';
@@ -6,8 +9,8 @@ import { StyleListService } from './style-list.service';
 describe('StyleListService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [StyleListService]
+      imports: [],
+      providers: [StyleListService, provideHttpClient(withInterceptorsFromDi())]
     });
   });
 

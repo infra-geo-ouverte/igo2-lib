@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
+import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   Catalog,
   CatalogBrowserComponent,
@@ -58,7 +59,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup: boolean = true;
+  @Input() toggleCollapsedGroup = true;
 
   /**
    * Map to add layers to
@@ -86,7 +87,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
     );
     const authenticate$ = this.authService.authenticate$;
     this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
-      ([record, authenticate]) => {
+      ([record]) => {
         const catalog = record.entity;
         this.catalog = catalog;
         this.loadCatalogItems(this.catalog);

@@ -11,7 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportButtonComponent,
   ExportOptions,
@@ -33,7 +34,6 @@ import {
   sourceCanSearch
 } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -77,34 +77,34 @@ import { MapState } from '../map.state';
     MatListModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  layers$ = new BehaviorSubject<Layer[]>([]);
+  showAllLegendsValue$ = new BehaviorSubject<boolean>(false);
 
   private resolution$$: Subscription;
   private visibleOrInRangeLayers$$: Subscription;
-  public delayedShowEmptyMapContent: boolean = false;
+  public delayedShowEmptyMapContent = false;
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() allowShowAllLegends = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() showAllLegendsValue = false;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
   @Input() selectedTabAtOpening: string;
 
-  @Input() ogcButton: boolean = true;
+  @Input() ogcButton = true;
 
-  @Input() timeButton: boolean = true;
+  @Input() timeButton = true;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
 
   @Input()
   get layerListControls(): LayerListControlsOptions {
@@ -134,7 +134,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
   get visibleOrInRangeLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
@@ -288,9 +288,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(
         (value) => {
-          value.length === 0
-            ? (visibleOrInRangeLayers = false)
-            : (visibleOrInRangeLayers = true);
+          visibleOrInRangeLayers = value.length === 0 ? false : true;
         }
       );
 

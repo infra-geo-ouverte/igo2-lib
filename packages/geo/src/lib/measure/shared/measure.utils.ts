@@ -576,8 +576,8 @@ export function getTooltipsOfOlGeometry(
  */
 export function createOlTooltipAtPoint(
   olPoint: OlPoint,
-  center: boolean = false,
-  srcGeomType: string = ''
+  center = false,
+  srcGeomType = ''
 ): OlOverlay {
   const olTooltip = new OlOverlay({
     element: document.createElement('div'),

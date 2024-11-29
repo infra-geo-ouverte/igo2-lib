@@ -130,8 +130,7 @@ export function removeStopFromStore(stopsStore: StopsStore, stop: Stop) {
  * @returns OL style function
  */
 export function directionsStyle(
-  feature: olFeature<OlGeometry>,
-  resolution: number
+  feature: olFeature<OlGeometry>
 ): olStyle.Style | olStyle.Style[] {
   const vertexStyle = [
     new olStyle.Style({
@@ -349,8 +348,7 @@ export function addDirectionToRoutesFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
   direction: Direction,
   projection: string,
-  active: boolean = false,
-  moveToExtent = false
+  active = false
 ) {
   const geom = direction.geometry.coordinates;
   const geometry4326 = new olGeom.LineString(geom);
@@ -425,7 +423,7 @@ export function formatDuration(duration: number): string {
 export function formatInstruction(
   type,
   modifier,
-  route,
+  route = 'Voie',
   direction,
   stepPosition,
   exit,

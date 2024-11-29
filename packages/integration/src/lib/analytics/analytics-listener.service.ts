@@ -15,7 +15,6 @@ import { skip } from 'rxjs/operators';
 
 import { ContextState } from '../context/context.state';
 import { MapState } from '../map/map.state';
-import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
 
 /**
@@ -33,7 +32,6 @@ export class AnalyticsListenerService {
     private analyticsService: AnalyticsService,
     private authService: AuthService,
     private contextState: ContextState,
-    private searchState: SearchState,
     private toolState: ToolState,
     private mapState: MapState
   ) {}
@@ -42,7 +40,6 @@ export class AnalyticsListenerService {
     this.listenUser();
     this.listenContext();
     this.listenTool();
-    this.listenSearch();
     this.listenLayer();
   }
 
@@ -81,19 +78,6 @@ export class AnalyticsListenerService {
     });
   }
 
-  listenSearch() {
-    this.searchState.searchTerm$
-      .pipe(skip(1))
-      .subscribe((searchTerm: string) => {
-        if (searchTerm !== undefined && searchTerm !== null) {
-          this.analyticsService.trackSearch(
-            searchTerm,
-            this.searchState.store.count
-          );
-        }
-      });
-  }
-
   /**
    * Listener for adding layers to the map
    */
@@ -110,7 +94,7 @@ export class AnalyticsListenerService {
         let restParams: string;
 
         switch (layer.dataSource.options.type) {
-          case 'wms':
+          case 'wms': {
             const wmsDataSource = layer.dataSource
               .options as WMSDataSourceOptions;
             const wmsLayerName: string = wmsDataSource.params.LAYERS;
@@ -122,7 +106,8 @@ export class AnalyticsListenerService {
               url: wmsUrl
             });
             break;
-          case 'wmts':
+          }
+          case 'wmts': {
             const wmtsDataSource = layer.dataSource
               .options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
@@ -136,9 +121,10 @@ export class AnalyticsListenerService {
               matrixSet
             });
             break;
+          }
           case 'arcgisrest':
           case 'tilearcgisrest':
-          case 'imagearcgisrest':
+          case 'imagearcgisrest': {
             const restDataSource = layer.options.sourceOptions as
               | ArcGISRestDataSourceOptions
               | TileArcGISRestDataSourceOptions
@@ -152,6 +138,7 @@ export class AnalyticsListenerService {
               url: restUrl
             });
             break;
+          }
           case 'xyz':
             /* const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
             const xyzName: string = layer.title;

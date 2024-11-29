@@ -9,12 +9,10 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import {
-  EntityStore,
-  PanelComponent,
-  SELECTION_MARKER_ICON,
-  ToolComponent
-} from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
+import { PanelComponent } from '@igo2/common/panel';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {
@@ -107,9 +105,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   public iterator = 1;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
-    undefined
-  );
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   private format = new olFormatGeoJSON();
 
@@ -382,9 +378,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   onZoneChange(feature: Feature, buffer?: boolean) {
     this.zone = feature;
     if (feature) {
-      buffer
-        ? this.tryAddFeaturesToMap([feature], true)
-        : this.tryAddFeaturesToMap([feature]);
+      this.tryAddFeaturesToMap([feature], buffer);
       this.zoomToFeatureExtent(feature);
     }
   }

@@ -4,11 +4,10 @@ import {
   EntityRecord,
   EntityState,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy,
-  Widget,
-  Workspace,
-  WorkspaceStore
-} from '@igo2/common';
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
+import { Widget } from '@igo2/common/widget';
+import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
@@ -30,7 +29,7 @@ import { WfsActionsService } from './shared/wfs-actions.service';
   providedIn: 'root'
 })
 export class WorkspaceState implements OnDestroy {
-  public workspacePanelExpanded: boolean = false;
+  public workspacePanelExpanded = false;
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);

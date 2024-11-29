@@ -23,8 +23,7 @@ import { CoordinatesUnit } from './draw.enum';
 export function createInteractionStyle(
   fillColor?: string,
   strokeColor?: string,
-  strokeWidth?: number,
-  label?: string
+  strokeWidth?: number
 ): Olstyle.Style {
   return new Olstyle.Style({
     stroke: new Olstyle.Stroke({
@@ -138,7 +137,7 @@ export function DDtoDMS(
       (val: [number, number]) => convertDDToDMS(val, 2)
     ]
   ]);
-  let conversion = conversionMapper.get(unit);
+  const conversion = conversionMapper.get(unit);
 
   return conversion ? conversion(value) : undefined;
 }

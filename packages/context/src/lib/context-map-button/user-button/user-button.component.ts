@@ -7,9 +7,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import type { IgoMap } from '@igo2/geo';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { PoiButtonComponent } from '../poi-button/poi-button.component';
 import { userButtonSlideInOut } from './user-button.animation';
@@ -27,7 +26,7 @@ import { UserDialogComponent } from './user-dialog.component';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class UserButtonComponent {

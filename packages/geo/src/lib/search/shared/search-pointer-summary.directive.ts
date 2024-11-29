@@ -8,7 +8,7 @@ import {
   Self
 } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
 import { MediaService } from '@igo2/core/media';
 import { SubjectStatus } from '@igo2/utils';
 
@@ -57,24 +57,23 @@ export class SearchPointerSummaryDirective
   private store$$: Subscription;
   private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
-  private hasPointerReverseSearchSource: boolean = false;
+  private hasPointerReverseSearchSource = false;
 
   /**
    * Listener to the pointer move event
    */
   private pointerMoveListener;
 
-  private searchPointerSummaryFeatureId: string =
-    'searchPointerSummaryFeatureId';
+  private searchPointerSummaryFeatureId = 'searchPointerSummaryFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoSearchPointerSummaryDelay: number = 1000;
+  @Input() igoSearchPointerSummaryDelay = 1000;
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoSearchPointerSummaryEnabled: boolean = false;
+  @Input() igoSearchPointerSummaryEnabled = false;
 
   @HostListener('mouseleave')
   mouseleave() {
@@ -168,7 +167,7 @@ export class SearchPointerSummaryDirective
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unsubscribeReverseSearch();
-    this.layers$$.unsubscribe();
+    this.layers$$?.unsubscribe();
   }
 
   /**
@@ -188,11 +187,12 @@ export class SearchPointerSummaryDirective
    * @param results SearchResult[]
    * @returns OL style function
    */
-  private computeSummaryClosestFeature(results: SearchResult[]): {} {
+  private computeSummaryClosestFeature(results: SearchResult[]) {
     const closestResultByType = {};
 
     results.map((result) => {
       if (result.data.properties.type && result.data.properties.distance >= 0) {
+        // eslint-disable-next-line no-prototype-builtins
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance =
             closestResultByType[result.data.properties.type].distance;
@@ -267,7 +267,7 @@ export class SearchPointerSummaryDirective
    * @internal
    */
   unsubscribeToPointerStore() {
-    this.store$$.unsubscribe();
+    this.store$$?.unsubscribe();
   }
   /**
    * Unsubscribe to reverse seatch store.

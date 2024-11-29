@@ -1,3 +1,5 @@
+import { Provider } from '@angular/core';
+
 export interface SearchSourceOptions {
   title?: string;
   searchUrl?: string;
@@ -37,7 +39,7 @@ export interface SettingOptions {
 }
 
 export interface TextSearchOptions {
-  params?: { [key: string]: string };
+  params?: Record<string, string>;
   searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
   getEnabledOnly?: boolean;
   extent?: [number, number, number, number];
@@ -50,5 +52,22 @@ export interface ReverseSearchOptions {
   distance?: number;
   conf?: number;
   zoom?: number;
-  params?: { [key: string]: string };
+  params?: Record<string, string>;
+}
+
+export interface SearchSourceFeature<KindT extends SearchSourceKind> {
+  kind: KindT;
+  providers: Provider[];
+}
+
+export enum SearchSourceKind {
+  ICherche = 0,
+  IChercheReverse = 1,
+  Cadastre = 2,
+  CoordinatesReverse = 3,
+  ILayer = 4,
+  Nominatim = 5,
+  StoredQueries = 6,
+  StoredQueriesReverse = 7,
+  Workspace = 8
 }

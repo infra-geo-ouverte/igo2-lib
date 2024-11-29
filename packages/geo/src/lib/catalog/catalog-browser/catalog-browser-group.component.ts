@@ -13,14 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  CollapseDirective,
-  EntityStore,
-  ListItemDirective
-} from '@igo2/common';
-import type { EntityStateManager } from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import type { EntityStateManager } from '@igo2/common/entity';
+import { EntityStore } from '@igo2/common/entity';
+import { ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
@@ -55,7 +53,7 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
     CatalogBrowserLayerComponent,
     ListItemDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
@@ -69,13 +67,13 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Whether all the layers of the group are added
    * @internal
    */
-  added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  preview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  added$ = new BehaviorSubject<boolean>(false);
+  preview$ = new BehaviorSubject<boolean>(false);
   /**
    * Whether the toggle button is disabled
    * @internal
    */
-  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  disabled$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Catalog
@@ -92,7 +90,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Whether the group is collapsed
    */
-  @Input() collapsed: boolean = true;
+  @Input() collapsed = true;
 
   @Input() resolution: number;
 
@@ -101,7 +99,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Whether the group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsed: boolean = true;
+  @Input() toggleCollapsed = true;
 
   /**
    * Parent catalog's items store state. Groups share a unique

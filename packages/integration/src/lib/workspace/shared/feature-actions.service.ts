@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { Action } from '@igo2/common';
+import { Action } from '@igo2/common/action';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import {
@@ -23,7 +23,7 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
 export class FeatureActionsService implements OnDestroy {
   public maximize$: BehaviorSubject<boolean>;
 
-  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;
 
   get storageService(): StorageService {

@@ -6,7 +6,7 @@ import {
 import { Inject, Injectable, Injector } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { IconSvg } from '@igo2/common';
+import { IconSvg } from '@igo2/common/icon';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
@@ -530,7 +530,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: IChercheData): { [key: string]: any } {
+  private computeProperties(data: IChercheData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -629,7 +629,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
     let keep = false;
     keep = hashtags.some((hashtag) => {
-      const hashtagKey = hashtag.substring(1);
+      const hashtagKey = String(hashtag).substring(1);
       return this.hashtagsLieuxToKeep.some(
         (h) =>
           h
@@ -896,7 +896,7 @@ export class IChercheReverseSearchSource
       case 'arrondissements':
         subtitle = data.properties.municipalite + ' (Arrondissement)';
         break;
-      default:
+      default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         const type = typeSetting.values.find(
           (t) => t.value === data.properties.type
@@ -904,6 +904,7 @@ export class IChercheReverseSearchSource
         if (type) {
           subtitle = this.languageService.translate.instant(type.title);
         }
+      }
     }
     return subtitle;
   }
@@ -940,7 +941,7 @@ export class IChercheReverseSearchSource
     };
   }
 
-  private computeProperties(data: IChercheReverseData): { [key: string]: any } {
+  private computeProperties(data: IChercheReverseData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist

@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { IgoMap } from '../shared/map';
 
@@ -18,17 +18,15 @@ import { IgoMap } from '../shared/map';
     MatTooltipModule,
     NgClass,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class OfflineButtonComponent implements OnInit {
-  btnStyle: string = 'onlineStyle';
+  btnStyle = 'onlineStyle';
 
   @Input() map: IgoMap;
   @Input() color: string;
-  @Input() enabled: boolean = false;
-
-  constructor() {}
+  @Input() enabled = false;
 
   ngOnInit(): void {
     this.map.forcedOffline$.next(this.enabled);

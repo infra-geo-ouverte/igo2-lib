@@ -10,15 +10,15 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { OnUpdateInputs } from '@igo2/common/dynamic-component';
+import { PanelComponent } from '@igo2/common/panel';
 import {
-  OnUpdateInputs,
-  PanelComponent,
   Tool,
   ToolComponent,
   ToolService,
   Toolbox,
   ToolboxComponent
-} from '@igo2/common';
+} from '@igo2/common/tool';
 
 import { BehaviorSubject } from 'rxjs';
 

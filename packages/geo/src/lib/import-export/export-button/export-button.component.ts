@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared';
@@ -21,7 +21,7 @@ import { Layer } from '../../layer/shared/layers/layer';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ExportButtonComponent {
@@ -42,8 +42,6 @@ export class ExportButtonComponent {
     this._color = value;
   }
   private _color = 'primary';
-
-  constructor() {}
 
   get options(): DataSourceOptions {
     if (!this.layer) {

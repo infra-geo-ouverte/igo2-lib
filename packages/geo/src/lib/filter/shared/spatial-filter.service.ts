@@ -19,7 +19,7 @@ import { SpatialFilterThematic } from './spatial-filter.interface';
   providedIn: 'root'
 })
 export class SpatialFilterService {
-  public baseUrl: string = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
+  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
 
   /*
    * Type association with URL
@@ -99,7 +99,7 @@ export class SpatialFilterService {
               item.name = this.languageService.translate.instant(
                 'igo.geo.terrapi.' + name
               );
-            } catch (e) {
+            } catch {
               item.name =
                 name.substring(0, 1).toUpperCase() +
                 name.substring(1, name.length - 1);
@@ -109,7 +109,7 @@ export class SpatialFilterService {
               item.group = this.languageService.translate.instant(
                 'igo.geo.spatialFilter.group.' + substr
               );
-            } catch (e) {
+            } catch {
               item.group =
                 substr.substring(0, 1).toUpperCase() +
                 substr.substring(1, name.length - 1);
@@ -127,7 +127,7 @@ export class SpatialFilterService {
                 item.name = this.languageService.translate.instant(
                   'igo.geo.terrapi.' + name
                 );
-              } catch (e) {
+              } catch {
                 item.name =
                   name.substring(0, 1).toUpperCase() +
                   name.substring(1, name.length - 1);

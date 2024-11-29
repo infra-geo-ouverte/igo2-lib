@@ -8,8 +8,8 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Form, getEntityRevision } from '@igo2/common';
-import { FormComponent } from '@igo2/common';
+import { getEntityRevision } from '@igo2/common/entity';
+import { Form, FormComponent } from '@igo2/common/form';
 import { uuid } from '@igo2/utils';
 
 import { BehaviorSubject } from 'rxjs';
@@ -48,7 +48,7 @@ export class FeatureFormComponent {
   get feature(): Feature | undefined {
     return this.feature$.value;
   }
-  readonly feature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
+  readonly feature$ = new BehaviorSubject<Feature>(undefined);
 
   /**
    * Event emitted when the form is submitted
@@ -57,14 +57,12 @@ export class FeatureFormComponent {
 
   @ViewChild('igoForm', { static: true }) igoForm: FormComponent;
 
-  constructor() {}
-
   /**
    * Transform the form data to a feature and emit an event
    * @param event Form submit event
    * @internal
    */
-  onSubmit(data: { [key: string]: any }) {
+  onSubmit(data: Record<string, any>) {
     const feature = this.formDataToFeature(data);
     this.submitForm.emit(feature);
   }
@@ -78,7 +76,7 @@ export class FeatureFormComponent {
    * @param data Form data
    * @returns A feature
    */
-  private formDataToFeature(data: { [key: string]: any }): Feature {
+  private formDataToFeature(data: Record<string, any>): Feature {
     const properties = {};
     const meta = {};
     if (this.feature === undefined) {

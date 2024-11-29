@@ -5,9 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { CollapseDirective } from '@igo2/common';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -33,19 +33,19 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
     LayerLegendComponent,
     TimeFilterFormComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ],
   providers: [TimeFilterService]
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
 
-  filtersCollapsed: boolean = false;
+  filtersCollapsed = false;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   @Input() layer: Layer;
 

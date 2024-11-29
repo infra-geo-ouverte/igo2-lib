@@ -15,7 +15,7 @@ export interface IInfosUser {
   tokenId: string;
 }
 
-export type AuthOptions = {
+export interface AuthOptions {
   url?: string;
   tokenKey?: string;
   allowAnonymous?: boolean;
@@ -27,7 +27,7 @@ export type AuthOptions = {
   hostsWithCredentials?: WithCredentialsOptions[];
   hostsByKey?: AuthByKeyOptions[];
   intern?: AuthInternOptions;
-};
+}
 
 export interface AuthByKeyOptions {
   domainRegFilters?: string;

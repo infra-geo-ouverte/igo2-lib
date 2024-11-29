@@ -12,11 +12,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  EntityStore,
-  IgoBadgeIconDirective,
-  StopPropagationDirective
-} from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { EntityStore } from '@igo2/common/entity';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
@@ -26,7 +25,6 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -66,31 +64,32 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
     MatBadgeModule,
     IgoBadgeIconDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
-  public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
+  public tooltip$ = new BehaviorSubject<string>(
     'igo.geo.catalog.layer.addToMap'
   );
 
-  public addFeatureToLayerTooltip$: BehaviorSubject<string> =
-    new BehaviorSubject('igo.geo.search.addToLayer');
+  public addFeatureToLayerTooltip$ = new BehaviorSubject<string>(
+    'igo.geo.search.addToLayer'
+  );
 
   private resolution$$: Subscription;
   private layers$$: Subscription;
 
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public inRange$ = new BehaviorSubject<boolean>(true);
 
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
 
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
 
   private layersSubcriptions = [];
 
   private lastTimeoutRequest;
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() layer: SearchResult;
 
@@ -109,7 +108,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   /**
    * show hide save search result in layer button
    */
-  @Input() saveSearchResultInLayer: boolean = false;
+  @Input() saveSearchResultInLayer = false;
 
   @Input()
   get color() {
@@ -128,7 +127,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     );
   }
   private mediaService$$: Subscription;
-  public isMobile: boolean = false;
+  public isMobile = false;
   constructor(
     private layerService: LayerService,
     private dialog: MatDialog,
@@ -293,9 +292,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   isVisible() {
     if (this.layer?.data?.sourceOptions?.id) {
       const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+
+      this.isVisible$.next(oLayer?.visible ?? false);
     }
   }
 
@@ -397,9 +395,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     ];
 
     // set layer id
-    let layerCounterID: number = 0;
+    let layerCounterID = 0;
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-search-layer', ''));
+      const numberId = Number(layer.id.replace('igo-search-layer', ''));
       layerCounterID = Math.max(numberId, layerCounterID);
     }
 
@@ -410,7 +408,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       } as QueryableDataSourceOptions)
       .pipe(take(1))
       .subscribe((dataSource: FeatureDataSource) => {
-        let searchLayer: VectorLayer = new VectorLayer({
+        const searchLayer: VectorLayer = new VectorLayer({
           isIgoInternalLayer: true,
           id: 'igo-search-layer' + ++layerCounterID,
           title: layerTitle,

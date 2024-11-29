@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import { Form, FormService, ToolComponent } from '@igo2/common';
+import { Form, FormService } from '@igo2/common/form';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { IgoMap } from '@igo2/geo';
@@ -47,7 +48,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   form$ = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$ = new BehaviorSubject<Record<string, any>>(undefined);
 
   submitDisabled = true;
 
@@ -63,7 +64,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     combineLatest([this.languageService.language$, this.map.layers$]).subscribe(
-      ([language, layers]) => {
+      ([_language, layers]) => {
         const baseLayerOrShownInLayerList = layers
           .filter((l) => l.baseLayer || l.showInLayerList)
           .map((l) => {

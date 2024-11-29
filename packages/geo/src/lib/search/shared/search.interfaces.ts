@@ -1,4 +1,4 @@
-import { IconSvg } from '@igo2/common';
+import { IconSvg } from '@igo2/common/icon';
 
 import { Observable } from 'rxjs';
 
@@ -15,7 +15,7 @@ export interface Research {
   source: SearchSource;
 }
 
-export interface SearchResult<T = { [key: string]: any }> {
+export interface SearchResult<T = Record<string, any>> {
   data: T;
   source: SearchSource;
   meta: SearchMeta;

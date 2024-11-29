@@ -1,14 +1,13 @@
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
-import { IgoPanelModule } from '@igo2/common';
+import { IgoPanelModule } from '@igo2/common/panel';
 import { IgoContextModule } from '@igo2/context';
 import {
   IgoFeatureModule,
   IgoLayerModule,
   IgoMapModule,
   IgoMetadataModule,
-  IgoOverlayModule,
   IgoQueryModule
 } from '@igo2/geo';
 
@@ -23,7 +22,6 @@ import { AppContextComponent } from './context.component';
     IgoMapModule,
     IgoLayerModule,
     IgoMetadataModule,
-    IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
     IgoContextModule,

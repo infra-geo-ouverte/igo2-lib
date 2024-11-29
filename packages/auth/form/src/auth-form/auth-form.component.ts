@@ -20,8 +20,8 @@ import {
   AuthMicrosoftb2cComponent
 } from '@igo2/auth/microsoft';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
 import { AuthFormOptions } from '../shared';
@@ -40,7 +40,7 @@ import { AuthFormOptions } from '../shared';
     AuthFacebookComponent,
     AuthInternComponent,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AuthFormComponent implements OnInit {

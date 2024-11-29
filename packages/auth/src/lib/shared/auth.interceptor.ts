@@ -65,9 +65,6 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
-    if (element.host === '') {
-      element.href = element.href; // FIX IE11, DO NOT REMOVE
-    }
 
     if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
       return next.handle(req);
@@ -114,7 +111,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   alterUrlWithKeyAuth(url: string): string {
     const hostWithKey = this.handleHostsAuthByKey(url);
-    let interceptedUrl = url;
+    const interceptedUrl = url;
     if (hostWithKey) {
       const urlDecomposed = interceptedUrl.split(/[?&]/);
       let urlWithKeyAdded = urlDecomposed.shift();
@@ -148,8 +145,8 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
-        var keyAdded = new RegExp(replace, 'gm');
+        const replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
+        const keyAdded = new RegExp(replace, 'gm');
         if (!keyAdded.test(reqUrl)) {
           hostWithKey = {
             key: hostWithAuthByKey.keyProperty,

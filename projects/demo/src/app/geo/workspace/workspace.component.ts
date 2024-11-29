@@ -3,20 +3,20 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
+import { Action, ActionbarComponent, ActionbarMode } from '@igo2/common/action';
 import {
-  Action,
-  ActionbarComponent,
-  ActionbarMode,
   EntityRecord,
   EntityTableComponent,
   EntityTablePaginatorComponent,
   EntityTablePaginatorOptions,
-  EntityTableScrollBehavior,
+  EntityTableScrollBehavior
+} from '@igo2/common/entity';
+import {
   Workspace,
   WorkspaceSelectorComponent,
   WorkspaceStore,
   WorkspaceWidgetOutletComponent
-} from '@igo2/common';
+} from '@igo2/common/workspace';
 import {
   DataSourceService,
   IgoGeoWorkspaceModule,
@@ -63,7 +63,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  entitySortChange$ = new BehaviorSubject<boolean>(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
     pageSize: 5, // Number of items to display on a page.
     pageSizeOptions: [1, 5, 10, 15, 30, 50, 100], // The set of provided page size options to display to the user.

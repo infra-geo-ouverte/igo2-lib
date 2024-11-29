@@ -23,17 +23,16 @@ import { AuthService } from '@igo2/auth';
 import {
   ActionStore,
   ActionbarComponent,
-  ActionbarMode,
-  CollapsibleComponent,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+  ActionbarMode
+} from '@igo2/common/action';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import type { IgoMap } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
@@ -73,15 +72,13 @@ import { ContextListControlsEnum } from './context-list.enum';
     ListItemDirective,
     AsyncPipe,
     KeyValuePipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
-    this.contextsInitial
-  );
+  contexts$ = new BehaviorSubject<ContextsList>(this.contextsInitial);
 
   change$ = new ReplaySubject<void>(1);
 
@@ -159,7 +156,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   get term(): string {
     return this._term;
   }
-  public _term: string = '';
+  public _term = '';
 
   get sortedAlpha(): boolean {
     return this._sortedAlpha;
@@ -304,11 +301,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
         return true;
       case ContextListControlsEnum.never:
         return false;
-      default:
+      default: {
         let totalLength = this.contexts.ours.length;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.contexts.public
           ? (totalLength += this.contexts.public.length)
           : (totalLength += 0);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.contexts.shared
           ? (totalLength += this.contexts.shared.length)
           : (totalLength += 0);
@@ -316,6 +315,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           return true;
         }
         return false;
+      }
     }
   }
 

@@ -12,7 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
@@ -42,7 +43,7 @@ import { MeasureFormatPipe } from './measure-format.pipe';
     NgFor,
     MatOptionModule,
     AsyncPipe,
-    TranslateModule,
+    IgoLanguageModule,
     MeasureFormatPipe
   ]
 })
@@ -51,7 +52,7 @@ export class MeasurerItemComponent implements OnDestroy {
    * Measure observable
    * @internal
    */
-  public measure$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  public measure$ = new BehaviorSubject<number>(undefined);
 
   /**
    * Subscription to the measure observable when the auto mode is on
@@ -90,7 +91,7 @@ export class MeasurerItemComponent implements OnDestroy {
   get auto(): boolean {
     return this._auto;
   }
-  private _auto: boolean = false;
+  private _auto = false;
 
   /**
    * Placeholder
@@ -114,8 +115,6 @@ export class MeasurerItemComponent implements OnDestroy {
     }
     return Object.values(MeasureLengthUnit);
   }
-
-  constructor() {}
 
   /**
    * Toggle the auto unit off

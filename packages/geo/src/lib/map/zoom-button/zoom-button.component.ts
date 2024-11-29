@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { IgoMap } from '../shared/map';
 
@@ -12,7 +12,7 @@ import { IgoMap } from '../shared/map';
   templateUrl: './zoom-button.component.html',
   styleUrls: ['./zoom-button.component.scss'],
   standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class ZoomButtonComponent {
   @Input() map: IgoMap;
@@ -30,6 +30,4 @@ export class ZoomButtonComponent {
   get maxZoom(): number {
     return this.map.viewController.olView.getMaxZoom();
   }
-
-  constructor() {}
 }

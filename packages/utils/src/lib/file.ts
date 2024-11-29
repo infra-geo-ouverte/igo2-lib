@@ -14,6 +14,11 @@ export function downloadContent(
   downloadFromUri(uri, fileName);
 }
 
+export function downloadBlob(blob: Blob, fileName: string) {
+  const url = window.URL.createObjectURL(blob);
+  downloadFromUri(url, fileName);
+}
+
 /**
  * Trigger download of a file
  *
@@ -31,4 +36,17 @@ export function downloadFromUri(uri: string, fileName: string) {
   element.click();
 
   document.body.removeChild(element);
+}
+
+/**
+ * Validate if string is valid json object
+ * @param jsonString
+ * @return boolean
+ */
+export function isValidJSON(jsonString: string): boolean {
+  try {
+    return JSON.parse(jsonString) && !!jsonString;
+  } catch {
+    return false;
+  }
 }

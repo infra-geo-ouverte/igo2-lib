@@ -1,4 +1,4 @@
-import { DOMValue } from '@igo2/common';
+import { DOMValue } from '@igo2/common/dom';
 
 import olFormatFilter from 'ol/format/filter/Filter';
 import olGeometry from 'ol/geom/Geometry';
@@ -9,7 +9,7 @@ import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperatorType } from './ogc-filter.enum';
 
-export interface OgcFilter extends olFormatFilter {}
+export type OgcFilter = olFormatFilter;
 
 export interface WFSWriteGetFeatureOptions {
   featureNS?: string;
@@ -85,6 +85,7 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfiltered?: boolean;
+  showChips?: boolean; // true by default for autocomplete
   selectors?:
     | OgcPushButton[]
     | OgcCheckbox[]
@@ -200,7 +201,7 @@ export interface OgcFilterIsLikeOptions extends OgcFilterAttributeOptions {
   escapeChar?: string;
   matchCase: boolean;
 }
-export interface OgcFilterIsNullOptions extends OgcFilterAttributeOptions {}
+export type OgcFilterIsNullOptions = OgcFilterAttributeOptions;
 
 export interface OgcInterfaceFilterOptions {
   active?: boolean;

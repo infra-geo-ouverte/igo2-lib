@@ -4,7 +4,7 @@ import {
   EntityKey,
   EntityStoreOptions,
   EntityStoreStrategyOptions
-} from '@igo2/common';
+} from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -17,7 +17,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap } from '../../map/shared/map';
 import { FeatureMotion } from './feature.enums';
 
-export interface Feature<P = { [key: string]: any }> {
+export interface Feature<P = Record<string, any>> {
   type: string;
   projection?: string;
   geometry?: FeatureGeometry;
@@ -35,11 +35,11 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
-  style?: { [key: string]: any };
-  alias?: { [key: string]: string };
+  style?: Record<string, any>;
+  alias?: Record<string, string>;
   revision?: number;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
+  excludeAttribute?: string[];
+  excludeAttributeOffline?: string[];
 }
 
 export interface FeatureGeometry {
@@ -74,14 +74,18 @@ export interface FeatureStorePropertyTypeStrategyOptions
   extends FeatureStoreStrategyOptions {
   map: IgoMap;
 }
-export interface FeatureStoreInMapExtentStrategyOptions
-  extends FeatureStoreStrategyOptions {}
 
-export interface FeatureStoreInMapResolutionStrategyOptions
-  extends FeatureStoreStrategyOptions {}
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreInMapExtentStrategyOptions =
+  FeatureStoreStrategyOptions;
 
-export interface FeatureStoreLoadingLayerStrategyOptions
-  extends FeatureStoreStrategyOptions {}
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreInMapResolutionStrategyOptions =
+  FeatureStoreStrategyOptions;
+
+/** @deprecated use FeatureStoreStrategyOptions*/
+export type FeatureStoreLoadingLayerStrategyOptions =
+  FeatureStoreStrategyOptions;
 
 export interface FeatureStoreSearchIndexStrategyOptions
   extends EntityStoreStrategyOptions {

@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
@@ -25,7 +25,7 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class TrackFeatureButtonComponent implements OnInit {
@@ -40,9 +40,7 @@ export class TrackFeatureButtonComponent implements OnInit {
     return this.layer.options;
   }
 
-  public color: string = 'primary';
-
-  constructor() {}
+  public color = 'primary';
 
   ngOnInit() {
     this.color = this.trackFeature ? 'primary' : 'basic';
@@ -50,7 +48,7 @@ export class TrackFeatureButtonComponent implements OnInit {
 
   toggleTrackFeature() {
     if (this.trackFeature) {
-      this.layer.disableTrackFeature(this.layer.options.trackFeature);
+      this.layer.disableTrackFeature();
       this.color = 'basic';
     } else {
       this.layer.enableTrackFeature(this.layer.options.trackFeature);

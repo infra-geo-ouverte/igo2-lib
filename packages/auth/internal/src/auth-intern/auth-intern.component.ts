@@ -20,8 +20,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService } from '@igo2/core/language';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
   selector: 'igo-auth-intern',
@@ -37,7 +36,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatButtonModule,
     MatProgressSpinner,
     NgIf,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AuthInternComponent {
@@ -79,7 +78,7 @@ export class AuthInternComponent {
           this.languageService.translate
             .get('igo.auth.error.' + error.error.message)
             .subscribe((errorMsg) => (this.error = errorMsg));
-        } catch (e) {
+        } catch {
           this.error = error.error.message;
         }
         this.loading = false;

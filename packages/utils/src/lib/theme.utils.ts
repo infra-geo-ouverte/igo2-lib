@@ -11,8 +11,13 @@ export function loadTheme(
   const src = `${path}/${themeName}.css`;
   const head = doc.getElementsByTagName('head')[0];
 
-  let themeLink = doc.getElementById(LINK_ID) as HTMLLinkElement;
-  themeLink ? (themeLink.href = src) : createHtmlLink(doc, src, head);
+  const themeLink = doc.getElementById(LINK_ID) as HTMLLinkElement;
+
+  if (themeLink) {
+    themeLink.href = src;
+  } else {
+    createHtmlLink(doc, src, head);
+  }
 }
 
 function createHtmlLink(doc: Document, src: string, parent: HTMLElement): void {

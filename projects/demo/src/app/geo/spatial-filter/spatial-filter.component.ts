@@ -10,7 +10,8 @@ import {
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityKey, EntityStore, PanelComponent } from '@igo2/common';
+import { EntityKey, EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {
@@ -103,13 +104,11 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public zoneWithBuffer: Feature;
-  public buffer: number = 0;
+  public buffer = 0;
 
-  public iterator: number = 1;
+  public iterator = 1;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
-    undefined
-  );
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 
@@ -117,9 +116,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
-  public loading: boolean = false;
+  public loading = false;
 
-  public thematicLength: number = 0;
+  public thematicLength = 0;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
@@ -225,7 +224,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private loadThematics(): void {
     this.loading = true;
-    let zeroResults: boolean = true;
+    let zeroResults = true;
     let thematics: SpatialFilterThematic[];
     if (this.buffer === 0 || this.type === SpatialFilterType.Point) {
       this.tryAddFeaturesToMap([this.zone]);
@@ -330,7 +329,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Try to add zone feature to the map overlay
    */
   public tryAddFeaturesToMap(features: Feature[], buffer?: boolean): void {
-    let i: number = 1;
+    let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.layers) {
@@ -448,7 +447,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id: EntityKey): void {
-    let i: number = 1;
+    let i = 1;
     if (features.length) {
       if (this.map === undefined) {
         return;
@@ -543,7 +542,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Try to add line or polygon features to the map
    */
   private tryAddLayerToMap(features: Feature[], id: EntityKey): void {
-    let i: number = 1;
+    let i = 1;
     if (features.length) {
       if (this.map === undefined) {
         return;

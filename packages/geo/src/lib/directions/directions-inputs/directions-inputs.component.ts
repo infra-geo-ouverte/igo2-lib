@@ -26,11 +26,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olObservable from 'ol/Observable';
 import * as olProj from 'ol/proj';
 
-import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -65,21 +65,21 @@ import { StopsFeatureStore, StopsStore } from '../shared/store';
     MatOptionModule,
     CdkDragHandle,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DirectionsInputsComponent implements OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
   public stopWithHover: Stop;
-  public stopIsDragged: boolean = false;
+  public stopIsDragged = false;
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() projection: string;
-  @Input() coordRoundedDecimals: number = 6;
+  @Input() coordRoundedDecimals = 6;
 
-  @Input() debounce: number = 200;
-  @Input() length: number = 2;
+  @Input() debounce = 200;
+  @Input() length = 2;
 
   @Output() stopInputHasFocus: EventEmitter<boolean> =
     new EventEmitter<boolean>(false);

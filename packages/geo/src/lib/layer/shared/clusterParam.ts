@@ -8,5 +8,5 @@ export interface ClusterRange {
   maxRadius?: number;
   showRange?: boolean;
   dynamicRadius?: boolean;
-  style: { [key: string]: any };
+  style: Record<string, any>;
 }

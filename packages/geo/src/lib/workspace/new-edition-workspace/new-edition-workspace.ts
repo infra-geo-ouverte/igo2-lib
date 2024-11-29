@@ -5,7 +5,8 @@ import {
 } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
-import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
+import { EntityRecord } from '@igo2/common/entity';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 import { MessageService } from '@igo2/core/message';
 
 import { BehaviorSubject } from 'rxjs';
@@ -40,7 +41,7 @@ interface UpdateEdition extends BaseEdition {
   type: EditionType.UPDATE;
   featureData: {
     geometry?: FeatureGeometry;
-    properties: { [key: string]: any };
+    properties: Record<string, any>;
   };
 }
 
@@ -90,8 +91,8 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
     this.geometryEditor = new GeometryEditor(this.map, GeometryType.Point);
   }
 
-  abstract getUpdateBody(feature: EditionFeature): Object;
-  abstract getCreateBody(feature: EditionFeature): Object;
+  abstract getUpdateBody(feature: EditionFeature): object;
+  abstract getCreateBody(feature: EditionFeature): object;
 
   updateFeature(feature: EditionFeature) {
     if (this.edition) {
@@ -141,7 +142,7 @@ export abstract class NewEditionWorkspace extends Workspace<Feature> {
 
   private initNewFeatureProperties() {
     const { sourceFields } = this.layer.options.sourceOptions;
-    let properties = {};
+    const properties = {};
     sourceFields.forEach((field) => {
       if (!field.primary) {
         properties[field.name] = '';

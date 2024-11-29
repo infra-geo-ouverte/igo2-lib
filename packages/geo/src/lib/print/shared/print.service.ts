@@ -1,7 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
-import { SecureImagePipe } from '@igo2/common';
+import { SecureImagePipe } from '@igo2/common/image';
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -15,7 +16,6 @@ import { default as JSZip } from 'jszip';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
-import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
@@ -40,15 +40,15 @@ export class PrintService {
   zipFile: JSZip;
   nbFileToProcess: number;
   activityId: string;
-  imgSizeAdded: Array<number>;
-  mapPrintExtent: Array<number>;
+  mapPrintExtent: number[];
+  imgSizeAdded: number[];
 
   TEXTPDFFONT = {
-    titleFont: 'Sans Serif',
+    titleFont: 'times',
     titleFontStyle: 'bold',
-    subtitleFont: 'Sans Serif',
+    subtitleFont: 'times',
     subtitleFontStyle: 'bold',
-    commentFont: 'Sans Serif',
+    commentFont: 'times',
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
@@ -58,7 +58,8 @@ export class PrintService {
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -77,15 +78,11 @@ export class PrintService {
       unit: 'mm' // default
     });
 
-    const dimensions = [
-      doc.internal.pageSize.width,
-      doc.internal.pageSize.height
-    ];
+    const { width: pageWidth, height: pageHeight } = doc.internal.pageSize;
 
-    const margins = [10, 10, 10, 10];
-    const width = dimensions[0] - margins[3] - margins[1];
-    const height = dimensions[1] - margins[0] - margins[2];
-    const size: [number, number] = [width, height];
+    /** top | right | bottom | left */
+    const baseMargins: [number, number, number, number] = [10, 10, 10, 10];
+
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
@@ -95,14 +92,14 @@ export class PrintService {
       (paperFormat === PrintPaperFormat.A1 ||
         paperFormat === PrintPaperFormat.A0)
     ) {
-      margins[0] += 10;
+      baseMargins[0] += 10;
     }
     // PDF title
-    const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+    const fontSizeInPt = Math.round(2 * (pageHeight + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
     if (options.title !== undefined && options.title !== '') {
       titleSizes = this.getTextPdfObjectSizeAndMarg(
         options.title,
-        margins,
+        baseMargins,
         this.TEXTPDFFONT.titleFont,
         fontSizeInPt,
         this.TEXTPDFFONT.titleFontStyle,
@@ -115,18 +112,18 @@ export class PrintService {
         this.TEXTPDFFONT.titleFont,
         this.TEXTPDFFONT.titleFontStyle,
         titleSizes.fontSize,
-        titleSizes.marginLeft + margins[3],
-        margins[0]
+        titleSizes.marginLeft + baseMargins[3],
+        baseMargins[0]
       );
 
-      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
+      baseMargins[0] = titleSizes.height + baseMargins[0]; // cumulative margin top for next elem to place in pdf doc
     }
 
     // PDF subtitle
     if (options.subtitle !== undefined && options.subtitle !== '') {
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(
         options.subtitle,
-        margins,
+        baseMargins,
         this.TEXTPDFFONT.subtitleFont,
         options.title !== '' ? titleSizes.fontSize * 0.7 : fontSizeInPt * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
@@ -139,35 +136,50 @@ export class PrintService {
         this.TEXTPDFFONT.subtitleFont,
         this.TEXTPDFFONT.subtitleFontStyle,
         subtitleSizes.fontSize,
-        subtitleSizes.marginLeft + margins[3],
-        margins[0]
+        subtitleSizes.marginLeft + baseMargins[3],
+        baseMargins[0]
       );
 
-      margins[0] += 5; // cumulative marg top for next elem to place in pdf doc. 5 is a fix it could be adjust
+      baseMargins[0] += 5; // cumulative marg top for next elem to place in pdf doc. 5 is a fix it could be adjust
     }
 
-    if (options.showProjection === true || options.showScale === true) {
-      this.addProjScale(
-        doc,
-        map,
-        resolution,
-        options.showProjection,
-        options.showScale
-      );
-    }
+    const verticalSpacing = 5;
     if (options.comment !== undefined && options.comment !== '') {
-      this.addComment(doc, options.comment);
+      this.addComment(doc, options.comment, baseMargins, verticalSpacing);
     }
 
-    this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
+    this.handleFooter(
+      map,
+      doc,
+      options,
+      resolution,
+      verticalSpacing,
+      baseMargins
+    );
+
+    const width = pageWidth - baseMargins[3] - baseMargins[1];
+    const height = pageHeight - baseMargins[0] - baseMargins[2];
+    const size: [number, number] = [width, height];
+
+    this.addMap(doc, map, resolution, size, baseMargins).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.handleMeasureLayer(doc, map, margins);
-
           const width = this.imgSizeAdded[0];
           const height = this.imgSizeAdded[1];
-
-          this.addGeoRef(doc, width, height, margins);
+          this.addGeoRef(doc, map, width, height, baseMargins);
+          await this.handleMeasureLayer(doc, map, baseMargins);
+          if (options.showNorthArrow) {
+            const northArrowCanvas = await this.createNorthDirectionArrow(
+              map.viewController.getRotation()
+            );
+            await this.addNorthArrowInDoc(
+              doc,
+              northArrowCanvas,
+              baseMargins,
+              legendPostion,
+              width
+            );
+          }
 
           if (options.legendPosition !== 'none') {
             if (
@@ -178,12 +190,12 @@ export class PrintService {
               await this.addLegendSamePage(
                 doc,
                 map,
-                margins,
+                baseMargins,
                 resolution,
                 options.legendPosition
               );
             } else if (options.legendPosition === 'newpage') {
-              await this.addLegend(doc, map, margins, resolution);
+              await this.addLegend(doc, map, baseMargins, resolution);
             }
           } else {
             await this.saveDoc(doc);
@@ -200,15 +212,21 @@ export class PrintService {
     return status$;
   }
   // ref GeoMoose https://github.com/geomoose/gm3/tree/main/src/gm3/components/print
-  addGeoRef(doc, width, height, margins) {
+  addGeoRef(
+    doc,
+    map: IgoMap,
+    width: number,
+    height: number,
+    baseMargins: [number, number, number, number]
+  ) {
     const unit = 'mm';
     const docHeight = doc.internal.pageSize.getHeight();
 
     // x,y = margin left-bottom corner for img in pdf doc
-    const x = margins[3];
-    const y = docHeight - margins[0] - height;
+    const x = baseMargins[3];
+    const y = docHeight - baseMargins[0] - height;
 
-    let pdf_extents = [x, y, x + width, y + height];
+    const pdf_extents = [x, y, x + width, y + height];
     for (let i = 0; i < pdf_extents.length; i++) {
       pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
     }
@@ -219,12 +237,12 @@ export class PrintService {
    * Add measure overlay on the map on the document when the measure layer is present
    * @param  doc - Pdf document where measure tooltip will be added
    * @param  map - Map of the app
-   * @param  margins - Page margins
+   * @param  baseMargins - Page margins
    */
   private async handleMeasureLayer(
     doc: jsPDF,
     map: IgoMap,
-    margins: Array<number>
+    baseMargins: [number, number, number, number]
   ) {
     if (
       map.layers.find(
@@ -239,7 +257,7 @@ export class PrintService {
       }).then((e) => {
         canvasOverlayHTMLMeasures = e;
       });
-      this.addCanvas(doc, canvasOverlayHTMLMeasures, margins); // this adds measure overlays
+      this.addCanvas(doc, canvasOverlayHTMLMeasures, baseMargins); // this adds measure overlays
     }
   }
 
@@ -249,20 +267,10 @@ export class PrintService {
    * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(
-    map: IgoMap,
-    width: number,
-    resolution: number
-  ): Observable<string> {
+  getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
     return new Observable((observer) => {
       let html = '';
-      const legends = getLayersLegends(map.layers, {
-        resolution: map.viewController.getResolution(),
-        extent: map.viewController.getExtent(),
-        projection: map.viewController.getOlProjection().getCode(),
-        // scale: map.viewController.getScale(resolution),
-        size: map.ol.getSize()
-      } as LegendMapViewOptions);
+      const legends = getLayersLegends(map.layers);
 
       if (legends.filter((l) => l.display === true).length === 0) {
         observer.next(html);
@@ -320,20 +328,11 @@ export class PrintService {
    * * @param  format - Image format. default value to "png"
    * @return The image of the legend
    */
-  async getLayersLegendImage(
-    map,
-    format: string = 'png',
-    doZipFile: boolean,
-    resolution: number
-  ) {
+  async getLayersLegendImage(map, format = 'png', doZipFile: boolean) {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = await this.getLayersLegendHtml(
-      map,
-      width,
-      resolution
-    ).toPromise();
+    let html = await this.getLayersLegendHtml(map, width).toPromise();
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -365,7 +364,7 @@ export class PrintService {
           // Add the canvas to zip
           this.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
         }
-      } catch (err) {
+      } catch {
         status = SubjectStatus.Error;
       }
       status$.next(status);
@@ -386,7 +385,6 @@ export class PrintService {
     fontStyle: string,
     doc: jsPDF
   ): TextPdfSizeAndMargin {
-    const pdfResolution = 96;
     const docWidth = doc.internal.pageSize.getWidth();
     const pageWidth = docWidth - margins[1] - margins[3];
 
@@ -416,21 +414,34 @@ export class PrintService {
 
   /**
    * Add comment to the document
-   * * @param  doc - pdf document
-   * * @param  comment - Comment to add in the document
+   * @param  doc - pdf document
+   * @param  comment - Comment to add in the document
+   * @param baseMargins - top | right | bottom | left
+   * @param verticalSpacing - calculate text position and map height
    */
-  private addComment(doc: jsPDF, comment: string) {
-    const commentMarginLeft = 10; //margin left and bottom is fix
-    const commentMarginBottom = 10;
-    const marginTop = doc.internal.pageSize.height - commentMarginBottom;
+  private addComment(
+    doc: jsPDF,
+    comment: string,
+    baseMargins: [number, number, number, number],
+    verticalSpacing: number
+  ) {
+    // calculate map image height
+    baseMargins[2] += verticalSpacing;
+
+    const xPosition = baseMargins[3]; //margin left and bottom is fix
+    const marginBottom = baseMargins[2];
+    // calculate text position Y
+    const yPosition =
+      doc.internal.pageSize.height - marginBottom + verticalSpacing;
+
     this.addTextInPdfDoc(
       doc,
       comment,
       this.TEXTPDFFONT.commentFont,
       this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
-      commentMarginLeft,
-      marginTop,
+      xPosition,
+      yPosition,
       true
     );
   }
@@ -443,7 +454,7 @@ export class PrintService {
     textFontSize: number,
     textMarginLeft: number,
     textMarginTop: number,
-    isComment: boolean = false
+    isComment = false
   ) {
     doc.setFont(textFont, textFontStyle);
     doc.setFontSize(textFontSize);
@@ -458,42 +469,82 @@ export class PrintService {
   }
 
   /**
-   * Add projection and/or scale to the document
-   * @param  doc - pdf document
+   * Add attribution and/or (projection and/or scale) to the document
    * @param  map - Map of the app
-   * @param  dpi - DPI resolution of the document
-   * @param  projection - Bool to indicate if projection need to be added
-   * @param  scale - Bool to indicate if scale need to be added
+   * @param  doc - pdf document
+   * @param  options - Print options
+   * @param  resolution - cart resolution
+   * @param baseMargins - top | right | bottom | left
+   * @param verticalSpacing - calculate text position and map height
    */
-  private addProjScale(
-    doc: jsPDF,
+  private async handleFooter(
     map: IgoMap,
-    dpi: number,
-    projection: boolean,
-    scale: boolean
+    doc: jsPDF,
+    options: PrintOptions,
+    resolution: number,
+    verticalSpacing: number,
+    baseMargins: [number, number, number, number]
   ) {
-    const translate = this.languageService.translate;
-    const projScaleSize = 12;
-    const projScaleMarginLeft = 10;
-    const marginBottom = 15;
-    const heightPixels = doc.internal.pageSize.height - marginBottom;
+    let text = '';
 
-    let textProjScale: string = '';
-    if (projection === true) {
+    const attributionText: string = this.getAttributionText(map);
+    if (attributionText) {
+      text += attributionText + '. ';
+    }
+    if (options.showProjection === true || options.showScale === true) {
+      text += this.getProjScale(map, options, resolution);
+    }
+
+    if (text) {
+      baseMargins[2] += verticalSpacing;
+    }
+
+    const xPosition = baseMargins[3];
+    const marginBottom = baseMargins[2];
+    // calculate text position Y
+    const yPosition =
+      doc.internal.pageSize.height - marginBottom + verticalSpacing;
+
+    this.addTextInPdfDoc(
+      doc,
+      text,
+      this.TEXTPDFFONT.commentFont,
+      this.TEXTPDFFONT.commentFontStyle,
+      this.TEXTPDFFONT.commentFontSize,
+      xPosition,
+      yPosition
+    );
+  }
+
+  getAttributionText(map: IgoMap): string {
+    const mapOverlayHtml = map.ol.getOverlayContainerStopEvent() as HTMLElement;
+    const htmlAttribution = mapOverlayHtml
+      .getElementsByClassName('ol-attribution')[0]
+      .cloneNode(true) as HTMLElement;
+    htmlAttribution.getElementsByTagName('button')[0].remove();
+    return htmlAttribution.innerText;
+  }
+
+  private getProjScale(
+    map: IgoMap,
+    options: PrintOptions,
+    dpi: number
+  ): string {
+    const translate = this.languageService.translate;
+    let textProjScale = '';
+    if (options.showProjection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
       textProjScale += projText + ': ' + map.projection;
     }
-    if (scale === true) {
-      if (projection === true) {
+    if (options.showScale === true) {
+      if (options.showProjection === true) {
         textProjScale += '   ';
       }
       const scaleText = translate.instant('igo.geo.printForm.scale');
       const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
-    doc.setFont(this.TEXTPDFFONT.commentFont);
-    doc.setFontSize(projScaleSize);
-    doc.text(textProjScale, projScaleMarginLeft, heightPixels);
+    return textProjScale;
   }
 
   /**
@@ -505,16 +556,12 @@ export class PrintService {
   private async addLegend(
     doc: jsPDF,
     map: IgoMap,
-    margins: Array<number>,
+    margins: number[],
     resolution: number
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(
-      map,
-      width,
-      resolution
-    ).toPromise();
+    const html = await this.getLayersLegendHtml(map, width).toPromise();
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -541,9 +588,8 @@ export class PrintService {
         (pourcentageReduction * (25.4 * canvas.width)) / resolution,
         (pourcentageReduction * (25.4 * canvas.height)) / resolution
       ];
-      let imgData;
       doc.addPage();
-      imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/png');
       doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
     }
 
@@ -554,22 +600,18 @@ export class PrintService {
    * Add the legend to the document
    * @param  doc - Pdf document where legend will be added
    * @param  map - Map of the app
-   * @param  margins - Page margins
+   * @param  baseMargins - Page margins
    */
   private async addLegendSamePage(
     doc: jsPDF,
     map: IgoMap,
-    margins: Array<number>,
+    baseMargins: [number, number, number, number],
     resolution: number,
     legendPosition: string
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(
-      map,
-      width,
-      resolution
-    ).toPromise();
+    const html = await this.getLayersLegendHtml(map, width).toPromise();
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -598,32 +640,32 @@ export class PrintService {
       // Move the legend to the correct position on the page
       if (legendPosition === 'bottomright') {
         marginsLegend = [
-          doc.internal.pageSize.height - margins[2] - imageSize[1],
-          margins[1],
-          margins[2],
-          doc.internal.pageSize.width - margins[1] - imageSize[0]
+          doc.internal.pageSize.height - baseMargins[2] - imageSize[1],
+          baseMargins[1],
+          baseMargins[2],
+          doc.internal.pageSize.width - baseMargins[1] - imageSize[0]
         ];
       } else if (legendPosition === 'topright') {
         marginsLegend = [
-          margins[0],
-          margins[1],
-          doc.internal.pageSize.height - margins[0] - imageSize[1],
-          doc.internal.pageSize.width - margins[1] - imageSize[0]
+          baseMargins[0],
+          baseMargins[1],
+          doc.internal.pageSize.height - baseMargins[0] - imageSize[1],
+          doc.internal.pageSize.width - baseMargins[1] - imageSize[0]
         ];
       } else if (legendPosition === 'bottomleft') {
         // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
         marginsLegend = [
-          doc.internal.pageSize.height - margins[2] - imageSize[1] - 15,
-          doc.internal.pageSize.width - margins[3] - imageSize[0],
-          margins[2] + 15,
-          margins[3]
+          doc.internal.pageSize.height - baseMargins[2] - imageSize[1],
+          doc.internal.pageSize.width - baseMargins[3] - imageSize[0],
+          baseMargins[2],
+          baseMargins[3]
         ];
       } else if (legendPosition === 'topleft') {
         marginsLegend = [
-          margins[0],
-          doc.internal.pageSize.width - margins[3] - imageSize[0],
-          doc.internal.pageSize.height - margins[0] - imageSize[1],
-          margins[3]
+          baseMargins[0],
+          doc.internal.pageSize.width - baseMargins[3] - imageSize[0],
+          doc.internal.pageSize.height - baseMargins[0] - imageSize[1],
+          baseMargins[3]
         ];
       }
       this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
@@ -642,7 +684,7 @@ export class PrintService {
   private addCanvas(
     doc: jsPDF,
     canvas: HTMLCanvasElement,
-    margins: Array<number>
+    baseMargins: [number, number, number, number]
   ) {
     let image;
     if (canvas) {
@@ -654,18 +696,16 @@ export class PrintService {
         console.log('Warning: An image cannot be print in pdf file');
         return;
       }
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas, baseMargins);
       doc.addImage(
         image,
         'PNG',
-        margins[3],
-        margins[0],
+        baseMargins[3],
+        baseMargins[0],
         imageSize[0],
         imageSize[1]
       );
-
-      doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
-
+      doc.rect(baseMargins[3], baseMargins[0], imageSize[0], imageSize[1]);
       this.imgSizeAdded = imageSize; // keep img size for georef later
     }
   }
@@ -675,15 +715,14 @@ export class PrintService {
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
-    docSize: [number, number],
-    margins: Array<number>,
-    legendPostion: PrintLegendPosition
+    imageDimensions: [number, number],
+    baseMargins: [number, number, number, number]
   ) {
     const mapSize = map.ol.getSize() as [number, number];
     const viewResolution = map.ol.getView().getResolution();
     const dimensionPixels = this.setMapResolution(
       map,
-      docSize,
+      imageDimensions,
       resolution,
       viewResolution
     );
@@ -694,12 +733,13 @@ export class PrintService {
       const mapCanvas = event.target
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
+
       const mapResultCanvas = await this.drawMap(dimensionPixels, mapCanvas);
+
       this.mapPrintExtent = map.viewController.getExtent('EPSG:3857');
 
       this.resetOriginalMapSize(map, mapSize, viewResolution);
-
-      await this.drawMapControls(map, mapResultCanvas, legendPostion);
+      await this.drawMapControls(map, mapResultCanvas);
 
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
@@ -710,9 +750,9 @@ export class PrintService {
         let status = SubjectStatus.Done;
         try {
           if (mapResultCanvas.width !== 0) {
-            this.addCanvas(doc, mapResultCanvas, margins);
+            this.addCanvas(doc, mapResultCanvas, baseMargins);
           }
-        } catch (err) {
+        } catch {
           status = SubjectStatus.Error;
           this.messageService.error(
             'igo.geo.printForm.corsErrorMessageBody',
@@ -730,9 +770,9 @@ export class PrintService {
         let status = SubjectStatus.Done;
         try {
           if (mapResultCanvas.width !== 0) {
-            this.addCanvas(doc, mapResultCanvas, margins);
+            this.addCanvas(doc, mapResultCanvas, baseMargins);
           }
-        } catch (err) {
+        } catch {
           status = SubjectStatus.Error;
           this.messageService.error(
             'igo.geo.printForm.corsErrorMessageBody',
@@ -781,13 +821,14 @@ export class PrintService {
   }
 
   async drawMap(
-    size: Array<number>,
+    size: number[],
     mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
     const mapResultCanvas = document.createElement('canvas');
     mapResultCanvas.width = size[0];
     mapResultCanvas.height = size[1];
 
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let index = 0; index < mapCanvas.length; index++) {
       const canvas = mapCanvas[index];
       if (canvas.width > 0) {
@@ -837,21 +878,13 @@ export class PrintService {
     mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
   }
 
-  async drawMapControls(
-    map: IgoMap,
-    canvas: HTMLCanvasElement,
-    position: PrintLegendPosition
-  ): Promise<void> {
+  async drawMapControls(map: IgoMap, canvas: HTMLCanvasElement): Promise<void> {
     const context = canvas.getContext('2d');
     // Get the scale and attribution
     // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
     const mapOverlayHTML = map.ol
       .getOverlayContainerStopEvent()
       .cloneNode(true) as HTMLElement;
-    // add North Direction to mapOverly
-    await this.addNorthDirection(mapOverlayHTML, position);
-    // add map Attribution designe to print
-    await this.addAttribution(mapOverlayHTML);
 
     // set 'OverlayContainer' size to print size
     mapOverlayHTML.style.width = canvas.width + 'px';
@@ -872,7 +905,12 @@ export class PrintService {
       scale: 1,
       backgroundColor: null,
       allowTaint: true,
-      useCORS: true
+      useCORS: true,
+      ignoreElements: (element: Element) => {
+        return element instanceof HTMLElement
+          ? element.className.includes('ol-attribution')
+          : false;
+      }
     });
 
     if (canvasOverlayHTML.width !== 0 && canvasOverlayHTML.height !== 0) {
@@ -883,42 +921,65 @@ export class PrintService {
     mapOverlayHTML.remove();
   }
 
-  private async addNorthDirection(
-    mapOverlayHTML: HTMLElement,
-    position: PrintLegendPosition
-  ): Promise<void> {
-    const northDirection = document
-      .getElementsByTagName('igo-rotation-button')[0]
-      .cloneNode(true) as HTMLElement;
-    const HTMLButton = northDirection.getElementsByTagName(
-      'button'
-    )[0] as HTMLElement;
-    if (!HTMLButton) {
-      return null;
+  private async addNorthArrowInDoc(
+    doc: jsPDF | CanvasRenderingContext2D,
+    arrawCanvas: HTMLCanvasElement,
+    baseMargins: [number, number, number, number],
+    legendPosition: PrintLegendPosition,
+    width: number,
+    yPosition = 0
+  ) {
+    let xPosition = 0;
+    let northArrowDimension = 0;
+    if (doc instanceof CanvasRenderingContext2D) {
+      northArrowDimension = 50;
+      xPosition =
+        legendPosition === 'topright' ? 0 : width - northArrowDimension;
+      doc.drawImage(
+        arrawCanvas,
+        xPosition,
+        yPosition,
+        northArrowDimension,
+        northArrowDimension
+      );
+    } else {
+      northArrowDimension = 16;
+      xPosition = legendPosition === 'topright' ? 10 : width - baseMargins[1];
+      yPosition = baseMargins[0];
+      doc.addImage(
+        arrawCanvas.toDataURL(),
+        xPosition,
+        yPosition,
+        northArrowDimension,
+        northArrowDimension
+      );
     }
-    // in case legend position is topright
-    // we change rotate btn to topleft
-    if (position === 'topright') {
-      northDirection.style.width = 'inherit';
-      northDirection.style.left = '10px';
-    }
-    HTMLButton.parentElement.style.background = 'transparent';
-    HTMLButton.style.color = '#000';
-    mapOverlayHTML.appendChild(northDirection);
   }
 
-  private async addAttribution(mapOverlayHTML: HTMLElement): Promise<void> {
-    const HTMLattribution =
-      mapOverlayHTML.getElementsByClassName('ol-attribution')[0];
-    const HTMLButton = HTMLattribution.getElementsByTagName('button')[0];
-    if (!HTMLButton) {
-      return null;
-    }
-    HTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-    const olCollapsed: boolean =
-      HTMLattribution.classList.contains('ol-collapsed');
-    if (olCollapsed) {
-      HTMLattribution.classList.remove('ol-collapsed');
+  /**
+   * @param rotation - map rotation 'rad' unit
+   *
+   */
+  private async createNorthDirectionArrow(
+    rotation: number
+  ): Promise<HTMLCanvasElement> {
+    const div = this.document.createElement('div');
+    div.style.maxWidth = '50mm';
+    div.style.maxHeight = '50mm';
+    div.style.textAlign = 'center';
+
+    const img = this.document.createElement('img');
+    img.src = './assets/igo2/geo/images/north-direction.png';
+    img.style.maxWidth = '50mm';
+    img.style.maxHeight = '50mm';
+    img.style.transform = 'rotate(' + rotation + 'rad)';
+    img.style.padding = '5mm';
+    div.appendChild(img);
+    this.document.body.appendChild(div);
+    const canvas = await html2canvas(div, { backgroundColor: null });
+    this.removeHtmlElement(div);
+    if (canvas) {
+      return canvas;
     }
   }
 
@@ -945,7 +1006,8 @@ export class PrintService {
     subtitle = '',
     comment = '',
     doZipFile = true,
-    legendPosition: PrintLegendPosition
+    legendPosition: PrintLegendPosition,
+    showNorthArrow: boolean
   ) {
     const status$ = new Subject();
     this.activityId = this.activityService.register();
@@ -964,7 +1026,8 @@ export class PrintService {
 
       this.resetOriginalMapSize(map, initialMapSize, viewResolution);
 
-      await this.drawMapControls(map, mapResultCanvas, legendPosition);
+      await this.drawMapControls(map, mapResultCanvas);
+
       // Check the legendPosition
       if (legendPosition !== 'none') {
         if (
@@ -980,7 +1043,7 @@ export class PrintService {
             format
           );
         } else if (legendPosition === 'newpage') {
-          await this.getLayersLegendImage(map, format, doZipFile, resolution);
+          await this.getLayersLegendImage(map, format, doZipFile);
         }
       }
       // add other information to final canvas before exporting
@@ -1114,6 +1177,20 @@ export class PrintService {
 
       newContext.drawImage(mapResultCanvas, 0, positionHCanvas);
 
+      if (showNorthArrow) {
+        const northArrowCanvas = await this.createNorthDirectionArrow(
+          map.viewController.getRotation()
+        );
+        await this.addNorthArrowInDoc(
+          newContext,
+          northArrowCanvas,
+          null,
+          legendPosition,
+          width,
+          positionHCanvas
+        );
+      }
+
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
       if (format.toLowerCase() === 'tiff') {
@@ -1132,7 +1209,7 @@ export class PrintService {
           // Add the canvas to zip
           this.generateCanvaFileToZip(newCanvas, fileNameWithExt);
         }
-      } catch (err) {
+      } catch {
         status = SubjectStatus.Error;
       }
       status$.next(status);
@@ -1203,11 +1280,7 @@ export class PrintService {
     const context = canvas.getContext('2d');
 
     // Get html code for the legend
-    const html = await this.getLayersLegendHtml(
-      map,
-      canvas.width,
-      resolution
-    ).toPromise();
+    const html = await this.getLayersLegendHtml(map, canvas.width).toPromise();
     // If no legend, save the map directly
     if (html === '') {
       await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);
@@ -1265,11 +1338,6 @@ export class PrintService {
     }
   }
 
-  private renderMap(map, size, extent) {
-    map.ol.updateSize();
-    map.ol.renderSync();
-  }
-
   /**
    * Save document
    * @param  doc - Document to save
@@ -1287,7 +1355,7 @@ export class PrintService {
   getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
     const pageHeight =
-      doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
+      doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
     const pageWidth =
       doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = this.pdf_units2points(canvas.height, 'mm');
@@ -1326,16 +1394,15 @@ export class PrintService {
    */
   private saveCanvasImageAsFile(canvas, nameWithExt, format) {
     const blobFormat = 'image/' + format;
-    const that = this;
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
       canvas.toBlob((blob) => {
         // download image
         saveAs(blob, nameWithExt);
-        that.saveFileProcessing();
+        this.saveFileProcessing();
       }, blobFormat);
-    } catch (err) {
+    } catch {
       this.messageService.error(
         'igo.geo.printForm.corsErrorMessageBody',
         'igo.geo.printForm.corsErrorMessageHeader'
@@ -1350,8 +1417,8 @@ export class PrintService {
    */
   private generateCanvaFileToZip(canvas, name) {
     const blobFormat = 'image/' + 'jpeg';
-    const that = this;
     if (
+      // eslint-disable-next-line no-prototype-builtins
       !this.hasOwnProperty('zipFile') ||
       typeof this.zipFile === 'undefined'
     ) {
@@ -1364,10 +1431,10 @@ export class PrintService {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
         canvas.toBlob((blob) => {
-          that.addFileToZip(name, blob);
+          this.addFileToZip(name, blob);
         }, blobFormat);
       }
-    } catch (err) {
+    } catch {
       this.messageService.error(
         'igo.geo.printForm.corsErrorMessageBody',
         'igo.geo.printForm.corsErrorMessageHeader'
@@ -1409,11 +1476,10 @@ export class PrintService {
    * @return Retun a zip file
    */
   private getZipFile() {
-    const that = this;
     this.zipFile.generateAsync({ type: 'blob' }).then((blob) => {
       // 1) generate the zip file
       saveAs(blob, 'map.zip');
-      delete that.zipFile;
+      delete this.zipFile;
     });
   }
 

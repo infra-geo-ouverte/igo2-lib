@@ -3,6 +3,7 @@ import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import { WorkspaceSearchSource } from './workspace';
 
 /**
@@ -30,5 +31,12 @@ export function provideWorkspaceSearchSource() {
     useFactory: workspaceSearchSourceFactory,
     multi: true,
     deps: [LanguageService, StorageService, ConfigService]
+  };
+}
+
+export function withWorkspaceSource(): SearchSourceFeature<SearchSourceKind.Workspace> {
+  return {
+    kind: SearchSourceKind.Workspace,
+    providers: [provideWorkspaceSearchSource()]
   };
 }

@@ -4,6 +4,12 @@ import { ExportButtonComponent } from './export-button/export-button.component';
 import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
 
+export const IMPORT_EXPORT_DIRECTIVES = [
+  ImportExportComponent,
+  DropGeoFileDirective,
+  ExportButtonComponent
+] as const;
+
 /**
  * @deprecated import the components directly or IMPORT_EXPORT_DIRECTIVES for the set
  */

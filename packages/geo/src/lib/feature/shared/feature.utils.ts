@@ -5,7 +5,7 @@ import {
   getEntityProperty,
   getEntityRevision,
   getEntityTitle
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -213,7 +213,6 @@ export function featureFromOl(
     : olFeature.get(idColumn)
       ? olFeature.get(idColumn)
       : uuid();
-  const newFeature = olFeature.get('_newFeature');
 
   return {
     type: FEATURE,

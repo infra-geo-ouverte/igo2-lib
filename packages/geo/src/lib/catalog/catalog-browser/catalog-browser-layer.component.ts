@@ -14,13 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {
-  IgoBadgeIconDirective,
-  getEntityIcon,
-  getEntityTitle
-} from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -53,24 +50,22 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
     IgoBadgeIconDirective,
     LayerLegendComponent,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public inRange$ = new BehaviorSubject<boolean>(true);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
   private isPreview$$: Subscription;
   private resolution$$: Subscription;
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  public layerLegendShown$ = new BehaviorSubject<boolean>(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() resolution: number;
 
@@ -169,7 +164,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     this.onToggleClick(event);
   }
 
-  askForLegend(event) {
+  askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
     this.layerService
       .createAsyncLayer(this.layer.options)

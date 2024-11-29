@@ -14,11 +14,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard, uuid } from '@igo2/utils';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { ShareMapService } from '../shared/share-map.service';
 
@@ -36,7 +35,7 @@ import { ShareMapService } from '../shared/share-map.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class ShareMapApiComponent implements OnInit {
@@ -57,7 +56,7 @@ export class ShareMapApiComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.auth.authenticate$.subscribe((auth) => {
+    this.auth.authenticate$.subscribe(() => {
       const decodeToken = this.auth.decodeToken();
       this.userId = decodeToken?.user?.id.toString();
       this.buildForm();
@@ -93,7 +92,7 @@ export class ShareMapApiComponent implements OnInit {
     this.shareMapService
       .updateContextShared(this.map, inputs, this.idContextShared)
       .subscribe(
-        (rep) => {
+        () => {
           this.messageService.success(
             'igo.context.contextManager.dialog.saveMsg',
             'igo.context.contextManager.dialog.saveTitle',

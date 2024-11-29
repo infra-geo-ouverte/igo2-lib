@@ -1,4 +1,4 @@
-import { Workspace, WorkspaceOptions } from '@igo2/common';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,9 +12,7 @@ export interface FeatureWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class FeatureWorkspace extends Workspace<Feature> {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): VectorLayer {
     return this.options.layer;

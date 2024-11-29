@@ -20,9 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ColorPickerFormFieldComponent } from '@igo2/common';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { ColorPickerFormFieldComponent } from '@igo2/common/color';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { FontType } from '../../shared/font.enum';
 import { DrawStyleService } from '../../style-service/draw-style.service';
@@ -51,11 +50,11 @@ import {
     MatOptionModule,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class StyleModalDrawingComponent implements OnInit {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
 

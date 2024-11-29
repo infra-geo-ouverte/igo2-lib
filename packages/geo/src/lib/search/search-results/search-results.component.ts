@@ -13,18 +13,17 @@ import {
 import type { TemplateRef } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { CollapsibleComponent } from '@igo2/common/collapsible';
 import {
-  CollapsibleComponent,
   EntityState,
   EntityStore,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreWatcher,
-  ListComponent,
-  ListItemDirective
-} from '@igo2/common';
+  EntityStoreWatcher
+} from '@igo2/common/entity';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
@@ -60,11 +59,11 @@ export enum SearchResultMode {
     ListItemDirective,
     MatTabsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
-  private showResultsCount: boolean = true;
+  private showResultsCount = true;
 
   /**
    * Reference to the SearchResultMode enum
@@ -108,7 +107,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * To check if the view for tabsMode for search-result-tools
    */
-  @Input() tabsMode: boolean = false;
+  @Input() tabsMode = false;
 
   /**
    * Search term
@@ -125,7 +124,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
-  @Input() termSplitter: string = '|';
+  @Input() termSplitter = '|';
 
   /**
    * Event emitted when a result is focused

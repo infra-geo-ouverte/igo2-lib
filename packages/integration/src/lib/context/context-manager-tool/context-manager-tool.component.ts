@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   ContextListBindingDirective,
   ContextListComponent
@@ -22,7 +22,7 @@ import { ToolState } from '../../tool/tool.state';
   imports: [ContextListComponent, ContextListBindingDirective]
 })
 export class ContextManagerToolComponent {
-  @Input() toolToOpenOnContextChange: string = 'mapTools';
+  @Input() toolToOpenOnContextChange = 'mapTools';
 
   get map(): IgoMap {
     return this.mapState.map;

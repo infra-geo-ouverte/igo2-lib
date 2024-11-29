@@ -7,17 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
-import {
-  EntityTableComponent,
-  EntityTableTemplate,
-  ToolComponent
-} from '@igo2/common';
+import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Clipboard, NumberUtils } from '@igo2/utils';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { MapProximityState } from '../map-proximity.state';
@@ -26,7 +23,7 @@ import { MapState } from '../map.state';
 @ToolComponent({
   name: 'map-proximity',
   title: 'igo.integration.tools.closestFeature',
-  icon: 'output_circle'
+  icon: 'radar'
 })
 /**
  * Tool to handle the advanced map tools
@@ -46,7 +43,7 @@ import { MapState } from '../map.state';
     MatRadioModule,
     FormsModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MapProximityToolComponent implements OnInit, OnDestroy {

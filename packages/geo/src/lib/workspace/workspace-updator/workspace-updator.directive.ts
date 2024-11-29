@@ -1,7 +1,7 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { Workspace } from '@igo2/common/workspace';
+import type { WorkspaceStore } from '@igo2/common/workspace';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';

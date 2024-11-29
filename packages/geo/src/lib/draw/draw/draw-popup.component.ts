@@ -17,14 +17,13 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
 import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
 import { getLength } from 'ol/sphere';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap, roundCoordTo } from '../../map/shared';
 import {
@@ -61,11 +60,11 @@ import { DDtoDMS } from '../shared/draw.utils';
     MatOptionModule,
     MatDialogActions,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class DrawPopupComponent {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
   @Input() labelFlag: LabelType | [LabelType, LabelType] = LabelType.Custom;
   @Input() coordinatesMeasureUnit: CoordinatesUnit;
   @Input() lengthMeasureUnit: MeasureLengthUnit;
@@ -127,12 +126,12 @@ export class DrawPopupComponent {
       this.olGeometryType === GeometryType.Circle
     ) {
       if (this.data.olGeometry instanceof OlFeature) {
-        let longitude = this.data.olGeometry.get('longitude');
-        let latitude = this.data.olGeometry.get('latitude');
+        const longitude = this.data.olGeometry.get('longitude');
+        const latitude = this.data.olGeometry.get('latitude');
         this.longlatDD = roundCoordTo([longitude, latitude], 5);
         this.coordinatesInDD = '(' + latitude + ', ' + longitude + ')';
       } else {
-        let point4326 = transform(
+        const point4326 = transform(
           this.data.olGeometry.getFlatCoordinates(),
           projection,
           'EPSG:4326'
@@ -161,7 +160,7 @@ export class DrawPopupComponent {
       ).toFixed(2);
       this.currentArea = this.areaInMetersSquare;
     } else if (this.olGeometryType === GeometryType.Circle) {
-      let circularPolygon = fromCircle(olGeometry, 10000);
+      const circularPolygon = fromCircle(olGeometry, 10000);
       const radius = this.getRadius(circularPolygon);
       this.lengthInMeters = radius.toFixed(2);
       this.currentLength = this.lengthInMeters;
@@ -349,7 +348,7 @@ export class DrawPopupComponent {
 
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit) {
     this.coordinatesMeasureUnit = coordinatesUnit;
-    let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
+    const coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
     this.currentCoordinates =
       '(' + coordinates[1] + ', ' + coordinates[0] + ')';
   }

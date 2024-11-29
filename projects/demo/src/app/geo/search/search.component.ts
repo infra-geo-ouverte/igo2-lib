@@ -10,11 +10,11 @@ import {
 import {
   ActionStore,
   ActionbarComponent,
-  ActionbarMode,
-  CONTEXT_MENU_DIRECTIVES,
-  EntityStore,
-  PanelComponent
-} from '@igo2/common';
+  ActionbarMode
+} from '@igo2/common/action';
+import { CONTEXT_MENU_DIRECTIVES } from '@igo2/common/context-menu';
+import { EntityStore } from '@igo2/common/entity';
+import { PanelComponent } from '@igo2/common/panel';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
@@ -33,12 +33,10 @@ import {
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
-  SearchService,
   ZoomButtonComponent,
-  provideDefaultCoordinatesSearchResultFormatter,
-  provideDefaultIChercheSearchResultFormatter,
-  provideILayerSearchResultFormatter,
-  provideSearchSourceService
+  provideSearch,
+  withIChercheSource,
+  withWorkspaceSource
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 
@@ -70,19 +68,18 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     FeatureDetailsComponent
   ],
   providers: [
-    SearchService,
-    provideSearchSourceService(),
-    provideDefaultIChercheSearchResultFormatter(),
-    provideDefaultCoordinatesSearchResultFormatter(),
-    provideILayerSearchResultFormatter()
+    provideSearch([withIChercheSource(), withWorkspaceSource()], {
+      analytics: true
+    }),
+    SearchState
   ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
-  public igoSearchPointerSummaryEnabled: boolean = false;
+  public igoSearchPointerSummaryEnabled = false;
 
-  public termSplitter: string = '|';
+  public termSplitter = '|';
 
   public map: IgoMap = new IgoMap({
     overlay: true,

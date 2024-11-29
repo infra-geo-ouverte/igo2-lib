@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import {
   HttpClient,
   HttpErrorResponse,
@@ -7,13 +8,13 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { AuthInterceptor } from '@igo2/auth';
+import { ActionStore } from '@igo2/common/action';
 import {
-  ActionStore,
   EntityStoreFilterSelectionStrategy,
   EntityTableButton,
   EntityTableColumnRenderer,
   EntityTableTemplate
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
@@ -141,6 +142,8 @@ export class EditionWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
@@ -293,7 +296,7 @@ export class EditionWorkspaceService {
 
     const relations = layer.dataSource.options.relations || [];
 
-    let rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
+    const rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
     let relationsColumn = [];
@@ -387,7 +390,7 @@ export class EditionWorkspaceService {
     }
 
     columns = fields.map((field: SourceFieldsOptionsParams) => {
-      let column = {
+      const column = {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
         renderer: rendererType,
@@ -496,7 +499,7 @@ export class EditionWorkspaceService {
     feature,
     workspace: EditionWorkspace,
     url: string,
-    headers: { [key: string]: any }
+    headers: Record<string, any>
   ) {
     if (workspace.layer.dataSource.options.edition.hasGeometry) {
       const projDest =
@@ -607,7 +610,7 @@ export class EditionWorkspaceService {
     feature,
     workspace: EditionWorkspace,
     url: string,
-    headers: { [key: string]: any },
+    headers: Record<string, any>,
     protocole = 'patch'
   ) {
     if (workspace.layer.dataSource.options.edition.hasGeometry) {
@@ -661,12 +664,13 @@ export class EditionWorkspaceService {
 
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
 
+        // TODO a valider si la clause if est bonne.
         if (!workspace.layer.options.sourceOptions?.relations) {
           this.relationLayers$.next([]);
           return;
         }
 
-        let relationLayers = [];
+        const relationLayers = [];
         for (const relation of workspace.layer.options.sourceOptions
           .relations) {
           workspace.map.layers.forEach((layer) => {
@@ -779,7 +783,7 @@ export class EditionWorkspaceService {
         lay.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
       ) {
         const wmsOlLayer = lay.dataSource.ol as olSourceImageWMS;
-        let params = wmsOlLayer.getParams();
+        const params = wmsOlLayer.getParams();
         params._t = new Date().getTime();
         wmsOlLayer.updateParams(params);
       }
@@ -787,7 +791,6 @@ export class EditionWorkspaceService {
   }
 
   validateFeature(feature, workspace: EditionWorkspace) {
-    let message;
     let key;
     let valid = true;
     workspace.meta.tableTemplate.columns.forEach((column) => {

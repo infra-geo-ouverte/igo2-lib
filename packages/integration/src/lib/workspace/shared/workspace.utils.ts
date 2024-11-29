@@ -1,15 +1,14 @@
+import { Action } from '@igo2/common/action';
 import {
-  Action,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy,
-  Widget
-} from '@igo2/common';
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
+import { Widget } from '@igo2/common/widget';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 import { StorageService } from '@igo2/core/storage';
 import {
   AnyWorkspace,
-  ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
   OgcFilterableDataSource,
@@ -116,7 +115,7 @@ export function getWorkspaceActions(
             layers: [ws.layer.id],
             featureInMapExtent: filterStrategy.active,
             layersWithSelection
-          } as ExportOptions
+          }
         });
       },
       args: [workspace]

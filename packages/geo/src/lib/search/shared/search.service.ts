@@ -1,5 +1,13 @@
-import { Injectable } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  Optional,
+  WritableSignal,
+  effect,
+  signal
+} from '@angular/core';
 
+import { AnalyticsService } from '@igo2/core/analytics';
 import { StorageService } from '@igo2/core/storage';
 
 import { MapService } from '../../map/shared/map.service';
@@ -24,15 +32,32 @@ import {
  * keeps internal state of the researches it performed
  * and the results they yielded.
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SearchService {
+  searchTerm: WritableSignal<string> = signal(null);
+
   constructor(
     private searchSourceService: SearchSourceService,
     private mapService: MapService,
-    private storageService: StorageService
-  ) {}
+    private storageService: StorageService,
+    private analyticsService: AnalyticsService,
+    @Inject('searchAnalytics')
+    @Optional()
+    analytics: boolean
+  ) {
+    if (analytics) {
+      this.handleAnalytics();
+    }
+  }
+
+  private handleAnalytics(): void {
+    effect(() => {
+      const term = this.searchTerm();
+      if (term != null) {
+        this.analyticsService.trackSearch(term, null);
+      }
+    });
+  }
 
   /**
    * Perform a research by text
@@ -43,6 +68,8 @@ export class SearchService {
     if (!this.termIsValid(term)) {
       return [];
     }
+
+    this.searchTerm.set(term);
 
     const proj = this.mapService.getMap()?.projection || 'EPSG:3857';
     const response = stringToLonLat(term, proj, {
@@ -89,7 +116,7 @@ export class SearchService {
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions,
-    asPointerSummary: boolean = false
+    asPointerSummary = false
   ) {
     const reverseSourceFonction = asPointerSummary
       ? sourceCanReverseSearchAsSummary

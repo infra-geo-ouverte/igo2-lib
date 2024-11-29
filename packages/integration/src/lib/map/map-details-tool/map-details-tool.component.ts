@@ -3,7 +3,8 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportButtonComponent,
   ExportOptions,
@@ -21,7 +22,6 @@ import {
   sourceCanSearch
 } from '@igo2/geo';
 
-import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -56,27 +56,27 @@ import { MapState } from './../map.state';
     MatListModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class MapDetailsToolComponent implements OnInit {
-  public delayedShowEmptyMapContent: boolean = false;
+  public delayedShowEmptyMapContent = false;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() ogcButton: boolean = true;
+  @Input() ogcButton = true;
 
-  @Input() timeButton: boolean = true;
+  @Input() timeButton = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
 
   get map(): IgoMap {
     return this.mapState.map;

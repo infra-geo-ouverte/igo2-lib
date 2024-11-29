@@ -3,12 +3,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import {
-  FlexibleComponent,
-  FlexibleState,
-  PanelComponent,
-  getEntityTitle
-} from '@igo2/common';
+import { getEntityTitle } from '@igo2/common/entity';
+import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
+import { PanelComponent } from '@igo2/common/panel';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
@@ -77,8 +74,6 @@ export class ToastComponent {
   get title(): string {
     return getEntityTitle(this.feature);
   }
-
-  constructor() {}
 
   toggle() {
     this.expanded = !this.expanded;

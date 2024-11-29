@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
@@ -87,7 +87,7 @@ export class CatalogService {
           map((catalogs) =>
             catalogs.map((c: any) => Object.assign(c, c.options))
           ),
-          catchError((_response: HttpErrorResponse) => EMPTY)
+          catchError(() => EMPTY)
         );
       observables$.push(catalogsFromApi$);
     }
@@ -109,13 +109,13 @@ export class CatalogService {
     }
 
     return zip(...observables$).pipe(
+      // eslint-disable-next-line prefer-spread
       map((catalogs: Catalog[][]) => [].concat.apply([], catalogs))
     ) as Observable<Catalog[]>;
   }
 
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
-    let newCatalog: Catalog;
-    newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
+    const newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
     return newCatalog.collectCatalogItems();
   }
 
@@ -505,11 +505,11 @@ export class CatalogService {
         ? layer?.DataURL[0].OnlineResource
         : undefined;
 
-    let metadataUrl =
+    const metadataUrl =
       propertiesToForce?.metadataUrl ||
       propertiesToForce?.metadataUrlAll ||
       layerOnlineResource;
-    let metadataAbstract =
+    const metadataAbstract =
       propertiesToForce?.metadataAbstract ||
       propertiesToForce?.metadataAbstractAll ||
       baseAbstract;
@@ -606,7 +606,7 @@ export class CatalogService {
     catalog: Catalog,
     itemListIn: any,
     itemsPrepare: CatalogItem[],
-    loopLevel: number = 0
+    loopLevel = 0
   ) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map(
@@ -663,7 +663,7 @@ export class CatalogService {
 
   private getWMTSItems(
     catalog,
-    capabilities: { [key: string]: any }
+    capabilities: Record<string, any>
   ): CatalogItemLayer[] {
     if (!capabilities) {
       return [];
@@ -689,9 +689,9 @@ export class CatalogService {
         );
         let extern = true;
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           catalog.abstract;
@@ -785,27 +785,18 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     );
 
-    let abstract;
-    if (
-      capabilities.serviceDescription &&
-      capabilities.serviceDescription.length
-    ) {
-      const regex = /(<([^>]+)>)/gi;
-      abstract = capabilities.serviceDescription.replace(regex, '');
-    }
-
     const items: CatalogItemLayer[] = layers
       .map((layer: ArcGISRestCapabilitiesLayer) => {
         const propertiesToForce = this.computeForcedProperties(
           layer.name,
           catalog.forcedProperties
         );
-        let baseAbstract = catalog.abstract;
+        const baseAbstract = catalog.abstract;
         let extern = true;
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           baseAbstract;
@@ -985,6 +976,7 @@ class CatalogFactory {
     catalogService: CatalogService
   ): Catalog {
     let catalog: Catalog;
+    // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('composite')) {
       catalog = new CompositeCatalog(options, (catalog: Catalog) =>
         catalogService.loadCatalogCompositeLayerItems(catalog)

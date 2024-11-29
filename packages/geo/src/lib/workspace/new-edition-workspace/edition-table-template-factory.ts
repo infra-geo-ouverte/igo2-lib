@@ -1,4 +1,7 @@
-import { EntityTableButton, EntityTableColumnRenderer } from '@igo2/common';
+import {
+  EntityTableButton,
+  EntityTableColumnRenderer
+} from '@igo2/common/entity';
 
 import olFeature from 'ol/Feature';
 

@@ -12,9 +12,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ListComponent, ListItemDirective } from '@igo2/common';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   EMPTY,
@@ -43,20 +43,17 @@ import { Layer } from '../shared/layers/layer';
     LayerLegendItemComponent,
     ListItemDirective,
     AsyncPipe,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
 
-  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
-  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> =
-    new BehaviorSubject(true);
-  layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegend: boolean = false;
+  hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  hasVisibleAndNotInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  layersInUi$ = new BehaviorSubject<Layer[]>([]);
+  layers$ = new BehaviorSubject<Layer[]>([]);
+  showAllLegend = false;
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
   @Input()
@@ -68,17 +65,16 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
     return this._layers;
   }
   private _layers: Layer[];
-  @Input() excludeBaseLayers: boolean = false;
+  @Input() excludeBaseLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() allowShowAllLegends = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() showAllLegendsValue = false;
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
 
-  constructor() {}
   ngOnInit(): void {
     this.change$$ = this.change$
       .pipe(

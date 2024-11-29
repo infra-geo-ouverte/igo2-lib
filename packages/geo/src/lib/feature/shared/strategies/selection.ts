@@ -1,4 +1,8 @@
-import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+import {
+  EntityKey,
+  EntityRecord,
+  EntityStoreStrategy
+} from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
@@ -187,9 +191,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection
-        map((features: Array<Feature[]>) =>
-          features.reduce((a, b) => a.concat(b))
-        )
+        map((features: Feature[][]) => features.reduce((a, b) => a.concat(b)))
       )
       .subscribe((features: Feature[]) => this.onSelectFromStore(features));
   }

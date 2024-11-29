@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 import { ObjectUtils } from '@igo2/utils';
 
 import { Subscription, debounceTime, pairwise } from 'rxjs';
@@ -105,7 +105,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         })
     );
     this.states$$.push(
-      store.entities$.pipe(debounceTime(250)).subscribe((a) => {
+      store.entities$.pipe(debounceTime(250)).subscribe(() => {
         this.updateEntitiesPropertiesState(store);
       })
     );
