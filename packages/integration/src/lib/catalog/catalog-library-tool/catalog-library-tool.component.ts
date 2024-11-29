@@ -76,7 +76,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   /**
    * Determine if the export button is shown
    */
-  @Input() exportButton: boolean = false;
+  @Input() exportButton = false;
 
   /**
    * List of predefined catalogs
@@ -200,7 +200,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   getCatalogList(): void {
-    var rank = 1;
+    let rank = 1;
     const t = this.languageService.translate;
     let wholeCsvOutputs: CsvOutput[] = [
       {
@@ -346,7 +346,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    */
   private downloadCsv(csvOutput: CsvOutput[]) {
     const sep = this.languageService.getLanguage() === 'fr' ? ';' : ',';
-    let csvContent = csvOutput
+    const csvContent = csvOutput
       .map((e) => {
         return `${e.rank}${sep}${e.layerTitle}${sep}${e.layerGroup}${sep}${e.catalog}${sep}${e.provider}${sep}${e.url}${sep}${e.layerName}${sep}${e.context}${sep}${e.dataDescription}`;
       })
