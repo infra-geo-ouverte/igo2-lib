@@ -8,5 +8,6 @@ export interface ListExport {
   url: string;
   layerName: string;
   context: string;
-  dataDescription: string;
+  metadataAbstract: string;
+  metadataUrl: string;
 }

@@ -33,7 +33,8 @@
           "url": "URL",
           "layerName": "Layer name",
           "context": "Context/Thematic",
-          "dataDescription": "Data description",
+          "metadataAbstract": "Data description",
+          "metadataUrl": "Metadata hyperlink",
           "documentName": "LayerList_{{value}}",
           "internal": "Internal",
           "external": "External"

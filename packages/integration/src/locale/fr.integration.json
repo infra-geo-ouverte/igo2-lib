@@ -34,6 +34,8 @@
           "layerName": "Nom système de la couche d'informaiton",
           "context": "Contexte/Thématique",
           "dataDescription": "Description de la donnée",
+          "metadataAbstract": "Description de la donnée",
+          "metadataUrl": "Lien des métadonnées",
           "documentName": "ListeCouchesInformation_{{value}}",
           "internal": "Interne",
           "external": "Externe"

@@ -152,12 +152,17 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get the item description for getCatalogList
+   * Get the item abstract for getCatalogList
    */
-  private getDescription(item: CatalogItemLayer): string {
+  private getMetadataAbstract(item: CatalogItemLayer): string {
     return item.options.metadata.abstract?.replaceAll('\n', '') ?? '';
   }
-
+  /**
+   * Get the item url metadata for getCatalogList
+   */
+  private getMetadataUrl(item: CatalogItemLayer): string {
+    return item.options.metadata.url;
+  }
   /**
    * Prepare the observale to produce the layer list extraction
    * @returns An array of catalog and items plus detailed contexts info.
@@ -290,7 +295,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       url: infos.url,
       layerName: infos.layerName,
       context: '',
-      dataDescription: this.getDescription(layer)
+      metadataAbstract: this.getMetadataAbstract(layer),
+      metadataUrl: this.getMetadataUrl(layer)
     };
   }
 
@@ -337,9 +343,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       url: t.instant('igo.integration.catalog.listExport.url'),
       layerName: t.instant('igo.integration.catalog.listExport.layerName'),
       context: t.instant('igo.integration.catalog.listExport.context'),
-      dataDescription: t.instant(
-        'igo.integration.catalog.listExport.dataDescription'
-      )
+      metadataAbstract: t.instant(
+        'igo.integration.catalog.listExport.metadataAbstract'
+      ),
+      metadataUrl: t.instant('igo.integration.catalog.listExport.metadataUrl')
     });
 
     const catalogOutput = catalogOutputs.map((catalogOutput) => {
