@@ -1,4 +1,4 @@
-export interface CsvOutput {
+export interface ListExport {
   id: string;
   rank: string;
   layerTitle: string;

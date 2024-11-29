@@ -23,15 +23,15 @@
         "closestFeature": "Entités à proximité"
       },
       "catalog": {
-        "library.getCatalogList": "Obtenir la liste des services du catalogue",
-        "csv": {
+        "library.getCatalogList": "Obtenir la liste du contenu des catalogues",
+        "listExport": {
           "rank": "Rang",
           "layerTitle": "Titre de la couche",
           "layerGroup": "Nom du groupe de couches",
           "catalog": "Catalogue",
           "externalProvider": "Fournisseur",
           "url": "URL",
-          "layerName": "Nom du fichier - Service Web",
+          "layerName": "Nom système de la couche d'informaiton",
           "context": "Contexte/Thématique",
           "dataDescription": "Description de la donnée",
           "documentName": "ListeCouchesInformation_{{value}}",

@@ -1,18 +1,15 @@
 import type { ColInfo, WorkBook } from 'xlsx';
 
-import { CsvOutput } from './catalog-library-tool.interface';
+import { ListExport } from './catalog-library-tool.interface';
 
-export function getColumnsInfo(rows: Record<string, any>[]): ColInfo[] {
+export function getColumnsInfo(rows: ListExport[]): ColInfo[] {
   const columns = Object.keys(rows[0]);
   return columns.map((column) => ({
     wch: getColumnMaxWidth(column, rows)
   }));
 }
 
-export function getColumnMaxWidth(
-  column: string,
-  rows: Record<string, any>[]
-): number {
+export function getColumnMaxWidth(column: string, rows: ListExport[]): number {
   return rows.reduce(
     (width, row) => Math.max(width, row[column]?.length ?? 0),
     column.length
@@ -21,7 +18,7 @@ export function getColumnMaxWidth(
 
 export async function addExcelSheet(
   title: string,
-  rows: CsvOutput[],
+  rows: ListExport[],
   workbook: WorkBook,
   skipHeader = true
 ): Promise<void> {

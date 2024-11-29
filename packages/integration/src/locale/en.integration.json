@@ -23,15 +23,15 @@
         "closestFeature": "Closest feature tool"
       },
       "catalog": {
-        "library.getCatalogList": "Get the catalog services list",
-        "csv": {
+        "library.getCatalogList": "Get the catalogs's content list",
+        "listExport": {
           "rank": "Rank",
           "layerTitle": "Layer Title",
           "layerGroup": "Layer Group",
           "catalog": "Catalog",
           "externalProvider": "Provider",
           "url": "URL",
-          "layerName": "File name - Web service",
+          "layerName": "Layer name",
           "context": "Context/Thematic",
           "dataDescription": "Data description",
           "documentName": "LayerList_{{value}}",

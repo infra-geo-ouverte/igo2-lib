@@ -32,7 +32,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import { CsvOutput } from './catalog-library-tool.interface';
+import { ListExport } from './catalog-library-tool.interface';
 import { addExcelSheet } from './catalog-library-tool.utils';
 
 /**
@@ -201,23 +201,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
   async getCatalogList(): Promise<void> {
     let rank = 1;
-    const t = this.languageService.translate;
-    let wholeCsvOutputs: CsvOutput[] = [
-      {
-        id: 'csvHeader',
-        rank: t.instant('igo.integration.catalog.csv.rank'),
-        layerTitle: t.instant('igo.integration.catalog.csv.layerTitle'),
-        layerGroup: t.instant('igo.integration.catalog.csv.layerGroup'),
-        catalog: t.instant('igo.integration.catalog.csv.catalog'),
-        provider: t.instant('igo.integration.catalog.csv.externalProvider'),
-        url: t.instant('igo.integration.catalog.csv.url'),
-        layerName: t.instant('igo.integration.catalog.csv.layerName'),
-        context: t.instant('igo.integration.catalog.csv.context'),
-        dataDescription: t.instant(
-          'igo.integration.catalog.csv.dataDescription'
-        )
-      }
-    ];
+    let finalListExportOutputs: ListExport[] = [];
     this.generatelist$$ =
       this.getCatalogsAndItemsAndDetailedContexts().subscribe(
         (catalogsAndItemsAndDetailedContexts) => {
@@ -239,13 +223,13 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             const catalog = catalogAndItems.catalog;
             const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
 
-            const catalogCsvOutputs = loadedCatalogItems.reduce(
-              (catalogCsvOutputs, item) => {
+            const catalogListExports = loadedCatalogItems.reduce(
+              (catalogListExports, item) => {
                 if (item.type === CatalogItemType.Group) {
                   const group = item as CatalogItemGroup;
                   group.items.forEach((layer: CatalogItemLayer) => {
-                    catalogCsvOutputs.push(
-                      this.catalogItemLayerToCsvOutput(
+                    catalogListExports.push(
+                      this.catalogItemLayerToCatalogOutput(
                         layer,
                         rank,
                         group.title,
@@ -256,8 +240,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
                   });
                 } else {
                   const layer = item as CatalogItemLayer;
-                  catalogCsvOutputs.push(
-                    this.catalogItemLayerToCsvOutput(
+                  catalogListExports.push(
+                    this.catalogItemLayerToCatalogOutput(
                       layer,
                       rank,
                       '',
@@ -266,33 +250,34 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
                   );
                   rank++;
                 }
-                return catalogCsvOutputs;
+                return catalogListExports;
               },
-              [] as CsvOutput[]
+              [] as ListExport[]
             );
-            wholeCsvOutputs.push(...catalogCsvOutputs);
+            finalListExportOutputs.push(...catalogListExports);
           });
 
-          wholeCsvOutputs = this.matchLayersWithLayersContext(
-            wholeCsvOutputs,
+          finalListExportOutputs = this.matchLayersWithLayersContext(
+            finalListExportOutputs,
             layerInfosFromDetailedContexts
           );
 
-          this.exportExcel(wholeCsvOutputs);
+          this.exportExcel(finalListExportOutputs);
         }
       );
   }
 
-  private catalogItemLayerToCsvOutput(
+  private catalogItemLayerToCatalogOutput(
     layer: CatalogItemLayer,
     rank: number,
     groupTitle: string,
     catalogTitle: string
-  ): CsvOutput {
+  ): ListExport {
     const infos = getInfoFromSourceOptions(
       layer.options.sourceOptions,
       layer.id
     );
+    const t = this.languageService.translate;
     return {
       id: infos.id,
       rank: rank.toString(),
@@ -300,12 +285,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       layerGroup: groupTitle,
       catalog: catalogTitle,
       provider: layer.externalProvider
-        ? this.languageService.translate.instant(
-            'igo.integration.catalog.csv.external'
-          )
-        : this.languageService.translate.instant(
-            'igo.integration.catalog.csv.internal'
-          ),
+        ? t.instant('igo.integration.catalog.listExport.external')
+        : t.instant('igo.integration.catalog.listExport.internal'),
       url: infos.url,
       layerName: infos.layerName,
       context: '',
@@ -315,39 +296,55 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
   /**
    * Match a list of layer info with an other list derived from contexts
-   * @param csvOutputs The row list to be written into a csv file
+   * @param catalogOutputs The row list to be written into a file
    * @param layerInfosFromDetailedContexts Layers info derived from the context
    * @returns An altered list, with layer/context association
    */
 
   private matchLayersWithLayersContext(
-    csvOutputs: CsvOutput[],
+    catalogOutputs: ListExport[],
     layerInfosFromDetailedContexts: InfoFromSourceOptions[]
-  ): CsvOutput[] {
-    const sep = this.languageService.getLanguage() === 'fr' ? ',' : ';';
-    csvOutputs
-      .filter((b) => b.id !== 'csvHeader')
-      .forEach((csvOutput) => {
-        const matchingLayersFromContext = layerInfosFromDetailedContexts
-          .filter(
-            (l) =>
-              l.id === csvOutput.id ||
-              (l.layerName === csvOutput.layerName && l.url === csvOutput.url)
-          )
-          .map((f) => f.context);
-        csvOutput.context = matchingLayersFromContext.join(sep);
-      });
-    return csvOutputs;
+  ): ListExport[] {
+    catalogOutputs.forEach((catalogOutput) => {
+      const matchingLayersFromContext = layerInfosFromDetailedContexts
+        .filter(
+          (l) =>
+            l.id === catalogOutput.id ||
+            (l.layerName === catalogOutput.layerName &&
+              l.url === catalogOutput.url)
+        )
+        .map((f) => f.context);
+      catalogOutput.context = matchingLayersFromContext.join(',');
+    });
+    return catalogOutputs;
   }
 
   /**
    * Write a Excel file
-   * @param csvOutputs The row list to be written into a excel file
+   * @param catalogOutputs The row list to be written into a excel file
    */
-  async exportExcel(csvOutputs: CsvOutput[]) {
-    const catalogOutput = csvOutputs.map((csvOutput) => {
-      delete csvOutput.id;
-      return csvOutput;
+  async exportExcel(catalogOutputs: ListExport[]) {
+    const t = this.languageService.translate;
+    catalogOutputs.unshift({
+      id: 'catalogIdHeader',
+      rank: t.instant('igo.integration.catalog.listExport.rank'),
+      layerTitle: t.instant('igo.integration.catalog.listExport.layerTitle'),
+      layerGroup: t.instant('igo.integration.catalog.listExport.layerGroup'),
+      catalog: t.instant('igo.integration.catalog.listExport.catalog'),
+      provider: t.instant(
+        'igo.integration.catalog.listExport.externalProvider'
+      ),
+      url: t.instant('igo.integration.catalog.listExport.url'),
+      layerName: t.instant('igo.integration.catalog.listExport.layerName'),
+      context: t.instant('igo.integration.catalog.listExport.context'),
+      dataDescription: t.instant(
+        'igo.integration.catalog.listExport.dataDescription'
+      )
+    });
+
+    const catalogOutput = catalogOutputs.map((catalogOutput) => {
+      delete catalogOutput.id;
+      return catalogOutput;
     });
 
     const { utils, writeFile } = await import('xlsx');
@@ -355,10 +352,9 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
     await addExcelSheet('Informations', catalogOutput, workbook, true);
 
-    const fn = this.languageService.translate.instant(
-      'igo.integration.catalog.csv.documentName',
-      { value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US') }
-    );
+    const fn = t.instant('igo.integration.catalog.listExport.documentName', {
+      value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US')
+    });
     writeFile(workbook, `${fn}.xlsx`, { compression: true });
   }
 }
