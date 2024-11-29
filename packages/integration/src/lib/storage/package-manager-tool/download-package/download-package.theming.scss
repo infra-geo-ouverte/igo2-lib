@@ -6,7 +6,7 @@
 
   igo-download-package {
     .oversized-package {
-      color: mat.get-color-from-palette($warn);
+      color: mat.m2-get-color-from-palette($warn);
       font-weight: bold;
     }
   }
