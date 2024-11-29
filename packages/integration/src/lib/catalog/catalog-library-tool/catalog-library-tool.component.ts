@@ -25,7 +25,6 @@ import {
   InfoFromSourceOptions,
   getInfoFromSourceOptions
 } from '@igo2/geo';
-import { downloadContent } from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
@@ -34,6 +33,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
 import { CsvOutput } from './catalog-library-tool.interface';
+import { addExcelSheet } from './catalog-library-tool.utils';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -199,7 +199,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  getCatalogList(): void {
+  async getCatalogList(): Promise<void> {
     let rank = 1;
     const t = this.languageService.translate;
     let wholeCsvOutputs: CsvOutput[] = [
@@ -278,7 +278,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             layerInfosFromDetailedContexts
           );
 
-          this.downloadCsv(wholeCsvOutputs);
+          this.exportExcel(wholeCsvOutputs);
         }
       );
   }
@@ -288,7 +288,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     rank: number,
     groupTitle: string,
     catalogTitle: string
-  ) {
+  ): CsvOutput {
     const infos = getInfoFromSourceOptions(
       layer.options.sourceOptions,
       layer.id
@@ -341,22 +341,24 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Write a CSV file, the column separator is based on language.
-   * @param csvOutputs The row list to be written into a csv file
+   * Write a Excel file
+   * @param csvOutputs The row list to be written into a excel file
    */
-  private downloadCsv(csvOutput: CsvOutput[]) {
-    const sep = this.languageService.getLanguage() === 'fr' ? ';' : ',';
-    const csvContent = csvOutput
-      .map((e) => {
-        return `${e.rank}${sep}${e.layerTitle}${sep}${e.layerGroup}${sep}${e.catalog}${sep}${e.provider}${sep}${e.url}${sep}${e.layerName}${sep}${e.context}${sep}${e.dataDescription}`;
-      })
-      .join('\n');
+  async exportExcel(csvOutputs: CsvOutput[]) {
+    const catalogOutput = csvOutputs.map((csvOutput) => {
+      delete csvOutput.id;
+      return csvOutput;
+    });
+
+    const { utils, writeFile } = await import('xlsx');
+    const workbook = utils.book_new();
+
+    await addExcelSheet('Informations', catalogOutput, workbook, true);
 
     const fn = this.languageService.translate.instant(
       'igo.integration.catalog.csv.documentName',
       { value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US') }
     );
-
-    downloadContent(csvContent, 'text/csv;charset=utf-8', fn);
+    writeFile(workbook, `${fn}.xlsx`, { compression: true });
   }
 }
