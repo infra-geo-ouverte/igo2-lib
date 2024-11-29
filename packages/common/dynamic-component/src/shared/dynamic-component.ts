@@ -32,17 +32,17 @@ export class DynamicComponent<C> {
   /**
    * Component inputs
    */
-  private inputs: { [key: string]: any } = {};
+  private inputs: Record<string, any> = {};
 
   /**
    * Subscriptions to the component's async inputs
    */
-  private inputs$$: { [key: string]: Subscription } = {};
+  private inputs$$: Record<string, Subscription> = {};
 
   /**
    * Subscribers to the component's outputs
    */
-  private subscribers: { [key: string]: (event: any) => void } = {};
+  private subscribers: Record<string, (event: any) => void> = {};
 
   constructor(private componentFactory: ComponentFactory<C>) {}
 
@@ -78,7 +78,7 @@ export class DynamicComponent<C> {
    * Update the component inputs. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateInputs(inputs: { [key: string]: any }) {
+  updateInputs(inputs: Record<string, any>) {
     this.inputs = inputs;
     if (this.componentRef === undefined) {
       return;
@@ -93,7 +93,7 @@ export class DynamicComponent<C> {
         this.unobserveInput(key);
 
         const inputValue = inputs[key];
-        if (inputs.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
           if (inputValue instanceof Observable) {
             this.observeInput(key, inputValue);
           } else {
@@ -133,7 +133,7 @@ export class DynamicComponent<C> {
    * Update the component subscribers. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateSubscribers(subscribers: { [key: string]: (event: any) => void }) {
+  updateSubscribers(subscribers: Record<string, (event: any) => void>) {
     this.subscribers = subscribers;
     if (this.componentRef === undefined) {
       return;
@@ -144,7 +144,7 @@ export class DynamicComponent<C> {
     allowedSubscribers.forEach(
       (value: { propName: string; templateName: string }) => {
         const key = value.propName;
-        if (subscribers.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(subscribers, key)) {
           const emitter = instance[key];
           const subscriber = subscribers[key];
           if (Array.isArray(subscriber)) {

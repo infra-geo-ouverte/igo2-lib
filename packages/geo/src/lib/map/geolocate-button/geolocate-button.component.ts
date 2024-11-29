@@ -28,7 +28,7 @@ import { IgoMap } from '../shared/map';
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;
   private isTemporaryDisableFollowPositionToSwitch: boolean;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('my_location');
+  readonly icon$ = new BehaviorSubject<string>('my_location');
 
   @Input()
   get map(): IgoMap {
@@ -58,9 +58,11 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
           if (tracking) {
             this.icon$.next('my_location');
           } else {
-            this.configService.getConfig('geolocate.basic')
-              ? this.icon$.next('my_location')
-              : this.icon$.next('location_searching');
+            this.icon$.next(
+              this.configService.getConfig('geolocate.basic')
+                ? 'my_location'
+                : 'location_searching'
+            );
           }
         }
       );

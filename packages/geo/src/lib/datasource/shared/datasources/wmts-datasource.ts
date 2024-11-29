@@ -6,8 +6,8 @@ import { DataSource } from './datasource';
 import { WMTSDataSourceOptions } from './wmts-datasource.interface';
 
 export class WMTSDataSource extends DataSource {
-  public declare options: WMTSDataSourceOptions;
-  public declare ol: olSourceWMTS;
+  declare public options: WMTSDataSourceOptions;
+  declare public ol: olSourceWMTS;
 
   constructor(options: WMTSDataSourceOptions) {
     super(options);
@@ -24,5 +24,7 @@ export class WMTSDataSource extends DataSource {
     return new olSourceWMTS(sourceOptions);
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

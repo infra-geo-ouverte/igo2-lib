@@ -1,17 +1,11 @@
 import { Layer } from '../shared/layers/layer';
-import {
-  LegendMapViewOptions,
-  OutputLayerLegend
-} from '../shared/layers/legend.interface';
+import { OutputLayerLegend } from '../shared/layers/legend.interface';
 
 /**
  * Get all the layers legend
  * @return Array of legend
  */
-export function getLayersLegends(
-  layers: Layer[],
-  view?: LegendMapViewOptions
-): OutputLayerLegend[] {
+export function getLayersLegends(layers: Layer[]): OutputLayerLegend[] {
   const legends = [];
 
   for (const layer of layers) {
@@ -20,7 +14,7 @@ export function getLayersLegends(
       continue;
     }
 
-    const legendUrls = layer.dataSource.getLegend(undefined, view) || [];
+    const legendUrls = layer.dataSource.getLegend() || [];
     for (const legendUrl of legendUrls) {
       if (legendUrl.url === undefined) {
         continue;

@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
 import { AuthService } from '@igo2/auth';
@@ -20,12 +23,13 @@ const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
   TestBed.configureTestingModule({
-    imports: [HttpClientModule, IgoAuthFormModule, ToastrModule],
+    imports: [IgoAuthFormModule, ToastrModule],
     providers: [
       provideMockTranslation(),
       { provide: MONITORING_OPTIONS, useValue: options },
       ToastrService,
-      MessageService
+      MessageService,
+      provideHttpClient(withInterceptorsFromDi())
     ]
   });
 

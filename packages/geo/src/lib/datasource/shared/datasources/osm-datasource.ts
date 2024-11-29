@@ -4,8 +4,8 @@ import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
 
 export class OSMDataSource extends DataSource {
-  public declare options: OSMDataSourceOptions;
-  public declare ol: olSourceOSM;
+  declare public options: OSMDataSourceOptions;
+  declare public ol: olSourceOSM;
 
   protected createOlSource(): olSourceOSM {
     if (!this.options.url) {
@@ -14,5 +14,7 @@ export class OSMDataSource extends DataSource {
     return new olSourceOSM(this.options);
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

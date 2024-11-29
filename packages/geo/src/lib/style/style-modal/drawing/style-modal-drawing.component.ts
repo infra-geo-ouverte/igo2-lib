@@ -54,7 +54,7 @@ import {
   ]
 })
 export class StyleModalDrawingComponent implements OnInit {
-  @Input() confirmFlag: boolean = false;
+  @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
 

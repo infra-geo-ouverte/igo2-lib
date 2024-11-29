@@ -17,13 +17,14 @@
       "architect": {
         "build": {
           "defaultConfiguration": "developpement",
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "aot": true,
-            "outputPath": "dist/demo",
+            "outputPath": {
+              "base": "dist/demo"
+            },
             "index": "projects/demo/src/index.html",
-            "main": "projects/demo/src/main.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
+            "polyfills": ["projects/demo/src/polyfills.ts"],
             "tsConfig": "projects/demo/tsconfig.app.json",
             "assets": [
               "projects/demo/src/favicon.ico",
@@ -59,6 +60,9 @@
               }
             ],
             "styles": ["projects/demo/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "scripts": [],
             "allowedCommonJsDependencies": [
               "@turf",
@@ -80,7 +84,8 @@
               "striptags",
               "ts-md5",
               "typy"
-            ]
+            ],
+            "browser": "projects/demo/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -96,8 +101,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -123,9 +126,9 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "outputPath": "dist/ghpages",
+              "outputPath": {
+                "base": "dist/ghpages"
+              },
               "baseHref": "/igo2-lib/",
               "budgets": [
                 {
@@ -144,20 +147,7 @@
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "7mb",
-                  "maximumError": "8mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ]
+              "extractLicenses": true
             }
           }
         },
@@ -187,7 +177,8 @@
             "lintFilePatterns": [
               "projects/demo/src/**/*.ts",
               "projects/demo/src/**/*.html"
-            ]
+            ],
+            "eslintConfig": "projects/demo/eslint.config.js"
           }
         },
         "test": {
@@ -203,6 +194,9 @@
               "projects/demo/src/favicon.ico",
               "projects/demo/src/assets"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "codeCoverage": true
           }
         },
@@ -266,7 +260,8 @@
             "lintFilePatterns": [
               "packages/auth/**/*.ts",
               "packages/auth/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/auth/eslint.config.js"
           }
         }
       }
@@ -312,7 +307,8 @@
             "lintFilePatterns": [
               "packages/common/**/*.ts",
               "packages/common/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/common/eslint.config.js"
           }
         }
       }
@@ -358,7 +354,8 @@
             "lintFilePatterns": [
               "packages/core/**/*.ts",
               "packages/core/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/core/eslint.config.js"
           }
         }
       }
@@ -404,7 +401,8 @@
             "lintFilePatterns": [
               "packages/geo/**/*.ts",
               "packages/geo/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/geo/eslint.config.js"
           }
         }
       }
@@ -434,7 +432,8 @@
             "lintFilePatterns": [
               "packages/utils/**/*.ts",
               "packages/utils/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/utils/eslint.config.js"
           }
         },
         "test": {
@@ -490,7 +489,8 @@
             "lintFilePatterns": [
               "packages/context/**/*.ts",
               "packages/context/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/context/eslint.config.js"
           }
         }
       }
@@ -526,17 +526,15 @@
             "lintFilePatterns": [
               "packages/integration/**/*.ts",
               "packages/integration/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/integration/eslint.config.js"
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics",
-      "@schematics/angular"
-    ],
+    "schematicCollections": ["@schematics/angular"],
     "cache": {
       "enabled": false,
       "environment": "all"

@@ -25,8 +25,8 @@ export abstract class Catalog implements ICatalog {
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
-  queryParams?: { [key: string]: string };
-  sourceOptions?: { [key: string]: any };
+  queryParams?: Record<string, string>;
+  sourceOptions?: Record<string, any>;
   count?: number;
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';

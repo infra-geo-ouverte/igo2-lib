@@ -105,9 +105,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   public iterator = 1;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
-    undefined
-  );
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   private format = new olFormatGeoJSON();
 
@@ -380,9 +378,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   onZoneChange(feature: Feature, buffer?: boolean) {
     this.zone = feature;
     if (feature) {
-      buffer
-        ? this.tryAddFeaturesToMap([feature], true)
-        : this.tryAddFeaturesToMap([feature]);
+      this.tryAddFeaturesToMap([feature], buffer);
       this.zoomToFeatureExtent(feature);
     }
   }

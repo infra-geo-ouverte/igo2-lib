@@ -39,7 +39,7 @@ export interface SettingOptions {
 }
 
 export interface TextSearchOptions {
-  params?: { [key: string]: string };
+  params?: Record<string, string>;
   searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
   getEnabledOnly?: boolean;
   extent?: [number, number, number, number];
@@ -52,7 +52,7 @@ export interface ReverseSearchOptions {
   distance?: number;
   conf?: number;
   zoom?: number;
-  params?: { [key: string]: string };
+  params?: Record<string, string>;
 }
 
 export interface SearchSourceFeature<KindT extends SearchSourceKind> {

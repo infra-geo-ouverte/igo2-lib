@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 
@@ -113,8 +114,9 @@ export class MapGeolocationController extends MapController {
    * Observable of the current emission interval to update the view
    */
 
-  public readonly viewUpdatePositionDebounceTime$: BehaviorSubject<number> =
-    new BehaviorSubject(5000);
+  public readonly viewUpdatePositionDebounceTime$ = new BehaviorSubject<number>(
+    5000
+  );
 
   /**
    * Observable of the current position
@@ -303,7 +305,7 @@ export class MapGeolocationController extends MapController {
         }
       })
     );
-    this.geolocation.on('change', (evt) => {
+    this.geolocation.on('change', () => {
       this.onPositionChange();
     });
   }
@@ -328,9 +330,9 @@ export class MapGeolocationController extends MapController {
     if (position.accuracy <= this.accuracyThreshold && isMoving) {
       // Calculate the heading using current position and last recorded
       // because ol heading not returning right value
-      var dx = position4326[1] - this.lastPosition.coordinates[1];
-      var dy = position4326[0] - this.lastPosition.coordinates[0];
-      var theta = Math.atan2(dy, dx);
+      const dx = position4326[1] - this.lastPosition.coordinates[1];
+      const dy = position4326[0] - this.lastPosition.coordinates[0];
+      let theta = Math.atan2(dy, dx);
       if (theta < 0) theta = 2 * Math.PI + theta;
       this.arrowRotation = theta;
       if (arrowFeature) {
@@ -354,7 +356,7 @@ export class MapGeolocationController extends MapController {
   }
 
   public addOnChangedListener(event: (geo: olGeolocation) => any) {
-    let listener = () => {
+    const listener = () => {
       event(this.geolocation);
     };
     this.geolocation.on('change', listener);
@@ -572,16 +574,16 @@ export class MapGeolocationController extends MapController {
     if (!position || !position.position) {
       return;
     }
-    let positionFeature = this.getFeatureByType(
+    const positionFeature = this.getFeatureByType(
       GeolocationOverlayType.Position
     );
-    let positionFeatureArrow = this.getFeatureByType(
+    const positionFeatureArrow = this.getFeatureByType(
       GeolocationOverlayType.PositionDirection
     );
-    let accuracyFeature = this.getFeatureByType(
+    const accuracyFeature = this.getFeatureByType(
       GeolocationOverlayType.Accuracy
     );
-    let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
+    const bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
     const features = [
       positionFeature,
       positionFeatureArrow,

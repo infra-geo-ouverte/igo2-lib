@@ -103,16 +103,21 @@
           "GPX": "GPX",
           "KML": "KML",
           "Shapefile": "Shapefile",
-          "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (Excel compatible)",
+          "CSV": "CSV",
+          "Excel": "Excel",
           "URL": "External link"
+        },
+        "separator": "Separator",
+        "csv.separator": {
+          "auto": "Auto detection",
+          "comma": "Comma",
+          "semicolon": "Semicolon"
         },
         "gpx.error.poly": {
           "title": "GPX error",
           "text": "GPX format do now allow polygon features"
         },
         "encoding": {
-          "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
         },
         "combinedLayers": "combinedLayers"
@@ -347,7 +352,8 @@
           "bottomright": "Bottom right corner of the map",
           "newpage": "On a new page",
           "newimage": "On a new image"
-        }
+        },
+        "showNorthArrow": "Show north arrow"
       },
       "directionsForm": {
         "stopLayer": "Directions - stops",

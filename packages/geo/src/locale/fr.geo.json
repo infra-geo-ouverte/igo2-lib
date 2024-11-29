@@ -103,16 +103,21 @@
           "GPX": "GPX",
           "KML": "KML",
           "Shapefile": "Shapefile",
-          "CSVcomma": "CSV (séparateur virgule)",
-          "CSVsemicolon": "CSV (compatible Excel)",
+          "CSV": "CSV",
+          "Excel": "Excel",
           "URL": "Lien externe"
+        },
+        "separator": "Séparateur",
+        "csv.separator": {
+          "auto": "Détection Automatique",
+          "comma": "Virgule",
+          "semicolon": "Point-virgule"
         },
         "gpx.error.poly": {
           "title": "GPX en erreur",
           "text": "Le format GPX ne permet pas de stocker les polygones"
         },
         "encoding": {
-          "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
         },
         "combinedLayers": "couchesCombinees"
@@ -347,7 +352,8 @@
           "bottomright": "Coin bas droit de la carte",
           "newpage": "Sur une nouvelle page",
           "newimage": "Sur une nouvelle image"
-        }
+        },
+        "showNorthArrow": "Afficher la flèche du nord"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",

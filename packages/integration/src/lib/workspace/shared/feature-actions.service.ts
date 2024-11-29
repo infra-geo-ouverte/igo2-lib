@@ -23,7 +23,7 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
 export class FeatureActionsService implements OnDestroy {
   public maximize$: BehaviorSubject<boolean>;
 
-  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;
 
   get storageService(): StorageService {

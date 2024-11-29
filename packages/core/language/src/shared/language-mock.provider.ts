@@ -1,6 +1,5 @@
 import {
   EnvironmentProviders,
-  Provider,
   importProvidersFrom,
   makeEnvironmentProviders
 } from '@angular/core';
@@ -11,9 +10,7 @@ import {
   TranslateModule
 } from '@ngx-translate/core';
 
-export function provideMockTranslation(
-  loader?: Provider
-): EnvironmentProviders {
+export function provideMockTranslation(): EnvironmentProviders {
   return makeEnvironmentProviders([
     importProvidersFrom(
       TranslateModule.forRoot({

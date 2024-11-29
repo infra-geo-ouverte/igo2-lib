@@ -25,15 +25,13 @@ export abstract class Watcher {
 
   protected abstract unwatch();
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   subscribe(callback: Function, scope?: any) {
     this.watch();
 
-    this.status$$ = this.status$
-      .pipe(distinctUntilChanged())
-      .subscribe((status: SubjectStatus) => {
-        this.handleStatusChange(status);
-        callback.call(scope, this);
-      });
+    this.status$$ = this.status$.pipe(distinctUntilChanged()).subscribe(() => {
+      callback.call(scope, this);
+    });
   }
 
   unsubscribe() {
@@ -44,6 +42,4 @@ export abstract class Watcher {
     }
     this.status = SubjectStatus.Waiting;
   }
-
-  protected handleStatusChange(status: SubjectStatus) {}
 }

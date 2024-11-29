@@ -127,7 +127,8 @@ export class PrintComponent {
           data.subtitle,
           data.comment,
           data.doZipFile,
-          data.legendPosition
+          data.legendPosition,
+          data.showNorthArrow
         )
         .pipe(take(1))
         .subscribe(() => {

@@ -59,14 +59,17 @@ export function buildUrl(
   );
 
   let prefix = 'filter';
-  if (!filterOrPush) {
+  if (extent && !filterOrPush) {
     prefix = 'bbox';
     filterOrPush = extent.join(',') + ',' + proj.getCode();
   }
 
-  paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
-    ? filterOrBox
-    : `${prefix}=${filterOrPush}`;
+  if (ogcFilters?.advancedOgcFilters || filterOrPush) {
+    paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
+      ? filterOrBox
+      : `${prefix}=${filterOrPush}`;
+  }
+
   let baseUrl = queryStringValues.find((f) => f.name === 'getfeature').value;
   const patternFilter = /(filter|bbox)=.*/gi;
   baseUrl = patternFilter.test(paramsWFS.xmlFilter)
@@ -94,8 +97,8 @@ export function formatWFSQueryString(
   count?: number,
   epsg?: string,
   properties?: string,
-  startIndex: number = 0,
-  forceDefaultOutputFormat: boolean = false
+  startIndex = 0,
+  forceDefaultOutputFormat = false
 ): { name: string; value: string }[] {
   const versionWfs200 = '2.0.0'; // not the same usage as defaultWfsVersion.
   const url = dataSourceOptions.urlWfs;

@@ -1,6 +1,6 @@
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureStore } from './store';
+import type { FeatureStore } from './store';
 
 /**
  * Try to bind a layer to a store if none is bound already.

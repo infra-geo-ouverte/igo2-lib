@@ -33,11 +33,11 @@ import { WorkspaceState } from '../workspace.state';
   ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
-  public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasWorkspace$ = new BehaviorSubject<boolean>(false);
   private hasWorkspace$$: Subscription;
 
   private _layer: Layer;
-  private layer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+  private layer$ = new BehaviorSubject<Layer>(undefined);
   @Input()
   set layer(value: Layer) {
     this._layer = value;
@@ -48,7 +48,7 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
     return this._layer;
   }
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
   constructor(private workspaceState: WorkspaceState) {}
 

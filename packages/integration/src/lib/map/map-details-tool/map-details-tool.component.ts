@@ -60,23 +60,23 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapDetailsToolComponent implements OnInit {
-  public delayedShowEmptyMapContent: boolean = false;
+  public delayedShowEmptyMapContent = false;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() ogcButton: boolean = true;
+  @Input() ogcButton = true;
 
-  @Input() timeButton: boolean = true;
+  @Input() timeButton = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
 
   get map(): IgoMap {
     return this.mapState.map;

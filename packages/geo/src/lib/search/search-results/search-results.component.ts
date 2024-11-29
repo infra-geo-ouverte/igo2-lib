@@ -63,7 +63,7 @@ export enum SearchResultMode {
   ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
-  private showResultsCount: boolean = true;
+  private showResultsCount = true;
 
   /**
    * Reference to the SearchResultMode enum
@@ -107,7 +107,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * To check if the view for tabsMode for search-result-tools
    */
-  @Input() tabsMode: boolean = false;
+  @Input() tabsMode = false;
 
   /**
    * Search term
@@ -124,7 +124,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
-  @Input() termSplitter: string = '|';
+  @Input() termSplitter = '|';
 
   /**
    * Event emitted when a result is focused

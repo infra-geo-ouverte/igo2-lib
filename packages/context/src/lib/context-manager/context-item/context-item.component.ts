@@ -43,7 +43,7 @@ export class ContextItemComponent {
   public color = 'primary';
   public collapsed = true;
 
-  @Input() showFavorite: boolean = true;
+  @Input() showFavorite = true;
   @Input() context: DetailedContext;
   @Input() default: boolean;
   @Input() selected: boolean;

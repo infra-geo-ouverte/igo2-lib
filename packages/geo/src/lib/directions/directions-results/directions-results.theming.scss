@@ -5,6 +5,6 @@
   $accent: map.get($theme, accent);
 
   igo-directions-results mat-list-item.igo-steps:hover {
-    background-color: mat.get-color-from-palette($accent, lighter);
+    background-color: mat.m2-get-color-from-palette($accent, lighter);
   }
 }

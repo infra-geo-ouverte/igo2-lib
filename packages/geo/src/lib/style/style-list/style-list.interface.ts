@@ -1,4 +1,4 @@
 export interface StyleListOptions {
-  default?: { [key: string]: any };
+  default?: Record<string, any>;
   path?: string;
 }

@@ -23,7 +23,7 @@
 
   app-root {
     .active-link span {
-      color: mat.get-color-from-palette($accent, 800);
+      color: mat.m2-get-color-from-palette($accent, 800);
     }
   }
 }

@@ -1,4 +1,4 @@
-<div class="import-export-toggle mat-typography">
+<div class="import-export-toggle">
   <mat-button-toggle-group
     [value]="selectedMode"
     (change)="onImportExportChange($event)"
@@ -28,15 +28,15 @@
           [value]="projection"
           (click)="$event.stopPropagation()"
         >
-          <p matListItemTitle *ngIf="projection.translateKey">
+          <span matListItemTitle *ngIf="projection.translateKey">
             {{
               'igo.geo.importExportForm.projections.' + projection.translateKey
                 | translate: projection
             }}
-          </p>
-          <p matListItemTitle *ngIf="!projection.translateKey">
+          </span>
+          <span matListItemTitle *ngIf="!projection.translateKey">
             {{ projection.alias }}
-          </p>
+          </span>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -71,7 +71,7 @@
     />
   </div>
 </form>
-<section class="mat-typography" *ngIf="selectedMode === 'import'">
+<section *ngIf="selectedMode === 'import'">
   <div *ngIf="importHtmlClarifications === ''">
     <h4>{{ 'igo.geo.importExportForm.importClarifications' | translate }}</h4>
     <ul>
@@ -89,14 +89,12 @@
   </div>
   <igo-custom-html
     *ngIf="importHtmlClarifications !== ''"
-    class="mat-typography"
     [html]="importHtmlClarifications"
   >
   </igo-custom-html>
 </section>
 
 <section
-  class="mat-typography"
   *ngIf="(exportableLayers$ | async).length === 0 && selectedMode === 'export'"
 >
   <h4>{{ 'igo.geo.importExportForm.exportNoLayersExportable' | translate }}</h4>
@@ -133,8 +131,8 @@
           [value]="layer.id"
           (click)="$event.stopPropagation()"
         >
-          <p matListItemTitle>{{ layer.title }}</p>
-          <p matListItemTitle>
+          <span matListItemTitle>{{ layer.title }}</span>
+          <span matListItemTitle>
             <mat-slide-toggle
               *ngIf="layerHasSelectedFeatures(layer)"
               (click)="onlySelectedClick($event, layer.id)"
@@ -145,7 +143,7 @@
                 'igo.geo.importExportForm.exportSelectedFeature' | translate
               }}</small>
             </mat-slide-toggle>
-          </p>
+          </span>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -158,11 +156,8 @@
       }}</mat-label>
       <mat-select formControlName="format">
         <ng-container *ngIf="(formats$ | async).length !== 0">
-          <mat-option
-            *ngFor="let format of formats$ | async | keyvalue"
-            [value]="format.key"
-          >
-            {{ 'igo.geo.export.format.' + format.value | translate }}
+          <mat-option *ngFor="let format of formats$ | async" [value]="format">
+            {{ 'igo.geo.export.format.' + format | translate }}
           </mat-option>
         </ng-container>
         <mat-option *ngIf="(formats$ | async).length === 0" disabled="true">
@@ -187,62 +182,40 @@
     </mat-form-field>
   </div>
 
-  <div
-    class="igo-input-container"
-    *ngIf="
-      form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon'
-    "
-  >
-    <mat-form-field>
-      <mat-label>{{
-        'igo.geo.importExportForm.encodingPlaceholder' | translate
-      }}</mat-label>
-      <mat-select formControlName="encoding">
-        <ng-container *ngIf="(encodings$ | async).length !== 0">
+  <ng-container *ngIf="this.isCsvExport(form.value.format)">
+    <div class="igo-input-container">
+      <mat-form-field>
+        <mat-label>{{ 'igo.geo.export.separator' | translate }}</mat-label>
+        <mat-select formControlName="csvSeparator">
           <mat-option
-            *ngFor="let encoding of encodings$ | async | keyvalue"
-            [value]="encoding.key"
+            *ngFor="let separator of csvSeparators"
+            [value]="separator"
           >
-            {{ 'igo.geo.export.encoding.' + encoding.value | translate }}
+            {{ 'igo.geo.export.csv.separator.' + separator | translate }}
           </mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
-  </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div *ngIf="layers.length > 1" class="export-combine-layers">
+      <mat-slide-toggle
+        formControlName="combineLayers"
+        [labelPosition]="'before'"
+      >
+        {{ 'igo.geo.importExportForm.exportCombineResults' | translate }}
+      </mat-slide-toggle>
+    </div>
 
-  <div
-    class="export-combine-layers mat-typography"
-    *ngIf="
-      layers.length > 1 &&
-      (form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon')
-    "
-  >
-    <mat-slide-toggle
-      formControlName="combineLayers"
-      [labelPosition]="'before'"
+    <div
+      *ngIf="layers.length > 1 && form.value.combineLayers"
+      class="export-separator"
     >
-      {{ 'igo.geo.importExportForm.exportCombineResults' | translate }}
-    </mat-slide-toggle>
-  </div>
+      <mat-slide-toggle formControlName="separator" [labelPosition]="'before'">
+        {{ 'igo.geo.importExportForm.exportSeparator' | translate }}
+      </mat-slide-toggle>
+    </div>
+  </ng-container>
 
-  <div
-    class="export-separator mat-typography"
-    *ngIf="
-      layers.length > 1 &&
-      (form.value.format === 'CSVcomma' ||
-        form.value.format === 'CSVsemicolon') &&
-      form.value.combineLayers
-    "
-  >
-    <mat-slide-toggle formControlName="separator" [labelPosition]="'before'">
-      {{ 'igo.geo.importExportForm.exportSeparator' | translate }}
-    </mat-slide-toggle>
-  </div>
-
-  <div
-    class="export-options mat-typography"
-    *ngIf="form.value.format !== 'URL'"
-  >
+  <div class="export-options" *ngIf="form.value.format !== 'URL'">
     <mat-slide-toggle
       formControlName="featureInMapExtent"
       [labelPosition]="'before'"
@@ -271,7 +244,6 @@
 
   <igo-custom-html
     *ngIf="exportHtmlClarifications !== ''"
-    class="mat-typography"
     [html]="exportHtmlClarifications"
   >
   </igo-custom-html>

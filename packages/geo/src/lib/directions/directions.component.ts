@@ -29,7 +29,7 @@ import { Feature } from '../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
 import { roundCoordTo, stringToLonLat } from '../map';
 import { QueryService } from '../query/shared/query.service';
-import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { SearchResult } from '../search/shared/search.interfaces';
 import { SearchService } from '../search/shared/search.service';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
@@ -76,9 +76,9 @@ import {
 export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;
 
-  public projection: string = 'EPSG:4326';
-  public hasOsrmPrivateAccess: boolean = false;
-  public twoSourcesAvailable: boolean = false;
+  public projection = 'EPSG:4326';
+  public hasOsrmPrivateAccess = false;
+  public twoSourcesAvailable = false;
 
   private zoomRoute$$: Subscription;
   private storeEmpty$$: Subscription;
@@ -88,8 +88,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
   private selectedRoute: olInteraction.Select;
-  private focusOnStop: boolean = false;
-  private isTranslating: boolean = false;
+  private focusOnStop = false;
+  private isTranslating = false;
 
   public previousStops: Stop[] = [];
 
@@ -101,10 +101,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
-  @Input() debounce: number = 200;
-  @Input() length: number = 2;
-  @Input() coordRoundedDecimals: number = 6;
-  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input() debounce = 200;
+  @Input() length = 2;
+  @Input() coordRoundedDecimals = 6;
+  @Input() zoomToActiveRoute$ = new Subject<void>();
   @Input() authenticated$: BehaviorSubject<boolean>;
 
   /**
@@ -356,12 +356,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
             term,
             this.stopsFeatureStore.layer.map.projection
           );
-          let researches: Research[];
           let isCoord = false;
           if (response.lonLat) {
             isCoord = true;
           }
-          researches = this.searchService.search(term, {
+          const researches = this.searchService.search(term, {
             searchType: 'Feature'
           });
           this.cancelSearch();
@@ -400,7 +399,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                       sp.type ===
                       (isCoord ? ProposalType.Coord : ProposalType.Text)
                   );
-                  let storedSource = stop.searchProposals.find(
+                  const storedSource = stop.searchProposals.find(
                     (sp) => sp.source === source
                   );
                   if (storedSource) {
@@ -443,7 +442,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRoutes(isOverview: boolean = false) {
+  private getRoutes(isOverview = false) {
     const stopsWithCoordinates = this.stopsStore.view
       .all()
       .filter((stop) => stop.coordinates);

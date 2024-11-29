@@ -12,8 +12,6 @@ export class ActivityService {
 
   private ids: string[] = [];
 
-  constructor() {}
-
   register(): string {
     const id = uuid();
     this.ids.push(id);

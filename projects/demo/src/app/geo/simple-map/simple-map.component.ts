@@ -25,7 +25,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppSimpleMapComponent {
   public pointerCoord: [number, number];
-  public pointerCoordDelay: number = 0;
+  public pointerCoordDelay = 0;
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
