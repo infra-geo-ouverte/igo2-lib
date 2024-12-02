@@ -20,6 +20,9 @@ import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { FEATURE, Feature, FeatureMotion } from '../../feature';
+import { LAYER, LayerOptions, LayerService } from '../../layer';
+import { IgoMap } from '../../map';
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
@@ -119,6 +122,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the coords format setting is changed
    */
   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+
+  /**
+   * Map to add layer
+   */
+  @Input() map: IgoMap;
 
   /**
    * Search term
@@ -253,7 +261,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(
     private configService: ConfigService,
     private searchService: SearchService,
-    private searchSourceService: SearchSourceService
+    private searchSourceService: SearchSourceService,
+    private layerService: LayerService
   ) {}
 
   /**
@@ -483,6 +492,53 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .filter((result) => result.source !== research.source)
         .concat(results);
       this.store.updateMany(newResults);
+    }
+  }
+
+  /**
+   * When the user clicks on the magnifying glass and
+   * this find the first object on the map
+   */
+  selectFirstElement() {
+    const results = this.store.all();
+    if (results.length === 0) {
+      return;
+    }
+
+    // find the highest result score
+    const result = results.reduce(
+      (highest, current) =>
+        current.meta.score > highest.meta.score ? current : highest,
+      results[0]
+    );
+
+    this.store.state.update(result, { focused: true, selected: true }, true);
+
+    if (this.map) {
+      this.handleMap(this.map, result);
+    }
+  }
+
+  private handleMap(
+    map: IgoMap,
+    result: SearchResult<Record<string, any>>
+  ): void {
+    const { dataType } = result.meta;
+
+    if (dataType === FEATURE) {
+      const feature = (result as SearchResult<Feature>).data;
+      map.searchResultsOverlay.setFeatures(
+        [feature] satisfies Feature[],
+        FeatureMotion.Default
+      );
+    } else if (dataType === LAYER) {
+      const layerOptions = (result as SearchResult<LayerOptions>).data;
+      if (layerOptions.sourceOptions.optionsFromApi === undefined) {
+        layerOptions.sourceOptions.optionsFromApi = true;
+      }
+      this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
+        map.addLayer(layer);
+      });
     }
   }
 }
