@@ -89,5 +89,4 @@ export interface CatalogServiceOptions {
   sources?: (ICatalog | ICompositeCatalog)[];
   /** @deprecated Use url instead */
   sourcesUrl?: string;
-  exportAsListButton?: boolean;
 }

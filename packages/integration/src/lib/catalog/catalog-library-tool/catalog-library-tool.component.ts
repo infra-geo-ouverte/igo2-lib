@@ -21,9 +21,7 @@ import {
   CatalogItemLayer,
   CatalogItemType,
   CatalogLibaryComponent,
-  CatalogService,
-  InfoFromSourceOptions,
-  getInfoFromSourceOptions
+  CatalogService
 } from '@igo2/geo';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,8 +30,14 @@ import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import { ListExport } from './catalog-library-tool.interface';
-import { addExcelSheet } from './catalog-library-tool.utils';
+import {
+  InfoFromSourceOptions,
+  ListExport
+} from './catalog-library-tool.interface';
+import {
+  addExcelSheet,
+  getInfoFromSourceOptions
+} from './catalog-library-tool.utils';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -58,7 +62,6 @@ import { addExcelSheet } from './catalog-library-tool.utils';
   ]
 })
 export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
-  public exportAsListButton: boolean;
   private generatelist$$: Subscription;
   /**
    * Store that contains the catalogs
@@ -171,7 +174,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     [
       {
         catalog: Catalog;
-        loadedCatalogItems: CatalogItem[];
+        items: CatalogItem[];
       }[],
       DetailedContext[]
     ]
@@ -182,8 +185,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
           return forkJoin(
             catalogs.map((catalog) =>
               this.catalogService.loadCatalogItems(catalog).pipe(
-                map((loadedCatalogItems) => {
-                  return { catalog, loadedCatalogItems };
+                map((items) => {
+                  return { catalog, items };
                 })
               )
             )
@@ -209,9 +212,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     let finalListExportOutputs: ListExport[] = [];
     this.generatelist$$ =
       this.getCatalogsAndItemsAndDetailedContexts().subscribe(
-        (catalogsAndItemsAndDetailedContexts) => {
-          const catalogsAndItems = catalogsAndItemsAndDetailedContexts[0];
-          const detailedContexts = catalogsAndItemsAndDetailedContexts[1];
+        ([catalogsWithItems, detailedContexts]) => {
           const layerInfosFromDetailedContexts: InfoFromSourceOptions[] = [];
           detailedContexts.forEach((detailedContext) =>
             detailedContext.layers.forEach((layer) =>
@@ -224,9 +225,9 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             )
           );
 
-          catalogsAndItems.forEach((catalogAndItems) => {
+          catalogsWithItems.forEach((catalogAndItems) => {
             const catalog = catalogAndItems.catalog;
-            const loadedCatalogItems = catalogAndItems.loadedCatalogItems;
+            const loadedCatalogItems = catalogAndItems.items;
 
             const catalogListExports = loadedCatalogItems.reduce(
               (catalogListExports, item) => {
@@ -330,23 +331,23 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    * @param catalogOutputs The row list to be written into a excel file
    */
   async exportExcel(catalogOutputs: ListExport[]) {
-    const t = this.languageService.translate;
+    const translateCatalogKey = (key: TemplateStringsArray) =>
+      this.languageService.translate.instant(
+        `igo.integration.catalog.listExport.${key}`
+      );
+
     catalogOutputs.unshift({
       id: 'catalogIdHeader',
-      rank: t.instant('igo.integration.catalog.listExport.rank'),
-      layerTitle: t.instant('igo.integration.catalog.listExport.layerTitle'),
-      layerGroup: t.instant('igo.integration.catalog.listExport.layerGroup'),
-      catalog: t.instant('igo.integration.catalog.listExport.catalog'),
-      provider: t.instant(
-        'igo.integration.catalog.listExport.externalProvider'
-      ),
-      url: t.instant('igo.integration.catalog.listExport.url'),
-      layerName: t.instant('igo.integration.catalog.listExport.layerName'),
-      context: t.instant('igo.integration.catalog.listExport.context'),
-      metadataAbstract: t.instant(
-        'igo.integration.catalog.listExport.metadataAbstract'
-      ),
-      metadataUrl: t.instant('igo.integration.catalog.listExport.metadataUrl')
+      rank: translateCatalogKey`rank`,
+      layerTitle: translateCatalogKey`layerTitle`,
+      layerGroup: translateCatalogKey`layerGroup`,
+      catalog: translateCatalogKey`catalog`,
+      provider: translateCatalogKey`externalProvider`,
+      url: translateCatalogKey`url`,
+      layerName: translateCatalogKey`layerName`,
+      context: translateCatalogKey`context`,
+      metadataAbstract: translateCatalogKey`metadataAbstract`,
+      metadataUrl: translateCatalogKey`metadataUrl`
     });
 
     const catalogOutput = catalogOutputs.map((catalogOutput) => {
@@ -359,9 +360,12 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
     await addExcelSheet('Informations', catalogOutput, workbook, true);
 
-    const fn = t.instant('igo.integration.catalog.listExport.documentName', {
-      value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US')
-    });
-    writeFile(workbook, `${fn}.xlsx`, { compression: true });
+    const documentName = this.languageService.translate.instant(
+      'igo.integration.catalog.listExport.documentName',
+      {
+        value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US')
+      }
+    );
+    writeFile(workbook, `${documentName}.xlsx`, { compression: true });
   }
 }

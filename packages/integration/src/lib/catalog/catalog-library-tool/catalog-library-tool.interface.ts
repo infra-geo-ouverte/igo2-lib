@@ -1,3 +1,5 @@
+import { AnyDataSourceOptions } from '@igo2/geo';
+
 export interface ListExport {
   id: string;
   rank: string;
@@ -10,4 +12,12 @@ export interface ListExport {
   context: string;
   metadataAbstract: string;
   metadataUrl: string;
+}
+
+export interface InfoFromSourceOptions {
+  id: string;
+  layerName: string;
+  url: string;
+  sourceOptions: AnyDataSourceOptions;
+  context: string;
 }
