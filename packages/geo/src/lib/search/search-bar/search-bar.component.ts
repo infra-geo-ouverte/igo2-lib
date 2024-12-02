@@ -512,10 +512,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       results[0]
     );
 
-    if (!result) {
-      return;
-    }
-
     this.store.state.update(result, { focused: true, selected: true }, true);
 
     if (this.map) {
