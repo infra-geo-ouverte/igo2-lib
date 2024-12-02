@@ -501,9 +501,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   selectFirstElement() {
     const results = this.store.all();
+    if (results.length === 0) {
+      return;
+    }
+
     // find the highest result score
-    const result = results.reduce((highest: SearchResult, current) =>
-      current.meta.score > highest.meta.score ? current : highest
+    const result = results.reduce(
+      (highest, current) =>
+        current.meta.score > highest.meta.score ? current : highest,
+      results[0]
     );
 
     if (!result) {
