@@ -26,7 +26,7 @@ import {
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { concatAll, map, switchMap, take, toArray } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
@@ -207,73 +207,92 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  async getCatalogList(): Promise<void> {
-    let rank = 1;
-    let finalListExportOutputs: ListExport[] = [];
-    this.generatelist$$ =
-      this.getCatalogsAndItemsAndDetailedContexts().subscribe(
-        ([catalogsWithItems, detailedContexts]) => {
-          const layerInfosFromDetailedContexts: InfoFromSourceOptions[] = [];
-          detailedContexts.forEach((detailedContext) =>
-            detailedContext.layers.forEach((layer) =>
-              layerInfosFromDetailedContexts.push(
-                getInfoFromSourceOptions(
-                  layer.sourceOptions,
-                  detailedContext.title ?? detailedContext.uri
-                )
-              )
-            )
-          );
-
-          catalogsWithItems.forEach((catalogAndItems) => {
-            const catalog = catalogAndItems.catalog;
-            const loadedCatalogItems = catalogAndItems.items;
-
-            const catalogListExports = loadedCatalogItems.reduce(
-              (catalogListExports, item) => {
-                if (item.type === CatalogItemType.Group) {
-                  const group = item as CatalogItemGroup;
-                  group.items.forEach((layer: CatalogItemLayer) => {
-                    catalogListExports.push(
-                      this.catalogItemLayerToCatalogOutput(
-                        layer,
-                        rank,
-                        group.title,
-                        catalog.title
-                      )
-                    );
-                    rank++;
-                  });
-                } else {
-                  const layer = item as CatalogItemLayer;
-                  catalogListExports.push(
-                    this.catalogItemLayerToCatalogOutput(
-                      layer,
-                      rank,
-                      '',
-                      catalog.title
-                    )
-                  );
-                  rank++;
-                }
-                return catalogListExports;
-              },
-              [] as ListExport[]
-            );
-            finalListExportOutputs.push(...catalogListExports);
-          });
-
-          finalListExportOutputs = this.matchLayersWithLayersContext(
-            finalListExportOutputs,
-            layerInfosFromDetailedContexts
-          );
-
-          this.exportExcel(finalListExportOutputs);
-        }
-      );
+  private layersInfoFromContexts(): Observable<InfoFromSourceOptions[]> {
+    return this.contextService.getLocalContexts().pipe(
+      switchMap((contextsList) =>
+        forkJoin(
+          contextsList.ours.map((context) =>
+            this.contextService.getLocalContext(context.uri)
+          )
+        )
+      ),
+      concatAll(),
+      map((detailedContext) => {
+        return detailedContext.layers.map((layer) =>
+          getInfoFromSourceOptions(
+            layer.sourceOptions,
+            detailedContext.title ?? detailedContext.uri
+          )
+        );
+      }),
+      concatAll(),
+      toArray()
+    );
   }
 
-  private catalogItemLayerToCatalogOutput(
+  private listExportFromCatalogs(): Observable<ListExport[]> {
+    let rank = 1;
+    const finalListExportOutputs: ListExport[] = [];
+    return this.store.entities$.pipe(
+      switchMap((catalogs) =>
+        combineLatest(
+          catalogs.map((catalog) =>
+            this.catalogService.loadCatalogItems(catalog).pipe(
+              map((items) => {
+                return { catalog, items };
+              })
+            )
+          )
+        )
+      ),
+      map((catalogsWithItems) => {
+        catalogsWithItems.forEach((catalogAndItems) => {
+          const catalog = catalogAndItems.catalog;
+          const loadedCatalogItems = catalogAndItems.items;
+
+          const catalogListExports = loadedCatalogItems.reduce(
+            (catalogListExports, item) => {
+              if (item.type === CatalogItemType.Group) {
+                const group = item as CatalogItemGroup;
+                group.items.forEach((layer: CatalogItemLayer) => {
+                  catalogListExports.push(
+                    this.formatLayer(layer, rank, group.title, catalog.title)
+                  );
+                  rank++;
+                });
+              } else {
+                const layer = item as CatalogItemLayer;
+                catalogListExports.push(
+                  this.formatLayer(layer, rank, '', catalog.title)
+                );
+                rank++;
+              }
+              return catalogListExports;
+            },
+            [] as ListExport[]
+          );
+          finalListExportOutputs.push(...catalogListExports);
+        });
+        return finalListExportOutputs;
+      })
+    );
+  }
+
+  async getCatalogList(): Promise<void> {
+    this.generatelist$$ = combineLatest([
+      this.layersInfoFromContexts(),
+      this.listExportFromCatalogs()
+    ]).subscribe(([layersInfoFromContexts, listExportFromCatalogs]) => {
+      const listExport = this.matchLayersWithLayersFromContext(
+        listExportFromCatalogs,
+        layersInfoFromContexts
+      );
+
+      this.exportExcel(listExport);
+    });
+  }
+
+  private formatLayer(
     layer: CatalogItemLayer,
     rank: number,
     groupTitle: string,
@@ -308,11 +327,11 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    * @returns An altered list, with layer/context association
    */
 
-  private matchLayersWithLayersContext(
-    catalogOutputs: ListExport[],
+  private matchLayersWithLayersFromContext(
+    listExport: ListExport[],
     layerInfosFromDetailedContexts: InfoFromSourceOptions[]
   ): ListExport[] {
-    catalogOutputs.forEach((catalogOutput) => {
+    listExport.map((catalogOutput) => {
       const matchingLayersFromContext = layerInfosFromDetailedContexts
         .filter(
           (l) =>
@@ -323,7 +342,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         .map((f) => f.context);
       catalogOutput.context = matchingLayersFromContext.join(',');
     });
-    return catalogOutputs;
+    return listExport;
   }
 
   /**
