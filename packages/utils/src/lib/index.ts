@@ -7,6 +7,7 @@ export * from './change.interface';
 export * from './date.utils';
 export * from './dom.utils';
 export * from './file';
+export * from './file-export';
 export * from './object-utils';
 export * from './number-utils';
 export * from './strenum';
