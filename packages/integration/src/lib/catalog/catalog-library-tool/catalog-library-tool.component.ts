@@ -23,7 +23,11 @@ import {
   CatalogLibaryComponent,
   CatalogService
 } from '@igo2/geo';
-import { addExcelSheet, createBook, writeExcelFile } from '@igo2/utils';
+import {
+  addExcelSheetToWorkBook,
+  createExcelWorkBook,
+  writeExcelFile
+} from '@igo2/utils';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, forkJoin } from 'rxjs';
@@ -372,9 +376,11 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       return catalogOutput;
     });
 
-    const workbook = await createBook();
+    const workBook = await createExcelWorkBook();
 
-    await addExcelSheet('Informations', catalogOutput, workbook);
+    await addExcelSheetToWorkBook('Informations', catalogOutput, workBook, {
+      skipHeader: true
+    });
 
     const documentName = this.languageService.translate.instant(
       'igo.integration.catalog.listExport.documentName',
@@ -382,6 +388,6 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US')
       }
     );
-    writeExcelFile(workbook, `${documentName}.xlsx`, { compression: true });
+    writeExcelFile(workBook, `${documentName}.xlsx`, { compression: true });
   }
 }
