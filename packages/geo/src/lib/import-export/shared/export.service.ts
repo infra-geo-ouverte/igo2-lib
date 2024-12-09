@@ -6,7 +6,7 @@ import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 import {
   addExcelSheetToWorkBook,
-  createExcelWorkbook,
+  createExcelWorkBook,
   downloadBlob,
   downloadContent,
   isIsoDate,
@@ -258,7 +258,7 @@ export class ExportService {
   }
 
   async exportExcel(map: IgoMap, store: WorkspaceStore, data: ExportOptions) {
-    const workbook = await createExcelWorkbook();
+    const workbook = await createExcelWorkBook();
 
     for (const layerName of data.layers) {
       const layer = map.getLayerById(layerName);
