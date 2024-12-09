@@ -5,8 +5,8 @@ import { EntityRecord } from '@igo2/common/entity';
 import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 import {
-  addExcelSheet,
-  createBook,
+  addExcelSheetToWorkBook,
+  createExcelWorkbook,
   downloadBlob,
   downloadContent,
   isIsoDate,
@@ -138,7 +138,6 @@ export class ExportService {
       const properties = keys.reduce(
         (acc: object, key: string) => {
           if (key && key !== 'geometry') {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             key === 'id' && olFeature.get('draw')
               ? (comment += key + ':' + olFeature.get('draw') + '   \r\n')
               : (comment += key + ':' + olFeature.get(key) + '   \r\n');
@@ -259,7 +258,7 @@ export class ExportService {
   }
 
   async exportExcel(map: IgoMap, store: WorkspaceStore, data: ExportOptions) {
-    const workbook = await createBook();
+    const workbook = await createExcelWorkbook();
 
     for (const layerName of data.layers) {
       const layer = map.getLayerById(layerName);
@@ -280,7 +279,7 @@ export class ExportService {
         this.formatRecord(feature.properties)
       );
 
-      await addExcelSheet(layer.title, rows, workbook);
+      await addExcelSheetToWorkBook(layer.title, rows, workbook);
     }
 
     const title = this.getTitleFromLayers(data.layers, map);
@@ -298,7 +297,9 @@ export class ExportService {
     return layer.title;
   }
 
-  private formatRecord(record: Record<string, any>): Record<string, any> {
+  private formatRecord(
+    record: Record<string, unknown>
+  ): Record<string, unknown> {
     return Object.entries(record).reduce((formatted, [key, value]) => {
       formatted[key] = this.formatDataType(value);
       return formatted;
@@ -538,7 +539,7 @@ export class ExportService {
       geomType.features.forEach((feature) => {
         const radius: number = feature.get('rad');
         if (radius) {
-          const center4326: Array<number> = [
+          const center4326: number[] = [
             feature.get('longitude'),
             feature.get('latitude')
           ];
