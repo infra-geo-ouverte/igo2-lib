@@ -32,7 +32,6 @@
     "format": "npm run format --workspaces --if-present && npm run format.scripts",
     "format.scripts": "prettier --write ./scripts/src/**/*.{mts,ts,js,json}",
     "lint": "ng lint",
-    "lint.ci": "ng lint --quiet",
     "lint.fix": "ng lint --fix",
     "e2e": "npm run prestart && npm run e2e -w demo",
     "e2e.local": "npm run prestart &&npm run e2e.local -w demo",

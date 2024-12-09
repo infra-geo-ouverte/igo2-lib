@@ -4,7 +4,14 @@ import { Injectable } from '@angular/core';
 import { EntityRecord } from '@igo2/common/entity';
 import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
-import { downloadBlob, downloadContent, isIsoDate } from '@igo2/utils';
+import {
+  addExcelSheetToWorkBook,
+  createExcelWorkbook,
+  downloadBlob,
+  downloadContent,
+  isIsoDate,
+  writeExcelFile
+} from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
@@ -13,7 +20,6 @@ import { circular } from 'ol/geom/Polygon';
 
 import { FeatureCollection } from 'geojson';
 import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
-import type { ColInfo, WorkBook } from 'xlsx';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
@@ -132,7 +138,6 @@ export class ExportService {
       const properties = keys.reduce(
         (acc: object, key: string) => {
           if (key && key !== 'geometry') {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             key === 'id' && olFeature.get('draw')
               ? (comment += key + ':' + olFeature.get('draw') + '   \r\n')
               : (comment += key + ':' + olFeature.get(key) + '   \r\n');
@@ -253,9 +258,7 @@ export class ExportService {
   }
 
   async exportExcel(map: IgoMap, store: WorkspaceStore, data: ExportOptions) {
-    const { utils, writeFile } = await import('xlsx');
-
-    const workbook = utils.book_new();
+    const workbook = await createExcelWorkbook();
 
     for (const layerName of data.layers) {
       const layer = map.getLayerById(layerName);
@@ -266,11 +269,21 @@ export class ExportService {
       const formattedFeatures = features?.length
         ? this.formatFeatures(features, 'GeoJSON')
         : null;
-      await this.addExcelSheet(layer.title, formattedFeatures, workbook);
+
+      const collection: FeatureCollection = features
+        ? JSON.parse(formattedFeatures)
+        : {
+            features: []
+          };
+      const rows = collection.features.map((feature) =>
+        this.formatRecord(feature.properties)
+      );
+
+      await addExcelSheetToWorkBook(layer.title, rows, workbook);
     }
 
     const title = this.getTitleFromLayers(data.layers, map);
-    writeFile(workbook, `${title}.xlsx`, { compression: true });
+    writeExcelFile(workbook, title, { compression: true });
   }
 
   private getTitleFromLayers(layers: string[], map: IgoMap): string {
@@ -284,43 +297,9 @@ export class ExportService {
     return layer.title;
   }
 
-  private async addExcelSheet(
-    title: string,
-    features: string | null,
-    workbook: WorkBook
-  ): Promise<void> {
-    const { utils } = await import('xlsx');
-
-    const collection: FeatureCollection = features
-      ? JSON.parse(features)
-      : {
-          features: []
-        };
-    const rows = collection.features.map((feature) =>
-      this.formatRecord(feature.properties)
-    );
-
-    const worksheet = utils.json_to_sheet(rows);
-
-    /* calculate column width */
-    if (rows?.length) {
-      worksheet['!cols'] = this.getColumnsInfo(rows);
-    }
-
-    const SHEET_NAME_MAX_LENGTH = 31;
-    let sheetName =
-      title.length >= SHEET_NAME_MAX_LENGTH
-        ? title.substring(0, SHEET_NAME_MAX_LENGTH)
-        : title;
-
-    if (workbook.SheetNames.includes(sheetName)) {
-      sheetName = `${sheetName.substring(0, SHEET_NAME_MAX_LENGTH - 3)}_${workbook.SheetNames.length}`;
-    }
-
-    utils.book_append_sheet(workbook, worksheet, sheetName);
-  }
-
-  private formatRecord(record: Record<string, any>): Record<string, any> {
+  private formatRecord(
+    record: Record<string, unknown>
+  ): Record<string, unknown> {
     return Object.entries(record).reduce((formatted, [key, value]) => {
       formatted[key] = this.formatDataType(value);
       return formatted;
@@ -343,23 +322,6 @@ export class ExportService {
       default:
         return value;
     }
-  }
-
-  private getColumnsInfo(rows: Record<string, any>[]): ColInfo[] {
-    const columns = Object.keys(rows[0]);
-    return columns.map((column) => ({
-      wch: this.getColumnMaxWidth(column, rows)
-    }));
-  }
-
-  private getColumnMaxWidth(
-    column: string,
-    rows: Record<string, any>[]
-  ): number {
-    return rows.reduce(
-      (width, row) => Math.max(width, row[column]?.length ?? 0),
-      column.length
-    );
   }
 
   private exportWithOgre(
@@ -577,7 +539,7 @@ export class ExportService {
       geomType.features.forEach((feature) => {
         const radius: number = feature.get('rad');
         if (radius) {
-          const center4326: Array<number> = [
+          const center4326: number[] = [
             feature.get('longitude'),
             feature.get('latitude')
           ];
