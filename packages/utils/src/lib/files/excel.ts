@@ -1,28 +1,42 @@
-import type { ColInfo, WorkBook, WritingOptions } from 'xlsx';
+import type {
+  ColInfo,
+  JSON2SheetOpts,
+  WorkBook,
+  WorkSheet,
+  WritingOptions
+} from 'xlsx';
 
 /**
  *
+ * @param ws workSheet SheetJs definition https://docs.sheetjs.com/docs/csf/sheet/
+ * @param wsname Records reprensenting the dataset
  * @returns workBook SheetJs definition of an excel file
  */
-export async function createExcelWorkBook(): Promise<WorkBook> {
+export async function createExcelWorkBook(
+  workSheet?: WorkSheet,
+  wsname?: string
+): Promise<WorkBook> {
   const { utils } = await import('xlsx');
 
-  return utils.book_new();
+  return utils.book_new(workSheet, wsname);
 }
 /**
  *
  * @param title The sheet title
  * @param rows Records reprensenting the dataset
  * @param workBook workBook SheetJs definition of an excel file
+ * @param opts options to convert json to sheet, refer to SheetJs https://docs.sheetjs.com/docs/api/utilities/array#array-of-objects-input
  */
-export async function addExcelSheetToWorkBook(
+export async function addExcelSheetToWorkBook<T = Record<string, unknown>>(
   title: string,
-  rows: Record<string, unknown>[],
-  workBook: WorkBook
+  rows: T[],
+  workBook: WorkBook,
+  jsonToSheetOpts?: JSON2SheetOpts,
+  bookAppendSheetOpts: { roll?: boolean } = { roll: undefined }
 ): Promise<void> {
   const { utils } = await import('xlsx');
 
-  const worksheet = utils.json_to_sheet(rows);
+  const worksheet = utils.json_to_sheet(rows, jsonToSheetOpts);
 
   /* calculate column width */
   if (rows?.length) {
@@ -39,7 +53,12 @@ export async function addExcelSheetToWorkBook(
     sheetName = `${sheetName.substring(0, SHEET_NAME_MAX_LENGTH - 3)}_${workBook.SheetNames.length}`;
   }
 
-  utils.book_append_sheet(workBook, worksheet, sheetName);
+  utils.book_append_sheet(
+    workBook,
+    worksheet,
+    sheetName,
+    bookAppendSheetOpts.roll
+  );
 }
 
 /**
@@ -60,16 +79,16 @@ export async function writeExcelFile(
   writeFile(workBook, `${cleanedFileName}.xlsx`, opts);
 }
 
-function getColumnsInfo(rows: Record<string, unknown>[]): ColInfo[] {
+function getColumnsInfo<T = Record<string, unknown>>(rows: T[]): ColInfo[] {
   const columns = Object.keys(rows[0]);
   return columns.map((column) => ({
     wch: getColumnMaxWidth(column, rows)
   }));
 }
 
-function getColumnMaxWidth(
+function getColumnMaxWidth<T = Record<string, unknown>>(
   column: string,
-  rows: Record<string, unknown>[]
+  rows: T[]
 ): number {
   return rows.reduce(
     (width, row) => Math.max(width, row[column]?.toString().length ?? 0),
