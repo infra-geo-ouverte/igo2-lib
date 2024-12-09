@@ -81,7 +81,7 @@ export class OGCFilterService {
         options.ogcFilters.interfaceOgcFilters =
           ogcFilterWriter.defineInterfaceFilterSequence(
             mergedInterfaceOgcFilters,
-            options.paramsWFS.fieldNameGeometry
+            options.fieldNameGeometry
           );
       }
       this.filterByOgc(
