@@ -4,7 +4,7 @@ import type { ColInfo, WorkBook, WritingOptions } from 'xlsx';
  *
  * @returns workBook SheetJs definition of an excel file
  */
-export async function createExcelWorkbook(): Promise<WorkBook> {
+export async function createExcelWorkBook(): Promise<WorkBook> {
   const { utils } = await import('xlsx');
 
   return utils.book_new();
