@@ -1,14 +1,23 @@
 import type { ColInfo, WorkBook, WritingOptions } from 'xlsx';
 
-export async function createBook(): Promise<WorkBook> {
+/**
+ *
+ * @returns workBook SheetJs definition of an excel file
+ */
+export async function createExcelWorkbook(): Promise<WorkBook> {
   const { utils } = await import('xlsx');
 
   return utils.book_new();
 }
-
-export async function addExcelSheet(
+/**
+ *
+ * @param title The sheet title
+ * @param rows Records reprensenting the dataset
+ * @param workBook workBook SheetJs definition of an excel file
+ */
+export async function addExcelSheetToWorkBook(
   title: string,
-  rows: Record<string, any>[],
+  rows: Record<string, unknown>[],
   workBook: WorkBook
 ): Promise<void> {
   const { utils } = await import('xlsx');
@@ -35,11 +44,10 @@ export async function addExcelSheet(
 
 /**
  *
- * @param workBook
+ * @param workBook SheetJs definition of an excel file
  * @param filename Name of the file
  * @param opts Refer to https://docs.sheetjs.com/docs/api/write-options#writing-options
  */
-
 export async function writeExcelFile(
   workBook: WorkBook,
   filename: string,
@@ -52,7 +60,7 @@ export async function writeExcelFile(
   writeFile(workBook, `${cleanedFileName}.xlsx`, opts);
 }
 
-function getColumnsInfo(rows: Record<string, any>[]): ColInfo[] {
+function getColumnsInfo(rows: Record<string, unknown>[]): ColInfo[] {
   const columns = Object.keys(rows[0]);
   return columns.map((column) => ({
     wch: getColumnMaxWidth(column, rows)
@@ -61,10 +69,10 @@ function getColumnsInfo(rows: Record<string, any>[]): ColInfo[] {
 
 function getColumnMaxWidth(
   column: string,
-  rows: Record<string, any>[]
+  rows: Record<string, unknown>[]
 ): number {
   return rows.reduce(
-    (width, row) => Math.max(width, row[column]?.length ?? 0),
+    (width, row) => Math.max(width, row[column]?.toString().length ?? 0),
     column.length
   );
 }
