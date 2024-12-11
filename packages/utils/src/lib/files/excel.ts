@@ -6,37 +6,26 @@ import type {
   WritingOptions
 } from 'xlsx';
 
-/**
- *
- * @param ws workSheet SheetJs definition https://docs.sheetjs.com/docs/csf/sheet/
- * @param wsname Records reprensenting the dataset
- * @returns workBook SheetJs definition of an excel file
- */
 export async function createExcelWorkBook(
   workSheet?: WorkSheet,
-  wsname?: string
+  workSheetName?: string
 ): Promise<WorkBook> {
   const { utils } = await import('xlsx');
 
-  return utils.book_new(workSheet, wsname);
+  return utils.book_new(workSheet, workSheetName);
 }
-/**
- *
- * @param title The sheet title
- * @param rows Records reprensenting the dataset
- * @param workBook workBook SheetJs definition of an excel file
- * @param opts options to convert json to sheet, refer to SheetJs https://docs.sheetjs.com/docs/api/utilities/array#array-of-objects-input
- */
 export async function addExcelSheetToWorkBook<T = Record<string, unknown>>(
   title: string,
   rows: T[],
   workBook: WorkBook,
-  jsonToSheetOpts?: JSON2SheetOpts,
-  bookAppendSheetOpts: { roll?: boolean } = { roll: undefined }
+  opts?: {
+    json2SheetOpts?: JSON2SheetOpts;
+    bookAppendSheetOpts?: { roll?: boolean };
+  }
 ): Promise<void> {
   const { utils } = await import('xlsx');
 
-  const worksheet = utils.json_to_sheet(rows, jsonToSheetOpts);
+  const worksheet = utils.json_to_sheet(rows, opts?.json2SheetOpts);
 
   /* calculate column width */
   if (rows?.length) {
@@ -57,16 +46,10 @@ export async function addExcelSheetToWorkBook<T = Record<string, unknown>>(
     workBook,
     worksheet,
     sheetName,
-    bookAppendSheetOpts.roll
+    opts?.bookAppendSheetOpts?.roll
   );
 }
 
-/**
- *
- * @param workBook SheetJs definition of an excel file
- * @param filename Name of the file
- * @param opts Refer to https://docs.sheetjs.com/docs/api/write-options#writing-options
- */
 export async function writeExcelFile(
   workBook: WorkBook,
   filename: string,

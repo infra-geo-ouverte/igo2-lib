@@ -258,7 +258,7 @@ export class ExportService {
   }
 
   async exportExcel(map: IgoMap, store: WorkspaceStore, data: ExportOptions) {
-    const workbook = await createExcelWorkBook();
+    const workBook = await createExcelWorkBook();
 
     for (const layerName of data.layers) {
       const layer = map.getLayerById(layerName);
@@ -279,11 +279,11 @@ export class ExportService {
         this.formatRecord(feature.properties)
       );
 
-      await addExcelSheetToWorkBook(layer.title, rows, workbook);
+      await addExcelSheetToWorkBook(layer.title, rows, workBook);
     }
 
     const title = this.getTitleFromLayers(data.layers, map);
-    writeExcelFile(workbook, title, { compression: true });
+    writeExcelFile(workBook, title, { compression: true });
   }
 
   private getTitleFromLayers(layers: string[], map: IgoMap): string {
