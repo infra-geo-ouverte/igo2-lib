@@ -379,7 +379,9 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     const workBook = await createExcelWorkBook();
 
     await addExcelSheetToWorkBook('Informations', catalogOutput, workBook, {
-      skipHeader: true
+      json2SheetOpts: {
+        skipHeader: true
+      }
     });
 
     const documentName = this.languageService.translate.instant(
@@ -388,6 +390,6 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US')
       }
     );
-    writeExcelFile(workBook, `${documentName}.xlsx`, { compression: true });
+    writeExcelFile(workBook, documentName, { compression: true });
   }
 }
