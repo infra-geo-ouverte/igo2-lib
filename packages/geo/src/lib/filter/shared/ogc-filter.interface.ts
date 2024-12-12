@@ -251,7 +251,7 @@ export interface SliderOptionsInterface extends OgcFilterDuringOptions {
   enabled?: boolean;
 }
 
-export interface IOgcFiltersOption
+export interface IOgcFiltersOptionSaveable
   extends Omit<OgcFiltersOptions, 'interfaceOgcFilters'> {
   interfaceOgcFilters: IOgcInterfaceFilterOptions[];
 }

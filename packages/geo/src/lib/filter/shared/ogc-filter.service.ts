@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import olProjection from 'ol/proj/Projection';
 
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import type { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import type { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { searchFilter } from './filter.utils';
 import { OgcFilterWriter } from './ogc-filter';
 import {
@@ -22,8 +23,7 @@ export class OGCFilterService {
     wmsDatasource.ol.updateParams({ FILTER: appliedFilter });
   }
 
-  public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
-    const options: any = wfsDatasource.options;
+  public setOgcWFSFiltersOptions(options: WFSDataSourceOptions) {
     const ogcFilterWriter = new OgcFilterWriter();
 
     if (options.ogcFilters.enabled && options.ogcFilters.filters) {

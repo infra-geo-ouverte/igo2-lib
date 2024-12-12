@@ -14,7 +14,7 @@ import {
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
   AnyBaseOgcFilterOptions,
-  IOgcFiltersOption,
+  IOgcFiltersOptionSaveable,
   IOgcInterfaceFilterOptions,
   IgoLogicalArrayOptions,
   OgcFiltersOptions,
@@ -293,7 +293,7 @@ export function getFormatFromOptions(
 
 export function getSaveableOgcParams(
   options: OgcFiltersOptions
-): IOgcFiltersOption {
+): IOgcFiltersOptionSaveable {
   const selectors = OgcSelectorFields.reduce((selector, selectorName) => {
     if (options[selectorName]) {
       selector[selectorName] = {
