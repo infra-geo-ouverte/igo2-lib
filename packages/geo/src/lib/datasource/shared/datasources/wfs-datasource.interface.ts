@@ -1,4 +1,4 @@
-import type { OgcFiltersOptions } from '../../../filter';
+import type { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
 import type { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export interface WFSDataSourceOptions extends FeatureDataSourceOptions {

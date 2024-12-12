@@ -14,6 +14,7 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
@@ -113,7 +114,8 @@ export class WMSDataSource extends DataSource {
 
   constructor(
     public options: WMSDataSourceOptions,
-    protected wfsService: WFSService
+    protected wfsService: WFSService,
+    private ogcFilterService: OGCFilterService
   ) {
     super(options);
     const sourceParams: any = options.params;
@@ -213,6 +215,10 @@ export class WMSDataSource extends DataSource {
       (options.sourceFields || []).filter((sf) => !sf.values).length > 0
     ) {
       this.wfsService.getSourceFieldsFromWFS(options);
+    }
+
+    if (options.ogcFilters?.enabled && options.ogcFilters?.filters) {
+      this.ogcFilterService.setOgcWMSFiltersOptions(this);
     }
 
     const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(

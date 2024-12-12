@@ -17,6 +17,7 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { DataSource } from './datasource';
 import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -52,7 +53,7 @@ export class WFSDataSource extends DataSource {
       ...baseOptions,
       params: this.options.params,
       ...(this.ogcFilters && {
-        ogcFilters: getSaveableOgcParams(this.ogcFilters)
+        ogcFilters: getSaveableOgcParams(this.ogcFilters) as OgcFiltersOptions // Workaround we force IOgcFiltersOptionSaveable to be detectd as OgcFiltersOptions
       })
     };
   }
@@ -60,6 +61,7 @@ export class WFSDataSource extends DataSource {
   constructor(
     public options: WFSDataSourceOptions,
     protected wfsService: WFSService,
+    private ogcFilterService: OGCFilterService,
     private authInterceptor?: AuthInterceptor
   ) {
     super(checkWfsParams(options, 'wfs'));
@@ -96,6 +98,10 @@ export class WFSDataSource extends DataSource {
     }
     if (ogcFilters?.autocomplete) {
       ogcFilters.autocomplete.selectorType = 'autocomplete';
+    }
+
+    if (options?.ogcFilters?.enabled && options?.ogcFilters?.filters) {
+      this.ogcFilterService.setOgcWFSFiltersOptions(this.options);
     }
 
     this.setOgcFilters(
