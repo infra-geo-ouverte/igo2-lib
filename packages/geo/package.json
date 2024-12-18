@@ -58,6 +58,8 @@
     "@igo2/core": "*",
     "@igo2/utils": "*",
     "@mat-datetimepicker/core": "~14.0.0",
+    "geostyler-legend": "^5.0.1",
+    "geostyler-openlayers-parser": "^5.0.0",
     "file-saver": "^2.0.2",
     "flexsearch": "0.7.21",
     "html2canvas": "^1.4.1",

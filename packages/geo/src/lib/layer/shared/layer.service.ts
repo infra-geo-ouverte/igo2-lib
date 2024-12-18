@@ -12,7 +12,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, concatMap, map } from 'rxjs/operators';
+import { catchError, concatMap, map, mergeMap } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
@@ -33,6 +33,7 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { GeostylerService } from '../../style/geostyler-service/geostyler.service';
 import { StyleService } from '../../style/style-service/style.service';
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
@@ -60,7 +61,8 @@ export class LayerService {
     private messageService: MessageService,
     @Optional() private geoNetworkService?: GeoNetworkService,
     @Optional() private layerDBService?: LayerDBService,
-    @Optional() private authInterceptor?: AuthInterceptor
+    @Optional() private authInterceptor?: AuthInterceptor,
+    @Optional() private geostylerStyleService?: GeostylerService
   ) {}
 
   createLayer(layerOptions: AnyLayerOptions): Layer {
@@ -122,7 +124,7 @@ export class LayerService {
       return new Observable((d) => d.next(this.createLayer(layerOptions)));
     }
 
-    return this.dataSourceService
+    const datasource$ = this.dataSourceService
       .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
       .pipe(
         map((source) => {
@@ -132,6 +134,38 @@ export class LayerService {
           return this.createLayer(Object.assign(layerOptions, { source }));
         })
       );
+
+    const stylableLayerOptions = layerOptions as
+      | VectorLayerOptions
+      | VectorTileLayerOptions;
+    const geostylerStyleGlobal =
+      stylableLayerOptions.igoStyle?.geostylerStyle?.global;
+
+    if (geostylerStyleGlobal) {
+      return combineLatest([
+        this.geostylerStyleService.geostylerToOl(geostylerStyleGlobal),
+        this.geostylerStyleService.geostylerStyleToLegend(geostylerStyleGlobal)
+      ]).pipe(
+        mergeMap((res) => {
+          const writeStyleResult = res[0];
+          const legend = res[1];
+          if (writeStyleResult?.output) {
+            stylableLayerOptions.style = writeStyleResult.output;
+          }
+          if (legend) {
+            if (layerOptions.legendOptions) {
+              layerOptions.legendOptions.html = legend;
+            } else {
+              layerOptions.legendOptions = { html: legend };
+            }
+          }
+
+          return datasource$;
+        })
+      );
+    } else {
+      return datasource$;
+    }
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
@@ -257,7 +291,13 @@ export class LayerService {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
         if (legacyOption === 'style') {
-          if (layerOptions[legacyOption] instanceof olStyle.Style) {
+          if (
+            layerOptions[legacyOption] instanceof olStyle.Style ||
+            (Array.isArray(layerOptions[legacyOption]) &&
+              layerOptions[legacyOption].every(
+                (r) => r instanceof olStyle.Style
+              ))
+          ) {
             return;
           }
           if (typeof layerOptions[legacyOption] === 'object') {
@@ -281,7 +321,7 @@ export class LayerService {
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style[] | Style | OlStyleLike;
+    let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorTileLayer;
 
     if (!layerOptions.igoStyle) {
