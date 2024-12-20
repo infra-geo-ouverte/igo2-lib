@@ -203,6 +203,7 @@ export abstract class LayerBase {
     this.parent
       ? this.parent.removeChild(this)
       : this.map.ol.removeLayer(this.ol);
+    this.dataSource?.destroy();
   }
 
   reset(parent?: LayerGroupBase): void {

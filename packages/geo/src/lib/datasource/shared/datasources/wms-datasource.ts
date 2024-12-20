@@ -2,7 +2,7 @@ import { ObjectUtils } from '@igo2/utils';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, interval, tap } from 'rxjs';
 
 import {
   isDateOrRangeInRange,
@@ -18,7 +18,7 @@ import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface'
 import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
-import { Legend } from './datasource.interface';
+import { DatasourceEvent, Legend } from './datasource.interface';
 import { WFSService } from './wfs.service';
 import {
   TimeFilterableDataSourceOptions,
@@ -103,6 +103,14 @@ export class WMSDataSource extends DataSource {
     };
   }
 
+  /**
+   * @workaround
+   * We need a external way to desactive the refresh of a linked layer for the workspace
+   * The workspace services create all workspace layer on init and the refresh
+   * is enable by default even if the workspace is not use the layer will still be refreshed.
+   */
+  enableRefresh = false;
+
   constructor(
     public options: WMSDataSourceOptions,
     protected wfsService: WFSService
@@ -115,11 +123,7 @@ export class WMSDataSource extends DataSource {
     sourceParams.MAP_RESOLUTION = dpi;
     sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
 
-    if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
-      setInterval(() => {
-        this.refresh();
-      }, options.refreshIntervalSec * 1000); // Convert seconds to MS
-    }
+    this.addEvents();
 
     let fieldNameGeometry = defaultFieldNameGeometry;
 
@@ -259,8 +263,27 @@ export class WMSDataSource extends DataSource {
     }
   }
 
-  refresh() {
-    this.ol.updateParams({ igoRefresh: Math.random() });
+  private addRefreshInterval(refreshInterval: number): Observable<number> {
+    const intervalMs = refreshInterval * 1000; // secondes to MS
+    return interval(intervalMs).pipe(
+      tap(() => {
+        this.ol.updateParams({ igoRefresh: Math.random() });
+        if (this.enableRefresh) {
+          this.ol.notify('refresh', this.enableRefresh);
+        }
+      })
+    );
+  }
+
+  addEvents(): void {
+    const events: DatasourceEvent[] = [];
+
+    const refreshInterval = this.options.refreshIntervalSec;
+    if (refreshInterval && refreshInterval > 0) {
+      events.push(['refresh', this.addRefreshInterval(refreshInterval)]);
+    }
+
+    super.addEvents(events);
   }
 
   private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {

@@ -32,5 +32,6 @@ export enum LinkedProperties {
   MINRESOLUTION = 'minResolution',
   MAXRESOLUTION = 'maxResolution',
   ZINDEX = 'zIndex',
-  TIMEFILTER = 'timeFilter'
+  TIMEFILTER = 'timeFilter',
+  REFRESH = 'refresh'
 }
