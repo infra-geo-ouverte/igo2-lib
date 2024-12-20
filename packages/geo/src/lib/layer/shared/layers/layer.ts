@@ -48,6 +48,8 @@ export abstract class Layer extends LayerBase {
         .filter((m) => m.options?.showOnEachLayerVisibility)
         .map((message) => this.showMessage(message));
     }
+
+    value ? this.dataSource.addEvents() : this.dataSource.removeEvents();
   }
 
   get maxResolution() {

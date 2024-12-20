@@ -1,6 +1,7 @@
 import type { Type } from 'ol/geom/Geometry';
 
 import { Encoders, Preset, Tokenizer } from 'flexsearch';
+import type { Observable } from 'rxjs';
 
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
@@ -128,3 +129,7 @@ export interface TileGridOptions {
   tileSize?: [number, number];
   tileSizes?: [number, number][];
 }
+
+export type EventName = 'refresh';
+
+export type DatasourceEvent = [EventName, Observable<unknown>];
