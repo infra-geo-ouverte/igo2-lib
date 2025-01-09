@@ -131,10 +131,9 @@ export class WFSDataSource extends DataSource {
     const currentExtent = extent
       ? OlProj.transformExtent(extent, projection, wfsProj)
       : undefined;
-    const ogcFilters = this.ogcFilters;
 
     paramsWFS.srsName = paramsWFS.srsName || projection.getCode();
-    let url = buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
+    let url = buildUrl(this.options, currentExtent, wfsProj);
 
     // Exportation want to fetch without extent/bbox restrictions
     if (!extent && url.includes('bbox')) {

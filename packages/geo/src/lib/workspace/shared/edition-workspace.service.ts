@@ -761,7 +761,6 @@ export class EditionWorkspaceService {
       layer.customWFSLoader(
         layer.ol.getSource(),
         layer.options.sourceOptions as WFSDataSourceOptions,
-        this.authInterceptor,
         extent,
         resolution,
         proj,
