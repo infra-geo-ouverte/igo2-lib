@@ -43,9 +43,9 @@ export function buildUrl(
   options: WFSDataSourceOptions,
   extent: Extent,
   proj: olProjection,
-  ogcFilters: OgcFiltersOptions,
   randomParam?: boolean
 ): string {
+  const ogcFilters = options.ogcFilters;
   const paramsWFS = options.paramsWFS;
   const queryStringValues = formatWFSQueryString(
     options,
