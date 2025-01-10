@@ -232,6 +232,9 @@ export class OgcFilterTimeComponent implements OnInit {
     refreshFilter = true
   ) {
     if (typeof value === 'string') {
+      if (!this.isValidDate(value)) {
+        return;
+      }
       value = new Date(value);
     }
     let valueTmp = this.getDateTime(value, position);
@@ -786,5 +789,13 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.setFilterStateDisable();
     this.updateValues();
+  }
+
+  private isValidDate(value: string): boolean {
+    if (/^\d+$/.test(value)) {
+      return false;
+    }
+    const date = new Date(value);
+    return date instanceof Date && !isNaN(date.getTime());
   }
 }
