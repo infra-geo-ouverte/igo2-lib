@@ -1,4 +1,12 @@
-import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output
+} from '@angular/core';
 import { Params } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
@@ -40,6 +48,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private contextLayers: AnyLayer[] = [];
 
   @Input() removeLayersOnContextChange = true;
+
+  @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
 
   get map(): IgoMap {
     return this.component.map;
@@ -112,6 +122,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             }
           });
         }
+
+        this.contextLayersLoaded.emit(true);
       });
 
     if (this.configService.getConfig('offline')?.enable) {
