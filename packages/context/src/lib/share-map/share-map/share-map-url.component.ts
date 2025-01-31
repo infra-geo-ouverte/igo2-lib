@@ -1,7 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { NgIf } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   Input,
@@ -16,10 +15,13 @@ import { MatInputModule } from '@angular/material/input';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
 import type { IgoMap } from '@igo2/geo';
 
 import { Subscription, combineLatest } from 'rxjs';
 
+import { ContextService } from '../../context-manager/shared/context.service';
+import { ShareOption } from '../shared/share-map.interface';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
@@ -36,46 +38,54 @@ import { ShareMapService } from '../shared/share-map.service';
     IgoLanguageModule
   ]
 })
-export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ShareMapUrlComponent implements OnInit, OnDestroy {
   private mapState$$: Subscription;
 
   @Input() map: IgoMap;
 
   public url: string;
-  public publicShareOption = {
+  private publicShareOption: ShareOption = {
     layerlistControls: { querystring: '' }
   };
+  private language: string;
 
   constructor(
     private clipboard: Clipboard,
     private messageService: MessageService,
     private shareMapService: ShareMapService,
-    private cdRef: ChangeDetectorRef
-  ) {}
+    private contextService: ContextService,
+    private cdRef: ChangeDetectorRef,
+    private route: RouteService
+  ) {
+    this.route.queryParams.subscribe((params) => {
+      const lang = params[this.route.options.languageKey];
+      if (lang) {
+        this.language = lang;
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.resetUrl();
+    this.generateUrl();
     this.mapState$$ = combineLatest([
       this.map.viewController.state$,
       this.map.status$
     ]).subscribe(() => {
-      this.resetUrl();
+      this.generateUrl();
       this.cdRef.detectChanges();
     });
   }
 
-  ngAfterViewInit(): void {
-    this.resetUrl();
-  }
-
   ngOnDestroy(): void {
-    this.mapState$$.unsubscribe();
+    this.mapState$$?.unsubscribe();
   }
 
-  resetUrl() {
-    this.url = this.shareMapService.getUrlWithoutApi(
+  generateUrl(): void {
+    this.url = this.shareMapService.encoder.generateUrl(
       this.map,
-      this.publicShareOption
+      this.contextService.context$.value,
+      this.publicShareOption,
+      this.language
     );
   }
 

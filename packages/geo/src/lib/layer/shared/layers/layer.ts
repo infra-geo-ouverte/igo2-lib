@@ -1,4 +1,5 @@
-import { AuthInterceptor } from '@igo2/auth';
+import { Optional } from '@angular/core';
+
 import { Message, MessageService } from '@igo2/core/message';
 
 import OlLayer from 'ol/layer/Layer';
@@ -81,8 +82,7 @@ export abstract class Layer extends LayerBase {
 
   constructor(
     public options: LayerOptions,
-    protected messageService?: MessageService,
-    protected authInterceptor?: AuthInterceptor
+    @Optional() protected messageService?: MessageService
   ) {
     super(options);
 
@@ -211,10 +211,7 @@ export abstract class Layer extends LayerBase {
   }
 
   private showMessage(message: Message) {
-    if (!this.messageService) {
-      return;
-    }
-    this.messageService.message(message as Message);
+    this.messageService?.message(message as Message);
   }
 
   private observeResolution() {

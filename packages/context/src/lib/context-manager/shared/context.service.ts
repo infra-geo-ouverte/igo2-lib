@@ -30,6 +30,8 @@ import {
   tap
 } from 'rxjs/operators';
 
+import { ShareMapService } from '../../share-map/shared/share-map.service';
+import { ContextRouteService } from './context-route.service';
 import { TypePermission } from './context.enum';
 import {
   Context,
@@ -81,6 +83,8 @@ export class ContextService {
     private messageService: MessageService,
     private storageService: StorageService,
     private exportService: ExportService,
+    private contextRouteService: ContextRouteService,
+    private shareMapService: ShareMapService,
     @Optional() private route: RouteService
   ) {
     this.options = Object.assign(
@@ -367,9 +371,9 @@ export class ContextService {
       }
     };
 
-    if (this.route && this.route.options.contextKey) {
+    if (this.route) {
       this.route.queryParams.pipe(debounceTime(100)).subscribe((params) => {
-        const contextParam = params[this.route.options.contextKey as string];
+        const contextParam = this.contextRouteService.getContext(params);
         let direct = false;
         if (contextParam) {
           this.defaultContextUri = contextParam;
@@ -643,23 +647,8 @@ export class ContextService {
     }
 
     this.route.queryParams.subscribe((params) => {
-      const centerKey = this.route.options.centerKey;
-      if (centerKey && params[centerKey as string]) {
-        const centerParams = params[centerKey as string];
-        this.mapViewFromRoute.center = centerParams.split(',').map(Number);
-      }
-
-      const projectionKey = this.route.options.projectionKey;
-      if (projectionKey && params[projectionKey as string]) {
-        const projectionParam = params[projectionKey as string];
-        this.mapViewFromRoute.projection = projectionParam;
-      }
-
-      const zoomKey = this.route.options.zoomKey;
-      if (zoomKey && params[zoomKey as string]) {
-        const zoomParam = params[zoomKey as string];
-        this.mapViewFromRoute.zoom = Number(zoomParam);
-      }
+      const positions = this.shareMapService.parser.parsePosition(params);
+      this.mapViewFromRoute = ObjectUtils.removeUndefined(positions);
     });
   }
 

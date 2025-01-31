@@ -67,14 +67,14 @@ export class VectorLayer extends Layer {
 
   private lastRequest: VectorRequest;
   private ongoingRequests: VectorRequest[] = [];
-  declare public dataSource:
+  public declare dataSource:
     | FeatureDataSource
     | WFSDataSource
     | ArcGISRestDataSource
     | WebSocketDataSource
     | ClusterDataSource;
-  declare public options: VectorLayerOptions;
-  declare public ol: olLayerVector<olSourceVector>;
+  public declare options: VectorLayerOptions;
+  public declare ol: olLayerVector<olSourceVector>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 
@@ -94,7 +94,7 @@ export class VectorLayer extends Layer {
     public geoDBService?: GeoDBService,
     public layerDBService?: LayerDBService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
