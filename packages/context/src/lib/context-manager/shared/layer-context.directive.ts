@@ -21,6 +21,7 @@ import {
   addImportedFeaturesStyledToMap,
   addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
+import { ContextRouteService } from './context-route.service';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
@@ -47,6 +48,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     private configService: ConfigService,
     private styleListService: StyleListService,
     private styleService: StyleService,
+    private contextRouteService: ContextRouteService,
     @Optional() private route: RouteService
   ) {}
 
@@ -55,12 +57,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       .pipe(filter((context) => context !== undefined))
       .subscribe((context) => this.handleContextChange(context));
 
-    if (
-      this.route &&
-      this.route.options.visibleOnLayersKey &&
-      this.route.options.visibleOffLayersKey &&
-      this.route.options.contextKey
-    ) {
+    if (this.route) {
       this.route.queryParams
         .pipe(first((params) => !ObjectUtils.isEmpty(params)))
         .subscribe((params) => {
@@ -153,27 +150,24 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (!params || !currentLayerid) {
       return visible;
     }
+    const contextParams = this.contextRouteService.getContext(params);
 
-    const contextParams = params[this.route.options.contextKey as string];
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
       let visiblelayers: string[] = [];
       let invisiblelayers: string[] = [];
+      const visibleOnLayers =
+        params[this.contextRouteService.optionsLegacy.visibleOnLayersKey];
 
-      if (
-        this.route.options.visibleOnLayersKey &&
-        params[this.route.options.visibleOnLayersKey as string]
-      ) {
-        visibleOnLayersParams =
-          params[this.route.options.visibleOnLayersKey as string];
+      const visibleOffLayers =
+        params[this.contextRouteService.optionsLegacy.visibleOffLayersKey];
+
+      if (visibleOnLayers) {
+        visibleOnLayersParams = visibleOnLayers;
       }
-      if (
-        this.route.options.visibleOffLayersKey &&
-        params[this.route.options.visibleOffLayersKey as string]
-      ) {
-        visibleOffLayersParams =
-          params[this.route.options.visibleOffLayersKey as string];
+      if (visibleOffLayers) {
+        visibleOffLayersParams = visibleOffLayers;
       }
 
       /* This order is important because to control whichever
