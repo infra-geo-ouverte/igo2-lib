@@ -98,6 +98,26 @@
           }
         }
       }
+    },
+    {
+      "label": "npm: test.context",
+      "type": "npm",
+      "path": "packages/context",
+      "script": "test.watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
     }
   ]
 }
