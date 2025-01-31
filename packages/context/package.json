@@ -22,6 +22,7 @@
     "lint": "ng lint context",
     "lint.fix": "ng lint context --fix",
     "test": "ng test context --watch=false",
+    "test.watch": "ng test context",
     "watch": "ng build context --watch"
   },
   "exports": {

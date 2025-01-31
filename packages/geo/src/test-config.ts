@@ -3,7 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestModuleMetadata } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { IgoLanguageModule, provideLanguageLoader } from '@igo2/core';
+import { IgoLanguageModule, provideMockTranslation } from '@igo2/core/language';
 
 export const TEST_CONFIG: TestModuleMetadata = {
   imports: [IgoLanguageModule],
@@ -11,6 +11,6 @@ export const TEST_CONFIG: TestModuleMetadata = {
     provideRouter([]),
     provideHttpClientTesting(),
     provideHttpClient(),
-    provideLanguageLoader()
+    provideMockTranslation()
   ]
 };

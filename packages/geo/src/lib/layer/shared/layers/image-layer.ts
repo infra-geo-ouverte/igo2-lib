@@ -1,3 +1,5 @@
+import { Optional } from '@angular/core';
+
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
 
@@ -22,8 +24,8 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    public messageService: MessageService,
-    public authInterceptor?: AuthInterceptor
+    @Optional() public messageService?: MessageService,
+    @Optional() public authInterceptor?: AuthInterceptor
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this, this.messageService);
@@ -67,18 +69,18 @@ export class ImageLayer extends Layer {
   private customLoader(
     tile,
     src: string,
-    interceptor: AuthInterceptor,
-    messageService: MessageService
+    interceptor?: AuthInterceptor,
+    messageService?: MessageService
   ) {
     const xhr = new XMLHttpRequest();
 
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(src);
+    const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(src);
     let url = src;
     if (alteredUrlWithKeyAuth) {
       url = alteredUrlWithKeyAuth;
     }
     xhr.open('GET', url);
-    const intercepted = interceptor.interceptXhr(xhr, url);
+    const intercepted = interceptor?.interceptXhr(xhr, url);
     if (!intercepted) {
       xhr.abort();
       tile.getImage().src = url;
@@ -91,7 +93,7 @@ export class ImageLayer extends Layer {
       const arrayBufferView = new Uint8Array((this as any).response);
       const responseString = new TextDecoder().decode(arrayBufferView);
       if (responseString.includes('ServiceExceptionReport')) {
-        messageService.error(
+        messageService?.error(
           'igo.geo.dataSource.optionsApiUnavailable',
           'igo.geo.dataSource.unavailableTitle'
         );

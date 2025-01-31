@@ -1,3 +1,5 @@
+import { Optional } from '@angular/core';
+
 import { MessageService } from '@igo2/core/message';
 import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
@@ -12,13 +14,13 @@ export class ImageWatcher extends Watcher {
 
   private source: olSourceImage;
 
-  private messageService: MessageService;
-
-  constructor(layer: ImageLayer, messageService: MessageService) {
+  constructor(
+    layer: ImageLayer,
+    @Optional() private messageService?: MessageService
+  ) {
     super();
     this.source = layer.options.source.ol;
     this.id = uuid();
-    this.messageService = messageService;
   }
 
   protected watch() {
@@ -72,7 +74,7 @@ export class ImageWatcher extends Watcher {
     if (!event.image.__watchers__) {
       return;
     }
-    this.messageService.error(
+    this.messageService?.error(
       'igo.geo.dataSource.unavailable',
       'igo.geo.dataSource.unavailableTitle',
       undefined,

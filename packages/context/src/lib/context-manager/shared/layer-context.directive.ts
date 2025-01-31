@@ -1,32 +1,44 @@
-import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 import { Params } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
-import { RouteService } from '@igo2/core/route';
 import {
+  ID_GROUP_PREFIX,
   LayerService,
   MapBrowserComponent,
   StyleListService,
   StyleService,
   isLayerGroupOptions,
+  mergeLayersOptions,
   sortLayersByZindex
 } from '@igo2/geo';
 import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
-import { debounceTime, filter, first } from 'rxjs/operators';
+import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
 import {
   addImportedFeaturesStyledToMap,
   addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
+import { ShareMapService } from '../../share-map/shared/share-map.service';
+import {
+  hasLegacyParams,
+  hasModernShareParams
+} from '../../share-map/shared/share-map.utils';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-  selector: '[igoLayerContext]',
-  standalone: true
+  selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
@@ -34,7 +46,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: AnyLayer[] = [];
 
-  @Input() removeLayersOnContextChange = true;
+  @Input() removeLayersOnContextChange: boolean = true;
+
+  @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
 
   get map(): IgoMap {
     return this.component.map;
@@ -47,26 +61,20 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     private configService: ConfigService,
     private styleListService: StyleListService,
     private styleService: StyleService,
-    @Optional() private route: RouteService
+    private shareMapService: ShareMapService
   ) {}
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .pipe(filter((context) => context !== undefined))
+    this.context$$ = this.shareMapService.routeService.queryParams
+      .pipe(
+        switchMap((params) => {
+          this.queryParams = params ?? {};
+          return this.contextService.context$.pipe(
+            filter((context) => context !== undefined)
+          );
+        })
+      )
       .subscribe((context) => this.handleContextChange(context));
-
-    if (
-      this.route &&
-      this.route.options.visibleOnLayersKey &&
-      this.route.options.visibleOffLayersKey &&
-      this.route.options.contextKey
-    ) {
-      this.route.queryParams
-        .pipe(first((params) => !ObjectUtils.isEmpty(params)))
-        .subscribe((params) => {
-          this.queryParams = params;
-        });
-    }
   }
 
   ngOnDestroy() {
@@ -77,6 +85,18 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (context.layers === undefined) {
       return;
     }
+
+    /**
+     * Assign an id to each layer group if it doesn't have one.
+     * This is needed to be able to detect layer groups in the context that doesn't have and id and be able to ignore them in the share
+     */
+    if (context.layers?.length) {
+      addIdToGroups(context.layers);
+    }
+
+    const contextLayers = this.handleContextWithSharedUrl(
+      ObjectUtils.copyDeep(context)
+    );
 
     if (this.removeLayersOnContextChange === true) {
       this.map.layerController.reset();
@@ -89,7 +109,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     const importExportOptions = this.configService.getConfig('importExport');
 
     this.layerService
-      .createLayers(context.layers, context.uri)
+      .createLayers(contextLayers, context.uri)
       .subscribe((layers) => {
         this.handleAddLayers(layers);
 
@@ -107,6 +127,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             }
           });
         }
+
+        this.contextLayersLoaded.emit(true);
       });
     if (this.configService.getConfig('importExport.allowToStoreLayer', false)) {
       this.layerService
@@ -114,20 +136,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         .pipe(debounceTime(500))
         .subscribe((layers) => this.handleAddLayers(layers));
     }
-  }
-
-  private getFlattenOptions(options: AnyLayerOptions[]): AnyLayerOptions[] {
-    return options.reduce((accumulator, option) => {
-      if (isLayerGroupOptions(option)) {
-        const children = option.children
-          ? this.getFlattenOptions(option.children)
-          : [];
-        accumulator.push(option, ...children);
-      } else {
-        accumulator.push(option);
-      }
-      return accumulator;
-    }, []);
   }
 
   private handleAddLayers(layers: (AnyLayer | undefined)[]) {
@@ -152,27 +160,24 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (!params || !currentLayerid) {
       return visible;
     }
+    const contextParams = this.shareMapService.getContext(params);
 
-    const contextParams = params[this.route.options.contextKey as string];
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
       let visiblelayers: string[] = [];
       let invisiblelayers: string[] = [];
+      const visibleOnLayers =
+        params[this.shareMapService.routeService.options.visibleOnLayersKey];
 
-      if (
-        this.route.options.visibleOnLayersKey &&
-        params[this.route.options.visibleOnLayersKey as string]
-      ) {
-        visibleOnLayersParams =
-          params[this.route.options.visibleOnLayersKey as string];
+      const visibleOffLayers =
+        params[this.shareMapService.routeService.options.visibleOffLayersKey];
+
+      if (visibleOnLayers) {
+        visibleOnLayersParams = visibleOnLayers;
       }
-      if (
-        this.route.options.visibleOffLayersKey &&
-        params[this.route.options.visibleOffLayersKey as string]
-      ) {
-        visibleOffLayersParams =
-          params[this.route.options.visibleOffLayersKey as string];
+      if (visibleOffLayers) {
+        visibleOffLayersParams = visibleOffLayers;
       }
 
       /* This order is important because to control whichever
@@ -202,5 +207,45 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
 
     return visible;
+  }
+
+  private handleContextWithSharedUrl(
+    context: DetailedContext
+  ): AnyLayerOptions[] {
+    if (
+      !this.queryParams ||
+      (!hasLegacyParams(this.queryParams, this.shareMapService.optionsLegacy) &&
+        !hasModernShareParams(
+          this.queryParams,
+          this.shareMapService.keysDefinitions
+        ))
+    ) {
+      return context.layers;
+    }
+
+    const { layers, uri } = context;
+    const contextValue = this.shareMapService.getContext(this.queryParams);
+
+    if (!contextValue || contextValue === uri) {
+      const layersOptions = this.shareMapService.parser.parseLayers(
+        this.queryParams
+      );
+      if (layersOptions.length) {
+        return mergeLayersOptions([...layers], layersOptions);
+      }
+    }
+    return layers;
+  }
+}
+
+/** Recursive */
+function addIdToGroups(layerOptions: AnyLayerOptions[]): void {
+  for (const options of layerOptions) {
+    if (isLayerGroupOptions(options) && !options.id) {
+      options.id = ID_GROUP_PREFIX + uuid();
+      if (Array.isArray(options.children)) {
+        addIdToGroups(options.children);
+      }
+    }
   }
 }

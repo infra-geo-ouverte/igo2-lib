@@ -38,9 +38,9 @@ export type ExtraFeatures = FeatureCollection & {
 };
 
 export interface DetailedContext extends Context {
+  layers?: AnyLayerOptions[];
   base?: string;
   map?: ContextMap;
-  layers?: AnyLayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
   message?: Message;

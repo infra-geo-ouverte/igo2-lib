@@ -43,5 +43,12 @@
       "preLaunchTask": "npm: test.common",
       "url": "http://localhost:9876/debug.html"
     },
+    {
+      "name": "test.context",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.context",
+      "url": "http://localhost:9876/debug.html"
+    },
   ]
 }
