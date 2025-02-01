@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+igo-downloaded-packages-manager,
+igo-download-package {
+  height: calc(100vh - 150px);
+}
+
+@media (any-pointer: coarse) {
+  // For mobiles
+  igo-downloaded-packages-manager,
+  igo-download-package {
+    height: calc(100vh - 275px);
+  }
+}

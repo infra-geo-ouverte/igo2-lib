@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.text-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 3px;
+}
+
+.action-title::after {
+  display: inline-block;
+  animation: dotty steps(1, end) 1.5s infinite;
+  content: '';
+}
+
+@keyframes dotty {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+  100% {
+    content: '';
+  }
+}
+
+.package-title {
+  opacity: 0.75;
+}

@@ -823,6 +823,32 @@
         "data-download-start": "Downloading data. Please don't leave the current app.",
         "data-download-completed": "Data download completed",
         "data-download-failed": "Data download failed. Please contact your application manager."
+      },
+      "package-manager": {
+        "installation": {
+          "message": "Your region {{title}} has been installed.",
+          "title": "Region Installation Done"
+        },
+        "deletion": {
+          "message": "Your region {{title}} has been deleted.",
+          "title": "Region Deletion Done"
+        },
+        "download-error": {
+          "message": "An error occured when downloading the region {{title}}.",
+          "title": "Region Download Error"
+        },
+        "no-space-left-error": {
+          "message": "Not enough space left on device for {{title}} region.",
+          "title": "Region Download Error"
+        },
+        "expired": {
+          "message": "Please delete the region {{title}} as soon as possible.",
+          "title": "A Region Has Expired"
+        },
+        "expiring-soon": {
+          "message": "Please update the region {{title}} as soon as possible.",
+          "title": "A Region is Expiring Soon"
+        }
       }
     }
   }

@@ -5,8 +5,11 @@ import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { combineLatest } from 'rxjs';
 
+import { XYZDataSourceOptions } from '../../datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { TileLayer } from '../../layer';
 import { Layer } from '../../layer/shared/layers/layer';
+import { PackageManagerService } from '../../offline';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
 import { IgoMap } from './map';
 
@@ -30,7 +33,8 @@ export class MapOfflineDirective implements AfterViewInit {
   constructor(
     component: MapBrowserComponent,
     private networkService: NetworkService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private packageService: PackageManagerService
   ) {
     this.component = component;
   }
@@ -101,6 +105,22 @@ export class MapOfflineDirective implements AfterViewInit {
       ) {
         offlinableByUrlSourceOptions = layer.options.sourceOptions;
       }
+
+      const isPotentialPackage =
+        layer instanceof TileLayer &&
+        layer.options.sourceOptions?.type === 'xyz' &&
+        (layer.options.sourceOptions as XYZDataSourceOptions).url;
+
+      if (isPotentialPackage) {
+        const isPackage = this.packageService.isLayerDownloaded(
+          (layer.options.sourceOptions as XYZDataSourceOptions).url
+        );
+
+        if (isPackage) {
+          return;
+        }
+      }
+
       if (offlinableByUrlSourceOptions) {
         const type = offlinableByUrlSourceOptions.type;
         if (type === 'mvt') {

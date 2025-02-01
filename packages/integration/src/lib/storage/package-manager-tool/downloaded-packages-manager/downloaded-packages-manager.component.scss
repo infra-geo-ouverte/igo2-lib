@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-container {
+  flex-grow: 1;
+  flex-basis: 5vh;
+  min-height: 170px;
+  max-height: 170vh;
+  overflow-y: auto;
+}
+
+.action-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 10px 10px 0;
+}
+
+.quota {
+  padding-left: 10px;
+}

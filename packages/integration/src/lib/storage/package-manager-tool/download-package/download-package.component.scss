@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.table-container {
+  flex-grow: 1;
+  flex-basis: 5vh;
+  min-height: 170px;
+  overflow-y: auto;
+}
+
+.action-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 10px 10px 0;
+}
+
+.quota {
+  padding-left: 10px;
+}
+
+.action-bar {
+  display: flex;
+  width: 100%;
+  padding: 8px 0 8px 8px;
+  justify-content: space-between;
+  align-items: center;
+
+  mat-form-field {
+    flex: 1;
+    height: 50px;
+  }
+}

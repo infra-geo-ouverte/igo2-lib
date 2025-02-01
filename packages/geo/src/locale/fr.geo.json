@@ -824,6 +824,32 @@
         "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
         "data-download-completed": "Téléchargement des données terminées.",
         "data-download-failed": "Échec du téléchargement des données pour utilisation hors ligne. Contacter le support de l'application"
+      },
+      "package-manager": {
+        "installation": {
+          "message": "Votre région {{title}} a été installée.",
+          "title": "Installation de la région terminé"
+        },
+        "deletion": {
+          "message": "Votre région {{title}} a été supprimée.",
+          "title": "Suppression de la région terminé"
+        },
+        "download-error": {
+          "message": "Une erreur s'est produite lors du téléchargement de la région {{title}}.",
+          "title": "Erreur de téléchargement de la région"
+        },
+        "no-space-left-error": {
+          "message": "Il ne reste pas assez d'espace sur l'appareil pour le région {{title}}.",
+          "title": "Erreur de téléchargement de la région"
+        },
+        "expired": {
+          "message": "Veuillez supprimer le région {{title}} dès que possible.",
+          "title": "Une région a expiré"
+        },
+        "expiring-soon": {
+          "message": "Veuillez mettre à jour le région {{title}} dès que possible.",
+          "title": "Une région expire bientôt"
+        }
       }
     }
   }

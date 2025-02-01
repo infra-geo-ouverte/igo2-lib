@@ -7,6 +7,7 @@
         "directions": "Itinéraire",
         "draw": "Dessin",
         "dataIssueReporter": "Soumettre une incohérence de donnée",
+        "packageManager": "Télécharger des fonds cartographiques ",
         "importExport": "Importer et exporter",
         "ogcFilter": "Filtrer par",
         "map": "Carte",
@@ -137,6 +138,24 @@
           "scale": "Échelle cartographique: ",
           "resolution": "Résolution cartographique: "
         }
+      },
+      "package-manager": {
+        "add-regions": "Ajouter des régions",
+        "manage-regions": "Gérer les régions",
+        "download": "Télécharger",
+        "delete": "Supprimer",
+        "cancel": "Annuler",
+        "title": "Titre",
+        "size": "Taille",
+        "expiration": "Expiration",
+        "filter": "Filtrer par titre",
+        "space-left": "Espace restant",
+        "usage": "Utilisation",
+        "gb": "Go",
+        "mb": "Mo",
+        "downloading": "Téléchargement",
+        "installing": "Installation",
+        "deleting": "Suppression"
       }
     }
   }
