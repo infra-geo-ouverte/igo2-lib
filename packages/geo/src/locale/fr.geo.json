@@ -299,6 +299,7 @@
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
         "geolocateInactive": "Masquer votre position",
+        "geolocateFollowPositionInactive": "Réactiver le suivi de position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",

@@ -13,8 +13,14 @@ import * as olproj from 'ol/proj';
 import * as olSphere from 'ol/sphere';
 import * as olstyle from 'ol/style';
 
-import { BehaviorSubject, Subscription, interval } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  Subscription,
+  first,
+  interval,
+  skipWhile,
+  switchMap
+} from 'rxjs';
 
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import {
@@ -105,9 +111,12 @@ export class MapGeolocationController extends MapController {
   private geolocation: olGeolocation;
 
   /**
-   * Observable of the current emission interval of the position. In seconds
+   * Observable of the current emission interval to update the view
    */
-  public readonly emissionIntervalSeconds$ = new BehaviorSubject<number>(5);
+
+  public readonly viewUpdatePositionDebounceTime$ = new BehaviorSubject<number>(
+    5000
+  );
 
   /**
    * Observable of the current position
@@ -195,6 +204,22 @@ export class MapGeolocationController extends MapController {
 
   private _followPosition;
 
+  /**
+   * Indicate if the follow position need to be temporary disabled.
+   */
+  set temporaryDisableFollowPosition(value: boolean) {
+    this._temporaryDisableFollowPosition = value;
+    this.followPosition = !value;
+    this.temporaryDisableFollowPosition$.next(value);
+  }
+
+  get temporaryDisableFollowPosition(): boolean {
+    return this._temporaryDisableFollowPosition;
+  }
+  private _temporaryDisableFollowPosition: boolean;
+  public temporaryDisableFollowPosition$: BehaviorSubject<boolean> =
+    new BehaviorSubject(false);
+
   constructor(
     private map: MapBase,
     private options?: MapGeolocationControllerOptions,
@@ -202,6 +227,7 @@ export class MapGeolocationController extends MapController {
     private configService?: ConfigService
   ) {
     super();
+    this.temporaryDisableFollowPosition = false;
     this.geolocationOverlay = new Overlay(this.map);
     this._followPosition =
       this.options && this.options.followPosition
@@ -235,7 +261,7 @@ export class MapGeolocationController extends MapController {
   setupObservers() {
     this.tracking$.subscribe((tracking) => {
       if (tracking) {
-        this.onPositionChange(true, true);
+        this.handleViewFromFeatures(this.position$.getValue(), true);
       } else {
         this.deleteGeolocationFeatures();
       }
@@ -250,22 +276,37 @@ export class MapGeolocationController extends MapController {
       },
       projection: this.options.projection
     });
-    let tracking = false;
     this.subscriptions$$.push(
-      this.emissionIntervalSeconds$
-        .pipe(switchMap((value) => interval(value * 1000)))
+      this.viewUpdatePositionDebounceTime$
+        .pipe(switchMap((value) => interval(value)))
         .subscribe(() => {
-          if (tracking === this.tracking) {
-            this.onPositionChange(true);
-          } else {
-            tracking = this.tracking;
-            this.onPositionChange(true, true);
+          const pos = this.position$.getValue();
+          if (pos && pos.position) {
+            this.handleViewFromFeatures(pos);
           }
         })
     );
-
+    this.subscriptions$$.push(
+      this.position$
+        .pipe(
+          skipWhile((pos) => !pos || !pos.position),
+          first()
+        )
+        .subscribe((pos) => {
+          if (this.tracking) {
+            this.handleViewFromFeatures(pos, true);
+          }
+        })
+    );
+    this.subscriptions$$.push(
+      this.map.viewController.dragging$.subscribe(() => {
+        if (this.followPosition) {
+          this.temporaryDisableFollowPosition = true;
+        }
+      })
+    );
     this.geolocation.on('change', () => {
-      this.onPositionChange(false, false);
+      this.onPositionChange();
     });
   }
 
@@ -367,7 +408,7 @@ export class MapGeolocationController extends MapController {
    * On position change, get the position, show it on the map and record it.
    * @param emitEvent Map event
    */
-  private onPositionChange(emitEvent = false, zoomTo = false) {
+  private onPositionChange() {
     if (!this.tracking) {
       return;
     }
@@ -394,9 +435,40 @@ export class MapGeolocationController extends MapController {
       timestamp: new Date()
     };
     this.handleFeatureCreation(position);
-    this.handleViewFromFeatures(position, zoomTo);
-    if (emitEvent) {
+    const different = this.positionsAreDifferent(
+      position,
+      this.position$.getValue()
+    );
+
+    if (different) {
       this.position$.next(position);
+    }
+  }
+
+  /**
+   *
+   * @param positionFrom  MapGeolocationState  to compare with
+   * @param positionTo MapGeolocationState to compare with
+   * @returns
+   */
+  private positionsAreDifferent(
+    positionFrom: MapGeolocationState,
+    positionTo: MapGeolocationState
+  ): boolean {
+    let different = true;
+    if (
+      !positionFrom ||
+      !positionFrom.position ||
+      !positionTo ||
+      !positionTo.position
+    ) {
+      return different;
+    } else {
+      const identical = Object.keys(positionFrom)
+        .filter((k) => k !== 'timestamp')
+        .every((k) => positionFrom[k] === positionTo[k]);
+      different = !identical;
+      return different;
     }
   }
 
@@ -495,7 +567,13 @@ export class MapGeolocationController extends MapController {
       }
     }
   }
-  handleViewFromFeatures(position: MapGeolocationState, zoomTo = false) {
+  handleViewFromFeatures(
+    position: MapGeolocationState,
+    zoomTo: boolean = false
+  ) {
+    if (!position || !position.position) {
+      return;
+    }
     const positionFeature = this.getFeatureByType(
       GeolocationOverlayType.Position
     );

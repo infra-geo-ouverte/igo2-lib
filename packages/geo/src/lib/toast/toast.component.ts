@@ -86,6 +86,7 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
+      this.map.geolocationController.temporaryDisableFollowPosition = true;
       moveToOlFeatures(
         this.map.viewController,
         [olFeature],
