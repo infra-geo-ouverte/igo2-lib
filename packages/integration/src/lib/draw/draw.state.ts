@@ -22,9 +22,9 @@ export class DrawState {
   public activeDrawingLayer: VectorLayer;
 
   constructor(private mapState: MapState) {
-    this.mapState.map.layers$.subscribe(() => {
+    this.mapState.map.layerController.all$.subscribe(() => {
       this.layersID.forEach((layerId) => {
-        if (!this.mapState.map.getLayerById(layerId)) {
+        if (!this.mapState.map.layerController.getById(layerId)) {
           const deletedStore = this.stores.find(
             (store) => store.layer.id === layerId
           );

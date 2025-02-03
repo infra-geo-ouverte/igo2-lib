@@ -1,0 +1,43 @@
+@use '../layer-base/layer-base';
+
+.igo-layer-title {
+  flex: 1;
+  font-weight: bold;
+  cursor: pointer;
+
+  max-height: 48px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+
+.layer-browser-group-carret {
+  margin-right: 10px;
+}
+
+.layer-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-actions {
+  display: flex;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.child-list {
+  padding-left: 26px;
+}

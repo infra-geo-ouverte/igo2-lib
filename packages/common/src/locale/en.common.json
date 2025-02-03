@@ -9,6 +9,12 @@
         "title": "Confirm",
         "applyBtn": "Apply"
       },
+      "dragDrop": {
+        "cannot": {
+          "dropInsideItself": "Unable to move the item inside itself",
+          "maxLevel": "The maximum hierarchical level is reached ({{value}})"
+        }
+      },
       "selectValueDialog": {
         "cancelButtonText": "Cancel",
         "processButtonText": "Select",

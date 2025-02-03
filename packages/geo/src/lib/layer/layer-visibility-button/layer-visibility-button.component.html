@@ -1,0 +1,29 @@
+<button
+  mat-icon-button
+  [ngClass]="{
+    disabled: disabled,
+    'out-of-range': !inResolutionsRange,
+    'visibility-hidden': !visible
+  }"
+  [color]="visible ? 'primary' : 'default'"
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="tooltip ?? defaultTooltip | translate"
+  (click)="toggle($event)"
+>
+  <igo-icon
+    matBadge="?"
+    matBadgeColor="accent"
+    matBadgeSize="small"
+    matBadgePosition="after"
+    [matBadgeHidden]="!showQueryBadge"
+    [icon]="
+      visible
+        ? hiddenByParent
+          ? eyeClosedSvg
+          : 'visibility'
+        : 'visibility_off'
+    "
+    iconPositionEnd
+  />
+</button>

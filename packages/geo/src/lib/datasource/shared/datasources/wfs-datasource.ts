@@ -44,6 +44,14 @@ export class WFSDataSource extends DataSource {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
+  get saveableOptions(): Partial<WFSDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   constructor(
     public options: WFSDataSourceOptions,
     protected wfsService: WFSService,

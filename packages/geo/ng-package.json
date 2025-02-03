@@ -10,8 +10,7 @@
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect",
-    "@turf/point-on-feature",
-    "xlsx"
+    "@turf/point-on-feature"
   ],
   "assets": [
     { "input": "", "glob": "**/*.them*.scss", "output": "" },

@@ -1,5 +1,5 @@
 <div
-  *ngIf="userControlledLayerList.length; else noLayersBlock"
+  *ngIf="userControlledLayerList?.length; else noLayersBlock"
   class="igo-swipe-select-container"
 >
   <form class="igo-form" [formGroup]="form">

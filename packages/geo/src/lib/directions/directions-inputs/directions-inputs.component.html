@@ -1,101 +1,112 @@
-<div cdkDropList class="stops-list" (cdkDropListDropped)="drop($event)">
+<div cdkDropList class="stops-list" (cdkDropListDropped)="dropStop($event)">
   <div
-    touchleave
-    (touchenter)="onStopEnter(stop)"
-    (touchleave)="onStopLeave()"
-    (mouseover)="onStopEnter(stop)"
-    (mouseleave)="onStopLeave()"
-    (cdkDragStarted)="stopIsDragged = true"
-    (cdkDragEnded)="stopIsDragged = false"
-    cdkDragLockAxis="y"
-    class="stop-box"
-    *ngFor="let stop of stopsStore.view.all$() | async; let i = index"
-    cdkDrag
+    *ngFor="let stop of stopsStore.view.all$() | async; let stopIndex = index"
+    class="stop"
   >
-    <div [ngClass]="getNgClass(stop)">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>{{ getPlaceholder(stop) }}</mat-label>
-        <input
-          id="{{ stop.id }}"
-          type="text"
-          [placeholder]="getPlaceholder(stop)"
-          matTooltipShowDelay="500"
-          [matTooltip]="stop.text"
-          aria-label="Number"
-          matInput
-          (focus)="onInputFocus(stop)"
-          [(ngModel)]="stop.text"
-          (keyup)="setStopText($event, stop)"
-          (keydown.enter)="$event.preventDefault()"
-          [matAutocomplete]="auto"
-        />
-        <button
-          *ngIf="
-            (stop.text || stop.coordinates) &&
-            stopWithHover &&
-            stop.id === stopWithHover.id
-          "
-          mat-icon-button
-          matSuffix
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.directionsForm.clearStop' | translate"
-          color="warn"
-          aria-label="Clear"
-          (click)="clearStop(stop)"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-
-        <mat-autocomplete
-          [displayWith]="getOptionText"
-          #auto="matAutocomplete"
-          (optionSelected)="chooseProposal($event, stop)"
-        >
-          <mat-optgroup
-            *ngFor="let source of stop.searchProposals"
-            [label]="source.source.title"
-            [disabled]="source.source.enabled === false"
-          >
-            <mat-option
-              *ngFor="let result of source.results"
-              [value]="result"
-              matTooltipShowDelay="500"
-              [matTooltip]="result.meta ? result.meta.title : ''"
-            >
-              {{ result.meta ? result.meta.title : '' }}
-            </mat-option>
-          </mat-optgroup>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-
     <div
-      *ngIf="!stopIsDragged && stopWithHover && stop.id === stopWithHover.id"
-      class="igo-form-button-group"
+      (touchenter)="onStopEnter(stop)"
+      (touchleave)="onStopLeave()"
+      (mouseover)="onStopEnter(stop)"
+      (mouseleave)="onStopLeave()"
+      (cdkDragStarted)="stopIsDragged = true"
+      (cdkDragEnded)="stopIsDragged = false"
+      cdkDragLockAxis="y"
+      class="stop-box"
+      cdkDrag
     >
-      <button
-        class="swipe-vertical"
-        cdkDragHandle
-        mat-icon-button
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.moveStop' | translate"
-        color="primary"
-      >
-        <mat-icon>drag_indicator</mat-icon>
-      </button>
+      <div class="prefix-actions">
+        <button
+          class="swipe-vertical"
+          cdkDragHandle
+          mat-icon-button
+          [matTooltip]="'igo.geo.directions.input.moveStop' | translate"
+          color="primary"
+        >
+          <mat-icon>drag_indicator</mat-icon>
+        </button>
+      </div>
 
+      <div class="igo-input-container">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>{{ getInputLabel(stop) }}</mat-label>
+          <input
+            [id]="stop.id"
+            type="text"
+            [placeholder]="'igo.geo.directions.input.placeholder' | translate"
+            matInput
+            (focus)="onInputFocus(stop)"
+            [(ngModel)]="stop.text"
+            (keyup)="setStopText($event, stop)"
+            (keydown.enter)="$event.preventDefault()"
+            [matAutocomplete]="auto"
+          />
+          <button
+            *ngIf="currentPosition"
+            mat-icon-button
+            matPrefix
+            [matTooltip]="
+              'igo.geo.directions.input.currentPosition' | translate
+            "
+            color="accent"
+            (click)="useCurrentPosition(stop); $event.stopPropagation()"
+          >
+            <mat-icon>my_location</mat-icon>
+          </button>
+          <button
+            *ngIf="stop.text || stop.coordinates"
+            mat-icon-button
+            matSuffix
+            [matTooltip]="'igo.geo.directions.input.clearStop' | translate"
+            color="warn"
+            (click)="clearStopInput(stop)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <mat-autocomplete
+            [displayWith]="getOptionText"
+            #auto="matAutocomplete"
+            (optionSelected)="chooseOption($event, stop)"
+          >
+            <mat-optgroup
+              *ngFor="let source of stop.searchProposals"
+              [label]="source.source.title"
+              [disabled]="!source.source.enabled"
+            >
+              <mat-option
+                *ngFor="let result of source.results"
+                [value]="result"
+              >
+                {{ result.meta ? result.meta.title : '' }}
+              </mat-option>
+            </mat-optgroup>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
       <button
+        class="delete-button"
         *ngIf="(stopsStore.count$ | async) > 2"
         mat-icon-button
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate"
+        [matTooltip]="'igo.geo.directions.input.removeStop' | translate"
         color="warn"
         (click)="removeStop(stop)"
       >
         <mat-icon>delete</mat-icon>
       </button>
     </div>
+  </div>
+  <div class="prefix-actions">
+    <button
+      mat-icon-button
+      [disabled]="
+        (stopsStore.count$ | async) !== (stopsFeatureStore.count$ | async) ||
+        stopIsDragged
+      "
+      [matTooltip]="'igo.geo.directions.input.addStop' | translate"
+      color="primary"
+      (click)="addStop()"
+    >
+      <mat-icon>add_location_alt</mat-icon>
+    </button>
   </div>
 </div>

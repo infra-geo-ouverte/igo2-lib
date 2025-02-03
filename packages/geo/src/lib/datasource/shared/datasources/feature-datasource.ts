@@ -7,6 +7,15 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 export class FeatureDataSource extends DataSource {
   declare public options: FeatureDataSourceOptions;
   declare public ol: olSourceVector;
+
+  get saveableOptions(): Partial<FeatureDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
   protected createOlSource(): olSourceVector {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)

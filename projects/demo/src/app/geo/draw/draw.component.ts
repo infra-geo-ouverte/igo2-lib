@@ -1,18 +1,15 @@
 import { Component } from '@angular/core';
 
 import {
-  DataSourceService,
+  AnyLayerOptions,
   DrawComponent,
   FeatureStore,
   FeatureWithDraw,
   IgoMap,
-  LayerOptions,
   LayerService,
   MapBrowserComponent,
   MapService,
   MapViewOptions,
-  OSMDataSource,
-  OSMDataSourceOptions,
   ZoomButtonComponent
 } from '@igo2/geo';
 
@@ -51,24 +48,24 @@ export class AppDrawComponent {
   public stores: FeatureStore<FeatureWithDraw>[] = [];
 
   constructor(
-    private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mapService: MapService
   ) {
     this.mapService.setMap(this.map);
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource,
-            baseLayer: true,
-            visible: true
-          } satisfies LayerOptions)
-        );
-      });
+
+    const layers: AnyLayerOptions[] = [
+      {
+        title: 'OSM',
+        sourceOptions: {
+          type: 'osm'
+        },
+        baseLayer: true,
+        visible: true
+      }
+    ];
+
+    this.layerService
+      .createLayers(layers)
+      .subscribe((layers) => this.map.layerController.add(...layers));
   }
 }

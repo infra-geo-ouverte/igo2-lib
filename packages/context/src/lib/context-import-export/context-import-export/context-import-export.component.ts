@@ -1,5 +1,5 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -19,10 +19,9 @@ import { SpinnerComponent } from '@igo2/common/spinner';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { Layer, VectorLayer } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
+import { type AnyLayer, type IgoMap, VectorLayer } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { DetailedContext } from '../../context-manager/shared/context.interface';
@@ -58,20 +57,18 @@ import {
     IgoLanguageModule
   ]
 })
-export class ContextImportExportComponent implements OnInit, OnDestroy {
+export class ContextImportExportComponent implements OnInit {
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
-  public layerList: Layer[];
-  public userControlledLayerList: Layer[];
+  public layerList: AnyLayer[];
+  public userControlledLayerList: readonly AnyLayer[];
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
   public activeImportExport = 'import';
-
-  private layers$$: Subscription;
 
   @Input() map: IgoMap;
 
@@ -93,12 +90,9 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
-    this.layers$$ = this.map.layers$.subscribe(() => {
-      this.layerList = this.contextService.getContextLayers(this.map);
-      this.userControlledLayerList = this.layerList.filter(
-        (layer) => layer.showInLayerList
-      );
-    });
+
+    this.layerList = this.map.layerController.all;
+    this.userControlledLayerList = this.map.layerController.treeLayers;
   }
 
   importFiles(files: File[]) {
@@ -180,9 +174,5 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
 
   onImportExportChange(event) {
     this.activeImportExport = event.value;
-  }
-
-  ngOnDestroy(): void {
-    this.layers$$.unsubscribe();
   }
 }

@@ -16,9 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { IgoIconComponent } from '@igo2/common/icon';
-import { ContextService, DetailedContext } from '@igo2/context';
+import { DetailedContext } from '@igo2/context';
 import { IgoLanguageModule } from '@igo2/core/language';
-import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
+import { AnyLayer, IgoMap, Layer, VectorLayer, isLayerItem } from '@igo2/geo';
 
 import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
@@ -46,8 +46,8 @@ import { MapState } from '../../map.state';
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe = false;
-  public layerList: Layer[];
-  public userControlledLayerList: Layer[];
+  public layerList: AnyLayer[];
+  public userControlledLayerList: AnyLayer[];
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public res: DetailedContext;
@@ -62,7 +62,6 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
 
   constructor(
     public mapState: MapState,
-    private contextService: ContextService,
     private formBuilder: UntypedFormBuilder,
     private toolState: ToolState
   ) {
@@ -74,11 +73,14 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.map.layers$.subscribe(
-      (ll) =>
-        (this.userControlledLayerList = ll.filter(
+    this.map.layerController.all$.subscribe(
+      (layers) =>
+        (this.userControlledLayerList = layers.filter(
           (layer) =>
-            !layer.baseLayer && layer.showInLayerList && layer.displayed
+            isLayerItem(layer) &&
+            !layer.baseLayer &&
+            layer.showInLayerList &&
+            layer.displayed
         ))
     );
   }
@@ -123,7 +125,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     if (e._selected) {
       e._selected = false;
     }
-    const allLayers = this.userControlledLayerList.length;
+    const allLayers = this.userControlledLayerList?.length;
     const selectedLayers = this.form.controls.layers.value.length;
     if (selectedLayers === allLayers) {
       e._selected = true;

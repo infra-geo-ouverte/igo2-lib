@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "18.0.0-next.7",
+  "version": "18.0.0-next.10",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "bowser": "^2.11.0",
-    "tslib": "^2.6.0"
+    "tslib": "^2.6.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "peerDependencies": {
     "@angular/common": "^18.0.0",

@@ -4,6 +4,10 @@
   }
 
   ::ng-deep {
+    mat-tab-header {
+      border-bottom: 1px solid #ccc;
+    }
+
     .mat-mdc-tab-body-wrapper {
       flex: 1;
     }

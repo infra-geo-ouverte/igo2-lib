@@ -3,18 +3,15 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
 import {
   DataSourceService,
-  FeatureDataSource,
   FeatureDataSourceOptions,
   FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
-  LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
-  OSMDataSource,
   OSMDataSourceOptions,
   VectorLayer
 } from '@igo2/geo';
@@ -170,40 +167,37 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       }
     ]);
 
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            baseLayer: true,
-            visible: true,
-            source: dataSource
-          } satisfies LayerOptions)
-        );
+    this.layerService
+      .createAsyncLayer({
+        title: 'OSM',
+        baseLayer: true,
+        visible: true,
+        sourceOptions: {
+          type: 'osm'
+        } satisfies OSMDataSourceOptions
+      })
+      .subscribe((layer) => {
+        this.map.layerController.add(layer);
       });
 
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'vector'
-      } satisfies FeatureDataSourceOptions)
-      .subscribe((dataSource: FeatureDataSource) => {
-        const layer = this.layerService.createLayer({
-          title: 'Vector Layer',
-          source: dataSource,
-          animation: {
-            duration: 2000
-          },
-          igoStyle: {
-            mapboxStyle: {
-              url: 'assets/mapboxStyleExample-feature.json',
-              source: 'source_nameX'
-            }
+    this.layerService
+      .createAsyncLayer({
+        title: 'Vector Layer',
+        sourceOptions: {
+          type: 'vector'
+        } satisfies FeatureDataSourceOptions,
+        animation: {
+          duration: 2000
+        },
+        igoStyle: {
+          mapboxStyle: {
+            url: 'assets/mapboxStyleExample-feature.json',
+            source: 'source_nameX'
           }
-        }) as VectorLayer;
-        this.map.addLayer(layer);
+        }
+      })
+      .subscribe((layer: VectorLayer) => {
+        this.map.layerController.add(layer);
         this.store.bindLayer(layer);
         loadingStrategy.activate();
         selectionStrategy.activate();

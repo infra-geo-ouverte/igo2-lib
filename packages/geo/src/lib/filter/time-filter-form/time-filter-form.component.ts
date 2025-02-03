@@ -8,6 +8,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import {
   DateAdapter,
@@ -27,10 +28,13 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
-import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
+import {
+  MatDatetimepickerModule,
+  MatNativeDatetimeModule
+} from '@mat-datetimepicker/core';
 import { default as moment } from 'moment';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
@@ -43,6 +47,8 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
     NgIf,
     MatFormFieldModule,
     MatDatetimepickerModule,
+    MatMomentDateModule,
+    MatNativeDatetimeModule,
     MatNativeDateModule, // For the DateAdapter provider
     MatInputModule,
     FormsModule,
@@ -58,10 +64,6 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
-  @Input() layer: Layer;
-
-  @Input() options: TimeFilterOptions;
-
   public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
@@ -74,6 +76,14 @@ export class TimeFilterFormComponent implements OnInit {
   public listYears: string[] = [];
   public startListYears: string[] = [];
   public endListYears: string[] = [];
+
+  public interval: number;
+  public playIcon = 'play-circle';
+  public resetIcon = 'replay';
+
+  @Input() layer: Layer;
+
+  @Input() options: TimeFilterOptions;
 
   @Input()
   set currentValue(value: string) {
@@ -93,10 +103,6 @@ export class TimeFilterFormComponent implements OnInit {
       }
     }
   }
-
-  public interval: any;
-  public playIcon = 'play_circle';
-  public resetIcon = 'replay';
 
   @Output() change = new EventEmitter<Date | [Date, Date]>();
   @Output()
@@ -377,7 +383,7 @@ export class TimeFilterFormComponent implements OnInit {
       this.stopFilter();
     } else {
       this.playIcon = 'pause_circle';
-      this.interval = setInterval(
+      this.interval = window.setInterval(
         (that) => {
           let newMinDateNumber;
           const maxDateNumber = new Date(that.max);

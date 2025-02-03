@@ -27,7 +27,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { Feature } from '../../../feature';
-import { Layer } from '../../../layer';
+import { AnyLayer } from '../../../layer';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import {
   SpatialFilterQueryType,
@@ -55,14 +55,7 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
-  @Input()
-  get store(): EntityStore<Feature> {
-    return this._store;
-  }
-  set store(store: EntityStore<Feature>) {
-    this._store = store;
-  }
-  private _store: EntityStore<Feature>;
+  @Input() store: EntityStore<Feature>;
 
   @Input()
   get queryType(): SpatialFilterQueryType {
@@ -87,7 +80,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
   private _zone;
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
   public zoneWithBuffer;
   public selectedZone: any;

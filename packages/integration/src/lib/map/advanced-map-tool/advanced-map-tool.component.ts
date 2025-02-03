@@ -34,19 +34,25 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
 })
 export class AdvancedMapToolComponent {
   get tracking$() {
-    return this.mapState.map.geolocationController.tracking$;
+    return this.mapState.map.geolocationController?.tracking$;
   }
   get followPosition$() {
-    return this.mapState.map.geolocationController.followPosition$;
+    return this.mapState.map.geolocationController?.followPosition$;
   }
 
   constructor(public mapState: MapState) {}
 
   toggleTracking(value) {
+    if (!this.mapState.map.geolocationController) {
+      return;
+    }
     this.mapState.map.geolocationController.tracking = value;
   }
 
   toggleFollow(value) {
+    if (!this.mapState.map.geolocationController) {
+      return;
+    }
     this.mapState.map.geolocationController.followPosition = value;
   }
 }

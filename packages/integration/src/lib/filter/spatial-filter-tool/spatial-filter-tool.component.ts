@@ -16,15 +16,12 @@ import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import {
-  ClusterDataSource,
-  DataSource,
-  DataSourceService,
+  AnyLayer,
   ExportOptions,
   Feature,
   FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
-  Layer,
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
@@ -36,12 +33,13 @@ import {
   SpatialFilterType,
   SpatialFilterTypeComponent,
   VectorLayer,
+  VectorLayerOptions,
   createOverlayMarkerStyle,
   featureToOl,
+  isLayerItem,
   moveToOlFeatures
 } from '@igo2/geo';
 
-import { EventsKey } from 'ol/events';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
@@ -94,8 +92,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
   @Input() freehandDrawIsActive: boolean;
 
-  public layers: Layer[] = [];
-  public activeLayers: Layer[] = [];
+  public layers: AnyLayer[] = [];
+  public activeLayers: AnyLayer[] = [];
 
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
@@ -120,14 +118,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
 
-  private moveendKey: EventsKey;
-
   public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
 
   constructor(
     private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
-    private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mapState: MapState,
     private messageService: MessageService,
@@ -139,7 +134,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    for (const layer of this.map.layers) {
+    for (const layer of this.map.layerController.all) {
       if (
         layer.title &&
         layer.title.includes(
@@ -193,7 +188,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.activeLayers.length &&
           this.workspaceState.store.all().length > 1
         ) {
-          if (this.itemType === SpatialFilterItemType.Thematics) {
+          if (
+            this.itemType === SpatialFilterItemType.Thematics &&
+            this.thematics
+          ) {
             for (const thematic of this.thematics) {
               if (!thematic.zeroResults) {
                 layerToOpenWks = this.activeLayers.find((layer) =>
@@ -223,7 +221,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.workspaceState.store.all().length > 1
         ) {
           this.selectWorkspaceEntity(record);
-          this.moveendKey = this.map.ol.on('moveend', () => {
+          this.map.ol.on('moveend', () => {
             this.selectWorkspaceEntity(record);
           });
         }
@@ -271,7 +269,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   }
 
   clearMap() {
-    this.map.removeLayers(this.layers);
+    this.map.layerController.remove(...this.layers);
     this.layers = [];
     this.activeLayers = [];
     this.thematicLength = 0;
@@ -392,6 +390,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.layers) {
           if (
+            isLayerItem(layer) &&
             layer.options._internal &&
             layer.options._internal.code === feature.properties.code &&
             !buffer
@@ -406,7 +405,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             this.activeLayers = [];
             const index = this.layers.indexOf(layer);
             this.layers.splice(index, 1);
-            this.map.removeLayer(layer);
+            this.map.layerController.remove(layer);
           }
         }
       } else {
@@ -418,7 +417,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             ) {
               const index = this.layers.indexOf(layer);
               this.layers.splice(index, 1);
-              this.map.removeLayer(layer);
+              this.map.layerController.remove(layer);
             }
           }
         }
@@ -455,46 +454,51 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           })
         });
       };
-      this.dataSourceService
-        .createAsyncDataSource({
+
+      const options: VectorLayerOptions = {
+        isIgoInternalLayer: true,
+        title: ('Zone ' +
+          i +
+          ' - ' +
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.spatialFilter'
+          )) as string,
+        workspace: { enabled: true },
+        _internal: {
+          code:
+            this.type === SpatialFilterType.Predefined
+              ? feature.properties.code
+              : undefined
+        },
+        sourceOptions: {
           type: 'vector',
           queryable: true
-        } as QueryableDataSourceOptions)
+        } as QueryableDataSourceOptions,
+        visible: true
+      };
+
+      this.layerService
+        .createAsyncLayer(options)
         .pipe(take(1))
-        .subscribe((dataSource: DataSource) => {
-          const olLayer = this.layerService.createLayer({
-            isIgoInternalLayer: true,
-            title: ('Zone ' +
-              i +
-              ' - ' +
-              this.languageService.translate.instant(
-                'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
-            workspace: { enabled: true },
-            _internal: {
-              code:
-                this.type === SpatialFilterType.Predefined
-                  ? feature.properties.code
-                  : undefined
-            },
-            source: dataSource,
-            visible: true
-          }) as VectorLayer;
+        .subscribe((layer: VectorLayer) => {
           const featuresOl = features.map((f) => {
             return featureToOl(f, this.map.projection);
           });
+
           if (this.type !== SpatialFilterType.Predefined) {
             const type =
               this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          const ol = dataSource.ol as olSourceVector | olSourceCluster;
+          const ol = layer.dataSource.ol as olSourceVector | olSourceCluster;
           ol.addFeatures(featuresOl);
-          olLayer.ol.setStyle(this.defaultStyle);
-          this.map.addLayer(olLayer);
-          this.layers.push(olLayer);
-          this.activeLayers.push(olLayer);
+          layer.ol.setStyle(this.defaultStyle);
+
+          this.map.layerController.add(layer);
+
+          this.layers.push(layer);
+          this.activeLayers.push(layer);
           this.cdRef.detectChanges();
         });
     }
@@ -515,8 +519,28 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           i++;
         }
       }
-      this.dataSourceService
-        .createAsyncDataSource({
+
+      const icon = features[0].meta.icon;
+      let style: olstyle.Style;
+      if (!icon) {
+        style = createOverlayMarkerStyle();
+      } else {
+        style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
+      }
+
+      const options: VectorLayerOptions = {
+        isIgoInternalLayer: true,
+        title: (features[0].meta.title +
+          ' ' +
+          i +
+          ' - ' +
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.spatialFilter'
+          )) as string,
+        visible: true,
+        style,
+
+        sourceOptions: {
           type: 'cluster',
           id,
           queryable: true,
@@ -524,54 +548,36 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           meta: {
             title: 'Cluster'
           }
-        } as QueryableDataSourceOptions)
+        } as QueryableDataSourceOptions
+      };
+      this.layerService
+        .createAsyncLayer(options)
         .pipe(take(1))
-        .subscribe((dataSource: ClusterDataSource) => {
-          const icon = features[0].meta.icon;
-          let style: olstyle.Style;
-          if (!icon) {
-            style = createOverlayMarkerStyle();
-          } else {
-            style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
-          }
-
-          const olLayer = this.layerService.createLayer({
-            isIgoInternalLayer: true,
-            title: (features[0].meta.title +
-              ' ' +
-              i +
-              ' - ' +
-              this.languageService.translate.instant(
-                'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
-            source: dataSource,
-            visible: true,
-            style
-          });
-
+        .subscribe((layer: VectorLayer) => {
           const featuresOl = features.map((feature) => {
             return featureToOl(feature, this.map.projection);
           });
-          const ol = dataSource.ol as olSourceCluster;
+          const ol = layer.dataSource.ol as olSourceCluster;
           ol.getSource().addFeatures(featuresOl);
-          if (this.layers.find((layer) => layer.id === olLayer.id)) {
-            this.map.removeLayer(
-              this.layers.find((layer) => layer.id === olLayer.id)
-            );
+          const previousLayer = this.layers.find(
+            (prevLayer) => prevLayer.id === layer.id
+          );
+          if (previousLayer) {
+            this.map.layerController.remove(previousLayer);
             i = i - 1;
-            olLayer.title = (features[0].meta.title +
+            layer.title = (features[0].meta.title +
               ' ' +
               i +
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
               )) as string;
-            olLayer.options.title = olLayer.title;
+            layer.options.title = layer.title;
           }
           this.iterator = i;
-          this.map.addLayer(olLayer);
-          this.layers.push(olLayer);
-          this.pushLayer(olLayer);
+          this.map.layerController.add(layer);
+          this.layers.push(layer);
+          this.pushLayer(layer);
           this.cdRef.detectChanges();
         });
     }
@@ -608,48 +614,50 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           i++;
         }
       }
-      this.dataSourceService
-        .createAsyncDataSource({
+
+      const options: VectorLayerOptions = {
+        isIgoInternalLayer: true,
+        title: (features[0].meta.title +
+          ' ' +
+          i +
+          ' - ' +
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.spatialFilter'
+          )) as string,
+        sourceOptions: {
           type: 'vector',
           id,
           queryable: true
-        } as QueryableDataSourceOptions)
+        } as QueryableDataSourceOptions,
+        visible: true
+      };
+      this.layerService
+        .createAsyncLayer(options)
         .pipe(take(1))
-        .subscribe((dataSource: DataSource) => {
-          const olLayer = this.layerService.createLayer({
-            isIgoInternalLayer: true,
-            title: (features[0].meta.title +
-              ' ' +
-              i +
-              ' - ' +
-              this.languageService.translate.instant(
-                'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
-            source: dataSource,
-            visible: true
-          });
+        .subscribe((layer: VectorLayer) => {
           const featuresOl = features.map((feature) => {
             return featureToOl(feature, this.map.projection);
           });
-          const ol = dataSource.ol as olSourceVector;
+          const ol = layer.dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
-          if (this.layers.find((layer) => layer.id === olLayer.id)) {
-            this.map.removeLayer(
-              this.layers.find((layer) => layer.id === olLayer.id)
-            );
+          const previousLayer = this.layers.find(
+            (prevLayer) => prevLayer.id === layer.id
+          );
+          if (previousLayer) {
+            this.map.layerController.remove(previousLayer);
             i = i - 1;
-            olLayer.title = (features[0].meta.title +
+            layer.title = (features[0].meta.title +
               ' ' +
               i +
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
               )) as string;
-            olLayer.options.title = olLayer.title;
+            layer.options.title = layer.title;
           }
-          this.map.addLayer(olLayer);
-          this.layers.push(olLayer);
-          this.pushLayer(olLayer);
+          this.map.layerController.add(layer);
+          this.layers.push(layer);
+          this.pushLayer(layer);
           this.cdRef.detectChanges();
         });
     }
