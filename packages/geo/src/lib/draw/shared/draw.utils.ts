@@ -1,4 +1,5 @@
 import OlOverlay from 'ol/Overlay';
+import { Coordinate } from 'ol/coordinate';
 import OlCircle from 'ol/geom/Circle';
 import OlLineString from 'ol/geom/LineString';
 import OlPoint from 'ol/geom/Point';
@@ -117,24 +118,24 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
 }
 
 export function DDtoDMS(
-  value: [number, number],
+  value: Coordinate,
   unit: CoordinatesUnit
 ): string[] | undefined {
   const conversionMapper = new Map([
     [
       CoordinatesUnit.DecimalDegree,
-      (val: [number, number]) => {
+      (val: Coordinate) => {
         if (typeof val[0] === 'number') {
           return roundCoordToString(val, 5) as string[];
         } else {
-          const numVal: [number, number] = [Number(val[0]), Number(val[1])];
+          const numVal: Coordinate = [Number(val[0]), Number(val[1])];
           return roundCoordToString(numVal, 5) as string[];
         }
       }
     ],
     [
       CoordinatesUnit.DegreesMinutesSeconds,
-      (val: [number, number]) => convertDDToDMS(val, 2)
+      (val: Coordinate) => convertDDToDMS(val, 2)
     ]
   ]);
   const conversion = conversionMapper.get(unit);

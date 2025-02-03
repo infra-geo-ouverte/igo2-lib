@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { StorageService } from '@igo2/core/storage';
 import {
+  AnyLayer,
   FEATURE,
   Feature,
   FeatureStore,
@@ -11,11 +12,13 @@ import {
   QueryableDataSource,
   QueryableDataSourceOptions,
   featureFromOl,
+  isLayerItem,
   measureOlGeometryLength,
   roundCoordTo
 } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 
+import { Coordinate } from 'ol/coordinate';
 import GeoJSON from 'ol/format/GeoJSON';
 import Geometry from 'ol/geom/Geometry';
 import olLineString from 'ol/geom/LineString';
@@ -45,7 +48,7 @@ export class MapProximityState {
     new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
-  public currentPositionCoordinate$ = new BehaviorSubject<[number, number]>(
+  public currentPositionCoordinate$ = new BehaviorSubject<Coordinate>(
     undefined
   );
 
@@ -85,7 +88,7 @@ export class MapProximityState {
           (bunch: [boolean, string, number, number, MapGeolocationState]) => {
             this.proximityFeatureStore.clear();
             const enabled = bunch[0];
-            const layers = this.map.layers;
+            const layers = this.map.layerController.all;
             const currentPos = this.map.geolocationController.position$.value;
             const locationType = bunch[1];
             const proximityRadiusValue = bunch[2];
@@ -128,11 +131,12 @@ export class MapProximityState {
 
             const layersToMonitor = layers.filter(
               (layer) =>
+                isLayerItem(layer) &&
                 layer.ol instanceof olLayerVector &&
                 (layer.dataSource as QueryableDataSource).options.queryable &&
                 layer.visible &&
                 layer.isInResolutionsRange
-            );
+            ) as Layer[];
 
             layersToMonitor.map((layerToMonitor) => {
               const layerSource =
@@ -241,16 +245,14 @@ export class MapProximityState {
     });
   }
 
-  getQueryTitle(feature: Feature, layer: Layer): string {
-    let title;
-    if (layer.options?.source?.options) {
+  getQueryTitle(feature: Feature, layer: AnyLayer): string | undefined {
+    if (isLayerItem(layer) && layer.options?.source?.options) {
       const dataSourceOptions = layer.options.source
         .options as QueryableDataSourceOptions;
       if (dataSourceOptions.queryTitle) {
-        title = this.getLabelMatch(feature, dataSourceOptions.queryTitle);
+        return this.getLabelMatch(feature, dataSourceOptions.queryTitle);
       }
     }
-    return title;
   }
 
   getLabelMatch(feature: Feature, labelMatch): string {

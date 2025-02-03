@@ -69,7 +69,7 @@ export function addLayerAndFeaturesToMap(
     style: randomStyle
   }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
-  map.addLayer(layer);
+  map.layerController.add(layer);
   moveToOlFeatures(map.viewController, olFeatures);
 
   return layer;
@@ -227,7 +227,7 @@ export function addLayerAndFeaturesStyledToMap(
       imposedLayerOptions
     )
   );
-  map.addLayer(layer);
+  map.layerController.add(layer);
   if (zoomTo) {
     moveToOlFeatures(map.viewController, olFeatures);
   }

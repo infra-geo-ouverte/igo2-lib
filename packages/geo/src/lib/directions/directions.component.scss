@@ -1,6 +1,9 @@
-$slide-toggle-width: 60px;
-
 .directions-options {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin: 0 12px;
+
   mat-slide-toggle {
     width: 100%;
     padding: 10px;
@@ -11,7 +14,14 @@ $slide-toggle-width: 60px;
 
     ::ng-deep .mdc-label {
       margin-left: 0;
-      width: calc(100% - #{$slide-toggle-width});
+      margin-right: auto;
+      width: auto;
+      padding-right: 0;
+    }
+
+    ::ng-deep .mdc-slide-toggle {
+      margin-left: auto;
+      margin-right: 0;
     }
   }
 }

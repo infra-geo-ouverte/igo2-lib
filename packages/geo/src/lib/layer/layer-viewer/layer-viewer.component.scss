@@ -1,0 +1,57 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.layer-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.layer-list-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
+}
+
+.header-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 16px;
+
+  mat-checkbox {
+    margin-left: -16px;
+  }
+}
+
+::ng-deep .layer-indicator {
+  color: rgba(0, 0, 0, 0.38) !important;
+
+  igo-icon,
+  &.mdc-icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  mat-icon {
+    $size: 18px;
+    height: $size;
+    width: $size;
+    font-size: $size;
+
+    font-variation-settings: 'fill' 0;
+
+    ::ng-deep svg {
+      height: $size;
+      width: $size;
+    }
+  }
+}

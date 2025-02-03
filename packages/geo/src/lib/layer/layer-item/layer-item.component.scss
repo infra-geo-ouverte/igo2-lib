@@ -1,29 +1,43 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../common/src/style/partial/common.variables';
+@use '../layer-base/layer-base';
 
 :host {
   overflow: hidden;
+}
 
-  ::ng-deep .igo-layer-title {
-    display: block;
-    width: 100%;
-    cursor: pointer;
-  }
+.list-actions {
+  display: flex;
+  margin-left: 4px;
+  margin-right: 4px;
+}
 
-  .igo-layer-legend-container {
-    padding-left: 18px;
-    width: calc(100% - 18px);
-  }
+.layer-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
 
-  mat-icon {
-    &[matBadge] ::ng-deep .mat-badge-content {
-      font-size: 12px;
-    }
-  }
+.igo-layer-title {
+  display: block;
+  cursor: pointer;
 
-  .layerCheck {
-    align-self: baseline;
-    width: 16px;
-    padding-right: 0px;
-  }
+  max-height: 48px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+
+.igo-layer-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.igo-layer-legend-container {
+  padding-top: 4px;
+  width: calc(100% - 12px);
 }

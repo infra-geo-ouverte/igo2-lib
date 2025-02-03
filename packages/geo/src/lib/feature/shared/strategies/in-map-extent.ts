@@ -79,11 +79,14 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     }
 
     this.updateEntitiesInExtent(store);
-    this.states$$.push(
-      store.layer.map.viewController.state$
-        .pipe(debounceTime(250))
-        .subscribe(() => this.updateEntitiesInExtent(store))
-    );
+    const map = store.map ?? store.layer.map;
+    if (map) {
+      this.states$$.push(
+        map.viewController.state$
+          .pipe(debounceTime(250))
+          .subscribe(() => this.updateEntitiesInExtent(store))
+      );
+    }
   }
 
   private updateEntitiesInExtent(store: FeatureStore) {

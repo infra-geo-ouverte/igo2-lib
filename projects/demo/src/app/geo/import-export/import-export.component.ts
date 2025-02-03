@@ -54,6 +54,6 @@ export class AppImportExportComponent {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
   }
 }

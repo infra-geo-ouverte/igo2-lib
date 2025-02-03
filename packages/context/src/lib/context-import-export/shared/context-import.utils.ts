@@ -177,7 +177,7 @@ export function addImportedFeaturesToMap(
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
   });
-  map.addLayer(layer);
+  map.layerController.add(layer);
 
   return layer;
 }
@@ -268,7 +268,7 @@ export function addImportedFeaturesStyledToMap(
     opacity: extraFeatures.opacity,
     visible: extraFeatures.visible
   });
-  map.addLayer(layer);
+  map.layerController.add(layer);
 
   return layer;
 }

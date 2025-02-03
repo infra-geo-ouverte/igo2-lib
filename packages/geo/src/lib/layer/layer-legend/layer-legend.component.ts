@@ -30,14 +30,16 @@ import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { Legend } from '../../datasource/shared/datasources/datasource.interface';
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { Layer } from '../shared/layers/layer';
+import {
+  Legend,
+  WMSDataSource,
+  WMSDataSourceOptions
+} from '../../datasource/shared/datasources';
 import {
   ItemStyleOptions,
+  Layer,
   LegendMapViewOptions
-} from '../shared/layers/legend.interface';
+} from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -106,9 +108,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   public imagesHeight: Record<string, number> = {};
 
-  /**
-   * Layer
-   */
   @Input() layer: Layer;
 
   /**

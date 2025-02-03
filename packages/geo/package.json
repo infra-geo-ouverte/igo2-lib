@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "18.0.0-next.7",
+  "version": "18.0.0-next.11",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -22,6 +22,7 @@
     "lint": "ng lint geo",
     "lint.fix": "ng lint geo --fix",
     "test": "ng test geo --watch=false",
+    "test.watch": "ng test geo",
     "watch": "ng build geo --watch"
   },
   "exports": {

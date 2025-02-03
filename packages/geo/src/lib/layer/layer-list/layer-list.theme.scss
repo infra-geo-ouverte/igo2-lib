@@ -1,0 +1,50 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+}
+
+@mixin color($theme) {
+  $accent: map.get($theme, accent);
+  $hoveredColor: mat.m2-get-color-from-palette($accent, default);
+
+  igo-layer-list {
+    mat-tree-node {
+      &.--selected,
+      &.--dragged {
+        igo-layer-group,
+        igo-layer-item {
+          background-color: mat.m2-get-color-from-palette($accent, lighter);
+          color: mat.m2-get-color-from-palette($accent, default-contrast);
+        }
+      }
+
+      &.--children-selected {
+        igo-layer-group,
+        igo-layer-item {
+          background-color: adjust-color(
+            $color: mat.m2-get-color-from-palette($accent, lighter),
+            $lightness: 8%
+          );
+          color: mat.m2-get-color-from-palette($accent, default-contrast);
+        }
+      }
+
+      &.--drag-hover {
+        &::after {
+          border-color: $hoveredColor !important;
+        }
+      }
+    }
+
+    // Workaround, the hover freeze when a tree is expanded when dragging
+    mat-tree:not(.--dragging) {
+      mat-tree-node {
+        &:hover::after {
+          border-color: $hoveredColor;
+        }
+      }
+    }
+  }
+}

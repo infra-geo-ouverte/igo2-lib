@@ -1,10 +1,21 @@
 @use '@angular/material' as mat;
-@use './layer-legend/layer-legend.theming.scss' as layer-legend;
+@use './layer-legend/layer-legend.theme.scss' as layer-legend;
 @use './layer-list-tool/layer-list-tool.theming.scss' as layer-list-tool;
+@use './layer-unavailable/layer-unavailable.theme.scss' as layer-unavailable;
+@use './layer-visibility-button/layer-visibility-button.theme.scss' as
+  layer-visibility-button;
+@use './layer-viewer/layer-viewer.theme' as layer-viewer;
 @use './layer-item/layer-item.theme.scss' as layer-item;
+@use './layer-group/layer-group.theme.scss' as layer-group;
+@use './layer-list/layer-list.theme.scss' as layer-list;
 
-@mixin igo-layer-theming($theme) {
-  @include layer-legend.igo-layer-legend-theming($theme);
+@mixin themes($theme) {
+  @include layer-legend.theme($theme);
   @include layer-list-tool.theme($theme);
   @include layer-item.theme($theme);
+  @include layer-group.theme($theme);
+  @include layer-list.theme($theme);
+  @include layer-unavailable.theme($theme);
+  @include layer-viewer.theme($theme);
+  @include layer-visibility-button.theme($theme);
 }

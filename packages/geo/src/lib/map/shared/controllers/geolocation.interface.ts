@@ -1,3 +1,4 @@
+import { Coordinate } from 'ol/coordinate';
 import { ProjectionLike } from 'ol/proj';
 
 export interface GeolocationOptions {
@@ -17,7 +18,7 @@ export interface MapGeolocationControllerOptions {
 }
 
 export interface MapGeolocationState {
-  position: number[];
+  position: Coordinate;
   projection: string;
   accuracy: number;
   altitude: number;
