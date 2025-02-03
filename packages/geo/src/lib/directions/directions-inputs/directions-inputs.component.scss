@@ -8,47 +8,38 @@
     }
   }
 
-  .igo-form-button-group {
-    display: flex;
-    align-items: center;
-    padding-left: 12px;
-  }
-
   .stops-list {
-    max-width: 100%;
-    min-height: 60px;
-    display: block;
-    background: white;
-    border-radius: 4px;
-    overflow: hidden;
-    padding: 20px 10px;
+    padding: 12px 10px;
   }
 
-  .swipe-vertical {
-    cursor: move;
-  }
-
-  .stop-box {
-    color: rgba(0, 0, 0, 0.87);
+  .stops-list,
+  .stop {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    background: white;
+    flex-flow: column;
+    row-gap: 12px;
+  }
 
-    &:not(:last-child) {
-      margin-bottom: 16px;
+  .stop:hover {
+    .swipe-vertical,
+    .delete-button {
+      visibility: visible;
+      display: block;
     }
   }
 
-  .cdk-drag-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow:
-      0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  .swipe-vertical {
+    visibility: hidden;
+    cursor: move;
+  }
+
+  .delete-button {
+    display: none;
+  }
+
+  .stop-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .cdk-drag-placeholder {

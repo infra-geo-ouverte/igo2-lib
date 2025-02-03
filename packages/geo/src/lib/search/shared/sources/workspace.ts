@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { FEATURE } from '../../../feature/shared/feature.enums';
 import { Feature } from '../../../feature/shared/feature.interfaces';
-import { Layer } from '../../../layer/shared/layers/layer';
+import { Layer } from '../../../layer';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';

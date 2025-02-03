@@ -1,12 +1,4 @@
-import { ImageLayer } from './image-layer';
-import { Layer } from './layer';
-import { TileLayer } from './tile-layer';
-import { VectorLayer } from './vector-layer';
-import { VectorTileLayer } from './vectortile-layer';
+import { type Layer } from './layer';
+import { type LayerGroup } from './layer-group';
 
-export type AnyLayer =
-  | Layer
-  | ImageLayer
-  | TileLayer
-  | VectorLayer
-  | VectorTileLayer;
+export type AnyLayer = Layer | LayerGroup;

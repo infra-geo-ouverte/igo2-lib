@@ -57,7 +57,7 @@ export class AppLegendComponent {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             visible: true,
@@ -82,7 +82,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -99,7 +99,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -116,7 +116,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -130,7 +130,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -144,7 +144,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -158,7 +158,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -172,7 +172,7 @@ export class AppLegendComponent {
           }
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
@@ -199,7 +199,9 @@ export class AppLegendComponent {
             extern: true
           }
         };
-        this.map.addLayer(this.layerService.createLayer(layerOptions));
+        this.map.layerController.add(
+          this.layerService.createLayer(layerOptions)
+        );
       });
   }
 }

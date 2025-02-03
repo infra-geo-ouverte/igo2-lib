@@ -10,6 +10,15 @@ export class ArcGISRestDataSource extends DataSource {
   declare public ol: olSourceVector;
   declare public options: ArcGISRestDataSourceOptions;
 
+  get saveableOptions(): Partial<ArcGISRestDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params,
+      url: this.options.url
+    };
+  }
+
   protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();
     return new olSourceVector({

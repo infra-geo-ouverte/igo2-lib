@@ -41,7 +41,8 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
-import type { IgoMap, MapExtent } from '../../../map/shared';
+import type { MapBase } from '../../../map/shared/map.abstract';
+import { MapExtent } from '../../../map/shared/map.interface';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
@@ -54,9 +55,11 @@ import {
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
+import { LayerType } from './layer.interface';
 import type { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
+  type: LayerType = 'vector';
   private previousLoadExtent: Extent;
   private previousLoadResolution: number;
   private previousOgcFilters: OgcFiltersOptions;
@@ -241,7 +244,13 @@ export class VectorLayer extends Layer {
     return vector;
   }
 
-  removeLayerFromIDB() {
+  remove(): void {
+    this.watcher.unsubscribe();
+    this.removeLayerFromIDB();
+    super.remove();
+  }
+
+  private removeLayerFromIDB() {
     if (this.geoDBService && this.layerDBService) {
       zip(
         this.geoDBService.deleteByKey(this.id),
@@ -376,13 +385,13 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
       this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
   }
 
   public setExtent(extent: MapExtent): void {

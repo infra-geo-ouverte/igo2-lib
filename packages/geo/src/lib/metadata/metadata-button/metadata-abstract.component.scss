@@ -1,13 +1,13 @@
 :host {
   position: relative;
   display: block;
+}
 
-  .close-button {
-    top: 5px;
-    right: 5px;
-    padding: 7px;
-    line-height: 10px;
-    position: absolute !important;
-    min-width: auto;
-  }
+.close-button {
+  top: 5px;
+  right: 5px;
+  padding: 7px;
+  line-height: 10px;
+  position: absolute !important;
+  min-width: auto;
 }

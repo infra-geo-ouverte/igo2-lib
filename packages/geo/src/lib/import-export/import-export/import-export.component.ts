@@ -49,6 +49,7 @@ import { skipWhile } from 'rxjs/operators';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { DownloadService } from '../../download/shared/download.service';
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { isLayerGroup, isLayerItem } from '../../layer';
 import { LayerService } from '../../layer/shared/layer.service';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { Layer } from '../../layer/shared/layers/layer';
@@ -110,7 +111,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public form: UntypedFormGroup;
   public importForm: UntypedFormGroup;
   public formats$ = new BehaviorSubject<ExportFormat[]>(undefined);
-  public exportableLayers$ = new BehaviorSubject<AnyLayer[]>([]);
+  public exportableLayers$ = new BehaviorSubject<Layer[]>([]);
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
@@ -225,16 +226,18 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$.subscribe((layers) => {
-      this.exportableLayers$.next(
-        layers.filter((layer: Layer) => {
-          return (
-            (layer instanceof VectorLayer && layer.exportable === true) ||
-            (layer.dataSource.options.download &&
-              layer.dataSource.options.download.url)
-          );
-        }) as AnyLayer[]
-      );
+    this.layers$$ = this.map.layerController.all$.subscribe((layers) => {
+      const exportableLayers = layers.filter((layer) => {
+        if (isLayerGroup(layer)) {
+          return false;
+        }
+        return (
+          (layer instanceof VectorLayer && layer.exportable === true) ||
+          (layer.dataSource.options.download &&
+            layer.dataSource.options.download.url)
+        );
+      });
+      this.exportableLayers$.next(exportableLayers as Layer[]);
     });
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
@@ -249,7 +252,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layers) {
           this.computeFormats(
-            exportOptions.layers.map((l) => this.map.getLayerById(l))
+            exportOptions.layers.map((l) => this.map.layerController.getById(l))
           );
         }
       });
@@ -274,7 +277,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         const selectedLayers =
           layersId instanceof Array ? layersId : [layersId];
         this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
-        const layers = selectedLayers.map((l) => this.map.getLayerById(l));
+        const layers = selectedLayers.map((l) =>
+          this.map.layerController.getById(l)
+        );
         this.computeFormats(layers);
 
         if (this.formats$.value.indexOf(this.form.value.format) === -1) {
@@ -429,7 +434,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public getLayerTitleById(id): string {
-    return this.map.getLayerById(id)?.title;
+    return this.map.layerController.getById(id)?.title;
   }
 
   layerHasSelectedFeatures(layer: Layer): boolean {
@@ -489,7 +494,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const previousSpecs = this.previousLayerSpecs$.value;
     if (previousSpecs && previousSpecs.length) {
       previousSpecs.forEach((specs) => {
-        const previousLayer = this.map.getLayerById(specs.id);
+        const previousLayer = this.map.layerController.getById(specs.id);
         previousLayer.visible = specs.visible;
         previousLayer.opacity = specs.opacity;
         (previousLayer as any).queryable = specs.queryable;
@@ -565,7 +570,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const layerId of data.layers) {
       this.loading$.next(true);
-      const layer = this.map.getLayerById(layerId);
+      const layer = this.map.layerController.getById(layerId);
+      if (isLayerGroup(layer)) {
+        continue;
+      }
       const features = await lastValueFrom(
         this.exportService.getFeatures(this.map, layer, data, this.store)
       ).catch((error) => {
@@ -584,7 +592,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         );
       }
 
-      if (data.format === 'URL') {
+      if (data.format === 'URL' && isLayerItem(layer)) {
         this.handleUrlExport(layer);
       }
 
@@ -711,7 +719,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ): Promise<GeometryCollection[]> {
     return data.layers.reduce(async (typesPromise, layerId) => {
       const types = await typesPromise;
-      const layer = this.map.getLayerById(layerId);
+      const layer = this.map.layerController.getById(layerId);
+      if (isLayerGroup(layer)) {
+        return typesPromise;
+      }
       const features = await lastValueFrom(
         this.exportService.getFeatures(this.map, layer, data, this.store)
       ).catch((error) => {
@@ -931,7 +942,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const customList = [];
     if (layers?.length) {
       layers.forEach((layer) => {
-        if (!layer) {
+        if (!layer || isLayerGroup(layer)) {
           return;
         }
         if (layer.dataSource.options.download?.allowedFormats) {

@@ -13,7 +13,7 @@ import { OnUpdateInputs } from '@igo2/common/dynamic-component';
 import { WidgetComponent } from '@igo2/common/widget';
 
 import { OgcFilterableItemComponent } from '../../../filter/ogc-filterable-item/ogc-filterable-item.component';
-import { Layer } from '../../../layer/shared/layers/layer';
+import { Layer } from '../../../layer';
 import { IgoMap } from '../../../map/shared/map';
 
 @Component({

@@ -55,7 +55,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -70,7 +70,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -85,7 +85,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.layerService
       .createAsyncLayer({
@@ -100,6 +100,6 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
   }
 }

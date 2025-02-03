@@ -1,51 +1,63 @@
-<div class="igo-input-container" *ngIf="directions && activeDirection">
-  <mat-form-field *ngIf="directions && directions.length > 1">
+<div class="igo-input-container" *ngIf="routes && activeRoute">
+  <mat-form-field *ngIf="routes.length > 1" [matTooltip]="activeRoute.title">
     <mat-label>{{
-      'igo.geo.directionsForm.drivingOptions' | translate
+      'igo.geo.directions.results.routeOptions' | translate
     }}</mat-label>
     <mat-select
-      placeholder="{{ 'igo.geo.directionsForm.drivingOptions' | translate }}"
-      (selectionChange)="changeRoute()"
-      [(ngModel)]="activeDirection"
+      (selectionChange)="chooseRouteOption()"
+      [(ngModel)]="activeRoute"
     >
       <mat-option
-        *ngFor="let direction of directions; let cnt = index"
-        [value]="direction"
+        *ngFor="let route of routes; let routeIndex = index"
+        [value]="route"
       >
-        Option {{ cnt + 1 }} : {{ formatDistance(direction.distance) }} ({{
-          formatDuration(direction.duration)
-        }})
+        Option {{ routeIndex + 1 }}: {{ route.title }} ({{
+          formatDistance(route.distance)
+        }}
+        - {{ formatDuration(route.duration) }})
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-divider *ngIf="directions && directions.length === 0"></mat-divider>
+  <h3 mat-header class="igo-route-title">
+    {{ activeRoute.title }}
+    {{ getTitleDurationAndDistance() }}
+  </h3>
+  <mat-list (mouseleave)="onLeaveList()">
+    <ng-container *ngFor="let step of activeRoute.steps; let stepIndex = index">
+      <mat-list-item
+        *ngIf="
+          (formatDistance(step.distance) && formatDuration(step.duration)) ||
+          stepIndex === activeRoute.steps.length - 1
+        "
+        matListItem
+        class="igo-steps step"
+        (mouseenter)="showStep(step)"
+        (click)="showStep(step, true)"
+      >
+        <mat-icon
+          matListItemIcon
+          [matTooltip]="
+            'igo.geo.directions.results.stepTitleTooltip' | translate
+          "
+          >{{ getFormattedStep(step, stepIndex).iconName }}
+        </mat-icon>
 
-  <mat-list (mouseleave)="onStepsListBlur()">
-    <h2 mat-header class="igo-route-title">{{ activeDirection.title }}</h2>
-    <span class="mat-caption">
-      {{ formatDistance(activeDirection.distance) }},
-      {{ formatDuration(activeDirection.duration) }}
-    </span>
-    <mat-list-item
-      class="igo-steps"
-      (mouseenter)="showSegment(step)"
-      (click)="showSegment(step, true)"
-      *ngFor="let step of activeDirection.steps; let cnt = index"
-      igoListItem
-    >
-      <mat-icon [ngClass]="formatStep(step, cnt).cssClass" matListItemIcon
-        >{{ formatStep(step, cnt).image }}
-      </mat-icon>
-
-      <span class="igo-step-text">
-        {{ cnt + 1 }}. {{ formatStep(step, cnt).instruction }}
-      </span>
-      <span matListItemMeta>
-        {{ formatDistance(step.distance) }}
-      </span>
-    </mat-list-item>
-
-    <mat-divider></mat-divider>
+        <span
+          matListItemTitle
+          class="step-title"
+          [matTooltip]="getFormattedStep(step, stepIndex).instruction"
+        >
+          {{ getFormattedStep(step, stepIndex).instruction }}
+        </span>
+        <span
+          *ngIf="stepIndex !== activeRoute.steps.length - 1"
+          matListItemLine
+        >
+          {{ formatDistance(step.distance) }} -
+          {{ formatDuration(step.duration) }}
+        </span>
+      </mat-list-item>
+    </ng-container>
   </mat-list>
 </div>

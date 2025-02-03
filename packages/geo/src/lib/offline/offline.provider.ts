@@ -37,23 +37,21 @@ const dbConfig: DBConfig = {
   ]
 };
 
-export function provideOffline(
-  options: IOfflineOptions | undefined
-): EnvironmentProviders {
-  if (!options?.enable) {
-    return;
-  }
-
+export function provideOffline(options: IOfflineOptions): EnvironmentProviders {
   const dbConfigFormatted = {};
   for (const config of [dbConfig]) {
     Object.assign(dbConfigFormatted, { [config.name]: dbConfig });
   }
 
-  return makeEnvironmentProviders([
-    provideIndexedDb(dbConfig),
-    LayerDBService,
-    GeoDBService,
-    GeoNetworkService,
-    ConfigFileToGeoDBService
-  ]);
+  return makeEnvironmentProviders(
+    options?.enable
+      ? [
+          provideIndexedDb(dbConfig),
+          LayerDBService,
+          GeoDBService,
+          GeoNetworkService,
+          ConfigFileToGeoDBService
+        ]
+      : []
+  );
 }

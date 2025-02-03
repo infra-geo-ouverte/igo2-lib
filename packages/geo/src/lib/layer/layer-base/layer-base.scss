@@ -1,0 +1,28 @@
+:host {
+  ::ng-deep .list-secondary-actions {
+    button {
+      visibility: hidden;
+
+      &.disabled {
+        visibility: visible;
+      }
+    }
+  }
+
+  &:hover {
+    ::ng-deep .list-secondary-actions {
+      button {
+        visibility: visible;
+      }
+    }
+  }
+
+  &.disabled {
+    ::ng-deep {
+      .igo-layer-title,
+      .list-secondary-actions {
+        opacity: 0.54;
+      }
+    }
+  }
+}

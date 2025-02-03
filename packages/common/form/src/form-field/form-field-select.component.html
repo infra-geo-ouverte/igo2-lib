@@ -2,7 +2,7 @@
   <mat-select
     [multiple]="multiple"
     [required]="required"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder | translate"
     [formControl]="formControl"
   >
     <mat-option *ngFor="let choice of choices$ | async" [value]="choice.value">

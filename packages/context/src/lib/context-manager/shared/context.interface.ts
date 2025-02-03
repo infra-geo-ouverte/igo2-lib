@@ -1,7 +1,7 @@
 import { Tool } from '@igo2/common/tool';
 import { Message } from '@igo2/core/message';
 import {
-  LayerOptions,
+  AnyLayerOptions,
   MapAttributionOptions,
   MapExtent,
   MapScaleLineOptions,
@@ -36,10 +36,11 @@ export type ExtraFeatures = FeatureCollection & {
   opacity: number;
   visible: boolean;
 };
+
 export interface DetailedContext extends Context {
   base?: string;
   map?: ContextMap;
-  layers?: LayerOptions[];
+  layers?: AnyLayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
   message?: Message;
