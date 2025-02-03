@@ -21,7 +21,8 @@ import {
   CatalogItemLayer,
   CatalogItemType,
   CatalogLibaryComponent,
-  CatalogService
+  CatalogService,
+  isLayerItemOptions
 } from '@igo2/geo';
 import {
   addExcelSheetToWorkBook,
@@ -220,12 +221,14 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       ),
       concatAll(),
       map((detailedContext) => {
-        return detailedContext.layers.map((layer) =>
-          getInfoFromSourceOptions(
-            layer.sourceOptions,
-            detailedContext.title ?? detailedContext.uri
-          )
-        );
+        return detailedContext.layers
+          .filter((layer) => isLayerItemOptions(layer))
+          .map((layer) =>
+            getInfoFromSourceOptions(
+              layer.sourceOptions,
+              detailedContext.title ?? detailedContext.uri
+            )
+          );
       }),
       concatAll(),
       toArray()
