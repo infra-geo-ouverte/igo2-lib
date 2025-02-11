@@ -16,6 +16,7 @@ import {
   TimeFilterStyle,
   TimeFilterType
 } from '../../filter/shared/time-filter.enum';
+import { TimeFilterOptions } from '../../filter/shared/time-filter.interface';
 import type {
   ItemStyleOptions,
   LegendOptions
@@ -540,11 +541,11 @@ export class CapabilitiesService {
     }
   }
 
-  getTimeFilter(layer) {
+  getTimeFilter(layer): TimeFilterOptions {
     let dimension;
 
     if (layer.Dimension) {
-      const timeFilter: any = {};
+      const timeFilter: TimeFilterOptions = {};
       dimension = layer.Dimension[0];
 
       if (dimension.values) {
@@ -555,7 +556,7 @@ export class CapabilitiesService {
       }
 
       if (dimension.default) {
-        timeFilter.value = dimension.default;
+        timeFilter.value = timeFilter.default = dimension.default;
       }
       return timeFilter;
     }

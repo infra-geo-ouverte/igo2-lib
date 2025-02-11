@@ -120,3 +120,9 @@ export function searchFilter(
   }
   return undefined;
 }
+
+export function isTimeFrame(value: string): boolean {
+  return TimeFrame.some((timeFrame) =>
+    value.toLocaleLowerCase().includes(timeFrame)
+  );
+}

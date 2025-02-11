@@ -4,8 +4,8 @@ export interface TimeFilterOptions {
   min?: string;
   max?: string;
   range?: boolean;
-  value?: string;
-  values?: [string, string];
+  value?: string | [string, string];
+  default?: string | [string, string];
   type?: TimeFilterType;
   format?: string;
   style?: TimeFilterStyle;
