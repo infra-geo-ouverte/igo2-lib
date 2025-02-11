@@ -4,6 +4,10 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { BehaviorSubject } from 'rxjs';
 
+import {
+  isDateOrRangeInRange,
+  parseDateString
+} from '../../../filter/shared/date.utils';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
   OgcFilterDuringOptions,
@@ -79,7 +83,16 @@ export class WMSDataSource extends DataSource {
   readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
 
   get saveableOptions(): Partial<WMSDataSourceOptions> {
-    const baseOptions = super.saveableOptions;
+    const baseOptions = super.saveableOptions as WMSDataSourceOptions;
+
+    if (
+      this.timeFilter?.value &&
+      this.timeFilter?.value.toString() !== this.timeFilter?.default.toString()
+    ) {
+      baseOptions.timeFilter = {
+        value: this.timeFilter.value
+      };
+    }
 
     return {
       ...baseOptions,
@@ -87,8 +100,6 @@ export class WMSDataSource extends DataSource {
       ...(this.ogcFilters && {
         ogcFilters: getSaveableOgcParams(this.ogcFilters)
       })
-      // TODO: On veut enregistrer la valeur seulement si l'utilisateur fait une modification.
-      // timeFilter: { value: this.timeFilter?.value }
     };
   }
 
@@ -216,7 +227,35 @@ export class WMSDataSource extends DataSource {
       timeFilterableDataSourceOptions?.timeFilterable &&
       timeFilterableDataSourceOptions?.timeFilter
     ) {
+      if (timeFilterableDataSourceOptions.timeFilter.value) {
+        const date = this.dateFormat(
+          timeFilterableDataSourceOptions.timeFilter
+        );
+
+        this.ol.updateParams({
+          TIME: date
+        });
+      }
       this.setTimeFilter(timeFilterableDataSourceOptions.timeFilter, true);
+    }
+  }
+
+  private dateFormat(timeFilterOptions: TimeFilterOptions): string {
+    const date = parseDateString(timeFilterOptions.value);
+    const minMax = parseDateString([
+      timeFilterOptions.min,
+      timeFilterOptions.max
+    ]) as [min: Date, max: Date];
+    const valueInRange = isDateOrRangeInRange(date, minMax);
+
+    if (date instanceof Date) {
+      return valueInRange
+        ? `${date.toISOString().split('.')[0]}Z`
+        : `${minMax[0].toISOString().split('.')[0]}Z`;
+    } else {
+      return valueInRange
+        ? `${date[0].toISOString().split('.')[0]}Z/${date[1].toISOString().split('.')[0]}Z`
+        : `${minMax[0].toISOString().split('.')[0]}Z/${minMax[1].toISOString().split('.')[0]}Z`;
     }
   }
 
@@ -247,7 +286,7 @@ export class WMSDataSource extends DataSource {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
-      this.ol.notify('timeFilter', this.ogcFilters);
+      this.ol.notify('timeFilter', this.timeFilter);
     }
   }
 

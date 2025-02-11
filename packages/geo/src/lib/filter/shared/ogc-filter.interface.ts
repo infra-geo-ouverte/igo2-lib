@@ -219,7 +219,7 @@ export interface OgcInterfaceFilterOptions {
   end?: string;
   step?: string;
   restrictToStep?: boolean;
-  sliderOptions: SliderOptionsInterface;
+  sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
   escapeChar?: string;
   expression?: string | number;
