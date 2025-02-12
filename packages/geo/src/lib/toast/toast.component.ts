@@ -16,18 +16,17 @@ import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 
 @Component({
-  selector: 'igo-toast',
-  templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.scss'],
-  standalone: true,
-  imports: [
-    FlexibleComponent,
-    PanelComponent,
-    MatButtonModule,
-    MatIconModule,
-    NgIf,
-    FeatureDetailsComponent
-  ]
+    selector: 'igo-toast',
+    templateUrl: './toast.component.html',
+    styleUrls: ['./toast.component.scss'],
+    imports: [
+        FlexibleComponent,
+        PanelComponent,
+        MatButtonModule,
+        MatIconModule,
+        NgIf,
+        FeatureDetailsComponent
+    ]
 })
 export class ToastComponent {
   static SWIPE_ACTION = {

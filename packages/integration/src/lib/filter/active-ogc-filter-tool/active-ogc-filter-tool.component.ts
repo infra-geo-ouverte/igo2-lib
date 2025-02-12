@@ -18,11 +18,10 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   parent: 'mapTools'
 })
 @Component({
-  selector: 'igo-active-ogc-filter-tool',
-  templateUrl: './active-ogc-filter-tool.component.html',
-  animations: [toolSlideInOut()],
-  standalone: true,
-  imports: [OgcFilterableItemComponent]
+    selector: 'igo-active-ogc-filter-tool',
+    templateUrl: './active-ogc-filter-tool.component.html',
+    animations: [toolSlideInOut()],
+    imports: [OgcFilterableItemComponent]
 })
 export class ActiveOgcFilterToolComponent {
   get map(): IgoMap {

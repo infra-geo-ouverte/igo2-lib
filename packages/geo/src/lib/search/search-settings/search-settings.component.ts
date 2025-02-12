@@ -45,26 +45,25 @@ import {
  * more than one search source enabled.
  */
 @Component({
-  selector: 'igo-search-settings',
-  templateUrl: './search-settings.component.html',
-  styleUrls: ['./search-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    MatMenuModule,
-    MatIconModule,
-    NgIf,
-    NgFor,
-    MatCheckboxModule,
-    NgSwitch,
-    NgSwitchCase,
-    MatRadioModule,
-    MatDividerModule,
-    MatSlideToggleModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-search-settings',
+    templateUrl: './search-settings.component.html',
+    styleUrls: ['./search-settings.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatButtonModule,
+        MatTooltipModule,
+        MatMenuModule,
+        MatIconModule,
+        NgIf,
+        NgFor,
+        MatCheckboxModule,
+        NgSwitch,
+        NgSwitchCase,
+        MatRadioModule,
+        MatDividerModule,
+        MatSlideToggleModule,
+        IgoLanguageModule
+    ]
 })
 export class SearchSettingsComponent implements OnInit {
   public hasPointerReverseSearchSource = false;

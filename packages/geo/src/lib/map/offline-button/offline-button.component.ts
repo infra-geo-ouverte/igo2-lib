@@ -9,17 +9,16 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { IgoMap } from '../shared/map';
 
 @Component({
-  selector: 'igo-offline-button',
-  templateUrl: './offline-button.component.html',
-  styleUrls: ['./offline-button.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    NgClass,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-offline-button',
+    templateUrl: './offline-button.component.html',
+    styleUrls: ['./offline-button.component.scss'],
+    imports: [
+        MatButtonModule,
+        MatTooltipModule,
+        NgClass,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class OfflineButtonComponent implements OnInit {
   btnStyle = 'onlineStyle';

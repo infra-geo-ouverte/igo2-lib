@@ -14,7 +14,7 @@ import { DropPositionType, TreeFlatNode } from './tree-drag-drop.interface';
 import { TREE_MOCK } from './tree-drag-drop.mock';
 
 @Component({
-  template: `
+    template: `
     <mat-tree
       igoTreeDragDrop
       [treeControl]="treeControl"
@@ -24,7 +24,8 @@ import { TREE_MOCK } from './tree-drag-drop.mock';
         <div>Test</div>
       </mat-tree-node>
     </mat-tree>
-  `
+  `,
+    standalone: false
 })
 class TestComponent {
   treeControl = new FlatTreeControl<any>(

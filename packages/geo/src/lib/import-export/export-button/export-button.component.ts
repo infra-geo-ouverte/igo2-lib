@@ -10,18 +10,17 @@ import { DataSourceOptions } from '../../datasource/shared/datasources';
 import { Layer, VectorLayer } from '../../layer/shared';
 
 @Component({
-  selector: 'igo-export-button',
-  templateUrl: './export-button.component.html',
-  styleUrls: ['./export-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-export-button',
+    templateUrl: './export-button.component.html',
+    styleUrls: ['./export-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class ExportButtonComponent {
   @Input() layer: Layer;

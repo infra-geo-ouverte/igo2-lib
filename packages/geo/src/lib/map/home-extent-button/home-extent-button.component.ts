@@ -16,11 +16,10 @@ import { HomeExtentButtonOptions } from './home-extent-button.interface';
 Button to center the map to the home extent
 */
 @Component({
-  selector: 'igo-home-extent-button',
-  templateUrl: './home-extent-button.component.html',
-  styleUrls: ['./home-extent-button.component.scss'],
-  standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
+    selector: 'igo-home-extent-button',
+    templateUrl: './home-extent-button.component.html',
+    styleUrls: ['./home-extent-button.component.scss'],
+    imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeExtentButtonComponent {
   @Input() map: IgoMap;

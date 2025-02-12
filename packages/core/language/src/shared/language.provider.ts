@@ -1,11 +1,5 @@
 import { HttpBackend } from '@angular/common/http';
-import {
-  APP_INITIALIZER,
-  EnvironmentProviders,
-  Provider,
-  importProvidersFrom,
-  makeEnvironmentProviders
-} from '@angular/core';
+import { EnvironmentProviders, Provider, importProvidersFrom, makeEnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -46,9 +40,8 @@ export function provideTranslation(
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     ...featureConfig.providers,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (languageService: LanguageService) => () => {
+    provideAppInitializer(() => {
+        const initializerFn = ((languageService: LanguageService) => () => {
         return (
           languageService.translate.currentLoader as LanguageLoaderBase
         ).isLoaded$?.pipe(
@@ -59,10 +52,9 @@ export function provideTranslation(
             throw error;
           })
         );
-      },
-      deps: [LanguageService],
-      multi: true
-    }
+      })(inject(LanguageService));
+        return initializerFn();
+      })
   ]);
 }
 

@@ -21,22 +21,21 @@ import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
 
 @Component({
-  selector: 'igo-context-item',
-  templateUrl: './context-item.component.html',
-  styleUrls: ['./context-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatListModule,
-    NgClass,
-    NgIf,
-    MatButtonModule,
-    StopPropagationDirective,
-    MatTooltipModule,
-    MatIconModule,
-    CollapseDirective,
-    IgoLanguageModule
-  ]
+    selector: 'igo-context-item',
+    templateUrl: './context-item.component.html',
+    styleUrls: ['./context-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatListModule,
+        NgClass,
+        NgIf,
+        MatButtonModule,
+        StopPropagationDirective,
+        MatTooltipModule,
+        MatIconModule,
+        CollapseDirective,
+        IgoLanguageModule
+    ]
 })
 export class ContextItemComponent {
   public typePermission = TypePermission;

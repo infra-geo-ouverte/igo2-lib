@@ -5,11 +5,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'igo-spinner',
-  templateUrl: './spinner.component.html',
-  styleUrls: ['./spinner.component.scss'],
-  standalone: true,
-  imports: [NgClass, MatProgressSpinner, AsyncPipe]
+    selector: 'igo-spinner',
+    templateUrl: './spinner.component.html',
+    styleUrls: ['./spinner.component.scss'],
+    imports: [NgClass, MatProgressSpinner, AsyncPipe]
 })
 export class SpinnerComponent {
   public shown$ = new BehaviorSubject<boolean>(false);

@@ -8,17 +8,16 @@ import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-  selector: 'igo-menu-button',
-  templateUrl: './menu-button.component.html',
-  styleUrls: ['./menu-button.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    NgClass,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-menu-button',
+    templateUrl: './menu-button.component.html',
+    styleUrls: ['./menu-button.component.scss'],
+    imports: [
+        MatButtonModule,
+        NgClass,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class MenuButtonComponent {
   @Input()

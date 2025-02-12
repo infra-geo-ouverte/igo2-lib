@@ -22,22 +22,21 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-layer',
-  templateUrl: './layer.component.html',
-  styleUrls: ['./layer.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    MatGridListModule,
-    MAP_DIRECTIVES,
-    LayerViewerComponent,
-    PanelComponent,
-    LAYER_DIRECTIVES,
-    METADATA_DIRECTIVES,
-    DownloadButtonComponent,
-    FILTER_DIRECTIVES
-  ]
+    selector: 'app-layer',
+    templateUrl: './layer.component.html',
+    styleUrls: ['./layer.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        MatGridListModule,
+        MAP_DIRECTIVES,
+        LayerViewerComponent,
+        PanelComponent,
+        LAYER_DIRECTIVES,
+        METADATA_DIRECTIVES,
+        DownloadButtonComponent,
+        FILTER_DIRECTIVES
+    ]
 })
 export class AppLayerComponent {
   public map: IgoMap = new IgoMap({

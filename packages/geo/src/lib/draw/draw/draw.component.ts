@@ -109,57 +109,50 @@ import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 
 @Component({
-  selector: 'igo-draw',
-  animations: [
-    trigger('openClose', [
-      state(
-        'open',
-        style({
-          opacity: 1
-        })
-      ),
-      state(
-        'closed',
-        style({
-          opacity: 0
-        })
-      ),
-      transition('open => closed', [animate('600ms ease')]),
-      transition('closed => open', [animate('800ms ease')])
-    ])
-  ],
-  templateUrl: './draw.component.html',
-  styleUrls: ['./draw.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    NgIf,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    NgFor,
-    MatOptionModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    EntityTableComponent,
-    MatBadgeModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ],
-  providers: [
-    {
-      provide: MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
-      useValue: {
-        hideSingleSelectionIndicator: true
-      } satisfies MatButtonToggleDefaultOptions
-    }
-  ]
+    selector: 'igo-draw',
+    animations: [
+        trigger('openClose', [
+            state('open', style({
+                opacity: 1
+            })),
+            state('closed', style({
+                opacity: 0
+            })),
+            transition('open => closed', [animate('600ms ease')]),
+            transition('closed => open', [animate('800ms ease')])
+        ])
+    ],
+    templateUrl: './draw.component.html',
+    styleUrls: ['./draw.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatDividerModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        EntityTableComponent,
+        MatBadgeModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ],
+    providers: [
+        {
+            provide: MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS,
+            useValue: {
+                hideSingleSelectionIndicator: true
+            } satisfies MatButtonToggleDefaultOptions
+        }
+    ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
   /**

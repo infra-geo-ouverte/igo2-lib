@@ -21,19 +21,18 @@ import { Catalog } from '../shared/catalog.abstract';
  * Catalog library item
  */
 @Component({
-  selector: 'igo-catalog-library-item',
-  templateUrl: './catalog-library-item.component.html',
-  styleUrls: ['./catalog-library-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatListModule,
-    NgIf,
-    MatIconModule,
-    MatTooltipModule,
-    MatButtonModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-catalog-library-item',
+    templateUrl: './catalog-library-item.component.html',
+    styleUrls: ['./catalog-library-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatListModule,
+        NgIf,
+        MatIconModule,
+        MatTooltipModule,
+        MatButtonModule,
+        IgoLanguageModule
+    ]
 })
 export class CatalogLibaryItemComponent {
   /**

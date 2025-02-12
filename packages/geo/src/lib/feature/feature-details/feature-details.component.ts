@@ -37,23 +37,22 @@ import { SearchSource } from '../../search/shared/sources/source';
 import { Feature } from '../shared';
 
 @Component({
-  selector: 'igo-feature-details',
-  templateUrl: './feature-details.component.html',
-  styleUrls: ['./feature-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    MatIconModule,
-    NgStyle,
-    ImageErrorDirective,
-    AsyncPipe,
-    JsonPipe,
-    KeyValuePipe,
-    IgoLanguageModule,
-    SecureImagePipe
-  ]
+    selector: 'igo-feature-details',
+    templateUrl: './feature-details.component.html',
+    styleUrls: ['./feature-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        NgFor,
+        MatIconModule,
+        NgStyle,
+        ImageErrorDirective,
+        AsyncPipe,
+        JsonPipe,
+        KeyValuePipe,
+        IgoLanguageModule,
+        SecureImagePipe
+    ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;

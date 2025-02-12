@@ -24,21 +24,20 @@ import type { AnyLayer } from '../shared/layers/any-layer';
 import type { LayerGroup } from '../shared/layers/layer-group';
 
 @Component({
-  selector: 'igo-layer-group',
-  templateUrl: './layer-group.component.html',
-  styleUrls: ['./layer-group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    NgIf,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatIconModule,
-    LayerVisibilityButtonComponent,
-    IgoLanguageModule
-  ]
+    selector: 'igo-layer-group',
+    templateUrl: './layer-group.component.html',
+    styleUrls: ['./layer-group.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        AsyncPipe,
+        NgIf,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatIconModule,
+        LayerVisibilityButtonComponent,
+        IgoLanguageModule
+    ]
 })
 export class LayerGroupComponent implements OnInit {
   @Input() layer: LayerGroup;

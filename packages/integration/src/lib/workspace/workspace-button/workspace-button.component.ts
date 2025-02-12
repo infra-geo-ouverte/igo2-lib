@@ -18,19 +18,18 @@ import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { WorkspaceState } from '../workspace.state';
 
 @Component({
-  selector: 'igo-workspace-button',
-  templateUrl: './workspace-button.component.html',
-  styleUrls: ['./workspace-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-workspace-button',
+    templateUrl: './workspace-button.component.html',
+    styleUrls: ['./workspace-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   public hasWorkspace$ = new BehaviorSubject<boolean>(false);

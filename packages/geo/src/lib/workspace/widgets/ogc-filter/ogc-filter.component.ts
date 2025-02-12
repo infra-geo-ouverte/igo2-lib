@@ -15,12 +15,11 @@ import { Layer } from '../../../layer';
 import { IgoMap } from '../../../map/shared/map';
 
 @Component({
-  selector: 'igo-ogc-filter',
-  templateUrl: './ogc-filter.component.html',
-  styleUrls: ['./ogc-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [OgcFilterableItemComponent]
+    selector: 'igo-ogc-filter',
+    templateUrl: './ogc-filter.component.html',
+    styleUrls: ['./ogc-filter.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [OgcFilterableItemComponent]
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   @Input() layer: Layer;

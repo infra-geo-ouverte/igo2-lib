@@ -29,28 +29,27 @@ import { WktService } from '../../wkt/shared/wkt.service';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 
 @Component({
-  selector: 'igo-ogc-filter-form',
-  templateUrl: './ogc-filter-form.component.html',
-  styleUrls: ['./ogc-filter-form.component.scss'],
-  standalone: true,
-  imports: [
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    NgClass,
-    MatSelectModule,
-    MatOptionModule,
-    NgIf,
-    MatInputModule,
-    MatAutocompleteModule,
-    NgFor,
-    MatButtonModule,
-    MatIconModule,
-    OgcFilterTimeComponent,
-    AsyncPipe,
-    KeyValuePipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-ogc-filter-form',
+    templateUrl: './ogc-filter-form.component.html',
+    styleUrls: ['./ogc-filter-form.component.scss'],
+    imports: [
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        NgClass,
+        MatSelectModule,
+        MatOptionModule,
+        NgIf,
+        MatInputModule,
+        MatAutocompleteModule,
+        NgFor,
+        MatButtonModule,
+        MatIconModule,
+        OgcFilterTimeComponent,
+        AsyncPipe,
+        KeyValuePipe,
+        IgoLanguageModule
+    ]
 })
 export class OgcFilterFormComponent implements OnInit {
   ogcFilterOperator = OgcFilterOperator;

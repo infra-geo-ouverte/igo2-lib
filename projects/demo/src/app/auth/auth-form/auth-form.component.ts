@@ -10,16 +10,15 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-auth-form',
-  templateUrl: './auth-form.component.html',
-  styleUrls: ['./auth-form.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    AuthFormComponent,
-    MatButtonModule
-  ]
+    selector: 'app-auth-form',
+    templateUrl: './auth-form.component.html',
+    styleUrls: ['./auth-form.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        AuthFormComponent,
+        MatButtonModule
+    ]
 })
 export class AppAuthFormComponent implements OnInit, OnDestroy {
   public logged = false;

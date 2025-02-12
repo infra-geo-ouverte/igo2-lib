@@ -19,11 +19,10 @@ import { Subscription } from 'rxjs';
 import { ListItemDirective } from './list-item.directive';
 
 @Component({
-  selector: 'igo-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
-  standalone: true,
-  imports: [MatListModule, ClickoutDirective, NgClass]
+    selector: 'igo-list',
+    templateUrl: './list.component.html',
+    styleUrls: ['./list.component.scss'],
+    imports: [MatListModule, ClickoutDirective, NgClass]
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input()

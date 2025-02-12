@@ -61,20 +61,19 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 export class AppAboutToolComponent {}
 
 @Component({
-  selector: 'app-tool',
-  templateUrl: './tool.component.html',
-  styleUrls: ['./tool.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    PanelComponent,
-    NgIf,
-    MatButtonModule,
-    MatIconModule,
-    ToolboxComponent,
-    AsyncPipe
-  ]
+    selector: 'app-tool',
+    templateUrl: './tool.component.html',
+    styleUrls: ['./tool.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        PanelComponent,
+        NgIf,
+        MatButtonModule,
+        MatIconModule,
+        ToolboxComponent,
+        AsyncPipe
+    ]
 })
 export class AppToolComponent implements OnInit, OnDestroy {
   toolbox: Toolbox = new Toolbox();

@@ -29,18 +29,17 @@ import {
 } from '../shared/store';
 
 @Component({
-  selector: 'igo-directions-buttons',
-  templateUrl: './directions-buttons.component.html',
-  styleUrls: ['./directions-buttons.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    NgIf,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-directions-buttons',
+    templateUrl: './directions-buttons.component.html',
+    styleUrls: ['./directions-buttons.component.scss'],
+    imports: [
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        NgIf,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class DirectionsButtonsComponent {
   @Input({ required: true }) contextUri: string;

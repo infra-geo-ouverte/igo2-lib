@@ -22,11 +22,10 @@ import { DrawState } from '../draw.state';
   icon: 'stylus_note'
 })
 @Component({
-  selector: 'igo-drawing-tool',
-  templateUrl: './drawing-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [DrawComponent]
+    selector: 'igo-drawing-tool',
+    templateUrl: './drawing-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DrawComponent]
 })
 export class DrawingToolComponent {
   /**

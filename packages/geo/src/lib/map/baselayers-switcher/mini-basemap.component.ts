@@ -23,12 +23,11 @@ import { MapBrowserComponent } from '../map-browser/map-browser.component';
 import { IgoMap } from '../shared/map';
 
 @Component({
-  selector: 'igo-mini-basemap',
-  templateUrl: './mini-basemap.component.html',
-  styleUrls: ['./mini-basemap.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, MapBrowserComponent]
+    selector: 'igo-mini-basemap',
+    templateUrl: './mini-basemap.component.html',
+    styleUrls: ['./mini-basemap.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgIf, MapBrowserComponent]
 })
 export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   @Input() map: IgoMap;

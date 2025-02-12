@@ -26,23 +26,22 @@ import {
 import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 
 @Component({
-  selector: 'igo-layer-viewer-bottom-actions',
-  templateUrl: './layer-viewer-bottom-actions.component.html',
-  styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    NgTemplateOutlet,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatMenuModule,
-    MatSliderModule,
-    IgoLanguageModule,
-    PanelComponent
-  ],
-  providers: [LayerListToolService, FormDialogService]
+    selector: 'igo-layer-viewer-bottom-actions',
+    templateUrl: './layer-viewer-bottom-actions.component.html',
+    styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
+    imports: [
+        NgIf,
+        NgTemplateOutlet,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatMenuModule,
+        MatSliderModule,
+        IgoLanguageModule,
+        PanelComponent
+    ],
+    providers: [LayerListToolService, FormDialogService]
 })
 export class LayerViewerBottomActionsComponent {
   orderable = true;

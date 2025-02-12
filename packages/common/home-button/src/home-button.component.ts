@@ -6,11 +6,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-  selector: 'igo-home-button',
-  templateUrl: './home-button.component.html',
-  styleUrls: ['./home-button.component.scss'],
-  standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
+    selector: 'igo-home-button',
+    templateUrl: './home-button.component.html',
+    styleUrls: ['./home-button.component.scss'],
+    imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeButtonComponent {
   @Output() unselectButton = new EventEmitter<any>();

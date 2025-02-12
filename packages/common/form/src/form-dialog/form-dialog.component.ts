@@ -27,23 +27,22 @@ import {
 import { FormDialogData } from './form-dialog.interface';
 
 @Component({
-  selector: 'igo-form-dialog',
-  templateUrl: './form-dialog.component.html',
-  styleUrls: ['./form-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    NgIf,
-    FormComponent,
-    NgFor,
-    FormFieldComponent,
-    FormGroupComponent,
-    MatDialogActions,
-    MatButtonModule,
-    CustomHtmlComponent,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-form-dialog',
+    templateUrl: './form-dialog.component.html',
+    styleUrls: ['./form-dialog.component.scss'],
+    imports: [
+        MatDialogTitle,
+        NgIf,
+        FormComponent,
+        NgFor,
+        FormFieldComponent,
+        FormGroupComponent,
+        MatDialogActions,
+        MatButtonModule,
+        CustomHtmlComponent,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class FormDialogComponent {
   form$ = new BehaviorSubject<Form>(undefined);

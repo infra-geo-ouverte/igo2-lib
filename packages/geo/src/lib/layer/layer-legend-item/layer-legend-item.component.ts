@@ -18,12 +18,11 @@ import { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
 
 @Component({
-  selector: 'igo-layer-legend-item',
-  templateUrl: './layer-legend-item.component.html',
-  styleUrls: ['./layer-legend-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
+    selector: 'igo-layer-legend-item',
+    templateUrl: './layer-legend-item.component.html',
+    styleUrls: ['./layer-legend-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
   inResolutionRange$ = new BehaviorSubject<boolean>(true);

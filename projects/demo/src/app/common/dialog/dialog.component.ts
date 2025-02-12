@@ -28,20 +28,19 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    IgoConfirmDialogModule,
-    IgoSelectValueDialogModule,
-    IgoFormDialogModule,
-    IgoJsonDialogModule,
-    MatButtonModule,
-    MatDividerModule
-  ]
+    selector: 'app-dialog',
+    templateUrl: './dialog.component.html',
+    styleUrls: ['./dialog.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        IgoConfirmDialogModule,
+        IgoSelectValueDialogModule,
+        IgoFormDialogModule,
+        IgoJsonDialogModule,
+        MatButtonModule,
+        MatDividerModule
+    ]
 })
 export class AppDialogComponent {
   constructor(

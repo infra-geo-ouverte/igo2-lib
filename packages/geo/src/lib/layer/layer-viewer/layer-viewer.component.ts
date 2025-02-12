@@ -45,24 +45,23 @@ import {
 import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
 
 @Component({
-  selector: 'igo-layer-viewer',
-  templateUrl: './layer-viewer.component.html',
-  styleUrls: ['./layer-viewer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    NgTemplateOutlet,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDividerModule,
-    MatIconModule,
-    LayerListComponent,
-    LayerUnavailableListComponent,
-    LayerViewerBottomActionsComponent,
-    IgoLanguageModule,
-    LayerListToolComponent
-  ],
-  standalone: true
+    selector: 'igo-layer-viewer',
+    templateUrl: './layer-viewer.component.html',
+    styleUrls: ['./layer-viewer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        NgTemplateOutlet,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatDividerModule,
+        MatIconModule,
+        LayerListComponent,
+        LayerUnavailableListComponent,
+        LayerViewerBottomActionsComponent,
+        IgoLanguageModule,
+        LayerListToolComponent
+    ]
 })
 export class LayerViewerComponent implements OnInit {
   layers: AnyLayer[];

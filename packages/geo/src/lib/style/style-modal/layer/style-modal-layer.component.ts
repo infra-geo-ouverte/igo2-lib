@@ -28,22 +28,21 @@ import {
 } from '../shared/style-modal.interface';
 
 @Component({
-  selector: 'igo-style-modal-layer',
-  templateUrl: './style-modal-layer.component.html',
-  styleUrls: ['./style-modal-layer.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    FormsModule,
-    ReactiveFormsModule,
-    NgIf,
-    MatIconModule,
-    ColorPickerFormFieldComponent,
-    MatDialogActions,
-    MatButtonModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-style-modal-layer',
+    templateUrl: './style-modal-layer.component.html',
+    styleUrls: ['./style-modal-layer.component.scss'],
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        FormsModule,
+        ReactiveFormsModule,
+        NgIf,
+        MatIconModule,
+        ColorPickerFormFieldComponent,
+        MatDialogActions,
+        MatButtonModule,
+        IgoLanguageModule
+    ]
 })
 export class StyleModalLayerComponent implements OnInit {
   @Input() confirmFlag = false;

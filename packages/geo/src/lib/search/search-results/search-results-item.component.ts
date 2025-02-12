@@ -28,19 +28,18 @@ import { SearchResult } from '../shared/search.interfaces';
  * Search results list item
  */
 @Component({
-  selector: 'igo-search-results-item',
-  templateUrl: './search-results-item.component.html',
-  styleUrls: ['./search-results-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatListModule,
-    NgIf,
-    MatIconModule,
-    MatTooltipModule,
-    MatButtonModule,
-    StopPropagationDirective
-  ]
+    selector: 'igo-search-results-item',
+    templateUrl: './search-results-item.component.html',
+    styleUrls: ['./search-results-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatListModule,
+        NgIf,
+        MatIconModule,
+        MatTooltipModule,
+        MatButtonModule,
+        StopPropagationDirective
+    ]
 })
 export class SearchResultsItemComponent {
   /**

@@ -5,10 +5,9 @@ import { IconSvg } from '../shared';
 import { IconService } from '../shared/icon.service';
 
 @Component({
-  selector: 'igo-icon',
-  standalone: true,
-  imports: [MatIconModule],
-  templateUrl: './icon.component.html'
+    selector: 'igo-icon',
+    imports: [MatIconModule],
+    templateUrl: './icon.component.html'
 })
 export class IgoIconComponent {
   @Input({ required: true })

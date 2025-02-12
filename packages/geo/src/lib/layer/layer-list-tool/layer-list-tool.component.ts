@@ -31,26 +31,25 @@ import { LayerGroup } from '../shared/layers/layer-group';
 import { LayerListToolService } from './layer-list-tool.service';
 
 @Component({
-  selector: 'igo-layer-list-tool',
-  templateUrl: './layer-list-tool.component.html',
-  styleUrls: ['./layer-list-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgIf,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatIconModule,
-    MatBadgeModule,
-    IgoBadgeIconDirective,
-    IgoLanguageModule,
-    LayerSearchComponent
-  ],
-  providers: [LayerListToolService, FormDialogService]
+    selector: 'igo-layer-list-tool',
+    templateUrl: './layer-list-tool.component.html',
+    styleUrls: ['./layer-list-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        FormsModule,
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatIconModule,
+        MatBadgeModule,
+        IgoBadgeIconDirective,
+        IgoLanguageModule,
+        LayerSearchComponent
+    ],
+    providers: [LayerListToolService, FormDialogService]
 })
 export class LayerListToolComponent {
   @Input({ required: true }) mode: LayerToolMode;

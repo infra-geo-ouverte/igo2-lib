@@ -46,26 +46,25 @@ import { MapState } from '../../map.state';
  * Tool to display the coordinates and a cursor of the center of the map
  */
 @Component({
-  selector: 'igo-advanced-coordinates',
-  templateUrl: './advanced-coordinates.component.html',
-  styleUrls: ['./advanced-coordinates.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    NgFor,
-    MatOptionModule,
-    MatSlideToggleModule,
-    AsyncPipe,
-    DecimalPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-advanced-coordinates',
+    templateUrl: './advanced-coordinates.component.html',
+    styleUrls: ['./advanced-coordinates.component.scss'],
+    imports: [
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatSlideToggleModule,
+        AsyncPipe,
+        DecimalPipe,
+        IgoLanguageModule
+    ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$ = new BehaviorSubject<string>('');

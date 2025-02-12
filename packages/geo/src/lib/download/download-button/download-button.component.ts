@@ -11,18 +11,17 @@ import { DownloadDataSourceOptions } from '../shared/download.interface';
 import { DownloadService } from '../shared/download.service';
 
 @Component({
-  selector: 'igo-download-button',
-  templateUrl: './download-button.component.html',
-  styleUrls: ['./download-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-download-button',
+    templateUrl: './download-button.component.html',
+    styleUrls: ['./download-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class DownloadButtonComponent {
   @Input() layer: Layer;

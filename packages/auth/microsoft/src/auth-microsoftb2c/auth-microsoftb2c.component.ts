@@ -33,13 +33,12 @@ import { MsalBroadcastServiceb2c } from './auth-msalBroadcastServiceb2c.service'
 import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 
 @Component({
-  selector: 'igo-auth-microsoftb2c',
-  templateUrl: './auth-microsoftb2c.component.html',
-  styleUrls: ['./auth-microsoftb2c.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent],
-  providers: [MsalServiceb2c]
+    selector: 'igo-auth-microsoftb2c',
+    templateUrl: './auth-microsoftb2c.component.html',
+    styleUrls: ['./auth-microsoftb2c.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent],
+    providers: [MsalServiceb2c]
 })
 export class AuthMicrosoftb2cComponent {
   private options: AuthMicrosoftb2cOptions;

@@ -38,28 +38,27 @@ import {
 import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component';
 
 @Component({
-  selector: 'igo-ogc-filter-time',
-  templateUrl: './ogc-filter-time.component.html',
-  styleUrls: ['./ogc-filter-time.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatSlideToggleModule,
-    FormsModule,
-    OgcFilterTimeSliderComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    NgFor,
-    MatOptionModule,
-    IgoLanguageModule
-  ],
-  providers: [OGCFilterTimeService, provideMomentDateAdapter()]
+    selector: 'igo-ogc-filter-time',
+    templateUrl: './ogc-filter-time.component.html',
+    styleUrls: ['./ogc-filter-time.component.scss'],
+    imports: [
+        NgIf,
+        MatSlideToggleModule,
+        FormsModule,
+        OgcFilterTimeSliderComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        NgFor,
+        MatOptionModule,
+        IgoLanguageModule
+    ],
+    providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
   @Input() datasource: OgcFilterableDataSource;

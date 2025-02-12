@@ -20,11 +20,10 @@ import { MeasureState } from '../measure.state';
   icon: 'square_foot'
 })
 @Component({
-  selector: 'igo-measurer-tool',
-  templateUrl: './measurer-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MeasurerComponent]
+    selector: 'igo-measurer-tool',
+    templateUrl: './measurer-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {
   /**

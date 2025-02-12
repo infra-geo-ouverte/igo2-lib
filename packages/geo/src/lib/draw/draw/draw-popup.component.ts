@@ -43,26 +43,25 @@ import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { DDtoDMS } from '../shared/draw.utils';
 
 @Component({
-  selector: 'igo-draw-popup-component',
-  templateUrl: './draw-popup.component.html',
-  styleUrls: ['./draw-popup.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    NgIf,
-    MatDialogContent,
-    MatButtonToggleModule,
-    MatRadioModule,
-    NgFor,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatDialogActions,
-    MatButtonModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-draw-popup-component',
+    templateUrl: './draw-popup.component.html',
+    styleUrls: ['./draw-popup.component.scss'],
+    imports: [
+        MatDialogTitle,
+        NgIf,
+        MatDialogContent,
+        MatButtonToggleModule,
+        MatRadioModule,
+        NgFor,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatDialogActions,
+        MatButtonModule,
+        IgoLanguageModule
+    ]
 })
 export class DrawPopupComponent {
   @Input() confirmFlag = false;

@@ -13,11 +13,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-simple-map',
-  templateUrl: './simple-map.component.html',
-  styleUrls: ['./simple-map.component.scss'],
-  standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
+    selector: 'app-simple-map',
+    templateUrl: './simple-map.component.html',
+    styleUrls: ['./simple-map.component.scss'],
+    imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
 })
 export class AppSimpleMapComponent {
   public pointerCoord: [number, number];

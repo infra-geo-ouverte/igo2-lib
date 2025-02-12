@@ -6,11 +6,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-media',
-  templateUrl: './media.component.html',
-  styleUrls: ['./media.component.scss'],
-  standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent]
+    selector: 'app-media',
+    templateUrl: './media.component.html',
+    styleUrls: ['./media.component.scss'],
+    imports: [DocViewerComponent, ExampleViewerComponent]
 })
 export class AppMediaComponent {
   constructor(private mediaService: MediaService) {}

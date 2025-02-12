@@ -22,18 +22,17 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-time-filter',
-  templateUrl: './time-filter.component.html',
-  styleUrls: ['./time-filter.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    MatGridListModule,
-    MAP_DIRECTIVES,
-    PanelComponent,
-    FILTER_DIRECTIVES
-  ]
+    selector: 'app-time-filter',
+    templateUrl: './time-filter.component.html',
+    styleUrls: ['./time-filter.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        MatGridListModule,
+        MAP_DIRECTIVES,
+        PanelComponent,
+        FILTER_DIRECTIVES
+    ]
 })
 export class AppTimeFilterComponent {
   public map: IgoMap = new IgoMap({

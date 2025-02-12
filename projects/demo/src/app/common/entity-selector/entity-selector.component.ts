@@ -15,17 +15,16 @@ interface DemoEntity {
 }
 
 @Component({
-  selector: 'app-entity-selector',
-  templateUrl: './entity-selector.component.html',
-  styleUrls: ['./entity-selector.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    EntitySelectorComponent,
-    NgIf,
-    AsyncPipe
-  ]
+    selector: 'app-entity-selector',
+    templateUrl: './entity-selector.component.html',
+    styleUrls: ['./entity-selector.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        EntitySelectorComponent,
+        NgIf,
+        AsyncPipe
+    ]
 })
 export class AppEntitySelectorComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);

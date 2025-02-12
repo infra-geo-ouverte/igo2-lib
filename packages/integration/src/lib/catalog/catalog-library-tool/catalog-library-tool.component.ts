@@ -24,11 +24,10 @@ import { CatalogState } from '../catalog.state';
   icon: 'library_add'
 })
 @Component({
-  selector: 'igo-catalog-library-tool',
-  templateUrl: './catalog-library-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CatalogLibaryComponent]
+    selector: 'igo-catalog-library-tool',
+    templateUrl: './catalog-library-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CatalogLibaryComponent]
 })
 export class CatalogLibraryToolComponent implements OnInit {
   /**

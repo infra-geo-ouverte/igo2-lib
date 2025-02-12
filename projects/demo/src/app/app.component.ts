@@ -29,23 +29,22 @@ import { delay, first } from 'rxjs';
 import { ROUTES_CONFIG } from './app.routing';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  imports: [
-    NgFor,
-    NgIf,
-    MatExpansionModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatListModule,
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet
-  ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [
+        NgFor,
+        NgIf,
+        MatExpansionModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatListModule,
+        RouterLink,
+        RouterLinkActive,
+        RouterOutlet
+    ]
 })
 export class AppComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;

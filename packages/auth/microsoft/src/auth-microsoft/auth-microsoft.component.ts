@@ -35,12 +35,11 @@ import {
 } from '../shared/auth-microsoft.interface';
 
 @Component({
-  selector: 'igo-auth-microsoft',
-  templateUrl: './auth-microsoft.component.html',
-  styleUrls: ['./auth-microsoft.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
+    selector: 'igo-auth-microsoft',
+    templateUrl: './auth-microsoft.component.html',
+    styleUrls: ['./auth-microsoft.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
 })
 export class AuthMicrosoftComponent {
   private options?: AuthMicrosoftOptions;

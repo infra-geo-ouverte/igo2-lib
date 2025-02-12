@@ -53,36 +53,35 @@ import { isLayerGroup, isLayerItem } from '../utils/layer.utils';
 type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
 
 @Component({
-  selector: 'igo-layer-list',
-  templateUrl: './layer-list.component.html',
-  styleUrls: ['./layer-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    NgTemplateOutlet,
-    FormsModule,
-    AsyncPipe,
-    MatBadgeModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDividerModule,
-    MatIconModule,
-    MatMenuModule,
-    MatSliderModule,
-    MatTreeModule,
-    MatTooltipModule,
-    TreeDragDropDirective,
-    LayerListToolComponent,
-    LayerGroupComponent,
-    ListComponent,
-    LayerItemComponent,
-    ListItemDirective,
-    PanelComponent,
-    IgoLanguageModule,
-    IgoIconComponent
-  ]
+    selector: 'igo-layer-list',
+    templateUrl: './layer-list.component.html',
+    styleUrls: ['./layer-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        NgFor,
+        NgTemplateOutlet,
+        FormsModule,
+        AsyncPipe,
+        MatBadgeModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatDividerModule,
+        MatIconModule,
+        MatMenuModule,
+        MatSliderModule,
+        MatTreeModule,
+        MatTooltipModule,
+        TreeDragDropDirective,
+        LayerListToolComponent,
+        LayerGroupComponent,
+        ListComponent,
+        LayerItemComponent,
+        ListItemDirective,
+        PanelComponent,
+        IgoLanguageModule,
+        IgoIconComponent
+    ]
 })
 export class LayerListComponent {
   public toggleOpacity = false;

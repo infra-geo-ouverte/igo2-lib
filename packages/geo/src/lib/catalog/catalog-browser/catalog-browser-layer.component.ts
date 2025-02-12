@@ -33,25 +33,24 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
  * Catalog browser layer item
  */
 @Component({
-  selector: 'igo-catalog-browser-layer',
-  templateUrl: './catalog-browser-layer.component.html',
-  styleUrls: ['./catalog-browser-layer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatListModule,
-    NgIf,
-    MatIconModule,
-    NgClass,
-    MatTooltipModule,
-    MatButtonModule,
-    MetadataButtonComponent,
-    MatBadgeModule,
-    IgoBadgeIconDirective,
-    LayerLegendComponent,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-catalog-browser-layer',
+    templateUrl: './catalog-browser-layer.component.html',
+    styleUrls: ['./catalog-browser-layer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatListModule,
+        NgIf,
+        MatIconModule,
+        NgClass,
+        MatTooltipModule,
+        MatButtonModule,
+        MetadataButtonComponent,
+        MatBadgeModule,
+        IgoBadgeIconDirective,
+        LayerLegendComponent,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$ = new BehaviorSubject<boolean>(true);

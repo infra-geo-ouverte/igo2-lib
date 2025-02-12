@@ -13,9 +13,8 @@ import {
   parent: 'contextManager'
 })
 @Component({
-  selector: 'igo-context-permission-manager-tool',
-  templateUrl: './context-permission-manager-tool.component.html',
-  standalone: true,
-  imports: [ContextPermissionsComponent, ContextPermissionsBindingDirective]
+    selector: 'igo-context-permission-manager-tool',
+    templateUrl: './context-permission-manager-tool.component.html',
+    imports: [ContextPermissionsComponent, ContextPermissionsBindingDirective]
 })
 export class ContextPermissionManagerToolComponent {}

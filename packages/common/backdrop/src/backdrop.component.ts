@@ -2,11 +2,10 @@ import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'igo-backdrop',
-  templateUrl: './backdrop.component.html',
-  styleUrls: ['./backdrop.component.scss'],
-  standalone: true,
-  imports: [NgClass]
+    selector: 'igo-backdrop',
+    templateUrl: './backdrop.component.html',
+    styleUrls: ['./backdrop.component.scss'],
+    imports: [NgClass]
 })
 export class BackdropComponent {
   @Input()

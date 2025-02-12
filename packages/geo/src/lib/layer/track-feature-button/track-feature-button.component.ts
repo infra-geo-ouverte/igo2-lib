@@ -15,18 +15,17 @@ import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({
-  selector: 'igo-track-feature-button',
-  templateUrl: './track-feature-button.component.html',
-  styleUrls: ['./track-feature-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-track-feature-button',
+    templateUrl: './track-feature-button.component.html',
+    styleUrls: ['./track-feature-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class TrackFeatureButtonComponent implements OnInit {
   @Input() layer: VectorLayer;

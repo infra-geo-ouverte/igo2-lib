@@ -41,24 +41,23 @@ import { MapState } from './../map.state';
   icon: 'map'
 })
 @Component({
-  selector: 'igo-map-details-tool',
-  templateUrl: './map-details-tool.component.html',
-  styleUrls: ['./map-details-tool.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    LayerViewerComponent,
-    WorkspaceButtonComponent,
-    ExportButtonComponent,
-    OgcFilterButtonComponent,
-    TimeFilterButtonComponent,
-    TrackFeatureButtonComponent,
-    MetadataButtonComponent,
-    MatListModule,
-    MatIconModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-map-details-tool',
+    templateUrl: './map-details-tool.component.html',
+    styleUrls: ['./map-details-tool.component.scss'],
+    imports: [
+        NgIf,
+        LayerViewerComponent,
+        WorkspaceButtonComponent,
+        ExportButtonComponent,
+        OgcFilterButtonComponent,
+        TimeFilterButtonComponent,
+        TrackFeatureButtonComponent,
+        MetadataButtonComponent,
+        MatListModule,
+        MatIconModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class MapDetailsToolComponent implements OnInit {
   isDesktop: boolean;
