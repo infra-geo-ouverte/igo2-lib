@@ -1,4 +1,10 @@
-import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
+import {
+  EnvironmentProviders,
+  InjectionToken,
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer
+} from '@angular/core';
 
 import { ConfigOptions } from './config.interface';
 import { ConfigService } from './config.service';
@@ -14,9 +20,12 @@ export function provideConfig(options: ConfigOptions): EnvironmentProviders {
       useValue: options
     },
     provideAppInitializer(() => {
-        const initializerFn = (configFactory)(inject(ConfigService), inject(CONFIG_OPTIONS));
-        return initializerFn();
-      })
+      const initializerFn = configFactory(
+        inject(ConfigService),
+        inject(CONFIG_OPTIONS)
+      );
+      return initializerFn();
+    })
   ]);
 }
 
