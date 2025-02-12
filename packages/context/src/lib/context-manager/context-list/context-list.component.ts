@@ -303,11 +303,11 @@ export class ContextListComponent implements OnInit, OnDestroy {
         return false;
       default: {
         let totalLength = this.contexts.ours.length;
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
         this.contexts.public
           ? (totalLength += this.contexts.public.length)
           : (totalLength += 0);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
         this.contexts.shared
           ? (totalLength += this.contexts.shared.length)
           : (totalLength += 0);

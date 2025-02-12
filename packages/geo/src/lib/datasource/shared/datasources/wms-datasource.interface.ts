@@ -18,7 +18,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   ratio?: number;
   refreshIntervalSec?: number;
   contentDependentLegend?: boolean;
-  excludeAttribute?: Array<string>;
+  excludeAttribute?: string[];
   ogcFilters?: OgcFiltersOptions;
   timeFilter?: TimeFilterOptions;
 }

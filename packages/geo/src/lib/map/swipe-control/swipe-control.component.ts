@@ -59,7 +59,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.getListOfLayers();
     this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe((value) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
       value ? this.displaySwipe() : this.displaySwipeOff();
     });
     this.letZoom();
@@ -227,7 +227,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
     document.getElementById('igo-layer-swipe').addEventListener(
       'wheel',
       (event) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
         event.deltaY > 0
           ? this.map.viewController.zoomOut()
           : this.map.viewController.zoomIn();

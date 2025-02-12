@@ -88,7 +88,7 @@ export function getAllChildLayersByDeletion(
   layer: Layer,
   knownChildLayers: Layer[]
 ): Layer[] {
-  let childLayers = getLayersByDeletion(
+  const childLayers = getLayersByDeletion(
     layers,
     layer.options.linkedLayers.links
   );
@@ -112,7 +112,7 @@ function getDirectParentLayerByProperty(
 ): Layer {
   if (layer?.options.linkedLayers?.linkId) {
     const currentLinkId = layer.options.linkedLayers.linkId;
-    let parents = layers.filter((pl) => {
+    const parents = layers.filter((pl) => {
       if (isLayerGroup(pl)) {
         return false;
       }

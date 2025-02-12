@@ -136,7 +136,7 @@ export class LayerService {
     options: AnyLayerItemOptions,
     detailedContextUri?: string
   ): Observable<Layer | undefined> {
-    let optionsCloned = { ...options };
+    const optionsCloned = { ...options };
 
     computeMVTOptionsOnHover(optionsCloned);
     if (optionsCloned.source) {
