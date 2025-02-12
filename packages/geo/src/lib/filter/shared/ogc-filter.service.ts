@@ -13,7 +13,9 @@ import {
   OgcInterfaceFilterOptions
 } from './ogc-filter.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'platform'
+})
 export class OGCFilterService {
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
     const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(
