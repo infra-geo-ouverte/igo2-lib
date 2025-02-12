@@ -1,6 +1,6 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 @mixin theme($theme) {
   @include color($theme);
@@ -10,11 +10,11 @@
   $primary: map.get($theme, primary);
 
   igo-menu-button > button#menu-button {
-    color: $app-background-color;
+    color: core.$app-background-color;
     background-color: mat.m2-get-color-from-palette($primary);
   }
   igo-menu-button > button#menu-button.menu-button-white-background {
     color: mat.m2-get-color-from-palette($primary);
-    background-color: $app-background-color;
+    background-color: core.$app-background-color;
   }
 }

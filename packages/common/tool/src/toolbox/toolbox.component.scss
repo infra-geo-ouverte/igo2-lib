@@ -1,4 +1,4 @@
-@import '../../../../core/src/style/partial/media';
+@use '../../../../core/src/style/partial/media';
 
 :host {
   display: block;
@@ -44,7 +44,7 @@
     -o-box-shadow: 2px 0px 2px 0px #dddddd;
     box-shadow: 2px 0px 2px 0px #dddddd;
 
-    @include mobile {
+    @include media.mobile {
       overflow: auto;
     }
   }

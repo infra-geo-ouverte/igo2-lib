@@ -1,11 +1,11 @@
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 table {
   width: 100%;
 }
 
 table td {
-  padding: $igo-padding;
+  padding: core.$igo-padding;
 }
 
 #keyValue {

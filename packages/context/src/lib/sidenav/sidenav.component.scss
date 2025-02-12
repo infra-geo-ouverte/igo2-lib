@@ -1,5 +1,5 @@
-@import '../../../../core/src/style/partial/media';
-@import '../../../../core/src/style/partial/core.variables';
+@use '../../../../core/src/style/partial/media';
+@use '../../../../core/src/style/partial/core.variables' as core;
 
 $igo-border-width: 1px;
 $igo-border-style: solid;
@@ -52,8 +52,8 @@ $igo-mobile-min-space-left: 40px;
 mat-sidenav {
   width: $igo-sidenav-width;
 
-  @include mobile {
-    width: calc(100% - #{$igo-mobile-min-space-left} - #{$igo-margin});
+  @include media.mobile {
+    width: calc(100% - #{$igo-mobile-min-space-left} - #{core.$igo-margin});
   }
 
   @extend %box-shadowed;
