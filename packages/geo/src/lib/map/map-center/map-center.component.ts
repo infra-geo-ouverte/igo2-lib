@@ -54,7 +54,6 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
     document.getElementById('mapCenter').addEventListener(
       'wheel',
       (event) => {
-
         event.deltaY > 0
           ? this.map.viewController.zoomOut()
           : this.map.viewController.zoomIn();

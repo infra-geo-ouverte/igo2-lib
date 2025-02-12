@@ -59,7 +59,6 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.getListOfLayers();
     this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe((value) => {
-
       value ? this.displaySwipe() : this.displaySwipeOff();
     });
     this.letZoom();
@@ -227,7 +226,6 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
     document.getElementById('igo-layer-swipe').addEventListener(
       'wheel',
       (event) => {
-
         event.deltaY > 0
           ? this.map.viewController.zoomOut()
           : this.map.viewController.zoomIn();
