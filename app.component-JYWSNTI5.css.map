@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/app.component.scss"],
+  "sourcesContent": [".example-container {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n\n.example-toolbar {\n  display: flex;\n  justify-content: space-between;\n  z-index: 2;\n\n  h5 {\n    margin: 0;\n  }\n}\nmat-panel-title {\n  font-size: 14px;\n}\n\nmat-nav-list {\n  padding: 0;\n}\n\nmat-expansion-panel {\n  box-shadow: unset !important;\n\n  ::ng-deep {\n    .mat-expansion-panel-body {\n      padding: 0 8px 16px;\n    }\n  }\n}\n\n.active-link ::ng-deep span {\n  font-weight: bold;\n}\n\n.example-is-mobile .example-toolbar {\n  position: fixed;\n  z-index: 2;\n}\n\n.example-sidenav-container {\n  flex: 1;\n}\n\n.example-is-mobile .example-sidenav-container {\n  flex: 1 0 auto;\n}\n\n.example-is-mobile mat-sidenav {\n  background-color: white;\n}\n\nmat-sidenav-content {\n  box-sizing: border-box;\n}\n"],
+  "mappings": "AAAA,CAAA,kBACE,QAAA,KACA,eAAA,OACA,SAAA,SACA,MAAA,EAMF,CAAA,gBACE,QAAA,KACA,gBAAA,cACA,QAAA,EAEA,CALF,gBAKE,GAfF,OAgBI,EAGJ,gBACE,UAAA,KAGF,aAvBA,QAwBE,EAGF,oBACE,WAAA,gBAGE,oBAAA,UAAA,CAAA,yBA/BJ,QAgCM,EAAA,IAAA,KAKN,CAAA,YAAA,UAAA,KACE,YAAA,IAGF,CAAA,kBAAA,CA/BA,gBAgCE,SAAA,MACA,QAAA,EAGF,CAAA,0BACE,KAAA,EAGF,CATA,kBASA,CAJA,0BAKE,KAAA,EAAA,EAAA,KAGF,CAbA,kBAaA,YACE,iBAAA,KAGF,oBACE,WAAA",
+  "names": []
+}

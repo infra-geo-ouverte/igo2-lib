@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/measure/measurer/measurer-dialog.component.scss"],
+  "sourcesContent": [":host {\n  font-family: Roboto, 'Helvetica Neue', sans-serif;\n}\n\nh3 {\n  text-align: center;\n  margin: 0;\n}\n\ntable {\n  width: 100%;\n  padding: 10px;\n\n  tbody tr td:last-child {\n    padding-left: 10px;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,YAAA,MAAA,CAAA,cAAA,CAAA,WAGF,GACE,WAAA,OALF,OAME,EAGF,MACE,MAAA,KAVF,QAWE,KAEA,MAAA,MAAA,GAAA,EAAA,YACE,aAAA",
+  "names": []
+}

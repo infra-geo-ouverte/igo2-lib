@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/draw/draw.component.scss"],
+  "sourcesContent": [":host {\n  igo-map-browser {\n    width: 100%;\n    height: 300px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,gBACE,MAAA,KACA,OAAA",
+  "names": []
+}

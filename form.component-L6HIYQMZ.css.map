@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/form/src/form/form.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n}\n\nform {\n  width: 100%;\n  height: 100%;\n}\n\n.igo-form-body,\n.igo-form-content {\n  height: 100%;\n}\n\n.igo-form-body-with-buttons .igo-form-content {\n  height: calc(100% - 56px);\n}\n\n.igo-form-content {\n  display: flex;\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MAGF,KACE,MAAA,KACA,OAAA,KAGF,CAAA,cAAA,CAAA,iBAEE,OAAA,KAGF,CAAA,2BAAA,CALA,iBAME,OAAA,KAAA,KAAA,EAAA,MAGF,CATA,iBAUE,QAAA",
+  "names": []
+}

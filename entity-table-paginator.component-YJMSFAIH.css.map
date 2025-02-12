@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/entity/src/entity-table-paginator/entity-table-paginator.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep .mat-mdc-paginator-container {\n    min-height: unset;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,UAAA,CAAA,4BACE,WAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/measure/measurer/measurer-item.component.scss"],
+  "sourcesContent": [":host {\n  display: flex;\n  width: 100%;\n  padding: 5px 10px;\n\n  .measure-field {\n    pointer-events: none;\n    flex: 2;\n  }\n\n  .unit-field {\n    margin-left: 8px;\n    flex: 1;\n  }\n\n  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {\n    display: none;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,KACA,MAAA,KAFF,QAGE,IAAA,KAEA,MAAA,CAAA,cACE,eAAA,KACA,KAAA,EAGF,MAAA,CAAA,WACE,YAAA,IACA,KAAA,EAGF,MAAA,UAAA,eAAA,CAAA,qCACE,QAAA",
+  "names": []
+}

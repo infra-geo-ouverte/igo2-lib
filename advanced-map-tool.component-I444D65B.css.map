@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/map/advanced-map-tool/advanced-map-tool.component.scss"],
+  "sourcesContent": ["@use './shared/advanced-map-tool.utils' as vars;\n\n:host {\n  display: block;\n  padding: 0 vars.$xSpacer vars.$ySpacer;\n}\n\n.nameOfTool {\n  text-align: center;\n  font-weight: bold;\n  font-size: small;\n  margin: vars.$ySpacer 0 8px;\n}\n\n.advanced-tool-line {\n  height: 2px;\n  background-color: gray;\n}\n\n.geolocation-slide-toggle-container {\n  display: flex;\n  flex-direction: column;\n  padding: vars.$ySpacer 0;\n\n  mat-slide-toggle {\n    flex: 1;\n\n    &:not(:last-child) {\n      margin-bottom: 16px;\n    }\n\n    ::ng-deep {\n      .mdc-form-field {\n        display: flex;\n        justify-content: space-between;\n      }\n      .mdc-label {\n        flex: 1;\n      }\n    }\n  }\n}\n\nmat-divider {\n  margin: 0 (-(vars.$xSpacer)) 0;\n}\n"],
+  "mappings": "AAEA,MACE,QAAA,MADF,QAEE,EAAA,KAAA,KAGF,CAAA,WACE,WAAA,OACA,YAAA,IACA,UAAA,MARF,OASE,KAAA,EAAA,IAGF,CAAA,mBACE,OAAA,IACA,iBAAA,KAGF,CAAA,mCACE,QAAA,KACA,eAAA,OAnBF,QAoBE,KAAA,EAEA,CALF,mCAKE,iBACE,KAAA,EAEA,CARJ,mCAQI,gBAAA,KAAA,aACE,cAAA,KAIA,CAbN,mCAaM,iBAAA,UAAA,CAAA,eACE,QAAA,KACA,gBAAA,cAEF,CAjBN,mCAiBM,iBAAA,UAAA,CAAA,UACE,KAAA,EAMR,YAzCA,OA0CE,EAAA",
+  "names": []
+}

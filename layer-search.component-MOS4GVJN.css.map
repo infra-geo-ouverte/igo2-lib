@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-search/layer-search.component.scss"],
+  "sourcesContent": [":host {\n  flex: 1;\n}\n\nmat-form-field {\n  width: 100%;\n\n  ::ng-deep {\n    .mat-mdc-form-field-infix {\n      width: auto !important;\n    }\n  }\n}\n"],
+  "mappings": "AAAA,MACE,KAAA,EAGF,eACE,MAAA,KAGE,eAAA,UAAA,CAAA,yBACE,MAAA",
+  "names": []
+}

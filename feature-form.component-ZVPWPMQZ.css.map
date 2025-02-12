@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/feature/feature-form/feature-form.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n}\n\nigo-form {\n  height: 100%;\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MAGF,SACE,OAAA",
+  "names": []
+}

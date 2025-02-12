@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/form/src/form-dialog/form-dialog.component.scss"],
+  "sourcesContent": [":host {\n  div[mat-dialog-actions] {\n    margin: 10px 0 0 0;\n  }\n  .form-dialog-container {\n    width: 100%;\n    padding: 10px;\n\n    igo-form-field,\n    igo-form-group {\n      display: block;\n      height: auto;\n    }\n  }\n}\n"],
+  "mappings": "AACE,MAAA,GAAA,CAAA,oBAAA,OACE,KAAA,EAAA,EAEF,MAAA,CAAA,sBACE,MAAA,KAJF,QAKE,KAEA,MAAA,CAJF,sBAIE,eAAA,MAAA,CAJF,sBAIE,eAEE,QAAA,MACA,OAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/map/map-tools/map-tools.component.scss"],
+  "sourcesContent": [":host {\n  mat-tab-group {\n    height: 100%;\n  }\n\n  ::ng-deep {\n    mat-tab-header {\n      border-bottom: 1px solid #ccc;\n    }\n\n    .mat-mdc-tab-body-wrapper {\n      flex: 1;\n    }\n\n    .mat-tab-body {\n      margin-top: 8px;\n    }\n\n    .mat-mdc-tab-body-content {\n      overflow: hidden;\n    }\n  }\n\n  .map-empty,\n  .search-tool,\n  .catalog-tool,\n  .context-tool {\n    margin: 10px;\n  }\n\n  .map-empty {\n    text-align: justify;\n  }\n\n  .search-tool,\n  .catalog-tool,\n  .context-tool {\n    cursor: pointer;\n  }\n\n  mat-list mat-list-item h4 {\n    font-weight: bold;\n  }\n\n  mat-list-item ::ng-deep .mdc-list-item__primary-text {\n    font-size: smaller;\n  }\n\n  mat-list.mat-mdc-list-base\n    mat-list-item.mat-mdc-list-item\n    ::ng-deep\n    div.mdc-list-item__content\n    div.mdc-list-item__primary-text {\n    padding-left: 5px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,cACE,OAAA,KAIA,MAAA,UAAA,eACE,cAAA,IAAA,MAAA,KAGF,MAAA,UAAA,CAAA,yBACE,KAAA,EAGF,MAAA,UAAA,CAAA,aACE,WAAA,IAGF,MAAA,UAAA,CAAA,yBACE,SAAA,OAIJ,MAAA,CAAA,UAAA,MAAA,CAAA,YAAA,MAAA,CAAA,aAAA,MAAA,CAAA,aAtBA,OA0BE,KAGF,MAAA,CAPA,UAQE,WAAA,QAGF,MAAA,CAXA,YAWA,MAAA,CAXA,aAWA,MAAA,CAXA,aAcE,OAAA,QAGF,MAAA,SAAA,cAAA,GACE,YAAA,IAGF,MAAA,cAAA,UAAA,CAAA,4BACE,UAAA,QAGF,MAAA,QAAA,CAAA,kBAAA,aAAA,CAAA,kBAAA,UAAA,GAAA,CAAA,uBAAA,GAAA,CAJA,4BASE,aAAA",
+  "names": []
+}

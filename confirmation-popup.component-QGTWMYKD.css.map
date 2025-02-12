@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/workspace/confirmation-popup/confirmation-popup.component.scss"],
+  "sourcesContent": ["div.mat-mdc-dialog-actions {\n  justify-content: center;\n}\n"],
+  "mappings": "AAAA,GAAA,CAAA,uBACE,gBAAA",
+  "names": []
+}

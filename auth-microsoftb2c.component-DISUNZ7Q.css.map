@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/auth/microsoft/src/auth-microsoftb2c/auth-microsoftb2c.component.scss"],
+  "sourcesContent": [":host {\n  padding: 10px 10px 10px 0;\n  display: inline-block;\n  position: relative;\n  top: -15px;\n}\n\n:host > button {\n  font-size: 15px;\n  height: 40px;\n  width: 265px;\n}\n\nmat-icon {\n  margin-right: 10px;\n}\n"],
+  "mappings": "AAAA,cACE,KAAA,KAAA,KAAA,EACA,QAAA,aACA,SAAA,SACA,IAAA,MAGF,KAAA,CAAA,OACE,UAAA,KACA,OAAA,KACA,MAAA,MAGF,SACE,aAAA",
+  "names": []
+}

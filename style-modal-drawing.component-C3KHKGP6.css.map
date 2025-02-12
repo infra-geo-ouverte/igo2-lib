@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/style/style-modal/drawing/style-modal-drawing.component.scss"],
+  "sourcesContent": [":host {\n  h2 {\n    margin: 0 0 1px;\n  }\n\n  form {\n    padding-top: 16px;\n  }\n\n  .fill-field,\n  .stroke-field {\n    width: 140px;\n  }\n\n  .color-picker {\n    display: grid;\n    grid-template-columns: auto 1fr;\n    align-items: center;\n    grid-gap: 16px;\n    margin-bottom: 16px;\n\n    span {\n      display: flex;\n      align-items: center;\n\n      mat-icon {\n        margin-right: 8px;\n      }\n    }\n  }\n\n  .box {\n    width: 25px;\n    height: 25px;\n  }\n\n  .igo-input-container {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    grid-gap: 16px;\n  }\n\n  .igo-form-input-box {\n    width: 150px;\n  }\n\n  button {\n    margin-right: 5px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,GAAA,OACE,EAAA,EAAA,IAGF,MAAA,KACE,YAAA,KAGF,MAAA,CAAA,WAAA,MAAA,CAAA,aAEE,MAAA,MAGF,MAAA,CAAA,aACE,QAAA,KACA,sBAAA,KAAA,IACA,YAAA,OACA,SAAA,KACA,cAAA,KAEA,MAAA,CAPF,aAOE,KACE,QAAA,KACA,YAAA,OAEA,MAAA,CAXJ,aAWI,KAAA,SACE,aAAA,IAKN,MAAA,CAAA,IACE,MAAA,KACA,OAAA,KAGF,MAAA,CAAA,oBACE,QAAA,KACA,sBAAA,IAAA,IACA,SAAA,KAGF,MAAA,CAAA,mBACE,MAAA,MAGF,MAAA,OACE,aAAA",
+  "names": []
+}

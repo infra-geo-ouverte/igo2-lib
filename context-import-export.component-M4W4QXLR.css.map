@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-import-export/context-import-export/context-import-export.component.scss"],
+  "sourcesContent": [".import-export-toggle {\n  padding: 10px;\n  text-align: center;\n  mat-button-toggle-group {\n    width: 100%;\n    mat-button-toggle {\n      width: 50%;\n    }\n  }\n}\n\n.igo-input-container {\n  padding: 10px;\n\n  mat-form-field {\n    width: 100%;\n  }\n}\n\nh4 {\n  padding: 0 5px;\n}\n\n.igo-form {\n  padding: 15px 5px;\n}\n\n.igo-form-button-group {\n  text-align: center;\n  padding-top: 10px;\n}\n\nigo-spinner {\n  position: absolute;\n  padding-left: 10px;\n}\n"],
+  "mappings": "AAAA,CAAA,qBAAA,QACE,KACA,WAAA,OACA,CAHF,qBAGE,wBACE,MAAA,KACA,CALJ,qBAKI,wBAAA,kBACE,MAAA,IAKN,CAAA,oBAXA,QAYE,KAEA,CAHF,oBAGE,eACE,MAAA,KAIJ,GAnBA,QAoBE,EAAA,IAGF,CAAA,SAvBA,QAwBE,KAAA,IAGF,CAAA,sBACE,WAAA,OACA,YAAA,KAGF,YACE,SAAA,SACA,aAAA",
+  "names": []
+}

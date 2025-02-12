@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/search/search-results/search-results-add-button.component.scss"],
+  "sourcesContent": [":host {\n  #hide-save-search-result-btn {\n    display: none;\n  }\n\n  #show-save-search-result-btn {\n    display: block;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,4BACE,QAAA,KAGF,MAAA,CAAA,4BACE,QAAA",
+  "names": []
+}

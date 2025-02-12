@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/filter/ogc-filterable-item/ogc-filterable-item.component.scss"],
+  "sourcesContent": [":host {\n  overflow: hidden;\n  .advancedOgcFilters {\n    text-align: center;\n    width: 100%;\n    display: inline-block;\n  }\n\n  .mat-mdc-list-item {\n    height: auto;\n  }\n\n  .igo-layer-legend-container {\n    padding-left: 1.125em;\n    width: calc(100% - 18px);\n  }\n\n  mat-icon.disabled {\n    color: rgba(0, 0, 0, 0.38);\n  }\n\n  .separate-item {\n    border-bottom: 4px solid darkgrey;\n  }\n\n  ::ng-deep {\n    .mdc-list-item__start,\n    .mdc-list-item__end,\n    .mdc-list-item__content {\n      pointer-events: auto;\n    }\n  }\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,OACA,MAAA,CAAA,mBACE,WAAA,OACA,MAAA,KACA,QAAA,aAGF,MAAA,CAAA,kBACE,OAAA,KAGF,MAAA,CAAA,2BACE,aAAA,QACA,MAAA,KAAA,KAAA,EAAA,MAGF,MAAA,QAAA,CAAA,SACE,MAAA,UAGF,MAAA,CAAA,cACE,cAAA,IAAA,MAAA,SAIA,MAAA,UAAA,CAAA,qBAAA,MAAA,UAAA,CAAA,mBAAA,MAAA,UAAA,CAAA,uBAGE,eAAA",
+  "names": []
+}

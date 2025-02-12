@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/import-export/import-export-tool/import-export-tool.component.scss"],
+  "sourcesContent": ["mat-form-field {\n  width: 100%;\n}\n"],
+  "mappings": "AAAA,eACE,MAAA",
+  "names": []
+}

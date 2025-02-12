@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/components/example/example-viewer/example-viewer.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n  margin-top: 24px;\n\n  mat-card-header {\n    display: flex;\n    justify-content: space-between;\n    padding: 8px 8px 0 16px;\n    margin-bottom: 0px;\n  }\n\n  ::ng-deep .mat-mdc-card-header-text {\n    display: flex;\n    align-items: center;\n  }\n\n  mat-card-subtitle {\n    font-size: 16px;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MACA,WAAA,KAEA,MAAA,gBACE,QAAA,KACA,gBAAA,cANJ,QAOI,IAAA,IAAA,EAAA,KACA,cAAA,EAGF,MAAA,UAAA,CAAA,yBACE,QAAA,KACA,YAAA,OAGF,MAAA,kBACE,UAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-manager/context-list/context-list.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {\n    display: none;\n  }\n}\n\n.context-filter-container {\n  display: flex;\n  align-items: center;\n  padding: 8px 4px;\n\n  mat-form-field {\n    flex: 1;\n  }\n}\n\n.sort-alpha {\n  &.--active mat-icon {\n    color: red;\n  }\n}\n\n.context-filter-min-width {\n  width: calc(100% - 135px);\n  margin: 5px;\n  padding-left: 6px;\n}\n\n.profil-menu {\n  padding-left: 8px;\n\n  mat-checkbox {\n    margin-right: 8px;\n  }\n}\n\n.add-context-button {\n  margin: 0px;\n  width: 40px;\n  display: inline-flex;\n  overflow: hidden;\n}\n.actions-container {\n  margin-left: 4px;\n}\n\n.no-result {\n  padding: 16px;\n}\n"],
+  "mappings": "AACE,MAAA,UAAA,eAAA,CAAA,qCACE,QAAA,KAIJ,CAAA,yBACE,QAAA,KACA,YAAA,OAPA,QAQA,IAAA,IAEA,CALF,yBAKE,eACE,KAAA,EAKF,CAAA,UAAA,CAAA,SAAA,SACE,MAAA,IAIJ,CAAA,yBACE,MAAA,KAAA,KAAA,EAAA,OAtBA,OAuBA,IACA,aAAA,IAGF,CAAA,YACE,aAAA,IAEA,CAHF,YAGE,aACE,aAAA,IAIJ,CAAA,mBAnCE,OAoCA,EACA,MAAA,KACA,QAAA,YACA,SAAA,OAEF,CAAA,kBACE,YAAA,IAGF,CAAA,UA7CE,QA8CA",
+  "names": []
+}

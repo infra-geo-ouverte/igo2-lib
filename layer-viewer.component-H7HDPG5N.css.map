@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-viewer/layer-viewer.component.scss"],
+  "sourcesContent": [":host {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n\n.layer-view {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow-y: auto;\n}\n\n.layer-list-container {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow-x: hidden;\n}\n\n.header-item {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 48px;\n  padding: 0 16px;\n\n  mat-checkbox {\n    margin-left: -16px;\n  }\n}\n\n::ng-deep .layer-indicator {\n  color: rgba(0, 0, 0, 0.38) !important;\n\n  igo-icon,\n  &.mdc-icon-button {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  mat-icon {\n    $size: 18px;\n    height: $size;\n    width: $size;\n    font-size: $size;\n\n    font-variation-settings: 'fill' 0;\n\n    ::ng-deep svg {\n      height: $size;\n      width: $size;\n    }\n  }\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,KACA,eAAA,OACA,OAAA,KAGF,CAAA,WACE,QAAA,KACA,eAAA,OACA,KAAA,EACA,WAAA,KAGF,CAAA,qBACE,SAAA,SACA,QAAA,KACA,eAAA,OACA,KAAA,EACA,WAAA,OAGF,CAAA,YACE,QAAA,KACA,YAAA,OACA,gBAAA,cACA,OAAA,KAzBF,QA0BE,EAAA,KAEA,CAPF,YAOE,aACE,YAAA,MAIJ,UAAA,CAAA,gBACE,MAAA,oBAEA,UAAA,CAHF,gBAGE,SAAA,UAAA,CAHF,eAGE,CAAA,gBAEE,QAAA,KACA,YAAA,OACA,gBAAA,OAGF,UAAA,CAVF,gBAUE,SAEE,OADO,KAEP,MAFO,KAGP,UAHO,KAKP,wBAAA,OAAA,EAEA,UAAA,CAlBJ,gBAkBI,SAAA,UAAA,IACE,OARK,KASL,MATK",
+  "names": []
+}

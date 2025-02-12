@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/filter/spatial-filter/spatial-filter-list/spatial-filter-list.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n\n  .buffer-div {\n    display: flex;\n    width: 100%;\n  }\n\n  .zone-list {\n    width: 100%;\n  }\n\n  .buffer {\n    flex: 2;\n  }\n\n  .unit-field {\n    flex: 1;\n    margin-left: 8px;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MAEA,MAAA,CAAA,WACE,QAAA,KACA,MAAA,KAGF,MAAA,CAAA,UACE,MAAA,KAGF,MAAA,CAAA,OACE,KAAA,EAGF,MAAA,CAAA,WACE,KAAA,EACA,YAAA",
+  "names": []
+}

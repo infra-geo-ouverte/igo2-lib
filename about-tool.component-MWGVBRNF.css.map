@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/about/about-tool/about-tool.component.scss"],
+  "sourcesContent": ["igo-interactive-tour button {\n  margin-left: 20px;\n}\n\n.training-guide-button {\n  margin-left: 5px;\n  background-color: #1976d2;\n  color: white;\n  padding: 0 12px;\n}\n"],
+  "mappings": "AAAA,qBAAA,OACE,YAAA,KAGF,CAAA,sBACE,YAAA,IACA,iBAAA,QACA,MAAA,KAPF,QAQE,EAAA",
+  "names": []
+}

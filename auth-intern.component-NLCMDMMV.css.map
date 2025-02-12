@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/auth/internal/src/auth-intern/auth-intern.component.scss"],
+  "sourcesContent": [".full-width {\n  width: 100%;\n}\n\n.anonymous {\n  margin-left: 10px;\n}\n\n.loading-container {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 1000;\n  top: 0;\n  left: 0;\n  padding: 24px;\n  box-sizing: border-box;\n}\n"],
+  "mappings": "AAAA,CAAA,WACE,MAAA,KAGF,CAAA,UACE,YAAA,KAGF,CAAA,kBACE,SAAA,SACA,MAAA,KACA,OAAA,KACA,QAAA,KACA,gBAAA,OACA,YAAA,OACA,QAAA,KACA,IAAA,EACA,KAAA,EAjBF,QAkBE,KACA,WAAA",
+  "names": []
+}

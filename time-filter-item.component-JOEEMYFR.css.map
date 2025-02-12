@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/filter/time-filter-item/time-filter-item.component.scss"],
+  "sourcesContent": [":host {\n  overflow: hidden;\n\n  .igo-datasource-filters-container {\n    text-align: center;\n    width: 100%;\n    display: inline-block;\n    padding-top: 5px;\n  }\n\n  .igo-layer-legend-container {\n    padding-left: 1.125em;\n    width: calc(100% - 18px);\n  }\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,OAEA,MAAA,CAAA,iCACE,WAAA,OACA,MAAA,KACA,QAAA,aACA,YAAA,IAGF,MAAA,CAAA,2BACE,aAAA,QACA,MAAA,KAAA,KAAA,EAAA",
+  "names": []
+}

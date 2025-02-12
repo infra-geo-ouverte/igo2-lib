@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/share-map/share-map/share-map-api.component.scss"],
+  "sourcesContent": ["mat-form-field {\n  width: 100%;\n}\n\n#uriInput {\n  .fieldWrapper {\n    display: block;\n    overflow: hidden;\n  }\n  .prefix {\n    float: left;\n  }\n}\n\n.linkToShare  {\n  padding: 25px 5px 5px;\n  textarea {\n    resize: none;\n    width: 100%;\n    line-height: 1.3;\n    height: 40px;\n    overflow-y: hidden;\n    word-wrap: normal;\n    word-break: break-all;\n    &.textAreaWithButton {\n      width: calc(100% - 60px);\n    }\n  }\n  mat-form-field > button {\n    float: right;\n    margin: -10px 0;\n  }\n}\n\n.igo-form {\n  padding: 20px 5px 5px;\n}\n\n.igo-form-button-group {\n  text-align: center;\n  padding-top: 10px;\n}\n"],
+  "mappings": "iBAAA,eACE,MAAA,KAIA,CAAA,SAAA,CAAA,aACE,QAAA,MACA,SAAA,OAEF,CAJA,SAIA,CAAA,OACE,MAAA,KAIJ,CAAA,wBACE,KAAA,IAAA,IACA,CAFF,gBAEE,SACE,OAAA,KACA,MAAA,KACA,YAAA,IACA,OAAA,KACA,WAAA,OACA,UAAA,OACA,WAAA,UACA,CAVJ,gBAUI,QAAA,CAAA,mBACE,MAAA,KAAA,KAAA,EAAA,MAGJ,CAdF,gBAcE,cAAA,CAAA,OACE,MAAA,aACA,MAAA,EAIJ,CAAA,iBACE,KAAA,IAAA,IAGF,CAAA,sBACE,WAAA,OACA,YAAA",
+  "names": []
+}

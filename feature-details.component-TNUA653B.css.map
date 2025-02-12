@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/feature/feature-details/feature-details.component.scss", "packages/core/src/style/partial/core.variables.scss"],
+  "sourcesContent": ["@import '../../../../../core/src/style/partial/core.variables';\n\ntable {\n  width: 100%;\n}\n\ntable td {\n  padding: $igo-padding;\n}\n\n#keyValue {\n  width: 30%;\n}\n\ntable ::ng-deep .routing {\n  cursor: pointer;\n}\n\niframe {\n  height: calc(100% - 4px);\n  width: 100%;\n  border: 0;\n}\n.copyClipboard {\n  border: none;\n  background: transparent;\n  cursor: pointer;\n}\n", "$igo-margin: 5px;\n$igo-padding: 5px;\n$igo-icon-size: 40px;\n\n$app-background-color: rgb(255, 255, 255);\n"],
+  "mappings": "AAEA,MACE,MAAA,KAGF,MAAA,GAJA,QCDc,IDSd,CAAA,SACE,MAAA,IAGF,MAAA,UAAA,CAAA,QACE,OAAA,QAGF,OACE,OAAA,KAAA,KAAA,EAAA,KACA,MAAA,KACA,OAAA,EAEF,CAAA,cACE,OAAA,KACA,WAAA,YACA,OAAA",
+  "names": []
+}

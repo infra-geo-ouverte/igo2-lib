@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/map/advanced-map-tool/advanced-coordinates/advanced-coordinates.component.scss"],
+  "sourcesContent": ["@use '../shared/advanced-map-tool.utils' as vars;\n\n:host {\n  padding: vars.$ySpacer 0;\n}\n\ntextarea {\n  resize: none;\n}\n\n.advanced-coordinates {\n  &__coordinates-container {\n    width: 100%;\n    display: flex;\n    flex-direction: column;\n    padding: vars.$ySpacer 0;\n\n    &__inner {\n      display: flex;\n      align-items: center;\n      margin-bottom: 16px;\n\n      mat-form-field {\n        flex: 1;\n      }\n\n      mat-form-field,\n      button {\n        &:not(:first-child) {\n          margin-left: 8px;\n        }\n      }\n    }\n  }\n\n  &__form {\n    display: flex;\n    flex-direction: column;\n\n    mat-slide-toggle {\n      flex: 1;\n\n      ::ng-deep {\n        .mdc-form-field {\n          display: flex;\n          justify-content: space-between;\n        }\n        .mdc-label {\n          flex: 1;\n        }\n      }\n    }\n  }\n}\n"],
+  "mappings": "AAEA,cACE,KAAA,EAGF,SACE,OAAA,KAIA,CAAA,4CACE,MAAA,KACA,QAAA,KACA,eAAA,OAZJ,QAaI,KAAA,EAEA,CAAA,mDACE,QAAA,KACA,YAAA,OACA,cAAA,KAEA,CALF,mDAKE,eACE,KAAA,EAKA,CAXJ,mDAWI,cAAA,KAAA,cAAA,CAXJ,mDAWI,MAAA,KAAA,cACE,YAAA,IAMR,CAAA,2BACE,QAAA,KACA,eAAA,OAEA,CAJF,2BAIE,iBACE,KAAA,EAGE,CARN,2BAQM,iBAAA,UAAA,CAAA,eACE,QAAA,KACA,gBAAA,cAEF,CAZN,2BAYM,iBAAA,UAAA,CAAA,UACE,KAAA",
+  "names": []
+}

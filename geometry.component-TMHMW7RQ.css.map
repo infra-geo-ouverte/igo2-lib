@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/geometry/geometry.component.scss"],
+  "sourcesContent": [":host {\n  pre,\n  code {\n    font-family: monospace, monospace;\n  }\n  pre {\n    overflow: auto;\n  }\n  pre > code {\n    display: block;\n    padding: 1rem;\n    word-wrap: normal;\n  }\n\n  igo-map-browser {\n    flex: 1;\n    height: 500px;\n  }\n\n  .container {\n    display: flex;\n    gap: 16px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,IAAA,MAAA,KAEE,YAAA,SAAA,CAAA,UAEF,MAAA,IACE,SAAA,KAEF,MAAA,GAAA,CAAA,KACE,QAAA,MARF,QASE,KACA,UAAA,OAGF,MAAA,gBACE,KAAA,EACA,OAAA,MAGF,MAAA,CAAA,UACE,QAAA,KACA,IAAA",
+  "names": []
+}

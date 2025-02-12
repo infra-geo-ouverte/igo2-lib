@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/print/print-form/print-form.component.scss"],
+  "sourcesContent": ["@import '../../../../../core/src/style/partial/media';\n\n$slide-toggle-width: 60px;\n\n:host {\n  mat-form-field {\n    width: 100%;\n  }\n\n  .slide-toggle-container {\n    margin-bottom: 16px;\n  }\n\n  .print-slide-toggle-container {\n    mat-slide-toggle {\n      width: 100%;\n      padding: 0 8px;\n\n      ::ng-deep .mdc-form-field {\n        width: 100%;\n      }\n\n      ::ng-deep .mdc-label {\n        margin-left: 0;\n        width: calc(100% - #{$slide-toggle-width});\n      }\n    }\n  }\n\n  .print-option {\n    display: block;\n    margin-bottom: 12px;\n  }\n\n  .igo-form {\n    padding: 10px 5px 5px;\n  }\n\n  .igo-form-button-group {\n    text-align: center;\n  }\n}\n"],
+  "mappings": "AAKE,MAAA,eACE,MAAA,KAGF,MAAA,CAAA,uBACE,cAAA,KAIA,MAAA,CAAA,6BAAA,iBACE,MAAA,KAVJ,QAWI,EAAA,IAEA,MAAA,CAJF,6BAIE,iBAAA,UAAA,CAAA,eACE,MAAA,KAGF,MAAA,CARF,6BAQE,iBAAA,UAAA,CAAA,UACE,YAAA,EACA,MAAA,KAAA,KAAA,EAAA,MAKN,MAAA,CAAA,aACE,QAAA,MACA,cAAA,KAGF,MAAA,CAAA,SA7BA,QA8BE,KAAA,IAAA,IAGF,MAAA,CAAA,sBACE,WAAA",
+  "names": []
+}

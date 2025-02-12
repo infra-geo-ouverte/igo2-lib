@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-legend-item/layer-legend-item.component.scss"],
+  "sourcesContent": [":host {\n  overflow: hidden;\n\n  .igo-layer-list-item {\n    height: 48px;\n    clear: both;\n  }\n\n  .igo-layer-legend-container {\n    padding-left: 18px;\n    width: calc(100% - 18px);\n  }\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,OAEA,MAAA,CAAA,oBACE,OAAA,KACA,MAAA,KAGF,MAAA,CAAA,2BACE,aAAA,KACA,MAAA,KAAA,KAAA,EAAA",
+  "names": []
+}

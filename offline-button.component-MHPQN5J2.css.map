@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/src/style/partial/common-utils.scss", "packages/geo/src/lib/map/offline-button/offline-button.component.scss", "packages/core/src/style/partial/core.variables.scss"],
+  "sourcesContent": ["@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n", "@use '../../../../../common/src/style/partial/common-utils';\n@import '../../../../../core/src/style/partial/media';\n@import '../../../../../core/src/style/partial/core.variables';\n\n:host {\n  @include common-utils.square-button();\n\n  .onlineStyle {\n    width: $igo-icon-size;\n    background-color: rgb(255, 255, 255);\n    &:hover {\n      background-color: #efefef;\n    }\n  }\n\n  .offlineStyle {\n    width: $igo-icon-size;\n    background-color: #b9b9b9;\n  }\n}\n", "$igo-margin: 5px;\n$igo-padding: 5px;\n$igo-icon-size: 40px;\n\n$app-background-color: rgb(255, 255, 255);\n"],
+  "mappings": "AACE,MAAA,OAAA,cACE,YACA,MAAA,OAAA,CAAA,WAAA,MAAA,OAAA,CAAA,wBAFF,cAII,YCEJ,MAAA,CAAA,YACE,MCNY,KDOZ,iBAAA,KACA,MAAA,CAHF,WAGE,OACE,iBAAA,QAIJ,MAAA,CAAA,aACE,MCdY,KDeZ,iBAAA",
+  "names": []
+}

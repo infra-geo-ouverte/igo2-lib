@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/flexible/src/flexible.component.scss"],
+  "sourcesContent": ["@import '../../../core/src/style/partial/core.variables';\n\n:host {\n  display: flex;\n  height: 100%;\n  width: 100%;\n  &.column {\n    flex-direction: column;\n  }\n\n  &.row {\n    flex-direction: row;\n  }\n\n  .igo-flexible-main {\n    flex: 0 0 auto;\n    overflow: hidden;\n  }\n\n  .igo-flexible-main.column {\n    transition: height 0.25s ease-in;\n  }\n\n  .igo-flexible-main.row {\n    transition: width 0.25s ease-in;\n  }\n\n  .igo-flexible-fill > div {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n  }\n\n  .igo-container {\n    height: 100%;\n    overflow: hidden;\n    position: relative;\n  }\n\n  ::ng-deep .igo-flexible-fill {\n    flex: 1 1 auto;\n    overflow: hidden;\n    position: relative;\n  }\n\n  ::ng-deep .igo-content {\n    height: 100%;\n    width: 100%;\n    overflow: auto;\n  }\n\n  ::ng-deep igo-panel {\n    height: 100%;\n  }\n}\n"],
+  "mappings": "AAEA,MACE,QAAA,KACA,OAAA,KACA,MAAA,KACA,KAAA,CAAA,OACE,eAAA,OAGF,KAAA,CAAA,IACE,eAAA,IAGF,MAAA,CAAA,kBACE,KAAA,EAAA,EAAA,KACA,SAAA,OAGF,MAAA,CALA,iBAKA,CAbA,OAcE,WAAA,OAAA,KAAA,QAGF,MAAA,CATA,iBASA,CAbA,IAcE,WAAA,MAAA,KAAA,QAGF,MAAA,CAAA,iBAAA,CAAA,IACE,SAAA,SACA,MAAA,EAMF,MAAA,CAAA,cACE,OAAA,KACA,SAAA,OACA,SAAA,SAGF,MAAA,UAAA,CAdA,kBAeE,KAAA,EAAA,EAAA,KACA,SAAA,OACA,SAAA,SAGF,MAAA,UAAA,CAAA,YACE,OAAA,KACA,MAAA,KACA,SAAA,KAGF,MAAA,UAAA,UACE,OAAA",
+  "names": []
+}

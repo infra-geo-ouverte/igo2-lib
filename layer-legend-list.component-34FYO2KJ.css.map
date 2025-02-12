@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-legend-list/layer-legend-list.component.scss"],
+  "sourcesContent": ["$slide-toggle-width: 60px;\n\n:host {\n  mat-slide-toggle {\n    width: 100%;\n    padding: 10px;\n\n    ::ng-deep .mdc-form-field {\n      width: 100%;\n    }\n\n    ::ng-deep .mdc-label {\n      margin-left: 0;\n      width: calc(100% - #{$slide-toggle-width});\n    }\n  }\n\n  igo-list {\n    /* autoprefixer: ignore next */\n    display: contents;\n  }\n\n  .layers-empty {\n    text-align: justify;\n    margin: 10px;\n  }\n\n  .layer-legend-list-container {\n    max-height: 100%;\n    overflow: auto;\n  }\n}\n"],
+  "mappings": "AAGE,MAAA,iBACE,MAAA,KADF,QAEE,KAEA,MAAA,iBAAA,UAAA,CAAA,eACE,MAAA,KAGF,MAAA,iBAAA,UAAA,CAAA,UACE,YAAA,EACA,MAAA,KAAA,KAAA,EAAA,MAIJ,MAAA,SAEE,QAAA,SAGF,MAAA,CAAA,aACE,WAAA,QApBF,OAqBE,KAGF,MAAA,CAAA,4BACE,WAAA,KACA,SAAA",
+  "names": []
+}

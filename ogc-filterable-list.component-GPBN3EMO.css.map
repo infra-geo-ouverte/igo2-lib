@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/filter/ogc-filterable-list/ogc-filterable-list.component.scss"],
+  "sourcesContent": ["#no-layer-message {\n  padding: 7%;\n  text-align: center;\n  font-size: medium;\n  font-weight: bold;\n}\n"],
+  "mappings": "AAAA,CAAA,iBAAA,QACE,GACA,WAAA,OACA,UAAA,OACA,YAAA",
+  "names": []
+}

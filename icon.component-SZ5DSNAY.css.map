@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/common/icon/icon.component.scss"],
+  "sourcesContent": [".field-container {\n  display: flex;\n  align-items: center;\n}\n"],
+  "mappings": "AAAA,CAAA,gBACE,QAAA,KACA,YAAA",
+  "names": []
+}

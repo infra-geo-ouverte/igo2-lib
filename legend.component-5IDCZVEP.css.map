@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/legend/legend.component.scss"],
+  "sourcesContent": ["igo-map-browser {\n  width: 100%;\n  height: 300px;\n}\n\nigo-panel {\n  width: 100%;\n  padding-top: 10px;\n}\n"],
+  "mappings": "AAAA,gBACE,MAAA,KACA,OAAA,MAGF,UACE,MAAA,KACA,YAAA",
+  "names": []
+}

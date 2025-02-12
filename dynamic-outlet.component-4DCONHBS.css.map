@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/dynamic-component/src/dynamic-outlet/dynamic-outlet.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n  width: 100%;\n  height: 100%;\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MACA,MAAA,KACA,OAAA",
+  "names": []
+}

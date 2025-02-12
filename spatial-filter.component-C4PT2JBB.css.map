@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/spatial-filter/spatial-filter.component.scss"],
+  "sourcesContent": [":host {\n  igo-form {\n    display: none;\n  }\n\n  igo-spatial-filter-item ::ng-deep .thematics-header {\n    max-width: 225px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,SACE,QAAA,KAGF,MAAA,wBAAA,UAAA,CAAA,iBACE,UAAA",
+  "names": []
+}

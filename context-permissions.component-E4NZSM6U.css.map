@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-manager/context-permissions/context-permissions.component.scss"],
+  "sourcesContent": [":host {\n  margin: 10px;\n}\n\n.full-width {\n  width: 100%;\n}\n\nmat-radio-button {\n  padding: 14px 14px 14px 0;\n}\n\n.scopeForm,\nform {\n  padding: 5px;\n}\n"],
+  "mappings": "AAAA,aACE,KAGF,CAAA,WACE,MAAA,KAGF,iBARA,QASE,KAAA,KAAA,KAAA,EAGF,CAAA,UAAA,KAZA,QAcE",
+  "names": []
+}

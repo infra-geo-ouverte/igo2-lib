@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-manager/context-item/context-item.component.scss"],
+  "sourcesContent": [":host {\n  overflow: hidden;\n\n  .igo-actions-container {\n    flex-shrink: 0;\n  }\n\n  .igo-actions-expand-container {\n    display: inline-flex;\n  }\n\n  mat-icon.disabled {\n    color: rgba(0, 0, 0, 0.38);\n  }\n\n  button[matlistitemavatar] {\n    margin-right: 8px;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,OAEA,MAAA,CAAA,sBACE,YAAA,EAGF,MAAA,CAAA,6BACE,QAAA,YAGF,MAAA,QAAA,CAAA,SACE,MAAA,UAGF,MAAA,MAAA,CAAA,mBACE,aAAA",
+  "names": []
+}

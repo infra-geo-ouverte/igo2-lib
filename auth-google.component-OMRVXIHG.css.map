@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/auth/google/src/auth-google/auth-google.component.scss"],
+  "sourcesContent": [":host {\n  padding: 10px 10px 10px 0;\n  display: inline-block;\n}\n\n.google-login-button ::ng-deep .abcRioButton {\n  color: rgba(0, 0, 0, 0.87);\n}\n"],
+  "mappings": "AAAA,cACE,KAAA,KAAA,KAAA,EACA,QAAA,aAGF,CAAA,oBAAA,UAAA,CAAA,aACE,MAAA",
+  "names": []
+}

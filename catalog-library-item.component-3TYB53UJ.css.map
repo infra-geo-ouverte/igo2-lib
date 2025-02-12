@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/catalog/catalog-library/catalog-library-item.component.scss"],
+  "sourcesContent": [".igo-blank {\n  cursor: pointer;\n}\n\n.igo-external-provider {\n  cursor: help;\n}\n"],
+  "mappings": "AAAA,CAAA,UACE,OAAA,QAGF,CAAA,sBACE,OAAA",
+  "names": []
+}

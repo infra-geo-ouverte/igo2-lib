@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/metadata/metadata-button/metadata-abstract.component.scss"],
+  "sourcesContent": [":host {\n  position: relative;\n  display: block;\n}\n\n.close-button {\n  top: 5px;\n  right: 5px;\n  padding: 7px;\n  line-height: 10px;\n  position: absolute !important;\n  min-width: auto;\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,SACA,QAAA,MAGF,CAAA,aACE,IAAA,IACA,MAAA,IAPF,QAQE,IACA,YAAA,KACA,SAAA,mBACA,UAAA",
+  "names": []
+}

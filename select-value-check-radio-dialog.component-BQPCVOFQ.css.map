@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/select-value-dialog/src/select-value-check-radio-dialog.component.scss"],
+  "sourcesContent": [":host::ng-deep {\n  div[mat-dialog-actions] {\n    margin: 10px 0 0 0;\n  }\n  section.choices-section {\n    max-width: auto;\n    display: grid;\n    grid-template-columns: auto auto;\n    grid-gap: 0px;\n    padding: 5px;\n  }\n}\n"],
+  "mappings": "AACE,KAAA,UAAA,GAAA,CAAA,oBAAA,OACE,KAAA,EAAA,EAEF,KAAA,UAAA,OAAA,CAAA,gBACE,UAAA,KACA,QAAA,KACA,sBAAA,KAAA,KACA,SAAA,IAPF,QAQE",
+  "names": []
+}

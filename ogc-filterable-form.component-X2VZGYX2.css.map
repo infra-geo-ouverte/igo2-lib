@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;727db875c10b13d1cec395b5326ff0bfd630330454d0e760c85a8469708df5d8;/home/runner/work/igo2-lib/igo2-lib/packages/geo/src/lib/filter/ogc-filterable-form/ogc-filterable-form.component.ts"],
+  "sourcesContent": ["::ng-deep.igo-overlay-panel-width { min-width: fit-content;}"],
+  "mappings": "AAAA,UAAS,CAAC,wBAA0B,UAAW,WAAY",
+  "names": []
+}

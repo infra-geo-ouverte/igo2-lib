@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/measure/measure.component.scss"],
+  "sourcesContent": ["igo-map-browser {\n  width: 100%;\n  height: 300px;\n}\n\nigo-measurer ::ng-deep mat-divider {\n  position: inherit !important;\n  left: inherit !important;\n  width: 160px !important;\n}\n"],
+  "mappings": "AAAA,gBACE,MAAA,KACA,OAAA,MAGF,aAAA,UAAA,YACE,SAAA,kBACA,KAAA,kBACA,MAAA",
+  "names": []
+}
