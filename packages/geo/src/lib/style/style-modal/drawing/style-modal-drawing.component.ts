@@ -31,27 +31,26 @@ import {
 } from '../shared/style-modal.interface';
 
 @Component({
-  selector: 'igo-style-modal-drawing',
-  templateUrl: './style-modal-drawing.component.html',
-  styleUrls: ['./style-modal-drawing.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    FormsModule,
-    ReactiveFormsModule,
-    NgIf,
-    MatIconModule,
-    ColorPickerFormFieldComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    NgFor,
-    MatOptionModule,
-    MatDialogActions,
-    MatButtonModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-style-modal-drawing',
+    templateUrl: './style-modal-drawing.component.html',
+    styleUrls: ['./style-modal-drawing.component.scss'],
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        FormsModule,
+        ReactiveFormsModule,
+        NgIf,
+        MatIconModule,
+        ColorPickerFormFieldComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatDialogActions,
+        MatButtonModule,
+        IgoLanguageModule
+    ]
 })
 export class StyleModalDrawingComponent implements OnInit {
   @Input() confirmFlag = false;

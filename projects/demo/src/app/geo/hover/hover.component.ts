@@ -18,11 +18,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-hover',
-  templateUrl: './hover.component.html',
-  styleUrls: ['./hover.component.scss'],
-  standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
+    selector: 'app-hover',
+    templateUrl: './hover.component.html',
+    styleUrls: ['./hover.component.scss'],
+    imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
   public pointerCoordDelay = 0;

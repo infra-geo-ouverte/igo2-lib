@@ -13,10 +13,9 @@ import { ContextFormComponent } from '../context-form/context-form.component';
 import { Context } from '../shared/context.interface';
 
 @Component({
-  selector: 'igo-context-edit',
-  templateUrl: './context-edit.component.html',
-  standalone: true,
-  imports: [NgIf, ContextFormComponent, IgoLanguageModule]
+    selector: 'igo-context-edit',
+    templateUrl: './context-edit.component.html',
+    imports: [NgIf, ContextFormComponent, IgoLanguageModule]
 })
 export class ContextEditComponent {
   @Input()

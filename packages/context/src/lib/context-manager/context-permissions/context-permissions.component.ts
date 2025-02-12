@@ -43,30 +43,29 @@ import {
 } from '../shared/context.interface';
 
 @Component({
-  selector: 'igo-context-permissions',
-  templateUrl: './context-permissions.component.html',
-  styleUrls: ['./context-permissions.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatRadioModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    NgFor,
-    MatOptionModule,
-    MatButtonModule,
-    ListComponent,
-    CollapsibleComponent,
-    MatListModule,
-    MatIconModule,
-    StopPropagationDirective,
-    MatTooltipModule,
-    KeyValuePipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-context-permissions',
+    templateUrl: './context-permissions.component.html',
+    styleUrls: ['./context-permissions.component.scss'],
+    imports: [
+        NgIf,
+        MatRadioModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        NgFor,
+        MatOptionModule,
+        MatButtonModule,
+        ListComponent,
+        CollapsibleComponent,
+        MatListModule,
+        MatIconModule,
+        StopPropagationDirective,
+        MatTooltipModule,
+        KeyValuePipe,
+        IgoLanguageModule
+    ]
 })
 export class ContextPermissionsComponent implements OnInit {
   public form: UntypedFormGroup;

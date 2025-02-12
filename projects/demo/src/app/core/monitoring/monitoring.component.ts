@@ -15,16 +15,15 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-monitoring',
-  templateUrl: './monitoring.component.html',
-  styleUrls: ['./monitoring.component.scss'],
-  providers: [
-    JsonPipe,
-    ...provideMonitoring(environment.igo.monitoring),
-    ...provideAuthUserMonitoring(environment.igo.monitoring)
-  ],
-  standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
+    selector: 'app-monitoring',
+    templateUrl: './monitoring.component.html',
+    styleUrls: ['./monitoring.component.scss'],
+    providers: [
+        JsonPipe,
+        ...provideMonitoring(environment.igo.monitoring),
+        ...provideAuthUserMonitoring(environment.igo.monitoring)
+    ],
+    imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMonitoringComponent {
   exampleProviderCode: string = EXAMPLE_PROVIDER;

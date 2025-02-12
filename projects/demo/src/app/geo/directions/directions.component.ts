@@ -27,21 +27,20 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-directions',
-  templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    MatGridListModule,
-    MAP_DIRECTIVES,
-    DirectionsComponent
-  ],
-  providers: [
-    provideDirection(withOsrmSource()),
-    provideSearch([withIChercheSource()])
-  ]
+    selector: 'app-directions',
+    templateUrl: './directions.component.html',
+    styleUrls: ['./directions.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        MatGridListModule,
+        MAP_DIRECTIVES,
+        DirectionsComponent
+    ],
+    providers: [
+        provideDirection(withOsrmSource()),
+        provideSearch([withIChercheSource()])
+    ]
 })
 export class AppDirectionsComponent {
   public map: IgoMap = new IgoMap({

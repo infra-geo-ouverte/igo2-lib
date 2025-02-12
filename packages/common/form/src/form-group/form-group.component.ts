@@ -15,19 +15,18 @@ import { getControlErrorMessage } from '../shared/form.utils';
  * emits an event with the form data but no other operation is performed.
  */
 @Component({
-  selector: 'igo-form-group',
-  templateUrl: './form-group.component.html',
-  styleUrls: ['./form-group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    NgClass,
-    FormFieldComponent,
-    MatFormFieldModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-form-group',
+    templateUrl: './form-group.component.html',
+    styleUrls: ['./form-group.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        NgFor,
+        NgClass,
+        FormFieldComponent,
+        MatFormFieldModule,
+        IgoLanguageModule
+    ]
 })
 export class FormGroupComponent {
   /**

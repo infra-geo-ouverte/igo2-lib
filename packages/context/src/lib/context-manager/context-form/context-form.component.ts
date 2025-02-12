@@ -19,21 +19,20 @@ import { Clipboard, ObjectUtils } from '@igo2/utils';
 import { Context } from '../shared/context.interface';
 
 @Component({
-  selector: 'igo-context-form',
-  templateUrl: './context-form.component.html',
-  styleUrls: ['./context-form.component.scss'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-context-form',
+    templateUrl: './context-form.component.html',
+    styleUrls: ['./context-form.component.scss'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class ContextFormComponent implements OnInit {
   public form: UntypedFormGroup;

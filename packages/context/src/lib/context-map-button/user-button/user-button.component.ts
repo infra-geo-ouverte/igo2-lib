@@ -15,19 +15,18 @@ import { userButtonSlideInOut } from './user-button.animation';
 import { UserDialogComponent } from './user-dialog.component';
 
 @Component({
-  selector: 'igo-user-button',
-  templateUrl: './user-button.component.html',
-  styleUrls: ['./user-button.component.scss'],
-  animations: [userButtonSlideInOut()],
-  standalone: true,
-  imports: [
-    NgIf,
-    PoiButtonComponent,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+    selector: 'igo-user-button',
+    templateUrl: './user-button.component.html',
+    styleUrls: ['./user-button.component.scss'],
+    animations: [userButtonSlideInOut()],
+    imports: [
+        NgIf,
+        PoiButtonComponent,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        IgoLanguageModule
+    ]
 })
 export class UserButtonComponent {
   @Input()

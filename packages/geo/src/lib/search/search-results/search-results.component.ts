@@ -44,23 +44,22 @@ export enum SearchResultMode {
  * This component is dumb and only emits events.
  */
 @Component({
-  selector: 'igo-search-results',
-  templateUrl: './search-results.component.html',
-  styleUrls: ['./search-results.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    ListComponent,
-    NgFor,
-    CollapsibleComponent,
-    NgTemplateOutlet,
-    SearchResultsItemComponent,
-    ListItemDirective,
-    MatTabsModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-search-results',
+    templateUrl: './search-results.component.html',
+    styleUrls: ['./search-results.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        ListComponent,
+        NgFor,
+        CollapsibleComponent,
+        NgTemplateOutlet,
+        SearchResultsItemComponent,
+        ListItemDirective,
+        MatTabsModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
   private showResultsCount = true;

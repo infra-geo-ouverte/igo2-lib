@@ -24,25 +24,24 @@ import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
 
 @Component({
-  selector: 'igo-advanced-swipe',
-  templateUrl: './advanced-swipe.component.html',
-  styleUrls: ['./advanced-swipe.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatDividerModule,
-    NgFor,
-    MatSlideToggleModule,
-    MatListModule,
-    MatIconModule,
-    IgoLanguageModule,
-    IgoIconComponent
-  ]
+    selector: 'igo-advanced-swipe',
+    templateUrl: './advanced-swipe.component.html',
+    styleUrls: ['./advanced-swipe.component.scss'],
+    imports: [
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatDividerModule,
+        NgFor,
+        MatSlideToggleModule,
+        MatListModule,
+        MatIconModule,
+        IgoLanguageModule,
+        IgoIconComponent
+    ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe = false;

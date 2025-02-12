@@ -31,25 +31,24 @@ import {
 } from '../shared/print.type';
 
 @Component({
-  selector: 'igo-print-form',
-  templateUrl: './print-form.component.html',
-  styleUrls: ['./print-form.component.scss'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgIf,
-    MatSlideToggleModule,
-    MatSelectModule,
-    NgFor,
-    MatOptionModule,
-    MatButtonModule,
-    AsyncPipe,
-    KeyValuePipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-print-form',
+    templateUrl: './print-form.component.html',
+    styleUrls: ['./print-form.component.scss'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgIf,
+        MatSlideToggleModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatButtonModule,
+        AsyncPipe,
+        KeyValuePipe,
+        IgoLanguageModule
+    ]
 })
 export class PrintFormComponent implements OnInit {
   public form: UntypedFormGroup;

@@ -26,20 +26,19 @@ import {
  */
 @IgoFormFieldComponent('textarea')
 @Component({
-  selector: 'igo-form-field-textarea',
-  templateUrl: './form-field-textarea.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgIf,
-    MatIconModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-form-field-textarea',
+    templateUrl: './form-field-textarea.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgIf,
+        MatIconModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class FormFieldTextareaComponent implements OnInit {
   disabled$ = new BehaviorSubject<boolean>(false);

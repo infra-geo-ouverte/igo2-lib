@@ -52,33 +52,32 @@ import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 
 @Component({
-  selector: 'igo-ogc-filter-selection',
-  templateUrl: './ogc-filter-selection.component.html',
-  styleUrls: ['./ogc-filter-selection.component.scss'],
-  providers: [DOMService],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    NgFor,
-    NgIf,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatOptionModule,
-    MatButtonToggleModule,
-    NgStyle,
-    MatCheckboxModule,
-    MatRadioModule,
-    MatIconModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    OgcFilterTimeComponent,
-    AsyncPipe,
-    IgoLanguageModule,
-    MatChipsModule
-  ]
+    selector: 'igo-ogc-filter-selection',
+    templateUrl: './ogc-filter-selection.component.html',
+    styleUrls: ['./ogc-filter-selection.component.scss'],
+    providers: [DOMService],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        NgFor,
+        NgIf,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatTooltipModule,
+        MatOptionModule,
+        MatButtonToggleModule,
+        NgStyle,
+        MatCheckboxModule,
+        MatRadioModule,
+        MatIconModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        OgcFilterTimeComponent,
+        AsyncPipe,
+        IgoLanguageModule,
+        MatChipsModule
+    ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
   @ViewChild('selection') sel: MatSelect;

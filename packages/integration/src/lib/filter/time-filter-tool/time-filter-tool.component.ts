@@ -12,9 +12,8 @@ import {
   icon: 'history'
 })
 @Component({
-  selector: 'igo-time-filter-tool',
-  templateUrl: './time-filter-tool.component.html',
-  standalone: true,
-  imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
+    selector: 'igo-time-filter-tool',
+    templateUrl: './time-filter-tool.component.html',
+    imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
 })
 export class TimeFilterToolComponent {}

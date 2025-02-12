@@ -8,11 +8,10 @@ import {
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  standalone: true,
-  imports: [DocViewerComponent, IgoInteractiveTourModule]
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    imports: [DocViewerComponent, IgoInteractiveTourModule]
 })
 export class AppHomeComponent {
   constructor(private interactiveTourService: InteractiveTourService) {}

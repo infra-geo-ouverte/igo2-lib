@@ -27,21 +27,20 @@ import { Poi } from './shared/poi.interface';
 import { PoiService } from './shared/poi.service';
 
 @Component({
-  selector: 'igo-poi-button',
-  templateUrl: './poi-button.component.html',
-  styleUrls: ['./poi-button.component.scss'],
-  standalone: true,
-  imports: [
-    MatSelectModule,
-    MatOptionModule,
-    MatButtonModule,
-    StopPropagationDirective,
-    MatIconModule,
-    MatDividerModule,
-    NgFor,
-    IgoLanguageModule
-  ],
-  providers: [PoiService]
+    selector: 'igo-poi-button',
+    templateUrl: './poi-button.component.html',
+    styleUrls: ['./poi-button.component.scss'],
+    imports: [
+        MatSelectModule,
+        MatOptionModule,
+        MatButtonModule,
+        StopPropagationDirective,
+        MatIconModule,
+        MatDividerModule,
+        NgFor,
+        IgoLanguageModule
+    ],
+    providers: [PoiService]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
   @Input()

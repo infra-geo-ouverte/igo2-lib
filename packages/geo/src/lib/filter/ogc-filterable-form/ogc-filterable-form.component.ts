@@ -11,27 +11,26 @@ import { OgcFilterSelectionComponent } from '../ogc-filter-selection/ogc-filter-
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 
 @Component({
-  selector: 'igo-ogc-filterable-form',
-  templateUrl: './ogc-filterable-form.component.html',
-  styles: ['::ng-deep.igo-overlay-panel-width { min-width: fit-content;}'],
-  providers: [
-    {
-      provide: MAT_SELECT_CONFIG,
-      useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
-    },
-    {
-      provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
-      useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
-    }
-  ],
-  standalone: true,
-  imports: [
-    NgIf,
-    OgcFilterSelectionComponent,
-    ListItemDirective,
-    NgFor,
-    OgcFilterFormComponent
-  ]
+    selector: 'igo-ogc-filterable-form',
+    templateUrl: './ogc-filterable-form.component.html',
+    styles: ['::ng-deep.igo-overlay-panel-width { min-width: fit-content;}'],
+    providers: [
+        {
+            provide: MAT_SELECT_CONFIG,
+            useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
+        },
+        {
+            provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
+            useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
+        }
+    ],
+    imports: [
+        NgIf,
+        OgcFilterSelectionComponent,
+        ListItemDirective,
+        NgFor,
+        OgcFilterFormComponent
+    ]
 })
 export class OgcFilterableFormComponent {
   @Input() datasource: OgcFilterableDataSource;

@@ -18,11 +18,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-overlay',
-  templateUrl: './overlay.component.html',
-  styleUrls: ['./overlay.component.scss'],
-  standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES]
+    selector: 'app-overlay',
+    templateUrl: './overlay.component.html',
+    styleUrls: ['./overlay.component.scss'],
+    imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES]
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {
   public map: IgoMap = new IgoMap({

@@ -31,25 +31,24 @@ import type { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
 
 @Component({
-  selector: 'igo-layer-item',
-  templateUrl: './layer-item.component.html',
-  styleUrls: ['./layer-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatListModule,
-    NgIf,
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatIconModule,
-    MatBadgeModule,
-    NgClass,
-    LayerLegendComponent,
-    AsyncPipe,
-    IgoLanguageModule,
-    LayerVisibilityButtonComponent
-  ]
+    selector: 'igo-layer-item',
+    templateUrl: './layer-item.component.html',
+    styleUrls: ['./layer-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatListModule,
+        NgIf,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatIconModule,
+        MatBadgeModule,
+        NgClass,
+        LayerLegendComponent,
+        AsyncPipe,
+        IgoLanguageModule,
+        LayerVisibilityButtonComponent
+    ]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
   showLegend$ = new BehaviorSubject(true);

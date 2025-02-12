@@ -19,12 +19,11 @@ import { Workspace } from '../shared/workspace';
  * Drop list that activates the selected workspace emit an event.
  */
 @Component({
-  selector: 'igo-workspace-selector',
-  templateUrl: './workspace-selector.component.html',
-  styleUrls: ['./workspace-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [EntitySelectorComponent]
+    selector: 'igo-workspace-selector',
+    templateUrl: './workspace-selector.component.html',
+    styleUrls: ['./workspace-selector.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [EntitySelectorComponent]
 })
 export class WorkspaceSelectorComponent {
   /**

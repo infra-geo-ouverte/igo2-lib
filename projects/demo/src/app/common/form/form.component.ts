@@ -18,19 +18,18 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-form',
-  templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    NgIf,
-    FormComponent,
-    FormGroupComponent,
-    MatButtonModule,
-    AsyncPipe
-  ]
+    selector: 'app-form',
+    templateUrl: './form.component.html',
+    styleUrls: ['./form.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        NgIf,
+        FormComponent,
+        FormGroupComponent,
+        MatButtonModule,
+        AsyncPipe
+    ]
 })
 export class AppFormComponent implements OnInit, OnDestroy {
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);

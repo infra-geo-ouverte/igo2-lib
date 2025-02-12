@@ -17,25 +17,24 @@ import { TimeFilterService } from '../shared/time-filter.service';
 import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.component';
 
 @Component({
-  selector: 'igo-time-filter-item',
-  templateUrl: './time-filter-item.component.html',
-  styleUrls: ['./time-filter-item.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatListModule,
-    MatIconModule,
-    CollapseDirective,
-    NgStyle,
-    MatButtonModule,
-    MatTooltipModule,
-    NgClass,
-    LayerLegendComponent,
-    TimeFilterFormComponent,
-    AsyncPipe,
-    IgoLanguageModule
-  ],
-  providers: [TimeFilterService]
+    selector: 'igo-time-filter-item',
+    templateUrl: './time-filter-item.component.html',
+    styleUrls: ['./time-filter-item.component.scss'],
+    imports: [
+        NgIf,
+        MatListModule,
+        MatIconModule,
+        CollapseDirective,
+        NgStyle,
+        MatButtonModule,
+        MatTooltipModule,
+        NgClass,
+        LayerLegendComponent,
+        TimeFilterFormComponent,
+        AsyncPipe,
+        IgoLanguageModule
+    ],
+    providers: [TimeFilterService]
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';

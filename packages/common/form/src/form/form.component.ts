@@ -21,12 +21,11 @@ import { getAllFormFields } from '../shared/form.utils';
  * A configurable form
  */
 @Component({
-  selector: 'igo-form',
-  templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgClass]
+    selector: 'igo-form',
+    templateUrl: './form.component.html',
+    styleUrls: ['./form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FormsModule, ReactiveFormsModule, NgClass]
 })
 export class FormComponent implements OnChanges {
   /**

@@ -50,29 +50,28 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
-  standalone: true,
-  imports: [
-    DocViewerComponent,
-    ExampleViewerComponent,
-    NgIf,
-    MapBrowserComponent,
-    ZoomButtonComponent,
-    CONTEXT_MENU_DIRECTIVES,
-    IgoSearchModule,
-    PanelComponent,
-    SEARCH_RESULTS_DIRECTIVES,
-    ActionbarComponent,
-    FeatureDetailsComponent
-  ],
-  providers: [
-    provideSearch([withIChercheSource(), withWorkspaceSource()], {
-      analytics: true
-    }),
-    SearchState
-  ]
+    selector: 'app-search',
+    templateUrl: './search.component.html',
+    styleUrls: ['./search.component.scss'],
+    imports: [
+        DocViewerComponent,
+        ExampleViewerComponent,
+        NgIf,
+        MapBrowserComponent,
+        ZoomButtonComponent,
+        CONTEXT_MENU_DIRECTIVES,
+        IgoSearchModule,
+        PanelComponent,
+        SEARCH_RESULTS_DIRECTIVES,
+        ActionbarComponent,
+        FeatureDetailsComponent
+    ],
+    providers: [
+        provideSearch([withIChercheSource(), withWorkspaceSource()], {
+            analytics: true
+        }),
+        SearchState
+    ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);

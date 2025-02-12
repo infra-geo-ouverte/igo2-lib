@@ -19,12 +19,11 @@ import { Workspace } from '../shared/workspace';
  * emit the 'cancel' or 'complete' event.
  */
 @Component({
-  selector: 'igo-workspace-widget-outlet',
-  templateUrl: './workspace-widget-outlet.component.html',
-  styleUrls: ['./workspace-widget-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, WidgetOutletComponent, AsyncPipe]
+    selector: 'igo-workspace-widget-outlet',
+    templateUrl: './workspace-widget-outlet.component.html',
+    styleUrls: ['./workspace-widget-outlet.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgIf, WidgetOutletComponent, AsyncPipe]
 })
 export class WorkspaceWidgetOutletComponent {
   /**

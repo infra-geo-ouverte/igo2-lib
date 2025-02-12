@@ -1,9 +1,4 @@
-import {
-  APP_INITIALIZER,
-  ConstructorProvider,
-  ErrorHandler,
-  FactoryProvider
-} from '@angular/core';
+import { ConstructorProvider, ErrorHandler, FactoryProvider, inject, provideAppInitializer } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TraceService } from '@sentry/angular';
@@ -34,11 +29,9 @@ export const provideSentryMonitoring = (
       deps: [Router]
     },
     // Force instantiate TraceService to avoid require it in any constructor.
-    tracingEnabled && {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => void 1,
-      deps: [TraceService],
-      multi: true
-    }
+    tracingEnabled && provideAppInitializer(() => {
+        const initializerFn = (() => () => void 1)(inject(TraceService));
+        return initializerFn();
+      })
   ].filter(Boolean);
 };

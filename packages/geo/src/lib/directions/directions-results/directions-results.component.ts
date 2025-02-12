@@ -44,24 +44,23 @@ import {
 import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
 
 @Component({
-  selector: 'igo-directions-results',
-  templateUrl: './directions-results.component.html',
-  styleUrls: ['./directions-results.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    NgFor,
-    MatOptionModule,
-    MatDividerModule,
-    MatTooltipModule,
-    MatListModule,
-    MatIconModule,
-    NgClass,
-    IgoLanguageModule
-  ]
+    selector: 'igo-directions-results',
+    templateUrl: './directions-results.component.html',
+    styleUrls: ['./directions-results.component.scss'],
+    imports: [
+        NgIf,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        NgFor,
+        MatOptionModule,
+        MatDividerModule,
+        MatTooltipModule,
+        MatListModule,
+        MatIconModule,
+        NgClass,
+        IgoLanguageModule
+    ]
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;

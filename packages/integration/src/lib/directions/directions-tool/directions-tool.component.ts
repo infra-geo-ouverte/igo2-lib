@@ -26,10 +26,9 @@ import { DirectionState } from '../directions.state';
   icon: 'directions'
 })
 @Component({
-  selector: 'igo-directions-tool',
-  templateUrl: './directions-tool.component.html',
-  standalone: true,
-  imports: [IgoDirectionsModule]
+    selector: 'igo-directions-tool',
+    templateUrl: './directions-tool.component.html',
+    imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {
   public currentContextUri: string;

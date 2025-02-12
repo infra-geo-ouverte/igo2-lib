@@ -41,25 +41,24 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-  selector: 'app-workspace',
-  templateUrl: './workspace.component.html',
-  styleUrls: ['./workspace.component.scss'],
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    DocViewerComponent,
-    ExampleViewerComponent,
-    EntityTableComponent,
-    ActionbarComponent,
-    EntityTablePaginatorComponent,
-    IgoGeoWorkspaceModule,
-    MAP_DIRECTIVES,
-    WorkspaceSelectorComponent,
-    WorkspaceSelectorDirective,
-    WorkspaceWidgetOutletComponent,
-    MatCardModule,
-    NgIf
-  ]
+    selector: 'app-workspace',
+    templateUrl: './workspace.component.html',
+    styleUrls: ['./workspace.component.scss'],
+    imports: [
+        AsyncPipe,
+        DocViewerComponent,
+        ExampleViewerComponent,
+        EntityTableComponent,
+        ActionbarComponent,
+        EntityTablePaginatorComponent,
+        IgoGeoWorkspaceModule,
+        MAP_DIRECTIVES,
+        WorkspaceSelectorComponent,
+        WorkspaceSelectorDirective,
+        WorkspaceWidgetOutletComponent,
+        MatCardModule,
+        NgIf
+    ]
 })
 export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;

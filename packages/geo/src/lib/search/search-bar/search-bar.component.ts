@@ -41,25 +41,24 @@ import { SearchService } from '../shared/search.service';
  * into that store. An event is always emitted when a research is completed.
  */
 @Component({
-  selector: 'igo-search-bar',
-  templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgClass,
-    MatFormFieldModule,
-    NgIf,
-    MatInputModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatDividerModule,
-    SearchSelectorComponent,
-    SearchSettingsComponent,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-search-bar',
+    templateUrl: './search-bar.component.html',
+    styleUrls: ['./search-bar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgClass,
+        MatFormFieldModule,
+        NgIf,
+        MatInputModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatDividerModule,
+        SearchSelectorComponent,
+        SearchSettingsComponent,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   /**

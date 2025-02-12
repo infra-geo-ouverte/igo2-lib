@@ -52,28 +52,27 @@ import { StopsFeatureStore, StopsStore } from '../shared/store';
 import { DirectionRelativePositionType } from './../shared/directions.enum';
 
 @Component({
-  selector: 'igo-directions-inputs',
-  templateUrl: './directions-inputs.component.html',
-  styleUrls: ['./directions-inputs.component.scss'],
-  standalone: true,
-  imports: [
-    CdkDropList,
-    NgFor,
-    CdkDrag,
-    NgClass,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatAutocompleteModule,
-    MatTooltipModule,
-    NgIf,
-    MatButtonModule,
-    MatIconModule,
-    MatOptionModule,
-    CdkDragHandle,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-directions-inputs',
+    templateUrl: './directions-inputs.component.html',
+    styleUrls: ['./directions-inputs.component.scss'],
+    imports: [
+        CdkDropList,
+        NgFor,
+        CdkDrag,
+        NgClass,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatAutocompleteModule,
+        MatTooltipModule,
+        NgIf,
+        MatButtonModule,
+        MatIconModule,
+        MatOptionModule,
+        CdkDragHandle,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class DirectionsInputsComponent implements OnDestroy {
   @Input({ required: true }) stopsStore: StopsStore;

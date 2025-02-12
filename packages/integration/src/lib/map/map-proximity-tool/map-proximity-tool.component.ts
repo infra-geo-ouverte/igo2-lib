@@ -29,22 +29,21 @@ import { MapState } from '../map.state';
  * Tool to handle the advanced map tools
  */
 @Component({
-  selector: 'igo-map-proximity-tool',
-  templateUrl: './map-proximity-tool.component.html',
-  styleUrls: ['./map-proximity-tool.component.scss'],
-  standalone: true,
-  imports: [
-    EntityTableComponent,
-    NgIf,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatRadioModule,
-    FormsModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-map-proximity-tool',
+    templateUrl: './map-proximity-tool.component.html',
+    styleUrls: ['./map-proximity-tool.component.scss'],
+    imports: [
+        EntityTableComponent,
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatRadioModule,
+        FormsModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class MapProximityToolComponent implements OnInit, OnDestroy {
   private subs$$: Subscription[] = [];

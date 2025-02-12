@@ -35,23 +35,22 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
  * Component to browse a list of available catalogs
  */
 @Component({
-  selector: 'igo-catalog-library',
-  templateUrl: './catalog-library.component.html',
-  styleUrls: ['./catalog-library.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    ListComponent,
-    NgFor,
-    CatalogLibaryItemComponent,
-    ListItemDirective,
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-catalog-library',
+    templateUrl: './catalog-library.component.html',
+    styleUrls: ['./catalog-library.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ListComponent,
+        NgFor,
+        CatalogLibaryItemComponent,
+        ListItemDirective,
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**

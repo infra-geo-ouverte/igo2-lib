@@ -33,29 +33,28 @@ import { SearchResult } from '../shared';
 import { SearchResultsItemComponent } from './search-results-item.component';
 
 @Component({
-  selector: 'igo-save-feature-dialog',
-  templateUrl: './save-feature-dialog.component.html',
-  styleUrls: ['./save-feature-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    FormsModule,
-    ReactiveFormsModule,
-    ListComponent,
-    SearchResultsItemComponent,
-    ListItemDirective,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    NgFor,
-    MatOptionModule,
-    MatListModule,
-    MatDialogActions,
-    MatButtonModule,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+    selector: 'igo-save-feature-dialog',
+    templateUrl: './save-feature-dialog.component.html',
+    styleUrls: ['./save-feature-dialog.component.scss'],
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        FormsModule,
+        ReactiveFormsModule,
+        ListComponent,
+        SearchResultsItemComponent,
+        ListItemDirective,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        NgFor,
+        MatOptionModule,
+        MatListModule,
+        MatDialogActions,
+        MatButtonModule,
+        AsyncPipe,
+        IgoLanguageModule
+    ]
 })
 export class SaveFeatureDialogComponent implements OnInit {
   public form: UntypedFormGroup;

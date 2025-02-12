@@ -23,21 +23,20 @@ import type { IgoMap } from '@igo2/geo';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 @Component({
-  selector: 'igo-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss'],
-  standalone: true,
-  imports: [
-    MatSidenavModule,
-    FlexibleComponent,
-    PanelComponent,
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    FeatureDetailsComponent,
-    IgoLanguageModule
-  ]
+    selector: 'igo-sidenav',
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss'],
+    imports: [
+        MatSidenavModule,
+        FlexibleComponent,
+        PanelComponent,
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        FeatureDetailsComponent,
+        IgoLanguageModule
+    ]
 })
 export class SidenavComponent {
   private format = new olFormatGeoJSON();
