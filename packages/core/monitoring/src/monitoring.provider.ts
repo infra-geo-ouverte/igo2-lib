@@ -1,4 +1,4 @@
-import { InjectionToken, Provider } from '@angular/core';
+import { EnvironmentProviders, InjectionToken, Provider } from '@angular/core';
 
 import { provideSentryMonitoring } from './sentry/sentry.provider';
 import { AnyMonitoringOptions, MonitoringOptions } from './shared';
@@ -9,12 +9,12 @@ export const MONITORING_OPTIONS = new InjectionToken<MonitoringOptions | null>(
 
 export function provideMonitoring(
   options: AnyMonitoringOptions | null
-): Provider[] {
+): (EnvironmentProviders | Provider)[] {
   if (!options) {
     return [];
   }
 
-  const providers: Provider[] = [
+  const providers: (EnvironmentProviders | Provider)[] = [
     { provide: MONITORING_OPTIONS, useValue: options }
   ];
 

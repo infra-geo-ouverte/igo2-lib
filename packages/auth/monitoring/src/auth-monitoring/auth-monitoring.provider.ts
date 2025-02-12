@@ -1,4 +1,10 @@
-import { Injector, Provider, inject, provideAppInitializer } from '@angular/core';
+import {
+  EnvironmentProviders,
+  Injector,
+  Provider,
+  inject,
+  provideAppInitializer
+} from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import {
@@ -10,7 +16,7 @@ import { AuthMonitoringService } from './auth-monitoring.service';
 
 export function provideAuthUserMonitoring(
   options: AnyMonitoringOptions | null
-): Provider[] {
+): (Provider | EnvironmentProviders)[] {
   if (!options) {
     return [];
   }
@@ -23,8 +29,11 @@ export function provideAuthUserMonitoring(
     },
     // Force instantiate Tracing service to avoid require it in any constructor.
     provideAppInitializer(() => {
-        const initializerFn = (() => () => void 1)(inject(AuthMonitoringService));
-        return initializerFn();
-      })
+      const initializerFn = () => {
+        inject(AuthMonitoringService);
+        return;
+      };
+      return initializerFn();
+    })
   ];
 }

@@ -23,7 +23,10 @@ export function styleListFactory(
 
 export function provideStyleListLoader() {
   return provideAppInitializer(() => {
-        const initializerFn = (styleListFactory)(inject(StyleListService), inject(STYLELIST_OPTIONS));
-        return initializerFn();
-      });
+    const initializerFn = styleListFactory(
+      inject(StyleListService),
+      inject(STYLELIST_OPTIONS)
+    );
+    return initializerFn();
+  });
 }

@@ -1,4 +1,9 @@
-import { EnvironmentProviders, makeEnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
+import {
+  EnvironmentProviders,
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer
+} from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
 type MaterialSymbolStyle = 'outlined' | 'rounded' | 'sharp';
@@ -9,9 +14,13 @@ export function provideIcon(
   return makeEnvironmentProviders([
     MatIconModule,
     provideAppInitializer(() => {
-        const initializerFn = ((iconRegistry: MatIconRegistry) => () =>
-        iconRegistry.setDefaultFontSetClass(`material-symbols-${style}`))(inject(MatIconRegistry));
-        return initializerFn();
-      })
+      const initializerFn = () => {
+        const iconRegistry = inject(MatIconRegistry);
+        iconRegistry.setDefaultFontSetClass(`material-symbols-${style}`);
+        return;
+      };
+
+      return initializerFn();
+    })
   ]);
 }
