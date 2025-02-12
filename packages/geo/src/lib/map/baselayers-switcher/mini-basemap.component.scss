@@ -1,8 +1,8 @@
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 .igo-mini-basemap-container {
-  width: calc(#{$igo-icon-size} * 2);
-  height: calc(#{$igo-icon-size} * 2);
+  width: calc(#{core.$igo-icon-size} * 2);
+  height: calc(#{core.$igo-icon-size} * 2);
   background-color: rgba(255, 255, 255, 0.01);
   border: 2px solid white;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);

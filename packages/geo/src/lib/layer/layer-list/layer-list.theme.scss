@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'sass:color';
 @use '@angular/material' as mat;
 
 @mixin theme($theme) {
@@ -23,7 +24,7 @@
       &.--children-selected {
         igo-layer-group,
         igo-layer-item {
-          background-color: adjust-color(
+          background-color: color.adjust(
             $color: mat.m2-get-color-from-palette($accent, lighter),
             $lightness: 8%
           );

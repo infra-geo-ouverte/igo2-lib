@@ -1,4 +1,4 @@
-@import '../../src/style/partial/common.variables';
+@use '../../src/style/partial/common.variables' as common;
 
 // This is to make the list scrollable
 :host {
@@ -27,7 +27,7 @@
   ::ng-deep
   .mat-mdc-list
   .mat-mdc-list-item.mdc-list-item--with-leading-icon {
-  height: $igo-list-item-height;
+  height: common.$igo-list-item-height;
 }
 
 :host

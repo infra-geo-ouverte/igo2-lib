@@ -1,5 +1,4 @@
-@import '../../../core/src/style/partial/core.variables';
-@import '../../src/style/partial/common.variables';
+@use '../../src/style/partial/common.variables' as common;
 
 :host {
   display: flex;
@@ -16,7 +15,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: $igo-panel-header-height;
+    height: common.$igo-panel-header-height;
     text-align: center;
   }
 
