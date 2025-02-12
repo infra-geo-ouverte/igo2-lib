@@ -36,8 +36,8 @@ export interface ICatalog {
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id, title, sortDirection?)
   groupSeparator?: string;
   queryFormat?: QueryFormat | CatalogQueryFormatTypes;
-  queryParams?: { [key: string]: string };
-  sourceOptions?: { [key: string]: any };
+  queryParams?: Record<string, string>;
+  sourceOptions?: Record<string, any>;
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;

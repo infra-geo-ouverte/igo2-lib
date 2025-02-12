@@ -30,14 +30,16 @@ import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { Legend } from '../../datasource/shared/datasources/datasource.interface';
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { Layer } from '../shared/layers/layer';
+import {
+  Legend,
+  WMSDataSource,
+  WMSDataSourceOptions
+} from '../../datasource/shared/datasources';
 import {
   ItemStyleOptions,
+  Layer,
   LegendMapViewOptions
-} from '../shared/layers/legend.interface';
+} from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -65,12 +67,12 @@ import {
   ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
   /**
    * Observable of the legend items
    */
-  legendItems$: BehaviorSubject<Legend[]> = new BehaviorSubject([]);
+  legendItems$ = new BehaviorSubject<Legend[]>([]);
 
   /**
    * Subscription to the map's resolution
@@ -104,11 +106,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * List of size of images displayed
    */
-  public imagesHeight: { [srcKey: string]: number } = {};
+  public imagesHeight: Record<string, number> = {};
 
-  /**
-   * Layer
-   */
   @Input() layer: Layer;
 
   /**
@@ -154,10 +153,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     ) {
       lastlLegend = [];
     } else {
-      lastlLegend = this.layer.dataSource.getLegend(
-        this.currentStyle,
-        this.view
-      );
+      lastlLegend = this.layer.dataSource.getLegend();
     }
 
     if (
@@ -260,10 +256,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer.dataSource.getLegend(
-      this.currentStyle,
-      this.view
-    );
+    let legendItems = this.layer.dataSource.getLegend();
     if (this.layer.legend && this.layer.legend.length > 1) {
       legendItems = this.transfertToggleLegendItem(legendItems);
     }
@@ -316,7 +309,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       this.layer.dataSource.ol
         .getParams()
         .LAYERS.split(',')
-        .map((layer) => (STYLES += this.currentStyle + ','));
+        .map(() => (STYLES += this.currentStyle + ','));
       STYLES = STYLES.slice(0, -1);
       this.layer.dataSource.ol.updateParams({ STYLES });
     }

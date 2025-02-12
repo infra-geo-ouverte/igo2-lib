@@ -29,7 +29,7 @@ import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
-import { Layer, VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
+import { VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
@@ -52,7 +52,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     new EntityStore<OlFeature<OlGeometry>>([]);
   private lastTimeoutRequest;
   private store$$: Subscription;
-  private layers$$: Subscription;
 
   private selectionLayer: olLayerVectorTile;
   private selectionMVT = {};
@@ -65,16 +64,16 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
   private singleClickMapListener;
 
-  private hoverFeatureId: string = 'hoverFeatureId';
+  private hoverFeatureId = 'hoverFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoHoverFeatureDelay: number = 1000;
+  @Input() igoHoverFeatureDelay = 1000;
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoHoverFeatureEnabled: boolean = false;
+  @Input() igoHoverFeatureEnabled = false;
 
   @HostListener('mouseout')
   mouseout() {
@@ -114,13 +113,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         this.subscribeToPointerStore();
         this.listenToMapClick();
       });
-
-    // To handle context change without using the contextService.
-    this.layers$$ = this.map.layers$.subscribe((layers: Layer[]) => {
-      if (this.store && !layers.find((l) => l.id === 'hoverFeatureId')) {
-        this.initStore();
-      }
-    });
   }
 
   /**
@@ -222,7 +214,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unlistenToMapSingleClick();
-    this.layers$$.unsubscribe();
   }
 
   /**
@@ -251,9 +242,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * On map singleclick
    */
   private listenToMapClick() {
-    this.singleClickMapListener = this.map.ol.on(
-      'singleclick',
-      (event: OlMapBrowserEvent<any>) => this.onMapSingleClickEvent(event)
+    this.singleClickMapListener = this.map.ol.on('singleclick', () =>
+      this.onMapSingleClickEvent()
     );
   }
 
@@ -262,7 +252,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   unsubscribeToPointerStore() {
-    this.store$$.unsubscribe();
+    this.store$$?.unsubscribe();
   }
 
   /**
@@ -287,7 +277,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Trigger clear layer on singleclick.
    * @param event OL map browser singleclick event
    */
-  private onMapSingleClickEvent(event: OlMapBrowserEvent<any>) {
+  private onMapSingleClickEvent() {
     this.clearLayer();
   }
 
@@ -353,7 +343,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               this.pointerHoverFeatureStore.all()[0]?.getProperties()
           ) {
             this.clearLayer();
-            let igoLayer;
             if (layerOL instanceof olLayerVector) {
               const myLayerVector = this.map.getLayerByOlUId(
                 (layerOL as any).ol_uid
@@ -361,7 +350,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               if (!this.canProcessHover(myLayerVector)) {
                 return;
               }
-              let localOlFeature = this.handleRenderFeature(mapFeature);
+              const localOlFeature = this.handleRenderFeature(mapFeature);
               this.setLayerStyleFromOptions(myLayerVector, localOlFeature);
               const featuresToLoad = [localOlFeature];
               localOlFeature.set('_isLabel', false);
@@ -377,7 +366,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               this.setLayerStyleFromOptions(myLayerVector, myLabelOlFeature);
               featuresToLoad.push(myLabelOlFeature);
               this.pointerHoverFeatureStore.load(featuresToLoad);
-              igoLayer = myLayerVector;
               return true;
             }
             if (layerOL instanceof olLayerVectorTile) {
@@ -413,7 +401,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                       this.clearLayer();
                       return;
                     }
-                    let localOlFeature = this.handleRenderFeature(feature);
+                    const localOlFeature = this.handleRenderFeature(feature);
                     localOlFeature.set('_isLabel', false);
                     const myLabelOlFeature = new OlFeature();
                     myLabelOlFeature.setProperties(
@@ -435,7 +423,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                     this.selectionLayer.changed();
                   }
                 );
-              igoLayer = myLayerVectorTile;
             }
           }
         },

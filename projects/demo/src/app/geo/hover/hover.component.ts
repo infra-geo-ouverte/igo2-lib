@@ -25,8 +25,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
-  public pointerCoordDelay: number = 0;
-  public pointerHoverFeatureDelay: number = 0;
+  public pointerCoordDelay = 0;
+  public pointerHoverFeatureDelay = 0;
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -65,11 +65,9 @@ export class AppHoverComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
 
-    interface WFSDataOptions extends WFSDataSourceOptions {}
-
-    const wfsDatasourcePoint: WFSDataOptions = {
+    const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
       params: {
@@ -130,7 +128,9 @@ export class AppHoverComponent {
             }
           }
         };
-        this.map.addLayer(this.layerService.createLayer(layerOptions));
+        this.map.layerController.add(
+          this.layerService.createLayer(layerOptions)
+        );
       });
   }
 }

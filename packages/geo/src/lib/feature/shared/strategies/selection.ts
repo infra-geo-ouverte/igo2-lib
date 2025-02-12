@@ -191,9 +191,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection
-        map((features: Array<Feature[]>) =>
-          features.reduce((a, b) => a.concat(b))
-        )
+        map((features: Feature[][]) => features.reduce((a, b) => a.concat(b)))
       )
       .subscribe((features: Feature[]) => this.onSelectFromStore(features));
   }
@@ -462,8 +460,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * features.
    */
   private addOverlayLayer() {
-    if (this.overlayStore.layer.map === undefined) {
-      this.map.addLayer(this.overlayStore.layer);
+    const layer = this.overlayStore.layer;
+    if (!this.map.layerController.getById(layer.id)) {
+      this.map.layerController.add(layer);
     }
   }
 
@@ -472,6 +471,6 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private removeOverlayLayer() {
     this.overlayStore.source.ol.clear();
-    this.map.removeLayer(this.overlayStore.layer);
+    this.map.layerController.remove(this.overlayStore.layer);
   }
 }

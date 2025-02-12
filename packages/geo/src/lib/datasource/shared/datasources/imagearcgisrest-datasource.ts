@@ -6,8 +6,8 @@ import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
 
 export class ImageArcGISRestDataSource extends DataSource {
-  public declare ol: ImageArcGISRest;
-  public declare options: ArcGISRestImageDataSourceOptions;
+  declare public ol: ImageArcGISRest;
+  declare public options: ArcGISRestImageDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -27,6 +27,14 @@ export class ImageArcGISRestDataSource extends DataSource {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
       : QueryHtmlTarget.BLANK;
+  }
+
+  get saveableOptions(): Partial<ArcGISRestImageDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
   }
 
   protected createOlSource(): ImageArcGISRest {
@@ -79,5 +87,7 @@ export class ImageArcGISRestDataSource extends DataSource {
     return [{ html: htmlString }];
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

@@ -130,62 +130,61 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Whether measure units should be automatically determined
    * @internal
    */
-  public measureUnitsAuto: boolean = false;
+  public measureUnitsAuto = false;
 
   /**
    * Whether display of distances of areas
    * @internal
    */
-  public displayDistance: boolean = true;
+  public displayDistance = true;
 
   /**
    * Whether display of distances of lines
    * @internal
    */
-  public displayLines: boolean = true;
+  public displayLines = true;
 
   /**
    * Whether display of areas
    * @internal
    */
-  public displayAreas: boolean = true;
+  public displayAreas = true;
 
   /**
    * Observable of line boolean
    * @internal
    */
-  public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasLine$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Observable of area boolean
    * @internal
    */
-  public hasArea$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasArea$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Observable of area
    * @internal
    */
-  public measure$: BehaviorSubject<Measure> = new BehaviorSubject({});
+  public measure$ = new BehaviorSubject<Measure>({});
 
   /**
    * Observable of selected features
    * @internal
    */
-  public selectedFeatures$: BehaviorSubject<FeatureWithMeasure[]> =
-    new BehaviorSubject([]);
+  public selectedFeatures$ = new BehaviorSubject<FeatureWithMeasure[]>([]);
 
   /**
    * OL draw source
    * @internal
    */
-  public showTooltips: boolean = true;
+  public showTooltips = true;
 
   /**
    * Whether draw control toggle is disabled or not
    * @internal
    */
-  public drawControlIsDisabled: boolean = true;
+  public drawControlIsDisabled = true;
 
   /**
    * Draw line control
@@ -300,7 +299,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * The minimum length a segment must have to display a tooltip.
    * It also applies to area tooltips.
    */
-  @Input() minSegmentLength: number = 10;
+  @Input() minSegmentLength = 10;
 
   @ViewChild('table', { static: true }) table: EntityTableComponent;
 
@@ -393,6 +392,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    if (this.store.count === 0) {
+      this.store.map.layerController.remove(this.store.layer);
+    }
+
     this.setActiveMeasureType(undefined);
     this.deactivateModifyControl();
     this.freezeStore();
@@ -434,9 +437,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayDistance(toggle: boolean) {
     this.displayDistance = toggle;
     this.onDisplayDistance();
-    toggle
-      ? this.storageService.set('distanceToggle', true, StorageScope.SESSION)
-      : this.storageService.set('distanceToggle', false, StorageScope.SESSION);
+    this.storageService.set('distanceToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -446,9 +447,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayLines(toggle: boolean) {
     this.displayLines = toggle;
     this.onDisplayLines();
-    toggle
-      ? this.storageService.set('linesToggle', true, StorageScope.SESSION)
-      : this.storageService.set('linesToggle', false, StorageScope.SESSION);
+    this.storageService.set('linesToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -458,9 +457,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayAreas(toggle: boolean) {
     this.displayAreas = toggle;
     this.onDisplayAreas();
-    toggle
-      ? this.storageService.set('areasToggle', true, StorageScope.SESSION)
-      : this.storageService.set('areasToggle', false, StorageScope.SESSION);
+    this.storageService.set('areasToggle', toggle, StorageScope.SESSION);
   }
 
   /**
@@ -651,7 +648,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private initStore() {
     const store = this.store;
 
-    const layer = new VectorLayer({
+    let layer = new VectorLayer({
       title: this.languageService.translate.instant(
         'igo.geo.measure.layerTitle'
       ),
@@ -662,11 +659,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       style: createMeasureLayerStyle(),
       showInLayerList: true,
       exportable: true,
+      visible: true,
       browsable: false,
       workspace: { enabled: false }
     });
-    tryBindStoreLayer(store, layer);
-    store.layer.visible = true;
+    layer = tryBindStoreLayer(store, layer);
+
     layer.visible$.subscribe((visible) => {
       const elements: HTMLCollectionOf<Element> =
         this.document.getElementsByClassName('igo-map-tooltip-measure');
@@ -747,14 +745,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         } else {
           this.hasLine$.next(false);
         }
-      })
-    );
-
-    this.subscriptions$$.push(
-      this.store.count$.subscribe((cnt) => {
-        cnt >= 1
-          ? (this.store.layer.options.showInLayerList = true)
-          : (this.store.layer.options.showInLayerList = false);
       })
     );
   }
@@ -1082,19 +1072,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Show the map tooltips of a geoemtry
-   */
-  private showTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
-    getTooltipsOfOlGeometry(olGeometry).forEach(
-      (olTooltip: OlOverlay | undefined) => {
-        if (this.shouldShowTooltip(olTooltip)) {
-          this.map.ol.addOverlay(olTooltip);
-        }
-      }
-    );
-  }
-
-  /**
    * Clear the tooltips of an OL geometrys
    * @param olGeometry OL geometry with tooltips
    */
@@ -1114,15 +1091,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private updateTooltipsOfOlSource(olSource: OlVectorSource) {
     olSource.forEachFeature((olFeature: OlFeature) => {
       this.updateTooltipsOfOlGeometry(olFeature.getGeometry() as any);
-    });
-  }
-
-  /**
-   * Show the map tooltips of all the geometries of a source
-   */
-  private showTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.showTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 

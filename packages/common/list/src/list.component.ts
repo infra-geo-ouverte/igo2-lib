@@ -95,9 +95,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
       this.init();
     }
 
-    this.listItems$$ = this.listItems.changes.subscribe(
-      (items: ListItemDirective[]) => this.init()
-    );
+    this.listItems$$ = this.listItems.changes.subscribe(() => this.init());
   }
 
   ngOnDestroy() {

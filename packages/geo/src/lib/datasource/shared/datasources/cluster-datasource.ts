@@ -6,8 +6,16 @@ import { ClusterDataSourceOptions } from './cluster-datasource.interface';
 import { FeatureDataSource } from './feature-datasource';
 
 export class ClusterDataSource extends FeatureDataSource {
-  public declare options: ClusterDataSourceOptions;
-  public declare ol: olSourceCluster;
+  declare public options: ClusterDataSourceOptions;
+  declare public ol: olSourceCluster;
+
+  get saveableOptions(): Partial<ClusterDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
 
   protected createOlSource(): olSourceCluster {
     this.options.format = this.getSourceFormatFromOptions(this.options);
@@ -19,5 +27,7 @@ export class ClusterDataSource extends FeatureDataSource {
     return uuid();
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

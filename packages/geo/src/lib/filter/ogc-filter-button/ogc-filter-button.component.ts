@@ -13,9 +13,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { MapBase } from '../../map';
-import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
+import { OgcFilterableItemComponent } from '../ogc-filterable-item';
 import {
   IgoOgcSelector,
   OgcFilterableDataSourceOptions
@@ -165,17 +165,15 @@ export class OgcFilterButtonComponent implements OnInit {
         .options as OgcFilterableDataSourceOptions;
     }
   }
-  private _layer;
+  private _layer: Layer;
 
   @Input() map: MapBase;
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
   @Input() header: boolean;
 
   public ogcFilterCollapse = false;
-
-  constructor() {}
 
   ngOnInit() {
     this.options = this.layer.dataSource

@@ -67,7 +67,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed: boolean = false;
+  @Input() addCatalogAllowed = false;
 
   /**
    * Determine if the form to add a catalog is allowed

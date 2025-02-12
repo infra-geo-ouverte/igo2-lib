@@ -77,9 +77,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
-  public igoSearchPointerSummaryEnabled: boolean = false;
+  public igoSearchPointerSummaryEnabled = false;
 
-  public termSplitter: string = '|';
+  public termSplitter = '|';
 
   public map: IgoMap = new IgoMap({
     overlay: true,
@@ -134,7 +134,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer) => this.map.addLayer(layer));
+      .subscribe((layer) => this.map.layerController.add(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||

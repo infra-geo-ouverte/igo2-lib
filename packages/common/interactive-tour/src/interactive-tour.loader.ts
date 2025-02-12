@@ -25,7 +25,7 @@ export class InteractiveTourLoader {
       (data) => {
         this.allToursOptions = data;
       },
-      (err) => {
+      () => {
         throw new Error(
           `Problem with Interactive tour configuration file: interactiveTour.json not find. Check if the file and is path is set correctly.`
         );

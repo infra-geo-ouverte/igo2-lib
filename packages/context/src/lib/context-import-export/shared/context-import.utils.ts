@@ -160,7 +160,7 @@ export function addImportedFeaturesToMap(
   source.ol.addFeatures(olFeatures);
 
   let randomStyle;
-  let editable: boolean = false;
+  let editable = false;
   const featureKeys = olFeatures[0]?.getKeys() ?? [];
   if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
     randomStyle = featureRandomStyleFunction();
@@ -177,7 +177,7 @@ export function addImportedFeaturesToMap(
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
   });
-  map.addLayer(layer);
+  map.layerController.add(layer);
 
   return layer;
 }
@@ -268,7 +268,7 @@ export function addImportedFeaturesStyledToMap(
     opacity: extraFeatures.opacity,
     visible: extraFeatures.visible
   });
-  map.addLayer(layer);
+  map.layerController.add(layer);
 
   return layer;
 }

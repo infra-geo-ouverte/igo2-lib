@@ -25,7 +25,8 @@ import {
 import { debounce } from 'rxjs/operators';
 
 import { LayerLegendItemComponent } from '../layer-legend-item/layer-legend-item.component';
-import { Layer } from '../shared/layers/layer';
+import { AnyLayer } from '../shared/layers/any-layer';
+import { isBaseLayer, isLayerItem, sortLayersByZindex } from '../utils';
 
 @Component({
   selector: 'igo-layer-legend-list',
@@ -48,37 +49,29 @@ import { Layer } from '../shared/layers/layer';
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
+  hasVisibleOrInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  hasVisibleAndNotInRangeLayers$ = new BehaviorSubject<boolean>(true);
+  layersInUi$ = new BehaviorSubject<AnyLayer[]>([]);
+  layers$ = new BehaviorSubject<AnyLayer[]>([]);
+  showAllLegend = false;
 
-  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
-  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> =
-    new BehaviorSubject(true);
-  layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegend: boolean = false;
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
-  @Input()
-  set layers(value: Layer[]) {
-    this._layers = value;
-    this.next();
-  }
-  get layers(): Layer[] {
-    return this._layers;
-  }
-  private _layers: Layer[];
-  @Input() excludeBaseLayers: boolean = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() layers: AnyLayer[];
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() excludeBaseLayers = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
+
+  @Input() allowShowAllLegends = false;
+
+  @Input() showAllLegendsValue = false;
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
 
-  constructor() {}
+  isLayerItem = isLayerItem;
+
   ngOnInit(): void {
     this.change$$ = this.change$
       .pipe(
@@ -92,20 +85,15 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
         this.hasVisibleOrInRangeLayers$.next(
           this.layers
             .slice(0)
-            .filter((layer) => layer.baseLayer !== true)
-            .filter(
-              (layer) =>
-                layer.visible$.value && layer.isInResolutionsRange$.value
-            ).length > 0
+            .filter((layer) => !isBaseLayer(layer))
+            .filter((layer) => layer.displayed).length > 0
         );
         this.hasVisibleAndNotInRangeLayers$.next(
           this.layers
             .slice(0)
-            .filter((layer) => layer.baseLayer !== true)
-            .filter(
-              (layer) =>
-                layer.visible$.value && !layer.isInResolutionsRange$.value
-            ).length > 0
+            .filter((layer) => !isBaseLayer(layer))
+            .filter((layer) => layer.visible && !layer.isInResolutionsRange)
+            .length > 0
         );
 
         this.layersInUi$.next(
@@ -114,7 +102,7 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
             .filter(
               (layer) =>
                 layer.showInLayerList !== false &&
-                (!this.excludeBaseLayers || !layer.baseLayer)
+                (!this.excludeBaseLayers || !isBaseLayer(layer))
             )
         );
       });
@@ -126,17 +114,12 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   private next() {
     this.change$.next();
   }
-  private computeShownLayers(layers: Layer[]) {
-    let shownLayers = layers.filter(
-      (layer: Layer) => layer.visible && layer.isInResolutionsRange
-    );
+  private computeShownLayers(layers: AnyLayer[]) {
+    let shownLayers = layers.filter((layer) => layer.displayed);
     if (this.showAllLegendsValue) {
       shownLayers = layers;
     }
-    return this.sortLayersByZindex(shownLayers);
-  }
-  private sortLayersByZindex(layers: Layer[]) {
-    return layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
+    return sortLayersByZindex(shownLayers, 'desc');
   }
 
   toggleShowAllLegends(toggle: boolean) {

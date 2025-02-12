@@ -1,6 +1,6 @@
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureStore } from './store';
+import type { FeatureStore } from './store';
 
 /**
  * Try to bind a layer to a store if none is bound already.
@@ -9,12 +9,15 @@ import { FeatureStore } from './store';
  * @param store The store to bind the layer
  * @param layer An optional VectorLayer
  */
-export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
+export function tryBindStoreLayer(
+  store: FeatureStore,
+  layer?: VectorLayer
+): VectorLayer {
   if (store.layer !== undefined) {
-    if (store.layer.map === undefined) {
-      store.map.addLayer(store.layer);
+    if (!store.map.layerController.getById(store.layer.id)) {
+      store.map.layerController.add(store.layer);
     }
-    return;
+    return store.layer;
   }
 
   layer = layer
@@ -23,7 +26,9 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
         source: new FeatureDataSource()
       });
   store.bindLayer(layer);
-  if (store.layer.map === undefined) {
-    store.map.addLayer(store.layer);
+  if (!store.map.layerController.getById(store.layer.id)) {
+    store.map.layerController.add(store.layer);
   }
+
+  return layer;
 }

@@ -12,11 +12,11 @@ import {
   standalone: true
 })
 export class DragAndDropDirective {
-  @Input() allowedExtensions: Array<string> = [];
+  @Input() allowedExtensions: string[] = [];
 
-  @Output() protected filesDropped: EventEmitter<File[]> = new EventEmitter();
+  @Output() protected filesDropped = new EventEmitter<File[]>();
 
-  @Output() protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
+  @Output() protected filesInvalid = new EventEmitter<File[]>();
 
   @HostBinding('style.background') private background = 'inherit';
 

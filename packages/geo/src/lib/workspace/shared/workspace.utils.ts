@@ -102,12 +102,17 @@ export function addOrRemoveLayer(
   });
   if (action === 'add') {
     layerService.createAsyncLayer(so).subscribe((layer) => {
+      if (!layer) {
+        return;
+      }
       map.layersAddedByClick$.next([layer]);
-      map.addLayer(layer);
+      map.layerController.add(layer);
     });
   } else if (action === 'remove') {
     const addedLayerId = generateIdFromSourceOptions(so.sourceOptions);
-    map.removeLayer(map.layers.find((l) => l.id === addedLayerId));
+    map.layerController.remove(
+      map.layerController.all.find((l) => l.id === addedLayerId)
+    );
   }
 }
 
@@ -122,7 +127,7 @@ export function getGeoServiceAction(
       tooltip: '',
       renderer: EntityTableColumnRenderer.ButtonGroup,
       valueAccessor: (entity: Feature, record: EntityRecord<Feature>) => {
-        let geoServiceProperties = record.state.geoService;
+        const geoServiceProperties = record.state.geoService;
         if (
           geoServiceProperties &&
           geoServiceProperties.haveGeoServiceProperties &&

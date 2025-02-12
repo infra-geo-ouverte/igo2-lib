@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { provideMockTranslation } from '@igo2/core/language';
@@ -9,8 +12,12 @@ import { AuthService } from './auth.service';
 describe('AuthService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, IgoMessageModule],
-      providers: [AuthService, provideMockTranslation()]
+      imports: [IgoMessageModule],
+      providers: [
+        AuthService,
+        provideMockTranslation(),
+        provideHttpClient(withInterceptorsFromDi())
+      ]
     });
   });
 

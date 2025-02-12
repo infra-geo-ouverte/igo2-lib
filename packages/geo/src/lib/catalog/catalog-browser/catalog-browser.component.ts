@@ -13,8 +13,8 @@ import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
 import { BehaviorSubject, zip } from 'rxjs';
 
+import { Layer, isLayerItem } from '../../layer';
 import { LayerService } from '../../layer/shared/layer.service';
-import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared/map';
 import {
   AddedChangeEmitter,
@@ -79,7 +79,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup: boolean = true;
+  @Input() toggleCollapsedGroup = true;
 
   constructor(
     private layerService: LayerService,
@@ -90,13 +90,15 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    const currentItems = this.map.layers.map((layer: Layer) => {
-      return {
-        id: layer.options.source.id,
-        title: layer.title,
-        type: CatalogItemType.Layer
-      };
-    });
+    const currentItems = this.map.layerController.all
+      .filter((layer) => isLayerItem(layer))
+      .map((layer: Layer) => {
+        return {
+          id: layer.options.source.id,
+          title: layer.title,
+          type: CatalogItemType.Layer
+        };
+      });
     this.store.state.updateMany(currentItems, { added: true }, true);
     if (this.catalog && this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
@@ -178,10 +180,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @param layers Catalog layers
    */
   private addLayersToMap(
-    layers: CatalogItemLayer[],
+    catalogLayers: CatalogItemLayer[],
     event: AddedChangeEmitter | AddedChangeGroupEmitter
   ) {
-    const layers$ = layers.map((layer: CatalogItemLayer) => {
+    const layers$ = catalogLayers.map((layer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
       }
@@ -190,12 +192,12 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       }
       return this.layerService.createAsyncLayer(layer.options);
     });
-    zip(...layers$).subscribe((layers: Layer[]) => {
+    zip(...layers$).subscribe((layers) => {
       if (event.event.type === 'click' && event.added) {
         this.map.layersAddedByClick$.next(layers);
       }
-      this.store.state.updateMany(layers, { added: true });
-      this.map.addLayers(layers);
+      this.store.state.updateMany(catalogLayers, { added: true });
+      this.map.layerController.add(...layers.filter(Boolean));
     });
   }
 
@@ -207,14 +209,16 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store.state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const currLayer = this.map.getLayerById(layer.options.id);
+        const currLayer = this.map.layerController.getById(
+          String(layer.options.id)
+        );
         if (currLayer !== undefined) {
-          this.map.removeLayer(currLayer);
+          this.map.layerController.remove(currLayer);
         }
       } else {
-        const currLayer = this.map.getLayerById(layer.id);
+        const currLayer = this.map.layerController.getById(layer.id);
         if (currLayer !== undefined) {
-          this.map.removeLayer(currLayer);
+          this.map.layerController.remove(currLayer);
         }
       }
     });

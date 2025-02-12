@@ -21,7 +21,6 @@ import {
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
-  OverlayDirective,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
@@ -51,7 +50,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MAP_DIRECTIVES,
-    OverlayDirective,
     IgoQueryModule,
     PanelComponent,
     NgIf,
@@ -87,7 +85,7 @@ export class AppQueryComponent {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -108,7 +106,7 @@ export class AppQueryComponent {
         }
       } as QueryableDataSourceOptions)
       .subscribe((dataSource: DataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'WMS',
             source: dataSource
@@ -129,7 +127,7 @@ export class AppQueryComponent {
         }
       } as QueryableDataSourceOptions)
       .subscribe((dataSource: DataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'WMS html with a pre call in GML',
             source: dataSource
@@ -158,7 +156,7 @@ export class AppQueryComponent {
           }
         }
       } as ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -170,7 +168,7 @@ export class AppQueryComponent {
         ]
       } as FeatureDataSourceOptions)
       .subscribe((dataSource: FeatureDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Vector layer',
             source: dataSource
@@ -200,11 +198,13 @@ export class AppQueryComponent {
           source: 'ahocevar'
         }
       } as VectorTileLayerOptions)
-      .subscribe((layer: VectorTileLayer) => this.map.addLayer(layer));
+      .subscribe((layer: VectorTileLayer) =>
+        this.map.layerController.add(layer)
+      );
   }
 
   addFeatures(dataSource: FeatureDataSource): void {
-    const feature1: olFeature<olLineString> = new olFeature({
+    const feature1 = new olFeature<olLineString>({
       name: 'feature1',
       geometry: new olLineString([
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
@@ -213,14 +213,14 @@ export class AppQueryComponent {
       ])
     });
 
-    const feature2: olFeature<olPoint> = new olFeature({
+    const feature2 = new olFeature<olPoint>({
       name: 'feature2',
       geometry: new olPoint(
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
       )
     });
 
-    const feature3: olFeature<olPolygon> = new olFeature({
+    const feature3 = new olFeature<olPolygon>({
       name: 'feature3',
       geometry: new olPolygon([
         [

@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { FeatureStore } from '../../feature/shared/store';
 import {
-  FeatureWithDirection,
+  FeatureWithDirections,
   FeatureWithStep,
   FeatureWithStop,
   Stop
@@ -15,9 +15,7 @@ import {
  * stops.
  */
 export class StopsStore extends EntityStore<Stop> {
-  public storeInitialized$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  public storeInitialized$ = new BehaviorSubject<boolean>(false);
 
   public clearStops() {
     this.storeInitialized$.next(false);
@@ -26,5 +24,5 @@ export class StopsStore extends EntityStore<Stop> {
 }
 
 export class StopsFeatureStore extends FeatureStore<FeatureWithStop> {}
-export class RoutesFeatureStore extends FeatureStore<FeatureWithDirection> {}
-export class StepFeatureStore extends FeatureStore<FeatureWithStep> {}
+export class RoutesFeatureStore extends FeatureStore<FeatureWithDirections> {}
+export class StepsFeatureStore extends FeatureStore<FeatureWithStep> {}

@@ -25,7 +25,7 @@ export interface FormFieldGroup extends FormFieldGroupConfig {
 
 export interface FormFieldGroupOptions {
   validator?: ValidatorFn;
-  errors?: { [key: string]: string };
+  errors?: Record<string, string>;
 }
 export interface FormGroupsConfig {
   name: string;
@@ -42,7 +42,7 @@ export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
   subscribers?: FormFieldSubscribers;
 }
 
-export type FormFieldSubscribers = { [key: string]: FormFieldSubscriber };
+export type FormFieldSubscribers = Record<string, FormFieldSubscriber>;
 type FormFieldSubscriber = (options: FormFieldSubscriberOptions) => void;
 
 interface FormFieldSubscriberOptions {
@@ -56,14 +56,16 @@ export interface FormField<T extends FormFieldInputs = FormFieldInputs>
 }
 
 export interface FormFieldOptions {
+  initialValue?: unknown;
   validator?: ValidatorFn;
   disabled?: boolean;
   visible?: boolean;
   cols?: number;
-  errors?: { [key: string]: string };
+  errors?: Record<string, string>;
   disableSwitch?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface FormFieldInputs {}
 
 export interface FormFieldSelectInputs extends FormFieldInputs {

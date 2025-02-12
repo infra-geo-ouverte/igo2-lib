@@ -2,12 +2,12 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
+import type { Feature } from '../../feature/shared/feature.interfaces';
 import {
-  Feature,
-  FeatureMotion,
   featureToOl,
   moveToOlFeatures
-} from '../../feature/shared';
+} from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { MapBase } from '../../map/shared/map.abstract';
 import { createOverlayLayer } from './overlay.utils';

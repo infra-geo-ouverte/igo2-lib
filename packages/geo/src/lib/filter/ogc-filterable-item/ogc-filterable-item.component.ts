@@ -16,8 +16,8 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
+import { Layer } from '../../layer';
 import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
-import { Layer } from '../../layer/shared/layers/layer';
 import { MapBase } from '../../map';
 import { OgcFilterableFormComponent } from '../ogc-filterable-form/ogc-filterable-form.component';
 import { OgcFilterWriter } from '../shared/ogc-filter';
@@ -59,9 +59,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
-  public hasSelector: boolean = false;
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public hasSelector = false;
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
   private ogcFilterWriter;
 
@@ -69,7 +69,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
 
   @Input() map: MapBase;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);

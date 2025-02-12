@@ -45,7 +45,7 @@ import { SelectValueData } from './select-value-dialog.interface';
 })
 export class SelectValueCheckRadioDialogComponent implements OnInit {
   public formGroup: UntypedFormGroup;
-  public isDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public isDisabled$ = new BehaviorSubject<boolean>(true);
 
   constructor(
     private formBuilder: UntypedFormBuilder,

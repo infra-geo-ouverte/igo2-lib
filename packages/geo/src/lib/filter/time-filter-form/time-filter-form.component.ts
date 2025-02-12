@@ -8,6 +8,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import {
   DateAdapter,
@@ -27,10 +28,13 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
-import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
+import {
+  MatDatetimepickerModule,
+  MatNativeDatetimeModule
+} from '@mat-datetimepicker/core';
 import { default as moment } from 'moment';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
@@ -43,6 +47,8 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
     NgIf,
     MatFormFieldModule,
     MatDatetimepickerModule,
+    MatMomentDateModule,
+    MatNativeDatetimeModule,
     MatNativeDateModule, // For the DateAdapter provider
     MatInputModule,
     FormsModule,
@@ -58,10 +64,6 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
-  @Input() layer: Layer;
-
-  @Input() options: TimeFilterOptions;
-
   public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
@@ -71,9 +73,17 @@ export class TimeFilterFormComponent implements OnInit {
   public endYear: any;
   public initStartYear: any;
   public initEndYear: any;
-  public listYears: Array<string> = [];
-  public startListYears: Array<string> = [];
-  public endListYears: Array<string> = [];
+  public listYears: string[] = [];
+  public startListYears: string[] = [];
+  public endListYears: string[] = [];
+
+  public interval: number;
+  public playIcon = 'play-circle';
+  public resetIcon = 'replay';
+
+  @Input() layer: Layer;
+
+  @Input() options: TimeFilterOptions;
 
   @Input()
   set currentValue(value: string) {
@@ -94,13 +104,9 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  public interval: any;
-  public playIcon = 'play_circle';
-  public resetIcon = 'replay';
-
-  @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
+  @Output() change = new EventEmitter<Date | [Date, Date]>();
   @Output()
-  yearChange: EventEmitter<string | [string, string]> = new EventEmitter();
+  yearChange = new EventEmitter<string | [string, string]>();
   @ViewChild(MatSlider) mySlider;
 
   get type(): TimeFilterType {
@@ -268,7 +274,7 @@ export class TimeFilterFormComponent implements OnInit {
     // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
   }
 
-  handleDateChange(event: any) {
+  handleDateChange() {
     this.setupDateOutput();
     this.applyTypeChange();
 
@@ -280,7 +286,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  handleYearChange(event: any) {
+  handleYearChange() {
     if (this.isRange) {
       this.endListYears = [];
       for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
@@ -296,11 +302,11 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  handleListYearChange(event: any) {
-    this.handleYearChange([this.startYear, this.endYear]);
+  handleListYearChange() {
+    this.handleYearChange();
   }
 
-  handleListYearStartChange(event: any) {
+  handleListYearStartChange() {
     this.change.emit([this.startDate, this.endDate]);
   }
 
@@ -357,7 +363,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  resetFilter(event: any) {
+  resetFilter() {
     this.date = new Date(this.min);
     this.year = this.date.getFullYear();
     if (
@@ -372,12 +378,12 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  playFilter(event: any) {
+  playFilter() {
     if (this.interval) {
       this.stopFilter();
     } else {
       this.playIcon = 'pause_circle';
-      this.interval = setInterval(
+      this.interval = window.setInterval(
         (that) => {
           let newMinDateNumber;
           const maxDateNumber = new Date(that.max);
@@ -391,7 +397,7 @@ export class TimeFilterFormComponent implements OnInit {
             that.stopFilter();
           }
 
-          that.handleDateChange({ value: that.date, date: that.date });
+          that.handleDateChange();
         },
         this.timeInterval,
         this
@@ -399,13 +405,13 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  playYear(event: any) {
+  playYear() {
     if (
       this.year + this.mySlider.step >
       this.max.getFullYear() + this.mySlider.step
     ) {
       this.stopFilter();
-      this.resetFilter(event);
+      this.resetFilter();
     }
     if (this.interval) {
       this.stopFilter();
@@ -437,7 +443,7 @@ export class TimeFilterFormComponent implements OnInit {
   handleSliderDateChange(event: any) {
     this.date = new Date(event.value);
     this.setSliderThumbLabel(this.handleSliderTooltip());
-    this.handleDateChange(event);
+    this.handleDateChange();
   }
 
   handleSliderYearChange(event: any) {

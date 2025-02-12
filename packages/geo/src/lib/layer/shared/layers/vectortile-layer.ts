@@ -6,15 +6,17 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
-import { IgoMap } from '../../../map/shared/map';
+import type { MapBase } from '../../../map/shared/map.abstract';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
+import { LayerType } from './layer.interface';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 
 export class VectorTileLayer extends Layer {
-  public declare dataSource: MVTDataSource;
-  public declare options: VectorTileLayerOptions;
-  public declare ol: olLayerVectorTile;
+  type: LayerType = 'vector';
+  declare public dataSource: MVTDataSource;
+  declare public options: VectorTileLayerOptions;
+  declare public ol: olLayerVectorTile;
 
   private watcher: TileWatcher;
 
@@ -80,7 +82,7 @@ export class VectorTileLayer extends Layer {
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
-      xhr.onload = (event) => {
+      xhr.onload = () => {
         if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
           const type = format.getType();
           let source;
@@ -123,12 +125,17 @@ export class VectorTileLayer extends Layer {
     };
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
+  }
+
+  remove(): void {
+    this.watcher.unsubscribe();
+    super.remove();
   }
 }

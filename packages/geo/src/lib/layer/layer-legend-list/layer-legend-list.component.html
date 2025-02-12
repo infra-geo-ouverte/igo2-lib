@@ -17,9 +17,9 @@
   <igo-list [navigation]="false" [selection]="false">
     <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
       <igo-layer-legend-item
-        *ngIf="!(excludeBaseLayers && layer.baseLayer)"
+        *ngIf="!(excludeBaseLayers && isLayerItem(layer) && layer.baseLayer)"
         igoListItem
-        [layer]="layer"
+        [layer]="$any(layer)"
         [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
       >
       </igo-layer-legend-item>

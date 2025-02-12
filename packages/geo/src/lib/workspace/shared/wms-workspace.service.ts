@@ -66,7 +66,7 @@ export class WmsWorkspaceService {
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
       !layer.options.workspace ||
-      map.layers.find(
+      map.layerController.all.find(
         (lay) => lay.id === layer.id + '.WfsWorkspaceTableDest'
       ) ||
       layer.dataSource.options.edition
@@ -107,16 +107,21 @@ export class WmsWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
       (layer.options.linkedLayers.links = clonedLinks);
+
+    layer.createLink();
+
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
     let wks;
-    let wksLayerOption: GeoWorkspaceOptions = {
+    const wksLayerOption: GeoWorkspaceOptions = {
       printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,
@@ -132,7 +137,10 @@ export class WmsWorkspaceService {
 
     this.layerService
       .createAsyncLayer({
+        title: layer.title,
+        parentId: layer.options.parentId,
         isIgoInternalLayer: true,
+        visible: layer.visible,
         id: wfsLinkId,
         linkedLayers: {
           linkId: wfsLinkId
@@ -140,7 +148,6 @@ export class WmsWorkspaceService {
         workspace: wksLayerOption,
         showInLayerList: false,
         opacity: 0,
-        title: layer.title,
         minResolution:
           layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution:
@@ -184,7 +191,7 @@ export class WmsWorkspaceService {
         } as WFSoptions
       })
       .subscribe((workspaceLayer: VectorLayer) => {
-        map.addLayer(workspaceLayer);
+        map.layerController.add(workspaceLayer);
         layer.ol.setProperties(
           {
             linkedLayers: {
@@ -249,8 +256,25 @@ export class WmsWorkspaceService {
     const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
+    const id = layer.id + '.FeatureStore';
+
+    if (!layer.link) {
+      layer.options.linkedLayers.links = [
+        {
+          syncedDelete: true,
+          linkedIds: [id],
+          properties: [LinkedProperties.VISIBLE]
+        }
+      ];
+      layer.createLink();
+    }
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
+        id,
+        linkedLayers: {
+          linkId: id
+        },
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {

@@ -7,8 +7,8 @@ import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 
 export class TileArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceTileArcGISRest;
-  public declare options: TileArcGISRestDataSourceOptions;
+  declare public ol: olSourceTileArcGISRest;
+  declare public options: TileArcGISRestDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -28,6 +28,14 @@ export class TileArcGISRestDataSource extends DataSource {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
       : QueryHtmlTarget.BLANK;
+  }
+
+  get saveableOptions(): Partial<TileArcGISRestDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
   }
 
   protected createOlSource(): olSourceTileArcGISRest {
@@ -64,5 +72,7 @@ export class TileArcGISRestDataSource extends DataSource {
     return [{ html: htmlString }];
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

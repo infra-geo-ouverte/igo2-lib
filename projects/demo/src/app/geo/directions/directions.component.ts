@@ -3,6 +3,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AuthService } from '@igo2/auth';
 import {
+  AnyLayerOptions,
   DirectionsComponent,
   IgoMap,
   LayerService,
@@ -10,10 +11,9 @@ import {
   MapService,
   MapViewOptions,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore,
-  TileLayer,
   TileLayerOptions,
   provideDirection,
   provideSearch,
@@ -62,13 +62,13 @@ export class AppDirectionsComponent {
   public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
     map: this.map
   });
-  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
+  public stepsFeatureStore: StepsFeatureStore = new StepsFeatureStore([], {
     map: this.map
   });
   public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
     map: this.map
   });
-  public zoomToActiveRoute$: Subject<void> = new Subject();
+  public zoomOnActiveRoute$ = new Subject<void>();
 
   public authenticated$: BehaviorSubject<boolean>;
 
@@ -79,8 +79,9 @@ export class AppDirectionsComponent {
   ) {
     this.authenticated$ = this.authService.authenticate$;
     this.mapService.setMap(this.map);
-    this.layerService
-      .createAsyncLayer({
+
+    const layers: AnyLayerOptions[] = [
+      {
         title: 'Quebec Base Map',
         baseLayer: true,
         visible: true,
@@ -89,7 +90,11 @@ export class AppDirectionsComponent {
           url: '/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
           crossOrigin: 'anonymous'
         }
-      } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      } satisfies TileLayerOptions
+    ];
+
+    this.layerService
+      .createLayers(layers)
+      .subscribe((layers) => this.map.layerController.add(...layers));
   }
 }

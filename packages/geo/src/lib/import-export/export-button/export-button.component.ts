@@ -7,8 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources';
-import { VectorLayer } from '../../layer/shared';
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer, VectorLayer } from '../../layer/shared';
 
 @Component({
   selector: 'igo-export-button',
@@ -25,25 +24,9 @@ import { Layer } from '../../layer/shared/layers/layer';
   ]
 })
 export class ExportButtonComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  private _layer: Layer;
+  @Input() layer: Layer;
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
-
-  constructor() {}
+  @Input() color = 'primary';
 
   get options(): DataSourceOptions {
     if (!this.layer) {

@@ -29,9 +29,7 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): ImageLayer | VectorLayer {
     return this.options.layer;
@@ -102,7 +100,9 @@ export class EditionWorkspace extends Workspace {
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point as any);
 
-    this.map.removeLayer(this.olDrawingLayer);
+    if (this.olDrawingLayer) {
+      this.map.layerController.remove(this.olDrawingLayer);
+    }
 
     this.olDrawingLayer = new VectorLayer({
       id: 'igo-draw-layer',
@@ -329,7 +329,7 @@ export class EditionWorkspace extends Workspace {
 
     this.olDrawingLayer.dataSource.ol.clear();
     this.olDrawingLayer.dataSource.ol.addFeature(featureOl);
-    this.map.addLayer(this.olDrawingLayer);
+    this.map.layerController.add(this.olDrawingLayer);
 
     this.deactivateDrawControl();
     this.createModifyInteraction(featureOl, feature, workspace);
@@ -340,7 +340,7 @@ export class EditionWorkspace extends Workspace {
    * Layer refresh will automatically add the new feature into the store.
    */
   deleteDrawings() {
-    this.map.removeLayer(this.olDrawingLayer);
+    this.map.layerController.remove(this.olDrawingLayer);
     this.olDrawingLayerSource.clear();
     this.map.ol.removeInteraction(this.modify);
   }

@@ -12,7 +12,7 @@ import {
   DirectionsFormat,
   SourceDirectionsType
 } from '../shared/directions.enum';
-import { Direction, DirectionOptions } from '../shared/directions.interface';
+import { DirectionOptions, Directions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
 import {
   BaseDirectionsSourceOptionsProfile,
@@ -101,7 +101,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
   route(
     coordinates: Position[],
     directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]> {
+  ): Observable<Directions[]> {
     const directionsParams = this.getRouteParams(directionsOptions);
     return this.getRoute(coordinates, directionsParams);
   }
@@ -109,7 +109,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
   private getRoute(
     coordinates: Position[],
     params: HttpParams
-  ): Observable<Direction[]> {
+  ): Observable<Directions[]> {
     const url: string = this.url;
     return this._http
       .get<JSON[]>(url + coordinates.join(';'), {
@@ -118,7 +118,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
       .pipe(map((res) => this.extractRoutesData(res)));
   }
 
-  private extractRoutesData(response): Direction[] {
+  private extractRoutesData(response): Directions[] {
     const routeResponse = [];
     response.routes.forEach((route) => {
       routeResponse.push(this.formatRoute(route, response.waypoints));
@@ -161,7 +161,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
     });
   }
 
-  private formatRoute(roadNetworkRoute: any, waypoints: any): Direction {
+  private formatRoute(roadNetworkRoute: any, waypoints: any): Directions {
     const stepsUI = [];
     roadNetworkRoute.legs.forEach((leg) => {
       leg.steps.forEach((step) => {

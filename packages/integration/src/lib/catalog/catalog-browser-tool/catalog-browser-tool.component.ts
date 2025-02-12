@@ -59,7 +59,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup: boolean = true;
+  @Input() toggleCollapsedGroup = true;
 
   /**
    * Map to add layers to
@@ -87,7 +87,11 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
     );
     const authenticate$ = this.authService.authenticate$;
     this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
-      ([record, authenticate]) => {
+      ([record]) => {
+        // Mute an error, that we are not able to replicate where the record is undefined
+        if (record === undefined) {
+          return;
+        }
         const catalog = record.entity;
         this.catalog = catalog;
         this.loadCatalogItems(this.catalog);

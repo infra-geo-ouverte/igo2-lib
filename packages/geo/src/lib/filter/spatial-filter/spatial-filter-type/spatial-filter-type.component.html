@@ -1,7 +1,7 @@
 <mat-tab-group
   [selectedIndex]="selectedTypeIndex.value"
   (selectedIndexChange)="selectedTypeIndex.setValue($event)"
-  (selectedTabChange)="onTypeChange($event)"
+  (selectedTabChange)="onTypeChange()"
 >
   <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
     <mat-form-field>

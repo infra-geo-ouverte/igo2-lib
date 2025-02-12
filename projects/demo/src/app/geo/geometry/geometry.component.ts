@@ -62,9 +62,9 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
 
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$ = new BehaviorSubject<Record<string, any>>(undefined);
 
-  submitDisabled: boolean = true;
+  submitDisabled = true;
 
   private valueChanges$$: Subscription;
 
@@ -80,7 +80,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -175,7 +175,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }): void {
+  onSubmit(data: Record<string, any>): void {
     alert(JSON.stringify(data));
   }
 }

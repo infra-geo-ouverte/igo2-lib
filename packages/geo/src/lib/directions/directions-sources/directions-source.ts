@@ -1,7 +1,7 @@
 import { Position } from 'geojson';
 import { Observable } from 'rxjs';
 
-import { Direction, DirectionOptions } from '../shared/directions.interface';
+import { DirectionOptions, Directions } from '../shared/directions.interface';
 import { BaseDirectionsSourceOptionsProfile } from './directions-source.interface';
 
 export abstract class DirectionsSource {
@@ -12,5 +12,5 @@ export abstract class DirectionsSource {
   abstract route(
     coordinates: Position[],
     directionsOptions: DirectionOptions
-  ): Observable<Direction[]>;
+  ): Observable<Directions[]>;
 }

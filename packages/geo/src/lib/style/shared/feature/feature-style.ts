@@ -97,8 +97,7 @@ export function featureRandomStyle(): olStyle.Style {
  * @returns OL style function
  */
 export function hoverFeatureMarkerStyle(
-  feature: olFeature<olGeom.Geometry>,
-  resolution: number
+  feature: olFeature<olGeom.Geometry>
 ): olStyle.Style[] {
   const olStyleText = new olStyle.Style({
     text: new olStyle.Text({
@@ -162,8 +161,7 @@ export function hoverFeatureMarkerStyle(
  * @returns OL style function
  */
 export function pointerPositionSummaryMarkerStyle(
-  feature: olFeature<OlGeometry>,
-  resolution: number
+  feature: olFeature<OlGeometry>
 ): olStyle.Style {
   return new olStyle.Style({
     image: new olStyle.Icon({

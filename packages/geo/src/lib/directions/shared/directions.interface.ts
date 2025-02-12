@@ -1,3 +1,5 @@
+import { Coordinate } from 'ol/coordinate';
+
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -5,8 +7,11 @@ import { SearchMeta } from '../../search';
 import { SearchSource } from '../../search/shared/sources/source';
 import {
   DirectionRelativePositionType,
-  DirectionType,
   DirectionsFormat,
+  DirectionsType,
+  LaneType,
+  ManeuverModifier,
+  ManeuverType,
   ProposalType,
   SourceDirectionsType
 } from './directions.enum';
@@ -19,26 +24,25 @@ export interface DirectionOptions {
   continue_straight?: boolean;
 }
 
-export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
-export interface FeatureWithDirection
-  extends Feature<FeatureWithDirectionProperties> {}
-export interface FeatureWithStep extends Feature<FeatureWithStepProperties> {}
+export type FeatureWithStop = Feature<FeatureWithStopProperties>;
+export type FeatureWithDirections = Feature<FeatureWithDirectionsProperties>;
+export type FeatureWithStep = Feature<FeatureWithStepProperties>;
 
 export interface FeatureWithStepProperties {
   id: string;
   step: IgoStep;
-  type: DirectionType;
+  type: DirectionsType;
 }
-export interface FeatureWithDirectionProperties {
+export interface FeatureWithDirectionsProperties {
   id: string;
-  direction: Direction;
-  type: DirectionType;
+  directions: Directions;
+  type: DirectionsType;
   active: boolean;
 }
 export interface FeatureWithStopProperties {
   id: string;
   stop: Stop;
-  type: DirectionType;
+  type: DirectionsType;
   stopText: string;
   stopColor: string;
   stopOpacity: 1;
@@ -48,23 +52,22 @@ export interface Stop {
   id: string;
   text?: string;
   searchProposals?: SourceProposal[];
-  coordinates?: [number, number];
+  coordinates?: Coordinate;
   position: number;
   relativePosition: DirectionRelativePositionType;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;
-  stopCoordinates?: [number, number];
 }
 
 export interface SourceProposal {
   type: ProposalType;
   source: SearchSource;
-  results: { [key: string]: any }[];
+  results: Record<string, any>[];
   meta: SearchMeta;
 }
 
-export interface Direction {
+export interface Directions {
   id: string;
   source: string;
   sourceType?: SourceDirectionsType;
@@ -77,19 +80,19 @@ export interface Direction {
   distance?: number;
   duration?: number;
   geometry?: DirectionsGeometry;
-  legs?: OsrmLeg[];
+  legs?: OsrmRouteLeg[];
   steps?: IgoStep[];
   weight?: number;
   weight_name?: string;
 }
 export interface DirectionsGeometry {
   type: GeoJsonGeometryTypes;
-  coordinates: [any];
+  coordinates: Coordinate;
 }
-export interface OsrmLeg {
+export interface OsrmRouteLeg {
   distance?: number;
   duration?: number;
-  steps?: OsrmStep[];
+  steps?: OsrmRouteStep[];
   summary: string;
   weight?: number;
 }
@@ -100,30 +103,61 @@ export interface IgoStep {
   duration?: number;
   geometry?: DirectionsGeometry;
   intersections?: OsrmIntersection[];
-  maneuver?: OsrmManeuver;
+  maneuver?: OsrmStepManeuver;
   mode?: string;
   name?: string;
 }
-export interface OsrmStep {
+
+export interface FormattedStep {
+  instruction: string;
+  iconName: string;
+}
+
+export interface OsrmRouteStep {
+  destinations?: string[];
   distance?: number;
   driving_side?: string;
   duration?: number;
+  exits: number[] | string[];
   geometry?: DirectionsGeometry;
   intersections?: OsrmIntersection[];
-  maneuver?: OsrmManeuver;
+  maneuver?: OsrmStepManeuver;
   mode?: string;
   name?: string;
+  pronunciation?: string;
+  rotary_name?: string;
+  rotary_pronunciation?: string;
+  ref?: number | string;
+  weight?: number;
 }
+
+export interface OsrmStepManeuver {
+  bearing_after?: number;
+  bearing_before?: number;
+  exit?: number;
+  location?: [number, number];
+  modifier?: ManeuverModifier;
+  type?: ManeuverType;
+}
+
+export interface OsrmLane {
+  indications: LaneType[];
+  valid: boolean;
+}
+
 export interface OsrmIntersection {
-  bearing?: [any];
-  entry?: [boolean];
+  bearings?: number[];
+  classes?: string[];
+  entry?: boolean[];
+  in?: number;
+  lanes?: OsrmLane[];
   location?: [number, number];
   out?: number;
 }
-export interface OsrmManeuver {
-  bearing_after?: number;
-  bearing_before?: number;
-  location?: [number, number];
-  modifier?: string;
-  type?: string;
+
+export interface OsrmWaypoint {
+  distance?: number;
+  hint?: string;
+  location: [number, number];
+  name?: string;
 }

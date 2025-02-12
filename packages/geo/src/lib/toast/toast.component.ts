@@ -75,8 +75,6 @@ export class ToastComponent {
     return getEntityTitle(this.feature);
   }
 
-  constructor() {}
-
   toggle() {
     this.expanded = !this.expanded;
     this.opened.emit(this.expanded);

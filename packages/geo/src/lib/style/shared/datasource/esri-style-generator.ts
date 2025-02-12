@@ -324,6 +324,7 @@ export class EsriStyleGenerator {
     }
     const field = renderer.field1;
     const infos = renderer.uniqueValueInfos;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const me = this;
     return (() => {
       const hash = {};

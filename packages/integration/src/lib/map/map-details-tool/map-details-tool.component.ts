@@ -4,16 +4,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
 import { ToolComponent } from '@igo2/common/tool';
+import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
 import {
+  AnyLayer,
   ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
-  LayerListBindingDirective,
-  LayerListComponent,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  LayerViewerComponent,
+  LayerViewerOptions,
   MetadataButtonComponent,
   OgcFilterButtonComponent,
   SearchSourceService,
@@ -23,7 +26,6 @@ import {
 } from '@igo2/geo';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import {
   ImportExportMode,
@@ -45,8 +47,7 @@ import { MapState } from './../map.state';
   standalone: true,
   imports: [
     NgIf,
-    LayerListComponent,
-    LayerListBindingDirective,
+    LayerViewerComponent,
     WorkspaceButtonComponent,
     ExportButtonComponent,
     OgcFilterButtonComponent,
@@ -60,38 +61,45 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapDetailsToolComponent implements OnInit {
-  public delayedShowEmptyMapContent: boolean = false;
+  isDesktop: boolean;
+  public delayedShowEmptyMapContent = false;
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() ogcButton: boolean = true;
+  @Input() ogcButton = true;
 
-  @Input() timeButton: boolean = true;
+  @Input() timeButton = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
+
+  private _layerViewerOptions: Partial<LayerViewerOptions>;
+  get layerViewerOptions(): LayerViewerOptions {
+    return {
+      filterAndSortOptions: this.layerFilterAndSortOptions,
+      legend: {
+        showForVisibleLayers: this.expandLegendOfVisibleLayers,
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
+        updateOnResolutionChange: this.updateLegendOnResolutionChange
+      },
+      queryBadge: this.queryBadge,
+      ...this._layerViewerOptions
+    };
+  }
 
   get map(): IgoMap {
     return this.mapState.map;
   }
 
-  get layers$(): Observable<Layer[]> {
-    return this.map.layers$.pipe(
-      map((layers) =>
-        layers.filter(
-          (layer) =>
-            layer.showInLayerList !== false &&
-            (!this.excludeBaseLayers || !layer.baseLayer)
-        )
-      )
-    );
+  get layers$(): Observable<AnyLayer[]> {
+    return this.map.layerController.all$;
   }
 
   get excludeBaseLayers(): boolean {
@@ -141,15 +149,21 @@ export class MapDetailsToolComponent implements OnInit {
     private mapState: MapState,
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef,
-    private importExportState: ImportExportState
-  ) {}
+    private importExportState: ImportExportState,
+    private configService: ConfigService,
+    public mediaService: MediaService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this._layerViewerOptions = this.configService.getConfig('layer');
+  }
 
   ngOnInit(): void {
+    this.handleMedia();
+
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
-      this.cdRef.detectChanges();
+      this.cdr.detectChanges();
     }, 250);
   }
 
@@ -176,5 +190,12 @@ export class MapDetailsToolComponent implements OnInit {
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  private handleMedia(): void {
+    this.mediaService.media$.subscribe((result) => {
+      this.isDesktop = result === Media.Desktop;
+      this.cdr.detectChanges();
+    });
   }
 }

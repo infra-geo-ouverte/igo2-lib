@@ -26,7 +26,7 @@ import { provideAuthentification } from '@igo2/auth';
 import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
-import { provideTranslation } from '@igo2/core/language';
+import { provideTranslation, withStaticConfig } from '@igo2/core/language';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routing';
@@ -61,7 +61,7 @@ bootstrapApplication(AppComponent, {
     provideConfig({
       default: environment.igo
     }),
-    provideTranslation(),
+    provideTranslation(withStaticConfig(environment.igo.language)),
     provideAuthentification(),
     provideIcon(),
     {

@@ -42,6 +42,7 @@ import {
 } from '@igo2/geo';
 
 import olFeature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
@@ -89,29 +90,27 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean = true;
+  @Input() showIcons = true;
 
   /**
    * Determine the top panel default state
    */
-  @Input() topPanelStateDefault: string = 'expanded';
+  @Input() topPanelStateDefault = 'expanded';
 
-  private hasFeatureEmphasisOnSelection: boolean = false;
-  public saveSearchResultInLayer: boolean = false;
+  private hasFeatureEmphasisOnSelection = false;
+  public saveSearchResultInLayer = false;
 
   private showResultsGeometries$$: Subscription;
   private getRoute$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
-  private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
-    undefined
-  );
+  private focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
   private isSelectedResultOutOfView$$: Subscription;
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
-  public debouncedEmpty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public debouncedEmpty$ = new BehaviorSubject<boolean>(true);
   private debouncedEmpty$$: Subscription;
 
   /**
@@ -699,56 +698,53 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.getRoute$$.unsubscribe();
       }
       this.getRoute$$ =
-        this.directionState.stopsStore.storeInitialized$.subscribe(
-          (init: boolean) => {
-            if (
-              this.directionState.stopsStore.storeInitialized$.value &&
-              !routingCoordLoaded
-            ) {
-              routingCoordLoaded = true;
-              const stop = this.directionState.stopsStore
-                .all()
-                .find((e) => e.position === 1);
-              let coord;
-              if (this.feature.geometry) {
-                if (this.feature.geometry.type === 'Point') {
-                  coord = [
-                    this.feature.geometry.coordinates[0],
-                    this.feature.geometry.coordinates[1]
-                  ];
-                } else {
-                  const point = pointOnFeature(this.feature.geometry);
-                  coord = [
-                    point.geometry.coordinates[0],
-                    point.geometry.coordinates[1]
-                  ];
-                }
-              }
-              stop.text = this.featureTitle;
-              stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
-              if (this.map.geolocationController.position$.value) {
-                const currentPos =
-                  this.map.geolocationController.position$.value;
-                const stop = this.directionState.stopsStore
-                  .all()
-                  .find((e) => e.position === 0);
-                const currentCoord = olProj.transform(
-                  currentPos.position,
-                  currentPos.projection,
-                  'EPSG:4326'
-                );
-                const coord: [number, number] = roundCoordTo(
-                  [currentCoord[0], currentCoord[1]],
-                  6
-                );
-                stop.text = coord.join(',');
-                stop.coordinates = coord;
-                this.directionState.stopsStore.update(stop);
+        this.directionState.stopsStore.storeInitialized$.subscribe(() => {
+          if (
+            this.directionState.stopsStore.storeInitialized$.value &&
+            !routingCoordLoaded
+          ) {
+            routingCoordLoaded = true;
+            const stop = this.directionState.stopsStore
+              .all()
+              .find((e) => e.position === 1);
+            let coord;
+            if (this.feature.geometry) {
+              if (this.feature.geometry.type === 'Point') {
+                coord = [
+                  this.feature.geometry.coordinates[0],
+                  this.feature.geometry.coordinates[1]
+                ];
+              } else {
+                const point = pointOnFeature(this.feature.geometry);
+                coord = [
+                  point.geometry.coordinates[0],
+                  point.geometry.coordinates[1]
+                ];
               }
             }
+            stop.text = this.featureTitle;
+            stop.coordinates = coord;
+            this.directionState.stopsStore.update(stop);
+            if (this.map.geolocationController.position$.value) {
+              const currentPos = this.map.geolocationController.position$.value;
+              const stop = this.directionState.stopsStore
+                .all()
+                .find((e) => e.position === 0);
+              const currentCoord = olProj.transform(
+                currentPos.position,
+                currentPos.projection,
+                'EPSG:4326'
+              );
+              const coord: Coordinate = roundCoordTo(
+                [currentCoord[0], currentCoord[1]],
+                6
+              );
+              stop.text = coord.join(',');
+              stop.coordinates = coord;
+              this.directionState.stopsStore.update(stop);
+            }
           }
-        );
+        });
     }, 250);
   }
 }

@@ -7,8 +7,17 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceVector;
-  public declare options: ArcGISRestDataSourceOptions;
+  declare public ol: olSourceVector;
+  declare public options: ArcGISRestDataSourceOptions;
+
+  get saveableOptions(): Partial<ArcGISRestDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params,
+      url: this.options.url
+    };
+  }
 
   protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();
@@ -16,7 +25,7 @@ export class ArcGISRestDataSource extends DataSource {
       attributions: this.options.params.attributions,
       overlaps: false,
       format: esrijsonFormat,
-      url: function (extent, resolution, proj) {
+      url: function (extent) {
         const baseUrl = this.options.url + '/' + this.options.layer + '/query/';
         const geometry = encodeURIComponent(
           '{"xmin":' +
@@ -142,9 +151,9 @@ export class ArcGISRestDataSource extends DataSource {
   }
 
   createSVG(symbol): string {
-    let svg: string = '';
+    let svg = '';
 
-    const color: Array<number> = symbol.color ? symbol.color : [0, 0, 0, 0];
+    const color: number[] = symbol.color ? symbol.color : [0, 0, 0, 0];
 
     if (symbol.type === 'esriSLS') {
       const width: number = symbol.width ? symbol.width : 0;
@@ -169,7 +178,7 @@ export class ArcGISRestDataSource extends DataSource {
           strokeWidth +
           `"/></svg>`;
       } else if (symbol.style === 'esriSLSDash') {
-        const strokeDashArray: string = `stroke-dasharray="5,5"`;
+        const strokeDashArray = `stroke-dasharray="5,5"`;
         svg =
           `<svg height="30" width="30"><line x1="0" y1="15" x2="30" y2="15" style="` +
           stroke +
@@ -234,5 +243,7 @@ export class ArcGISRestDataSource extends DataSource {
     return svg;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

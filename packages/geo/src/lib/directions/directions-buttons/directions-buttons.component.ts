@@ -10,20 +10,21 @@ import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 import { Clipboard } from '@igo2/utils';
 
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Coordinate } from 'ol/coordinate';
 
-import { roundCoordTo } from '../../map/shared/map.utils';
+import { Subject } from 'rxjs';
+
+import { roundCoordTo, roundCoordToString } from '../../map/shared/map.utils';
 import { DirectionsService } from '../shared';
-import { FeatureWithDirection } from '../shared/directions.interface';
+import { FeatureWithDirections, IgoStep } from '../shared/directions.interface';
 import {
-  addStopToStore,
   formatDistance,
   formatDuration,
-  formatInstruction
+  formatStep
 } from '../shared/directions.utils';
 import {
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsStore
 } from '../shared/store';
 
@@ -42,169 +43,242 @@ import {
   ]
 })
 export class DirectionsButtonsComponent {
-  get activeRoute() {
-    return this.routesFeatureStore
-      .all()
-      .find((route) => route.properties.active);
-  }
-  @Input() contextUri: string;
-  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
-  @Input() stopsStore: StopsStore;
-  @Input() routesFeatureStore: RoutesFeatureStore;
-  @Input() stepFeatureStore: StepFeatureStore;
+  @Input({ required: true }) contextUri: string;
+  @Input({ required: true }) zoomOnActiveRoute$ = new Subject<void>();
+  @Input({ required: true }) stopsStore: StopsStore;
+  @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
+  @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
 
-  public disabled$ = new BehaviorSubject(false);
+  public downloadDirectionsBtnDisabled = false;
 
   constructor(
     private languageService: LanguageService,
     private messageService: MessageService,
-    @Optional() private route: RouteService,
+    @Optional() private routeService: RouteService,
     private directionsService: DirectionsService
   ) {}
 
-  resetStops() {
+  /**
+   * Returns the active route from the routesFeatureStore.
+   *
+   * @return {FeatureWithDirections | undefined} The active route, or undefined if no active route is found.
+   */
+  get activeRoute(): FeatureWithDirections {
+    return this.routesFeatureStore
+      .all()
+      .find((route) => route.properties.active);
+  }
+
+  /**
+   * Resets the stops in the stopsStore by clearing all the stops.
+   *
+   */
+  resetStops(): void {
     this.stopsStore.clearStops();
   }
 
-  // stop are always added before the last stop.
-  addStop(): void {
-    addStopToStore(this.stopsStore);
+  /**
+   * Triggers the zoom on the active route.
+   *
+   */
+  zoomOnActiveRoute(): void {
+    this.zoomOnActiveRoute$.next();
   }
 
-  copyLinkToClipboard() {
-    const successful = Clipboard.copy(this.getUrl());
+  /**
+   * Copies the directions to the clipboard and displays a success message if the copy is successful.
+   *
+   */
+  copyDirectionsToClipboard(): void {
+    const directions: string = this.directionsToText();
+    const successful: boolean = Clipboard.copy(directions);
     if (successful) {
       this.messageService.success(
-        'igo.geo.directionsForm.dialog.copyMsgLink',
-        'igo.geo.directionsForm.dialog.copyTitle'
+        'igo.geo.directions.buttons.message.copyDirections'
       );
     }
   }
 
-  zoomRoute() {
-    this.zoomToActiveRoute$.next();
-  }
-
-  copyDirectionsToClipboard() {
-    const directionsBody = this.directionsToText();
-    const successful = Clipboard.copy(directionsBody);
-    if (successful) {
+  /**
+   * Copies the link to the clipboard and displays a success message if the copy is successful.
+   *
+   */
+  copyLinkToClipboard(): void {
+    const copySuccessful: boolean = Clipboard.copy(this.getLink());
+    if (copySuccessful) {
       this.messageService.success(
-        'igo.geo.directionsForm.dialog.copyMsg',
-        'igo.geo.directionsForm.dialog.copyTitle'
+        'igo.geo.directions.buttons.message.copyLink'
       );
     }
   }
 
-  private directionsToText() {
+  /**
+   * Downloads the directions.
+   *
+   */
+  downloadDirections(): void {
+    this.stepsFeatureStore.clear();
+    this.downloadDirectionsBtnDisabled = true;
+    this.directionsService
+      .downloadDirections(
+        this.routesFeatureStore.map,
+        this.activeRoute.properties.directions
+      )
+      .subscribe(() => {
+        this.downloadDirectionsBtnDisabled = false;
+      });
+  }
+
+  /**
+   * Generates a text representation of the directions, including summary, stops, URL, and directions.
+   *
+   * @return {string} The directions in text format.
+   */
+  private directionsToText(): string {
     const indent = '\t';
-    let activeRouteDirective =
+    const newLine = '\n';
+
+    let summary: string =
       this.languageService.translate.instant(
-        'igo.geo.directionsForm.instructions'
-      ) + ':\n';
-    let wayPointList = '';
-    const summary =
-      this.languageService.translate.instant('igo.geo.directionsForm.summary') +
-      ': \n' +
-      indent +
-      this.activeRoute.properties.direction.title +
-      '\n' +
-      indent +
-      formatDistance(this.activeRoute.properties.direction.distance) +
-      '\n' +
-      indent +
-      formatDuration(this.activeRoute.properties.direction.duration) +
-      '\n\n' +
-      this.languageService.translate.instant(
-        'igo.geo.directionsForm.stopsList'
+        'igo.geo.directions.directionsText.summary'
       ) +
-      ':\n';
-
-    const url =
-      this.languageService.translate.instant('igo.geo.directionsForm.link') +
-      ':\n' +
+      ':' +
+      newLine +
       indent +
-      this.getUrl();
+      this.activeRoute.properties.directions.title;
 
-    let wayPointsCnt = 1;
+    const distance: string = formatDistance(
+      this.activeRoute.properties.directions.distance
+    );
+    const duration: string = formatDuration(
+      this.activeRoute.properties.directions.duration
+    );
+
+    if (distance && duration) {
+      summary += ' (' + distance + ' - ' + duration + ')';
+    }
+
+    summary += newLine + newLine;
+
+    let stops: string =
+      this.languageService.translate.instant(
+        'igo.geo.directions.directionsText.stopList'
+      ) +
+      ':' +
+      newLine;
+
+    let stopNumber = 1;
     this.stopsStore.view.all().forEach((stop) => {
-      let coord = '';
+      let coords = '';
       let stopText = '';
-      if (stop.text !== roundCoordTo(stop.coordinates).join(',')) {
+      if (stop.text !== roundCoordToString(stop.coordinates, 6).join(', ')) {
         stopText = stop.text;
-        coord = ` ( ${roundCoordTo(stop.coordinates).join(',')} )`;
+        coords = ` (${roundCoordToString(stop.coordinates, 6).join(', ')})`;
       } else {
-        stopText = roundCoordTo(stop.coordinates).join(',');
+        stopText = roundCoordToString(stop.coordinates, 6).join(', ');
       }
 
-      wayPointList =
-        wayPointList +
+      stops =
+        stops +
         indent +
-        wayPointsCnt.toLocaleString() +
+        stopNumber.toLocaleString() +
         '. ' +
         stopText +
-        coord +
-        '\n';
-      wayPointsCnt++;
+        coords +
+        newLine;
+      stopNumber++;
     });
+    stops += newLine;
 
-    let localCnt = 0;
-    this.activeRoute.properties.direction.steps.forEach((step) => {
-      const instruction = this.formatStep(step, localCnt).instruction;
-      const distance =
-        formatDistance(step.distance) === undefined
-          ? ''
-          : ' (' + formatDistance(step.distance) + ')';
-      activeRouteDirective =
-        activeRouteDirective +
-        indent +
-        (localCnt + 1).toLocaleString() +
-        '. ' +
-        instruction +
-        distance +
-        '\n';
-      localCnt++;
-    });
+    const url: string =
+      this.languageService.translate.instant(
+        'igo.geo.directions.directionsText.link'
+      ) +
+      ':' +
+      newLine +
+      indent +
+      this.getLink() +
+      newLine +
+      newLine;
 
-    const directionsBody =
-      summary + wayPointList + '\n' + url + '\n\n' + activeRouteDirective;
+    let directions: string =
+      this.languageService.translate.instant('igo.geo.directions.directions') +
+      ':' +
+      newLine;
+
+    this.activeRoute.properties.directions.steps.forEach(
+      (step, stepIndex, steps) => {
+        const distance: string = formatDistance(step.distance);
+        const duration: string = formatDuration(step.duration);
+        if ((distance && duration) || stepIndex === steps.length - 1) {
+          const instruction: string = this.getFormattedStepInstruction(
+            step,
+            stepIndex
+          );
+          const formattedDistanceDuration: string =
+            distance && duration ? ` (${distance} - ${duration}) ` : '';
+          directions =
+            directions +
+            indent +
+            '- ' +
+            instruction +
+            formattedDistanceDuration +
+            newLine;
+        }
+      }
+    );
+
+    const directionsBody: string = summary + stops + url + directions;
 
     return directionsBody;
   }
 
-  formatStep(step, cnt) {
-    return formatInstruction(
-      step.maneuver.type,
-      step.maneuver.modifier,
-      step.name,
-      step.maneuver.bearing_after,
-      cnt,
-      step.maneuver.exit,
+  /**
+   * Formats a step.
+   *
+   * @param {IgoStep} step - The step to format.
+   * @param {number} stepIndex - The index of the step in the directions.
+   * @return {string} The formatted instruction for the step.
+   */
+  private getFormattedStepInstruction(
+    step: IgoStep,
+    stepIndex: number
+  ): string {
+    return formatStep(
+      step,
       this.languageService,
-      cnt === this.activeRoute.properties.direction.steps.length - 1
-    );
+      stepIndex === this.activeRoute.properties.directions.steps.length - 1
+    ).instruction;
   }
 
-  private getUrl() {
-    if (!this.route) {
+  /**
+   * Generates a link based on the current route and stops.
+   *
+   * @return {string | undefined} The generated link, or undefined if the route service is not available.
+   */
+  private getLink(): string | undefined {
+    if (!this.routeService) {
       return;
     }
+
     let context = '';
     if (this.contextUri) {
       context = `context=${this.contextUri}&`;
     }
 
-    const pos = this.routesFeatureStore
+    const routeIndex: number = this.routesFeatureStore
       .all()
-      .map((direction: FeatureWithDirection) => direction.properties.id)
+      .map((direction) => direction.properties.id)
       .indexOf(this.activeRoute.properties.id);
     let routingOptions = '';
-    if (pos !== 0) {
-      const routingOptionsKey = this.route.options.directionsOptionsKey;
-      routingOptions = `&${routingOptionsKey}=result:${pos}`;
+    if (routeIndex !== 0) {
+      const routingOptionsKey: string | boolean =
+        this.routeService.options.directionsOptionsKey;
+      routingOptions = `&${routingOptionsKey}=result:${routeIndex}`;
     }
-    const directionsKey = this.route.options.directionsCoordKey;
-    const stopsCoordinates = this.stopsStore.view
+    const directionsKey: string | boolean =
+      this.routeService.options.directionsCoordKey;
+    const stopsCoordinates: Coordinate[] = this.stopsStore.view
       .all()
       .map((stop) => roundCoordTo(stop.coordinates, 6));
     let directionsUrl = '';
@@ -213,18 +287,5 @@ export class DirectionsButtonsComponent {
       return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;
-  }
-
-  printDirections() {
-    this.stepFeatureStore.clear();
-    this.disabled$.next(true);
-    this.directionsService
-      .downloadDirection(
-        this.routesFeatureStore.map,
-        this.activeRoute.properties.direction
-      )
-      .subscribe(() => {
-        this.disabled$.next(false);
-      });
   }
 }

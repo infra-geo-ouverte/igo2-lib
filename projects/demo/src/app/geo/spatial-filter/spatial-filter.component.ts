@@ -41,6 +41,7 @@ import {
   VectorLayer,
   createOverlayMarkerStyle,
   featureToOl,
+  isLayerGroup,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -104,13 +105,11 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public zoneWithBuffer: Feature;
-  public buffer: number = 0;
+  public buffer = 0;
 
-  public iterator: number = 1;
+  public iterator = 1;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
-    undefined
-  );
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 
@@ -118,9 +117,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
-  public loading: boolean = false;
+  public loading = false;
 
-  public thematicLength: number = 0;
+  public thematicLength = 0;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
@@ -141,7 +140,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         type: 'osm'
       } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
-        this.map.addLayer(
+        this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
@@ -153,7 +152,10 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    for (const layer of this.map.layers) {
+    for (const layer of this.map.layerController.all) {
+      if (isLayerGroup(layer)) {
+        return;
+      }
       if (
         layer.title &&
         layer.title.includes(
@@ -213,7 +215,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   }
 
   clearMap(): void {
-    this.map.removeLayers(this.layers);
+    this.map.layerController.remove(...this.layers);
     this.layers = [];
     this.activeLayers = [];
     this.thematicLength = 0;
@@ -226,7 +228,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private loadThematics(): void {
     this.loading = true;
-    let zeroResults: boolean = true;
+    let zeroResults = true;
     let thematics: SpatialFilterThematic[];
     if (this.buffer === 0 || this.type === SpatialFilterType.Point) {
       this.tryAddFeaturesToMap([this.zone]);
@@ -331,7 +333,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Try to add zone feature to the map overlay
    */
   public tryAddFeaturesToMap(features: Feature[], buffer?: boolean): void {
-    let i: number = 1;
+    let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.layers) {
@@ -350,7 +352,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             this.activeLayers = [];
             const index: number = this.layers.indexOf(layer);
             this.layers.splice(index, 1);
-            this.map.removeLayer(layer);
+            this.map.layerController.remove(layer);
           }
         }
       } else {
@@ -362,7 +364,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             ) {
               const index: number = this.layers.indexOf(layer);
               this.layers.splice(index, 1);
-              this.map.removeLayer(layer);
+              this.map.layerController.remove(layer);
             }
           }
         }
@@ -436,7 +438,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           const ol = dataSource.ol as olSourceVector | olSourceCluster;
           ol.addFeatures(featuresOl);
           olLayer.ol.setStyle(this.defaultStyle);
-          this.map.addLayer(olLayer);
+          this.map.layerController.add(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
           this.cdRef.detectChanges();
@@ -449,7 +451,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id: EntityKey): void {
-    let i: number = 1;
+    let i = 1;
     if (features.length) {
       if (this.map === undefined) {
         return;
@@ -479,7 +481,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
           }
 
-          const olLayer: Layer = this.layerService.createLayer({
+          const olLayer = this.layerService.createLayer({
             isIgoInternalLayer: true,
             title: (features[0].meta.title +
               ' ' +
@@ -498,9 +500,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           });
           const ol: olSourceCluster = dataSource.ol;
           ol.getSource().addFeatures(featuresOl);
-          if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
-            this.map.removeLayer(
-              this.layers.find((layer: Layer) => layer.id === olLayer.id)
+          if (this.layers.find((layer) => layer.id === olLayer.id)) {
+            this.map.layerController.remove(
+              this.layers.find((layer) => layer.id === olLayer.id)
             );
             i = i - 1;
             olLayer.title = (features[0].meta.title +
@@ -513,7 +515,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             olLayer.options.title = olLayer.title;
           }
           this.iterator = i;
-          this.map.addLayer(olLayer);
+          this.map.layerController.add(olLayer);
           this.layers.push(olLayer);
           this.pushLayer(olLayer);
           this.cdRef.detectChanges();
@@ -544,7 +546,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
    * Try to add line or polygon features to the map
    */
   private tryAddLayerToMap(features: Feature[], id: EntityKey): void {
-    let i: number = 1;
+    let i = 1;
     if (features.length) {
       if (this.map === undefined) {
         return;
@@ -562,7 +564,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         } as QueryableDataSourceOptions)
         .pipe(take(1))
         .subscribe((dataSource: QueryableDataSource) => {
-          const olLayer: Layer = this.layerService.createLayer({
+          const olLayer = this.layerService.createLayer({
             isIgoInternalLayer: true,
             title: (features[0].meta.title +
               ' ' +
@@ -579,9 +581,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           });
           const ol = dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
-          if (this.layers.find((layer: Layer) => layer.id === olLayer.id)) {
-            this.map.removeLayer(
-              this.layers.find((layer: Layer) => layer.id === olLayer.id)
+          if (this.layers.find((layer) => layer.id === olLayer.id)) {
+            this.map.layerController.remove(
+              this.layers.find((layer) => layer.id === olLayer.id)
             );
             i = i - 1;
             olLayer.title = (features[0].meta.title +
@@ -593,7 +595,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               )) satisfies string;
             olLayer.options.title = olLayer.title;
           }
-          this.map.addLayer(olLayer);
+          this.map.layerController.add(olLayer);
           this.layers.push(olLayer);
           this.pushLayer(olLayer);
           this.cdRef.detectChanges();

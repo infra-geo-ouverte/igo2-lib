@@ -1,8 +1,11 @@
 import { NumberUtils } from '@igo2/utils';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { Coordinate } from 'ol/coordinate';
 import { MAC } from 'ol/has';
 import * as olproj from 'ol/proj';
+
+import { Position } from 'geojson';
 
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
@@ -53,7 +56,7 @@ export function stringToLonLat(
   let projectionStr: string;
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
-  const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?';
+  const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?°?';
   const lonLatPattern = `${lonlatCoord}[\\s,]+${lonlatCoord}`;
   const lonLatRegex = new RegExp(`^${lonLatPattern}$`, 'g');
 
@@ -79,7 +82,6 @@ export function stringToLonLat(
   const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex = new RegExp(`^${patternDmd}`, 'g');
 
-  /* eslint-disable max-len */
   const patternBELL =
     'LAT\\s*[\\s:]*\\s*([-+])?(\\d{1,2})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*LONG\\s*[\\s:]*\\s*([-+])?(\\d{1,3})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*UNC\\s*[\\s:]?\\s*(\\d+)\\s*CONF\\s*[\\s:]?\\s*(\\d{1,3})';
   const bellRegex = new RegExp(`^${patternBELL}?`, 'gi');
@@ -306,7 +308,7 @@ export function stringToLonLat(
 
     try {
       lonLat = olproj.transform(lonLat, source, dest) as [number, number];
-    } catch (e) {
+    } catch {
       return {
         lonLat: undefined,
         message: 'Projection ' + source + ' not supported',
@@ -363,10 +365,7 @@ function convertDMSToDD(
  * @param decimal number of decimals for seconds
  * @returns longitude and latitude in dms
  */
-export function convertDDToDMS(
-  lonLatDD: [number, number],
-  decimal: number = 3
-): string[] {
+export function convertDDToDMS(lonLatDD: Coordinate, decimal = 3): string[] {
   const lonLatDMS = [];
 
   lonLatDD.forEach((dd) => {
@@ -430,10 +429,7 @@ export function formatScale(scale) {
  * @param dpi DPI
  * @returns Resolution
  */
-export function getResolutionFromScale(
-  scale: number,
-  dpi: number = 96
-): number {
+export function getResolutionFromScale(scale: number, dpi = 96): number {
   const inchesPerMeter = 39.3701;
   return scale / (inchesPerMeter * dpi);
 }
@@ -445,8 +441,8 @@ export function getResolutionFromScale(
  */
 export function getScaleFromResolution(
   resolution: number,
-  unit: string = 'm',
-  dpi: number = 96
+  unit = 'm',
+  dpi = 96
 ): number {
   const inchesPerMeter = 39.3701;
   return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMeter * dpi;
@@ -467,20 +463,20 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
 }
 
 export function roundCoordTo(
-  coord: [number, number],
-  decimal: number = 3
-): [number, number] {
+  coord: [number, number] | Position | Coordinate,
+  decimal = 3
+): Coordinate {
   return [
     NumberUtils.roundToNDecimal(coord[0], decimal),
     NumberUtils.roundToNDecimal(coord[1], decimal)
-  ] as [number, number];
+  ];
 }
 
 export function roundCoordToString(
-  coord: [number, number],
-  decimal: number = 3
+  coord: [number, number] | Position | Coordinate,
+  decimal = 3
 ): [string, string] {
-  return roundCoordTo(coord, decimal).map((r) => r.toString()) as [
+  return roundCoordTo(coord, decimal).map((r) => r.toString() + '°') as [
     string,
     string
   ];

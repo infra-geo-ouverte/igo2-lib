@@ -42,7 +42,7 @@ type ColorFormat = 'hex' | 'rgba' | 'hsla';
   ]
 })
 export class ColorPickerFormFieldComponent implements ControlValueAccessor {
-  isOpen: boolean = false;
+  isOpen = false;
 
   set value(value: string) {
     this._value = this.formatColor(value ?? '#000');
@@ -66,8 +66,8 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   colorPicker: string;
 
-  onChange: any = () => {};
-  onTouch: any = () => {};
+  onChange: any = () => void 1;
+  onTouch: any = () => void 1;
 
   writeValue(value: string) {
     this.value = value;

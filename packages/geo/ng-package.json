@@ -6,7 +6,6 @@
   },
   "allowedNonPeerDependencies": [
     "nosleep.js",
-    "windows-1252",
     "ts-cacheable",
     "ts-md5",
     "@turf/helpers",

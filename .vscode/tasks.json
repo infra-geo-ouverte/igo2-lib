@@ -7,19 +7,8 @@
       "script": "start",
       "path": "projects/demo",
       "isBackground": true,
-      "presentation": {
-        "focus": true,
-        "panel": "dedicated"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
       "problemMatcher": {
         "owner": "typescript",
-        "source": "ts",
-        "applyTo": "closedDocuments",
-        "fileLocation": ["relative", "${cwd}"],
         "pattern": "$tsc",
         "background": {
           "activeOnStart": true,
@@ -27,7 +16,7 @@
             "regexp": "(.*?)"
           },
           "endsPattern": {
-            "regexp": "Compiled |Failed to compile."
+            "regexp": "bundle generation complete"
           }
         }
       }
@@ -38,19 +27,8 @@
       "script": "link.start",
       "path": "projects/igo2",
       "isBackground": true,
-      "presentation": {
-        "focus": true,
-        "panel": "dedicated"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
       "problemMatcher": {
         "owner": "typescript",
-        "source": "ts",
-        "applyTo": "closedDocuments",
-        "fileLocation": ["relative", "${cwd}"],
         "pattern": "$tsc",
         "background": {
           "activeOnStart": true,
@@ -58,7 +36,45 @@
             "regexp": "(.*?)"
           },
           "endsPattern": {
-            "regexp": "Compiled |Failed to compile."
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
+    },
+    {
+      "label": "npm: test.common",
+      "type": "npm",
+      "path": "packages/common",
+      "script": "test.watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
           }
         }
       }

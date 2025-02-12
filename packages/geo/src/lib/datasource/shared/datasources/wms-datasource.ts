@@ -35,7 +35,7 @@ export interface TimeFilterableDataSource extends WMSDataSource {
 }
 
 export class WMSDataSource extends DataSource {
-  public declare ol: olSourceImageWMS;
+  declare public ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;
@@ -70,8 +70,15 @@ export class WMSDataSource extends DataSource {
   get timeFilter(): TimeFilterOptions {
     return (this.options as TimeFilterableDataSourceOptions).timeFilter;
   }
-  readonly timeFilter$: BehaviorSubject<TimeFilterOptions> =
-    new BehaviorSubject(undefined);
+  readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
+
+  get saveableOptions(): Partial<WMSDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.params
+    };
+  }
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -217,14 +224,14 @@ export class WMSDataSource extends DataSource {
     return new olSourceImageWMS(Object.assign({ ratio: 1 }, this.options));
   }
 
-  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
-  setTimeFilter(timeFilter: TimeFilterOptions, triggerEvent: boolean = false) {
+  setTimeFilter(timeFilter: TimeFilterOptions, triggerEvent = false) {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
@@ -294,7 +301,9 @@ export class WMSDataSource extends DataSource {
     return legend;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }
 
 export interface TimeFilterableDataSource extends WMSDataSource {

@@ -54,7 +54,7 @@ import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { Layer, VectorLayer } from '../../../layer/shared';
+import { AnyLayer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
@@ -226,9 +226,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
-  @Input() allLayers: Layer[] = [];
+  @Input() allLayers: AnyLayer[] = [];
 
   @Input()
   get thematicLength(): number {
@@ -287,14 +287,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   );
 
   // For geometry form field input
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
-  drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<
+  value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
+  drawGuide$ = new BehaviorSubject<number>(null);
+  overlayStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<
+  >(undefined);
+  drawStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
@@ -320,7 +320,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
-  public buffer: number = 0;
+  public buffer = 0;
   public radiusFormControl = new UntypedFormControl();
   public bufferFormControl = new UntypedFormControl();
 

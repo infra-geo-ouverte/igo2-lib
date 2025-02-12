@@ -2,10 +2,7 @@ import olClusterSource from 'ol/source/Cluster';
 import olSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
 
-import {
-  LegendMapViewOptions,
-  LegendOptions
-} from '../../../layer/shared/layers/legend.interface';
+import { LegendOptions } from '../../../layer/shared/layers/legend.interface';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { DataService } from './data.service';
 import { DataSourceOptions, Legend } from './datasource.interface';
@@ -14,6 +11,14 @@ export abstract class DataSource {
   public id: string;
   public ol: olSource | olVectorSource | olClusterSource;
   private legend: Legend[];
+
+  get saveableOptions(): Partial<DataSourceOptions> {
+    return {
+      id: this.options.id,
+      type: this.options.type,
+      url: this.options.url
+    };
+  }
 
   constructor(
     public options: DataSourceOptions = {},
@@ -30,7 +35,7 @@ export abstract class DataSource {
     return generateIdFromSourceOptions(this.options);
   }
 
-  public getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
+  public getLegend(): Legend[] {
     return this.legend ? this.legend : [];
   }
 

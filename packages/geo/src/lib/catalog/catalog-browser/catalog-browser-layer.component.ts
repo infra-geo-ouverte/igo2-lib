@@ -54,20 +54,18 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public inRange$ = new BehaviorSubject<boolean>(true);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
   private isPreview$$: Subscription;
   private resolution$$: Subscription;
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  public layerLegendShown$ = new BehaviorSubject(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() resolution: number;
 
@@ -113,7 +111,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
       this.addedLayerIsPreview.emit(value)
     );
 
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
 
@@ -166,7 +164,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     this.onToggleClick(event);
   }
 
-  askForLegend(event) {
+  askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
     this.layerService
       .createAsyncLayer(this.layer.options)
@@ -259,10 +257,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   isVisible() {
     if (this.layer?.id) {
-      const oLayer = this.map.getLayerById(this.layer?.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+      const layer = this.map.layerController.getById(this.layer?.id);
+      this.isVisible$.next(layer?.displayed);
     }
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 export class ObjectUtils {
   static resolve(obj: object, key: string): any {
     const keysArray = key.replace(/\[/g, '.').replace(/\]/g, '').split('.');

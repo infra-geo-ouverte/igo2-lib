@@ -11,8 +11,8 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { Layer } from '../../layer';
 import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
-import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterService } from '../shared/time-filter.service';
 import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.component';
 
@@ -39,13 +39,13 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
 
-  filtersCollapsed: boolean = false;
+  filtersCollapsed = false;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   @Input() layer: Layer;
 

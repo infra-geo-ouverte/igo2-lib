@@ -12,12 +12,13 @@ import { MatListModule } from '@angular/material/list';
 import { ToolComponent } from '@igo2/common/tool';
 import { IgoLanguageModule } from '@igo2/core/language';
 import {
+  AnyLayer,
   IgoMap,
-  Layer,
   LayerLegendListBindingDirective,
   LayerLegendListComponent,
   LayerListControlsOptions,
   SearchSourceService,
+  isBaseLayer,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -54,22 +55,22 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
-  public delayedShowEmptyMapContent: boolean = false;
+  public delayedShowEmptyMapContent = false;
 
-  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  layers$ = new BehaviorSubject<AnyLayer[]>([]);
+  showAllLegendsValue$ = new BehaviorSubject(false);
   change$ = new ReplaySubject<void>(1);
 
   private resolution$$: Subscription;
   private visibleOrInRangeLayers$$: Subscription;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
 
-  @Input() allowShowAllLegends: boolean = false;
+  @Input() allowShowAllLegends = false;
 
-  @Input() showAllLegendsValue: boolean = false;
+  @Input() showAllLegendsValue = false;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
@@ -77,19 +78,15 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  get visibleOrInRangeLayers$(): Observable<Layer[]> {
+  get visibleOrInRangeLayers$(): Observable<AnyLayer[]> {
     return this.layers$.pipe(
-      map((layers) =>
-        layers.filter(
-          (layer) => layer.visible$.value && layer.isInResolutionsRange$.value
-        )
-      )
+      map((layers) => layers.filter((layer) => layer.displayed))
     );
   }
 
-  get visibleLayers$(): Observable<Layer[]> {
+  get visibleLayers$(): Observable<AnyLayer[]> {
     return this.layers$.pipe(
-      map((layers) => layers.filter((layer) => layer.visible$.value))
+      map((layers) => layers.filter((layer) => layer.visible))
     );
   }
 
@@ -123,16 +120,16 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resolution$$ = combineLatest([
-      this.map.layers$,
+      this.map.layerController.all$,
       this.map.viewController.resolution$
     ])
       .pipe(debounceTime(10))
-      .subscribe((bunch: [Layer[], number]) => {
+      .subscribe((bunch) => {
         this.layers$.next(
           bunch[0].filter(
             (layer) =>
               layer.showInLayerList !== false &&
-              (!this.excludeBaseLayers || !layer.baseLayer)
+              (!this.excludeBaseLayers || !isBaseLayer(layer))
           )
         );
       });
@@ -169,9 +166,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(
         (value) => {
-          value.length === 0
-            ? (visibleOrInRangeLayers = false)
-            : (visibleOrInRangeLayers = true);
+          visibleOrInRangeLayers = value.length === 0 ? false : true;
         }
       );
 

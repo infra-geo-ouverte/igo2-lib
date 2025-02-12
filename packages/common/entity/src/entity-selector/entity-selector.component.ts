@@ -84,17 +84,17 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Wheter selecting many entities is allowed
    */
-  @Input() multi: boolean = false;
+  @Input() multi = false;
 
   /**
    * Text to display for the select all option
    */
-  @Input() multiAllText: string = 'All';
+  @Input() multiAllText = 'All';
 
   /**
    * Text to display for the select none option
    */
-  @Input() multiNoneText: string = 'None';
+  @Input() multiNoneText = 'None';
 
   /**
    * Field placeholder
@@ -104,7 +104,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Wheter the selector is disabled or not
    */
-  @Input() disabled: boolean = false;
+  @Input() disabled = false;
 
   /**
    * Event emitted when the selection changes

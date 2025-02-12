@@ -16,7 +16,10 @@ import { catchError, concatMap, map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
+  AnyDataSourceOptions,
+  AnyDataSourceOptionsWithParams,
   ArcGISRestDataSource,
+  ArcGISRestDataSourceOptions,
   CartoDataSource,
   ClusterDataSource,
   FeatureDataSource,
@@ -28,18 +31,25 @@ import {
   WFSDataSource,
   WMSDataSource,
   WMTSDataSource,
+  WMTSDataSourceOptions,
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleService } from '../../style/style-service/style.service';
-import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
+  computeMVTOptionsOnHover,
+  isLayerGroupOptions
+} from '../utils/layer.utils';
+import {
+  AnyLayer,
+  AnyLayerItemOptions,
   AnyLayerOptions,
   ImageLayer,
   ImageLayerOptions,
   Layer,
+  LayerGroupOptions,
   LayerOptions,
   TileLayer,
   TileLayerOptions,
@@ -48,37 +58,46 @@ import {
   VectorTileLayer,
   VectorTileLayerOptions
 } from './layers';
+import { LayerGroup } from './layers/layer-group';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LayerService {
+  public unavailableLayers: AnyLayerItemOptions[] = [];
+
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
-    private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
-    private layerDBService: LayerDBService,
-    @Optional() private authInterceptor: AuthInterceptor
+    @Optional() private geoNetworkService?: GeoNetworkService,
+    @Optional() private layerDBService?: LayerDBService,
+    @Optional() private authInterceptor?: AuthInterceptor
   ) {}
 
-  createLayer(layerOptions: AnyLayerOptions): Layer {
-    if (!layerOptions.source) {
-      return;
-    }
+  createLayers(
+    layersOption: AnyLayerOptions[],
+    contextUri?: string
+  ): Observable<(AnyLayer | undefined)[]> {
+    const arrayObsLayers = layersOption.map((option) => {
+      return isLayerGroupOptions(option)
+        ? this.createAsyncGroup(option)
+        : this.createAsyncLayer(option, contextUri);
+    });
 
-    if (
-      layerOptions.source.options &&
-      layerOptions.source.options._layerOptionsFromSource
-    ) {
+    return combineLatest(arrayObsLayers);
+  }
+
+  createLayer(layerOptions: AnyLayerItemOptions): Layer {
+    if (layerOptions.source?.options?._layerOptionsFromSource) {
       layerOptions = ObjectUtils.mergeDeep(
         layerOptions.source.options._layerOptionsFromSource,
         layerOptions || {}
       );
     }
 
-    let layer;
+    let layer: Layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
@@ -99,12 +118,13 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
-      case MVTDataSource:
+      case MVTDataSource: {
         const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
           _layerOptions as VectorTileLayerOptions
         );
         break;
+      }
       default:
         break;
     }
@@ -113,24 +133,54 @@ export class LayerService {
   }
 
   createAsyncLayer(
-    _layerOptions: AnyLayerOptions,
+    options: AnyLayerItemOptions,
     detailedContextUri?: string
-  ): Observable<Layer> {
-    const layerOptions = computeMVTOptionsOnHover(_layerOptions);
-    if (layerOptions.source) {
-      return new Observable((d) => d.next(this.createLayer(layerOptions)));
+  ): Observable<Layer | undefined> {
+    const optionsCloned = { ...options };
+
+    computeMVTOptionsOnHover(optionsCloned);
+    if (optionsCloned.source) {
+      return new Observable((d) => d.next(this.createLayer(optionsCloned)));
     }
 
     return this.dataSourceService
-      .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
+      .createAsyncDataSource(optionsCloned.sourceOptions, detailedContextUri)
       .pipe(
         map((source) => {
           if (source === undefined) {
+            const found = this.unavailableLayers.some(
+              (el) => el === optionsCloned
+            );
+            if (!found) {
+              this.unavailableLayers.push(optionsCloned);
+            }
+
             return undefined;
           }
-          return this.createLayer(Object.assign(layerOptions, { source }));
+          return this.createLayer(Object.assign(optionsCloned, { source }));
         })
       );
+  }
+
+  createAsyncGroup(
+    options: LayerGroupOptions,
+    detailedContextUri?: string
+  ): Observable<LayerGroup> {
+    if (!options.children?.length) {
+      return of(this.createGroup(null, options));
+    }
+
+    return this.createLayers(options.children, detailedContextUri).pipe(
+      map((layers) => this.createGroup(layers.filter(Boolean), options))
+    );
+  }
+
+  private createGroup(
+    layers: AnyLayer[],
+    options: LayerGroupOptions
+  ): LayerGroup {
+    const group = new LayerGroup(layers, options);
+    return group;
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
@@ -179,7 +229,6 @@ export class LayerService {
       layerOptions.igoStyle.igoStyleObject &&
       layerOptions.idbInfo?.storeToIdb
     ) {
-      // temporary fix todo : handle it with geostyler.
       style = this.styleService.parseStyle(
         'style',
         layerOptions.igoStyle.igoStyleObject
@@ -198,12 +247,13 @@ export class LayerService {
           resolution
         );
       };
+
       igoLayer = new VectorLayer(
         layerOptions,
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -219,12 +269,13 @@ export class LayerService {
           baseStyle
         );
       };
+
       igoLayer = new VectorLayer(
         layerOptions,
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -239,7 +290,7 @@ export class LayerService {
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
-        this.geoNetworkService.geoDBService,
+        this.geoNetworkService?.geoDBService,
         this.layerDBService
       );
     }
@@ -386,8 +437,8 @@ export class LayerService {
     }
   }
 
-  createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
-    return this.layerDBService.getAll().pipe(
+  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
+    return this.layerDBService?.getAll().pipe(
       concatMap((res) => {
         const idbLayers =
           contextUri !== '*'
@@ -405,5 +456,39 @@ export class LayerService {
         );
       })
     );
+  }
+
+  deleteUnavailableLayers(anyLayerOptions: AnyLayerItemOptions) {
+    const anyLayerSourceOptions = anyLayerOptions.sourceOptions;
+    const index = this.unavailableLayers.findIndex((item) => {
+      const baseSourceOptions = item.sourceOptions;
+      if (
+        this.sourceOptionsWithParams(baseSourceOptions) &&
+        this.sourceOptionsWithParams(anyLayerSourceOptions)
+      ) {
+        return (
+          baseSourceOptions.params.LAYERS ===
+          anyLayerSourceOptions.params.LAYERS
+        );
+      } else if (
+        this.sourceOptionsWithLayer(baseSourceOptions) &&
+        this.sourceOptionsWithLayer(anyLayerSourceOptions)
+      ) {
+        return baseSourceOptions.layer === anyLayerSourceOptions.layer;
+      }
+    });
+    this.unavailableLayers.splice(index, index >= 0 ? 1 : 0);
+  }
+
+  sourceOptionsWithParams(
+    sourceOptions: AnyDataSourceOptions
+  ): sourceOptions is AnyDataSourceOptionsWithParams {
+    return 'params' in sourceOptions;
+  }
+
+  sourceOptionsWithLayer(
+    sourceOptions: AnyDataSourceOptions
+  ): sourceOptions is ArcGISRestDataSourceOptions | WMTSDataSourceOptions {
+    return 'layer' in sourceOptions;
   }
 }

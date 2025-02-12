@@ -41,7 +41,9 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
+import type { MapBase } from '../../../map/shared/map.abstract';
+import { MapExtent } from '../../../map/shared/map.interface';
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBData } from '../../../offline/layerDB/layerDB.interface';
@@ -53,21 +55,23 @@ import {
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
-import { VectorLayerOptions } from './vector-layer.interface';
+import { LayerType } from './layer.interface';
+import type { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
+  type: LayerType = 'vector';
   private previousLoadExtent: Extent;
   private previousLoadResolution: number;
   private previousOgcFilters: OgcFiltersOptions;
   private xhrAccumulator: XMLHttpRequest[] = [];
-  public declare dataSource:
+  declare public dataSource:
     | FeatureDataSource
     | WFSDataSource
     | ArcGISRestDataSource
     | WebSocketDataSource
     | ClusterDataSource;
-  public declare options: VectorLayerOptions;
-  public declare ol: olLayerVector<olSourceVector>;
+  declare public options: VectorLayerOptions;
+  declare public ol: olLayerVector<olSourceVector>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 
@@ -87,13 +91,7 @@ export class VectorLayer extends Layer {
     public geoDBService?: GeoDBService,
     public layerDBService?: LayerDBService
   ) {
-    super(
-      options,
-      messageService,
-      authInterceptor,
-      geoDBService,
-      layerDBService
-    );
+    super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -205,7 +203,6 @@ export class VectorLayer extends Layer {
           this.customLoader(
             vectorSource,
             url,
-            this.authInterceptor,
             extent,
             resolution,
             proj,
@@ -247,7 +244,13 @@ export class VectorLayer extends Layer {
     return vector;
   }
 
-  removeLayerFromIDB() {
+  remove(): void {
+    this.watcher.unsubscribe();
+    this.removeLayerFromIDB();
+    super.remove();
+  }
+
+  private removeLayerFromIDB() {
     if (this.geoDBService && this.layerDBService) {
       zip(
         this.geoDBService.deleteByKey(this.id),
@@ -382,13 +385,13 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
   }
 
   public setExtent(extent: MapExtent): void {
@@ -432,7 +435,7 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public disableTrackFeature(id?: string | number) {
+  public disableTrackFeature() {
     unByKey(this.trackFeatureListenerId);
   }
 
@@ -476,7 +479,7 @@ export class VectorLayer extends Layer {
         (this.previousOgcFilters && this.previousOgcFilters !== ogcFilters)
       ) {
         vectorSource.removeLoadedExtent(this.previousLoadExtent);
-        for (let xhr of this.xhrAccumulator) {
+        for (const xhr of this.xhrAccumulator) {
           xhr.abort();
         }
       }
@@ -486,6 +489,7 @@ export class VectorLayer extends Layer {
       this.previousOgcFilters = ogcFilters;
 
       paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
+
       const url = buildUrl(
         options,
         currentExtent,
@@ -509,7 +513,6 @@ export class VectorLayer extends Layer {
           alteredUrl.replace(/&&/g, '&');
           this.getFeatures(
             vectorSource,
-            interceptor,
             currentExtent,
             wfsProj,
             proj,
@@ -522,7 +525,6 @@ export class VectorLayer extends Layer {
       } else {
         this.getFeatures(
           vectorSource,
-          interceptor,
           currentExtent,
           wfsProj,
           proj,
@@ -538,7 +540,6 @@ export class VectorLayer extends Layer {
    * Custom loader to get feature from a WFS datasource
    * @internal
    * @param vectorSource the vector source to be created
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param dataProjection the projection of the retrieved data
    * @param featureProjection the projection of the created features
@@ -548,7 +549,6 @@ export class VectorLayer extends Layer {
    */
   private getFeatures(
     vectorSource: olSourceVector,
-    interceptor: AuthInterceptor,
     extent: Extent,
     dataProjection: olProjection,
     featureProjection: olProjection,
@@ -557,20 +557,22 @@ export class VectorLayer extends Layer {
     failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+    const alteredUrlWithKeyAuth = this.authInterceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
     }
+
     xhr.open('GET', modifiedUrl);
-    if (interceptor) {
-      interceptor.interceptXhr(xhr, modifiedUrl);
+    if (this.authInterceptor) {
+      this.authInterceptor.interceptXhr(xhr, modifiedUrl);
     }
     const onError = () => {
       vectorSource.removeLoadedExtent(extent);
       failure();
     };
     xhr.onerror = onError;
+
     xhr.onload = () => {
       if (xhr.status === 200 && xhr.responseText.length > 0) {
         const features = vectorSource
@@ -598,7 +600,6 @@ export class VectorLayer extends Layer {
    * @internal
    * @param vectorSource the vector source to be created
    * @param url the url string or function to retrieve the data
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
    * @param projection the projection to retrieve the data
@@ -606,7 +607,6 @@ export class VectorLayer extends Layer {
   private customLoader(
     vectorSource: olSourceVector,
     url: string,
-    interceptor: AuthInterceptor,
     extent: Extent,
     resolution: number,
     projection: olProjection,
@@ -616,7 +616,8 @@ export class VectorLayer extends Layer {
     const xhr = new XMLHttpRequest();
     let modifiedUrl = url;
     if (typeof url !== 'function') {
-      const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+      const alteredUrlWithKeyAuth =
+        this.authInterceptor.alterUrlWithKeyAuth(url);
       if (alteredUrlWithKeyAuth) {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
@@ -626,7 +627,7 @@ export class VectorLayer extends Layer {
       const format = vectorSource.getFormat();
       const type = format.getType();
 
-      let responseType = type;
+      const responseType = type;
       const onError = () => {
         vectorSource.removeLoadedExtent(extent);
         failure();
@@ -685,8 +686,8 @@ export class VectorLayer extends Layer {
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
-      if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl as string);
+      if (this.authInterceptor) {
+        this.authInterceptor.interceptXhr(xhr, modifiedUrl as string);
       }
 
       const onError = () => {
@@ -735,7 +736,6 @@ export class VectorLayer extends Layer {
    * @internal
    * @param vectorSource the vector source to be created
    * @param layerID the url string or function to retrieve the data
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
    * @param projection the projection to retrieve the data
