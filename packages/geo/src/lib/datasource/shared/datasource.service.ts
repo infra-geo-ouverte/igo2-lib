@@ -251,7 +251,7 @@ export class DataSourceService {
   ): WMSDataSourceOptionsParams {
     const uppercasedParams: Partial<WMSDataSourceOptionsParams> = {};
     for (const key in params) {
-      if (params.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
         uppercasedParams[key.toUpperCase()] = params[key];
       }
     }
