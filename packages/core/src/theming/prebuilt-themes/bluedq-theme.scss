@@ -53,7 +53,8 @@ $theme: mat.m2-define-light-theme(
   )
 );
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 @include mat.typography-hierarchy($typography);
 @include mat.all-component-themes($theme);
 
