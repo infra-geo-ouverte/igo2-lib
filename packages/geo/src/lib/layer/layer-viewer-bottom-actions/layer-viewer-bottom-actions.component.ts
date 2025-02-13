@@ -1,4 +1,4 @@
-import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,22 +26,21 @@ import {
 import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 
 @Component({
-    selector: 'igo-layer-viewer-bottom-actions',
-    templateUrl: './layer-viewer-bottom-actions.component.html',
-    styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
-    imports: [
-        NgIf,
-        NgTemplateOutlet,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatBadgeModule,
-        MatMenuModule,
-        MatSliderModule,
-        IgoLanguageModule,
-        PanelComponent
-    ],
-    providers: [LayerListToolService, FormDialogService]
+  selector: 'igo-layer-viewer-bottom-actions',
+  templateUrl: './layer-viewer-bottom-actions.component.html',
+  styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatSliderModule,
+    IgoLanguageModule,
+    PanelComponent
+  ],
+  providers: [LayerListToolService, FormDialogService]
 })
 export class LayerViewerBottomActionsComponent {
   orderable = true;

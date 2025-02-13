@@ -1,4 +1,4 @@
-import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -81,30 +81,29 @@ import {
 
 type SelectMode = 'import' | 'export';
 @Component({
-    selector: 'igo-import-export',
-    templateUrl: './import-export.component.html',
-    styleUrls: ['./import-export.component.scss'],
-    imports: [
-        MatButtonToggleModule,
-        NgIf,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule,
-        MatTooltipModule,
-        MatButtonModule,
-        SpinnerComponent,
-        CustomHtmlComponent,
-        NgClass,
-        MatSlideToggleModule,
-        MatInputModule,
-        AsyncPipe,
-        KeyValuePipe,
-        IgoLanguageModule
-    ],
-    providers: [ConfirmDialogService]
+  selector: 'igo-import-export',
+  templateUrl: './import-export.component.html',
+  styleUrls: ['./import-export.component.scss'],
+  imports: [
+    MatButtonToggleModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatTooltipModule,
+    MatButtonModule,
+    SpinnerComponent,
+    CustomHtmlComponent,
+    NgClass,
+    MatSlideToggleModule,
+    MatInputModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ],
+  providers: [ConfirmDialogService]
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: UntypedFormGroup;

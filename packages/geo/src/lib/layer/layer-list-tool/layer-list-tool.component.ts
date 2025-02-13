@@ -18,7 +18,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoBadgeIconDirective } from '@igo2/common/badge';
 import { FormDialogService } from '@igo2/common/form';
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -31,25 +30,24 @@ import { LayerGroup } from '../shared/layers/layer-group';
 import { LayerListToolService } from './layer-list-tool.service';
 
 @Component({
-    selector: 'igo-layer-list-tool',
-    templateUrl: './layer-list-tool.component.html',
-    styleUrls: ['./layer-list-tool.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        FormsModule,
-        NgIf,
-        MatFormFieldModule,
-        MatInputModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatMenuModule,
-        MatIconModule,
-        MatBadgeModule,
-        IgoBadgeIconDirective,
-        IgoLanguageModule,
-        LayerSearchComponent
-    ],
-    providers: [LayerListToolService, FormDialogService]
+  selector: 'igo-layer-list-tool',
+  templateUrl: './layer-list-tool.component.html',
+  styleUrls: ['./layer-list-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    FormsModule,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    MatBadgeModule,
+    IgoLanguageModule,
+    LayerSearchComponent
+  ],
+  providers: [LayerListToolService, FormDialogService]
 })
 export class LayerListToolComponent {
   @Input({ required: true }) mode: LayerToolMode;
