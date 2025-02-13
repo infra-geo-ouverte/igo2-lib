@@ -1,4 +1,3 @@
-import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, Input, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,17 +28,10 @@ import {
 } from '../shared/store';
 
 @Component({
-    selector: 'igo-directions-buttons',
-    templateUrl: './directions-buttons.component.html',
-    styleUrls: ['./directions-buttons.component.scss'],
-    imports: [
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        NgIf,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-directions-buttons',
+  templateUrl: './directions-buttons.component.html',
+  styleUrls: ['./directions-buttons.component.scss'],
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class DirectionsButtonsComponent {
   @Input({ required: true }) contextUri: string;

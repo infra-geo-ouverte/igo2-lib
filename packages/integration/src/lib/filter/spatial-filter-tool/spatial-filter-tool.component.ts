@@ -11,7 +11,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 
 import { EntityStore } from '@igo2/common/entity';
 import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
-import { PanelComponent } from '@igo2/common/panel';
 import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -69,18 +68,17 @@ import {
  * Spatial Filter Type
  */
 @Component({
-    selector: 'igo-spatial-filter-tool',
-    templateUrl: './spatial-filter-tool.component.html',
-    styleUrls: ['./spatial-filter-tool.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        SpatialFilterTypeComponent,
-        SpatialFilterItemComponent,
-        PanelComponent,
-        FeatureDetailsComponent,
-        NgIf,
-        AsyncPipe
-    ]
+  selector: 'igo-spatial-filter-tool',
+  templateUrl: './spatial-filter-tool.component.html',
+  styleUrls: ['./spatial-filter-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    SpatialFilterTypeComponent,
+    SpatialFilterItemComponent,
+    FeatureDetailsComponent,
+    NgIf,
+    AsyncPipe
+  ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {

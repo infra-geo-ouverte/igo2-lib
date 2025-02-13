@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -44,23 +44,22 @@ import {
 import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
 
 @Component({
-    selector: 'igo-directions-results',
-    templateUrl: './directions-results.component.html',
-    styleUrls: ['./directions-results.component.scss'],
-    imports: [
-        NgIf,
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        NgFor,
-        MatOptionModule,
-        MatDividerModule,
-        MatTooltipModule,
-        MatListModule,
-        MatIconModule,
-        NgClass,
-        IgoLanguageModule
-    ]
+  selector: 'igo-directions-results',
+  templateUrl: './directions-results.component.html',
+  styleUrls: ['./directions-results.component.scss'],
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    NgFor,
+    MatOptionModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatListModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
   @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;

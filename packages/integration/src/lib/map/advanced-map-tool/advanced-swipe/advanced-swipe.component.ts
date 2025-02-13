@@ -15,7 +15,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { IgoIconComponent } from '@igo2/common/icon';
 import { DetailedContext } from '@igo2/context';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { AnyLayer, IgoMap, Layer, VectorLayer, isLayerItem } from '@igo2/geo';
@@ -24,24 +23,23 @@ import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
 
 @Component({
-    selector: 'igo-advanced-swipe',
-    templateUrl: './advanced-swipe.component.html',
-    styleUrls: ['./advanced-swipe.component.scss'],
-    imports: [
-        NgIf,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatDividerModule,
-        NgFor,
-        MatSlideToggleModule,
-        MatListModule,
-        MatIconModule,
-        IgoLanguageModule,
-        IgoIconComponent
-    ]
+  selector: 'igo-advanced-swipe',
+  templateUrl: './advanced-swipe.component.html',
+  styleUrls: ['./advanced-swipe.component.scss'],
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    NgFor,
+    MatSlideToggleModule,
+    MatListModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe = false;
