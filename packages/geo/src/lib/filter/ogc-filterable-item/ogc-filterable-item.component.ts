@@ -29,27 +29,27 @@ import {
 import { OGCFilterService } from '../shared/ogc-filter.service';
 
 @Component({
-    selector: 'igo-ogc-filterable-item',
-    templateUrl: './ogc-filterable-item.component.html',
-    styleUrls: ['./ogc-filterable-item.component.scss'],
-    imports: [
-        NgClass,
-        MatListModule,
-        NgIf,
-        MatIconModule,
-        CollapseDirective,
-        NgStyle,
-        MatTooltipModule,
-        MatButtonModule,
-        LayerLegendComponent,
-        OgcFilterableFormComponent,
-        MatDividerModule,
-        MatCheckboxModule,
-        FormsModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ],
-    providers: [OGCFilterService]
+  selector: 'igo-ogc-filterable-item',
+  templateUrl: './ogc-filterable-item.component.html',
+  styleUrls: ['./ogc-filterable-item.component.scss'],
+  imports: [
+    NgClass,
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    CollapseDirective,
+    NgStyle,
+    MatTooltipModule,
+    MatButtonModule,
+    LayerLegendComponent,
+    OgcFilterableFormComponent,
+    MatDividerModule,
+    MatCheckboxModule,
+    FormsModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ],
+  providers: [OGCFilterService]
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public color = 'primary';

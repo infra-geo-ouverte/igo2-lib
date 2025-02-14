@@ -28,20 +28,20 @@ import {
  */
 @IgoFormFieldComponent('text')
 @Component({
-    selector: 'igo-form-field-text',
-    templateUrl: './form-field-text.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgIf,
-        MatIconModule,
-        MatButtonModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-form-field-text',
+  templateUrl: './form-field-text.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatIconModule,
+    MatButtonModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class FormFieldTextComponent implements OnInit {
   disabled$ = new BehaviorSubject<boolean>(false);

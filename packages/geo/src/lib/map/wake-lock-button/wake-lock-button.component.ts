@@ -12,16 +12,16 @@ import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-    selector: 'igo-wake-lock-button',
-    templateUrl: './wake-lock-button.component.html',
-    styleUrls: ['./wake-lock-button.component.scss'],
-    imports: [
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-wake-lock-button',
+  templateUrl: './wake-lock-button.component.html',
+  styleUrls: ['./wake-lock-button.component.scss'],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 
 /**

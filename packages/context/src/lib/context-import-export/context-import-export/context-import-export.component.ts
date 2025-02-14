@@ -36,25 +36,25 @@ import {
 } from '../shared/context-import.utils';
 
 @Component({
-    selector: 'igo-context-import-export',
-    templateUrl: './context-import-export.component.html',
-    styleUrls: ['./context-import-export.component.scss'],
-    imports: [
-        MatButtonToggleModule,
-        NgIf,
-        FormsModule,
-        MatButtonModule,
-        SpinnerComponent,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatDividerModule,
-        NgFor,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-context-import-export',
+  templateUrl: './context-import-export.component.html',
+  styleUrls: ['./context-import-export.component.scss'],
+  imports: [
+    MatButtonToggleModule,
+    NgIf,
+    FormsModule,
+    MatButtonModule,
+    SpinnerComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    NgFor,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class ContextImportExportComponent implements OnInit {
   public form: UntypedFormGroup;

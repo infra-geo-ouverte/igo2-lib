@@ -89,43 +89,43 @@ interface RowData {
 }
 
 @Component({
-    selector: 'igo-entity-table',
-    templateUrl: './entity-table.component.html',
-    styleUrls: ['./entity-table.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [
-        { provide: MatFormFieldControl, useExisting: EntityTableComponent },
-        provideMomentDateAdapter()
-    ],
-    imports: [
-        AsyncPipe,
-        EntityTablePaginatorComponent,
-        EntityTableRowDirective,
-        FormsModule,
-        ImageErrorDirective,
-        MatAutocompleteModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        MatDatepickerModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatNativeDateModule, // For the DateAdapter provider
-        MatOptionModule,
-        MatSelectModule,
-        MatSortModule,
-        MatTableModule,
-        MatTooltipModule,
-        NgClass,
-        NgFor,
-        NgIf,
-        NgStyle,
-        ReactiveFormsModule,
-        SanitizeHtmlPipe,
-        SecureImagePipe,
-        StopPropagationDirective,
-        IgoLanguageModule
-    ]
+  selector: 'igo-entity-table',
+  templateUrl: './entity-table.component.html',
+  styleUrls: ['./entity-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EntityTableComponent },
+    provideMomentDateAdapter()
+  ],
+  imports: [
+    AsyncPipe,
+    EntityTablePaginatorComponent,
+    EntityTableRowDirective,
+    FormsModule,
+    ImageErrorDirective,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatNativeDateModule, // For the DateAdapter provider
+    MatOptionModule,
+    MatSelectModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
+    ReactiveFormsModule,
+    SanitizeHtmlPipe,
+    SecureImagePipe,
+    StopPropagationDirective,
+    IgoLanguageModule
+  ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$ = new BehaviorSubject<boolean>(false);

@@ -7,10 +7,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-message',
-    templateUrl: './message.component.html',
-    styleUrls: ['./message.component.scss'],
-    imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
+  selector: 'app-message',
+  templateUrl: './message.component.html',
+  styleUrls: ['./message.component.scss'],
+  imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMessageComponent {
   constructor(private messageService: MessageService) {}

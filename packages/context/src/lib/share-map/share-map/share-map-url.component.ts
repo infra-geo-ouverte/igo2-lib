@@ -23,18 +23,18 @@ import { Subscription, combineLatest } from 'rxjs';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
-    selector: 'igo-share-map-url',
-    templateUrl: './share-map-url.component.html',
-    styleUrls: ['./share-map-url.component.scss'],
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatIconModule,
-        NgIf,
-        CustomHtmlComponent,
-        IgoLanguageModule
-    ]
+  selector: 'igo-share-map-url',
+  templateUrl: './share-map-url.component.html',
+  styleUrls: ['./share-map-url.component.scss'],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
+    CustomHtmlComponent,
+    IgoLanguageModule
+  ]
 })
 export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   private mapState$$: Subscription;

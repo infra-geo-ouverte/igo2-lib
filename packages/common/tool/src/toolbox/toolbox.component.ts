@@ -20,18 +20,18 @@ import { ToolboxColor } from '../shared/toolbox.enums';
 import { toolSlideInOut } from './toolbox.animation';
 
 @Component({
-    selector: 'igo-toolbox',
-    templateUrl: 'toolbox.component.html',
-    styleUrls: ['toolbox.component.scss'],
-    animations: [toolSlideInOut()],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        ActionbarComponent,
-        NgClass,
-        DynamicOutletComponent,
-        AsyncPipe
-    ]
+  selector: 'igo-toolbox',
+  templateUrl: 'toolbox.component.html',
+  styleUrls: ['toolbox.component.scss'],
+  animations: [toolSlideInOut()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    ActionbarComponent,
+    NgClass,
+    DynamicOutletComponent,
+    AsyncPipe
+  ]
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
   /**

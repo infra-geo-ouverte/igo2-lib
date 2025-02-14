@@ -15,19 +15,19 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { debounceTime } from 'rxjs';
 
 @Component({
-    selector: 'igo-layer-search',
-    templateUrl: './layer-search.component.html',
-    styleUrls: ['./layer-search.component.scss'],
-    imports: [
-        NgIf,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatButtonModule,
-        MatInputModule,
-        MatTooltipModule,
-        MatIconModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-layer-search',
+  templateUrl: './layer-search.component.html',
+  styleUrls: ['./layer-search.component.scss'],
+  imports: [
+    NgIf,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatInputModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class LayerSearchComponent implements OnInit {
   control = new FormControl();

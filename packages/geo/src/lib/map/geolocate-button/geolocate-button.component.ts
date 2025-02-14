@@ -12,17 +12,17 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { IgoMap } from '../shared/map';
 
 @Component({
-    selector: 'igo-geolocate-button',
-    templateUrl: './geolocate-button.component.html',
-    styleUrls: ['./geolocate-button.component.scss'],
-    imports: [
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-geolocate-button',
+  templateUrl: './geolocate-button.component.html',
+  styleUrls: ['./geolocate-button.component.scss'],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;

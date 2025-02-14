@@ -66,24 +66,24 @@ import { SearchState } from '../search.state';
   icon: 'search'
 })
 @Component({
-    selector: 'igo-search-results-tool',
-    templateUrl: './search-results-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        FlexibleComponent,
-        SearchResultsComponent,
-        SearchResultAddButtonComponent,
-        PanelComponent,
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatBadgeModule,
-        FeatureDetailsComponent,
-        AsyncPipe,
-        IgoLanguageModule,
-        SanitizeHtmlPipe
-    ]
+  selector: 'igo-search-results-tool',
+  templateUrl: './search-results-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    FlexibleComponent,
+    SearchResultsComponent,
+    SearchResultAddButtonComponent,
+    PanelComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    FeatureDetailsComponent,
+    AsyncPipe,
+    IgoLanguageModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**

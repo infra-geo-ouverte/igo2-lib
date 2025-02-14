@@ -20,15 +20,15 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-feature',
-    templateUrl: './feature.component.html',
-    styleUrls: ['./feature.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MAP_DIRECTIVES,
-        EntityTableComponent
-    ]
+  selector: 'app-feature',
+  templateUrl: './feature.component.html',
+  styleUrls: ['./feature.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MAP_DIRECTIVES,
+    EntityTableComponent
+  ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
   public map: IgoMap = new IgoMap({

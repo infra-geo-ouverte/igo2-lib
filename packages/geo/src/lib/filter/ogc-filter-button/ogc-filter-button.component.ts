@@ -22,20 +22,20 @@ import {
 } from '../shared/ogc-filter.interface';
 
 @Component({
-    selector: 'igo-ogc-filter-button',
-    templateUrl: './ogc-filter-button.component.html',
-    styleUrls: ['./ogc-filter-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatBadgeModule,
-        OgcFilterableItemComponent,
-        ListItemDirective,
-        IgoLanguageModule
-    ]
+  selector: 'igo-ogc-filter-button',
+  templateUrl: './ogc-filter-button.component.html',
+  styleUrls: ['./ogc-filter-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    OgcFilterableItemComponent,
+    ListItemDirective,
+    IgoLanguageModule
+  ]
 })
 export class OgcFilterButtonComponent implements OnInit {
   public options: OgcFilterableDataSourceOptions;

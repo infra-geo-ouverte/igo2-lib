@@ -8,16 +8,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-request',
-    templateUrl: './request.component.html',
-    styleUrls: ['./request.component.scss'],
-    imports: [
-        // IgoErrorModule,
-        // IgoLoggingModule, // Import in your root module or main.ts, only if you want register http calls in console
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatButtonModule
-    ]
+  selector: 'app-request',
+  templateUrl: './request.component.html',
+  styleUrls: ['./request.component.scss'],
+  imports: [
+    // IgoErrorModule,
+    // IgoLoggingModule, // Import in your root module or main.ts, only if you want register http calls in console
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatButtonModule
+  ]
 })
 export class AppRequestComponent {
   constructor(

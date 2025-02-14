@@ -25,20 +25,20 @@ import { AllEnvironmentOptions } from '../../environment';
   icon: 'help'
 })
 @Component({
-    selector: 'igo-about-tool',
-    templateUrl: './about-tool.component.html',
-    styleUrls: ['./about-tool.component.scss'],
-    imports: [
-        InteractiveTourComponent,
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatMenuModule,
-        NgFor,
-        CustomHtmlComponent,
-        IgoLanguageModule
-    ]
+  selector: 'igo-about-tool',
+  templateUrl: './about-tool.component.html',
+  styleUrls: ['./about-tool.component.scss'],
+  imports: [
+    InteractiveTourComponent,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatMenuModule,
+    NgFor,
+    CustomHtmlComponent,
+    IgoLanguageModule
+  ]
 })
 export class AboutToolComponent implements OnInit {
   private configOptions: AllEnvironmentOptions;

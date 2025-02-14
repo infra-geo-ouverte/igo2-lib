@@ -23,20 +23,20 @@ import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-    selector: 'igo-auth-intern',
-    templateUrl: './auth-intern.component.html',
-    styleUrls: ['./auth-intern.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Default,
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatProgressSpinner,
-        NgIf,
-        IgoLanguageModule
-    ]
+  selector: 'igo-auth-intern',
+  templateUrl: './auth-intern.component.html',
+  styleUrls: ['./auth-intern.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinner,
+    NgIf,
+    IgoLanguageModule
+  ]
 })
 export class AuthInternComponent {
   @Input()

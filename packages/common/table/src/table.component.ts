@@ -31,22 +31,22 @@ import { TableDataSource } from './table-datasource';
 import { TableModel } from './table-model.interface';
 
 @Component({
-    selector: 'igo-table',
-    templateUrl: './table.component.html',
-    styleUrls: ['./table.component.scss'],
-    imports: [
-        NgIf,
-        MatFormFieldModule,
-        MatInputModule,
-        MatTableModule,
-        MatSortModule,
-        MatCheckboxModule,
-        NgFor,
-        NgClass,
-        MatButtonModule,
-        MatIconModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-table',
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    NgFor,
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   @Input()

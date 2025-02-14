@@ -21,17 +21,17 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-catalog',
-    templateUrl: './catalog.component.html',
-    styleUrls: ['./catalog.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MAP_DIRECTIVES,
-        PanelComponent,
-        CatalogLibaryComponent,
-        CatalogBrowserComponent
-    ]
+  selector: 'app-catalog',
+  templateUrl: './catalog.component.html',
+  styleUrls: ['./catalog.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    CatalogLibaryComponent,
+    CatalogBrowserComponent
+  ]
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;

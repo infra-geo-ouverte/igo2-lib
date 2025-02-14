@@ -22,16 +22,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-legend',
-    templateUrl: './legend.component.html',
-    styleUrls: ['./legend.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MAP_DIRECTIVES,
-        PanelComponent,
-        LAYER_DIRECTIVES
-    ]
+  selector: 'app-legend',
+  templateUrl: './legend.component.html',
+  styleUrls: ['./legend.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES
+  ]
 })
 export class AppLegendComponent {
   public map: IgoMap = new IgoMap({

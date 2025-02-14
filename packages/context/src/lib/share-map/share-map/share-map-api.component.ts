@@ -22,20 +22,20 @@ import { Clipboard, uuid } from '@igo2/utils';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
-    selector: 'igo-share-map-api',
-    templateUrl: './share-map-api.component.html',
-    styleUrls: ['./share-map-api.component.scss'],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-share-map-api',
+  templateUrl: './share-map-api.component.html',
+  styleUrls: ['./share-map-api.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class ShareMapApiComponent implements OnInit {
   public form: UntypedFormGroup;

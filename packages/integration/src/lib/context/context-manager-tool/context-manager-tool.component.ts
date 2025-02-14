@@ -16,9 +16,9 @@ import { ToolState } from '../../tool/tool.state';
   icon: 'star'
 })
 @Component({
-    selector: 'igo-context-manager-tool',
-    templateUrl: './context-manager-tool.component.html',
-    imports: [ContextListComponent, ContextListBindingDirective]
+  selector: 'igo-context-manager-tool',
+  templateUrl: './context-manager-tool.component.html',
+  imports: [ContextListComponent, ContextListBindingDirective]
 })
 export class ContextManagerToolComponent {
   @Input() toolToOpenOnContextChange = 'mapTools';

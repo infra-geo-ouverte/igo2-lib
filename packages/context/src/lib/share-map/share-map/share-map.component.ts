@@ -10,16 +10,16 @@ import { ShareMapApiComponent } from './share-map-api.component';
 import { ShareMapUrlComponent } from './share-map-url.component';
 
 @Component({
-    selector: 'igo-share-map',
-    templateUrl: './share-map.component.html',
-    styleUrls: ['./share-map.component.scss'],
-    imports: [
-        NgIf,
-        MatTabsModule,
-        ShareMapApiComponent,
-        ShareMapUrlComponent,
-        IgoLanguageModule
-    ]
+  selector: 'igo-share-map',
+  templateUrl: './share-map.component.html',
+  styleUrls: ['./share-map.component.scss'],
+  imports: [
+    NgIf,
+    MatTabsModule,
+    ShareMapApiComponent,
+    ShareMapUrlComponent,
+    IgoLanguageModule
+  ]
 })
 export class ShareMapComponent {
   @Input() map: IgoMap;

@@ -19,17 +19,17 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
  * Tool to handle the advanced map tools
  */
 @Component({
-    selector: 'igo-advanced-map-tool',
-    templateUrl: './advanced-map-tool.component.html',
-    styleUrls: ['./advanced-map-tool.component.scss'],
-    imports: [
-        AdvancedSwipeComponent,
-        MatDividerModule,
-        AdvancedCoordinatesComponent,
-        MatSlideToggleModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-advanced-map-tool',
+  templateUrl: './advanced-map-tool.component.html',
+  styleUrls: ['./advanced-map-tool.component.scss'],
+  imports: [
+    AdvancedSwipeComponent,
+    MatDividerModule,
+    AdvancedCoordinatesComponent,
+    MatSlideToggleModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class AdvancedMapToolComponent {
   get tracking$() {

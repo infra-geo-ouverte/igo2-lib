@@ -34,10 +34,10 @@ import { CatalogState } from '../catalog.state';
   parent: 'catalog'
 })
 @Component({
-    selector: 'igo-catalog-browser-tool',
-    templateUrl: './catalog-browser-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
+  selector: 'igo-catalog-browser-tool',
+  templateUrl: './catalog-browser-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   catalog: Catalog;

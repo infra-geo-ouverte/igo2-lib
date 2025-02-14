@@ -16,16 +16,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-import-export',
-    templateUrl: './import-export.component.html',
-    styleUrls: ['./import-export.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatGridListModule,
-        MAP_DIRECTIVES,
-        IMPORT_EXPORT_DIRECTIVES
-    ]
+  selector: 'app-import-export',
+  templateUrl: './import-export.component.html',
+  styleUrls: ['./import-export.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    IMPORT_EXPORT_DIRECTIVES
+  ]
 })
 export class AppImportExportComponent {
   public map: IgoMap = new IgoMap({

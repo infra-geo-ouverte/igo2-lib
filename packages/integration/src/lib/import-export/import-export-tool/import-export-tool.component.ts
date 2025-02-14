@@ -33,18 +33,18 @@ import {
   icon: 'file_save'
 })
 @Component({
-    selector: 'igo-import-export-tool',
-    templateUrl: './import-export-tool.component.html',
-    styleUrls: ['./import-export-tool.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatTabsModule,
-        ImportExportComponent,
-        ContextImportExportComponent,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-import-export-tool',
+  templateUrl: './import-export-tool.component.html',
+  styleUrls: ['./import-export-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatTabsModule,
+    ImportExportComponent,
+    ContextImportExportComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class ImportExportToolComponent implements OnInit {
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;

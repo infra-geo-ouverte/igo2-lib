@@ -20,25 +20,25 @@ import tinycolor, { ColorInput } from 'tinycolor2';
 type ColorFormat = 'hex' | 'rgba' | 'hsla';
 
 @Component({
-    selector: 'igo-color-picker-form-field',
-    templateUrl: './color-picker-form-field.component.html',
-    styleUrls: ['./color-picker-form-field.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => ColorPickerFormFieldComponent),
-            multi: true
-        }
-    ],
-    imports: [
-        MatFormFieldModule,
-        CdkOverlayOrigin,
-        MatInputModule,
-        CdkConnectedOverlay,
-        ColorChromeModule,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-color-picker-form-field',
+  templateUrl: './color-picker-form-field.component.html',
+  styleUrls: ['./color-picker-form-field.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ColorPickerFormFieldComponent),
+      multi: true
+    }
+  ],
+  imports: [
+    MatFormFieldModule,
+    CdkOverlayOrigin,
+    MatInputModule,
+    CdkConnectedOverlay,
+    ColorChromeModule,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   isOpen = false;

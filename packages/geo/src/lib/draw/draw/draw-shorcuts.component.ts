@@ -15,18 +15,18 @@ import {
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-    selector: 'igo-draw-shorcuts',
-    templateUrl: './draw-shorcuts.component.html',
-    styleUrls: ['./draw-shorcuts.component.scss'],
-    imports: [
-        MatDialogContent,
-        MatIconModule,
-        MatDialogActions,
-        MatButtonModule,
-        MatDialogClose,
-        IgoLanguageModule,
-        IgoIconComponent
-    ]
+  selector: 'igo-draw-shorcuts',
+  templateUrl: './draw-shorcuts.component.html',
+  styleUrls: ['./draw-shorcuts.component.scss'],
+  imports: [
+    MatDialogContent,
+    MatIconModule,
+    MatDialogActions,
+    MatButtonModule,
+    MatDialogClose,
+    IgoLanguageModule,
+    IgoIconComponent
+  ]
 })
 export class DrawShorcutsComponent {
   svgIcon: IconSvg = KEYBOARD_ESC_ICON;

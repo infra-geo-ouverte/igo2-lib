@@ -10,17 +10,17 @@ const SRC_PATH =
   'https://github.com/infra-geo-ouverte/igo2-lib/tree/master/projects/demo/src';
 
 @Component({
-    selector: 'app-example-viewer',
-    templateUrl: './example-viewer.component.html',
-    styleUrls: ['./example-viewer.component.scss'],
-    imports: [
-        MatCardModule,
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatDividerModule
-    ]
+  selector: 'app-example-viewer',
+  templateUrl: './example-viewer.component.html',
+  styleUrls: ['./example-viewer.component.scss'],
+  imports: [
+    MatCardModule,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatDividerModule
+  ]
 })
 export class ExampleViewerComponent {
   @Input() title: string;

@@ -29,22 +29,22 @@ import { AnyLayer } from '../shared/layers/any-layer';
 import { isBaseLayer, isLayerItem, sortLayersByZindex } from '../utils';
 
 @Component({
-    selector: 'igo-layer-legend-list',
-    templateUrl: './layer-legend-list.component.html',
-    styleUrls: ['./layer-legend-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatSlideToggleModule,
-        MatTooltipModule,
-        MatDividerModule,
-        ListComponent,
-        NgFor,
-        LayerLegendItemComponent,
-        ListItemDirective,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-layer-legend-list',
+  templateUrl: './layer-legend-list.component.html',
+  styleUrls: ['./layer-legend-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatDividerModule,
+    ListComponent,
+    NgFor,
+    LayerLegendItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;

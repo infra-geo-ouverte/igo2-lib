@@ -10,16 +10,16 @@ import {
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-    selector: 'igo-confirm-dialog',
-    templateUrl: './confirm-dialog.component.html',
-    styleUrls: ['./confirm-dialog.component.scss'],
-    imports: [
-        MatDialogTitle,
-        MatDialogContent,
-        MatDialogActions,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-confirm-dialog',
+  templateUrl: './confirm-dialog.component.html',
+  styleUrls: ['./confirm-dialog.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class ConfirmDialogComponent {
   public confirmMessage: string;

@@ -46,15 +46,15 @@ export class AppExplanationComponent implements OnUpdateInputs {
 }
 
 @Component({
-    selector: 'app-dynamic-component',
-    templateUrl: './dynamic-component.component.html',
-    styleUrls: ['./dynamic-component.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        DynamicOutletComponent,
-        MatButtonModule
-    ]
+  selector: 'app-dynamic-component',
+  templateUrl: './dynamic-component.component.html',
+  styleUrls: ['./dynamic-component.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    DynamicOutletComponent,
+    MatButtonModule
+  ]
 })
 export class AppDynamicComponentComponent {
   component: any = AppSalutationComponent;

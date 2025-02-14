@@ -60,17 +60,17 @@ import {
 } from './shared/store';
 
 @Component({
-    selector: 'igo-directions',
-    templateUrl: './directions.component.html',
-    styleUrls: ['./directions.component.scss'],
-    imports: [
-        CommonModule,
-        MatSlideToggleModule,
-        DirectionsButtonsComponent,
-        DirectionsInputsComponent,
-        DirectionsResultsComponent,
-        IgoLanguageModule
-    ]
+  selector: 'igo-directions',
+  templateUrl: './directions.component.html',
+  styleUrls: ['./directions.component.scss'],
+  imports: [
+    CommonModule,
+    MatSlideToggleModule,
+    DirectionsButtonsComponent,
+    DirectionsInputsComponent,
+    DirectionsResultsComponent,
+    IgoLanguageModule
+  ]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;

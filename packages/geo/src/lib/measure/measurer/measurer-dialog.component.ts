@@ -14,16 +14,16 @@ import { MeasurerDialogData } from '../shared/measure.interfaces';
 import { MeasureFormatPipe } from './measure-format.pipe';
 
 @Component({
-    selector: 'igo-measurer-dialog',
-    templateUrl: 'measurer-dialog.component.html',
-    styleUrls: ['./measurer-dialog.component.scss'],
-    imports: [
-        MatDialogTitle,
-        MatDialogContent,
-        NgIf,
-        IgoLanguageModule,
-        MeasureFormatPipe
-    ]
+  selector: 'igo-measurer-dialog',
+  templateUrl: 'measurer-dialog.component.html',
+  styleUrls: ['./measurer-dialog.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    NgIf,
+    IgoLanguageModule,
+    MeasureFormatPipe
+  ]
 })
 export class MeasurerDialogComponent {
   measureAreaUnit = MeasureAreaUnit;

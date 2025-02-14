@@ -80,23 +80,23 @@ import { MeasurerItemComponent } from './measurer-item.component';
  * Tool to measure lengths and areas
  */
 @Component({
-    selector: 'igo-measurer',
-    templateUrl: './measurer.component.html',
-    styleUrls: ['./measurer.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatButtonToggleModule,
-        MatSlideToggleModule,
-        NgIf,
-        MatDividerModule,
-        MeasurerItemComponent,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        EntityTableComponent,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-measurer',
+  templateUrl: './measurer.component.html',
+  styleUrls: ['./measurer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    NgIf,
+    MatDividerModule,
+    MeasurerItemComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    EntityTableComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class MeasurerComponent implements OnInit, OnDestroy {
   /**

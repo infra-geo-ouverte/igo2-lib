@@ -25,22 +25,22 @@ import { SelectValueDialogType } from './select-value-dialog.enums';
 import { SelectValueData } from './select-value-dialog.interface';
 
 @Component({
-    selector: 'igo-select-value-check-radio-dialog',
-    templateUrl: './select-value-check-radio-dialog.component.html',
-    styleUrls: ['./select-value-check-radio-dialog.component.scss'],
-    imports: [
-        MatDialogTitle,
-        FormsModule,
-        ReactiveFormsModule,
-        NgIf,
-        NgFor,
-        MatCheckboxModule,
-        MatRadioModule,
-        MatDialogActions,
-        MatButtonModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-select-value-check-radio-dialog',
+  templateUrl: './select-value-check-radio-dialog.component.html',
+  styleUrls: ['./select-value-check-radio-dialog.component.scss'],
+  imports: [
+    MatDialogTitle,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    NgFor,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SelectValueCheckRadioDialogComponent implements OnInit {
   public formGroup: UntypedFormGroup;

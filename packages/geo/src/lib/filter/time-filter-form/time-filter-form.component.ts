@@ -39,28 +39,28 @@ import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
 @Component({
-    selector: 'igo-time-filter-form',
-    templateUrl: './time-filter-form.component.html',
-    styleUrls: ['./time-filter-form.component.scss'],
-    imports: [
-        NgIf,
-        MatFormFieldModule,
-        MatDatetimepickerModule,
-        MatMomentDateModule,
-        MatNativeDatetimeModule,
-        MatNativeDateModule, // For the DateAdapter provider
-        MatInputModule,
-        FormsModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule,
-        MatSliderModule,
-        MatSlideToggleModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatIconModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-time-filter-form',
+  templateUrl: './time-filter-form.component.html',
+  styleUrls: ['./time-filter-form.component.scss'],
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatDatetimepickerModule,
+    MatMomentDateModule,
+    MatNativeDatetimeModule,
+    MatNativeDateModule, // For the DateAdapter provider
+    MatInputModule,
+    FormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class TimeFilterFormComponent implements OnInit {
   public color: ThemePalette = 'primary';

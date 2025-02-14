@@ -13,10 +13,10 @@ import { toolSlideInOut } from './active-time-filter-tool.animation';
   parent: 'mapTools'
 })
 @Component({
-    selector: 'igo-active-time-filter-tool',
-    templateUrl: './active-time-filter-tool.component.html',
-    animations: [toolSlideInOut()],
-    imports: [TimeFilterItemComponent]
+  selector: 'igo-active-time-filter-tool',
+  templateUrl: './active-time-filter-tool.component.html',
+  animations: [toolSlideInOut()],
+  imports: [TimeFilterItemComponent]
 })
 export class ActiveTimeFilterToolComponent {
   get map(): IgoMap {

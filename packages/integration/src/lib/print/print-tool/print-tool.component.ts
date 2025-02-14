@@ -11,9 +11,9 @@ import { MapState } from '../../map/map.state';
   icon: 'print'
 })
 @Component({
-    selector: 'igo-print-tool',
-    templateUrl: './print-tool.component.html',
-    imports: [PrintComponent]
+  selector: 'igo-print-tool',
+  templateUrl: './print-tool.component.html',
+  imports: [PrintComponent]
 })
 export class PrintToolComponent {
   get map(): IgoMap {
