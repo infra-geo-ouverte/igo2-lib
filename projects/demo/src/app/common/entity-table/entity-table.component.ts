@@ -17,10 +17,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-entity-table',
-    templateUrl: './entity-table.component.html',
-    styleUrls: ['./entity-table.component.scss'],
-    imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
+  selector: 'app-entity-table',
+  templateUrl: './entity-table.component.html',
+  styleUrls: ['./entity-table.component.scss'],
+  imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);

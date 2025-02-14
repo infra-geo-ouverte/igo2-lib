@@ -42,28 +42,28 @@ import {
 } from '../shared/layers';
 
 @Component({
-    selector: 'igo-layer-legend',
-    templateUrl: './layer-legend.component.html',
-    styleUrls: ['./layer-legend.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        NgFor,
-        MatListModule,
-        MatIconModule,
-        CollapseDirective,
-        NgClass,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatTooltipModule,
-        FormsModule,
-        MatOptionModule,
-        ImageErrorDirective,
-        NgStyle,
-        AsyncPipe,
-        IgoLanguageModule,
-        SanitizeHtmlPipe
-    ]
+  selector: 'igo-layer-legend',
+  templateUrl: './layer-legend.component.html',
+  styleUrls: ['./layer-legend.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    NgFor,
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    NgClass,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    FormsModule,
+    MatOptionModule,
+    ImageErrorDirective,
+    NgStyle,
+    AsyncPipe,
+    IgoLanguageModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
   @Input() updateLegendOnResolutionChange = false;

@@ -11,17 +11,17 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-theme',
-    templateUrl: './theme.component.html',
-    styleUrls: ['./theme.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule
-    ]
+  selector: 'app-theme',
+  templateUrl: './theme.component.html',
+  styleUrls: ['./theme.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule
+  ]
 })
 export class AppThemeComponent {
   isDark: boolean;

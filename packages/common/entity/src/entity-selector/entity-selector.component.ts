@@ -25,18 +25,18 @@ export interface EntitySelectorChange<T = any> {
   value: T;
 }
 @Component({
-    selector: 'igo-entity-selector',
-    templateUrl: './entity-selector.component.html',
-    styleUrls: ['./entity-selector.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        NgIf,
-        MatOptionModule,
-        NgFor,
-        AsyncPipe
-    ]
+  selector: 'igo-entity-selector',
+  templateUrl: './entity-selector.component.html',
+  styleUrls: ['./entity-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    NgIf,
+    MatOptionModule,
+    NgFor,
+    AsyncPipe
+  ]
 })
 export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**

@@ -15,17 +15,17 @@ export interface DialogData {
 }
 
 @Component({
-    selector: 'igo-draw-popup-component',
-    templateUrl: './draw-layer-popup.component.html',
-    styleUrls: ['./draw-layer-popup.component.scss'],
-    imports: [
-        MatDialogContent,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDialogActions,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-draw-popup-component',
+  templateUrl: './draw-layer-popup.component.html',
+  styleUrls: ['./draw-layer-popup.component.scss'],
+  imports: [
+    MatDialogContent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class DrawLayerPopupComponent {
   @Input() confirmFlag = false;

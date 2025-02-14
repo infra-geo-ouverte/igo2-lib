@@ -23,11 +23,11 @@ import { EntityStore } from '../shared';
 import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';
 
 @Component({
-    selector: 'igo-entity-table-paginator',
-    templateUrl: './entity-table-paginator.component.html',
-    styleUrls: ['./entity-table-paginator.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatPaginatorModule]
+  selector: 'igo-entity-table-paginator',
+  templateUrl: './entity-table-paginator.component.html',
+  styleUrls: ['./entity-table-paginator.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatPaginatorModule]
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   public disabled = false;

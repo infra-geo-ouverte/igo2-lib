@@ -1,5 +1,12 @@
 import { HttpBackend } from '@angular/common/http';
-import { EnvironmentProviders, Provider, importProvidersFrom, makeEnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
+import {
+  EnvironmentProviders,
+  Provider,
+  importProvidersFrom,
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer
+} from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -41,7 +48,7 @@ export function provideTranslation(
   return makeEnvironmentProviders([
     ...featureConfig.providers,
     provideAppInitializer(() => {
-        const initializerFn = ((languageService: LanguageService) => () => {
+      const initializerFn = ((languageService: LanguageService) => () => {
         return (
           languageService.translate.currentLoader as LanguageLoaderBase
         ).isLoaded$?.pipe(
@@ -53,8 +60,8 @@ export function provideTranslation(
           })
         );
       })(inject(LanguageService));
-        return initializerFn();
-      })
+      return initializerFn();
+    })
   ]);
 }
 

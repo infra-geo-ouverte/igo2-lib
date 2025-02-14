@@ -37,23 +37,23 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
  * Catalog browser group item
  */
 @Component({
-    selector: 'igo-catalog-browser-group',
-    templateUrl: './catalog-browser-group.component.html',
-    styleUrls: ['./catalog-browser-group.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatListModule,
-        MatIconModule,
-        CollapseDirective,
-        MatTooltipModule,
-        NgIf,
-        MatButtonModule,
-        NgFor,
-        CatalogBrowserLayerComponent,
-        ListItemDirective,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-catalog-browser-group',
+  templateUrl: './catalog-browser-group.component.html',
+  styleUrls: ['./catalog-browser-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    NgFor,
+    CatalogBrowserLayerComponent,
+    ListItemDirective,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**

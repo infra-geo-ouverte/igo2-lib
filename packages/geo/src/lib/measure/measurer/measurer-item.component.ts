@@ -31,20 +31,20 @@ import { MeasureFormatPipe } from './measure-format.pipe';
  * Measurer item
  */
 @Component({
-    selector: 'igo-measurer-item',
-    templateUrl: './measurer-item.component.html',
-    styleUrls: ['./measurer-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule,
-        AsyncPipe,
-        IgoLanguageModule,
-        MeasureFormatPipe
-    ]
+  selector: 'igo-measurer-item',
+  templateUrl: './measurer-item.component.html',
+  styleUrls: ['./measurer-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    AsyncPipe,
+    IgoLanguageModule,
+    MeasureFormatPipe
+  ]
 })
 export class MeasurerItemComponent implements OnDestroy {
   /**

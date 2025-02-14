@@ -59,29 +59,29 @@ import { MapState } from '../map.state';
   icon: 'map'
 })
 @Component({
-    selector: 'igo-map-tools',
-    templateUrl: './map-tools.component.html',
-    styleUrls: ['./map-tools.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatTabsModule,
-        NgIf,
-        NgTemplateOutlet,
-        LayerViewerComponent,
-        StyleModalLayerButtonComponent,
-        MetadataButtonComponent,
-        TrackFeatureButtonComponent,
-        TimeFilterButtonComponent,
-        OgcFilterButtonComponent,
-        ExportButtonComponent,
-        WorkspaceButtonComponent,
-        LayerLegendListComponent,
-        LayerLegendListBindingDirective,
-        MatListModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-map-tools',
+  templateUrl: './map-tools.component.html',
+  styleUrls: ['./map-tools.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabsModule,
+    NgIf,
+    NgTemplateOutlet,
+    LayerViewerComponent,
+    StyleModalLayerButtonComponent,
+    MetadataButtonComponent,
+    TrackFeatureButtonComponent,
+    TimeFilterButtonComponent,
+    OgcFilterButtonComponent,
+    ExportButtonComponent,
+    WorkspaceButtonComponent,
+    LayerLegendListComponent,
+    LayerLegendListBindingDirective,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
   isDesktop: boolean;

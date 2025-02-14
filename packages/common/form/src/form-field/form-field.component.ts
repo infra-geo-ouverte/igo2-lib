@@ -17,11 +17,11 @@ import {
  * the field configuration it receives.
  */
 @Component({
-    selector: 'igo-form-field',
-    templateUrl: './form-field.component.html',
-    styleUrls: ['./form-field.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, DynamicOutletComponent]
+  selector: 'igo-form-field',
+  templateUrl: './form-field.component.html',
+  styleUrls: ['./form-field.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIf, DynamicOutletComponent]
 })
 export class FormFieldComponent {
   /**

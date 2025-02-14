@@ -36,22 +36,22 @@ import {
 import { SpatialFilterService } from './../../shared/spatial-filter.service';
 
 @Component({
-    selector: 'igo-spatial-filter-list',
-    templateUrl: './spatial-filter-list.component.html',
-    styleUrls: ['./spatial-filter-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        MatAutocompleteModule,
-        ReactiveFormsModule,
-        NgFor,
-        MatOptionModule,
-        MatSelectModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-spatial-filter-list',
+  templateUrl: './spatial-filter-list.component.html',
+  styleUrls: ['./spatial-filter-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    MatSelectModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
   @Input() store: EntityStore<Feature>;

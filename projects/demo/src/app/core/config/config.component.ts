@@ -8,10 +8,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-config',
-    templateUrl: './config.component.html',
-    styleUrls: ['./config.component.scss'],
-    imports: [DocViewerComponent, ExampleViewerComponent, JsonPipe]
+  selector: 'app-config',
+  templateUrl: './config.component.html',
+  styleUrls: ['./config.component.scss'],
+  imports: [DocViewerComponent, ExampleViewerComponent, JsonPipe]
 })
 export class AppConfigComponent {
   public configLanguage: LanguageOptions;

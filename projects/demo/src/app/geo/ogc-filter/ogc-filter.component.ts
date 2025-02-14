@@ -32,17 +32,17 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-ogc-filter',
-    templateUrl: './ogc-filter.component.html',
-    styleUrls: ['./ogc-filter.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatGridListModule,
-        MAP_DIRECTIVES,
-        PanelComponent,
-        FILTER_DIRECTIVES
-    ]
+  selector: 'app-ogc-filter',
+  templateUrl: './ogc-filter.component.html',
+  styleUrls: ['./ogc-filter.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    PanelComponent,
+    FILTER_DIRECTIVES
+  ]
 })
 export class AppOgcFilterComponent {
   public map: IgoMap = new IgoMap({

@@ -27,20 +27,20 @@ import { filter } from 'rxjs/operators';
 import { AuthFormOptions } from '../shared';
 
 @Component({
-    selector: 'igo-auth-form',
-    templateUrl: './auth-form.component.html',
-    styleUrls: ['./auth-form.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Default,
-    imports: [
-        NgIf,
-        AuthGoogleComponent,
-        AuthMicrosoftComponent,
-        AuthMicrosoftb2cComponent,
-        AuthFacebookComponent,
-        AuthInternComponent,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-auth-form',
+  templateUrl: './auth-form.component.html',
+  styleUrls: ['./auth-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [
+    NgIf,
+    AuthGoogleComponent,
+    AuthMicrosoftComponent,
+    AuthMicrosoftb2cComponent,
+    AuthFacebookComponent,
+    AuthInternComponent,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class AuthFormComponent implements OnInit {
   @Input()

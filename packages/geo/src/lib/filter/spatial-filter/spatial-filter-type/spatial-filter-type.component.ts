@@ -32,22 +32,22 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
  * Spatial Filter Type
  */
 @Component({
-    selector: 'igo-spatial-filter-type',
-    templateUrl: './spatial-filter-type.component.html',
-    styleUrls: ['./spatial-filter-type.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatTabsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule,
-        SpatialFilterListComponent,
-        MatButtonToggleModule,
-        MatTooltipModule,
-        MatIconModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-spatial-filter-type',
+  templateUrl: './spatial-filter-type.component.html',
+  styleUrls: ['./spatial-filter-type.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    SpatialFilterListComponent,
+    MatButtonToggleModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
   @Input() store: EntityStore<Feature>;

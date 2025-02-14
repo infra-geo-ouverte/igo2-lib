@@ -12,18 +12,18 @@ import { BehaviorSubject } from 'rxjs';
 import { IgoMap } from '../shared/map';
 
 @Component({
-    selector: 'igo-rotation-button',
-    templateUrl: './rotation-button.component.html',
-    styleUrls: ['./rotation-button.component.scss'],
-    imports: [
-        NgIf,
-        MatTooltipModule,
-        MatButtonModule,
-        MatIconModule,
-        NgStyle,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-rotation-button',
+  templateUrl: './rotation-button.component.html',
+  styleUrls: ['./rotation-button.component.scss'],
+  imports: [
+    NgIf,
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    NgStyle,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);

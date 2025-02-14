@@ -38,23 +38,23 @@ import { ActionbarItemComponent } from './actionbar-item.component';
  * This component can be displayed in one of two way: 'dock' or 'overlay'
  */
 @Component({
-    selector: 'igo-actionbar',
-    templateUrl: './actionbar.component.html',
-    styleUrls: ['./actionbar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatListModule,
-        ActionbarItemComponent,
-        NgFor,
-        MatMenuModule,
-        MatCardModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-actionbar',
+  templateUrl: './actionbar.component.html',
+  styleUrls: ['./actionbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatListModule,
+    ActionbarItemComponent,
+    NgFor,
+    MatMenuModule,
+    MatCardModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
   /**

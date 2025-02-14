@@ -9,17 +9,17 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-icon',
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        IgoIconComponent,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule
-    ],
-    templateUrl: './icon.component.html',
-    styleUrl: './icon.component.scss'
+  selector: 'app-icon',
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoIconComponent,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule
+  ],
+  templateUrl: './icon.component.html',
+  styleUrl: './icon.component.scss'
 })
 export class AppIconComponent {
   exampleIndexHtml: string = EXAMPLE_INDEX_HTML;

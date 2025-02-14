@@ -70,32 +70,32 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
  * Spatial-Filter-Item (search parameters)
  */
 @Component({
-    selector: 'igo-spatial-filter-item',
-    templateUrl: './spatial-filter-item.component.html',
-    styleUrls: ['./spatial-filter-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        GeometryFormFieldInputComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        NgIf,
-        MatSlideToggleModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        NgFor,
-        MatOptionModule,
-        MatRadioModule,
-        MatTableModule,
-        MatCheckboxModule,
-        MatTreeModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-        EntityTableComponent,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-spatial-filter-item',
+  templateUrl: './spatial-filter-item.component.html',
+  styleUrls: ['./spatial-filter-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    EntityTableComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() map: IgoMap;

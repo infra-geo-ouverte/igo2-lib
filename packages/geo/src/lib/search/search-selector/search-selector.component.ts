@@ -31,20 +31,20 @@ import { SEARCH_TYPES } from '../shared/search.enums';
  * more than one search source enabled.
  */
 @Component({
-    selector: 'igo-search-selector',
-    templateUrl: './search-selector.component.html',
-    styleUrls: ['./search-selector.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatButtonModule,
-        MatTooltipModule,
-        MatMenuModule,
-        MatIconModule,
-        MatRadioModule,
-        NgFor,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-search-selector',
+  templateUrl: './search-selector.component.html',
+  styleUrls: ['./search-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatIconModule,
+    MatRadioModule,
+    NgFor,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
   readonly searchType$ = new BehaviorSubject<string>(undefined);

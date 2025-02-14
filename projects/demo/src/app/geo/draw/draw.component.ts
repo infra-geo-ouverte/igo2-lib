@@ -17,16 +17,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-draw',
-    templateUrl: './draw.component.html',
-    styleUrls: ['./draw.component.scss'],
-    imports: [
-        MapBrowserComponent,
-        ZoomButtonComponent,
-        DrawComponent,
-        DocViewerComponent,
-        ExampleViewerComponent
-    ]
+  selector: 'app-draw',
+  templateUrl: './draw.component.html',
+  styleUrls: ['./draw.component.scss'],
+  imports: [
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    DrawComponent,
+    DocViewerComponent,
+    ExampleViewerComponent
+  ]
 })
 export class AppDrawComponent {
   public map: IgoMap = new IgoMap({

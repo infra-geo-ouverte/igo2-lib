@@ -30,19 +30,19 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-geometry',
-    templateUrl: './geometry.component.html',
-    styleUrls: ['./geometry.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MAP_DIRECTIVES,
-        NgIf,
-        FormComponent,
-        FormGroupComponent,
-        MatButtonModule,
-        AsyncPipe
-    ]
+  selector: 'app-geometry',
+  templateUrl: './geometry.component.html',
+  styleUrls: ['./geometry.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MAP_DIRECTIVES,
+    NgIf,
+    FormComponent,
+    FormGroupComponent,
+    MatButtonModule,
+    AsyncPipe
+  ]
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
   map: IgoMap = new IgoMap({

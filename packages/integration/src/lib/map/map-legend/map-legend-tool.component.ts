@@ -40,18 +40,18 @@ import { MapState } from './../map.state';
   icon: 'format_list_bulleted'
 })
 @Component({
-    selector: 'igo-map-legend-tool',
-    templateUrl: './map-legend-tool.component.html',
-    styleUrls: ['./map-legend-tool.component.scss'],
-    imports: [
-        NgIf,
-        LayerLegendListComponent,
-        LayerLegendListBindingDirective,
-        MatListModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-map-legend-tool',
+  templateUrl: './map-legend-tool.component.html',
+  styleUrls: ['./map-legend-tool.component.scss'],
+  imports: [
+    NgIf,
+    LayerLegendListComponent,
+    LayerLegendListBindingDirective,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
   public delayedShowEmptyMapContent = false;

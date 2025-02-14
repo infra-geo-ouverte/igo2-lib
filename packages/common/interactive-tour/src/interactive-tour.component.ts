@@ -17,20 +17,20 @@ import { Observable, of } from 'rxjs';
 import { InteractiveTourService } from './interactive-tour.service';
 
 @Component({
-    selector: 'igo-interactive-tour',
-    templateUrl: './interactive-tour.component.html',
-    styleUrls: ['./interactive-tour.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        NgClass,
-        MatTooltipModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule,
-        IgoIconComponent
-    ]
+  selector: 'igo-interactive-tour',
+  templateUrl: './interactive-tour.component.html',
+  styleUrls: ['./interactive-tour.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    NgClass,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule,
+    IgoIconComponent
+  ]
 })
 export class InteractiveTourComponent {
   presentationIcon = PRESENTATION_PLAY_ICON;

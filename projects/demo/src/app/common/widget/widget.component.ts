@@ -22,16 +22,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-salutation-widget',
-    template: `
+  selector: 'app-salutation-widget',
+  template: `
     <p>Hello, my name is {{ name }}.</p>
     <button mat-flat-button (click)="complete.emit(name)">
       Nice to meet you
     </button>
     <button mat-flat-button (click)="cancel.emit(name)">Dismiss</button>
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatButtonModule]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButtonModule]
 })
 export class AppSalutationWidgetComponent
   implements OnUpdateInputs, WidgetComponent
@@ -50,10 +50,10 @@ export class AppSalutationWidgetComponent
 }
 
 @Component({
-    selector: 'app-widget',
-    templateUrl: './widget.component.html',
-    styleUrls: ['./widget.component.scss'],
-    imports: [DocViewerComponent, ExampleViewerComponent, IgoWidgetOutletModule]
+  selector: 'app-widget',
+  templateUrl: './widget.component.html',
+  styleUrls: ['./widget.component.scss'],
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoWidgetOutletModule]
 })
 export class AppWidgetComponent {
   widget: DynamicComponent<WidgetComponent>;

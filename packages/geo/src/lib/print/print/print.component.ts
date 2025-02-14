@@ -17,9 +17,9 @@ import {
 } from '../shared/print.type';
 
 @Component({
-    selector: 'igo-print',
-    templateUrl: './print.component.html',
-    imports: [PrintFormComponent]
+  selector: 'igo-print',
+  templateUrl: './print.component.html',
+  imports: [PrintFormComponent]
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);

@@ -50,21 +50,21 @@ import { SearchResult } from '../shared/search.interfaces';
 import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 
 @Component({
-    selector: 'igo-search-add-button',
-    templateUrl: './search-results-add-button.component.html',
-    styleUrls: ['./search-results-add-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        StopPropagationDirective,
-        MatTooltipModule,
-        MatIconModule,
-        MatBadgeModule,
-        IgoBadgeIconDirective,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-search-add-button',
+  templateUrl: './search-results-add-button.component.html',
+  styleUrls: ['./search-results-add-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   public tooltip$ = new BehaviorSubject<string>(

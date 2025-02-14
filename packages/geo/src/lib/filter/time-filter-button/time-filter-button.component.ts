@@ -20,20 +20,20 @@ import { IgoMap } from '../../map/shared/map';
 import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
 
 @Component({
-    selector: 'igo-time-filter-button',
-    templateUrl: './time-filter-button.component.html',
-    styleUrls: ['./time-filter-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatBadgeModule,
-        TimeFilterItemComponent,
-        ListItemDirective,
-        IgoLanguageModule
-    ]
+  selector: 'igo-time-filter-button',
+  templateUrl: './time-filter-button.component.html',
+  styleUrls: ['./time-filter-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    TimeFilterItemComponent,
+    ListItemDirective,
+    IgoLanguageModule
+  ]
 })
 export class TimeFilterButtonComponent implements OnInit {
   public options: TimeFilterableDataSourceOptions;

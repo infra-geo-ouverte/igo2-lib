@@ -14,11 +14,11 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { AnyLayerItemOptions, AnyLayerOptions } from '../shared';
 
 @Component({
-    selector: 'igo-layer-unavailable',
-    templateUrl: './layer-unavailable.component.html',
-    styleUrls: ['./layer-unavailable.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatListModule, MatIconModule, MatTooltipModule, IgoLanguageModule]
+  selector: 'igo-layer-unavailable',
+  templateUrl: './layer-unavailable.component.html',
+  styleUrls: ['./layer-unavailable.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatListModule, MatIconModule, MatTooltipModule, IgoLanguageModule]
 })
 export class LayerUnavailableComponent {
   @Input() layerOptions: AnyLayerItemOptions;

@@ -35,22 +35,22 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
  */
 @IgoFormFieldComponent('geometry')
 @Component({
-    selector: 'igo-geometry-form-field',
-    templateUrl: './geometry-form-field.component.html',
-    styleUrls: ['./geometry-form-field.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        GeometryFormFieldInputComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        NgIf,
-        MatButtonToggleModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-geometry-form-field',
+  templateUrl: './geometry-form-field.component.html',
+  styleUrls: ['./geometry-form-field.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);

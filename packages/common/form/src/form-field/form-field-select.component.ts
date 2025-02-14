@@ -28,21 +28,21 @@ import {
  */
 @IgoFormFieldComponent('select')
 @Component({
-    selector: 'igo-form-field-select',
-    templateUrl: './form-field-select.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgFor,
-        MatOptionModule,
-        NgIf,
-        MatIconModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-form-field-select',
+  templateUrl: './form-field-select.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    NgIf,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class FormFieldSelectComponent implements OnInit {
   readonly disabled$ = new BehaviorSubject<boolean>(false);

@@ -34,28 +34,28 @@ import { TypeCapabilities } from '../../datasource/shared/capabilities.interface
 import { Catalog } from '../shared/catalog.abstract';
 
 @Component({
-    selector: 'igo-add-catalog-dialog',
-    templateUrl: './add-catalog-dialog.component.html',
-    styleUrls: ['./add-catalog-dialog.component.scss'],
-    imports: [
-        MatDialogTitle,
-        MatDialogContent,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        NgFor,
-        MatOptionModule,
-        MatTooltipModule,
-        MatSelectModule,
-        MatListModule,
-        NgIf,
-        MatDialogActions,
-        MatButtonModule,
-        AsyncPipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-add-catalog-dialog',
+  templateUrl: './add-catalog-dialog.component.html',
+  styleUrls: ['./add-catalog-dialog.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgFor,
+    MatOptionModule,
+    MatTooltipModule,
+    MatSelectModule,
+    MatListModule,
+    NgIf,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;

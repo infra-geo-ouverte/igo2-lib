@@ -8,15 +8,15 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-activity',
-    templateUrl: './activity.component.html',
-    styleUrls: ['./activity.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        SpinnerComponent,
-        MatButtonModule
-    ]
+  selector: 'app-activity',
+  templateUrl: './activity.component.html',
+  styleUrls: ['./activity.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    SpinnerComponent,
+    MatButtonModule
+  ]
 })
 export class AppActivityComponent {
   private idsActivity: string[] = [];

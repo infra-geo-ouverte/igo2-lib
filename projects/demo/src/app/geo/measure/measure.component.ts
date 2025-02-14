@@ -19,16 +19,16 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-measure',
-    templateUrl: './measure.component.html',
-    styleUrls: ['./measure.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MapBrowserComponent,
-        ZoomButtonComponent,
-        MeasurerComponent
-    ]
+  selector: 'app-measure',
+  templateUrl: './measure.component.html',
+  styleUrls: ['./measure.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    MeasurerComponent
+  ]
 })
 export class AppMeasureComponent {
   public map: IgoMap = new IgoMap({

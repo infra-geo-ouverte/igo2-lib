@@ -62,22 +62,22 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
  * Spatial Filter Type
  */
 @Component({
-    selector: 'app-spatial-filter',
-    templateUrl: './spatial-filter.component.html',
-    styleUrls: ['./spatial-filter.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatGridListModule,
-        MAP_DIRECTIVES,
-        IgoQueryModule,
-        PanelComponent,
-        FILTER_DIRECTIVES,
-        NgIf,
-        FEATURE_DETAILS_DIRECTIVES,
-        AsyncPipe
-    ]
+  selector: 'app-spatial-filter',
+  templateUrl: './spatial-filter.component.html',
+  styleUrls: ['./spatial-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    IgoQueryModule,
+    PanelComponent,
+    FILTER_DIRECTIVES,
+    NgIf,
+    FEATURE_DETAILS_DIRECTIVES,
+    AsyncPipe
+  ]
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public map: IgoMap = new IgoMap({

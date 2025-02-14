@@ -14,10 +14,10 @@ import { ContextService } from '../../context-manager/shared/context.service';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';
 
 @Component({
-    selector: 'igo-bookmark-button',
-    templateUrl: './bookmark-button.component.html',
-    styleUrls: ['./bookmark-button.component.scss'],
-    imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
+  selector: 'igo-bookmark-button',
+  templateUrl: './bookmark-button.component.html',
+  styleUrls: ['./bookmark-button.component.scss'],
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class BookmarkButtonComponent {
   @Input()

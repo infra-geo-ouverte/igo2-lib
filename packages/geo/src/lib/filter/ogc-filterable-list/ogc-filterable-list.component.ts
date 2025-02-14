@@ -10,19 +10,19 @@ import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterabl
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 
 @Component({
-    selector: 'igo-ogc-filterable-list',
-    templateUrl: './ogc-filterable-list.component.html',
-    styleUrls: ['./ogc-filterable-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        ListComponent,
-        NgIf,
-        NgFor,
-        OgcFilterableItemComponent,
-        ListItemDirective,
-        IgoLanguageModule,
-        FilterableDataSourcePipe
-    ]
+  selector: 'igo-ogc-filterable-list',
+  templateUrl: './ogc-filterable-list.component.html',
+  styleUrls: ['./ogc-filterable-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ListComponent,
+    NgIf,
+    NgFor,
+    OgcFilterableItemComponent,
+    ListItemDirective,
+    IgoLanguageModule,
+    FilterableDataSourcePipe
+  ]
 })
 export class OgcFilterableListComponent {
   @Input() layers: AnyLayer[];

@@ -20,20 +20,20 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-context',
-    templateUrl: './context.component.html',
-    styleUrls: ['./context.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatGridListModule,
-        MAP_DIRECTIVES,
-        CONTEXT_MANAGER_DIRECTIVES,
-        PanelComponent,
-        LAYER_DIRECTIVES,
-        METADATA_DIRECTIVES,
-        ContextImportExportComponent
-    ]
+  selector: 'app-context',
+  templateUrl: './context.component.html',
+  styleUrls: ['./context.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    MAP_DIRECTIVES,
+    CONTEXT_MANAGER_DIRECTIVES,
+    PanelComponent,
+    LAYER_DIRECTIVES,
+    METADATA_DIRECTIVES,
+    ContextImportExportComponent
+  ]
 })
 export class AppContextComponent {
   public map: IgoMap = new IgoMap({

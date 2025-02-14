@@ -12,15 +12,15 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
 @Component({
-    selector: 'igo-user-dialog',
-    templateUrl: './user-dialog.component.html',
-    imports: [
-        MatDialogTitle,
-        MatDialogContent,
-        MatButtonModule,
-        MatDialogActions,
-        IgoLanguageModule
-    ]
+  selector: 'igo-user-dialog',
+  templateUrl: './user-dialog.component.html',
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    MatDialogActions,
+    IgoLanguageModule
+  ]
 })
 export class UserDialogComponent {
   public user;

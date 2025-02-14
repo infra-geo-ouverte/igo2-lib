@@ -13,18 +13,18 @@ import { MatInputModule } from '@angular/material/input';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
-    selector: 'igo-poi-dialog',
-    templateUrl: './poi-dialog.component.html',
-    imports: [
-        MatDialogTitle,
-        MatDialogContent,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        MatDialogActions,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'igo-poi-dialog',
+  templateUrl: './poi-dialog.component.html',
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class PoiDialogComponent {
   public title: string;

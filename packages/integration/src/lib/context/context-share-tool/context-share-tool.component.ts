@@ -13,9 +13,9 @@ import { MapState } from '../../map/map.state';
   icon: 'share'
 })
 @Component({
-    selector: 'igo-context-share-tool',
-    templateUrl: './context-share-tool.component.html',
-    imports: [ShareMapComponent]
+  selector: 'igo-context-share-tool',
+  templateUrl: './context-share-tool.component.html',
+  imports: [ShareMapComponent]
 })
 export class ContextShareToolComponent {
   get map(): IgoMap {

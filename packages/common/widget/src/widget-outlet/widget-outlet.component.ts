@@ -21,11 +21,11 @@ import { WidgetComponent } from '../shared/widget.interfaces';
  * when any of those event is emitted.
  */
 @Component({
-    selector: 'igo-widget-outlet',
-    templateUrl: './widget-outlet.component.html',
-    styleUrls: ['./widget-outlet.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, DynamicOutletComponent]
+  selector: 'igo-widget-outlet',
+  templateUrl: './widget-outlet.component.html',
+  styleUrls: ['./widget-outlet.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIf, DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {
   /**

@@ -7,15 +7,15 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
-    selector: 'app-language',
-    templateUrl: './language.component.html',
-    styleUrls: ['./language.component.scss'],
-    imports: [
-        DocViewerComponent,
-        ExampleViewerComponent,
-        MatButtonModule,
-        IgoLanguageModule
-    ]
+  selector: 'app-language',
+  templateUrl: './language.component.html',
+  styleUrls: ['./language.component.scss'],
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class AppLanguageComponent {
   public app = {

@@ -25,22 +25,22 @@ import { Action } from '../shared/action.interfaces';
  * An action button
  */
 @Component({
-    selector: 'igo-actionbar-item',
-    templateUrl: './actionbar-item.component.html',
-    styleUrls: ['./actionbar-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        MatListModule,
-        MatTooltipModule,
-        NgClass,
-        MatButtonModule,
-        MatIconModule,
-        MatCheckboxModule,
-        AsyncPipe,
-        IgoLanguageModule,
-        IgoIconComponent
-    ]
+  selector: 'igo-actionbar-item',
+  templateUrl: './actionbar-item.component.html',
+  styleUrls: ['./actionbar-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    MatListModule,
+    MatTooltipModule,
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    MatCheckboxModule,
+    AsyncPipe,
+    IgoLanguageModule,
+    IgoIconComponent
+  ]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
   readonly disabled$ = new BehaviorSubject<boolean>(false);

@@ -49,30 +49,30 @@ import {
 import { ContextListControlsEnum } from './context-list.enum';
 
 @Component({
-    selector: 'igo-context-list',
-    templateUrl: './context-list.component.html',
-    styleUrls: ['./context-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        ListComponent,
-        NgIf,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-        ActionbarComponent,
-        MatMenuModule,
-        NgFor,
-        MatCheckboxModule,
-        CollapsibleComponent,
-        ContextItemComponent,
-        ListItemDirective,
-        AsyncPipe,
-        KeyValuePipe,
-        IgoLanguageModule
-    ]
+  selector: 'igo-context-list',
+  templateUrl: './context-list.component.html',
+  styleUrls: ['./context-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ListComponent,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    ActionbarComponent,
+    MatMenuModule,
+    NgFor,
+    MatCheckboxModule,
+    CollapsibleComponent,
+    ContextItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
   public contextConfigs: ContextServiceOptions;

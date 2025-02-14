@@ -15,20 +15,20 @@ import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
 import { MiniBaseMapComponent } from './mini-basemap.component';
 
 @Component({
-    selector: 'igo-baselayers-switcher',
-    templateUrl: './baselayers-switcher.component.html',
-    styleUrls: ['./baselayers-switcher.component.scss'],
-    animations: [baseLayersSwitcherSlideInOut()],
-    imports: [
-        NgIf,
-        NgClass,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        NgFor,
-        MiniBaseMapComponent,
-        IgoLanguageModule
-    ]
+  selector: 'igo-baselayers-switcher',
+  templateUrl: './baselayers-switcher.component.html',
+  styleUrls: ['./baselayers-switcher.component.scss'],
+  animations: [baseLayersSwitcherSlideInOut()],
+  imports: [
+    NgIf,
+    NgClass,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    NgFor,
+    MiniBaseMapComponent,
+    IgoLanguageModule
+  ]
 })
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   @Input() map: IgoMap;
