@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'sass:map';
 @use '@angular/material' as mat;
 
@@ -10,7 +11,7 @@
 
   igo-auth-intern {
     .loading-container {
-      background-color: change-color(
+      background-color: color.change(
         $color: mat.m2-get-color-from-palette($background, status-bar),
         $alpha: 0.64
       );

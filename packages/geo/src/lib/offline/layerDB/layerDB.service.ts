@@ -46,11 +46,7 @@ export class LayerDBService {
     );
     deleteRequest
       .pipe(
-        concatMap((isDeleted) =>
-          isDeleted
-            ? this.ngxIndexedDBService?.add(this.dbName, layerDBData)
-            : of(undefined)
-        )
+        concatMap(() => this.ngxIndexedDBService?.add(this.dbName, layerDBData))
       )
       .subscribe((object) => {
         if (object) {
@@ -75,7 +71,7 @@ export class LayerDBService {
    * @param layerId
    * @returns
    */
-  deleteByKey(layerId: string): Observable<boolean> {
+  deleteByKey(layerId: string): Observable<void> {
     return this.ngxIndexedDBService?.deleteByKey(this.dbName, layerId);
   }
 

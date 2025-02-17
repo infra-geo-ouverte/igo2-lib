@@ -14,15 +14,10 @@ export function provideStyleListOptions(options: StyleListOptions) {
   };
 }
 
-export function styleListFactory(
-  styleListService: StyleListService,
-  options: StyleListOptions
-) {
-  return () => styleListService.load(options);
-}
-
 export function provideStyleListLoader() {
-  return provideAppInitializer(
-    styleListFactory(inject(StyleListService), inject(STYLELIST_OPTIONS))
-  );
+  return provideAppInitializer(() => {
+    const styleListService = inject(StyleListService);
+    const options = inject(STYLELIST_OPTIONS);
+    return styleListService.load(options);
+  });
 }

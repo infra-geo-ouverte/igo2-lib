@@ -97,11 +97,7 @@ export class GeoDBService {
     );
     deleteRequest
       .pipe(
-        concatMap((isDeleted) =>
-          isDeleted
-            ? this.ngxIndexedDBService?.add(this.dbName, geoDBData)
-            : of(undefined)
-        )
+        concatMap(() => this.ngxIndexedDBService?.add(this.dbName, geoDBData))
       )
       .subscribe((object) => {
         if (object) {
@@ -180,13 +176,12 @@ export class GeoDBService {
     keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0),
     mode: DBMode = DBMode.readonly
   ) {
-    const request = this.ngxIndexedDBService?.openCursorByIndex(
-      this.dbName,
-      'regionID',
-      keyRange,
-      undefined,
+    const request = this.ngxIndexedDBService?.openCursorByIndex({
+      storeName: this.dbName,
+      indexName: 'regionID',
+      query: keyRange,
       mode
-    );
+    });
     return request;
   }
 
