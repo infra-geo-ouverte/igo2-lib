@@ -14,13 +14,9 @@ export function provideIcon(
   return makeEnvironmentProviders([
     MatIconModule,
     provideAppInitializer(() => {
-      const initializerFn = () => {
-        const iconRegistry = inject(MatIconRegistry);
-        iconRegistry.setDefaultFontSetClass(`material-symbols-${style}`);
-        return;
-      };
-
-      return initializerFn();
+      const iconRegistry = inject(MatIconRegistry);
+      iconRegistry.setDefaultFontSetClass(`material-symbols-${style}`);
+      return;
     })
   ]);
 }

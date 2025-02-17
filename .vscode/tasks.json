@@ -60,6 +60,26 @@
       }
     },
     {
+      "label": "npm: test.core",
+      "type": "npm",
+      "path": "packages/core",
+      "script": "test.watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
+    },
+    {
       "label": "npm: test.common",
       "type": "npm",
       "path": "packages/common",
