@@ -29,11 +29,8 @@ export function provideAuthUserMonitoring(
     },
     // Force instantiate Tracing service to avoid require it in any constructor.
     provideAppInitializer(() => {
-      const initializerFn = () => {
-        inject(AuthMonitoringService);
-        return;
-      };
-      return initializerFn();
+      inject(AuthMonitoringService);
+      return;
     })
   ];
 }

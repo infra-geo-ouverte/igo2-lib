@@ -19,13 +19,9 @@ export function provideConfig(options: ConfigOptions): EnvironmentProviders {
       provide: CONFIG_OPTIONS,
       useValue: options
     },
-    provideAppInitializer(() => {
-      const initializerFn = configFactory(
-        inject(ConfigService),
-        inject(CONFIG_OPTIONS)
-      );
-      return initializerFn();
-    })
+    provideAppInitializer(
+      configFactory(inject(ConfigService), inject(CONFIG_OPTIONS))
+    )
   ]);
 }
 

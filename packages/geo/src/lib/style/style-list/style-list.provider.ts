@@ -22,11 +22,7 @@ export function styleListFactory(
 }
 
 export function provideStyleListLoader() {
-  return provideAppInitializer(() => {
-    const initializerFn = styleListFactory(
-      inject(StyleListService),
-      inject(STYLELIST_OPTIONS)
-    );
-    return initializerFn();
-  });
+  return provideAppInitializer(
+    styleListFactory(inject(StyleListService), inject(STYLELIST_OPTIONS))
+  );
 }

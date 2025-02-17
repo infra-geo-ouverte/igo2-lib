@@ -48,19 +48,17 @@ export function provideTranslation(
   return makeEnvironmentProviders([
     ...featureConfig.providers,
     provideAppInitializer(() => {
-      const initializerFn = ((languageService: LanguageService) => () => {
-        return (
-          languageService.translate.currentLoader as LanguageLoaderBase
-        ).isLoaded$?.pipe(
-          timeout(TIMEOUT_DURATION),
-          first((isLoaded) => isLoaded === true),
-          catchError((error) => {
-            error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
-            throw error;
-          })
-        );
-      })(inject(LanguageService));
-      return initializerFn();
+      const languageService = inject(LanguageService);
+      return (
+        languageService.translate.currentLoader as LanguageLoaderBase
+      ).isLoaded$?.pipe(
+        timeout(TIMEOUT_DURATION),
+        first((isLoaded) => isLoaded === true),
+        catchError((error) => {
+          error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
+          throw error;
+        })
+      );
     })
   ]);
 }

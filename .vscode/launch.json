@@ -30,6 +30,13 @@
       "url": "http://localhost:9876/debug.html"
     },
     {
+      "name": "test.core",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.core",
+      "url": "http://localhost:9876/debug.html"
+    },
+    {
       "name": "test.common",
       "type": "chrome",
       "request": "launch",
