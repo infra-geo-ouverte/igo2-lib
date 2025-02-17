@@ -59,7 +59,6 @@
     "core-js": "^3.32.2",
     "file-saver": "^2.0.2",
     "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.1",
     "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",

@@ -39,8 +39,8 @@
     "@igo2/context": "*",
     "@igo2/geo": "*",
     "@turf/point-on-feature": "^6.5.0",
-    "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.8.0",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^3.8.4",
     "rxjs": "^7.8.0"
   },
   "engines": {

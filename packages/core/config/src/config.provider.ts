@@ -19,12 +19,10 @@ export function provideConfig(options: ConfigOptions): EnvironmentProviders {
       provide: CONFIG_OPTIONS,
       useValue: options
     },
-    provideAppInitializer(
-      configFactory(inject(ConfigService), inject(CONFIG_OPTIONS))
-    )
+    provideAppInitializer(async () => {
+      const configService = inject(ConfigService);
+      const options = inject(CONFIG_OPTIONS);
+      return configService.load(options);
+    })
   ]);
-}
-
-function configFactory(configService: ConfigService, options: ConfigOptions) {
-  return () => configService.load(options);
 }
