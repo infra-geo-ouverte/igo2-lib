@@ -9,6 +9,12 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { SubjectStatus } from '@igo2/utils';
 
+import ScaleLine from 'ol/control/ScaleLine.js';
+//Test
+import ImageLayer from 'ol/layer/Image.js';
+import { getPointResolution, get as getProjection } from 'ol/proj.js';
+
+import { promises } from 'dns';
 import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -16,6 +22,7 @@ import { default as JSZip } from 'jszip';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
+//Test
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
@@ -729,7 +736,26 @@ export class PrintService {
     const status$ = new Subject();
 
     let timeout;
+    //Test
+    // const layers = map.ol.getAllLayers();
+    // let ctn = 0;
+
+    // layers.forEach((layer) => {
+    //   if (layer.isVisible()) {
+    //     console.log(layer);
+    //     layer.once('postrender', async (event: any) => {
+    //       ctn++;
+    //       console.log(`${layer} est postrender`);
+    //     });
+    //   }
+    // });
+
     map.ol.once('rendercomplete', async (event: any) => {
+      // let i = 0;
+      // while (ctn < layers.length && i < layers.length) {
+      //   i++;
+      // }
+
       const mapCanvas = event.target
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
@@ -739,6 +765,7 @@ export class PrintService {
       this.mapPrintExtent = map.viewController.getExtent('EPSG:3857');
 
       this.resetOriginalMapSize(map, mapSize, viewResolution);
+
       await this.drawMapControls(map, mapResultCanvas);
 
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
@@ -800,11 +827,52 @@ export class PrintService {
     // Set print size
     const printSize = [widthPixels, heightPixels];
     map.ol.setSize(printSize);
+
+    // const scaleResolution =
+    //   scale /
+    //   getPointResolution(
+    //     map.getView().getProjection(),
+    //     resolution / 25.4,
+    //     map.getView().getCenter(),
+    //   );
+
+    const scaleResolution =
+      1000 /
+      getPointResolution(
+        map.ol.getView().getProjection(),
+        96 / 25.4,
+        map.ol.getView().getCenter()
+      );
+
     const scaling = Math.min(
       widthPixels / mapSize[0],
       heightPixels / mapSize[1]
     );
-    map.ol.getView().setResolution(viewResolution / scaling);
+    // const scaleLineControl = map.ol
+    //   .getControls()
+    //   .getArray()
+    //   .find((control) => control instanceof ScaleLine);
+
+    // console.log(scaleLineControl);
+
+    alert(`scaling: ${map.ol.getView().getResolution() * 96 * 39.37}`);
+
+    console.log(map.ol.getView().getZoom());
+    // map.ol.getView().setResolution(viewResolution / scaling);
+
+    map.ol.getView().setResolution(viewResolution);
+
+    // const scaleLine = new ScaleLine({ bar: true, text: true, minWidth: 125 });
+    // map.ol.addControl(scaleLine);
+
+    // scaleLineControl.setDpi(96);
+
+    // scaleLine.setDpi(96);
+
+    // alert(`scaleresolution: ${scaleLineControl}`);
+    // map.ol.getView().setResolution(scaleResolution);
+
+    console.log(map.ol.getView().getZoom());
 
     return [widthPixels, heightPixels];
   }
