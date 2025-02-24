@@ -14,7 +14,7 @@ import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipDefaultOptions
 } from '@angular/material/tooltip';
-import { BrowserModule, HammerModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   PreloadAllModules,
@@ -38,7 +38,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       IgoCoreModule,
       BrowserModule,
-      HammerModule,
       MatButtonModule,
       MatIconModule,
       MatListModule,

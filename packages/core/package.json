@@ -62,9 +62,6 @@
     "./environment": {
       "import": "./environment/src/public_api.ts"
     },
-    "./gesture": {
-      "import": "./gesture/src/public_api.ts"
-    },
     "./language": {
       "import": "./language/src/public_api.ts"
     },
