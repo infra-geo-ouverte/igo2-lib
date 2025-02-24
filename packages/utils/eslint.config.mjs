@@ -1,8 +1,9 @@
 // @ts-check
-const tseslint = require('typescript-eslint');
-const rootConfig = require('../../eslint.config.js');
+import tseslint from 'typescript-eslint';
 
-module.exports = tseslint.config(
+import rootConfig from '../../eslint.config.mjs';
+
+export default tseslint.config(
   ...rootConfig,
   { ignores: ['!**/*'] },
   {
@@ -12,7 +13,7 @@ module.exports = tseslint.config(
         'error',
         {
           type: 'attribute',
-          prefix: 'app',
+          prefix: 'igo',
           style: 'camelCase'
         }
       ],
@@ -20,7 +21,7 @@ module.exports = tseslint.config(
         'error',
         {
           type: 'element',
-          prefix: 'app',
+          prefix: 'igo',
           style: 'kebab-case'
         }
       ]

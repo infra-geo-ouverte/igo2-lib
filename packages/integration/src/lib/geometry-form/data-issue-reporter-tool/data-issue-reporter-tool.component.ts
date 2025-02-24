@@ -31,6 +31,7 @@ interface DataIssueReporterData {
   selector: 'igo-issue-reporter-tool',
   templateUrl: './data-issue-reporter-tool.component.html',
   styleUrls: ['./data-issue-reporter-tool.component.scss'],
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false
 })
 export class DataIssueReporterToolComponent implements OnInit, OnDestroy {

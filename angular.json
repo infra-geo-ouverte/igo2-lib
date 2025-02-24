@@ -184,7 +184,7 @@
               "projects/demo/src/**/*.ts",
               "projects/demo/src/**/*.html"
             ],
-            "eslintConfig": "projects/demo/eslint.config.js"
+            "eslintConfig": "projects/demo/eslint.config.mjs"
           }
         },
         "test": {
@@ -267,7 +267,7 @@
               "packages/auth/**/*.ts",
               "packages/auth/**/*.html"
             ],
-            "eslintConfig": "packages/auth/eslint.config.js"
+            "eslintConfig": "packages/auth/eslint.config.mjs"
           }
         }
       }
@@ -314,7 +314,7 @@
               "packages/common/**/*.ts",
               "packages/common/**/*.html"
             ],
-            "eslintConfig": "packages/common/eslint.config.js"
+            "eslintConfig": "packages/common/eslint.config.mjs"
           }
         }
       }
@@ -361,7 +361,7 @@
               "packages/core/**/*.ts",
               "packages/core/**/*.html"
             ],
-            "eslintConfig": "packages/core/eslint.config.js"
+            "eslintConfig": "packages/core/eslint.config.mjs"
           }
         }
       }
@@ -408,7 +408,7 @@
               "packages/geo/**/*.ts",
               "packages/geo/**/*.html"
             ],
-            "eslintConfig": "packages/geo/eslint.config.js"
+            "eslintConfig": "packages/geo/eslint.config.mjs"
           }
         }
       }
@@ -439,7 +439,7 @@
               "packages/utils/**/*.ts",
               "packages/utils/**/*.html"
             ],
-            "eslintConfig": "packages/utils/eslint.config.js"
+            "eslintConfig": "packages/utils/eslint.config.mjs"
           }
         },
         "test": {
@@ -496,7 +496,7 @@
               "packages/context/**/*.ts",
               "packages/context/**/*.html"
             ],
-            "eslintConfig": "packages/context/eslint.config.js"
+            "eslintConfig": "packages/context/eslint.config.mjs"
           }
         }
       }
@@ -533,7 +533,7 @@
               "packages/integration/**/*.ts",
               "packages/integration/**/*.html"
             ],
-            "eslintConfig": "packages/integration/eslint.config.js"
+            "eslintConfig": "packages/integration/eslint.config.mjs"
           }
         }
       }

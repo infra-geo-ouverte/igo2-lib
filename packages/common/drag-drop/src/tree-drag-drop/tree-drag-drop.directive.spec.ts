@@ -25,6 +25,7 @@ import { TREE_MOCK } from './tree-drag-drop.mock';
       </mat-tree-node>
     </mat-tree>
   `,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false
 })
 class TestComponent {
