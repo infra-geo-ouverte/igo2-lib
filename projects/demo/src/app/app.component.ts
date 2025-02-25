@@ -22,7 +22,7 @@ import {
 } from '@angular/router';
 
 import { version } from '@igo2/core/config';
-import { DomUtils, userAgent } from '@igo2/utils';
+import { DomUtils } from '@igo2/utils';
 
 import { delay, first } from 'rxjs';
 
@@ -64,8 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
-
-    this.detectOldBrowser();
   }
 
   ngOnInit(): void {
@@ -101,17 +99,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
-  }
-
-  private detectOldBrowser() {
-    const oldBrowser = userAgent.satisfies({
-      ie: '<=11',
-      chrome: '<64',
-      firefox: '<60'
-    });
-
-    if (oldBrowser) {
-      console.log('Very old browser ! ', userAgent.getBrowser());
-    }
   }
 }

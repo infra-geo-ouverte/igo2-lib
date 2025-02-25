@@ -6,7 +6,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
-import { userAgent } from '@igo2/utils';
 
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
@@ -49,22 +48,6 @@ export class WakeLockButtonComponent {
 
   constructor(private storageService: StorageService) {
     this.noSleep = new NoSleep();
-    const nonWakeLockApiBrowser = userAgent.satisfies({
-      ie: '>0',
-      edge: '<84',
-      chrome: '<84',
-      firefox: '>0',
-      opera: '<70',
-      safari: '>0'
-    });
-    if (nonWakeLockApiBrowser) {
-      this.disableWakeLock();
-      this.enabled = false;
-      window.addEventListener('blur', () => {
-        this.disableWakeLock();
-        this.enabled = false;
-      });
-    }
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }
 

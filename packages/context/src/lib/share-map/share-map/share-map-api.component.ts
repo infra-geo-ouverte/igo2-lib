@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import {
@@ -17,7 +18,7 @@ import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
-import { Clipboard, uuid } from '@igo2/utils';
+import { uuid } from '@igo2/utils';
 
 import { ShareMapService } from '../shared/share-map.service';
 
@@ -47,6 +48,7 @@ export class ShareMapApiComponent implements OnInit {
   public idContextShared: string;
 
   constructor(
+    private clipboard: Clipboard,
     private languageService: LanguageService,
     private messageService: MessageService,
     private auth: AuthService,
@@ -108,8 +110,8 @@ export class ShareMapApiComponent implements OnInit {
       );
   }
 
-  copyTextToClipboard(textArea) {
-    const successful = Clipboard.copy(textArea);
+  copyTextToClipboard(textArea: HTMLTextAreaElement) {
+    const successful = this.clipboard.copy(textArea.value);
     if (successful) {
       this.messageService.success(
         'igo.context.shareMap.dialog.copyMsg',

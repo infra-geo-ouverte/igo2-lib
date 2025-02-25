@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import {
   AsyncPipe,
   JsonPipe,
@@ -27,7 +28,6 @@ import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
-import { Clipboard } from '@igo2/utils';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -104,6 +104,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private clipboard: Clipboard,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
@@ -337,7 +338,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
    * Copy the url to a clipboard
    */
   copyTextToClipboard(value: string): void {
-    const successful = Clipboard.copy(value);
+    const successful = this.clipboard.copy(value);
     if (successful) {
       this.messageService.success('igo.geo.query.link.message');
     }

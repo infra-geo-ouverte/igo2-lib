@@ -90,8 +90,8 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.0",
     "@sentry/types": "^8.41.0",
-    "@stylistic/eslint-plugin": "^2.11.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@stylistic/eslint-plugin": "^4.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "@types/flexsearch": "^0.7.6",
     "@types/geojson": "^7946.0.10",
     "@types/jasmine": "~5.1.0",
@@ -120,7 +120,7 @@
     "semantic-release": "^24.2.0",
     "tsx": "^4.19.0",
     "typescript": "~5.5.4",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.25.0"
   },
   "madge": {
     "detectiveOptions": {

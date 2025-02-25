@@ -69,7 +69,6 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "@turf",
-              "bowser",
               "canvg",
               "core-js",
               "earcut",

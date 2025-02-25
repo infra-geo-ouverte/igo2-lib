@@ -1,6 +1,5 @@
 export * from './base64';
 export * from './cache.utils';
-export * from './clipboard';
 export * from './compression';
 export * from './change';
 export * from './change.interface';
@@ -13,6 +12,5 @@ export * from './strenum';
 export * from './string-utils';
 export * from './theme.utils';
 export * from './tree';
-export * from './user-agent';
 export * from './uuid';
 export * from './watcher';

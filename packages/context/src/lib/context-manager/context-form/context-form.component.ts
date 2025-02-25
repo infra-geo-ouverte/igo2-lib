@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
@@ -14,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { Clipboard, ObjectUtils } from '@igo2/utils';
+import { ObjectUtils } from '@igo2/utils';
 
 import { Context } from '../shared/context.interface';
 
@@ -72,6 +73,7 @@ export class ContextFormComponent implements OnInit {
   @Output() delete = new EventEmitter<any>();
 
   constructor(
+    private clipboard: Clipboard,
     private formBuilder: UntypedFormBuilder,
     private messageService: MessageService
   ) {}
@@ -94,7 +96,7 @@ export class ContextFormComponent implements OnInit {
 
   public copyTextToClipboard() {
     const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
-    const successful = Clipboard.copy(text);
+    const successful = this.clipboard.copy(text);
     if (successful) {
       this.messageService.success(
         'igo.context.contextManager.dialog.copyMsg',
