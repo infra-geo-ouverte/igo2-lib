@@ -8,9 +8,8 @@ import { SubjectStatus } from '@igo2/utils';
 
 import { Position } from 'geojson';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { UserOptions } from 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import { UserOptions, autoTable } from 'jspdf-autotable';
 import moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 
@@ -241,7 +240,7 @@ export class DirectionsService {
     });
     const HTMLtable: HTMLTableElement =
       await this.setHTMLTableDirections(directions);
-    (doc as any).autoTable({
+    autoTable(doc, {
       html: HTMLtable,
       startY: 30,
       margin: { top: 20, bottom: 20 },
