@@ -18,8 +18,8 @@ import {
   noElementSelected
 } from '@igo2/geo';
 
-import * as jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import { autoTable } from 'jspdf-autotable';
 import moment from 'moment';
 import { BehaviorSubject, map } from 'rxjs';
 
@@ -186,17 +186,19 @@ export function getWorkspaceActions(
           new Date(),
           'YYYY-MM-DD-HH_mm'
         )})`;
-        const doc: any = new jsPDF.default('landscape');
+        const doc = new jsPDF({
+          orientation: 'landscape'
+        });
         const totalPagesExp = '{total_pages_count_string}';
         doc.text(title, 14, 20);
-        doc.autoTable({
+        autoTable(doc, {
           startY: 25,
           tableWidth: 'wrap',
           html: '#currentWorkspaceTable',
           horizontalPageBreak: true,
           styles: { cellPadding: 0.5, minCellWidth: 20, fontSize: 6 },
           didDrawPage: (data) => {
-            let str = 'Page ' + doc.internal.getNumberOfPages();
+            let str = 'Page ' + doc.getNumberOfPages();
             if (typeof doc.putTotalPages === 'function') {
               str = str + ' / ' + totalPagesExp;
             }
