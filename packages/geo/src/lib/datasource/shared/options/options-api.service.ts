@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  AnyDataSourceOptions,
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
   TileArcGISRestDataSourceOptions,
@@ -57,16 +58,8 @@ export class OptionsApiService extends OptionsService {
       map(
         (res: {
           sourceOptions: WMSDataSourceOptions;
-          layerOptions: Record<string, string>;
-        }) => {
-          if (!res || !res.sourceOptions) {
-            return {} as WMSDataSourceOptions;
-          }
-          if (res.layerOptions) {
-            res.sourceOptions._layerOptionsFromSource = res.layerOptions;
-          }
-          return res.sourceOptions;
-        }
+          layerOptions: { [keys: string]: string };
+        }) => this.handleSourceOptions(res)
       )
     );
   }
@@ -108,20 +101,25 @@ export class OptionsApiService extends OptionsService {
             | ArcGISRestDataSourceOptions
             | ArcGISRestImageDataSourceOptions
             | TileArcGISRestDataSourceOptions;
-          layerOptions: Record<string, string>;
-        }) => {
-          if (!res || !res.sourceOptions) {
-            return {} as
-              | ArcGISRestDataSourceOptions
-              | ArcGISRestImageDataSourceOptions
-              | TileArcGISRestDataSourceOptions;
-          }
-          if (res.layerOptions) {
-            res.sourceOptions._layerOptionsFromSource = res.layerOptions;
-          }
-          return res.sourceOptions;
-        }
+          layerOptions: { [keys: string]: string };
+        }) => this.handleSourceOptions(res)
       )
     );
+  }
+
+  private handleSourceOptions<T extends AnyDataSourceOptions>(res: {
+    sourceOptions: T;
+    layerOptions: { [keys: string]: string };
+  }) {
+    if (!res || !res.sourceOptions) {
+      return {} as WMSDataSourceOptions;
+    }
+    if (res.layerOptions) {
+      res.sourceOptions._layerOptionsFromSource = res.layerOptions;
+    } else {
+      const { sourceOptions: _1, layerOptions: _2, ...restOptions } = res;
+      res.sourceOptions._layerOptionsFromSource = restOptions;
+    }
+    return res.sourceOptions;
   }
 }
