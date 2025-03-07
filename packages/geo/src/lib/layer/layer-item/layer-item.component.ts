@@ -85,16 +85,19 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   get visibilityTooltip() {
     if (
       this.viewerOptions.mode !== 'selection' &&
-      this.inResolutionRange$.getValue() === false
+      !this.inResolutionRange$.getValue()
     ) {
-      return 'igo.geo.layer.notInResolution';
-    } else {
-      return this.layer.visible && this.isDisabled
-        ? 'igo.geo.layer.group.hideChildren'
-        : this.layer.visible
-          ? 'igo.geo.layer.hideLayer'
-          : 'igo.geo.layer.showLayer';
+      return this.layer.visible
+        ? this.isDisabled
+          ? 'igo.geo.layer.notInResolution'
+          : 'igo.geo.layer.group.hideChildren'
+        : 'igo.geo.layer.showLayer';
     }
+    return this.layer.visible
+      ? this.isDisabled
+        ? 'igo.geo.layer.group.hideChildren'
+        : 'igo.geo.layer.hideLayer'
+      : 'igo.geo.layer.showLayer';
   }
 
   constructor(private networkService: NetworkService) {}
