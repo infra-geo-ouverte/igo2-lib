@@ -1,16 +1,15 @@
+import { Params } from '@angular/router';
+
+import { RouteServiceOptions } from '@igo2/core/route';
 import {
   AnyDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions,
-  LayerOptions,
+  AnyLayerOptions,
   QueryFormat,
   QueryableDataSourceOptions,
-  TileArcGISRestDataSourceOptions,
-  WMSDataSourceOptions,
-  WMTSDataSourceOptions
+  isLayerGroupOptions
 } from '@igo2/geo';
 
-import { ServiceType } from './share-map.interface';
+import { ServiceType, ShareMapKeysDefinitions } from './share-map.interface';
 
 export function buildDataSourceOptions(
   type: ServiceType,
@@ -54,29 +53,73 @@ export function buildDataSourceOptions(
   return baseParams;
 }
 
-export function getLayerParam(layerOptions: LayerOptions): string | undefined {
-  const { sourceOptions } = layerOptions;
-  const { type } = sourceOptions;
-
-  switch (type) {
-    case 'wms':
-      return (sourceOptions as WMSDataSourceOptions).params.LAYERS;
-
-    case 'wmts':
-    case 'arcgisrest':
-      return (
-        sourceOptions as WMTSDataSourceOptions | ArcGISRestDataSourceOptions
-      ).layer;
-
-    case 'imagearcgisrest':
-    case 'tilearcgisrest': {
-      const { layer, params } = sourceOptions as
-        | ArcGISRestImageDataSourceOptions
-        | TileArcGISRestDataSourceOptions;
-      return layer ?? params?.layer;
+export function getFlattenOptions(
+  options: AnyLayerOptions[]
+): AnyLayerOptions[] {
+  return options.reduce((accumulator, option) => {
+    if (isLayerGroupOptions(option)) {
+      const children = option.children
+        ? getFlattenOptions(option.children)
+        : [];
+      accumulator.push(option, ...children);
+    } else {
+      accumulator.push(option);
     }
+    return accumulator;
+  }, []);
+}
 
-    default:
-      return undefined;
-  }
+/**
+ * Checks if the provided query parameters contain legacy parameter pairs
+ * (e.g., layers and URLs) that indicate older configuration formats.
+ */
+export function hasLegacyParams(
+  params: Params,
+  optionsLegacy: RouteServiceOptions
+): boolean {
+  const {
+    layersKey,
+    wmsUrlKey,
+    wmsLayersKey,
+    wmtsUrlKey,
+    wmtsLayersKey,
+    arcgisUrlKey,
+    arcgisLayersKey,
+    iarcgisUrlKey,
+    iarcgisLayersKey,
+    tarcgisUrlKey,
+    tarcgisLayersKey
+  } = optionsLegacy;
+
+  // Define valid legacy parameter pairs
+  const legacyPairs: [string | undefined, string | undefined][] = [
+    [layersKey, wmsUrlKey],
+    [wmsLayersKey, wmsUrlKey],
+    [wmtsLayersKey, wmtsUrlKey],
+    [arcgisLayersKey, arcgisUrlKey],
+    [iarcgisLayersKey, iarcgisUrlKey],
+    [tarcgisLayersKey, tarcgisUrlKey]
+  ].filter(([layer, url]) => layer && url) as [string, string][];
+
+  // Check if any legacy pair exists in the query parameters
+  return legacyPairs.some(
+    ([layer, url]) => getParamValue(params, layer) && getParamValue(params, url)
+  );
+}
+
+export function hasModernShareParams(
+  params: Params,
+  keysDefinitions: ShareMapKeysDefinitions
+): boolean {
+  const { urlsKey, layers, groups } = keysDefinitions;
+  const hasGroups = !!getParamValue(params, groups.key);
+  const hasLayers = !!getParamValue(params, layers.key);
+  const hasUrls = !!getParamValue(params, urlsKey);
+
+  return (hasLayers && hasUrls) || hasGroups;
+}
+
+export function getParamValue(params: Params, key: string): string | undefined {
+  const value = params[key];
+  return value !== '' ? value : undefined;
 }

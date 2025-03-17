@@ -2,27 +2,33 @@ import { Location } from '@angular/common';
 
 import {
   AnyDataSourceOptions,
+  AnyLayer,
   AnyLayerOptions,
+  ID_GROUP_PREFIX,
   IgoMap,
   Layer,
+  LayerGroup,
   MapViewController,
   WMSDataSourceOptions,
-  isLayerItem,
-  isLayerItemOptions
+  getLayerOptionIdentifier,
+  isLayerGroup,
+  isLayerGroupOptions,
+  isLayerItem
 } from '@igo2/geo';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, OptionalRequired } from '@igo2/utils';
 
 import type { DetailedContext } from '../../context-manager';
 import {
   BaseKeyParams,
   DefinitionParams,
+  GroupParams,
   LayerParams,
   PositionParams,
   ServiceType,
   ShareMapKeysDefinitions,
   ShareOption
 } from './share-map.interface';
-import { getLayerParam } from './share-map.utils';
+import { getFlattenOptions } from './share-map.utils';
 
 export class ShareMapEncoder {
   private context: DetailedContext | undefined;
@@ -45,25 +51,39 @@ export class ShareMapEncoder {
     const layers = [
       map.layerController.baseLayer,
       ...map.layerController.layersFlattened
-    ].filter(
-      (layer) =>
-        layer &&
-        isLayerItem(layer) &&
-        ServiceType.includes(layer.dataSource?.options?.type as ServiceType)
-    ) as Layer[];
+    ].filter(Boolean);
 
-    const layersByService = this.generateLayersOptionsByService(
-      layers,
-      querystring
-    );
+    this.replaceIds(layers);
 
-    const layersQueryUrl = this.buildLayersQueryUrl(layersByService);
+    const queryUrl = this.buildQueryUrl(layers, querystring);
 
     const urlBaseConfig = this.getBaseUrlConfig(map.viewController, language);
+    return queryUrl !== '' ? urlBaseConfig + '&' + queryUrl : urlBaseConfig;
+  }
 
-    return layersQueryUrl
-      ? `${urlBaseConfig}&${layersQueryUrl}`
-      : urlBaseConfig;
+  private replaceIds(layers: AnyLayer[]): void {
+    const idMap = new Map<string, string>();
+    const existingIds = new Set(
+      layers.map((layer) => layer.id).filter(Boolean)
+    );
+
+    let counter = 1;
+
+    layers.forEach((layer) => {
+      if (layer.id && layer.id.includes(ID_GROUP_PREFIX)) {
+        const newId = this.getUniqueId(existingIds, counter);
+        idMap.set(layer.id, String(newId));
+        layer.options.id = newId;
+      }
+    });
+  }
+
+  private getUniqueId(existingIds: Set<string>, counter: number) {
+    while (existingIds.has(String(counter))) {
+      counter++;
+    }
+    existingIds.add(String(counter));
+    return counter;
   }
 
   private getCurrentContext(): {
@@ -82,29 +102,109 @@ export class ShareMapEncoder {
     });
   }
 
-  private filterLayersByContext(layers: Layer[]): Layer[] {
-    const ctxLayers =
-      this.getCurrentContext()?.layers?.filter((l) => isLayerItemOptions(l)) ||
-      [];
+  /**
+   * Filters layers to include only LayerGroups or LayerItems with a valid ServiceType.
+   */
+  private isLayerSharable(layers: AnyLayer[]): AnyLayer[] {
+    return layers.filter(
+      (layer) =>
+        isLayerGroup(layer) ||
+        (isLayerItem(layer) &&
+          ServiceType.includes(layer.dataSource?.options?.type as ServiceType))
+    );
+  }
 
-    const ctxLayersMap = new Map(
-      ctxLayers
-        .map((lctx) => [getLayerParam(lctx), lctx] as const)
-        .filter(([param]) => param !== undefined)
+  /**
+   * Extracts only LayerGroup items from the filtered layers.
+   */
+  private getLayerGroups(layers: AnyLayer[]): LayerGroup[] {
+    return layers.filter(isLayerGroup) as LayerGroup[];
+  }
+
+  /**
+   * Extracts only LayerItem items from the filtered layers.
+   */
+  private getLayerItems(layers: AnyLayer[]): Layer[] {
+    return layers.filter(isLayerItem) as Layer[];
+  }
+
+  private buildQueryUrl(layers: AnyLayer[], querystring: string) {
+    const layersSharable = this.isLayerSharable(layers);
+    const layersChanged = this.getFilteredMapLayers(layersSharable);
+
+    const groupsQueryUrl = this.buildGroupsQueryUrl(
+      this.getLayerGroups(layersChanged)
     );
 
-    return layers.filter((layer) => {
-      const newLayerParam = getLayerParam(layer.options);
-      if (!newLayerParam) return false;
+    const layersByService = this.generateLayersOptionsByService(
+      this.getLayerItems(layersChanged),
+      querystring
+    );
+    const layersQueryUrl = this.buildLayersQueryUrl(layersByService);
 
-      const ctxLayer = ctxLayersMap.get(newLayerParam);
+    return [layersQueryUrl, groupsQueryUrl].filter(Boolean).join('&');
+  }
+
+  /**
+   * Retrieves the current context layers and maps them by identifier.
+   */
+  private getContextLayersMap(): Map<string, AnyLayerOptions> {
+    const ctxLayers = this.getCurrentContext()?.layers || [];
+    const ctxFlattened = getFlattenOptions(ctxLayers);
+
+    return new Map(
+      ctxFlattened.map((lctx) => {
+        const identifier = getLayerOptionIdentifier(lctx);
+        return [identifier, lctx] as const;
+      })
+    );
+  }
+
+  /**
+   * Filters layers and context layers based on visibility, opacity, and expanded state.
+   */
+  private getFilteredMapLayers(filteredLayers: AnyLayer[]): AnyLayer[] {
+    const ctxLayersMap = this.getContextLayersMap();
+
+    return filteredLayers.filter((layer) => {
+      const mapLayerIdentifier = getLayerOptionIdentifier(layer.options);
+
+      if (!mapLayerIdentifier) return false;
+      const ctxLayer = ctxLayersMap.get(mapLayerIdentifier);
       if (!ctxLayer) return true;
 
-      const ctxLVisibility = ctxLayer.visible ?? true;
-      const ctxLOpacity = ctxLayer.opacity ?? 1;
+      const visibilityChange = layer.visible !== (ctxLayer.visible ?? true);
+      const opacityChange = layer.opacity !== (ctxLayer.opacity ?? 1);
+      const parentIdChange =
+        ctxLayer.parentId !== this.getIdsNestedParent(layer)?.join('.');
 
-      return ctxLVisibility !== layer.visible || ctxLOpacity !== layer.opacity;
+      let expandedChange: boolean = false;
+      if (isLayerGroup(layer) && isLayerGroupOptions(ctxLayer)) {
+        expandedChange = (ctxLayer.expanded ?? false) !== layer.expanded;
+      }
+
+      return (
+        visibilityChange || opacityChange || expandedChange || parentIdChange
+      );
     });
+  }
+
+  private getIdsNestedParent(
+    node: Layer | LayerGroup,
+    ids?: string[]
+  ): string[] | undefined {
+    if (!node.parent) return ids;
+
+    if (node.parent) {
+      if (!ids) {
+        ids = [node.parent.id];
+      } else {
+        ids.unshift(node.parent.id);
+      }
+      return this.getIdsNestedParent(node.parent, ids);
+    }
+
+    return ids;
   }
 
   private generateLayersOptionsByService(
@@ -112,9 +212,8 @@ export class ShareMapEncoder {
     querystring: string
   ): [url: string, layers: LayerParams[]][] {
     const layersByUrl = new Map<string, LayerParams[]>();
-    const layerItems = this.filterLayersByContext(layers);
 
-    layerItems.forEach((layer) => {
+    layers.forEach((layer) => {
       const [url, params] = this.generateLayerOption(layer, querystring);
       if (!layersByUrl.has(url)) {
         layersByUrl.set(url, [params]);
@@ -181,26 +280,24 @@ export class ShareMapEncoder {
 
   private getLayerParams(layer: Layer, queryString?: string): LayerParams {
     const dataSourceOptions = layer.dataSource.options;
-    const params: LayerParams = {
+    return {
       index: undefined,
       names: this.getLayerNames(dataSourceOptions),
       type: dataSourceOptions?.type,
-      opacity: this.getOpacity(layer),
+      opacity: this.getOpacity(layer.opacity),
       parentId: layer.parent?.id,
-      visible: this.getVisibility(layer),
+      visible: this.getVisibility(layer.visible),
       zIndex: layer.zIndex,
       queryString: this.getQueryString(dataSourceOptions?.type, queryString)
-    };
-
-    return params;
+    } satisfies OptionalRequired<LayerParams>;
   }
 
-  private getOpacity(layer: Layer): number | undefined {
-    return layer.opacity === 1 ? undefined : layer.opacity;
+  private getOpacity(opacity: number): number | undefined {
+    return opacity === 1 ? undefined : opacity;
   }
 
-  private getVisibility(layer: Layer): boolean {
-    return !!layer.visible;
+  private getVisibility(visibility: boolean | undefined): boolean {
+    return !!visibility;
   }
 
   private getQueryString(
@@ -271,8 +368,12 @@ export class ShareMapEncoder {
     keys.forEach((key) => {
       params.delete(key);
     });
+
     const newQueryString = params.toString();
-    return `${newQueryString ? `${base}?${newQueryString}` : base}&`;
+    if (newQueryString !== '') {
+      return `${base}?${newQueryString}&`;
+    }
+    return `${base}?`;
   }
 
   private extractKeys(defs: ShareMapKeysDefinitions): string[] {
@@ -314,11 +415,12 @@ export class ShareMapEncoder {
   }
 
   private getRotation(viewController: MapViewController): number | undefined {
-    const mapRotation = viewController.getRotation();
+    const rotationRadians = viewController.getRotation();
+    const rotationDegree = (rotationRadians * 180) / Math.PI;
     const ctxRotation = this.getCurrentContext().rotation;
-    return mapRotation === ctxRotation || mapRotation === 0
+    return rotationDegree === ctxRotation || rotationDegree === 0
       ? undefined
-      : mapRotation;
+      : rotationDegree;
   }
 
   private stringifyPosition(position: PositionParams): string {
@@ -349,5 +451,35 @@ export class ShareMapEncoder {
       })
       .join(',');
     return result === '' ? undefined : result;
+  }
+
+  private buildGroupsQueryUrl(layers: LayerGroup[]): string | undefined {
+    if (layers.length === 0) return undefined;
+    const { key } = this.SHARE_MAP_DEFS.groups;
+
+    const queryUrl = layers
+      .map((layer) => {
+        const params = this.getLayerGroupParams(layer);
+        return this.stringifyGroupParams(params);
+      })
+      .join(';');
+
+    return `${key}=${queryUrl}`;
+  }
+
+  private getLayerGroupParams(layer: LayerGroup): GroupParams {
+    return {
+      id: layer.id,
+      title: layer.title,
+      zIndex: layer.zIndex,
+      parentId: layer.parent?.id,
+      visible: this.getVisibility(layer.visible),
+      opacity: this.getOpacity(layer.opacity),
+      expanded: layer.expanded
+    } satisfies OptionalRequired<GroupParams>;
+  }
+
+  private stringifyGroupParams(params: GroupParams): string {
+    return this.stringifyDefinitions(params, this.SHARE_MAP_DEFS.groups.params);
   }
 }

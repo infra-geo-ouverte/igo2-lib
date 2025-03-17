@@ -1,4 +1,3 @@
-import { TestBed } from '@angular/core/testing';
 import { Params } from '@angular/router';
 
 import {
@@ -7,7 +6,6 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
-import { ContextRouteService } from '../../context-manager/shared';
 import { ShareMapLegacyParser } from './share-map-legacy.service';
 import { ROUTE_OPTION_LEGACY_MOCK } from './share-map.mock';
 
@@ -96,23 +94,8 @@ const wmsExpected: LayerOptions[] = [
 
 describe('ShareMapLegacyParser', () => {
   let service: ShareMapLegacyParser;
-  let contextRouteServiceMock: jasmine.SpyObj<ContextRouteService>;
 
   beforeEach(() => {
-    contextRouteServiceMock = jasmine.createSpyObj('ContextRouteService', [
-      'shareMapKeyDefs',
-      'options'
-    ]);
-    contextRouteServiceMock.optionsLegacy = ROUTE_OPTION_LEGACY_MOCK;
-
-    TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: ContextRouteService,
-          useValue: contextRouteServiceMock
-        }
-      ]
-    });
     service = new ShareMapLegacyParser(ROUTE_OPTION_LEGACY_MOCK);
   });
 

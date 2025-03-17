@@ -1,4 +1,4 @@
-interface ITreeConfig<T> {
+export interface ITreeConfig<T> {
   getChildren: (dataNode: T) => T[] | undefined | null;
   getId: (dataNode: T) => string;
   getLevel: (dataNode: T) => number;
