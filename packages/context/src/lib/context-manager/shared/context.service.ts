@@ -31,7 +31,6 @@ import {
 } from 'rxjs/operators';
 
 import { ShareMapService } from '../../share-map/shared/share-map.service';
-import { ContextRouteService } from './context-route.service';
 import { TypePermission } from './context.enum';
 import {
   Context,
@@ -83,7 +82,6 @@ export class ContextService {
     private messageService: MessageService,
     private storageService: StorageService,
     private exportService: ExportService,
-    private contextRouteService: ContextRouteService,
     private shareMapService: ShareMapService,
     @Optional() private route: RouteService
   ) {
@@ -373,7 +371,7 @@ export class ContextService {
 
     if (this.route) {
       this.route.queryParams.pipe(debounceTime(100)).subscribe((params) => {
-        const contextParam = this.contextRouteService.getContext(params);
+        const contextParam = this.shareMapService.getContext(params);
         let direct = false;
         if (contextParam) {
           this.defaultContextUri = contextParam;

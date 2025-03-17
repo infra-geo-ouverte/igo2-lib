@@ -1,10 +1,13 @@
-import { RouteServiceOptions } from '@igo2/core';
+import { RouteServiceOptions } from '@igo2/core/route';
 import {
+  AnyLayer,
   ArcGISRestImageDataSourceOptions,
   IgoMap,
   ImageArcGISRestDataSource,
   ImageLayer,
   ImageLayerOptions,
+  LayerGroup,
+  LayerGroupOptions,
   MapViewOptions,
   TileLayer,
   TileLayerOptions,
@@ -14,11 +17,8 @@ import {
   WMTSDataSourceOptions
 } from '@igo2/geo';
 
-import {
-  DetailedContext,
-  contextRouteKeysOptions
-} from '../../context-manager';
-import { ShareOption } from './share-map.interface';
+import { DetailedContext } from '../../context-manager';
+import { ShareMapRouteKeysOptions, ShareOption } from './share-map.interface';
 
 export const MOCK_SHARE_OPTION: ShareOption = {
   layerlistControls: {
@@ -26,7 +26,7 @@ export const MOCK_SHARE_OPTION: ShareOption = {
   }
 };
 
-export const CONTEXT_ROUTE_KEYS_OPTIONS_MOCK: contextRouteKeysOptions = {
+export const SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK: ShareMapRouteKeysOptions = {
   languageKey: 'lang',
   context: 'ctx',
   urls: 'urls',
@@ -144,9 +144,16 @@ function createImagearcgisrestLayer(options: ImageLayerOptions): ImageLayer {
   return layer;
 }
 
+function createGroup(
+  children: AnyLayer[] | null,
+  options: LayerGroupOptions
+): LayerGroup {
+  return new LayerGroup(children, options);
+}
+
 export const MAP_MOCK = createMap();
 
-function createMap() {
+function createMap(): IgoMap {
   const QUEBEC_BASE_MAP = createWmtsLayer(tileLayerOptions);
   const IMAGE_ARCGIS_REST_LAYER = createImagearcgisrestLayer(
     imagearcgisrestOption
@@ -166,6 +173,38 @@ function createMap() {
     QUEBEC_BASE_MAP,
     IMAGE_ARCGIS_REST_LAYER
   );
+
+  return map;
+}
+
+/*********** GROUPS MOCK ***********/
+export const MAP_GROUP_MOCK = createMapGroup();
+
+function createMapGroup(): IgoMap {
+  const IMAGE_ARCGIS_REST_LAYER = createImagearcgisrestLayer(
+    imagearcgisrestOption
+  );
+
+  const view: MapViewOptions = {
+    projection: 'EPSG:4326',
+    center: [-71.51804, 46.58602],
+    rotation: 0,
+    zoom: 9
+  };
+
+  const LAYER_GROUP_MOCK = createGroup(null, {
+    title: 'test1',
+    type: 'group'
+  });
+
+  const LAYER_GROUP_CHILDREN_MOCK = createGroup([IMAGE_ARCGIS_REST_LAYER], {
+    title: 'test2',
+    type: 'group'
+  });
+
+  const map = new IgoMap({ view });
+
+  map.layerController.add(LAYER_GROUP_MOCK, LAYER_GROUP_CHILDREN_MOCK);
 
   return map;
 }

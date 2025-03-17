@@ -2,15 +2,15 @@ import { Location } from '@angular/common';
 
 import { Layer, isLayerItem } from '@igo2/geo';
 
-import { ContextRouteService } from '../../context-manager/shared';
 import { shareMapKeyDefs } from './share-map-definitions';
 import { ShareMapEncoder } from './share-map-encoder';
 import { LayerParams, ShareMapKeysDefinitions } from './share-map.interface';
 import {
   CONTEXT_MOCK,
-  CONTEXT_ROUTE_KEYS_OPTIONS_MOCK,
+  MAP_GROUP_MOCK,
   MAP_MOCK,
-  MOCK_SHARE_OPTION
+  MOCK_SHARE_OPTION,
+  SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK
 } from './share-map.mock';
 
 const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
@@ -65,7 +65,6 @@ const EXPECTED_LAYERS_QUERY_URL: string =
 
 describe('ShareMapEncoder', () => {
   let shareMapEncoder: ShareMapEncoder;
-  let contextRouteServiceMock: jasmine.SpyObj<ContextRouteService>;
   let locationMock: jasmine.SpyObj<Location>;
 
   let EXPECTED_BASE_URL: string;
@@ -73,15 +72,7 @@ describe('ShareMapEncoder', () => {
   let posStringified: string;
 
   beforeEach(() => {
-    contextRouteServiceMock = jasmine.createSpyObj('ContextRouteService', [
-      'shareMapKeyDefs',
-      'options'
-    ]);
-    contextRouteServiceMock.options = CONTEXT_ROUTE_KEYS_OPTIONS_MOCK;
-    contextRouteServiceMock.shareMapKeyDefs = SHARE_MAP_DEFS = shareMapKeyDefs(
-      CONTEXT_ROUTE_KEYS_OPTIONS_MOCK
-    );
-
+    SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
     locationMock = jasmine.createSpyObj('Location', ['path']);
     locationMock.path.and.callFake(() => location.pathname);
     const mockDocument = {
@@ -93,7 +84,7 @@ describe('ShareMapEncoder', () => {
       }
     } as Document;
     const keysDefinitions = shareMapKeyDefs({
-      ...CONTEXT_ROUTE_KEYS_OPTIONS_MOCK
+      ...SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK
     });
 
     EXPECTED_BASE_URL = `${location.origin}${location.pathname}`;
@@ -116,11 +107,14 @@ describe('ShareMapEncoder', () => {
   });
 
   it('should return empty array from generateLayersOptionsByService()', () => {
+    shareMapEncoder['context'] = CONTEXT_MOCK;
+
     const result = shareMapEncoder['generateLayersOptionsByService']([], '');
     expect(result).toEqual([]);
   });
 
   it('should return formatted array from generateLayersOptionsByService()', () => {
+    shareMapEncoder['context'] = CONTEXT_MOCK;
     const layers = MAP_MOCK.layerController.layersFlattened.filter(
       isLayerItem
     ) as Layer[];
@@ -183,18 +177,57 @@ describe('ShareMapEncoder', () => {
       expect(result).toBe(`${EXPECTED_BASE_URL}`);
     });
 
-    it('should return clean url with new params', () => {
+    it('should delete pos and urls from url and return new url with tool param', () => {
+      const map = MAP_MOCK;
       shareMapEncoder['context'] = CONTEXT_MOCK;
 
       locationMock.path.and.returnValue(
-        '?tool=about&pos=@-71.51804,46.58602&urls=qsdsd,qsd'
+        `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`
       );
-      const map = MAP_MOCK;
-      const result = shareMapEncoder['getBaseUrlConfig'](
-        map.viewController,
+      const result = shareMapEncoder.generateUrl(
+        map,
+        CONTEXT_MOCK,
+        MOCK_SHARE_OPTION,
         undefined
       );
-      expect(result).toBe(`${location.origin}?tool=about&${posStringified}`);
+
+      expect(result).toBe(
+        `${location.origin}${location.pathname}?tool=about&${posStringified}&${EXPECTED_LAYERS_QUERY_URL}`
+      );
+    });
+
+    it('should delete all old params and return url with new params', () => {
+      const map = MAP_MOCK;
+      shareMapEncoder['context'] = CONTEXT_MOCK;
+
+      locationMock.path.and.returnValue(
+        `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd`
+      );
+      const result = shareMapEncoder.generateUrl(
+        map,
+        CONTEXT_MOCK,
+        MOCK_SHARE_OPTION,
+        undefined
+      );
+      expect(result).toBe(`${EXPECTED_BASE_URL}&${EXPECTED_LAYERS_QUERY_URL}`);
+    });
+
+    it('should return url with group', () => {
+      const { urlsKey, layers, groups } = SHARE_MAP_DEFS;
+
+      const EXPECTED_URLS = `${urlsKey}=https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer`;
+      const EXPECTED_LAYERS = `${layers.key}=0,[0]n,3t,0.5o,1pid,1v,3z`;
+      const EXPECTED_GROUPS = `${groups.key}=1id,test2t,2z,1v,0e;2id,test1t,1z,1v,0e`;
+      const result = shareMapEncoder.generateUrl(
+        MAP_GROUP_MOCK,
+        CONTEXT_MOCK,
+        MOCK_SHARE_OPTION,
+        ''
+      );
+
+      expect(result).toBe(
+        `${EXPECTED_BASE_URL}&${EXPECTED_URLS}&${EXPECTED_LAYERS}&${EXPECTED_GROUPS}`
+      );
     });
   });
 });

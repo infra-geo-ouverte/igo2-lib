@@ -1,20 +1,23 @@
 import { Params } from '@angular/router';
 
-import { AnyDataSourceOptions, LayerOptions } from '@igo2/geo';
+import {
+  AnyDataSourceOptions,
+  LayerGroupOptions,
+  LayerOptions
+} from '@igo2/geo';
 
-import { ContextRouteService } from '../../context-manager/shared';
 import { shareMapKeyDefs } from './share-map-definitions';
 import { ShareMapParser } from './share-map-parser';
 import { PositionParams, ShareMapKeysDefinitions } from './share-map.interface';
 import {
-  CONTEXT_ROUTE_KEYS_OPTIONS_MOCK,
-  ROUTE_OPTION_LEGACY_MOCK
+  ROUTE_OPTION_LEGACY_MOCK,
+  SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK
 } from './share-map.mock';
 
 const EXPECTED_POSITION: PositionParams = {
   center: [-71.51804, 46.58602],
   zoom: 5,
-  rotation: 0.5
+  rotation: (90 * Math.PI) / 180 // convert 90 degree to radians
 };
 const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
   {
@@ -61,33 +64,43 @@ const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
   }
 ];
 
+const EXPECTED_GROUPS_OPTIONS: LayerGroupOptions[] = [
+  {
+    id: '1',
+    title: 'test2',
+    zIndex: 1,
+    visible: true,
+    expanded: false,
+    type: 'group'
+  },
+  {
+    id: '2',
+    parentId: '1',
+    title: 'test1',
+    zIndex: 2,
+    visible: true,
+    expanded: false,
+    type: 'group'
+  }
+];
+
 const MOCK_PARAMS: Params = {
   urls: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer,https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts,https://ws.mapserver.transports.gouv.qc.ca/swtq',
   ctx: 'contextname',
   layers:
     '0,[0]n,3t,0.5o,1v,3z;1,[carte_gouv_qc_ro]n,1t,0v,2z;2,[etablissement_mtq]n,0t,1v,1z',
-  pos: '@-71.51804,46.58602,0.5r,5z'
+  pos: '@-71.51804,46.58602,90r,5z',
+  groups: '1id,test2t,1z,1v,0e;2id,test1t,2z,1pid,1v,0e'
 };
 
 describe('ShareMapParseUrl', () => {
   let shareMapParseUrl: ShareMapParser;
-  let contextRouteServiceMock: jasmine.SpyObj<ContextRouteService>;
   let SHARE_MAP_DEFS: ShareMapKeysDefinitions;
 
   beforeEach(() => {
-    contextRouteServiceMock = jasmine.createSpyObj('ContextRouteService', [
-      'shareMapKeyDefs',
-      'options'
-    ]);
-    contextRouteServiceMock.options = CONTEXT_ROUTE_KEYS_OPTIONS_MOCK;
-    contextRouteServiceMock.optionsLegacy = ROUTE_OPTION_LEGACY_MOCK;
-    SHARE_MAP_DEFS = contextRouteServiceMock.shareMapKeyDefs = shareMapKeyDefs(
-      CONTEXT_ROUTE_KEYS_OPTIONS_MOCK
-    );
-    shareMapParseUrl = new ShareMapParser(
-      SHARE_MAP_DEFS,
-      contextRouteServiceMock.optionsLegacy
-    );
+    const optionsLegacy = ROUTE_OPTION_LEGACY_MOCK;
+    SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
+    shareMapParseUrl = new ShareMapParser(SHARE_MAP_DEFS, optionsLegacy);
   });
 
   it('should be created', () => {
@@ -102,8 +115,8 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should correctly parse valid URL layers parameters into expected result', () => {
-    const result = shareMapParseUrl.parseLayers(MOCK_PARAMS);
-
+    const { groups, ...rest } = MOCK_PARAMS;
+    const result = shareMapParseUrl.parseLayers({ ...rest });
     expect(result).toBeDefined();
     expect(result).toEqual(EXPECTED_LAYERS_OPTIONS);
   });
@@ -151,16 +164,29 @@ describe('ShareMapParseUrl', () => {
       expect(parsePosition).toEqual({ center: [-71.51804, 46.58602] });
     });
 
-    it('should return undefined if center invalid input', () => {
+    it('should return zoom', () => {
       const parsePosition = shareMapParseUrl.parsePosition({
-        pos: 'invalid'
+        pos: '13z'
       });
-      expect(parsePosition).toEqual(undefined);
+      expect(parsePosition).toEqual({ zoom: 13 });
     });
 
     it('should return all PositionParams if params exist in input', () => {
       const parsePosition = shareMapParseUrl.parsePosition(MOCK_PARAMS);
       expect(parsePosition).toEqual(EXPECTED_POSITION);
+    });
+  });
+
+  describe('parse group', () => {
+    it('should parse group param and return group list', () => {
+      const params = {
+        groups: MOCK_PARAMS[SHARE_MAP_DEFS.groups.key],
+        ctx: MOCK_PARAMS[SHARE_MAP_DEFS.contextKey]
+      };
+      const result = shareMapParseUrl.parseLayers(params);
+
+      expect(result.length).toEqual(2);
+      expect(result).toEqual(EXPECTED_GROUPS_OPTIONS);
     });
   });
 });
