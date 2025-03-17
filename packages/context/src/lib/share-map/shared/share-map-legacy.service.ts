@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Params } from '@angular/router';
 
-import { RouteServiceOptions } from '@igo2/core';
+import { RouteServiceOptions } from '@igo2/core/route';
 import { LayerOptions, generateIdFromSourceOptions } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 

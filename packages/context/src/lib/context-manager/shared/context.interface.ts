@@ -1,6 +1,5 @@
 import { Tool } from '@igo2/common/tool';
 import { Message } from '@igo2/core/message';
-import { RouteServiceOptions } from '@igo2/core/route';
 import {
   AnyLayerOptions,
   MapAttributionOptions,
@@ -69,37 +68,11 @@ export interface ContextMap {
   };
 }
 
-export const CONTEXT_ROUTE_KEYS_OPTIONS: contextRouteKeysOptions = {
-  context: 'ctx',
-  urls: 'urls',
-  position: 'pos',
-  layers: 'layers',
-  groups: 'groups',
-  center: 'ctr',
-  zoom: 'z',
-  projection: 'p',
-  rotation: 'r',
-  opacity: 'o'
-};
-
-export interface contextRouteKeysOptions extends RouteServiceOptions {
-  context: string;
-  urls: string;
-  position: string;
-  layers: string;
-  groups: string;
-  center: string;
-  zoom: string;
-  projection: string;
-  rotation: string;
-  opacity: string;
-}
 export interface ContextServiceOptions {
   url?: string;
   basePath?: string;
   contextListFile?: string;
   defaultContextUri?: string;
-  shareMapConfig?: contextRouteKeysOptions;
 }
 
 export interface ContextPermission {

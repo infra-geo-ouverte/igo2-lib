@@ -1,11 +1,17 @@
 import { DOCUMENT, Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 
-import { RouteService } from '@igo2/core/route';
+import { RouteService, RouteServiceOptions } from '@igo2/core/route';
 
-import { ContextRouteService } from '../../context-manager/shared/context-route.service';
+import { shareMapKeyDefs } from './share-map-definitions';
 import { ShareMapEncoder } from './share-map-encoder';
 import { ShareMapParser } from './share-map-parser';
+import {
+  SHARE_MAP_KEYS_DEFAULT_OPTIONS,
+  ShareMapKeysDefinitions,
+  ShareMapRouteKeysOptions
+} from './share-map.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,27 +19,51 @@ import { ShareMapParser } from './share-map-parser';
 export class ShareMapService {
   private language = '';
 
+  options: ShareMapRouteKeysOptions;
+  optionsLegacy: RouteServiceOptions;
+  keysDefinitions: ShareMapKeysDefinitions;
   encoder: ShareMapEncoder;
   parser: ShareMapParser;
 
   constructor(
-    public contextRouteService: ContextRouteService,
     public location: Location,
-    public route: RouteService,
+    public routeService: RouteService,
     @Inject(DOCUMENT) public document: Document
   ) {
-    const keysDefinitions = this.contextRouteService.shareMapKeyDefs;
+    this.options = SHARE_MAP_KEYS_DEFAULT_OPTIONS;
+    this.optionsLegacy = this.routeService.legacyOptions;
+    this.keysDefinitions = shareMapKeyDefs({
+      ...SHARE_MAP_KEYS_DEFAULT_OPTIONS,
+      languageKey: this.routeService.options.languageKey
+    });
 
-    this.encoder = new ShareMapEncoder(keysDefinitions, location, document);
+    this.encoder = new ShareMapEncoder(
+      this.keysDefinitions,
+      location,
+      document
+    );
 
-    this.parser = new ShareMapParser(keysDefinitions, this.route.legacyOptions);
+    this.parser = new ShareMapParser(
+      this.keysDefinitions,
+      this.routeService.legacyOptions
+    );
 
-    this.route.queryParams.subscribe((params) => {
-      const language = this.contextRouteService.options.languageKey;
+    this.routeService.queryParams.subscribe((params) => {
+      const language = this.options.languageKey;
       if (params[language]) {
         this.language = params[language];
       }
     });
+  }
+
+  getContext(params: Params): string | undefined {
+    return (
+      params[this.optionsLegacy.contextKey] ?? params[this.options.context]
+    );
+  }
+
+  getZoom(params: Params): number | undefined {
+    return this.parser.parsePosition(params).zoom;
   }
 
   getUrlWithApi(formValues) {

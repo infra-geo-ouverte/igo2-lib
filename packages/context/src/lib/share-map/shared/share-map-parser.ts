@@ -1,40 +1,75 @@
 import { Params } from '@angular/router';
 
-import { RouteServiceOptions } from '@igo2/core';
-import type { LayerOptions } from '@igo2/geo';
-import { ObjectUtils } from '@igo2/utils';
+import { RouteServiceOptions } from '@igo2/core/route';
+import {
+  type AnyLayerOptions,
+  type LayerGroupOptions,
+  type LayerOptions
+} from '@igo2/geo';
+import { ObjectUtils, OptionalRequired } from '@igo2/utils';
 
 import { ShareMapLegacyParser } from './share-map-legacy.service';
 import {
   LayerProperties,
   PositionParams,
-  ServiceType,
   ShareMapKeysDefinitions
 } from './share-map.interface';
-import { buildDataSourceOptions } from './share-map.utils';
+import {
+  buildDataSourceOptions,
+  getParamValue,
+  hasLegacyParams
+} from './share-map.utils';
+
+type BaseLayerOptionsParsed = Pick<
+  LayerOptions,
+  'visible' | 'zIndex' | 'opacity' | 'parentId'
+>;
+type LayerOptionsParsed = BaseLayerOptionsParsed &
+  Pick<LayerOptions, 'sourceOptions'>;
+
+type LayerGroupOptionsParserd = BaseLayerOptionsParsed &
+  Pick<LayerGroupOptions, 'id' | 'title' | 'expanded' | 'type'>;
 
 export class ShareMapParser {
   legacy: ShareMapLegacyParser;
 
   constructor(
     private keysDefinitions: ShareMapKeysDefinitions,
-    legacyOptions: RouteServiceOptions
+    private legacyOptions: RouteServiceOptions
   ) {
     this.legacy = new ShareMapLegacyParser(legacyOptions);
   }
 
-  parseLayers(params: Params): LayerOptions[] | undefined {
-    const { urlsKey, layers } = this.keysDefinitions;
-    const urls = urlsKey ? params[urlsKey]?.split(',') : [];
-    const layersList: string[] = layers ? params[layers.key]?.split(';') : [];
-
-    if (!urls || !layersList) {
+  parseLayers(params: Params): AnyLayerOptions[] | undefined {
+    if (hasLegacyParams(params, this.legacyOptions)) {
       return this.legacy.parseUrl(params);
     }
 
-    return layersList
-      .map((layer) => this.parseLayer(layer, urls))
+    const {
+      urlsKey,
+      layers: layersDef,
+      groups: groupsDef
+    } = this.keysDefinitions;
+
+    const layersArray = this.splitParam(
+      getParamValue(params, layersDef.key),
+      ';'
+    );
+    const urlsArray = this.splitParam(getParamValue(params, urlsKey), ',');
+    const groupsArray = this.splitParam(
+      getParamValue(params, groupsDef.key),
+      ';'
+    );
+
+    const groupsOptions = groupsArray.map((layer) => this.parseGroup(layer));
+    const layersOptions = layersArray
+      .map((layer) => this.parseLayer(layer, urlsArray))
       .filter(Boolean);
+    return [...groupsOptions, ...layersOptions];
+  }
+
+  private splitParam(value: string | undefined, delimiter: string): string[] {
+    return value ? value.split(delimiter) : [];
   }
 
   parsePosition(params: Params): PositionParams | undefined {
@@ -46,28 +81,18 @@ export class ShareMapParser {
     const { center, zoom, rotation, projection } =
       this.keysDefinitions.pos.params;
 
-    const centerMatch = position?.match(center.regex);
-    if (!centerMatch) return undefined;
-
-    const zoomValue = this.extractParam(position, zoom.regex);
-    const rotationValue = this.extractParam(position, rotation.regex);
-    const projectionValue = this.extractParam(position, projection.regex);
-
     return ObjectUtils.removeUndefined({
-      center: center.parse(centerMatch[0]),
-      zoom: zoomValue === undefined ? undefined : zoom.parse(zoomValue),
-      rotation:
-        rotationValue === undefined ? undefined : rotation.parse(rotationValue),
-      projection: projectionValue
-    });
+      center: center.parse(position) as [number, number],
+      zoom: zoom.parse(position) as number,
+      rotation: rotation.parse(position) as number,
+      projection: projection.parse(position) as string
+    } satisfies OptionalRequired<PositionParams>);
   }
 
-  private extractParam(value: string, regex: RegExp): string | undefined {
-    const match = value.match(regex);
-    return match ? match[1] : undefined;
-  }
-
-  private parseLayer(layer: string, urls: string[]): LayerOptions {
+  private parseLayer(
+    layer: string,
+    urls: string[]
+  ): LayerOptionsParsed | undefined {
     const urlIndex = this.extractUrlIndex(layer);
     if (urlIndex === undefined) return undefined;
 
@@ -93,13 +118,26 @@ export class ShareMapParser {
       zIndex,
       opacity,
       parentId
-    });
+    } satisfies OptionalRequired<LayerOptionsParsed>);
+  }
+
+  private parseGroup(properties: string): LayerGroupOptionsParserd {
+    const { params } = this.keysDefinitions.groups;
+    return ObjectUtils.removeUndefined({
+      id: params.id.parse(properties) as string,
+      title: params.title.parse(properties) as string,
+      zIndex: params.zIndex.parse(properties) as number,
+      visible: params.visible.parse(properties) as boolean,
+      opacity: params.opacity.parse(properties) as number,
+      parentId: params.parentId.parse(properties) as string,
+      expanded: params.expanded.parse(properties) as boolean,
+      type: 'group'
+    } satisfies OptionalRequired<LayerGroupOptionsParserd>);
   }
 
   private extractVersionFromUrl(url: string): string | undefined {
-    const { params } = this.keysDefinitions.layers;
-    const match = url.match(params.version.regex);
-    return match ? match[1] : undefined;
+    const versionDef = this.keysDefinitions.layers.params.version;
+    return versionDef.parse(url) as string;
   }
 
   private extractUrlIndex(layer: string): number | undefined {
@@ -123,48 +161,13 @@ export class ShareMapParser {
   }
 
   private extractLayerProperties(properties: string): LayerProperties {
-    const zIndex = this.parseZindex(properties);
-    const visibility = this.parseVisibility(properties);
-    const type = this.parseType(properties);
-    const opacity = this.parseOpacity(properties);
-    const parentId = this.parseParentId(properties);
-
+    const { params } = this.keysDefinitions.layers;
     return {
-      zIndex,
-      visibility,
-      type,
-      opacity,
-      parentId
-    };
-  }
-
-  private parseOpacity(str: string): number | undefined {
-    const { opacity } = this.keysDefinitions.layers.params;
-    const match = str.match(new RegExp(`(-?\\d+(?:\\.\\d+)?)${opacity.key}`));
-    return match ? (opacity.parse(match[1]) as number) : undefined;
-  }
-
-  private parseVisibility(str: string): boolean | undefined {
-    const { visible } = this.keysDefinitions.layers.params;
-    const match = str.match(new RegExp(`([01])${visible.key}`));
-    return match ? (visible.parse(match[1]) as boolean) : undefined;
-  }
-
-  private parseParentId(str: string): string | undefined {
-    const { parentId } = this.keysDefinitions.layers.params;
-    const match = str.match(new RegExp(`(\\w+)${parentId.key}`));
-    return match ? match[1] : undefined;
-  }
-
-  private parseZindex(str: string): number | undefined {
-    const { zIndex } = this.keysDefinitions.layers.params;
-    const match = str.match(new RegExp(`(-?\\d+)${zIndex.key}`));
-    return match ? (zIndex.parse(match[1]) as number) : undefined;
-  }
-
-  private parseType(str: string): ServiceType | undefined {
-    const { type } = this.keysDefinitions.layers.params;
-    const match = str.match(new RegExp(`,(\\d+)${type.key}`));
-    return match ? (type.parse(match[1]) as ServiceType) : undefined;
+      zIndex: params.zIndex.parse(properties) as number,
+      visibility: params.visible.parse(properties) as boolean,
+      type: params.type.parse(properties) as any,
+      opacity: params.opacity.parse(properties) as number,
+      parentId: params.parentId.parse(properties) as string
+    } satisfies OptionalRequired<LayerProperties>;
   }
 }
