@@ -29,7 +29,7 @@ import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
-import { CatalogLibaryItemComponent } from './catalog-library-item.component';
+import { CatalogLibraryItemComponent } from './catalog-library-item.component';
 
 /**
  * Component to browse a list of available catalogs
@@ -42,7 +42,7 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
   imports: [
     ListComponent,
     NgFor,
-    CatalogLibaryItemComponent,
+    CatalogLibraryItemComponent,
     ListItemDirective,
     NgIf,
     MatButtonModule,
@@ -52,7 +52,7 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
     IgoLanguageModule
   ]
 })
-export class CatalogLibaryComponent implements OnInit, OnDestroy {
+export class CatalogLibraryComponent implements OnInit, OnDestroy {
   /**
    * Store holding the catalogs
    */

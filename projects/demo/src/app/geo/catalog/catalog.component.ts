@@ -8,7 +8,7 @@ import {
   Catalog,
   CatalogBrowserComponent,
   CatalogItem,
-  CatalogLibaryComponent,
+  CatalogLibraryComponent,
   CatalogService,
   IgoMap,
   LayerService,
@@ -29,7 +29,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MAP_DIRECTIVES,
     PanelComponent,
-    CatalogLibaryComponent,
+    CatalogLibraryComponent,
     CatalogBrowserComponent
   ]
 })
