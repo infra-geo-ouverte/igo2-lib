@@ -48,9 +48,11 @@ export class TileLayer extends Layer {
     });
     const tileLayer = new olLayerTile(olOptions);
     const tileSource = tileLayer.getSource();
-    tileSource.setTileLoadFunction((tile: Tile, url: string) => {
-      this.customLoader(tile, url, this.authInterceptor);
-    });
+    if ('setTileLoadFunction' in tileSource) {
+      tileSource.setTileLoadFunction((tile: Tile, url: string) => {
+        this.customLoader(tile, url, this.authInterceptor);
+      });
+    }
 
     return tileLayer;
   }

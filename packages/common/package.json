@@ -139,21 +139,21 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.6.0"
+    "@floating-ui/utils": "^0.2.0",
+    "angular-shepherd": "^19.0.0",
+    "ngx-color": "^10.0.0",
+    "scroll-into-view-if-needed": "^3.1.0",
+    "tinycolor2": "^1.6.0",
+    "tslib": "^2.6.0",
+    "typy": "^3.3.0"
   },
   "peerDependencies": {
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@angular/material": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
-    "@floating-ui/utils": "^0.2.0",
     "@igo2/core": "*",
-    "@igo2/utils": "*",
-    "angular-shepherd": "^19.0.0",
-    "ngx-color": "^9.0.0",
-    "scroll-into-view-if-needed": "^3.0.0",
-    "tinycolor2": "^1.6.0",
-    "typy": "^3.3.0"
+    "@igo2/utils": "*"
   },
   "devDependencies": {
     "typescript": "~5.5.4"

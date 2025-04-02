@@ -5,6 +5,8 @@ import VectorTile from 'ol/VectorTile';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
+import { Feature } from 'ol';
+
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { TileWatcher } from '../../utils/tile-watcher';
@@ -38,17 +40,19 @@ export class VectorTileLayer extends Layer {
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction((tile: VectorTile, url: string) => {
-      const loader = this.customLoader(
-        url,
-        tile.getFormat(),
-        this.authInterceptor,
-        tile.onLoad.bind(tile)
-      );
-      if (loader) {
-        tile.setLoader(loader);
+    vectorTileSource.setTileLoadFunction(
+      (tile: VectorTile<Feature>, url: string) => {
+        const loader = this.customLoader(
+          url,
+          tile.getFormat(),
+          this.authInterceptor,
+          tile.onLoad.bind(tile)
+        );
+        if (loader) {
+          tile.setLoader(loader);
+        }
       }
-    });
+    );
 
     return vectorTile;
   }

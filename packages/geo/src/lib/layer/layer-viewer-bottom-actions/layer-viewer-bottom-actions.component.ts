@@ -83,7 +83,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   get canRename(): boolean {
-    if (!this.viewerOptions.group.canRename || this.selected.length > 1) {
+    if (!this.viewerOptions.group?.canRename || this.selected.length > 1) {
       return false;
     }
 

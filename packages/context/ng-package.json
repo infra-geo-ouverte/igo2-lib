@@ -4,7 +4,7 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["ts-md5"],
+  "allowedNonPeerDependencies": ["ol"],
   "assets": [
     { "input": "", "glob": "**/*.them*.scss", "output": "" },
     { "input": "src", "glob": "*.scss", "output": "src" },

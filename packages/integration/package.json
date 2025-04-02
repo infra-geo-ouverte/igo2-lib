@@ -30,6 +30,9 @@
     }
   },
   "dependencies": {
+    "@turf/point-on-feature": "^7.2.0",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^5.0.0",
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
@@ -38,9 +41,6 @@
     "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
-    "@turf/point-on-feature": "^6.5.0",
-    "jspdf": "^3.0.0",
-    "jspdf-autotable": "^5.0.0",
     "rxjs": "^7.8.0"
   },
   "engines": {

@@ -111,11 +111,7 @@ export class SidenavComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.viewProjection
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 
