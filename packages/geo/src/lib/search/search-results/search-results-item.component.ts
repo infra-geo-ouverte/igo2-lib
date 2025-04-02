@@ -103,11 +103,7 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
-    moveToOlFeatures(
-      this.map.viewController,
-      [olFeature],
-      FeatureMotion.Default
-    );
+    moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Default);
   }
 
   /**

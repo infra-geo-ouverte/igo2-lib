@@ -45,7 +45,7 @@ export function featureToOl(
   const olFeature = olFormat.readFeature(feature, {
     dataProjection: feature.projection,
     featureProjection: projectionOut
-  });
+  }) as OlFeature<OlGeometry>;
 
   olFeature.setId(getId(feature));
 
@@ -370,14 +370,17 @@ export function featuresAreTooDeepInView(
  */
 export function moveToOlFeatures(
   viewController: MapViewController,
-  olFeatures: OlFeature<OlGeometry>[],
+  olFeatures: OlFeature | OlFeature[],
   motion: FeatureMotion = FeatureMotion.Default,
   scale?: [number, number, number, number],
   areaRatio?: number
 ) {
   const extent = viewController.getExtent();
   const projection = viewController.getOlProjection();
-  const featuresExtent = computeOlFeaturesExtent(olFeatures, projection);
+  const featuresExtent = computeOlFeaturesExtent(
+    Array.isArray(olFeatures) ? olFeatures : [olFeatures],
+    projection
+  );
   let viewExtent = featuresExtent;
   if (scale !== undefined) {
     viewExtent = scaleExtent(viewExtent, scale);

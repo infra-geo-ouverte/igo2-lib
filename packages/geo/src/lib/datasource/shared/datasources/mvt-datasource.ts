@@ -20,7 +20,7 @@ export class MVTDataSource extends DataSource {
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
     if (this.options.featureClass === 'feature') {
-      mvtFormat = new olFormatMVT({ featureClass: feature });
+      mvtFormat = new olFormatMVT({ featureClass: feature } as any);
     } else {
       mvtFormat = new olFormatMVT();
     }

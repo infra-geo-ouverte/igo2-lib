@@ -521,8 +521,11 @@ export class EditionWorkspaceService {
         projDest.replace('EPSG:', '') +
         ';' +
         this.wktFormat.writeGeometry(
-          this.geoJsonFormat
-            .readFeature(feature.geometry)
+          (
+            this.geoJsonFormat.readFeature(
+              feature.geometry
+            ) as olFeature<OlGeometry>
+          )
             .getGeometry()
             .transform('EPSG:4326', projDest),
           { dataProjection: projDest }
@@ -638,8 +641,11 @@ export class EditionWorkspaceService {
         projDest.replace('EPSG:', '') +
         ';' +
         this.wktFormat.writeGeometry(
-          this.geoJsonFormat
-            .readFeature(feature.geometry)
+          (
+            this.geoJsonFormat.readFeature(
+              feature.geometry
+            ) as olFeature<OlGeometry>
+          )
             .getGeometry()
             .transform('EPSG:4326', projDest),
           { dataProjection: projDest }

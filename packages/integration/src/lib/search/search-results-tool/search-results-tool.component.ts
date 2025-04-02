@@ -641,7 +641,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       });
       moveToOlFeatures(
         this.map.viewController,
-        [localOlFeature],
+        localOlFeature,
         FeatureMotion.Zoom
       );
     }

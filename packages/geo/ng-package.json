@@ -5,12 +5,23 @@
     "entryFile": "src/public_api.ts"
   },
   "allowedNonPeerDependencies": [
+    "@mat-datetimepicker/core",
+    "@turf",
+    "file-saver",
+    "flexsearch",
+    "html2canvas",
+    "jspdf-autotable",
+    "jspdf",
+    "jszip",
+    "moment",
+    "ngx-indexed-db",
     "nosleep.js",
+    "ol-mapbox-style",
+    "ol",
+    "proj4",
+    "striptags",
     "ts-cacheable",
-    "ts-md5",
-    "@turf/helpers",
-    "@turf/line-intersect",
-    "@turf/point-on-feature"
+    "ts-md5"
   ],
   "assets": [
     { "input": "", "glob": "**/*.them*.scss", "output": "" },
