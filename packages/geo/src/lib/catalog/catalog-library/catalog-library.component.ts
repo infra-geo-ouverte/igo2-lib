@@ -20,10 +20,10 @@ import { MessageService } from '@igo2/core/message';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
-import { Observable, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, Subscription, catchError } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
+import { TypeCapabilitiesStrings } from '../../datasource/shared/capabilities.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
@@ -122,7 +122,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       }
     }
     this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
-      c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
+      c.id = c.id ?? Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url));
       c.title = c.title === '' || !c.title ? c.url : c.title;
       return c;
     });
@@ -160,18 +160,13 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     if (!addedCatalog) {
       return;
     }
-    let id = Md5.hashStr(
-      addedCatalog.type + standardizeUrl(addedCatalog.url)
-    ) as string;
+    const id =
+      addedCatalog.id ??
+      Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url));
+
     const predefinedCatalog = this.predefinedCatalogs.find(
       (c) => c.id === addedCatalog.id
     );
-
-    if (predefinedCatalog) {
-      addedCatalog.version = predefinedCatalog.version;
-      addedCatalog.externalProvider = predefinedCatalog.externalProvider;
-      id = predefinedCatalog.id;
-    }
 
     if (this.store.get(id)) {
       this.messageService.alert(
@@ -181,75 +176,59 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       return;
     }
     this.unsubscribeAddingCatalog();
-
-    this.addingCatalog$$ = this.capabilitiesService
-      .getCapabilities(
-        addedCatalog.type as any,
-        addedCatalog.url,
-        addedCatalog.version
-      )
-      .pipe(
-        catchError((e) => {
-          if (e.error) {
-            this.addCatalogDialog(true, addedCatalog);
-            e.error.caught = true;
-            return e;
-          }
-          this.messageService.error(
-            'igo.geo.catalog.unavailable',
-            'igo.geo.catalog.unavailableTitle',
-            undefined,
-            { value: addedCatalog.url }
+    if (predefinedCatalog) {
+      predefinedCatalog.removable ??= true;
+      this.handleAddCatalogToStore(predefinedCatalog);
+    } else {
+      this.addingCatalog$$ = this.capabilitiesService
+        .getCapabilities(
+          addedCatalog.type as TypeCapabilitiesStrings,
+          addedCatalog.url
+        )
+        .pipe(
+          catchError((e) => {
+            if (e.error) {
+              this.addCatalogDialog(true, addedCatalog);
+              e.error.caught = true;
+              return e;
+            }
+            this.messageService.error(
+              'igo.geo.catalog.unavailable',
+              'igo.geo.catalog.unavailableTitle',
+              undefined,
+              { value: addedCatalog.url }
+            );
+            throw e;
+          })
+        )
+        .subscribe((capabilities) => {
+          const catalogToAdd: Catalog = ObjectUtils.removeUndefined(
+            Object.assign(
+              {},
+              {
+                id,
+                title: addedCatalog.title,
+                url: addedCatalog.url,
+                type: addedCatalog.type || 'wms',
+                externalProvider: true,
+                removable: true,
+                version:
+                  addedCatalog.type === 'wms' ? capabilities.version : '1.3.0'
+              }
+            )
           );
-          throw e;
-        })
-      )
-      .subscribe((capabilities) => {
-        let title;
-        let version;
-        switch (addedCatalog.type) {
-          case 'wms':
-            title = addedCatalog.title || capabilities.Service.Title;
-            version = addedCatalog.version || capabilities.version;
-            break;
-          case 'arcgisrest':
-          case 'imagearcgisrest':
-          case 'tilearcgisrest':
-            title = addedCatalog.title || capabilities.mapName;
-            break;
-          case 'wmts':
-            title =
-              addedCatalog.title ||
-              capabilities.ServiceIdentification.ServiceType;
-            break;
-          default:
-            title = addedCatalog.title;
-        }
-
-        const catalogToAdd = ObjectUtils.removeUndefined(
-          Object.assign(
-            {},
-            predefinedCatalog,
-            ObjectUtils.removeUndefined({
-              id,
-              title,
-              url: addedCatalog.url,
-              type: addedCatalog.type || 'wms',
-              externalProvider: addedCatalog.externalProvider || false,
-              removable: true,
-              version
-            })
-          ) as Catalog
-        );
-        this.store.insert(catalogToAdd);
-        const newCatalogs = this.addedCatalogs.slice(0);
-        newCatalogs.push(catalogToAdd);
-        this.addedCatalogs = newCatalogs;
-        this.unsubscribeAddingCatalog();
-      });
+          this.handleAddCatalogToStore(catalogToAdd);
+        });
+    }
   }
 
   ngOnDestroy() {
+    this.unsubscribeAddingCatalog();
+  }
+
+  private handleAddCatalogToStore(catalogToAdd: Catalog) {
+    this.store.insert(catalogToAdd);
+    this.addedCatalogs = [...this.addedCatalogs, catalogToAdd];
     this.unsubscribeAddingCatalog();
   }
 
