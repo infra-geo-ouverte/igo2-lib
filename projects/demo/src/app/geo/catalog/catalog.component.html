@@ -12,6 +12,7 @@
 
     <igo-panel title="Catalog Library">
       <igo-catalog-library
+        [addCatalogAllowed]="true"
         [store]="$any(catalogStore)"
         (catalogSelectChange)="onCatalogSelectChange($event)"
       >
