@@ -33,7 +33,6 @@ import { isBaseLayer, isLayerItem, sortLayersByZindex } from '../utils';
   templateUrl: './layer-legend-list.component.html',
   styleUrls: ['./layer-legend-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatSlideToggleModule,

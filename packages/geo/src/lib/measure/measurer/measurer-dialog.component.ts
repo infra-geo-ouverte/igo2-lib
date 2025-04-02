@@ -17,7 +17,6 @@ import { MeasureFormatPipe } from './measure-format.pipe';
   selector: 'igo-measurer-dialog',
   templateUrl: 'measurer-dialog.component.html',
   styleUrls: ['./measurer-dialog.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

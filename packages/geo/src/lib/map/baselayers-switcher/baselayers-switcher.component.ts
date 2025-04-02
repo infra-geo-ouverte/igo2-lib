@@ -19,7 +19,6 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
   templateUrl: './baselayers-switcher.component.html',
   styleUrls: ['./baselayers-switcher.component.scss'],
   animations: [baseLayersSwitcherSlideInOut()],
-  standalone: true,
   imports: [
     NgIf,
     NgClass,

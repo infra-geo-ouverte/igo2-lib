@@ -25,7 +25,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-layer',
   templateUrl: './layer.component.html',
   styleUrls: ['./layer.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

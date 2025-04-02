@@ -45,7 +45,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-query',
   templateUrl: './query.component.html',
   styleUrls: ['./query.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

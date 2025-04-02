@@ -22,7 +22,6 @@ import { ListItemDirective } from './list-item.directive';
   selector: 'igo-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  standalone: true,
   imports: [MatListModule, ClickoutDirective, NgClass]
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {

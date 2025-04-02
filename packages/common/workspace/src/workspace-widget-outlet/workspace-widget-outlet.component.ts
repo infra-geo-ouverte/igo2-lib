@@ -23,7 +23,6 @@ import { Workspace } from '../shared/workspace';
   templateUrl: './workspace-widget-outlet.component.html',
   styleUrls: ['./workspace-widget-outlet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, WidgetOutletComponent, AsyncPipe]
 })
 export class WorkspaceWidgetOutletComponent {

@@ -11,7 +11,6 @@ import {
   templateUrl: './panel.component.html',
   styleUrls: ['./panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, NgClass]
 })
 export class PanelComponent {

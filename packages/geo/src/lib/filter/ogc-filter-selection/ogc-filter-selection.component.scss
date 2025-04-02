@@ -1,4 +1,4 @@
-@import '../../../../../core/src/style/partial/media';
+@use '../../../../../core/src/style/partial/media';
 
 :host {
   .mat-button-toggle-group {
@@ -31,7 +31,7 @@
       font-size: small;
       display: block;
     }
-    @include mobile {
+    @include media.mobile {
       width: 45%;
     }
   }

@@ -10,7 +10,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-message',
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMessageComponent {

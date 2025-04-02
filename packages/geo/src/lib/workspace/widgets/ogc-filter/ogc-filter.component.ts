@@ -19,7 +19,6 @@ import { IgoMap } from '../../../map/shared/map';
   templateUrl: './ogc-filter.component.html',
   styleUrls: ['./ogc-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [OgcFilterableItemComponent]
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {

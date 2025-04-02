@@ -31,7 +31,6 @@ import {
   selector: 'igo-style-modal-layer',
   templateUrl: './style-modal-layer.component.html',
   styleUrls: ['./style-modal-layer.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

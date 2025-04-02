@@ -1,4 +1,4 @@
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 .igo-cataloglayer-title {
   cursor: pointer;
@@ -11,7 +11,7 @@
 .igo-cataloglayer-legend-container {
   padding-left: 18px;
   width: calc(100% - 18px);
-  margin-left: $igo-icon-size;
+  margin-left: core.$igo-icon-size;
 }
 
 .igo-cataloglayer-external-icon {

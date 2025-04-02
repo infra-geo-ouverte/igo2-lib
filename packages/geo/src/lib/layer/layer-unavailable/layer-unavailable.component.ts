@@ -18,7 +18,6 @@ import { AnyLayerItemOptions, AnyLayerOptions } from '../shared';
   templateUrl: './layer-unavailable.component.html',
   styleUrls: ['./layer-unavailable.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatListModule, MatIconModule, MatTooltipModule, IgoLanguageModule]
 })
 export class LayerUnavailableComponent {

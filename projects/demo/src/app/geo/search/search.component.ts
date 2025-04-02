@@ -53,7 +53,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

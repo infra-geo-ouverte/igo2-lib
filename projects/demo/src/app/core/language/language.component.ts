@@ -10,7 +10,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-language',
   templateUrl: './language.component.html',
   styleUrls: ['./language.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

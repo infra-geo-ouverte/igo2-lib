@@ -37,7 +37,6 @@ import {
   templateUrl: './import-export-tool.component.html',
   styleUrls: ['./import-export-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatTabsModule,

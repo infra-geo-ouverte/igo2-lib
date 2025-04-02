@@ -13,7 +13,6 @@ import { ShareMapUrlComponent } from './share-map-url.component';
   selector: 'igo-share-map',
   templateUrl: './share-map.component.html',
   styleUrls: ['./share-map.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatTabsModule,

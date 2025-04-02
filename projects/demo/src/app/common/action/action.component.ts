@@ -17,7 +17,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-action',
   templateUrl: './action.component.html',
   styleUrls: ['./action.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, ActionbarComponent]
 })
 export class AppActionComponent implements OnInit, OnDestroy {

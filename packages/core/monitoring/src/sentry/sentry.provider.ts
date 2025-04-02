@@ -1,8 +1,9 @@
 import {
-  APP_INITIALIZER,
   ConstructorProvider,
+  EnvironmentProviders,
   ErrorHandler,
-  FactoryProvider
+  inject,
+  provideAppInitializer
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -14,7 +15,7 @@ import { isTracingEnabled } from './sentry.utils';
 
 export const provideSentryMonitoring = (
   options: SentryMonitoringOptions
-): (FactoryProvider | ConstructorProvider)[] => {
+): (EnvironmentProviders | ConstructorProvider)[] => {
   const isEnabled = options.enabled !== undefined ? options.enabled : true;
   if (!isEnabled) {
     return [];
@@ -34,11 +35,10 @@ export const provideSentryMonitoring = (
       deps: [Router]
     },
     // Force instantiate TraceService to avoid require it in any constructor.
-    tracingEnabled && {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => void 1,
-      deps: [TraceService],
-      multi: true
-    }
+    tracingEnabled &&
+      provideAppInitializer(() => {
+        inject(TraceService);
+        return;
+      })
   ].filter(Boolean);
 };

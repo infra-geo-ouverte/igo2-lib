@@ -25,7 +25,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-legend',
   templateUrl: './legend.component.html',
   styleUrls: ['./legend.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

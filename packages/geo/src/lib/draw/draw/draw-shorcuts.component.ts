@@ -18,7 +18,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
   selector: 'igo-draw-shorcuts',
   templateUrl: './draw-shorcuts.component.html',
   styleUrls: ['./draw-shorcuts.component.scss'],
-  standalone: true,
   imports: [
     MatDialogContent,
     MatIconModule,

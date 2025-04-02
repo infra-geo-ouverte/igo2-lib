@@ -41,7 +41,6 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
   templateUrl: './catalog-browser-group.component.html',
   styleUrls: ['./catalog-browser-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     MatIconModule,

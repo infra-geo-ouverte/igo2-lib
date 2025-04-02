@@ -16,7 +16,6 @@ import { toolSlideInOut } from './active-time-filter-tool.animation';
   selector: 'igo-active-time-filter-tool',
   templateUrl: './active-time-filter-tool.component.html',
   animations: [toolSlideInOut()],
-  standalone: true,
   imports: [TimeFilterItemComponent]
 })
 export class ActiveTimeFilterToolComponent {

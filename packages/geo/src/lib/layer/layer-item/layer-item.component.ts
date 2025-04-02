@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -35,7 +35,6 @@ import { TooltipType } from '../shared/layers/layer.interface';
   templateUrl: './layer-item.component.html',
   styleUrls: ['./layer-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgIf,
@@ -44,7 +43,6 @@ import { TooltipType } from '../shared/layers/layer.interface';
     MatButtonModule,
     MatIconModule,
     MatBadgeModule,
-    NgClass,
     LayerLegendComponent,
     AsyncPipe,
     IgoLanguageModule,
@@ -87,16 +85,19 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   get visibilityTooltip() {
     if (
       this.viewerOptions.mode !== 'selection' &&
-      this.inResolutionRange$.getValue() === false
+      !this.inResolutionRange$.getValue()
     ) {
-      return 'igo.geo.layer.notInResolution';
-    } else {
-      return this.layer.visible && this.isDisabled
-        ? 'igo.geo.layer.group.hideChildren'
-        : this.layer.visible
-          ? 'igo.geo.layer.hideLayer'
-          : 'igo.geo.layer.showLayer';
+      return this.layer.visible
+        ? this.isDisabled
+          ? 'igo.geo.layer.notInResolution'
+          : 'igo.geo.layer.group.hideChildren'
+        : 'igo.geo.layer.showLayer';
     }
+    return this.layer.visible
+      ? this.isDisabled
+        ? 'igo.geo.layer.group.hideChildren'
+        : 'igo.geo.layer.hideLayer'
+      : 'igo.geo.layer.showLayer';
   }
 
   constructor(private networkService: NetworkService) {}

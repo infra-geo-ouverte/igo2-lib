@@ -1,5 +1,5 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   @include common-utils.square-button();
@@ -38,7 +38,7 @@
 }
 
 .igo-baselayers-switcher-button-container {
-  width: $igo-icon-size;
+  width: core.$igo-icon-size;
   background-color: #fff;
   &:hover {
     background-color: #efefef;

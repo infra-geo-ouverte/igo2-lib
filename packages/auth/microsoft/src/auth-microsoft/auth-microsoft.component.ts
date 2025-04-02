@@ -39,7 +39,6 @@ import {
   templateUrl: './auth-microsoft.component.html',
   styleUrls: ['./auth-microsoft.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
 })
 export class AuthMicrosoftComponent {

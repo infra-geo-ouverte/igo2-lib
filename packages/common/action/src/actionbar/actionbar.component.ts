@@ -42,7 +42,6 @@ import { ActionbarItemComponent } from './actionbar-item.component';
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

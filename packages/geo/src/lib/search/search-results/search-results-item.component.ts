@@ -32,7 +32,6 @@ import { SearchResult } from '../shared/search.interfaces';
   templateUrl: './search-results-item.component.html',
   styleUrls: ['./search-results-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgIf,

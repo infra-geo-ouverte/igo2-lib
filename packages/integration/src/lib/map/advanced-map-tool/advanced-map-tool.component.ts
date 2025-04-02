@@ -22,7 +22,6 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
   selector: 'igo-advanced-map-tool',
   templateUrl: './advanced-map-tool.component.html',
   styleUrls: ['./advanced-map-tool.component.scss'],
-  standalone: true,
   imports: [
     AdvancedSwipeComponent,
     MatDividerModule,

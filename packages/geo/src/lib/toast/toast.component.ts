@@ -19,7 +19,6 @@ import { IgoMap } from '../map/shared/map';
   selector: 'igo-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
-  standalone: true,
   imports: [
     FlexibleComponent,
     PanelComponent,

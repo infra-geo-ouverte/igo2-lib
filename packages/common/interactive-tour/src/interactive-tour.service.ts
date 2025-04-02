@@ -6,7 +6,7 @@ import { MediaService } from '@igo2/core/media';
 
 import { autoPlacement, offset } from '@floating-ui/dom';
 import { ShepherdService } from 'angular-shepherd';
-import Shepherd from 'shepherd.js';
+import { StepOptions } from 'shepherd.js';
 
 import {
   InteractiveTourAction,
@@ -286,7 +286,7 @@ export class InteractiveTourService {
   }
 
   private getShepherdSteps(tourConfig: InteractiveTourOptions) {
-    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
+    const shepherdSteps: StepOptions[] = [];
 
     let i = 0;
     for (const step of tourConfig.steps) {
@@ -339,7 +339,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      } satisfies Shepherd.Step.StepOptions);
+      } satisfies StepOptions);
       i++;
     }
 

@@ -28,7 +28,6 @@ import { AllEnvironmentOptions } from '../../environment';
   selector: 'igo-about-tool',
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss'],
-  standalone: true,
   imports: [
     InteractiveTourComponent,
     NgIf,

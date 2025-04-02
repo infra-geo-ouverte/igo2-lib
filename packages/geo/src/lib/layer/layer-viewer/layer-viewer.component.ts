@@ -61,8 +61,7 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
     LayerViewerBottomActionsComponent,
     IgoLanguageModule,
     LayerListToolComponent
-  ],
-  standalone: true
+  ]
 })
 export class LayerViewerComponent implements OnInit {
   layers: AnyLayer[];

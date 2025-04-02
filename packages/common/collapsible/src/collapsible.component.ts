@@ -8,7 +8,6 @@ import { CollapseDirective } from './collapse.directive';
   selector: 'igo-collapsible',
   templateUrl: './collapsible.component.html',
   styleUrls: ['./collapsible.component.scss'],
-  standalone: true,
   imports: [MatListModule, MatIconModule, CollapseDirective]
 })
 export class CollapsibleComponent {

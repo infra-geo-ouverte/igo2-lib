@@ -31,7 +31,6 @@ import {
   selector: 'igo-form-field-text',
   templateUrl: './form-field-text.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

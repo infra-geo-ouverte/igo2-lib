@@ -40,7 +40,6 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   templateUrl: './spatial-filter-list.component.html',
   styleUrls: ['./spatial-filter-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

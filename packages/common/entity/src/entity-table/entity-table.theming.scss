@@ -9,7 +9,7 @@
 @mixin color($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
-  $background: map-get($theme, background);
+  $background: map.get($theme, background);
   igo-entity-table
     table.igo-entity-table-with-selection
     tr.igo-entity-table-row-highlighted {

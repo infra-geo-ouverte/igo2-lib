@@ -21,7 +21,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-hover',
   templateUrl: './hover.component.html',
   styleUrls: ['./hover.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {

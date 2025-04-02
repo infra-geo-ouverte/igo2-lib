@@ -17,7 +17,6 @@ import { ToolState } from '../../tool/tool.state';
 @Component({
   selector: 'igo-context-editor-tool',
   templateUrl: './context-editor-tool.component.html',
-  standalone: true,
   imports: [ContextEditComponent, ContextEditBindingDirective]
 })
 export class ContextEditorToolComponent {

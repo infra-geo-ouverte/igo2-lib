@@ -10,7 +10,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 
 @Component({
   selector: 'app-icon',
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

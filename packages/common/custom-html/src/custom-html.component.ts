@@ -6,7 +6,6 @@ import { SanitizeHtmlPipe } from './custom-html.pipe';
   selector: 'igo-custom-html',
   templateUrl: './custom-html.component.html',
   styleUrls: ['./custom-html.component.scss'],
-  standalone: true,
   imports: [SanitizeHtmlPipe]
 })
 export class CustomHtmlComponent {

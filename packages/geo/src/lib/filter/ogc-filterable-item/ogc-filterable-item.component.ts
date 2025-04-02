@@ -32,7 +32,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
   styleUrls: ['./ogc-filterable-item.component.scss'],
-  standalone: true,
   imports: [
     NgClass,
     MatListModule,

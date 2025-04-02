@@ -49,7 +49,6 @@ import {
   templateUrl: './search-settings.component.html',
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     MatTooltipModule,

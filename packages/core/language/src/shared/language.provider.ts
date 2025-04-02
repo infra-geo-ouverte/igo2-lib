@@ -1,10 +1,11 @@
 import { HttpBackend } from '@angular/common/http';
 import {
-  APP_INITIALIZER,
   EnvironmentProviders,
   Provider,
   importProvidersFrom,
-  makeEnvironmentProviders
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer
 } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
@@ -46,23 +47,19 @@ export function provideTranslation(
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     ...featureConfig.providers,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (languageService: LanguageService) => () => {
-        return (
-          languageService.translate.currentLoader as LanguageLoaderBase
-        ).isLoaded$?.pipe(
-          timeout(TIMEOUT_DURATION),
-          first((isLoaded) => isLoaded === true),
-          catchError((error) => {
-            error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
-            throw error;
-          })
-        );
-      },
-      deps: [LanguageService],
-      multi: true
-    }
+    provideAppInitializer(() => {
+      const languageService = inject(LanguageService);
+      return (
+        languageService.translate.currentLoader as LanguageLoaderBase
+      ).isLoaded$?.pipe(
+        timeout(TIMEOUT_DURATION),
+        first((isLoaded) => isLoaded === true),
+        catchError((error) => {
+          error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
+          throw error;
+        })
+      );
+    })
   ]);
 }
 

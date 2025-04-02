@@ -18,7 +18,6 @@ import { debounceTime } from 'rxjs';
   selector: 'igo-layer-search',
   templateUrl: './layer-search.component.html',
   styleUrls: ['./layer-search.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     ReactiveFormsModule,

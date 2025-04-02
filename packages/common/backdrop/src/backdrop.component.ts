@@ -5,7 +5,6 @@ import { Component, Input } from '@angular/core';
   selector: 'igo-backdrop',
   templateUrl: './backdrop.component.html',
   styleUrls: ['./backdrop.component.scss'],
-  standalone: true,
   imports: [NgClass]
 })
 export class BackdropComponent {

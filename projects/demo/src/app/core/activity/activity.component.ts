@@ -11,7 +11,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-activity',
   templateUrl: './activity.component.html',
   styleUrls: ['./activity.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

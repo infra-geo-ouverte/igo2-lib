@@ -25,7 +25,6 @@ import { DetailedContext } from '../shared/context.interface';
   templateUrl: './context-item.component.html',
   styleUrls: ['./context-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgClass,

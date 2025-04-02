@@ -31,7 +31,6 @@ import {
   selector: 'igo-form-field-select',
   templateUrl: './form-field-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatSelectModule,

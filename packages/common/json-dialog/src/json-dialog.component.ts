@@ -11,7 +11,6 @@ import {
 @Component({
   selector: 'igo-json-dialog',
   templateUrl: './json-dialog.component.html',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

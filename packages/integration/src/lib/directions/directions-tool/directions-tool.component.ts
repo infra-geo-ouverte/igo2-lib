@@ -28,7 +28,6 @@ import { DirectionState } from '../directions.state';
 @Component({
   selector: 'igo-directions-tool',
   templateUrl: './directions-tool.component.html',
-  standalone: true,
   imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {

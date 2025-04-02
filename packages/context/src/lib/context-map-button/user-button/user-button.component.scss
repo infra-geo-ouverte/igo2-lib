@@ -1,5 +1,4 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/media';
 
 :host {
   @include common-utils.square-button();

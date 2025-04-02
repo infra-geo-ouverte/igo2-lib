@@ -18,7 +18,6 @@ export interface DialogData {
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-layer-popup.component.html',
   styleUrls: ['./draw-layer-popup.component.scss'],
-  standalone: true,
   imports: [
     MatDialogContent,
     MatFormFieldModule,

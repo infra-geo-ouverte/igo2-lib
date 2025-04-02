@@ -46,7 +46,6 @@ import {
   selector: 'igo-context-permissions',
   templateUrl: './context-permissions.component.html',
   styleUrls: ['./context-permissions.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatRadioModule,

@@ -15,7 +15,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 @Component({
   selector: 'igo-bookmark-dialog',
   templateUrl: './bookmark-dialog.component.html',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

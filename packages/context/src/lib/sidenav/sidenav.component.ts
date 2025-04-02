@@ -26,7 +26,6 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
   selector: 'igo-sidenav',
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss'],
-  standalone: true,
   imports: [
     MatSidenavModule,
     FlexibleComponent,

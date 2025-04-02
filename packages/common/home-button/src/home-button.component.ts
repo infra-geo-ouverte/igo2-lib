@@ -9,7 +9,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
   selector: 'igo-home-button',
   templateUrl: './home-button.component.html',
   styleUrls: ['./home-button.component.scss'],
-  standalone: true,
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeButtonComponent {

@@ -1,4 +1,4 @@
-import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,10 +29,8 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
   selector: 'igo-layer-viewer-bottom-actions',
   templateUrl: './layer-viewer-bottom-actions.component.html',
   styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
-    NgTemplateOutlet,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

@@ -1,10 +1,10 @@
 // @ts-check
-const stylistic = require('@stylistic/eslint-plugin');
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
+import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import angular from 'angular-eslint';
+import tseslint from 'typescript-eslint';
 
-module.exports = tseslint.config(
+export default tseslint.config(
   { ignores: ['packages/**/*'] },
   {
     files: ['**/*.ts'],
@@ -14,8 +14,9 @@ module.exports = tseslint.config(
     },
     extends: [
       eslint.configs.recommended,
+      // @ts-ignore
       ...tseslint.configs.recommended,
-      ...tseslint.configs.stylistic,
+      // @ts-ignore
       ...angular.configs.tsRecommended
     ],
     processor: angular.processInlineTemplates,
@@ -62,6 +63,7 @@ module.exports = tseslint.config(
   },
   {
     files: ['**/*.html'],
+    // @ts-ignore
     extends: [
       ...angular.configs.templateRecommended,
       ...angular.configs.templateAccessibility

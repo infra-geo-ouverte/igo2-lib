@@ -9,7 +9,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent]
 })
 export class AppMediaComponent {

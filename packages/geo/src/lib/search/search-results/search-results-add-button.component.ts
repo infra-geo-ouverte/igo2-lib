@@ -54,7 +54,6 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   templateUrl: './search-results-add-button.component.html',
   styleUrls: ['./search-results-add-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

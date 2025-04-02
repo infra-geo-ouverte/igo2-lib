@@ -53,7 +53,6 @@ import { ContextListControlsEnum } from './context-list.enum';
   templateUrl: './context-list.component.html',
   styleUrls: ['./context-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ListComponent,
     NgIf,

@@ -45,7 +45,6 @@ import { SearchService } from '../shared/search.service';
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgClass,
     MatFormFieldModule,

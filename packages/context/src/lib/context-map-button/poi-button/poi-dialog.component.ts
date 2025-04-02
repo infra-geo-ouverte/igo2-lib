@@ -15,7 +15,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 @Component({
   selector: 'igo-poi-dialog',
   templateUrl: './poi-dialog.component.html',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

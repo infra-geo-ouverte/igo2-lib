@@ -63,7 +63,6 @@ import { MapState } from '../map.state';
   templateUrl: './map-tools.component.html',
   styleUrls: ['./map-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTabsModule,
     NgIf,

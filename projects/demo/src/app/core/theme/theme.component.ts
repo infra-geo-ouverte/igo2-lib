@@ -14,7 +14,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-theme',
   templateUrl: './theme.component.html',
   styleUrls: ['./theme.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

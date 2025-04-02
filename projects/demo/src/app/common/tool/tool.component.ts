@@ -64,7 +64,6 @@ export class AppAboutToolComponent {}
   selector: 'app-tool',
   templateUrl: './tool.component.html',
   styleUrls: ['./tool.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

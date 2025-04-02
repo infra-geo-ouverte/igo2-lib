@@ -43,7 +43,6 @@ import { MapState } from './../map.state';
   selector: 'igo-map-legend-tool',
   templateUrl: './map-legend-tool.component.html',
   styleUrls: ['./map-legend-tool.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     LayerLegendListComponent,

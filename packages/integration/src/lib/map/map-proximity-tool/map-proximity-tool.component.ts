@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +14,7 @@ import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Feature, IgoMap } from '@igo2/geo';
-import { Clipboard, NumberUtils } from '@igo2/utils';
+import { NumberUtils } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
 
@@ -32,7 +33,6 @@ import { MapState } from '../map.state';
   selector: 'igo-map-proximity-tool',
   templateUrl: './map-proximity-tool.component.html',
   styleUrls: ['./map-proximity-tool.component.scss'],
-  standalone: true,
   imports: [
     EntityTableComponent,
     NgIf,
@@ -69,6 +69,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
   public tableTemplate: EntityTableTemplate;
 
   constructor(
+    private clipboard: Clipboard,
     public mapState: MapState,
     public mapProximityState: MapProximityState,
     private languageService: LanguageService,
@@ -139,7 +140,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
    * Copy the coordinates to a clipboard
    */
   copyTextToClipboard(): void {
-    const successful = Clipboard.copy(
+    const successful = this.clipboard.copy(
       this.mapProximityState.currentPositionCoordinate$?.value.toString()
     );
     if (successful) {

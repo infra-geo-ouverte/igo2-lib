@@ -11,7 +11,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, JsonPipe]
 })
 export class AppConfigComponent {

@@ -14,7 +14,6 @@ import {
 @Component({
   selector: 'igo-time-filter-tool',
   templateUrl: './time-filter-tool.component.html',
-  standalone: true,
   imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
 })
 export class TimeFilterToolComponent {}

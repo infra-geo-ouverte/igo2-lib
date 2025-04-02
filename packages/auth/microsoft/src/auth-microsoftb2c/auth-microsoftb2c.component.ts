@@ -37,7 +37,6 @@ import { MsalServiceb2c } from './auth-msalServiceb2c.service';
   templateUrl: './auth-microsoftb2c.component.html',
   styleUrls: ['./auth-microsoftb2c.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent],
   providers: [MsalServiceb2c]
 })

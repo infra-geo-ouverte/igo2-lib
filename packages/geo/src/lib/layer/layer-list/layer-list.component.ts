@@ -1,6 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { AsyncPipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,19 +28,12 @@ import {
   TreeDropEvent,
   TreeFlatNode
 } from '@igo2/common/drag-drop';
-import {
-  IconSvg,
-  IgoIconComponent,
-  VECTOR_SQUARE_ICON
-} from '@igo2/common/icon';
-import { ListComponent, ListItemDirective } from '@igo2/common/list';
-import { PanelComponent } from '@igo2/common/panel';
+import { IconSvg, VECTOR_SQUARE_ICON } from '@igo2/common/icon';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
 import { LayerGroupComponent } from '../layer-group';
 import { LayerItemComponent } from '../layer-item';
-import { LayerListToolComponent } from '../layer-list-tool';
 import type { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerType } from '../shared';
 import type { LayerController } from '../shared/layer-controller';
@@ -57,13 +49,8 @@ type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
   templateUrl: './layer-list.component.html',
   styleUrls: ['./layer-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    NgIf,
-    NgFor,
-    NgTemplateOutlet,
     FormsModule,
-    AsyncPipe,
     MatBadgeModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -74,14 +61,9 @@ type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
     MatTreeModule,
     MatTooltipModule,
     TreeDragDropDirective,
-    LayerListToolComponent,
     LayerGroupComponent,
-    ListComponent,
     LayerItemComponent,
-    ListItemDirective,
-    PanelComponent,
-    IgoLanguageModule,
-    IgoIconComponent
+    IgoLanguageModule
   ]
 })
 export class LayerListComponent {

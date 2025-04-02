@@ -34,7 +34,6 @@ import {
   selector: 'igo-print-form',
   templateUrl: './print-form.component.html',
   styleUrls: ['./print-form.component.scss'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

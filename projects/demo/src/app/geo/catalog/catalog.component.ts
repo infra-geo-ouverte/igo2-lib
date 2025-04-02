@@ -24,7 +24,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

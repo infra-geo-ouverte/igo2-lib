@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "18.0.0",
+  "version": "19.0.0-next.5",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -33,14 +33,14 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^18.0.0",
-    "@angular/core": "^18.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
     "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
     "@turf/point-on-feature": "^6.5.0",
-    "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.8.0",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^5.0.0",
     "rxjs": "^7.8.0"
   },
   "engines": {

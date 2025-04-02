@@ -21,7 +21,6 @@ import { InteractiveTourService } from './interactive-tour.service';
   templateUrl: './interactive-tour.component.html',
   styleUrls: ['./interactive-tour.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

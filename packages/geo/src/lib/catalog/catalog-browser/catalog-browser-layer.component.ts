@@ -37,7 +37,6 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   templateUrl: './catalog-browser-layer.component.html',
   styleUrls: ['./catalog-browser-layer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgIf,

@@ -10,7 +10,6 @@ import { LayerUnavailableComponent } from '../layer-unavailable.component';
   templateUrl: './layer-unavailable-list.component.html',
   styleUrls: ['./layer-unavailable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ListComponent, ListItemDirective, LayerUnavailableComponent]
 })
 export class LayerUnavailableListComponent {

@@ -19,7 +19,6 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
   templateUrl: './track-feature-button.component.html',
   styleUrls: ['./track-feature-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

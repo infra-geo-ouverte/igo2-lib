@@ -15,7 +15,6 @@ import { IgoMap } from '../shared/map';
   selector: 'igo-rotation-button',
   templateUrl: './rotation-button.component.html',
   styleUrls: ['./rotation-button.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatTooltipModule,

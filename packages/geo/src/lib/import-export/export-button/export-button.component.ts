@@ -14,7 +14,6 @@ import { Layer, VectorLayer } from '../../layer/shared';
   templateUrl: './export-button.component.html',
   styleUrls: ['./export-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

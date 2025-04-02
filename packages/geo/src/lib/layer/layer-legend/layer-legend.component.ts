@@ -46,7 +46,6 @@ import {
   templateUrl: './layer-legend.component.html',
   styleUrls: ['./layer-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     NgFor,

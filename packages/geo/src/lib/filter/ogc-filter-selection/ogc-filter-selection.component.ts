@@ -56,7 +56,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   templateUrl: './ogc-filter-selection.component.html',
   styleUrls: ['./ogc-filter-selection.component.scss'],
   providers: [DOMService],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

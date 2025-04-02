@@ -32,7 +32,6 @@ import { MetadataService } from '../shared/metadata.service';
   templateUrl: './metadata-button.component.html',
   styleUrls: ['./metadata-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,
@@ -89,7 +88,6 @@ export class MetadataButtonComponent {
   templateUrl: './metadata-abstract.component.html',
   styleUrls: ['./metadata-abstract.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatButtonModule,

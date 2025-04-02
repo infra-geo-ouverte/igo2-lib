@@ -66,7 +66,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './spatial-filter.component.html',
   styleUrls: ['./spatial-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

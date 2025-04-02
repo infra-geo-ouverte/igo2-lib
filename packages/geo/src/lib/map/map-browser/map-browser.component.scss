@@ -1,5 +1,4 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   position: relative;
@@ -14,8 +13,8 @@
 
 :host ::ng-deep .ol-attribution {
   flex-flow: row;
-  left: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
-  bottom: $igo-margin;
+  left: calc(#{core.$igo-icon-size} + 5px + #{core.$igo-margin});
+  bottom: core.$igo-margin;
   text-align: left;
   padding: 0;
   margin-right: 90px;

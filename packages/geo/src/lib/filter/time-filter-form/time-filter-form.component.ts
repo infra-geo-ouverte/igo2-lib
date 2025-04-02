@@ -42,7 +42,6 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   selector: 'igo-time-filter-form',
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatFormFieldModule,

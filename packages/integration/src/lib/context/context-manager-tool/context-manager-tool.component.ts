@@ -18,7 +18,6 @@ import { ToolState } from '../../tool/tool.state';
 @Component({
   selector: 'igo-context-manager-tool',
   templateUrl: './context-manager-tool.component.html',
-  standalone: true,
   imports: [ContextListComponent, ContextListBindingDirective]
 })
 export class ContextManagerToolComponent {

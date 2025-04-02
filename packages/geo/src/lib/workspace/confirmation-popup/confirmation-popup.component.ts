@@ -18,7 +18,6 @@ export interface DialogData {
   selector: 'igo-confirmation-popup-component',
   templateUrl: './confirmation-popup.component.html',
   styleUrls: ['./confirmation-popup.component.scss'],
-  standalone: true,
   imports: [MatDialogContent, MatDialogActions, MatButtonModule]
 })
 export class ConfirmationPopupComponent {

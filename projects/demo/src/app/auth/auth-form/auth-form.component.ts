@@ -13,7 +13,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-auth-form',
   templateUrl: './auth-form.component.html',
   styleUrls: ['./auth-form.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

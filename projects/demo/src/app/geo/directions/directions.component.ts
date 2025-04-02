@@ -30,7 +30,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-directions',
   templateUrl: './directions.component.html',
   styleUrls: ['./directions.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

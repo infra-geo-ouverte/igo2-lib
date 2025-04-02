@@ -14,7 +14,6 @@ import { StorageService } from '@igo2/core/storage';
 @Component({
   selector: 'igo-user-dialog',
   templateUrl: './user-dialog.component.html',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

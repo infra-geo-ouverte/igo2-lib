@@ -36,7 +36,6 @@ import { SearchResultsItemComponent } from './search-results-item.component';
   selector: 'igo-save-feature-dialog',
   templateUrl: './save-feature-dialog.component.html',
   styleUrls: ['./save-feature-dialog.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

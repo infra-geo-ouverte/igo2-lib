@@ -18,7 +18,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoBadgeIconDirective } from '@igo2/common/badge';
 import { FormDialogService } from '@igo2/common/form';
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -35,7 +34,6 @@ import { LayerListToolService } from './layer-list-tool.service';
   templateUrl: './layer-list-tool.component.html',
   styleUrls: ['./layer-list-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormsModule,
     NgIf,
@@ -46,7 +44,6 @@ import { LayerListToolService } from './layer-list-tool.service';
     MatMenuModule,
     MatIconModule,
     MatBadgeModule,
-    IgoBadgeIconDirective,
     IgoLanguageModule,
     LayerSearchComponent
   ],

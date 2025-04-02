@@ -13,7 +13,6 @@ const SRC_PATH =
   selector: 'app-example-viewer',
   templateUrl: './example-viewer.component.html',
   styleUrls: ['./example-viewer.component.scss'],
-  standalone: true,
   imports: [
     MatCardModule,
     NgIf,

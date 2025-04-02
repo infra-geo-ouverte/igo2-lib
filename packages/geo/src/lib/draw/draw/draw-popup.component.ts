@@ -46,7 +46,6 @@ import { DDtoDMS } from '../shared/draw.utils';
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-popup.component.html',
   styleUrls: ['./draw-popup.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     NgIf,

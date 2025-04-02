@@ -1,4 +1,4 @@
-@import '../../../../../core/src/style/partial/media';
+@use '../../../../../core/src/style/partial/media';
 
 :host {
   ::ng-deep input {
@@ -40,7 +40,7 @@
       margin-right: 8px;
     }
 
-    @include mobile {
+    @include media.mobile {
       margin-top: 4px;
     }
   }

@@ -20,7 +20,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {

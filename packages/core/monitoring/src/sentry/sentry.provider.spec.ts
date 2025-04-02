@@ -1,4 +1,8 @@
-import { APP_INITIALIZER, ErrorHandler, FactoryProvider } from '@angular/core';
+import {
+  ConstructorProvider,
+  ErrorHandler,
+  InjectionToken
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TraceService } from '@sentry/angular';
@@ -27,44 +31,55 @@ describe('Provide Sentry monitoring', () => {
 
   it('should provide ErrorHandler with createSentryErrorHandler factory', () => {
     const providers = provideSentryMonitoring(options);
-    const errorHandlerProvider = providers.find(
-      (p) => p.provide === ErrorHandler
-    ) as FactoryProvider;
-    expect(errorHandlerProvider).toBeDefined();
-    expect(errorHandlerProvider.useFactory).toBeDefined();
+
+    expect(providers).toEqual(
+      jasmine.arrayWithExactContents([
+        jasmine.objectContaining({ provide: ErrorHandler })
+      ])
+    );
   });
 
   it('should provide TraceService if tracing is enabled', () => {
     options.tracesSampleRate = 1;
     const providers = provideSentryMonitoring(options);
-    const traceServiceProvider = providers.find(
-      (p) => p.provide === TraceService
-    );
+    const traceServiceProvider: ConstructorProvider = providers.find(
+      (p: ConstructorProvider) => p.provide === TraceService
+    ) as ConstructorProvider;
     expect(traceServiceProvider).toBeDefined();
     expect(traceServiceProvider.deps).toContain(Router);
   });
 
-  it('should provide APP_INITIALIZER to instantiate TraceService if tracing is enabled', () => {
+  it('should provide TraceService if tracing is enabled', () => {
     options.tracesSampleRate = 1;
+
     const providers = provideSentryMonitoring(options);
-    const appInitializerProvider = providers.find(
-      (p) => p.provide === APP_INITIALIZER
-    ) as FactoryProvider;
-    expect(appInitializerProvider).toBeDefined();
-    expect(appInitializerProvider.useFactory).toBeDefined();
-    expect(appInitializerProvider.deps).toContain(TraceService);
-    expect(appInitializerProvider.multi).toBe(true);
+    expect(providers.length).toBe(3);
+    expect(providers).toEqual(
+      jasmine.arrayContaining([
+        jasmine.objectContaining({ provide: TraceService }),
+        jasmine.objectContaining({
+          ɵproviders: jasmine.arrayContaining([
+            jasmine.objectContaining({
+              provide: jasmine.any(InjectionToken),
+              multi: true,
+              useValue: jasmine.any(Function)
+            })
+          ])
+        })
+      ])
+    );
   });
 
   it('should not provide TraceService if tracing is not enabled', () => {
     options.tracesSampleRate = undefined;
     options.tracesSampler = undefined;
+
     const providers = provideSentryMonitoring(options);
-    const tracingProviders = providers.filter(
-      (p) =>
-        (p.provide === APP_INITIALIZER && p.deps.includes(TraceService)) ||
-        p.provide === TraceService
+    expect(providers.length).toBe(1);
+    expect(providers).toEqual(
+      jasmine.arrayWithExactContents([
+        jasmine.objectContaining({ provide: ErrorHandler })
+      ])
     );
-    expect(tracingProviders.length).toBe(0);
   });
 });

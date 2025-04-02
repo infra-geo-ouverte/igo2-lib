@@ -41,7 +41,6 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
   selector: 'igo-ogc-filter-time',
   templateUrl: './ogc-filter-time.component.html',
   styleUrls: ['./ogc-filter-time.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatSlideToggleModule,

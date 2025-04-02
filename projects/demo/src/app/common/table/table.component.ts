@@ -14,7 +14,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, TableComponent]
 })
 export class AppTableComponent implements OnInit {

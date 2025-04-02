@@ -44,7 +44,6 @@ import { MapState } from './../map.state';
   selector: 'igo-map-details-tool',
   templateUrl: './map-details-tool.component.html',
   styleUrls: ['./map-details-tool.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     LayerViewerComponent,

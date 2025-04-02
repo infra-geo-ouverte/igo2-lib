@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -47,7 +47,6 @@ import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
   selector: 'igo-directions-results',
   templateUrl: './directions-results.component.html',
   styleUrls: ['./directions-results.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatFormFieldModule,
@@ -59,7 +58,6 @@ import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
     MatTooltipModule,
     MatListModule,
     MatIconModule,
-    NgClass,
     IgoLanguageModule
   ]
 })

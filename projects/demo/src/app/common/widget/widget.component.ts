@@ -31,7 +31,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     <button mat-flat-button (click)="cancel.emit(name)">Dismiss</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule]
 })
 export class AppSalutationWidgetComponent
@@ -54,7 +53,6 @@ export class AppSalutationWidgetComponent
   selector: 'app-widget',
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, IgoWidgetOutletModule]
 })
 export class AppWidgetComponent {

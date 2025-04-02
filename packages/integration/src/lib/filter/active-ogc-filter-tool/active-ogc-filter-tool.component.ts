@@ -21,7 +21,6 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   selector: 'igo-active-ogc-filter-tool',
   templateUrl: './active-ogc-filter-tool.component.html',
   animations: [toolSlideInOut()],
-  standalone: true,
   imports: [OgcFilterableItemComponent]
 })
 export class ActiveOgcFilterToolComponent {

@@ -24,7 +24,9 @@ import { TREE_MOCK } from './tree-drag-drop.mock';
         <div>Test</div>
       </mat-tree-node>
     </mat-tree>
-  `
+  `,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
+  standalone: false
 })
 class TestComponent {
   treeControl = new FlatTreeControl<any>(

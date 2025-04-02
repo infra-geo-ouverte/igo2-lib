@@ -39,7 +39,6 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
   templateUrl: './geometry-form-field.component.html',
   styleUrls: ['./geometry-form-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     GeometryFormFieldInputComponent,
     FormsModule,

@@ -22,7 +22,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-measure',
   templateUrl: './measure.component.html',
   styleUrls: ['./measure.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

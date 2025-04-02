@@ -21,7 +21,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

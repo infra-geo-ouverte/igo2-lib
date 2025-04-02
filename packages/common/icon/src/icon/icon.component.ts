@@ -6,7 +6,6 @@ import { IconService } from '../shared/icon.service';
 
 @Component({
   selector: 'igo-icon',
-  standalone: true,
   imports: [MatIconModule],
   templateUrl: './icon.component.html'
 })

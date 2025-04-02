@@ -4,21 +4,18 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnDestroy
+  Input
 } from '@angular/core';
 
-import OlMap from 'ol/Map';
-import OlView from 'ol/View';
-
-import { isLayerItem } from '../../layer';
 import {
+  AnyLayerOptions,
   Layer,
   LayerOptions,
   LayersLink,
   LayersLinkProperties
 } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
+import { isLayerItem } from '../../layer/utils';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
 import { IgoMap } from '../shared/map';
 
@@ -27,10 +24,9 @@ import { IgoMap } from '../shared/map';
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, MapBrowserComponent]
 })
-export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
+export class MiniBaseMapComponent implements AfterViewInit {
   @Input() map: IgoMap;
   @Input() disabled: boolean;
   @Input() title: string;
@@ -66,22 +62,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   ngAfterViewInit() {
-    this.handleMainMapViewChange(this.map.ol.getView());
-    this.map.viewController.olView.on('change', (change) => {
-      this.handleMainMapViewChange(change.target as OlView);
-    });
-    this.map.ol.on('pointerdrag', (change) => {
-      this.handleMainMapViewChange((change.target as OlMap).getView());
-    });
-  }
-
-  ngOnDestroy() {
-    this.map.viewController.olView.un('change', (change) => {
-      this.handleMainMapViewChange(change.target as OlView);
-    });
-    this.map.ol.un('pointerdrag', (change) => {
-      this.handleMainMapViewChange((change.target as OlMap).getView());
-    });
+    this.basemap.ol.setView(this.map.ol.getView());
   }
 
   changeBaseLayer(baseLayer: Layer) {
@@ -92,23 +73,10 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     this.appRef.tick();
   }
 
-  private handleMainMapViewChange(mainMapView) {
-    const mainMapViewProperties = mainMapView.getProperties();
-    this.basemap.viewController.olView.setResolution(
-      mainMapViewProperties.resolution
-    );
-    this.basemap.viewController.olView.setRotation(
-      mainMapViewProperties.rotation
-    );
-    this.basemap.viewController.olView.setCenter(
-      this.map.viewController.getCenter()
-    );
-  }
-
   private handleBaseLayerChanged(baselayer: Layer) {
     this.basemap.layerController.reset();
 
-    const options: any = Object.assign(
+    const options: AnyLayerOptions = Object.assign(
       Object.create(baselayer.options),
       baselayer.options,
       {

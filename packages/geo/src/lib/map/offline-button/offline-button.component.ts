@@ -12,7 +12,6 @@ import { IgoMap } from '../shared/map';
   selector: 'igo-offline-button',
   templateUrl: './offline-button.component.html',
   styleUrls: ['./offline-button.component.scss'],
-  standalone: true,
   imports: [
     MatButtonModule,
     MatTooltipModule,

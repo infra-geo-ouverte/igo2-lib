@@ -11,7 +11,6 @@ import { IgoMap } from '../shared/map';
   selector: 'igo-zoom-button',
   templateUrl: './zoom-button.component.html',
   styleUrls: ['./zoom-button.component.scss'],
-  standalone: true,
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class ZoomButtonComponent {

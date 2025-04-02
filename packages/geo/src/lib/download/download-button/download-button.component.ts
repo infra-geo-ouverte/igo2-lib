@@ -15,7 +15,6 @@ import { DownloadService } from '../shared/download.service';
   templateUrl: './download-button.component.html',
   styleUrls: ['./download-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

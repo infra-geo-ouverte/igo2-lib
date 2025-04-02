@@ -27,7 +27,6 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   templateUrl: './entity-table-paginator.component.html',
   styleUrls: ['./entity-table-paginator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatPaginatorModule]
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {

@@ -20,7 +20,6 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
   selector: 'igo-time-filter-item',
   templateUrl: './time-filter-item.component.html',
   styleUrls: ['./time-filter-item.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatListModule,

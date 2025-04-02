@@ -84,7 +84,6 @@ import { MeasurerItemComponent } from './measurer-item.component';
   templateUrl: './measurer.component.html',
   styleUrls: ['./measurer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonToggleModule,
     MatSlideToggleModule,

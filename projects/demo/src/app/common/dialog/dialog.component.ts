@@ -31,7 +31,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
