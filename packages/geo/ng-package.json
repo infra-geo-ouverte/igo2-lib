@@ -5,7 +5,7 @@
     "entryFile": "src/public_api.ts"
   },
   "allowedNonPeerDependencies": [
-    "@mat-datetimepicker/core",
+    "@mat-datetimepicker",
     "@turf",
     "file-saver",
     "flexsearch",
@@ -16,9 +16,6 @@
     "moment",
     "ngx-indexed-db",
     "nosleep.js",
-    "ol-mapbox-style",
-    "ol",
-    "proj4",
     "striptags",
     "ts-cacheable",
     "ts-md5"
