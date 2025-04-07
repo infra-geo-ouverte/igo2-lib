@@ -4,7 +4,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { IgoWidgetModule } from '@igo2/common/widget';
 
 import { IgoOgcFilterModule } from './widgets/ogc-filter/ogc-filter.module';
-import { provideOgcFilterWidget } from './widgets/widgets';
+import {
+  provideInteractiveSelectionFormWidget,
+  provideOgcFilterWidget
+} from './widgets/widgets';
 import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selector.module';
 
 @NgModule({
@@ -15,6 +18,6 @@ import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selec
     MatDialogModule
   ],
   exports: [IgoOgcFilterModule],
-  providers: [provideOgcFilterWidget()]
+  providers: [provideOgcFilterWidget(), provideInteractiveSelectionFormWidget()]
 })
 export class IgoGeoWorkspaceModule {}

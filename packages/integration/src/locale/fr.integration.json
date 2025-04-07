@@ -102,7 +102,9 @@
         "maximize": "Agrandir",
         "maximizeTooltip": "Agrandir la fenêtre",
         "standardExtent": "Réduire",
-        "standardExtentTooltip": "Réduire la fenêtre"
+        "standardExtentTooltip": "Réduire la fenêtre",
+        "interactiveSelection.title": "Sélectioner les entités par géométrie",
+        "interactiveSelection.tooltip": "Sélectioner les entités par géométrie"
       },
       "directions": {
         "warning": {
