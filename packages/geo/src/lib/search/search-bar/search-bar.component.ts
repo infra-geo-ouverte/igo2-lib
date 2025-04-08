@@ -167,6 +167,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   readonly disabled$ = new BehaviorSubject<boolean>(false);
 
   @Input() pointerSummaryEnabled = false;
+  @Input() allowResetSearchSourcesOptions = true;
   @Input() searchResultsGeometryEnabled = false;
 
   /**

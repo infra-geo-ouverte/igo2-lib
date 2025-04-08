@@ -149,7 +149,7 @@ export class StoredQueriesSearchSource
     return StoredQueriesSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
       searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
@@ -452,7 +452,7 @@ export class StoredQueriesReverseSearchSource
     return StoredQueriesReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries (reverse)',
       searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'

@@ -49,7 +49,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return WorkspaceSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     const limit = 5;
 
     return {
