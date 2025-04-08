@@ -115,6 +115,7 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should correctly parse valid URL layers parameters into expected result', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { groups, ...rest } = MOCK_PARAMS;
     const result = shareMapParseUrl.parseLayers({ ...rest });
     expect(result).toBeDefined();
