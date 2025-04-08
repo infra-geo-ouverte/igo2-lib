@@ -110,9 +110,9 @@ export class OptionsApiService extends OptionsService {
   private handleSourceOptions<T extends AnyDataSourceOptions>(res: {
     sourceOptions: T;
     layerOptions: { [keys: string]: string };
-  }) {
+  }): T {
     if (!res || !res.sourceOptions) {
-      return {} as WMSDataSourceOptions;
+      return {} as T;
     }
     if (res.layerOptions) {
       res.sourceOptions._layerOptionsFromSource = res.layerOptions;
