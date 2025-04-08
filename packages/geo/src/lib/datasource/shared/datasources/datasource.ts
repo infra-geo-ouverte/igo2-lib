@@ -86,8 +86,8 @@ export abstract class DataSource {
   }
 
   public destroy(): void {
-    this.events.forEach((lisner) => {
-      lisner.unsubscribe();
+    this.events.forEach((listener) => {
+      listener.unsubscribe();
     });
   }
 
