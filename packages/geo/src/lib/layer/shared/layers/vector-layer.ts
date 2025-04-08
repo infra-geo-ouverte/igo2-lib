@@ -67,14 +67,14 @@ export class VectorLayer extends Layer {
 
   private lastRequest: VectorRequest;
   private ongoingRequests: VectorRequest[] = [];
-  public declare dataSource:
+  declare public dataSource:
     | FeatureDataSource
     | WFSDataSource
     | ArcGISRestDataSource
     | WebSocketDataSource
     | ClusterDataSource;
-  public declare options: VectorLayerOptions;
-  public declare ol: olLayerVector<olSourceVector>;
+  declare public options: VectorLayerOptions;
+  declare public ol: olLayerVector<olSourceVector>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 
