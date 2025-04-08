@@ -50,7 +50,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
    */
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Cadastre (Québec)',
       searchUrl: 'https://carto.cptaq.gouv.qc.ca/php/find_lot_v1.php?'

@@ -172,6 +172,15 @@
           {{ 'igo.geo.search.reverseCoordFormat.title' | translate }}
         </mat-slide-toggle>
       </div>
+      <div mat-menu-item *ngIf="allowResetSearchSourcesOptions">
+        <button
+          mat-raised-button
+          class="check-default-button"
+          (click)="resetSourceOptions($event)"
+        >
+          {{ 'igo.geo.search.searchSources.settings.reset.button' | translate }}
+        </button>
+      </div>
     </span>
   </mat-menu>
 </div>
