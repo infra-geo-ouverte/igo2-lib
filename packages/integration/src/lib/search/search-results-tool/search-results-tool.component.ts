@@ -603,7 +603,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     const igoList =
       this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
     let selectedItem;
-    // eslint-disable-next-line
+
     for (let i = 0; i < items.length; i++) {
       if (items[i].className.includes('igo-list-item-selected')) {
         selectedItem = items[i];

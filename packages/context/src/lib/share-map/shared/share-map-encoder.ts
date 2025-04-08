@@ -67,7 +67,7 @@ export class ShareMapEncoder {
       layers.map((layer) => layer.id).filter(Boolean)
     );
 
-    let counter = 1;
+    const counter = 1;
 
     layers.forEach((layer) => {
       if (layer.id && layer.id.includes(ID_GROUP_PREFIX)) {
@@ -380,7 +380,7 @@ export class ShareMapEncoder {
     const keys: string[] = [];
 
     for (const key in defs) {
-      if (defs.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(defs, key)) {
         const value = defs[key];
         if (typeof value === 'string') {
           keys.push(value);
