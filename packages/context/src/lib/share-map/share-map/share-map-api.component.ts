@@ -93,7 +93,7 @@ export class ShareMapApiComponent implements OnInit {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this._updateContextShared(this.map, inputs, this.idContextShared).subscribe(
-      (rep) => {
+      () => {
         this.messageService.success(
           'igo.context.contextManager.dialog.saveMsg',
           'igo.context.contextManager.dialog.saveTitle',
