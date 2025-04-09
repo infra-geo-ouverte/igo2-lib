@@ -13,9 +13,7 @@ import {
   ShareMapRouteKeysOptions
 } from './share-map.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ShareMapService {
   private language = '';
 
@@ -58,7 +56,7 @@ export class ShareMapService {
 
   getContext(params: Params): string | undefined {
     return (
-      params[this.optionsLegacy.contextKey] ?? params[this.options.context]
+      params[this.options.context] ?? params[this.optionsLegacy.contextKey]
     );
   }
 
@@ -72,5 +70,19 @@ export class ShareMapService {
     return this.language
       ? `${origin + pathname}?context=${formValues.uri}&lang=${this.language}`
       : `${origin + pathname}?context=${formValues.uri}`;
+  }
+
+  hasPositionParams(params: Params): boolean {
+    const { projectionKey, rotationKey, zoomKey, centerKey } =
+      this.optionsLegacy;
+    const { pos } = this.keysDefinitions;
+
+    return Boolean(
+      params[pos.key] ||
+        params[projectionKey] ||
+        params[rotationKey] ||
+        params[zoomKey] ||
+        params[centerKey]
+    );
   }
 }
