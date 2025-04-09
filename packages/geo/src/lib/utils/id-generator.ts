@@ -2,7 +2,6 @@ import { uuid } from '@igo2/utils';
 
 import { Md5 } from 'ts-md5';
 
-import type { AnyDataSourceOptions } from '../datasource/shared/datasources/any-datasource.interface';
 import type { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
 import type { WFSDataSourceOptions } from '../datasource/shared/datasources/wfs-datasource.interface';
 import type { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
@@ -26,10 +25,10 @@ export function generateIdFromSourceOptions(
     arcgisrest: generateArcgisRestIdFromSourceOptions,
     imagearcgisrest: generateArcgisRestIdFromSourceOptions,
     tilearcgisrest: generateArcgisRestIdFromSourceOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    osm: (_options: AnyDataSourceOptions) => 'OSM',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tiledebug: (_options: AnyDataSourceOptions) => 'tiledebug'
+
+    osm: () => 'OSM',
+
+    tiledebug: () => 'tiledebug'
   };
   const generator = generators[options.type] || generateId;
   return generator(options);

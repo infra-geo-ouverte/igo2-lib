@@ -344,7 +344,7 @@ function handleFilterDate(
   interfaceOgc: OgcInterfaceFilterOptions,
   saveableInterface: IOgcInterfaceFilterOptions
 ) {
-  const keys: Array<keyof OgcInterfaceFilterOptions> = ['begin', 'end'];
+  const keys: (keyof OgcInterfaceFilterOptions)[] = ['begin', 'end'];
   const formatDate = (date: string) =>
     TimeFrame.some((timeFrame) => date.toLocaleLowerCase().includes(timeFrame))
       ? new Date(parseDateOperation(date)).toISOString().split('.')[0] + 'Z'

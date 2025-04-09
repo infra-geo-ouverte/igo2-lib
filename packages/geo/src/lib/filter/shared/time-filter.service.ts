@@ -90,10 +90,10 @@ export class TimeFilterService {
 
   private reformatDateTime(value: Date) {
     const year = value.getFullYear();
-    let month = (value.getMonth() + 1).toString().padStart(2, '0');
-    let day = value.getUTCDate().toString().padStart(2, '0');
-    let hour = value.getUTCHours().toString().padStart(2, '0');
-    let minute = value.getUTCMinutes().toString().padStart(2, '0');
+    const month = (value.getMonth() + 1).toString().padStart(2, '0');
+    const day = value.getUTCDate().toString().padStart(2, '0');
+    const hour = value.getUTCHours().toString().padStart(2, '0');
+    const minute = value.getUTCMinutes().toString().padStart(2, '0');
     return `${year}-${month}-${day}T${hour}:${minute}:00Z`;
   }
 }
