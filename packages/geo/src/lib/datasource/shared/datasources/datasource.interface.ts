@@ -130,6 +130,8 @@ export interface TileGridOptions {
   tileSizes?: [number, number][];
 }
 
-export type EventName = 'refresh';
+export type AnyEventName = EventRefresh;
+export const EventRefresh = 'refresh' as const;
+export type EventRefresh = typeof EventRefresh;
 
-export type DatasourceEvent = [EventName, Observable<unknown>];
+export type DatasourceEvent = [AnyEventName, Observable<unknown>];

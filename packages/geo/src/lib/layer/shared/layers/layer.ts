@@ -101,6 +101,10 @@ export abstract class Layer extends LayerBase {
       this.legend = this.dataSource.setLegend(options.legendOptions);
     }
 
+    if (this.visible) {
+      this.dataSource.addEvents();
+    }
+
     this.ol = this.createOlLayer();
     this.ol.set('_layer', this, true);
 

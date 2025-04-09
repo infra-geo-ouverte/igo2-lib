@@ -8,9 +8,9 @@ import { LegendOptions } from '../../../layer/shared/layers/legend.interface';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { DataService } from './data.service';
 import {
+  AnyEventName,
   DataSourceOptions,
   DatasourceEvent,
-  EventName,
   Legend
 } from './datasource.interface';
 
@@ -27,7 +27,7 @@ export abstract class DataSource {
     };
   }
 
-  protected events = new Map<EventName, Subscription>();
+  protected events = new Map<AnyEventName, Subscription>();
 
   constructor(
     public options: DataSourceOptions = {},
@@ -77,7 +77,7 @@ export abstract class DataSource {
     });
   }
 
-  private addEvent(name: EventName, obs: Observable<unknown>): void {
+  private addEvent(name: AnyEventName, obs: Observable<unknown>): void {
     const subscription = this.events.get(name);
     if (subscription) {
       subscription.unsubscribe();

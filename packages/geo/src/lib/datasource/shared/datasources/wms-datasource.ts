@@ -18,7 +18,7 @@ import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface'
 import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
-import { DatasourceEvent, Legend } from './datasource.interface';
+import { DatasourceEvent, EventRefresh, Legend } from './datasource.interface';
 import { WFSService } from './wfs.service';
 import {
   TimeFilterableDataSourceOptions,
@@ -122,8 +122,6 @@ export class WMSDataSource extends DataSource {
     sourceParams.DPI = dpi;
     sourceParams.MAP_RESOLUTION = dpi;
     sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
-
-    this.addEvents();
 
     let fieldNameGeometry = defaultFieldNameGeometry;
 
@@ -263,18 +261,6 @@ export class WMSDataSource extends DataSource {
     }
   }
 
-  private addRefreshInterval(refreshInterval: number): Observable<number> {
-    const intervalMs = refreshInterval * 1000; // secondes to MS
-    return interval(intervalMs).pipe(
-      tap(() => {
-        this.ol.updateParams({ igoRefresh: Math.random() });
-        if (this.enableRefresh) {
-          this.ol.notify('refresh', this.enableRefresh);
-        }
-      })
-    );
-  }
-
   addEvents(): void {
     const events: DatasourceEvent[] = [];
 
@@ -284,14 +270,6 @@ export class WMSDataSource extends DataSource {
     }
 
     super.addEvents(events);
-  }
-
-  private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
-    const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
-    const downloadUrl = queryStringValues.find(
-      (f) => f.name === 'getfeature'
-    ).value;
-    return downloadUrl;
   }
 
   protected createOlSource(): olSourceImageWMS {
@@ -377,6 +355,26 @@ export class WMSDataSource extends DataSource {
 
   public onUnwatch() {
     // empty
+  }
+
+  private addRefreshInterval(refreshInterval: number): Observable<number> {
+    const intervalMs = refreshInterval * 1000; // secondes to MS
+    return interval(intervalMs).pipe(
+      tap(() => {
+        this.ol.updateParams({ [EventRefresh]: Math.random() });
+        if (this.enableRefresh) {
+          this.ol.notify('refresh', this.enableRefresh);
+        }
+      })
+    );
+  }
+
+  private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
+    const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
+    const downloadUrl = queryStringValues.find(
+      (f) => f.name === 'getfeature'
+    ).value;
+    return downloadUrl;
   }
 }
 
