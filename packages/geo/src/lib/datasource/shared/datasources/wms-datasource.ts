@@ -266,7 +266,7 @@ export class WMSDataSource extends DataSource {
 
     const refreshInterval = this.options.refreshIntervalSec;
     if (refreshInterval && refreshInterval > 0) {
-      events.push(['refresh', this.addRefreshInterval(refreshInterval)]);
+      events.push([EventRefresh, this.addRefreshInterval(refreshInterval)]);
     }
 
     super.addEvents(events);
@@ -363,7 +363,7 @@ export class WMSDataSource extends DataSource {
       tap(() => {
         this.ol.updateParams({ [EventRefresh]: Math.random() });
         if (this.enableRefresh) {
-          this.ol.notify('refresh', this.enableRefresh);
+          this.ol.notify(EventRefresh, this.enableRefresh);
         }
       })
     );
