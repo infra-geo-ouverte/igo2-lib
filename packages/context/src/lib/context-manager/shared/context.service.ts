@@ -96,8 +96,6 @@ export class ContextService {
 
     this.baseUrl = this.options.url ?? '';
 
-    this.readParamsFromRoute();
-
     if (this.authService.hasAuthService) {
       this.authService.logged$.subscribe((logged) => {
         if (logged) {
@@ -637,17 +635,6 @@ export class ContextService {
 
   getContextLayers(map: IgoMap) {
     return map.layerController.treeLayers;
-  }
-
-  private readParamsFromRoute() {
-    if (!this.route) {
-      return;
-    }
-
-    this.route.queryParams.subscribe((params) => {
-      const positions = this.shareMapService.parser.parsePosition(params);
-      this.mapViewFromRoute = ObjectUtils.removeUndefined(positions);
-    });
   }
 
   private getPath(file: string) {
