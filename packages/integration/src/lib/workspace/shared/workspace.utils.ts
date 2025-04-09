@@ -49,7 +49,8 @@ export function getWorkspaceActions(
   storageService: StorageService,
   languageService: LanguageService,
   mediaService: MediaService,
-  toolState: ToolState
+  toolState: ToolState,
+  interactiveSelectionFormWidget?: Widget
 ): Action[] {
   const actions = [
     {
@@ -141,6 +142,19 @@ export function getWorkspaceActions(
         });
       },
       args: [ogcFilterWidget, workspace]
+    },
+    {
+      id: 'interactiveSelect',
+      icon: 'select-marker',
+      title: 'igo.integration.workspace.interactiveSelection.title',
+      tooltip: 'igo.integration.workspace.interactiveSelection.tooltip',
+      handler: (widget: Widget, ws: FeatureWorkspace | WfsWorkspace) => {
+        ws.activateWidget(widget, {
+          map: ws.map,
+          workspace: ws
+        });
+      },
+      args: [interactiveSelectionFormWidget, workspace]
     },
     {
       id: 'maximize',

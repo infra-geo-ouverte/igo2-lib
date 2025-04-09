@@ -9,7 +9,11 @@ import {
   StorageServiceEvent,
   StorageServiceEventEnum
 } from '@igo2/core/storage';
-import { OgcFilterWidget, WfsWorkspace } from '@igo2/geo';
+import {
+  InteractiveSelectionFormWidget,
+  OgcFilterWidget,
+  WfsWorkspace
+} from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -38,6 +42,9 @@ export class WfsActionsService implements OnDestroy {
   }
 
   constructor(
+    @Optional()
+    @Inject(InteractiveSelectionFormWidget)
+    private interactiveSelectionFormWidget: Widget,
     @Optional()
     @Inject(OgcFilterWidget)
     private ogcFilterWidget: Widget,
@@ -98,7 +105,8 @@ export class WfsActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState
+      this.toolState,
+      this.interactiveSelectionFormWidget
     );
   }
 }

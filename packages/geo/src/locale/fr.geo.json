@@ -823,7 +823,19 @@
         "modifyError": "Un problème est survenu. L'entité n'a pas pu être modifiée.",
         "cancel": "Annuler",
         "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
+        "widget": {
+          "interactiveSelection": {
+            "selection.add": "Ajouter à la présente sélection",
+            "selection.new": "Effectuer la sélection",
+            "selection.remove": "Supprimer les résultats de la sélection",
+            "reset": {
+              "button": "Réinitialiser"
+            },
+            "action.title": "Action à faire avec le résultat de la présente sélection",
+            "buffer.title": "Taille de la zone tampon en mètre"
+          }
+        }
       },
       "formValidation": {
         "mandatory": "{{column}}est un champ obligatoire",
