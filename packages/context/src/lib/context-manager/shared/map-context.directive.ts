@@ -59,16 +59,18 @@ export class MapContextDirective implements OnInit, OnDestroy {
     }
 
     const viewContext: ContextMapView = context.map.view;
-
-    const { pos } = this.shareMapService.keysDefinitions;
-
-    if (this.params[pos.key] || this.component.view) {
-      this.synchronizeMapViewWithParams(context);
-    } else if (
+    const shouldOverrideView =
       !this.component.view ||
       viewContext.keepCurrentView !== true ||
-      context.map.view.projection !== this.map.projection
+      context.map.view.projection !== this.map.projection;
+
+    if (
+      this.shareMapService.hasPositionParams(this.params) &&
+      shouldOverrideView
     ) {
+      const positions = this.shareMapService.parser.parsePosition(this.params);
+      this.component.view = { ...viewContext, ...positions };
+    } else if (shouldOverrideView) {
       this.component.view = viewContext as MapViewOptions;
     }
 
@@ -91,24 +93,6 @@ export class MapContextDirective implements OnInit, OnDestroy {
         }
       }
       this.component.controls = controlsContext;
-    }
-  }
-
-  private synchronizeMapViewWithParams(context: DetailedContext): void {
-    const viewContext: ContextMapView = context.map.view;
-    const { pos, contextKey } = this.shareMapService.keysDefinitions;
-    const isSameContext =
-      !this.params[contextKey] || this.params[contextKey] === context.uri;
-
-    if (this.params[pos.key] && isSameContext) {
-      const positions = this.shareMapService.parser.parsePosition(this.params);
-      this.component.view = { ...viewContext, ...positions };
-    } else if (this.component.view && !isSameContext) {
-      const viewController = this.component.map.viewController;
-      if (viewController.getRotation() !== 0) {
-        viewController.olView.setRotation(0);
-      }
-      this.component.view = viewContext as MapViewOptions;
     }
   }
 }
