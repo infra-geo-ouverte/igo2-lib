@@ -484,9 +484,7 @@ export class EditionWorkspaceService {
 
       this.addFeature(feature, workspace, url, headers);
     } else {
-      if (
-        workspace.layer.dataSource.options.edition.modifyProtocol !== 'post'
-      ) {
+      if (workspace.layer.dataSource.options.edition.modifyMethod !== 'post') {
         url +=
           '?' +
           workspace.layer.dataSource.options.edition.modifyUrl +
@@ -495,8 +493,7 @@ export class EditionWorkspaceService {
         url += workspace.layer.dataSource.options.edition.modifyUrl;
       }
 
-      const protocole =
-        workspace.layer.dataSource.options.edition.modifyProtocol;
+      const protocole = workspace.layer.dataSource.options.edition.modifyMethod;
       const modifyHeaders =
         workspace.layer.dataSource.options.edition.modifyHeaders;
       const headers = new HttpHeaders(modifyHeaders);
@@ -531,10 +528,7 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (
-          (sf.name === property && sf.validation?.readonly) ||
-          (sf.name === property && sf.validation?.send === false)
-        ) {
+        if (sf.name === property && sf.validation?.readonly) {
           delete feature.properties[property];
         }
       }
@@ -647,10 +641,17 @@ export class EditionWorkspaceService {
     }
 
     for (const property in feature.properties) {
+      if (!workspace.layer.dataSource.options.sourceFields) {
+        if (property === 'boundedBy' || property === 'msGeometry') {
+          delete feature.properties[property];
+        }
+        continue;
+      }
+
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
         if (
+          property === 'msGeometry' ||
           (sf.name === property && sf.validation?.readonly) ||
-          (sf.name === property && sf.validation?.send === false) ||
           property === 'boundedBy'
         ) {
           delete feature.properties[property];
@@ -669,6 +670,12 @@ export class EditionWorkspaceService {
         this.messageService.success('igo.geo.workspace.modifySuccess');
 
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+
+        // TODO a valider si la clause if est bonne.
+        if (!workspace.layer.options.sourceOptions?.relations) {
+          this.relationLayers$.next([]);
+          return;
+        }
 
         const relationLayers = [];
         workspace.layer.options.sourceOptions.relations?.forEach((relation) => {

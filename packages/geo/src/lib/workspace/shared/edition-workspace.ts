@@ -17,18 +17,18 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
 import { GeometryType, createInteractionStyle } from '../../draw/shared';
-import { featureToOl } from '../../feature/shared';
+import { Feature, featureToOl } from '../../feature/shared';
 import { DrawControl } from '../../geometry/shared';
 import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
-export interface EditionWorkspaceOptions extends WorkspaceOptions {
+interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
   map: IgoMap;
 }
 
-export class EditionWorkspace extends Workspace {
+export class EditionWorkspace extends Workspace<Feature> {
   readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): ImageLayer | VectorLayer {
@@ -157,7 +157,7 @@ export class EditionWorkspace extends Workspace {
           }
           if (url) {
             url += id;
-            this.deleteFeature(workspace, url);
+            this.deleteFeature(workspace, url); // bug here
           }
         }
       });
