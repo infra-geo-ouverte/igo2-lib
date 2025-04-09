@@ -468,7 +468,13 @@ export class VectorLayer extends Layer {
       this.abortRequests(vectorSource);
     }
 
-    const url = buildUrl(options, currentExtent, wfsProj, randomParam);
+    const properties = this.dataSource.ol.getProperties();
+    const url = buildUrl(
+      { ...options, ...properties },
+      currentExtent,
+      wfsProj,
+      randomParam
+    );
 
     const request: VectorRequest = {
       xhr: undefined,

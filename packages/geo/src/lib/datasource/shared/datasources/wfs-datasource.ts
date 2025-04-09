@@ -18,6 +18,7 @@ import {
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
 import { DataSource } from './datasource';
+import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 import {
@@ -120,6 +121,13 @@ export class WFSDataSource extends DataSource {
 
   public onUnwatch() {
     // empty
+  }
+
+  refresh(): void {
+    this.ol.setProperties({
+      [EventRefresh]: Math.random()
+    });
+    super.refresh();
   }
 
   fetchFeatures({

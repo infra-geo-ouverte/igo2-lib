@@ -21,6 +21,7 @@ import {
   OgcInterfaceFilterOptions,
   OgcSelectorFields
 } from '../../../filter/shared/ogc-filter.interface';
+import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 
@@ -169,6 +170,10 @@ export function formatWFSQueryString(
   const getCapabilities = `${url}${separator}service=WFS&request=GetCapabilities&${version}`;
   let getFeature = `${url}${separator}service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
+
+  if (dataSourceOptions[EventRefresh]) {
+    getFeature += `&${EventRefresh}=${dataSourceOptions[EventRefresh]}`;
+  }
 
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
   getpropertyvalue += `&${cnt}&${valueReference}`;
