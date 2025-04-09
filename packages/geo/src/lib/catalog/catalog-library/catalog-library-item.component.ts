@@ -34,7 +34,7 @@ import { Catalog } from '../shared/catalog.abstract';
     IgoLanguageModule
   ]
 })
-export class CatalogLibaryItemComponent {
+export class CatalogLibraryItemComponent {
   /**
    * Catalog
    */

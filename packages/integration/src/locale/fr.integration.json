@@ -22,6 +22,25 @@
         "advancedMap": "Outils avancés",
         "closestFeature": "Entités à proximité"
       },
+      "catalog": {
+        "library.getCatalogList": "Obtenir la liste du contenu des catalogues",
+        "listExport": {
+          "rank": "Rang",
+          "layerTitle": "Titre de la couche",
+          "layerGroup": "Nom du groupe de couches",
+          "catalog": "Catalogue",
+          "externalProvider": "Fournisseur",
+          "url": "URL",
+          "layerName": "Nom système de la couche d'informaiton",
+          "context": "Contexte/Thématique",
+          "dataDescription": "Description de la donnée",
+          "metadataAbstract": "Description de la donnée",
+          "metadataUrl": "Lien des métadonnées",
+          "documentName": "ListeCouchesInformation_{{value}}",
+          "internal": "Interne",
+          "external": "Externe"
+        }
+      },
       "dataIssueReporterTool": {
         "submit": {
           "title": "Soumettre une incohérence de donnée",
@@ -29,9 +48,7 @@
           "setupMessage": "Veuillez configurer une composante serveur pour soumettre une incohérence",
           "button": "Soumettre la localisation"
         },
-        "reset": {
-          "button": "Réinitialiser la saisie"
-        },
+        "reset": { "button": "Réinitialiser la saisie" },
         "geometry": "Saisir une géométrie",
         "drawGuidePlaceholder": "Guide de dessin",
         "layer": "Couches d'informations",
