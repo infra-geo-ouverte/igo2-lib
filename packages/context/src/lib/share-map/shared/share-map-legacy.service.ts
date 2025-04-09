@@ -30,12 +30,12 @@ export class ShareMapLegacyParser {
     const zoom = params[this.options.zoomKey];
     const rotation = params[this.options.rotationKey];
 
-    return {
+    return ObjectUtils.removeUndefined({
       center: center?.split(',').map(Number),
       projection,
       zoom: zoom ? Number(zoom) : undefined,
       rotation: rotation ? Number(rotation) : undefined
-    };
+    });
   }
 
   private readLayersQueryParamsByType(

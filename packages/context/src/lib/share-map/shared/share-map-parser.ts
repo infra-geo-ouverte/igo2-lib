@@ -17,7 +17,8 @@ import {
 import {
   buildDataSourceOptions,
   getParamValue,
-  hasLegacyParams
+  hasLegacyParams,
+  hasModernShareParams
 } from './share-map.utils';
 
 type BaseLayerOptionsParsed = Pick<
@@ -41,7 +42,10 @@ export class ShareMapParser {
   }
 
   parseLayers(params: Params): AnyLayerOptions[] | undefined {
-    if (hasLegacyParams(params, this.legacyOptions)) {
+    if (
+      !hasModernShareParams(params, this.keysDefinitions) &&
+      hasLegacyParams(params, this.legacyOptions)
+    ) {
       return this.legacy.parseUrl(params);
     }
 
