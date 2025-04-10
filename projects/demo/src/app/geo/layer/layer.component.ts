@@ -14,7 +14,9 @@ import {
   LayerViewerOptions,
   MAP_DIRECTIVES,
   METADATA_DIRECTIVES,
-  MapViewOptions
+  MapViewOptions,
+  ProjectionService,
+  WFSDataSourceOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -61,7 +63,10 @@ export class AppLayerComponent {
     };
   }
 
-  constructor(private layerService: LayerService) {
+  constructor(
+    private layerService: LayerService,
+    private projectionService: ProjectionService // Don't remove this or it'll never be injected,
+  ) {
     const layers: AnyLayerOptions[] = [
       {
         title: 'OSM',
@@ -70,6 +75,35 @@ export class AppLayerComponent {
         sourceOptions: {
           type: 'osm'
         }
+      },
+      {
+        title: 'WFS (Custom EPSG)',
+        visible: true,
+        sourceOptions: {
+          type: 'wfs',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+          params: {
+            featureTypes: 'vg_observation_v_autre_wmst',
+            fieldNameGeometry: 'geometry',
+            maxFeatures: 10000,
+            version: '2.0.0',
+            outputFormat: 'geojson',
+            srsName: 'EPSG:32198',
+            outputFormatDownload: 'shp'
+          },
+          ogcFilters: {
+            enabled: true,
+            editable: false,
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'code_municipalite',
+              expression: '12072'
+            }
+          },
+          formatOptions: {
+            dataProjection: 'EPSG:32198'
+          }
+        } as WFSDataSourceOptions
       },
       {
         title: 'Parcs routiers',
