@@ -124,9 +124,7 @@ export class WFSDataSource extends DataSource {
   }
 
   refresh(): void {
-    this.ol.setProperties({
-      [EventRefresh]: Math.random()
-    });
+    this.properties.set(EventRefresh, Math.random());
     super.refresh();
   }
 
