@@ -468,7 +468,7 @@ export class VectorLayer extends Layer {
       this.abortRequests(vectorSource);
     }
 
-    const properties = this.dataSource.ol.getProperties();
+    const properties = this.dataSource.properties.getAll();
     const url = buildUrl(
       { ...options, ...properties },
       currentExtent,

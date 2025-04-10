@@ -29,6 +29,8 @@ export abstract class DataSource {
 
   protected events = new Map<AnyEventName, Subscription>();
 
+  properties = new DatasourceProperties();
+
   constructor(
     public options: DataSourceOptions = {},
     protected dataService?: DataService
@@ -92,4 +94,31 @@ export abstract class DataSource {
   }
 
   protected abstract onUnwatch();
+}
+
+class DatasourceProperties {
+  /** General object to store general properties */
+  private properties = new Map<string, unknown>();
+
+  get(key: string): unknown {
+    return this.properties.get(key);
+  }
+
+  getAll(): Record<string, unknown> {
+    return { ...Object.fromEntries(this.properties.entries()) };
+  }
+
+  set(key: string, value: unknown): void {
+    this.properties.set(key, value);
+  }
+
+  setMany(object: Record<string, unknown>): void {
+    Object.entries(object).forEach(([key, value]) =>
+      this.properties.set(key, value)
+    );
+  }
+
+  delete(key: string): void {
+    this.properties.delete(key);
+  }
 }
