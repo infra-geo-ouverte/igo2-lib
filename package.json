@@ -85,7 +85,7 @@
     "@commitlint/format": "^19.5.0",
     "@commitlint/types": "^19.5.0",
     "@compodoc/compodoc": "^1.1.15",
-    "@cypress/schematic": "^2.5.1",
+    "@cypress/schematic": "^3.0.0",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.0",
