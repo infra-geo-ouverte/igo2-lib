@@ -25,7 +25,7 @@ export class VectorTileLayer extends Layer {
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
   }

@@ -1,4 +1,12 @@
-import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output
+} from '@angular/core';
 import { Params } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
@@ -8,7 +16,7 @@ import {
   MapBrowserComponent,
   StyleListService,
   StyleService,
-  isLayerGroupOptions,
+  mergeLayersOptions,
   sortLayersByZindex
 } from '@igo2/geo';
 import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
@@ -21,6 +29,11 @@ import {
   addImportedFeaturesStyledToMap,
   addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
+import { ShareMapService } from '../../share-map/shared/share-map.service';
+import {
+  hasLegacyParams,
+  hasModernShareParams
+} from '../../share-map/shared/share-map.utils';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
@@ -36,6 +49,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   @Input() removeLayersOnContextChange = true;
 
+  @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
+
   get map(): IgoMap {
     return this.component.map;
   }
@@ -47,6 +62,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     private configService: ConfigService,
     private styleListService: StyleListService,
     private styleService: StyleService,
+    private shareMapService: ShareMapService,
     @Optional() private route: RouteService
   ) {}
 
@@ -55,12 +71,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       .pipe(filter((context) => context !== undefined))
       .subscribe((context) => this.handleContextChange(context));
 
-    if (
-      this.route &&
-      this.route.options.visibleOnLayersKey &&
-      this.route.options.visibleOffLayersKey &&
-      this.route.options.contextKey
-    ) {
+    if (this.route) {
       this.route.queryParams
         .pipe(first((params) => !ObjectUtils.isEmpty(params)))
         .subscribe((params) => {
@@ -78,6 +89,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       return;
     }
 
+    const contextLayers = this.handleContextWithSharedUrl(
+      ObjectUtils.copyDeep(context)
+    );
+
     if (this.removeLayersOnContextChange === true) {
       this.map.layerController.reset();
     } else {
@@ -89,7 +104,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     const importExportOptions = this.configService.getConfig('importExport');
 
     this.layerService
-      .createLayers(context.layers, context.uri)
+      .createLayers(contextLayers, context.uri)
       .subscribe((layers) => {
         this.handleAddLayers(layers);
 
@@ -107,6 +122,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             }
           });
         }
+
+        this.contextLayersLoaded.emit(true);
       });
 
     if (this.configService.getConfig('offline')?.enable) {
@@ -115,20 +132,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         .pipe(debounceTime(500))
         .subscribe((layers) => this.handleAddLayers(layers));
     }
-  }
-
-  private getFlattenOptions(options: AnyLayerOptions[]): AnyLayerOptions[] {
-    return options.reduce((accumulator, option) => {
-      if (isLayerGroupOptions(option)) {
-        const children = option.children
-          ? this.getFlattenOptions(option.children)
-          : [];
-        accumulator.push(option, ...children);
-      } else {
-        accumulator.push(option);
-      }
-      return accumulator;
-    }, []);
   }
 
   private handleAddLayers(layers: (AnyLayer | undefined)[]) {
@@ -153,27 +156,24 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (!params || !currentLayerid) {
       return visible;
     }
+    const contextParams = this.shareMapService.getContext(params);
 
-    const contextParams = params[this.route.options.contextKey as string];
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
       let visiblelayers: string[] = [];
       let invisiblelayers: string[] = [];
+      const visibleOnLayers =
+        params[this.shareMapService.optionsLegacy.visibleOnLayersKey];
 
-      if (
-        this.route.options.visibleOnLayersKey &&
-        params[this.route.options.visibleOnLayersKey as string]
-      ) {
-        visibleOnLayersParams =
-          params[this.route.options.visibleOnLayersKey as string];
+      const visibleOffLayers =
+        params[this.shareMapService.optionsLegacy.visibleOffLayersKey];
+
+      if (visibleOnLayers) {
+        visibleOnLayersParams = visibleOnLayers;
       }
-      if (
-        this.route.options.visibleOffLayersKey &&
-        params[this.route.options.visibleOffLayersKey as string]
-      ) {
-        visibleOffLayersParams =
-          params[this.route.options.visibleOffLayersKey as string];
+      if (visibleOffLayers) {
+        visibleOffLayersParams = visibleOffLayers;
       }
 
       /* This order is important because to control whichever
@@ -203,5 +203,33 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
 
     return visible;
+  }
+
+  private handleContextWithSharedUrl(
+    context: DetailedContext
+  ): AnyLayerOptions[] {
+    if (
+      !this.queryParams ||
+      (!hasLegacyParams(this.queryParams, this.shareMapService.optionsLegacy) &&
+        !hasModernShareParams(
+          this.queryParams,
+          this.shareMapService.keysDefinitions
+        ))
+    ) {
+      return context.layers;
+    }
+
+    const { layers, uri } = context;
+    const contextValue = this.shareMapService.getContext(this.queryParams);
+
+    if (!contextValue || contextValue === uri) {
+      const layersOptions = this.shareMapService.parser.parseLayers(
+        this.queryParams
+      );
+      if (layersOptions.length) {
+        return mergeLayersOptions([...layers], layersOptions);
+      }
+    }
+    return layers;
   }
 }
