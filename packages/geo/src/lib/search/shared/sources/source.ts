@@ -30,6 +30,7 @@ export class SearchSource {
    * @internal
    */
   protected options: SearchSourceOptions;
+  protected defaultOptions: SearchSourceOptions = {};
 
   /**
    * Get search source's id
@@ -50,8 +51,8 @@ export class SearchSource {
    * Get search source's default options
    * @returns Search source default options
    */
-  protected getDefaultOptions(): SearchSourceOptions {
-    throw new Error('You have to implement the method "getDefaultOptions".');
+  protected getEffectiveOptions(): SearchSourceOptions {
+    throw new Error('You have to implement the method "getEffectiveOptions".');
   }
 
   /**
@@ -116,6 +117,10 @@ export class SearchSource {
     return this._featureStoresWithIndex;
   }
   private _featureStoresWithIndex: FeatureStore[];
+
+  public resetSourceOptions() {
+    this.options = ObjectUtils.copyDeep(this.defaultOptions);
+  }
 
   setWorkspaces(workspaces: Workspace[]) {
     if (
@@ -194,6 +199,10 @@ export class SearchSource {
     private storageService?: StorageService
   ) {
     this.options = options;
+    this.defaultOptions = ObjectUtils.mergeDeep(
+      this.getEffectiveOptions(),
+      this.options
+    );
     if (this.storageService) {
       const storageOptions = this.storageService.get(
         this.getId() + '.options'
@@ -204,7 +213,7 @@ export class SearchSource {
     }
 
     this.options = ObjectUtils.mergeDeep(
-      this.getDefaultOptions(),
+      this.getEffectiveOptions(),
       this.options
     );
 
@@ -258,7 +267,7 @@ export class SearchSource {
   }
 
   getSettingsValues(search: string): SearchSourceSettings {
-    return this.getDefaultOptions().settings.find(
+    return this.getEffectiveOptions().settings.find(
       (value: SearchSourceSettings) => {
         return value.name === search;
       }

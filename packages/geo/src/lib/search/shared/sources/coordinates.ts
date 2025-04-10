@@ -78,7 +78,7 @@ export class CoordinatesReverseSearchSource
     return CoordinatesReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.coordinates.name',
       order: 1,

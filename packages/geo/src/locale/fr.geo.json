@@ -577,6 +577,17 @@
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "reset": {
+              "button": "Réinitialiser les options de recherche",
+              "dialog": {
+                "title": "Choisir les services de recherche à réinitialiser",
+                "form.field.title": "Choisir le(s) service(s) de recherche"
+              },
+              "notice": {
+                "multiple": "Les options des services de recherche sélectionnés ont été réinitialisés.",
+                "single": "Les options du service de recherche sélectionné ont été réinitialisés."
+              }
+            },
             "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

@@ -578,6 +578,17 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "reset": {
+              "button": "Reset search options",
+              "dialog": {
+                "title": "Choose search services to reset",
+                "form.field.title": "Choose search service(s)"
+              },
+              "notice": {
+                "multiple": "The options for the selected search services have been reset.",
+                "single": "The options for the selected search service have been reset."
+              }
+            },
             "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",

@@ -52,6 +52,7 @@
     <igo-search-settings
       *ngIf="searchSettings"
       [pointerSummaryEnabled]="pointerSummaryEnabled"
+      [allowResetSearchSourcesOptions]="allowResetSearchSourcesOptions"
       (pointerSummaryStatus)="pointerSummaryStatus.emit($event)"
       [searchResultsGeometryEnabled]="searchResultsGeometryEnabled"
       (searchResultsGeometryStatus)="searchResultsGeometryStatus.emit($event)"
