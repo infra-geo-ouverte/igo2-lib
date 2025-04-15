@@ -11,6 +11,7 @@ import * as olstyle from 'ol/style';
 import booleanIntersects from '@turf/boolean-intersects';
 import buffer from '@turf/buffer';
 import { Units, lineString } from '@turf/helpers';
+import { feature as turfFeature } from '@turf/helpers';
 import lineIntersect from '@turf/line-intersect';
 
 import { FeatureGeometry } from '../../feature';
@@ -168,10 +169,7 @@ export function bufferOlGeometry(
   units: Units = 'meters'
 ): FeatureGeometry {
   const olGeoJSON = new OlGeoJSON();
-  const bufferedGeom = olGeoJSON.writeGeometryObject(
-    olGeometry
-  ) as FeatureGeometry;
-
-  const buffered = buffer(bufferedGeom, dist, { units });
+  const bufferedGeom = olGeoJSON.writeGeometryObject(olGeometry);
+  const buffered = buffer(turfFeature(bufferedGeom), dist, { units });
   return buffered.geometry;
 }
