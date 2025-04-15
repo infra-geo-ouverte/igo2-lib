@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 
 import { OnUpdateInputs } from '@igo2/common/dynamic-component';
 import {
@@ -62,7 +61,6 @@ enum SelectionAction {
   imports: [
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     IgoLanguageModule,
     FormComponent,
     FormFieldComponent
