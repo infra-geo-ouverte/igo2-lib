@@ -1,4 +1,4 @@
-import { DOCUMENT, Location } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -13,7 +13,9 @@ import {
   ShareMapRouteKeysOptions
 } from './share-map.interface';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class ShareMapService {
   private language = '';
 
@@ -24,7 +26,6 @@ export class ShareMapService {
   parser: ShareMapParser;
 
   constructor(
-    public location: Location,
     public routeService: RouteService,
     @Inject(DOCUMENT) public document: Document
   ) {
@@ -35,11 +36,7 @@ export class ShareMapService {
       languageKey: this.routeService.options.languageKey
     });
 
-    this.encoder = new ShareMapEncoder(
-      this.keysDefinitions,
-      location,
-      document
-    );
+    this.encoder = new ShareMapEncoder(this.keysDefinitions, document);
 
     this.parser = new ShareMapParser(
       this.keysDefinitions,
@@ -65,8 +62,9 @@ export class ShareMapService {
   }
 
   getUrlWithApi(formValues) {
-    const origin = this.document.location.origin;
-    const pathname = this.location.path(false);
+    const loc = this.document.location;
+    const origin = loc.origin;
+    const pathname = loc.pathname;
     return this.language
       ? `${origin + pathname}?context=${formValues.uri}&lang=${this.language}`
       : `${origin + pathname}?context=${formValues.uri}`;
