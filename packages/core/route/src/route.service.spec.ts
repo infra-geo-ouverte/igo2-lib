@@ -14,7 +14,7 @@ describe('RouteService', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            params: of({ zoom: 8 })
+            queryParams: of({ zoom: 8 })
           }
         },
         RouteService
@@ -22,7 +22,10 @@ describe('RouteService', () => {
     });
   });
 
-  it('should ...', inject([RouteService], (service: RouteService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('should create the service', inject(
+    [RouteService],
+    (service: RouteService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });

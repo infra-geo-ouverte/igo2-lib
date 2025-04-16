@@ -1,4 +1,5 @@
 import { Directive, OnDestroy, OnInit } from '@angular/core';
+import { Params } from '@angular/router';
 
 import { MediaService } from '@igo2/core/media';
 import {
@@ -12,6 +13,7 @@ import type { IgoMap } from '@igo2/geo';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextMapView, DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
@@ -27,10 +29,13 @@ export class MapContextDirective implements OnInit, OnDestroy {
     return this.component.map;
   }
 
+  private params: Params;
+
   constructor(
     component: MapBrowserComponent,
     private contextService: ContextService,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private shareMapService: ShareMapService
   ) {
     this.component = component;
   }
@@ -39,6 +44,9 @@ export class MapContextDirective implements OnInit, OnDestroy {
     this.context$$ = this.contextService.context$
       .pipe(filter((context) => context !== undefined))
       .subscribe((context) => this.handleContextChange(context));
+    this.shareMapService.routeService.queryParams.subscribe((params) => {
+      this.params = params;
+    });
   }
 
   ngOnDestroy() {
@@ -51,13 +59,21 @@ export class MapContextDirective implements OnInit, OnDestroy {
     }
 
     const viewContext: ContextMapView = context.map.view;
-    if (
+    const shouldOverrideView =
       !this.component.view ||
       viewContext.keepCurrentView !== true ||
-      context.map.view.projection !== this.map.projection
+      context.map.view.projection !== this.map.projection;
+
+    if (
+      this.shareMapService.hasPositionParams(this.params) &&
+      shouldOverrideView
     ) {
+      const positions = this.shareMapService.parser.parsePosition(this.params);
+      this.component.view = { ...viewContext, ...positions };
+    } else if (shouldOverrideView) {
       this.component.view = viewContext as MapViewOptions;
     }
+
     if (this.component.map.geolocationController) {
       this.component.map.geolocationController.updateGeolocationOptions(
         viewContext

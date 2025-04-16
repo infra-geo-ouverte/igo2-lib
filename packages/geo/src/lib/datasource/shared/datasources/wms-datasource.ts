@@ -1,3 +1,5 @@
+import { Optional } from '@angular/core';
+
 import { ObjectUtils } from '@igo2/utils';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
@@ -114,8 +116,8 @@ export class WMSDataSource extends DataSource {
 
   constructor(
     public options: WMSDataSourceOptions,
-    protected wfsService: WFSService,
-    private ogcFilterService: OGCFilterService
+    @Optional() protected wfsService?: WFSService,
+    @Optional() private ogcFilterService?: OGCFilterService
   ) {
     super(options);
     const sourceParams: any = options.params;
@@ -214,11 +216,11 @@ export class WMSDataSource extends DataSource {
       initOgcFilters.editable &&
       (options.sourceFields || []).filter((sf) => !sf.values).length > 0
     ) {
-      this.wfsService.getSourceFieldsFromWFS(options);
+      this.wfsService?.getSourceFieldsFromWFS(options);
     }
 
     if (options.ogcFilters?.enabled && options.ogcFilters?.filters) {
-      this.ogcFilterService.setOgcWMSFiltersOptions(this);
+      this.ogcFilterService?.setOgcWMSFiltersOptions(this);
     }
 
     const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(
