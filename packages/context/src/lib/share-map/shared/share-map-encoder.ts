@@ -1,5 +1,3 @@
-import { Location } from '@angular/common';
-
 import {
   AnyDataSourceOptions,
   AnyLayer,
@@ -35,7 +33,6 @@ export class ShareMapEncoder {
 
   constructor(
     private SHARE_MAP_DEFS: ShareMapKeysDefinitions,
-    private location: Location,
     private document: Document
   ) {}
 
@@ -336,8 +333,9 @@ export class ShareMapEncoder {
     language: string | undefined
   ): string {
     const { pos, contextKey, languageKey } = this.SHARE_MAP_DEFS;
-    const origin = this.document.location.origin;
-    const pathname = this.location.path(false);
+    const loc = this.document.location;
+    const origin = loc.origin;
+    const pathname = loc.pathname;
     const baseUrl = this.sanitizeBaseUrl(origin + pathname);
 
     const params: string[] = [];

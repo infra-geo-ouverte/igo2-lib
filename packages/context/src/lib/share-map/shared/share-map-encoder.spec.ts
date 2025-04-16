@@ -1,5 +1,3 @@
-import { Location } from '@angular/common';
-
 import { Layer, isLayerItem } from '@igo2/geo';
 
 import { shareMapKeyDefs } from './share-map-definitions';
@@ -65,21 +63,22 @@ const EXPECTED_LAYERS_QUERY_URL: string =
 
 describe('ShareMapEncoder', () => {
   let shareMapEncoder: ShareMapEncoder;
-  let locationMock: jasmine.SpyObj<Location>;
-
   let EXPECTED_BASE_URL: string;
   let SHARE_MAP_DEFS: ShareMapKeysDefinitions;
   let posStringified: string;
+  let mockDocument: Document;
 
   beforeEach(() => {
     SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
-    locationMock = jasmine.createSpyObj('Location', ['path']);
-    locationMock.path.and.callFake(() => location.pathname);
-    const mockDocument = {
+    mockDocument = {
       location: {
         origin:
           typeof globalThis !== 'undefined' && globalThis.location
             ? globalThis.location.origin
+            : '',
+        pathname:
+          typeof globalThis !== 'undefined' && globalThis.location
+            ? globalThis.location.pathname
             : ''
       }
     } as Document;
@@ -95,11 +94,7 @@ describe('ShareMapEncoder', () => {
 
     posStringified = `${pos.key}=${params.center.key + params.center.stringify(MAP_MOCK.viewController.getCenter())}`;
     EXPECTED_BASE_URL = `${EXPECTED_BASE_URL}?${posStringified}`;
-    shareMapEncoder = new ShareMapEncoder(
-      keysDefinitions,
-      locationMock,
-      mockDocument
-    );
+    shareMapEncoder = new ShareMapEncoder(keysDefinitions, mockDocument);
   });
 
   it('should be created', () => {
@@ -180,10 +175,8 @@ describe('ShareMapEncoder', () => {
     it('should delete pos and urls from url and return new url with tool param', () => {
       const map = MAP_MOCK;
       shareMapEncoder['context'] = CONTEXT_MOCK;
+      mockDocument.location.pathname = `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`;
 
-      locationMock.path.and.returnValue(
-        `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`
-      );
       const result = shareMapEncoder.generateUrl(
         map,
         CONTEXT_MOCK,
@@ -199,10 +192,8 @@ describe('ShareMapEncoder', () => {
     it('should delete all old params and return url with new params', () => {
       const map = MAP_MOCK;
       shareMapEncoder['context'] = CONTEXT_MOCK;
+      mockDocument.location.pathname = `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd`;
 
-      locationMock.path.and.returnValue(
-        `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd`
-      );
       const result = shareMapEncoder.generateUrl(
         map,
         CONTEXT_MOCK,
