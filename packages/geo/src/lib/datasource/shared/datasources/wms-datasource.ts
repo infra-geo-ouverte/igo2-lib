@@ -116,8 +116,8 @@ export class WMSDataSource extends DataSource {
 
   constructor(
     public options: WMSDataSourceOptions,
-    private ogcFilterService: OGCFilterService,
-    @Optional() protected wfsService?: WFSService
+    @Optional() protected wfsService?: WFSService,
+    @Optional() private ogcFilterService?: OGCFilterService
   ) {
     super(options);
     const sourceParams: any = options.params;
@@ -220,7 +220,7 @@ export class WMSDataSource extends DataSource {
     }
 
     if (options.ogcFilters?.enabled && options.ogcFilters?.filters) {
-      this.ogcFilterService.setOgcWMSFiltersOptions(this);
+      this.ogcFilterService?.setOgcWMSFiltersOptions(this);
     }
 
     const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(
