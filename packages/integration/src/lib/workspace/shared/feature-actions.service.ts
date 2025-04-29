@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
@@ -36,12 +36,13 @@ export class FeatureActionsService implements OnDestroy {
   }
 
   constructor(
-    @Inject(InteractiveSelectionFormWidget)
-    private interactiveSelectionFormWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private toolState: ToolState,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    @Optional()
+    @Inject(InteractiveSelectionFormWidget)
+    private interactiveSelectionFormWidget?: Widget
   ) {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean

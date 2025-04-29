@@ -42,16 +42,16 @@ export class WfsActionsService implements OnDestroy {
   }
 
   constructor(
-    @Optional()
-    @Inject(InteractiveSelectionFormWidget)
-    private interactiveSelectionFormWidget: Widget,
-    @Optional()
-    @Inject(OgcFilterWidget)
-    private ogcFilterWidget: Widget,
     private storageState: StorageState,
     public languageService: LanguageService,
     private mediaService: MediaService,
-    private toolState: ToolState
+    private toolState: ToolState,
+    @Optional()
+    @Inject(InteractiveSelectionFormWidget)
+    private interactiveSelectionFormWidget?: Widget,
+    @Optional()
+    @Inject(OgcFilterWidget)
+    private ogcFilterWidget?: Widget
   ) {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
