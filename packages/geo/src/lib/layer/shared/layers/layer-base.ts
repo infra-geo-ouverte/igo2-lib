@@ -38,7 +38,7 @@ export abstract class LayerBase {
   }
 
   get parentId(): string {
-    return this.options.parentId;
+    return this.parent?.id ?? this.options.parentId;
   }
 
   get alias(): string {
@@ -61,6 +61,7 @@ export abstract class LayerBase {
     }
     this.ol.setZIndex(zIndex);
   }
+  initialZIndex: number;
 
   get baseLayer(): boolean {
     return this.options.baseLayer;
