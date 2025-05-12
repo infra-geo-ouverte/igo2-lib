@@ -49,7 +49,7 @@ export class WMSDataSource extends DataSource {
 
   set stylesParams(value: string) {
     this.options.params.STYLES = value;
-    this.ol.updateParams({ value });
+    this.ol.updateParams({ STYLES: value });
   }
 
   get queryTitle(): string {
