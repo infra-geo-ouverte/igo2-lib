@@ -231,6 +231,7 @@ export function createTableTemplate(
       title: field.alias ? field.alias : field.name,
       renderer: EntityTableColumnRenderer.UnsanitizedHTML,
       tooltip: field.tooltip,
+      visible: field.visible,
       cellClassFunc: () => {
         const cellClass = {};
         if (field.type) {
