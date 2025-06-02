@@ -4,14 +4,6 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": [
-    "@floating-ui/utils",
-    "angular-shepherd",
-    "ngx-color",
-    "scroll-into-view-if-needed",
-    "tinycolor2",
-    "typy"
-  ],
   "assets": [
     {
       "input": "",

@@ -30,13 +30,13 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.6.0",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "tslib": "^2.6.0"
   },
   "peerDependencies": {
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0"
+    "@angular/platform-browser": "^19.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"

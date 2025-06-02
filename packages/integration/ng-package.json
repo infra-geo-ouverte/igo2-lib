@@ -4,7 +4,6 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["@turf", "jspdf", "jspdf-autotable"],
   "assets": [
     { "input": "", "glob": "**/*.them*.scss", "output": "" },
     { "input": "src/style", "glob": "**/*.scss", "output": "src/style" },
