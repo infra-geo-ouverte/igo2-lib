@@ -1,3 +1,4 @@
+import { NgFor } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
@@ -11,7 +12,7 @@ import { LayerUnavailableComponent } from '../layer-unavailable.component';
   styleUrls: ['./layer-unavailable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ListComponent, ListItemDirective, LayerUnavailableComponent]
+  imports: [NgFor, ListComponent, ListItemDirective, LayerUnavailableComponent]
 })
 export class LayerUnavailableListComponent {
   @Input() layersOptions: AnyLayerOptions[];
