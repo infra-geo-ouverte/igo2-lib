@@ -10,6 +10,8 @@ import { IconService } from '../shared/icon.service';
   templateUrl: './icon.component.html'
 })
 export class IgoIconComponent {
+  @Input() color: string | null | undefined;
+
   @Input({ required: true })
   set icon(icon: string | IconSvg) {
     if (this.isSvg(icon)) {
