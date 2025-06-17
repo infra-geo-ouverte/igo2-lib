@@ -101,30 +101,37 @@ export function withAsyncConfig(
 
 /**
  * Get the first segment of the path (e.g., '/en/alerts' => 'en')
+ * @param allowedLanguages default to ['fr', 'en']
  */
-export function withDefaultLanguage(
-  defaultLang?: Language
+export function withUrlDefaultLanguage(
+  defaultLang?: Language,
+  allowedLanguages: Language[] = ['fr', 'en']
 ): TranslationFeature<TranslationFeatureKind.DefaultLanguage> {
   return {
     kind: TranslationFeatureKind.DefaultLanguage,
     providers: [
       {
         provide: DEFAULT_LANGUAGE,
-        useFactory: defaultLanguageSegmentFactory(defaultLang)
+        useFactory: defaultLanguageSegmentFactory(allowedLanguages, defaultLang)
       }
     ]
   };
 }
 
-function defaultLanguageSegmentFactory(defaultLang?: Language): () => string {
+function defaultLanguageSegmentFactory(
+  allowedLanguages: Language[],
+  defaultLang?: Language
+): () => string | undefined {
   return () => {
     const doc = inject(DOCUMENT);
     const url = new URL(doc.location.href);
 
     const firstSegment = url.pathname.split('/').filter(Boolean)[0];
-    const lang = firstSegment ?? defaultLang ?? 'fr';
+    if (allowedLanguages.includes(firstSegment)) {
+      return firstSegment;
+    }
 
-    return lang;
+    return defaultLang;
   };
 }
 
