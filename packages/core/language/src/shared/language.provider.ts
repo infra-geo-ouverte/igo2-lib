@@ -1,8 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpBackend } from '@angular/common/http';
 import {
   EnvironmentProviders,
   Provider,
-  importProvidersFrom,
   inject,
   makeEnvironmentProviders,
   provideAppInitializer
@@ -11,10 +11,12 @@ import {
 import { ConfigService } from '@igo2/core/config';
 
 import {
+  DEFAULT_LANGUAGE,
+  Language,
   MissingTranslationHandler,
   TranslateLoader,
-  TranslateModule,
-  TranslateModuleConfig
+  TranslateModuleConfig,
+  provideTranslateService
 } from '@ngx-translate/core';
 import { first } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -36,7 +38,8 @@ export interface TranslationFeature<KindT extends TranslationFeatureKind> {
 }
 
 export enum TranslationFeatureKind {
-  Translation = 0
+  Translation = 0,
+  DefaultLanguage = 1
 }
 
 /**
@@ -75,9 +78,7 @@ export function withStaticConfig(
   return {
     kind: TranslationFeatureKind.Translation,
     providers: [
-      importProvidersFrom(
-        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
-      )
+      provideTranslateService(setTranslationConfig(loader, defaultLanguage))
     ]
   };
 }
@@ -93,10 +94,37 @@ export function withAsyncConfig(
   return {
     kind: TranslationFeatureKind.Translation,
     providers: [
-      importProvidersFrom(
-        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
-      )
+      provideTranslateService(setTranslationConfig(loader, defaultLanguage))
     ]
+  };
+}
+
+/**
+ * Get the first segment of the path (e.g., '/en/alerts' => 'en')
+ */
+export function withDefaultLanguage(
+  defaultLang?: Language
+): TranslationFeature<TranslationFeatureKind.DefaultLanguage> {
+  return {
+    kind: TranslationFeatureKind.DefaultLanguage,
+    providers: [
+      {
+        provide: DEFAULT_LANGUAGE,
+        useFactory: defaultLanguageSegmentFactory(defaultLang)
+      }
+    ]
+  };
+}
+
+function defaultLanguageSegmentFactory(defaultLang?: Language): () => string {
+  return () => {
+    const doc = inject(DOCUMENT);
+    const url = new URL(doc.location.href);
+
+    const firstSegment = url.pathname.split('/').filter(Boolean)[0];
+    const lang = firstSegment ?? defaultLang ?? 'fr';
+
+    return lang;
   };
 }
 
