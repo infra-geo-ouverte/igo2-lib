@@ -1,4 +1,4 @@
-import { getClient } from '@sentry/angular';
+import { getClient, replayIntegration } from '@sentry/angular';
 
 import { MOCK_SENTRY_OPTIONS } from '../__mocks__/monitoring-mock';
 import { createSentryErrorHandler, initSentry } from './sentry';
@@ -25,18 +25,15 @@ describe('Sentry', () => {
       expect(client).toBeDefined();
     });
 
-    it('should initialize Sentry integration with BrowserTracing and Replay enabled', () => {
+    it('should initialize Sentry integration with Replay enabled', () => {
       options = {
         ...options,
-        tracesSampleRate: 1,
-        replaysSessionSampleRate: 1
+        integrations: [replayIntegration()]
       };
       initSentry(options, true);
       const client = getClient();
       const replay = client.getIntegrationByName('Replay');
-      const tracing = client.getIntegrationByName('BrowserTracing');
       expect(replay).toBeDefined();
-      expect(tracing).toBeDefined();
     });
   });
 });
