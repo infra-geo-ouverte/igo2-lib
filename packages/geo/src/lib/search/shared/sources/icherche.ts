@@ -782,6 +782,26 @@ export class IChercheReverseSearchSource
               title: 'igo.geo.search.icherche.type.unites',
               value: 'unites',
               enabled: types.indexOf('unites') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.tours',
+              value: 'tours',
+              enabled: types.indexOf('tours') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.rss',
+              value: 'rss',
+              enabled: types.indexOf('rss') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.rls',
+              value: 'rls',
+              enabled: types.indexOf('rls') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.clsc',
+              value: 'clsc',
+              enabled: types.indexOf('clsc') !== -1
             }
           ]
         },
