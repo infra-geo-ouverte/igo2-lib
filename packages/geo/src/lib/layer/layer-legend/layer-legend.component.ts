@@ -153,7 +153,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     ) {
       lastlLegend = [];
     } else {
-      lastlLegend = this.layer.dataSource.getLegend();
+      lastlLegend = this.layer.dataSource.getLegend(
+        this.currentStyle,
+        this.view
+      );
     }
 
     if (
@@ -256,7 +259,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer.dataSource.getLegend();
+    let legendItems = this.layer.dataSource.getLegend(
+      this.currentStyle,
+      this.view
+    );
     if (this.layer.legend && this.layer.legend.length > 1) {
       legendItems = this.transfertToggleLegendItem(legendItems);
     }
