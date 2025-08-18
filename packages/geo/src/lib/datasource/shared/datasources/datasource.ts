@@ -38,8 +38,9 @@ export abstract class DataSource {
     return generateIdFromSourceOptions(this.options);
   }
 
- public getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
-     return this.legend ? this.legend : [];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public getLegend(_style?: string, _view?: LegendMapViewOptions): Legend[] {
+    return this.legend ? this.legend : [];
   }
 
   public setLegend(options: LegendOptions): Legend[] {
