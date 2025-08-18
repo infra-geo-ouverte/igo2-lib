@@ -4,7 +4,10 @@ import olVectorSource from 'ol/source/Vector';
 
 import { Observable, Subscription } from 'rxjs';
 
-import { LegendOptions } from '../../../layer/shared/layers/legend.interface';
+import {
+  LegendMapViewOptions,
+  LegendOptions
+} from '../../../layer/shared/layers/legend.interface';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { DataService } from './data.service';
 import {
@@ -46,7 +49,8 @@ export abstract class DataSource {
     return generateIdFromSourceOptions(this.options);
   }
 
-  public getLegend(): Legend[] {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public getLegend(_style?: string, _view?: LegendMapViewOptions): Legend[] {
     return this.legend ? this.legend : [];
   }
 
