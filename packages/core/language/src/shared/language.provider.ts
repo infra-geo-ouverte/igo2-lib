@@ -11,11 +11,12 @@ import {
 import { ConfigService } from '@igo2/core/config';
 
 import {
-  DEFAULT_LANGUAGE,
   Language,
   MissingTranslationHandler,
+  TRANSLATE_SERVICE_CONFIG,
   TranslateLoader,
   TranslateModuleConfig,
+  TranslateServiceConfig,
   provideTranslateService
 } from '@ngx-translate/core';
 import { first } from 'rxjs';
@@ -104,15 +105,18 @@ export function withAsyncConfig(
  * @param allowedLanguages default to ['fr', 'en']
  */
 export function withUrlDefaultLanguage(
-  defaultLang?: Language,
+  fallbackLang?: Language,
   allowedLanguages: Language[] = ['fr', 'en']
 ): TranslationFeature<TranslationFeatureKind.DefaultLanguage> {
   return {
     kind: TranslationFeatureKind.DefaultLanguage,
     providers: [
       {
-        provide: DEFAULT_LANGUAGE,
-        useFactory: defaultLanguageSegmentFactory(allowedLanguages, defaultLang)
+        provide: TRANSLATE_SERVICE_CONFIG,
+        useFactory: defaultLanguageSegmentFactory(
+          allowedLanguages,
+          fallbackLang
+        )
       }
     ]
   };
@@ -120,18 +124,25 @@ export function withUrlDefaultLanguage(
 
 function defaultLanguageSegmentFactory(
   allowedLanguages: Language[],
-  defaultLang?: Language
-): () => string | undefined {
+  fallbackLang?: Language
+): () => TranslateServiceConfig {
   return () => {
     const doc = inject(DOCUMENT);
     const url = new URL(doc.location.href);
 
     const firstSegment = url.pathname.split('/').filter(Boolean)[0];
     if (allowedLanguages.includes(firstSegment)) {
-      return firstSegment;
+      return {
+        extend: true,
+        lang: firstSegment
+      } satisfies TranslateServiceConfig;
     }
 
-    return defaultLang;
+    return {
+      extend: true,
+      lang: fallbackLang,
+      fallbackLang: fallbackLang ?? 'fr'
+    } satisfies TranslateServiceConfig;
   };
 }
 
