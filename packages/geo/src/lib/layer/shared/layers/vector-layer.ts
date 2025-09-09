@@ -44,10 +44,10 @@ import {
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { MapExtent } from '../../../map/shared/map.interface';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
+import { GeoDB } from '../../../offline/geoDB/geoDB';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
-import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { LayerDB } from '../../../offline/layerDB/layerDB';
 import { LayerDBData } from '../../../offline/layerDB/layerDB.interface';
-import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import {
   GeoNetworkService,
   SimpleGetOptions
@@ -87,9 +87,7 @@ export class VectorLayer extends Layer {
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService,
-    public geoDBService?: GeoDBService,
-    public layerDBService?: LayerDBService
+    private geoNetworkService?: GeoNetworkService
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
@@ -135,7 +133,7 @@ export class VectorLayer extends Layer {
         }.bind(this)
       );
     }
-    if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+    if (this.options.idbInfo?.storeToIdb) {
       if (this.options.idbInfo.firstLoad) {
         this.maintainFeaturesInIdb();
       }
@@ -214,7 +212,7 @@ export class VectorLayer extends Layer {
       if (loader) {
         vectorSource.setLoader(loader);
       }
-    } else if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+    } else if (this.options.idbInfo?.storeToIdb) {
       const idbLoader = (extent, resolution, proj, success, failure) => {
         this.customIDBLoader(
           vectorSource,
@@ -230,7 +228,7 @@ export class VectorLayer extends Layer {
       }
     }
 
-    if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+    if (this.options.idbInfo?.storeToIdb) {
       vector.once('sourceready', () => {
         if (this.options.idbInfo.firstLoad) {
           this.maintainOptionsInIdb();
@@ -251,12 +249,9 @@ export class VectorLayer extends Layer {
   }
 
   private removeLayerFromIDB() {
-    if (this.geoDBService && this.layerDBService) {
-      zip(
-        this.geoDBService.deleteByKey(this.id),
-        this.layerDBService.deleteByKey(this.id)
-      ).subscribe();
-    }
+    const geoDB = new GeoDB();
+    const layerDB = new LayerDB();
+    zip(geoDB.delete(this.id), layerDB.delete(this.id)).subscribe();
   }
 
   private maintainOptionsInIdb() {
@@ -280,7 +275,8 @@ export class VectorLayer extends Layer {
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
     });
-    this.layerDBService.update(layerData);
+    const layerDB = new LayerDB();
+    layerDB.update(layerData).pipe(first()).subscribe();
   }
 
   private maintainFeaturesInIdb() {
@@ -291,13 +287,18 @@ export class VectorLayer extends Layer {
         featureProjection: this.dataSource.ol.getProjection() || 'EPSG:3857'
       })
     );
-    this.geoDBService.update(
-      this.id,
-      this.id,
-      geojsonObject,
-      InsertSourceInsertDBEnum.User,
-      `${this.title}-${this.id}-${new Date()}`
-    );
+
+    const geoDB = new GeoDB();
+    geoDB
+      .update(
+        this.id,
+        this.id,
+        geojsonObject,
+        InsertSourceInsertDBEnum.User,
+        `${this.title}-${this.id}-${new Date()}`
+      )
+      .pipe(first())
+      .subscribe();
   }
 
   protected flash(feature) {
@@ -634,7 +635,8 @@ export class VectorLayer extends Layer {
       };
 
       const options: SimpleGetOptions = { responseType };
-      this.geoNetworkService.geoDBService
+      const geoDB = new GeoDB();
+      geoDB
         .get(url)
         .pipe(delay(750))
         .pipe(
@@ -748,41 +750,40 @@ export class VectorLayer extends Layer {
     success,
     failure
   ) {
-    if (this.geoNetworkService) {
-      const onError = () => {
-        vectorSource.removeLoadedExtent(extent);
-        failure();
-      };
-      this.geoNetworkService.geoDBService.get(layerID).subscribe((content) => {
-        if (content) {
-          const format = vectorSource.getFormat();
-          const type = format.getType();
-          let source;
-          if (type === 'json' || type === 'text') {
-            source = content;
-          } else if (type === 'xml') {
-            source = content;
-            if (!source) {
-              source = new DOMParser().parseFromString(
-                content,
-                'application/xml'
-              );
-            }
-          } else if (type === 'arraybuffer') {
-            source = content;
+    const onError = () => {
+      vectorSource.removeLoadedExtent(extent);
+      failure();
+    };
+    const geoDB = new GeoDB();
+    geoDB.get(layerID).subscribe((content) => {
+      if (content) {
+        const format = vectorSource.getFormat();
+        const type = format.getType();
+        let source;
+        if (type === 'json' || type === 'text') {
+          source = content;
+        } else if (type === 'xml') {
+          source = content;
+          if (!source) {
+            source = new DOMParser().parseFromString(
+              JSON.stringify(content),
+              'application/xml'
+            );
           }
-          if (source) {
-            const features = format.readFeatures(source, {
-              extent,
-              featureProjection: projection
-            });
-            vectorSource.addFeatures(features, format.readProjection(source));
-            success(features);
-          } else {
-            onError();
-          }
+        } else if (type === 'arraybuffer') {
+          source = content;
         }
-      });
-    }
+        if (source) {
+          const features = format.readFeatures(source, {
+            extent,
+            featureProjection: projection
+          });
+          vectorSource.addFeatures(features, format.readProjection(source));
+          success(features);
+        } else {
+          onError();
+        }
+      }
+    });
   }
 }
