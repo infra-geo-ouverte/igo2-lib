@@ -28,7 +28,7 @@ import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation, withStaticConfig } from '@igo2/core/language';
-import { provideMonitoring } from '@igo2/core/monitoring';
+import { provideSentryMonitoring } from '@igo2/core/monitoring';
 
 import { environment } from '../environments/environment';
 import { routes } from './app.routing';
@@ -53,7 +53,7 @@ export const appConfig: ApplicationConfig = {
     provideTranslation(withStaticConfig(environment.igo.language)),
     provideAuthentification(),
     provideIcon(),
-    provideMonitoring(environment.igo.monitoring),
+    provideSentryMonitoring(environment.igo.monitoring),
     provideAuthUserMonitoring(environment.igo.monitoring),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

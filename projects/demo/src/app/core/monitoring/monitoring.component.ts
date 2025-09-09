@@ -41,7 +41,7 @@ export class AppMonitoringComponent {
 
 const EXAMPLE_PROVIDER = `bootstrapApplication(AppComponent, {
   providers: [
-    ...provideMonitoring(environment.igo.monitoring),
+    ...provideSentryMonitoring(environment.igo.monitoring),
 
     // Provide the authentication user monitoring if you want to identify your user (id, fullname, email) in the error logging
     ...provideAuthUserMonitoring(environment.igo.monitoring)
