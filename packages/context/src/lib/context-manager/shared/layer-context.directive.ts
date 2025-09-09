@@ -108,8 +108,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           });
         }
       });
-
-    if (this.configService.getConfig('offline')?.enable) {
+    if (this.configService.getConfig('importExport.allowToStoreLayer', false)) {
       this.layerService
         .createAsyncIdbLayers(context.uri)
         .pipe(debounceTime(500))
