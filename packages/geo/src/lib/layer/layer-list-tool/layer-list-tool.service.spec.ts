@@ -1,8 +1,6 @@
 // import { InjectionToken } from '@angular/core';
 // import { TestBed, inject } from '@angular/core/testing';
 
-// import { NgxIndexedDBService } from 'ngx-indexed-db';
-
 // import { TEST_CONFIG } from '../../../test-config';
 // import { LayerListToolService } from './layer-list-tool.service';
 
