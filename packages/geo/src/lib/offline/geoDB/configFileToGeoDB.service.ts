@@ -8,25 +8,27 @@ import { ActiveToast } from 'ngx-toastr';
 import { of, zip } from 'rxjs';
 import { catchError, concatMap } from 'rxjs/operators';
 
+import { GeoDB } from './geoDB';
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
 import { DatasToIDB, GeoDBData } from './geoDB.interface';
-import { GeoDBService } from './geoDB.service';
 
 @Injectable()
 export class ConfigFileToGeoDBService {
   constructor(
     private http: HttpClient,
-    private geoDBService: GeoDBService,
     private messageService: MessageService
   ) {}
 
-  load(url: string) {
+  load(urlFile: string) {
+    const geoDB = new GeoDB();
     let downloadMessage: ActiveToast<any>;
     this.http
-      .get(url)
+      .get(urlFile)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.messageService.error(`GeoData file ${url} could not be read`);
+          this.messageService.error(
+            `GeoData file ${urlFile} could not be read`
+          );
           error.error.caught = true;
           throw error;
         }),
@@ -35,7 +37,7 @@ export class ConfigFileToGeoDBService {
           let firstDownload = true;
           if (datasToIDB?.geoDatas) {
             const currentDate = new Date();
-            datasToIDB?.geoDatas.map((geoData) => {
+            datasToIDB?.geoDatas.forEach((geoData) => {
               if (typeof geoData.triggerDate === 'string') {
                 geoData.triggerDate = new Date(Date.parse(geoData.triggerDate));
               }
@@ -44,9 +46,9 @@ export class ConfigFileToGeoDBService {
                   const insertEvent = `${
                     geoData.source || InsertSourceInsertDBEnum.System
                   } (${geoData.triggerDate})`;
-                  geoData.urls.map((url) => {
+                  geoData.urls.forEach((url) => {
                     datas$.push(
-                      this.geoDBService.getByID(url).pipe(
+                      geoDB.getGeoDBData(url).pipe(
                         concatMap((res: GeoDBData) => {
                           if (res?.insertEvent !== insertEvent) {
                             if (firstDownload) {
@@ -84,7 +86,7 @@ export class ConfigFileToGeoDBService {
                               concatMap((r) => {
                                 if (isZip) {
                                   const observables$ = [
-                                    this.geoDBService.update(
+                                    geoDB.update(
                                       url,
                                       url,
                                       {},
@@ -113,7 +115,7 @@ export class ConfigFileToGeoDBService {
                                                 : '/') +
                                               relativePath;
                                             observables$.push(
-                                              this.geoDBService.update(
+                                              geoDB.update(
                                                 zippedUrl,
                                                 url,
                                                 geojson,
@@ -127,7 +129,7 @@ export class ConfigFileToGeoDBService {
                                   });
                                   return zip(observables$);
                                 }
-                                return this.geoDBService.update(
+                                return geoDB.update(
                                   url,
                                   url,
                                   r,
@@ -144,8 +146,8 @@ export class ConfigFileToGeoDBService {
                     );
                   });
                 } else if (geoData.action === 'delete') {
-                  geoData.urls.map((url) => {
-                    datas$.push(this.geoDBService.deleteByKey(url));
+                  geoData.urls.forEach((url) => {
+                    datas$.push(geoDB.delete(url));
                   });
                 }
               }
