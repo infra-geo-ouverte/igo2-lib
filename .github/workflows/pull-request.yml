@@ -38,3 +38,6 @@ jobs:
 
       - name: Build
         run: npm run build.libs
+
+      - name: Build demo
+        run: npm run build.demo
