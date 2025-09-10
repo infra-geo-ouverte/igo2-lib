@@ -3,6 +3,7 @@ import { Injectable, Optional } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
+import { GeoDBService, LayerDBService } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
 import olLayerVectorTile from 'ol/layer/VectorTile';
@@ -35,7 +36,6 @@ import {
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
-import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleService } from '../../style/style-service/style.service';
 import {
@@ -71,6 +71,8 @@ export class LayerService {
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
     private messageService: MessageService,
+    @Optional() private layerDBService: LayerDBService,
+    @Optional() private geoDBService: GeoDBService,
     @Optional() private geoNetworkService?: GeoNetworkService,
     @Optional() private authInterceptor?: AuthInterceptor
   ) {}
@@ -251,7 +253,9 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geoDBService,
+        this.layerDBService
       );
     }
 
@@ -271,7 +275,9 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geoDBService,
+        this.layerDBService
       );
     }
 
@@ -284,7 +290,9 @@ export class LayerService {
         layerOptionsOl,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geoDBService,
+        this.layerDBService
       );
     }
 
@@ -431,8 +439,7 @@ export class LayerService {
   }
 
   createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
-    const layerDB = new LayerDB();
-    return layerDB.getAll().pipe(
+    return this.layerDBService?.getAll().pipe(
       concatMap((res) => {
         const idbLayers =
           contextUri !== '*'

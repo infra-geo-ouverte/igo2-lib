@@ -1,16 +1,32 @@
-import { IDBPDatabase } from 'idb';
+import { Injectable } from '@angular/core';
+
+import { IDBPDatabase, openDB } from 'idb';
 import { Observable, from } from 'rxjs';
 import { concatMap, first, map, mergeMap, switchMap } from 'rxjs/operators';
 
-import { IgoDBSchema } from '../shared/indexed-db.interface';
-import { createIndexedDb } from '../shared/indexed-db.utils';
-import { LayerDBData } from './layerDB.interface';
+import { LayerDBData, LayerDataDBSchema } from './layerDB.interface';
 
-export class LayerDB {
-  private db$: Observable<IDBPDatabase<IgoDBSchema>>;
+@Injectable()
+export class LayerDBService {
+  private databaseName = 'layerdata-db';
+  private databaseVersion = 1;
+  private db$: Observable<IDBPDatabase<LayerDataDBSchema>>;
 
   constructor() {
-    this.db$ = createIndexedDb();
+    this.db$ = this.createLayerDataDb();
+  }
+
+  private createLayerDataDb(): Observable<IDBPDatabase<LayerDataDBSchema>> {
+    return from(
+      openDB<LayerDataDBSchema>(this.databaseName, this.databaseVersion, {
+        upgrade(db) {
+          db.createObjectStore('layerData', {
+            keyPath: 'layerId',
+            autoIncrement: false
+          });
+        }
+      })
+    );
   }
   /**
    * This method allow to update the stored layer into the indexeddb (layerData)

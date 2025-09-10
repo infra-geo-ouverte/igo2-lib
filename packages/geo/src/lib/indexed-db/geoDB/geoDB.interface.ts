@@ -1,3 +1,5 @@
+import { DBSchema } from 'idb';
+
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
 
 export interface GeoDBData {
@@ -7,6 +9,14 @@ export interface GeoDBData {
   compressed: boolean;
   insertSource: InsertSourceInsertDBEnum;
   insertEvent: string;
+}
+
+export interface GeoDataDBSchema extends DBSchema {
+  geoData: {
+    value: GeoDBData;
+    key: string;
+    indexes: { 'regionID-idx': string };
+  };
 }
 
 export interface GeoDataToIDB {

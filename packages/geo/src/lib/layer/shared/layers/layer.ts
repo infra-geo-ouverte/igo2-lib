@@ -7,7 +7,10 @@ import { Source } from 'ol/source';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource, Legend } from '../../../datasource/shared/datasources';
+import { GeoDBService } from '../../../indexed-db/geoDB/geoDB.service';
+import { LayerDBService } from '../../../indexed-db/layerDB/layerDB.service';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { GeoNetworkService } from '../../../offline/shared/geo-network.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -80,7 +83,10 @@ export abstract class Layer extends LayerBase {
   constructor(
     public options: LayerOptions,
     protected messageService?: MessageService,
-    protected authInterceptor?: AuthInterceptor
+    protected authInterceptor?: AuthInterceptor,
+    protected geoNetworkService?: GeoNetworkService,
+    protected geoDBService?: GeoDBService,
+    protected layerDBService?: LayerDBService
   ) {
     super(options);
 

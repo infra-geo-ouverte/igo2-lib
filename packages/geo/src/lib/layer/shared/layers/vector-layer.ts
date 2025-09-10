@@ -1,5 +1,10 @@
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
+import {
+  GeoDBService,
+  InsertSourceInsertDBEnum,
+  LayerDBService
+} from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -41,13 +46,10 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { LayerDBData } from '../../../indexed-db/layerDB/layerDB.interface';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { MapExtent } from '../../../map/shared/map.interface';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import { GeoDB } from '../../../offline/geoDB/geoDB';
-import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
-import { LayerDB } from '../../../offline/layerDB/layerDB';
-import { LayerDBData } from '../../../offline/layerDB/layerDB.interface';
 import {
   GeoNetworkService,
   SimpleGetOptions
@@ -87,9 +89,18 @@ export class VectorLayer extends Layer {
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService
+    public geoNetworkService?: GeoNetworkService,
+    public geoDBService?: GeoDBService,
+    public layerDBService?: LayerDBService
   ) {
-    super(options, messageService, authInterceptor);
+    super(
+      options,
+      messageService,
+      authInterceptor,
+      geoNetworkService,
+      geoDBService,
+      layerDBService
+    );
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -249,12 +260,20 @@ export class VectorLayer extends Layer {
   }
 
   private removeLayerFromIDB() {
-    const geoDB = new GeoDB();
-    const layerDB = new LayerDB();
-    zip(geoDB.delete(this.id), layerDB.delete(this.id)).subscribe();
+    zip(
+      this.geoDBService?.delete(this.id),
+      this.layerDBService?.delete(this.id)
+    ).subscribe();
   }
 
   private maintainOptionsInIdb() {
+    if (!this.layerDBService && this.options.idbInfo.storeToIdb) {
+      console.warn(
+        'To enable Indexed-db storage, use the layerService instead to create the layer OR provide this service LayerDBService',
+        this.options
+      );
+    }
+
     this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
     const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
@@ -275,11 +294,17 @@ export class VectorLayer extends Layer {
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
     });
-    const layerDB = new LayerDB();
-    layerDB.update(layerData).pipe(first()).subscribe();
+    this.layerDBService?.update(layerData).pipe(first()).subscribe();
   }
 
   private maintainFeaturesInIdb() {
+    if (!this.geoDBService && this.options.idbInfo.storeToIdb) {
+      console.warn(
+        'To enable Indexed-db storage, use the layerService instead to create the layer OR provide this service GeoDBService',
+        this.options
+      );
+    }
+
     const dsFeatures = this.dataSource.ol.getFeatures();
     const geojsonObject = JSON.parse(
       new olformat.GeoJSON().writeFeatures(dsFeatures, {
@@ -288,9 +313,8 @@ export class VectorLayer extends Layer {
       })
     );
 
-    const geoDB = new GeoDB();
-    geoDB
-      .update(
+    this.geoDBService
+      ?.update(
         this.id,
         this.id,
         geojsonObject,
@@ -635,9 +659,8 @@ export class VectorLayer extends Layer {
       };
 
       const options: SimpleGetOptions = { responseType };
-      const geoDB = new GeoDB();
-      geoDB
-        .get(url)
+      this.geoDBService
+        ?.get(url)
         .pipe(delay(750))
         .pipe(
           concatMap((r) =>
@@ -754,8 +777,7 @@ export class VectorLayer extends Layer {
       vectorSource.removeLoadedExtent(extent);
       failure();
     };
-    const geoDB = new GeoDB();
-    geoDB.get(layerID).subscribe((content) => {
+    this.geoDBService?.get(layerID).subscribe((content) => {
       if (content) {
         const format = vectorSource.getFormat();
         const type = format.getType();

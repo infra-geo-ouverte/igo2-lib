@@ -1,2 +1,2 @@
 export * from './layerDB.interface';
-export * from './layerDB';
+export * from './layerDB.service';

@@ -2,12 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { ConnectionState, NetworkService } from '@igo2/core/network';
+import { GeoDBService } from '@igo2/geo';
 
 import { Type } from 'ol/format/Feature';
 
 import { Observable } from 'rxjs';
-
-import { GeoDB } from '../geoDB';
 
 export enum ResponseType {
   Arraybuffer = 'arraybuffer',
@@ -24,7 +23,8 @@ export class GeoNetworkService {
   private networkOnline = true;
   constructor(
     private http: HttpClient,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    private geoDBService: GeoDBService
   ) {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.networkOnline = state.connection;
@@ -73,8 +73,7 @@ export class GeoNetworkService {
   }
 
   private getOffline(url: string): Observable<object | Blob> {
-    const geoDB = new GeoDB();
-    return geoDB?.get(url);
+    return this.geoDBService.get(url);
   }
 
   public isOnline() {

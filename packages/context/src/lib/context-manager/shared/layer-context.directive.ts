@@ -108,12 +108,14 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           });
         }
       });
-    if (this.configService.getConfig('importExport.allowToStoreLayer', false)) {
-      this.layerService
-        .createAsyncIdbLayers(context.uri)
-        .pipe(debounceTime(500))
-        .subscribe((layers) => this.handleAddLayers(layers));
-    }
+
+    // todo penser delplace dans une directive isolee ou dans contect service?
+    // if (this.configService.getConfig('importExport.allowToStoreLayer', false)) {
+    this.layerService
+      .createAsyncIdbLayers(context.uri)
+      .pipe(debounceTime(500))
+      .subscribe((layers) => this.handleAddLayers(layers));
+    //}
   }
 
   private getFlattenOptions(options: AnyLayerOptions[]): AnyLayerOptions[] {

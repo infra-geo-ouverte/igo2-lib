@@ -47,6 +47,7 @@ export * from './lib/map';
 export * from './lib/measure';
 export * from './lib/metadata';
 export * from './lib/offline';
+export * from './lib/indexed-db';
 export * from './lib/overlay';
 export * from './lib/print';
 export * from './lib/query';
