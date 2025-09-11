@@ -5,7 +5,7 @@
   ></div>
 
   <div *ngIf="!auth.logged && showLoginDiv" class="login center-block">
-    <h1>{{ 'igo.auth.connection' | translate }}</h1>
+    <h3>{{ 'igo.auth.connection' | translate }}</h3>
 
     <igo-auth-google
       *ngIf="options.google && options.google.enabled !== false"

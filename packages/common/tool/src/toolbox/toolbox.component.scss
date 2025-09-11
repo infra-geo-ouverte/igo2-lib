@@ -7,9 +7,6 @@
   width: 100%;
   height: 100%;
 
-  ::ng-deep .mdc-list-item--with-leading-avatar .mdc-list-item__start {
-    margin: 0;
-  }
   .igo-tool-container {
     position: absolute;
     top: 0;
@@ -51,5 +48,95 @@
 
   igo-dynamic-outlet {
     overflow: auto;
+  }
+
+  &.color-primary {
+    igo-actionbar:not(.with-title) {
+      color: var(--mat-sys-on-primary);
+      background-color: var(--mat-sys-on-primary-container);
+
+      ::ng-deep {
+        button {
+          color: var(--mat-sys-on-primary);
+        }
+      }
+
+      #lowChevron,
+      #topChevron {
+        background-color: var(--mat-sys-primary-container);
+        color: white;
+      }
+    }
+  }
+
+  ::ng-deep {
+    &.color-grey > igo-actionbar:not(.with-title) {
+      box-shadow: unset;
+      background-color: #737475;
+      #lowChevron,
+      #topChevron {
+        background-color: #737475;
+        color: white;
+      }
+    }
+
+    &.color-primary,
+    &.color-grey {
+      & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
+        .mat-mdc-list-item.mdc-list-item--with-leading-avatar {
+          color: white;
+          &:hover {
+            color: black;
+          }
+
+          &.tool-activated,
+          &.children-tool-activated {
+            color: var(--mat-sys-on-primary);
+            background-color: var(--mat-sys-on-primary-container);
+            color: black;
+          }
+        }
+      }
+    }
+
+    > igo-actionbar {
+      &:not(.with-title) {
+        > mat-list {
+          & > #lowChevron,
+          & > #topChevron {
+            &:hover {
+              background-color: var(--mat-sys-secondary-container);
+              color: black;
+            }
+          }
+
+          mat-list-item {
+            color: var(--mat-sys-on-primary-container);
+          }
+        }
+      }
+
+      mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
+        &:hover {
+          color: var(--mat-sys-on-primary-container);
+          background-color: var(--mat-sys-primary-container);
+
+          button {
+            color: var(--mat-sys-on-primary-container) !important;
+          }
+        }
+
+        &.tool-activated,
+        &.children-tool-activated {
+          color: var(--mat-sys-on-background);
+          background-color: var(--mat-sys-on-primary);
+
+          button {
+            color: var(--mat-sys-on-background) !important;
+            cursor: default;
+          }
+        }
+      }
+    }
   }
 }

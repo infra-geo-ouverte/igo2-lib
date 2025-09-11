@@ -37,7 +37,7 @@ function getPackagesRelations(): Map<PackageName, PackageOptions> {
       ...file.peerDependencies,
       ...file.dependencies
     })
-      .filter((key) => key.includes('@igo2'))
+      .filter((key) => key.includes('@igo2') && !key.includes('@igo2/sdg'))
       .map((key) => key.split('/')[1]) as PackageName[];
     packageRelations.set(folder, {
       dependsOn: igoDependencies,

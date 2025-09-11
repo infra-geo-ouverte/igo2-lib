@@ -1,9 +1,27 @@
+@use '@angular/material' as mat;
+
 :host {
   ::ng-deep mat-list-item:hover {
     cursor: pointer;
   }
 
+  @include mat.list-overrides(
+    (
+      list-item-leading-avatar-size: 48px
+    )
+  );
+
+  .mdc-icon-button {
+    @include mat.icon-button-overrides(
+      (
+        state-layer-size: 48px
+      )
+    );
+  }
+
   mat-list-item {
+    padding-right: 0px;
+
     &.igo-actionbar-item-disabled {
       color: rgba(0, 0, 0, 0.26);
       cursor: default !important;
@@ -16,8 +34,10 @@
     ::ng-deep {
       button {
         &[matlistitemavatar] {
-          margin-left: 4px;
+          margin-left: 0;
+          background-color: inherit;
         }
+
         .mat-mdc-button-persistent-ripple {
           display: none;
         }

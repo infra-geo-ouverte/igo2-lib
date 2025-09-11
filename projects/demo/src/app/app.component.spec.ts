@@ -41,10 +41,10 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app.title).toEqual('IGO');
   }));
-  it('should render title in a h1 tag', waitForAsync(() => {
+  it('should render title in a h2 tag', waitForAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('IGO');
+    expect(compiled.querySelector('h2').textContent).toContain('IGO');
   }));
 });

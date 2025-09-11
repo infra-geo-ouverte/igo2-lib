@@ -1,14 +1,5 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   @include common-utils.square-button();
-
-  .igo-home-extent-button-container {
-    width: core.$igo-icon-size;
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
-    }
-  }
 }

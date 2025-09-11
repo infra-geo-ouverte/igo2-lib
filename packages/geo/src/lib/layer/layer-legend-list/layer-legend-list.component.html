@@ -4,7 +4,6 @@
     matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.layer.legend.showAll' | translate"
     [checked]="showAllLegendsValue"
-    class="mat-typography"
     *ngIf="(layersInUi$ | async).length && allowShowAllLegends"
     [labelPosition]="'before'"
     (change)="toggleShowAllLegends($event.checked)"
@@ -26,7 +25,7 @@
     </ng-template>
   </igo-list>
   <p
-    class="layers-empty mat-typography"
+    class="layers-empty"
     *ngIf="
       !showAllLegendsValue &&
       (layersInUi$ | async).length &&
@@ -38,7 +37,7 @@
     {{ 'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate }}
   </p>
   <p
-    class="layers-empty mat-typography"
+    class="layers-empty"
     *ngIf="
       !showAllLegendsValue &&
       (layersInUi$ | async).length &&
@@ -52,7 +51,7 @@
     }}
   </p>
   <p
-    class="layers-empty mat-typography"
+    class="layers-empty"
     *ngIf="
       (layersInUi$ | async).length &&
       (hasVisibleOrInRangeLayers$ | async) === false &&
@@ -63,7 +62,7 @@
     {{ 'igo.geo.layer.legend.noLayersVisible' | translate }}
   </p>
   <p
-    class="layers-empty mat-typography"
+    class="layers-empty"
     *ngIf="
       (layersInUi$ | async).length &&
       (hasVisibleOrInRangeLayers$ | async) === false &&

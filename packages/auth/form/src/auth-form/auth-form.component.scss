@@ -9,10 +9,14 @@ div.login {
   width: 90%;
   min-width: 360px;
   max-width: 600px;
-  padding: 25px 50px;
+  padding: 24px 48px;
   border: 1px solid;
   background-color: #fff;
   border-color: $colorFont;
+
+  h3 {
+    margin-top: 0;
+  }
 }
 
 .center-block {

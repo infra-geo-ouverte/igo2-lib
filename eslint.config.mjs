@@ -1,24 +1,27 @@
-// @ts-check
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import angular from 'angular-eslint';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   { ignores: ['packages/**/*'] },
   {
     files: ['**/*.ts'],
     plugins: {
-      // @ts-ignore
       '@stylistic': stylistic
     },
     extends: [
       eslint.configs.recommended,
-      // @ts-ignore
       ...tseslint.configs.recommended,
-      // @ts-ignore
       ...angular.configs.tsRecommended
     ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname
+      }
+    },
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/directive-selector': [
@@ -69,7 +72,6 @@ export default tseslint.config(
   },
   {
     files: ['**/*.html'],
-    // @ts-ignore
     extends: [
       ...angular.configs.templateRecommended,
       ...angular.configs.templateAccessibility

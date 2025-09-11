@@ -17,6 +17,8 @@ mat-tree-node {
   position: relative;
   min-height: 40px;
 
+  font: var(--mat-sys-body-medium);
+
   &:hover,
   &.--drag-hover {
     &::after {
@@ -27,6 +29,38 @@ mat-tree-node {
       border-width: 1px;
       border-color: transparent;
       pointer-events: none;
+    }
+  }
+
+  &.--selected,
+  &.--dragged {
+    igo-layer-group,
+    igo-layer-item {
+      background-color: var(--mat-sys-secondary-fixed-dim);
+      color: var(--mat-sys-on-tertiary-fixed);
+    }
+  }
+
+  &.--children-selected {
+    igo-layer-group,
+    igo-layer-item {
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-tertiary-fixed);
+    }
+  }
+
+  &.--drag-hover {
+    &::after {
+      border-color: var(--mat-sys-tertiary) !important;
+    }
+  }
+}
+
+// Workaround, the hover freeze when a tree is expanded when dragging
+mat-tree:not(.--dragging) {
+  mat-tree-node {
+    &:hover::after {
+      border-color: var(--mat-sys-tertiary);
     }
   }
 }

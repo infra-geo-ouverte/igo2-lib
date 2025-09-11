@@ -10,6 +10,7 @@ import {
   IgoMap,
   ImageLayerOptions,
   LAYER_DIRECTIVES,
+  LayerGroupOptions,
   LayerService,
   LayerViewerComponent,
   LayerViewerOptions,
@@ -108,16 +109,22 @@ export class AppLayerComponent {
         } as WFSDataSourceOptions
       },
       {
-        title: 'Parcs routiers',
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          params: {
-            LAYERS: 'parc_routier',
-            VERSION: '1.3.0'
-          }
-        }
-      } satisfies ImageLayerOptions,
+        title: 'Groupe',
+        type: 'group',
+        children: [
+          {
+            title: 'Parcs routiers',
+            sourceOptions: {
+              type: 'wms',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+              params: {
+                LAYERS: 'parc_routier',
+                VERSION: '1.3.0'
+              }
+            }
+          } satisfies ImageLayerOptions
+        ]
+      } satisfies LayerGroupOptions,
       {
         title: 'Réseau routier',
         visible: false,

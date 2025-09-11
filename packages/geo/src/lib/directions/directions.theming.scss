@@ -1,8 +1,5 @@
-@use './directions-results/directions-results.theming' as
-  directions-results-theme;
 @use './directions-inputs/directions-inputs.theming' as directions-inputs-theme;
 
-@mixin igo-directions-theming($theme) {
-  @include directions-results-theme.igo-directions-results-theming($theme);
-  @include directions-inputs-theme.igo-directions-inputs-theming($theme);
+@mixin themes($theme) {
+  @include directions-inputs-theme.theme($theme);
 }

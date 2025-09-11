@@ -2,21 +2,14 @@
 
 :host {
   @include common-utils.square-button();
+}
 
-  .igo-user-button-container {
-    display: flex;
-    gap: 4px;
+.igo-user-button-container {
+  display: flex;
+  gap: 4px;
+}
 
-    button {
-      background-color: #fff;
-      &:hover {
-        background-color: #efefef;
-      }
-    }
-  }
-
-  .igo-user-button-more-container {
-    display: flex;
-    gap: 4px;
-  }
+.igo-user-button-more-container {
+  display: flex;
+  gap: 4px;
 }

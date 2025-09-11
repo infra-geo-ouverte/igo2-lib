@@ -1,5 +1,5 @@
 @use './lib/context-manager/context-manager.theming.scss' as context-manager;
 
-@mixin context-component-themes($theme) {
+@mixin themes($theme) {
   @include context-manager.themes($theme);
 }

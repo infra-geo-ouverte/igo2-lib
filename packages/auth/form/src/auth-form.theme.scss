@@ -1,9 +1,0 @@
-@use './auth-form/auth-intern.theme.scss' as auth-intern;
-
-@mixin themes($theme) {
-  @include auth-intern.theme($theme);
-}
-
-@mixin colors($theme) {
-  @include auth-intern.color($theme);
-}

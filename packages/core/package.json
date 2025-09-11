@@ -34,6 +34,9 @@
     "./style": {
       "style": "./style/style.css"
     },
+    "./themes": {
+      "sass": "./src/theming/themes/_index.scss"
+    },
     "./*": {
       "sass": "./src/style/*.scss",
       "style": "./style/*.css"
@@ -42,7 +45,7 @@
       "sass": "./src/style/partial/*.scss"
     },
     "./theme": {
-      "sass": "./src/core-theme.scss"
+      "sass": "./src/core.theme.scss"
     },
     "./theming/*": {
       "sass": "./src/theming/*.scss"
@@ -100,8 +103,10 @@
     "@angular/cdk": "^19.0.0",
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@igo2/sdg-core": "^1.0.0-next.105",
     "@igo2/utils": "*",
     "ngx-toastr": "^19.0.0",
     "@ngx-translate/core": "^17.0.0",

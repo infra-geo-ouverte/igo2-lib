@@ -1,5 +1,5 @@
 <div>
-  <div class="measure-type-toggle mat-typography">
+  <div class="measure-type-toggle">
     <mat-button-toggle-group
       [value]="activeMeasureType"
       (change)="onMeasureTypeChange($event.value)"
@@ -13,7 +13,7 @@
     </mat-button-toggle-group>
   </div>
 
-  <div class="measure-options mat-typography">
+  <div class="measure-options">
     <mat-slide-toggle
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"

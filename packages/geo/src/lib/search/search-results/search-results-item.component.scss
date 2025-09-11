@@ -13,3 +13,13 @@
     white-space: pre-line;
   }
 }
+
+.mdc-list-item--with-leading-icon {
+  &:hover .mdc-list-item__start {
+    color: black;
+  }
+
+  .mdc-list-item__start {
+    color: rgba(0, 0, 0, 0.87);
+  }
+}

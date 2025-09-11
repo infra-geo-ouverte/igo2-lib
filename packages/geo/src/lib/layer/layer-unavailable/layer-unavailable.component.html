@@ -1,7 +1,11 @@
 <mat-list-item>
-  <button mat-icon-button disabled class="layer-indicator">
-    <mat-icon aria-hidden="false" color="warn">warning</mat-icon>
-  </button>
+  <mat-icon
+    matListItemIcon
+    class="layer-indicator mat-warn"
+    aria-hidden="false"
+    color="warn"
+    >warning
+  </mat-icon>
   <span
     matListItemTitle
     [matTooltip]="title"

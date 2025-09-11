@@ -1,0 +1,79 @@
+@use '@angular/material' as mat;
+
+@mixin overrides() {
+  .mdc-fab {
+    $background: var(--mat-sys-on-primary);
+    $foreground: var(--mat-sys-primary);
+
+    @include mat.fab-overrides(
+      (
+        container-color: $background,
+        foreground-color: $foreground,
+        small-container-color: $background,
+        small-foreground-color: $foreground
+      )
+    );
+  }
+
+  @include color-variants-backwards-compatibility();
+}
+
+// Material custom color variants backwards compatibility
+@mixin color-variants-backwards-compatibility() {
+  .mdc-button {
+    &.mat-warn {
+      @include mat.button-overrides(
+        (
+          filled-container-color: var(--mat-sys-error)
+        )
+      );
+    }
+    &.mat-primary {
+      @include mat.button-overrides(
+        (
+          filled-container-color: var(--mat-sys-primary)
+        )
+      );
+    }
+  }
+
+  .mdc-fab {
+    &.mat-warn {
+      @include mat.fab-overrides(
+        (
+          container-color: var(--mat-sys-error),
+          foreground-color: var(--mat-sys-on-primary),
+          small-container-color: var(--mat-sys-error),
+          small-foreground-color: var(--mat-sys-on-primary)
+        )
+      );
+    }
+    &.mat-primary {
+      @include mat.fab-overrides(
+        (
+          container-color: var(--mat-sys-primary),
+          foreground-color: var(--mat-sys-on-primary),
+          small-container-color: var(--mat-sys-primary),
+          small-foreground-color: var(--mat-sys-on-primary)
+        )
+      );
+    }
+  }
+
+  .mdc-icon-button {
+    &.mat-warn {
+      @include mat.icon-button-overrides(
+        (
+          icon-color: var(--mat-sys-error)
+        )
+      );
+    }
+    &.mat-primary {
+      @include mat.icon-button-overrides(
+        (
+          icon-color: var(--mat-sys-primary)
+        )
+      );
+    }
+  }
+}

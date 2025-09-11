@@ -1,4 +1,5 @@
 import {
+  BrowserOptions,
   SentryErrorHandler,
   createErrorHandler,
   getClient,
@@ -25,5 +26,5 @@ export const initSentry = (
     return;
   }
 
-  init(options);
+  init(options as unknown as BrowserOptions);
 };

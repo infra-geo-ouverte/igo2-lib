@@ -1,28 +1,6 @@
-@use 'sass:map';
-@use '@angular/material' as mat;
-@use '../all-theme';
-@use '../typography';
+@use '../themes/blue-theme';
+@use '../themes/theme';
 
-$primary: mat.m2-define-palette(mat.$m2-blue-palette, 700, 400, 900);
-$accent: mat.m2-define-palette(mat.$m2-blue-palette, 200);
-$warn: mat.m2-define-palette(mat.$m2-red-palette);
-$typography: typography.$igo-typography;
-
-$theme: mat.m2-define-light-theme(
-  (
-    color: (
-      primary: $primary,
-      accent: $accent,
-      warn: $warn
-    ),
-    typography: $typography,
-    density: 0
-  )
-);
-
-@include mat.elevation-classes();
-@include mat.app-background();
-@include mat.typography-hierarchy($typography);
-@include mat.all-component-themes($theme);
-
-@include all-theme.all-component-themes($theme);
+html .blue-theme {
+  @include theme.theme(blue-theme.$theme, blue-theme.$defined-theme, 'blue');
+}

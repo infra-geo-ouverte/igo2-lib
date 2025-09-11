@@ -64,7 +64,7 @@ export class TileArcGISRestDataSource extends DataSource {
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +
-        `" alt ='' /></td><td class="mat-typography">` +
+        `" alt ='' /></td><td >` +
         label +
         '</td></tr>';
     }

@@ -69,6 +69,14 @@ import { SearchState } from '../search.state';
   selector: 'igo-search-results-tool',
   templateUrl: './search-results-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 16px;
+      }
+    `
+  ],
   imports: [
     NgIf,
     FlexibleComponent,

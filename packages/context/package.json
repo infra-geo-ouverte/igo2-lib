@@ -30,7 +30,7 @@
       "import": "./src/public_api.ts"
     },
     "./theme": {
-      "sass": "./src/context-theme.scss"
+      "sass": "./src/context.theme.scss"
     }
   },
   "dependencies": {
@@ -48,7 +48,7 @@
     "@igo2/core": "*",
     "@igo2/geo": "*",
     "@igo2/utils": "*",
-    "ol": "10.5.0",
+    "ol": "10.6.0",
     "rxjs": "^7.8.0"
   },
   "engines": {

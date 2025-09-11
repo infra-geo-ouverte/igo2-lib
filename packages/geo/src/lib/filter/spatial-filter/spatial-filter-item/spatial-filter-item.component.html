@@ -87,10 +87,10 @@
   </mat-form-field>
 </div>
 
-<mat-label class="title mat-typography"
+<mat-label class="title"
   >{{ 'igo.geo.spatialFilter.search' | translate }} :
 </mat-label>
-<mat-radio-group [value]="selectedItemType">
+<mat-radio-group [value]="selectedItemType" id="spatial-filter-field-item-type">
   <mat-radio-button
     *ngFor="let item of itemType"
     [value]="item"
