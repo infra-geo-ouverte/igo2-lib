@@ -1,0 +1,139 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Note: Color palettes are generated from primary: #1976d2, secondary: #1976d2, tertiary: #1976d2
+$_palettes: (
+  primary: (
+    0: #000000,
+    10: #001c3a,
+    20: #003c72,
+    25: #00539a,
+    30: #1976d2,
+    35: #1976d2,
+    40: #1976d2,
+    50: #1976d2,
+    60: #4492f0,
+    70: #72adff,
+    80: #4a98d9,
+    90: #72b2eb,
+    95: #eaf1ff,
+    98: #f8f9ff,
+    99: #fdfcff,
+    100: #ffffff
+  ),
+  secondary: (
+    0: #000000,
+    10: #001c3a,
+    20: #003c72,
+    25: #00539a,
+    30: #1976d2,
+    35: #1976d2,
+    40: #1976d2,
+    50: #1976d2,
+    60: #4492f0,
+    70: #72adff,
+    80: #90caf9,
+    90: #bbdefb,
+    95: #ebf1ff,
+    98: #f9f9ff,
+    99: #fdfcff,
+    100: #ffffff
+  ),
+  neutral: (
+    0: #000000,
+    10: #181c21,
+    20: #2d3037,
+    25: #383b42,
+    30: #44474d,
+    35: #4f5259,
+    40: #5b5e65,
+    50: #74777e,
+    60: #8e9198,
+    70: #a9abb3,
+    80: #c4c6ce,
+    90: #e0e2ea,
+    95: #eff0f9,
+    98: #ffffff,
+    99: #ffffff,
+    100: #ffffff,
+    4: #0b0e14,
+    6: #101319,
+    12: #1c2026,
+    17: #272a30,
+    22: #32353b,
+    24: #363940,
+    87: #d8dae2,
+    92: #e6e8f0,
+    94: #ecedf6,
+    96: #f2f3fc
+  ),
+  neutral-variant: (
+    0: #000000,
+    10: #161c26,
+    20: #2b313b,
+    25: #363c46,
+    30: #414752,
+    35: #4d535e,
+    40: #585f6a,
+    50: #717783,
+    60: #8b919e,
+    70: #a5abb8,
+    80: #c1c6d4,
+    90: #dde2f0,
+    95: #ebf1ff,
+    98: #ffffff,
+    99: #ffffff,
+    100: #ffffff
+  ),
+  error: (
+    0: #000000,
+    10: #410002,
+    20: #690005,
+    25: #7e0007,
+    30: #93000a,
+    35: #a80710,
+    40: #f44336,
+    50: #f44336,
+    60: #ff5449,
+    70: #ff897d,
+    80: #ffb4ab,
+    90: #ffdad6,
+    95: #ffedea,
+    98: #fff8f7,
+    99: #fffbff,
+    100: #ffffff
+  )
+);
+
+$_rest: (
+  secondary: map.get($_palettes, secondary),
+  neutral: map.get($_palettes, neutral),
+  neutral-variant: map.get($_palettes, neutral-variant),
+  error: map.get($_palettes, error)
+);
+
+$primary-palette: map.merge(map.get($_palettes, primary), $_rest);
+
+$font-family: var(--igo-font-family-text, ('Roboto', sans-serif));
+
+$theme: (
+  theme-type: light,
+  color: $primary-palette,
+  typography: $font-family,
+  density: 0
+);
+
+$defined-theme: mat.define-theme(
+  (
+    color: (
+      primary: $primary-palette
+    ),
+    typography: (
+      brand-family: $font-family,
+      plain-family: $font-family
+    ),
+    density: (
+      scale: 0
+    )
+  )
+);

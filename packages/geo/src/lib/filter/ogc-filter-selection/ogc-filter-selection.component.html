@@ -25,10 +25,9 @@
       <ng-container
         *ngFor="let bundle of currentPushButtonsGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <mat-button-toggle-group
           formControlName="pushButtons"
-          class="mat-typography"
           appearance="legacy"
           vertical="{{ bundleIsVertical(bundle) }}"
           multiple="true"
@@ -71,8 +70,8 @@
       <ng-container
         *ngFor="let bundle of currentCheckboxesGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
-        <div class="checkboxes mat-typography">
+        <h4>{{ bundle.title }}</h4>
+        <div class="checkboxes">
           <mat-checkbox
             *ngFor="let ogcCheckbox of bundle.selectors"
             [matTooltip]="getToolTip(ogcCheckbox)"
@@ -93,13 +92,13 @@
         >
           <u
             *ngIf="isLessResults(bundle, 'checkbox')"
-            class="lessResults mat-typography"
+            class="lessResults"
             (click)="displayLessResults('checkbox')"
             >{{ 'igo.geo.filter.displayLessResults' | translate }}
           </u>
           <u
             *ngIf="isMoreResults(bundle, 'checkbox')"
-            class="moreResults mat-typography"
+            class="moreResults"
             (click)="displayMoreResults('checkbox')"
             >{{ 'igo.geo.filter.displayMoreResults' | translate }}
           </u>
@@ -132,8 +131,8 @@
       <ng-container
         *ngFor="let bundle of currentRadioButtonsGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
-        <mat-radio-group formControlName="radioButtons" class="mat-typography">
+        <h4>{{ bundle.title }}</h4>
+        <mat-radio-group formControlName="radioButtons">
           <mat-radio-button
             *ngIf="bundle.unfiltered"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate"
@@ -161,13 +160,13 @@
           >
             <u
               *ngIf="isLessResults(bundle, 'radio')"
-              class="lessResults mat-typography"
+              class="lessResults"
               (click)="displayLessResults('radio')"
               >{{ 'igo.geo.filter.displayLessResults' | translate }}
             </u>
             <u
               *ngIf="isMoreResults(bundle, 'radio')"
-              class="moreResults mat-typography"
+              class="moreResults"
               (click)="displayMoreResults('radio')"
               >{{ 'igo.geo.filter.displayMoreResults' | translate }}
             </u>
@@ -196,7 +195,7 @@
         </mat-form-field>
       </div>
       <ng-container *ngFor="let bundle of currentSelectGroup.computedSelectors">
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <div class="groupsSelector">
           <mat-button
             *ngIf="bundle.unfiltered && !bundle.multiple"
@@ -220,7 +219,7 @@
                 [placeholder]="bundle.title"
                 formControlName="selectMulti"
               >
-                <div class="checkboxes mat-typography">
+                <div class="checkboxes">
                   <mat-checkbox
                     *ngIf="bundle.multiple"
                     [(ngModel)]="selectAllSelected"
@@ -289,7 +288,7 @@
       <ng-container
         *ngFor="let bundle of currentAutocompleteGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <div class="groupsSelector">
           <mat-button
             *ngIf="bundle.unfiltered"
@@ -371,10 +370,10 @@
 
 <div *ngIf="isTemporalOperator()">
   <mat-divider></mat-divider>
-  <h3 *ngIf="!currentFilter.title">
+  <h4 *ngIf="!currentFilter.title">
     {{ 'igo.geo.filter.reportingDate' | translate }}
-  </h3>
-  <h3 *ngIf="currentFilter.title">{{ currentFilter.title }}</h3>
+  </h4>
+  <h4 *ngIf="currentFilter.title">{{ currentFilter.title }}</h4>
   <igo-ogc-filter-time
     [datasource]="datasource"
     [currentFilter]="currentFilter"

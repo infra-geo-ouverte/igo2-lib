@@ -10,3 +10,10 @@
     color: red;
   }
 }
+
+mat-form-field {
+  .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field-focus-overlay {
+    background-color: white !important;
+  }
+}

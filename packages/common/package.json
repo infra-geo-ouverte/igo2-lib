@@ -33,7 +33,7 @@
       "style": "./style/style.css"
     },
     "./theme": {
-      "sass": "./src/common-theme.scss"
+      "sass": "./src/common.theme.scss"
     },
     "./partial/*": {
       "sass": "./src/style/partial/*.scss"

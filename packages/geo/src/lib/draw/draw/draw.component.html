@@ -1,5 +1,5 @@
 <div>
-  <div class="geometry-type-toggle mat-typography">
+  <div class="geometry-type-toggle">
     <mat-button-toggle-group
       (change)="onGeometryTypeChange($event.value)"
       [value]="geometryType.Point"
@@ -22,7 +22,7 @@
     </mat-button-toggle-group>
   </div>
 
-  <div class="draw-options mat-typography">
+  <div class="draw-options">
     <mat-slide-toggle
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"
@@ -98,7 +98,7 @@
     <button
       *ngIf="activeDrawingLayer"
       mat-icon-button
-      [color]="activeDrawingLayer.visible ? 'primary' : 'default'"
+      [color]="activeDrawingLayer.visible ? 'primary' : 'accent'"
       collapsibleButton
       tooltip-position="below"
       matTooltipShowDelay="500"

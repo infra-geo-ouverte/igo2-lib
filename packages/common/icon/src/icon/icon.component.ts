@@ -7,7 +7,14 @@ import { IconService } from '../shared/icon.service';
 @Component({
   selector: 'igo-icon',
   imports: [MatIconModule],
-  templateUrl: './icon.component.html'
+  templateUrl: './icon.component.html',
+  styles: `
+    :host {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `
 })
 export class IgoIconComponent {
   @Input() color: string | null | undefined;

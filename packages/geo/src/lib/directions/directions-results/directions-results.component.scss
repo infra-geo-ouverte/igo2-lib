@@ -15,3 +15,7 @@
 .step {
   cursor: pointer;
 }
+
+mat-list-item.igo-steps:hover {
+  background-color: var(--mat-sys-primary-container);
+}

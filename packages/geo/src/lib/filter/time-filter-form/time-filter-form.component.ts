@@ -79,7 +79,7 @@ export class TimeFilterFormComponent implements OnInit {
   public endListYears: string[] = [];
 
   public interval: number;
-  public playIcon = 'play-circle';
+  public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
   @Input() layer: Layer;

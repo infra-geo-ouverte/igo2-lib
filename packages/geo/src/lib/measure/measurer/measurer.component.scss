@@ -51,7 +51,16 @@ $slide-toggle-width: 60px;
   }
 }
 
-::ng-deep .igo-map-tooltip-hidden,
-.igo-map-tooltip-measure-by-display {
-  display: none;
+::ng-deep {
+  .igo-map-tooltip-hidden,
+  .igo-map-tooltip-measure-by-display {
+    display: none;
+  }
+
+  .igo-map-tooltip-measure {
+    background-color: rgba(255, 204, 51, 0.7);
+    border: 1px solid rgb(255, 205, 51);
+    color: black;
+    font-weight: bold;
+  }
 }

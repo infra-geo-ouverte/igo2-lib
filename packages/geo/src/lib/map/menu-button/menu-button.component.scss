@@ -3,3 +3,13 @@
 :host {
   @include common-utils.square-button();
 }
+
+button {
+  color: var(--mat-sys-on-primary) !important;
+  background-color: var(--mat-sys-on-primary-container) !important;
+
+  &.menu-button-white-background {
+    color: var(--mat-sys-on-primary-container) !important;
+    background-color: var(--mat-sys-surface-container-lowest) !important;
+  }
+}

@@ -6,7 +6,7 @@ const TOASTR_CONFIG: Partial<GlobalConfig> = {
   positionClass: 'toast-bottom-right',
   timeOut: 10000,
   extendedTimeOut: 10000,
-  titleClass: 'mat-subtitle-2',
+  titleClass: 'toastr-message-title',
   messageClass: 'toast-message',
   closeButton: true,
   progressBar: true,
