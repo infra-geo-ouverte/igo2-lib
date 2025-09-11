@@ -1,5 +1,32 @@
 @use '../layer-base/layer-base';
 
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--mat-sys-surface);
+
+  ::ng-deep {
+    button {
+      &.mat-default {
+        mat-icon {
+          color: var(--mat-sys-on-surface);
+          fill: var(--mat-sys-on-surface);
+        }
+      }
+
+      &.disabled {
+        $color-disabled: var(--mat-sys-on-secondary-fixed);
+        mat-icon {
+          color: $color-disabled;
+          fill: $color-disabled;
+          opacity: 0.64;
+        }
+      }
+    }
+  }
+}
+
 .igo-layer-title {
   flex: 1;
   font-weight: bold;
@@ -24,12 +51,6 @@
   display: flex;
   align-items: center;
   flex: 1;
-}
-
-:host {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .list-actions {

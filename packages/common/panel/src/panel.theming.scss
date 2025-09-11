@@ -2,21 +2,11 @@
 @use '@angular/material' as mat;
 
 @mixin theme($theme) {
-  @include color($theme);
   @include density($theme);
 }
 
-@mixin color($theme) {
-  $primary: map.get($theme, primary);
-
-  igo-panel > .igo-panel-header {
-    background-color: mat.m2-get-color-from-palette($primary);
-    color: mat.m2-get-color-from-palette($primary, default-contrast);
-  }
-}
-
 @mixin density($theme) {
-  $density: mat.m2-get-density-config($theme);
+  $density: mat.get-theme-density($theme);
   $theme: map.merge(
     $theme,
     (

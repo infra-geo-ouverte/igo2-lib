@@ -1,5 +1,0 @@
-@use '../message/src/message.theming.scss' as message;
-
-@mixin core-component-themes($theme) {
-  @include message.igo-message-theming($theme);
-}

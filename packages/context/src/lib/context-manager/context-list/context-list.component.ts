@@ -446,8 +446,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
     if (!this.showHidden) {
       const contexts: ContextsList = { ours: [], shared: [], public: [] };
       contexts.ours = this.contexts.ours.filter((c) => c.id !== context.id);
-      contexts.shared = this.contexts.shared.filter((c) => c.id !== context.id);
-      contexts.public = this.contexts.public.filter((c) => c.id !== context.id);
+      contexts.shared = this.contexts.shared?.filter(
+        (c) => c.id !== context.id
+      );
+      contexts.public = this.contexts.public?.filter(
+        (c) => c.id !== context.id
+      );
       this.contexts = contexts;
     }
     this.hide.emit(context);

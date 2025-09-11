@@ -1,7 +1,12 @@
 @use './entity-table/entity-table.theming' as entity-table;
 @use './entity-selector/entity-selector.theming' as entity-selector;
 
-@mixin igo-entity-theming($theme) {
+@mixin themes($theme) {
   @include entity-table.theme($theme);
   @include entity-selector.theme($theme);
+}
+
+@mixin densities($theme) {
+  @include entity-table.density($theme);
+  @include entity-selector.density($theme);
 }

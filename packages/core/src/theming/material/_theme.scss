@@ -1,0 +1,16 @@
+@use '@angular/material' as mat;
+@use '../all-theme';
+@use './overrides';
+
+@mixin theme($theme, $definedTheme, $name) {
+  html .#{$name}-theme {
+    @include mat.theme($theme);
+
+    @include mat.all-component-themes($definedTheme);
+    @include mat.color-variants-backwards-compatibility($definedTheme);
+
+    @include overrides.overrides();
+
+    @include all-theme.all-component-themes($theme);
+  }
+}

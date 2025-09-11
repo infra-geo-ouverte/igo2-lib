@@ -25,7 +25,7 @@
       <ng-container
         *ngFor="let bundle of currentPushButtonsGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <mat-button-toggle-group
           formControlName="pushButtons"
           class="mat-typography"
@@ -71,7 +71,7 @@
       <ng-container
         *ngFor="let bundle of currentCheckboxesGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <div class="checkboxes mat-typography">
           <mat-checkbox
             *ngFor="let ogcCheckbox of bundle.selectors"
@@ -132,7 +132,7 @@
       <ng-container
         *ngFor="let bundle of currentRadioButtonsGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <mat-radio-group formControlName="radioButtons" class="mat-typography">
           <mat-radio-button
             *ngIf="bundle.unfiltered"
@@ -196,7 +196,7 @@
         </mat-form-field>
       </div>
       <ng-container *ngFor="let bundle of currentSelectGroup.computedSelectors">
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <div class="groupsSelector">
           <mat-button
             *ngIf="bundle.unfiltered && !bundle.multiple"
@@ -289,7 +289,7 @@
       <ng-container
         *ngFor="let bundle of currentAutocompleteGroup.computedSelectors"
       >
-        <h3>{{ bundle.title }}</h3>
+        <h4>{{ bundle.title }}</h4>
         <div class="groupsSelector">
           <mat-button
             *ngIf="bundle.unfiltered"
@@ -371,10 +371,10 @@
 
 <div *ngIf="isTemporalOperator()">
   <mat-divider></mat-divider>
-  <h3 *ngIf="!currentFilter.title">
+  <h4 *ngIf="!currentFilter.title">
     {{ 'igo.geo.filter.reportingDate' | translate }}
-  </h3>
-  <h3 *ngIf="currentFilter.title">{{ currentFilter.title }}</h3>
+  </h4>
+  <h4 *ngIf="currentFilter.title">{{ currentFilter.title }}</h4>
   <igo-ogc-filter-time
     [datasource]="datasource"
     [currentFilter]="currentFilter"

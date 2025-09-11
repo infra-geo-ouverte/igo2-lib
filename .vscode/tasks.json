@@ -25,7 +25,7 @@
       "label": "npm: link.start",
       "type": "npm",
       "script": "link.start",
-      "path": "projects/igo2",
+      "path": "projects/client",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",

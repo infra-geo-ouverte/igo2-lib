@@ -1,12 +1,12 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@mixin igo-directions-inputs-theming($theme) {
+@mixin theme($theme) {
   @include density($theme);
 }
 
 @mixin density($theme) {
-  $density: mat.m2-get-density-config($theme);
+  $density: mat.get-theme-density($theme);
 
   $theme: map.merge(
     $theme,
