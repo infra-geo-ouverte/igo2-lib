@@ -144,6 +144,7 @@
   "peerDependencies": {
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
     "@angular/material-moment-adapter": "^19.0.0",
     "@angular/material": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
