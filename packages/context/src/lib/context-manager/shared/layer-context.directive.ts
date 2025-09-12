@@ -4,26 +4,26 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   Output
 } from '@angular/core';
 import { Params } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
-import { RouteService } from '@igo2/core/route';
 import {
+  ID_GROUP_PREFIX,
   LayerService,
   MapBrowserComponent,
   StyleListService,
   StyleService,
+  isLayerGroupOptions,
   mergeLayersOptions,
   sortLayersByZindex
 } from '@igo2/geo';
 import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
-import { debounceTime, filter, first } from 'rxjs/operators';
+import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
 import {
   addImportedFeaturesStyledToMap,
@@ -38,8 +38,7 @@ import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-  selector: '[igoLayerContext]',
-  standalone: true
+  selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
@@ -47,7 +46,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: AnyLayer[] = [];
 
-  @Input() removeLayersOnContextChange = true;
+  @Input() removeLayersOnContextChange: boolean = true;
 
   @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
 
@@ -62,22 +61,20 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     private configService: ConfigService,
     private styleListService: StyleListService,
     private styleService: StyleService,
-    private shareMapService: ShareMapService,
-    @Optional() private route: RouteService
+    private shareMapService: ShareMapService
   ) {}
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .pipe(filter((context) => context !== undefined))
+    this.context$$ = this.shareMapService.routeService.queryParams
+      .pipe(
+        switchMap((params) => {
+          this.queryParams = params ?? {};
+          return this.contextService.context$.pipe(
+            filter((context) => context !== undefined)
+          );
+        })
+      )
       .subscribe((context) => this.handleContextChange(context));
-
-    if (this.route) {
-      this.route.queryParams
-        .pipe(first((params) => !ObjectUtils.isEmpty(params)))
-        .subscribe((params) => {
-          this.queryParams = params;
-        });
-    }
   }
 
   ngOnDestroy() {
@@ -87,6 +84,14 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private handleContextChange(context: DetailedContext) {
     if (context.layers === undefined) {
       return;
+    }
+
+    /**
+     * Assign an id to each layer group if it doesn't have one.
+     * This is needed to be able to detect layer groups in the context that doesn't have and id and be able to ignore them in the share
+     */
+    if (context.layers?.length) {
+      addIdToGroups(context.layers);
     }
 
     const contextLayers = this.handleContextWithSharedUrl(
@@ -164,10 +169,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       let visiblelayers: string[] = [];
       let invisiblelayers: string[] = [];
       const visibleOnLayers =
-        params[this.shareMapService.optionsLegacy.visibleOnLayersKey];
+        params[this.shareMapService.routeService.options.visibleOnLayersKey];
 
       const visibleOffLayers =
-        params[this.shareMapService.optionsLegacy.visibleOffLayersKey];
+        params[this.shareMapService.routeService.options.visibleOffLayersKey];
 
       if (visibleOnLayers) {
         visibleOnLayersParams = visibleOnLayers;
@@ -231,5 +236,17 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       }
     }
     return layers;
+  }
+}
+
+/** Recursive */
+function addIdToGroups(layerOptions: AnyLayerOptions[]): void {
+  for (const options of layerOptions) {
+    if (isLayerGroupOptions(options) && !options.id) {
+      options.id = ID_GROUP_PREFIX + uuid();
+      if (Array.isArray(options.children)) {
+        addIdToGroups(options.children);
+      }
+    }
   }
 }

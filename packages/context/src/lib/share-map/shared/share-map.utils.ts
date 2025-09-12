@@ -36,10 +36,7 @@ export function buildDataSourceOptions(
     url,
     params,
     layer,
-    version: type === 'wmts' ? '1.0.0' : undefined,
-    optionsFromCapabilities: true,
-    optionsFromApi: true,
-    crossOrigin: 'anonymous'
+    version: type === 'wmts' ? '1.0.0' : undefined
   };
 
   if (arcgisClause) {

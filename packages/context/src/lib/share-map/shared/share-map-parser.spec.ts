@@ -26,10 +26,7 @@ const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
       url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer',
       layer: '0',
       queryable: true,
-      queryFormat: 'esrijson',
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      queryFormat: 'esrijson'
     } as AnyDataSourceOptions,
     visible: true,
     zIndex: 3,
@@ -40,10 +37,7 @@ const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
       type: 'wmts',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
       layer: 'carte_gouv_qc_ro',
-      version: '1.0.0',
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      version: '1.0.0'
     } as AnyDataSourceOptions,
     visible: false,
     zIndex: 2
@@ -54,10 +48,7 @@ const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
       url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
       params: {
         LAYERS: 'etablissement_mtq'
-      },
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      }
     } as AnyDataSourceOptions,
     visible: true,
     zIndex: 1
@@ -115,7 +106,6 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should correctly parse valid URL layers parameters into expected result', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { groups, ...rest } = MOCK_PARAMS;
     const result = shareMapParseUrl.parseLayers({ ...rest });
     expect(result).toBeDefined();
@@ -146,10 +136,7 @@ describe('ShareMapParseUrl', () => {
         sourceOptions: {
           type: 'wms',
           url: 'https://testgeoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi',
-          params: { LAYERS: 'bgr_v_centr_servc_geomt_act' },
-          optionsFromCapabilities: true,
-          optionsFromApi: true,
-          crossOrigin: 'anonymous'
+          params: { LAYERS: 'bgr_v_centr_servc_geomt_act' }
         } as AnyDataSourceOptions,
         visible: true,
         zIndex: 10

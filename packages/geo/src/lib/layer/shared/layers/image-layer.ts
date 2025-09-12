@@ -27,7 +27,7 @@ export class ImageLayer extends Layer {
     @Optional() public messageService?: MessageService,
     @Optional() public authInterceptor?: AuthInterceptor
   ) {
-    super(options, messageService);
+    super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this, this.messageService);
     this.status$ = this.watcher.status$;
     this.status$.subscribe((valStatus) => {

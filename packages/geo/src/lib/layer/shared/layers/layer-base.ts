@@ -61,7 +61,6 @@ export abstract class LayerBase {
     }
     this.ol.setZIndex(zIndex);
   }
-  initialZIndex: number;
 
   get baseLayer(): boolean {
     return this.options.baseLayer;

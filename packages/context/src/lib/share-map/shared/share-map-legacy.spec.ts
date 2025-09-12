@@ -25,9 +25,6 @@ const iarcgisExpected: LayerOptions[] = [
       type: 'imagearcgisrest',
       url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer',
       layer: '2',
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous',
       queryable: true,
       queryFormat: 'esrijson'
     } as ArcGISRestImageDataSourceOptions
@@ -54,10 +51,7 @@ const wmsExpected: LayerOptions[] = [
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/historiquesc.fcgi',
       params: {
         LAYERS: 'risc_evenement_igo_public_debby2024'
-      },
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      }
     } as WMSDataSourceOptions
   },
   {
@@ -69,10 +63,7 @@ const wmsExpected: LayerOptions[] = [
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/historiquesc.fcgi',
       params: {
         LAYERS: 'msp_risc_evenements_public_24h'
-      },
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      }
     } as WMSDataSourceOptions
   },
   {
@@ -84,10 +75,7 @@ const wmsExpected: LayerOptions[] = [
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/historiquesc.fcgi',
       params: {
         LAYERS: 'msp_risc_evenements_public'
-      },
-      optionsFromCapabilities: true,
-      optionsFromApi: true,
-      crossOrigin: 'anonymous'
+      }
     } as WMSDataSourceOptions
   }
 ];
@@ -119,10 +107,7 @@ describe('ShareMapLegacyParser', () => {
         url: '/apis/wss/historiquesc.fcgi',
         params: {
           LAYERS: 'msp_delaiss_crue_public_p'
-        },
-        optionsFromCapabilities: true,
-        optionsFromApi: true,
-        crossOrigin: 'anonymous'
+        }
       } as WMSDataSourceOptions);
     });
 
@@ -155,10 +140,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/aleas.fcgi',
             params: {
               LAYERS: 'points_feux'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         },
         {
@@ -170,10 +152,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/aleas.fcgi',
             params: {
               LAYERS: 'points_feux_historique'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         },
         {
@@ -185,10 +164,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/historiquesc.fcgi',
             params: {
               LAYERS: 'msp_risc_evenements_public'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         }
       ] as LayerOptions[]);
@@ -226,10 +202,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/aleas.fcgi',
             params: {
               LAYERS: 'points_feux'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         },
         {
@@ -241,10 +214,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/aleas.fcgi',
             params: {
               LAYERS: 'points_feux_historique'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         },
         {
@@ -256,10 +226,7 @@ describe('ShareMapLegacyParser', () => {
             url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/historiquesc.fcgi',
             params: {
               LAYERS: 'msp_risc_evenements_public'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         },
         {
@@ -270,9 +237,6 @@ describe('ShareMapLegacyParser', () => {
             type: 'imagearcgisrest',
             url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer',
             layer: '2',
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous',
             queryable: true,
             queryFormat: 'esrijson'
           } as ArcGISRestImageDataSourceOptions
@@ -301,10 +265,7 @@ describe('ShareMapLegacyParser', () => {
             params: {
               LAYERS:
                 'Bretelle [3K - 1],Bretelle [13K -3k],Route locale [200K - 25K],Route locale [10K - 1]'
-            },
-            optionsFromCapabilities: true,
-            optionsFromApi: true,
-            crossOrigin: 'anonymous'
+            }
           } as WMSDataSourceOptions
         }
       ] as LayerOptions[]);

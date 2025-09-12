@@ -94,7 +94,7 @@ export class VectorLayer extends Layer {
     public geoDBService?: GeoDBService,
     public layerDBService?: LayerDBService
   ) {
-    super(options, messageService);
+    super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }

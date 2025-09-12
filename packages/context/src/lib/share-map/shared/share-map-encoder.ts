@@ -8,6 +8,7 @@ import {
   LayerGroup,
   MapViewController,
   WMSDataSourceOptions,
+  findParentId,
   getLayerOptionIdentifier,
   isLayerGroup,
   isLayerGroupOptions,
@@ -50,22 +51,24 @@ export class ShareMapEncoder {
       ...map.layerController.layersFlattened
     ].filter(Boolean);
 
-    this.replaceIds(layers);
-
     const queryUrl = this.buildQueryUrl(layers, querystring);
 
     const urlBaseConfig = this.getBaseUrlConfig(map.viewController, language);
     return queryUrl !== '' ? urlBaseConfig + '&' + queryUrl : urlBaseConfig;
   }
 
-  private replaceIds(layers: AnyLayer[]): void {
+  /**
+   * Replaces local group IDs with unique IDs to avoid conflicts and have short URL.
+   * This is necessary for sharing the map context.
+   */
+  private replaceGroupLocalIds(layers: AnyLayer[]): void {
     const idMap = new Map<string, string>();
     const existingIds = new Set(
       layers.map((layer) => layer.id).filter(Boolean)
     );
 
-    const counter = 1;
-
+    // eslint-disable-next-line prefer-const
+    let counter = 1;
     layers.forEach((layer) => {
       if (layer.id && layer.id.includes(ID_GROUP_PREFIX)) {
         const newId = this.getUniqueId(existingIds, counter);
@@ -129,9 +132,11 @@ export class ShareMapEncoder {
     const layersSharable = this.isLayerSharable(layers);
     const layersChanged = this.getFilteredMapLayers(layersSharable);
 
-    const groupsQueryUrl = this.buildGroupsQueryUrl(
-      this.getLayerGroups(layersChanged)
-    );
+    const groups = this.getLayerGroups(layersChanged);
+
+    this.replaceGroupLocalIds(groups);
+
+    const groupsQueryUrl = this.buildGroupsQueryUrl(groups);
 
     const layersByService = this.generateLayersOptionsByService(
       this.getLayerItems(layersChanged),
@@ -165,23 +170,35 @@ export class ShareMapEncoder {
 
     return filteredLayers.filter((layer) => {
       const mapLayerIdentifier = getLayerOptionIdentifier(layer.options);
-
       if (!mapLayerIdentifier) return false;
       const ctxLayer = ctxLayersMap.get(mapLayerIdentifier);
       if (!ctxLayer) return true;
 
       const visibilityChange = layer.visible !== (ctxLayer.visible ?? true);
       const opacityChange = layer.opacity !== (ctxLayer.opacity ?? 1);
-      const parentIdChange =
-        ctxLayer.parentId !== this.getIdsNestedParent(layer)?.join('.');
+      const layerParentId = this.getIdsNestedParent(layer)?.join('.');
+      const ctxParentId =
+        ctxLayer.parentId ?? findParentId(this.context.layers, ctxLayer);
+      const parentIdChange = ctxParentId !== layerParentId;
 
-      let expandedChange: boolean = false;
+      let expandedChange = false;
+      let titleChange = false;
       if (isLayerGroup(layer) && isLayerGroupOptions(ctxLayer)) {
+        // Check if the layer group was assign an local id
+        // If so, we don't support any change for this case
+        if (String(ctxLayer.id).includes(ID_GROUP_PREFIX)) {
+          return false;
+        }
         expandedChange = (ctxLayer.expanded ?? false) !== layer.expanded;
+        titleChange = (ctxLayer.title ?? false) !== layer.title;
       }
 
       return (
-        visibilityChange || opacityChange || expandedChange || parentIdChange
+        visibilityChange ||
+        opacityChange ||
+        expandedChange ||
+        titleChange ||
+        parentIdChange
       );
     });
   }
@@ -333,10 +350,8 @@ export class ShareMapEncoder {
     language: string | undefined
   ): string {
     const { pos, contextKey, languageKey } = this.SHARE_MAP_DEFS;
-    const loc = this.document.location;
-    const origin = loc.origin;
-    const pathname = loc.pathname;
-    const baseUrl = this.sanitizeBaseUrl(origin + pathname);
+    const href = this.document.location.href;
+    const baseUrl = this.sanitizeBaseUrl(href);
 
     const params: string[] = [];
     if (pos) {
@@ -348,7 +363,7 @@ export class ShareMapEncoder {
     const contextUri = this.context?.uri;
     if (contextUri) params.push(`${contextKey}=${contextUri}`);
 
-    if (language && !pathname.includes(`${languageKey}=`))
+    if (language && !baseUrl.includes(`${languageKey}=`))
       params.push(`${languageKey}=${language}`);
 
     return `${baseUrl}${params.join('&')}`;

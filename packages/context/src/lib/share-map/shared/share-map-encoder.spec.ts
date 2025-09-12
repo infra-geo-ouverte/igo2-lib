@@ -1,4 +1,4 @@
-import { Layer, isLayerItem } from '@igo2/geo';
+import { AnyLayerOptions, Layer, findParentId, isLayerItem } from '@igo2/geo';
 
 import { shareMapKeyDefs } from './share-map-definitions';
 import { ShareMapEncoder } from './share-map-encoder';
@@ -70,16 +70,19 @@ describe('ShareMapEncoder', () => {
 
   beforeEach(() => {
     SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
+    const origin = globalThis?.location?.origin ?? '';
+    const pathname = globalThis?.location?.pathname ?? '';
+    const search = globalThis?.location?.search ?? '';
+    const hash = globalThis?.location?.hash ?? '';
     mockDocument = {
       location: {
-        origin:
-          typeof globalThis !== 'undefined' && globalThis.location
-            ? globalThis.location.origin
-            : '',
-        pathname:
-          typeof globalThis !== 'undefined' && globalThis.location
-            ? globalThis.location.pathname
-            : ''
+        origin,
+        pathname,
+        search,
+        hash,
+        get href() {
+          return this.origin + this.pathname + this.search + this.hash;
+        }
       }
     } as Document;
     const keysDefinitions = shareMapKeyDefs({
@@ -175,7 +178,7 @@ describe('ShareMapEncoder', () => {
     it('should delete pos and urls from url and return new url with tool param', () => {
       const map = MAP_MOCK;
       shareMapEncoder['context'] = CONTEXT_MOCK;
-      mockDocument.location.pathname = `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`;
+      mockDocument.location.pathname = `${mockDocument.location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`;
 
       const result = shareMapEncoder.generateUrl(
         map,
@@ -219,6 +222,51 @@ describe('ShareMapEncoder', () => {
       expect(result).toBe(
         `${EXPECTED_BASE_URL}&${EXPECTED_URLS}&${EXPECTED_LAYERS}&${EXPECTED_GROUPS}`
       );
+    });
+  });
+
+  describe('findParentId', () => {
+    const tree = [
+      {
+        id: 1,
+        title: 'Parent Layer',
+        type: 'group',
+        children: [
+          {
+            id: 2,
+            title: 'Child Layer'
+          },
+          {
+            id: 3,
+            title: 'Group Layer',
+            type: 'group',
+            children: [
+              {
+                id: 4,
+                title: 'Nested Layer'
+              }
+            ]
+          }
+        ]
+      }
+    ] as AnyLayerOptions[];
+
+    it('should find parent ID for a direct child', () => {
+      const target = {
+        id: 2,
+        title: 'Child Layer'
+      } as AnyLayerOptions;
+      const parentId = findParentId(tree, target);
+      expect(parentId).toBe('1');
+    });
+
+    it('should find parent ID for a nested child', () => {
+      const target = {
+        id: 4,
+        title: 'Nested Layer'
+      } as AnyLayerOptions;
+      const parentId = findParentId(tree as any, target);
+      expect(parentId).toBe('1.3');
     });
   });
 });

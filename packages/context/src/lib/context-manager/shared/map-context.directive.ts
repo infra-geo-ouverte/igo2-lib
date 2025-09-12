@@ -11,15 +11,14 @@ import {
 import type { IgoMap } from '@igo2/geo';
 
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextMapView, DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-  selector: '[igoMapContext]',
-  standalone: true
+  selector: '[igoMapContext]'
 })
 export class MapContextDirective implements OnInit, OnDestroy {
   private component: MapBrowserComponent;
@@ -29,7 +28,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
     return this.component.map;
   }
 
-  private params: Params;
+  private queryParams: Params;
 
   constructor(
     component: MapBrowserComponent,
@@ -41,12 +40,16 @@ export class MapContextDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .pipe(filter((context) => context !== undefined))
+    this.context$$ = this.shareMapService.routeService.queryParams
+      .pipe(
+        switchMap((params) => {
+          this.queryParams = params ?? {};
+          return this.contextService.context$.pipe(
+            filter((context) => context !== undefined)
+          );
+        })
+      )
       .subscribe((context) => this.handleContextChange(context));
-    this.shareMapService.routeService.queryParams.subscribe((params) => {
-      this.params = params;
-    });
   }
 
   ngOnDestroy() {
@@ -65,10 +68,12 @@ export class MapContextDirective implements OnInit, OnDestroy {
       context.map.view.projection !== this.map.projection;
 
     if (
-      this.shareMapService.hasPositionParams(this.params) &&
+      this.shareMapService.hasPositionParams(this.queryParams) &&
       shouldOverrideView
     ) {
-      const positions = this.shareMapService.parser.parsePosition(this.params);
+      const positions = this.shareMapService.parser.parsePosition(
+        this.queryParams
+      );
       this.component.view = { ...viewContext, ...positions };
     } else if (shouldOverrideView) {
       this.component.view = viewContext as MapViewOptions;

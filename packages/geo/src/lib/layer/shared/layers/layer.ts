@@ -1,5 +1,6 @@
 import { Optional } from '@angular/core';
 
+import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 
 import OlLayer from 'ol/layer/Layer';
@@ -82,7 +83,8 @@ export abstract class Layer extends LayerBase {
 
   constructor(
     public options: LayerOptions,
-    @Optional() protected messageService?: MessageService
+    @Optional() protected messageService?: MessageService,
+    @Optional() protected authInterceptor?: AuthInterceptor
   ) {
     super(options);
 
