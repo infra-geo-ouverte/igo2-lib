@@ -146,10 +146,10 @@ export class EditionWorkspaceService {
 
     // TODO: Démystifier ce bout de code
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
+    ((layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
-      (layer.options.linkedLayers.links = clonedLinks);
+      (layer.options.linkedLayers.links = clonedLinks));
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}

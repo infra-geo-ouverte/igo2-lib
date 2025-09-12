@@ -2,6 +2,27 @@
 
 :host {
   overflow: hidden;
+  background-color: var(--mat-sys-surface);
+
+  ::ng-deep {
+    button {
+      &.mat-default {
+        mat-icon {
+          color: var(--mat-sys-on-surface);
+          fill: var(--mat-sys-on-surface);
+        }
+      }
+
+      &.disabled {
+        $color-disabled: var(--mat-sys-on-secondary-fixed);
+        mat-icon {
+          color: $color-disabled;
+          fill: $color-disabled;
+          opacity: 0.64;
+        }
+      }
+    }
+  }
 }
 
 .list-actions {

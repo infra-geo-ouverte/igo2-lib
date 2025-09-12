@@ -1,19 +1,9 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   @include common-utils.square-button();
 
-  .onlineStyle {
-    width: core.$igo-icon-size;
-    background-color: rgb(255, 255, 255);
-    &:hover {
-      background-color: #efefef;
-    }
-  }
-
   .offlineStyle {
-    width: core.$igo-icon-size;
     background-color: #b9b9b9;
   }
 }

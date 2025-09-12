@@ -5,10 +5,18 @@
   flex-direction: column;
   overflow: hidden;
 
-  igo-interactive-tour {
-    position: absolute;
-    top: 0;
-    right: 0;
+  > .igo-panel-header {
+    color: var(--mat-sys-on-primary);
+    background-color: var(--mat-sys-on-primary-container);
+
+    h3 {
+      font: var(--mat-sys-title-large);
+    }
+
+    ::ng-deep mat-icon {
+      fill: var(--mat-sys-on-primary);
+      color: var(--mat-sys-on-primary);
+    }
   }
 
   .igo-panel-header {

@@ -11,7 +11,7 @@
 
 <div
   *ngIf="activeTool$ | async as tool"
-  class="igo-tool-container mat-body-1"
+  class="igo-tool-container"
   [ngClass]="{
     'igo-tool-container-with-toolbar': !actionStore.empty,
     'igo-tool-container-with-animation': animate

@@ -1,11 +1,14 @@
-@use '../../../../../core/src/style/partial/core.variables' as core;
-
 table {
   width: 100%;
+
+  .igo-striped tbody tr:nth-child(odd) {
+    background-color: var(--mat-sys-surface-container-low);
+    color: black;
+  }
 }
 
 table td {
-  padding: core.$igo-padding;
+  padding: 4px;
 }
 
 #keyValue {

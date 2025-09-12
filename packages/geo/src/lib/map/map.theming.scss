@@ -1,9 +1,5 @@
 @use './map-browser/map-browser.theming.scss' as map-browser;
-@use './zoom-button/zoom-button.theming.scss' as zoom-button;
-@use './menu-button/menu-button.theming.scss' as menu-button;
 
-@mixin igo-map-theming($theme) {
-  @include map-browser.igo-map-browser-theming($theme);
-  @include zoom-button.igo-zoom-button-theming($theme);
-  @include menu-button.theme($theme);
+@mixin themes($theme) {
+  @include map-browser.theme($theme);
 }

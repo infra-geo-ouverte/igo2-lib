@@ -3,7 +3,7 @@ import { Integration } from '@sentry/core';
 
 import { MonitoringOptions } from '../shared/monitoring.interface';
 
-export type SentryMonitoringOptions = BrowserOptions &
+export type SentryMonitoringOptions = Omit<BrowserOptions, 'integrations'> &
   MonitoringOptions & {
     provider: 'sentry';
     errorHandlerOptions?: ErrorHandlerOptions;

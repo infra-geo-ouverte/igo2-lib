@@ -3,12 +3,4 @@
 
 :host {
   @include common-utils.square-button();
-
-  .igo-wake-lock-button-container {
-    width: core.$igo-icon-size;
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
-    }
-  }
 }

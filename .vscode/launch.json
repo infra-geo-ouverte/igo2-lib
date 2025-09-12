@@ -19,7 +19,7 @@
       "name": "igo2-client/start (LINK)",
       "preLaunchTask": "npm: link.start",
       "url": "http://127.0.0.1:4201",
-      "webRoot": "${workspaceFolder}/projects/igo2",
+      "webRoot": "${workspaceFolder}/projects/client",
       "sourceMaps": true
     },
     {

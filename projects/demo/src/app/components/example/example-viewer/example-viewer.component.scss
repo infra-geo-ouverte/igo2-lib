@@ -5,15 +5,11 @@
   mat-card-header {
     display: flex;
     justify-content: space-between;
-    padding: 8px 8px 0 16px;
-    margin-bottom: 0px;
   }
 
-  ::ng-deep .mat-mdc-card-header-text {
-    display: flex;
-    align-items: center;
+  mat-card-content {
+    padding-top: 16px;
   }
-
   mat-card-subtitle {
     font-size: 16px;
   }

@@ -75,13 +75,23 @@ $igo-actionbar-item-icon-padding: 8px;
     }
   }
 
-  ::ng-deep .mdc-list-item__primary-text {
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    line-height: 18px;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+  &.with-title {
+    ::ng-deep {
+      .mdc-list-item--with-leading-avatar .mdc-list-item__start {
+        margin-right: 0;
+      }
+    }
+  }
+
+  ::ng-deep {
+    .mdc-list-item__primary-text {
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      line-height: 18px;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
   }
 }

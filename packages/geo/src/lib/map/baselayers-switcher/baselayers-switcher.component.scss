@@ -28,19 +28,7 @@
 .more-baselayers {
   width: 80px;
   height: 20px;
-  background-color: white;
+  background-color: var(--mat-sys-inverse-on-surface);
   text-align: center;
   cursor: pointer;
-
-  &:hover {
-    background-color: #efefef;
-  }
-}
-
-.igo-baselayers-switcher-button-container {
-  width: core.$igo-icon-size;
-  background-color: #fff;
-  &:hover {
-    background-color: #efefef;
-  }
 }

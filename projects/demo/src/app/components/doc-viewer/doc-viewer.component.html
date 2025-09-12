@@ -1,7 +1,7 @@
-<h6 class="mat-subtitle-2 m-b-0">{{ subtitle }}</h6>
+<h6 class="m-b-0">{{ subtitle }}</h6>
 <h2>{{ title }}</h2>
 
-<div class="mat-body-1">
+<div>
   <ng-container *ngIf="dependencies?.length">
     <label for="">Dependencies:</label>
     <ul>
@@ -10,19 +10,3 @@
   </ng-container>
   <ng-content></ng-content>
 </div>
-<!-- <mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-subtitle>{{subtitle}}</mat-card-subtitle>
-    <mat-card-title>{{title}}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <ng-container *ngIf="dependencies?.length">
-        <label for="">Dependencies:</label>
-        <ul>
-            <li *ngFor="let dep of dependencies">{{dep}}</li>
-        </ul>
-        <br />
-    </ng-container>
-    <ng-content></ng-content>
-  </mat-card-content>
-</mat-card> -->

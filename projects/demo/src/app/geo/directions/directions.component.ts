@@ -86,7 +86,7 @@ export class AppDirectionsComponent {
         visible: true,
         sourceOptions: {
           type: 'xyz',
-          url: '/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
+          url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
           crossOrigin: 'anonymous'
         }
       } satisfies TileLayerOptions
