@@ -66,6 +66,10 @@ export class FeatureWorkspaceService {
       enabled: true
     } as GeoWorkspaceOptions);
 
+    if (!layer.options.linkedLayers) {
+      layer.options.linkedLayers = { linkId: layer.id, links: [] };
+    }
+
     const wks = new FeatureWorkspace({
       id: layer.id,
       title: layer.title,

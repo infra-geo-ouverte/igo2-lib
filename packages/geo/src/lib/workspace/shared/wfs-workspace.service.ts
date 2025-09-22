@@ -69,6 +69,10 @@ export class WfsWorkspaceService {
       enabled: true
     } as GeoWorkspaceOptions);
 
+    if (!layer.options.linkedLayers) {
+      layer.options.linkedLayers = { linkId: layer.id, links: [] };
+    }
+
     const wks = new WfsWorkspace({
       id: layer.id,
       title: layer.title,
