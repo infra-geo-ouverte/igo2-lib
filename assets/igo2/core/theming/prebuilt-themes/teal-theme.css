@@ -2421,17 +2421,19 @@ igo-auth-intern .loading-container {
 
 igo-actionbar-item {
   --mat-icon-button-touch-target-display: none;
-  --mdc-list-list-item-one-line-container-height: 40px;
-  --mdc-list-list-item-two-line-container-height: 56px;
-  --mdc-list-list-item-three-line-container-height: 80px;
-  --mat-list-list-item-leading-icon-start-space: 16px;
-  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-actionbar-item .mat-mdc-icon-button.mat-mdc-button-base {
   --mdc-icon-button-state-layer-size: 40px;
   width: var(--mdc-icon-button-state-layer-size);
   height: var(--mdc-icon-button-state-layer-size);
   padding: 8px;
+}
+igo-actionbar-item {
+  --mdc-list-list-item-one-line-container-height: 40px;
+  --mdc-list-list-item-two-line-container-height: 56px;
+  --mdc-list-list-item-three-line-container-height: 80px;
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-actionbar-item .mdc-list-item__start,
 igo-actionbar-item .mdc-list-item__end {
@@ -2486,17 +2488,19 @@ igo-entity-selector {
 
 igo-list {
   --mat-icon-button-touch-target-display: block;
-  --mdc-list-list-item-one-line-container-height: 48px;
-  --mdc-list-list-item-two-line-container-height: 64px;
-  --mdc-list-list-item-three-line-container-height: 88px;
-  --mat-list-list-item-leading-icon-start-space: 16px;
-  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-list .mat-mdc-icon-button.mat-mdc-button-base {
   --mdc-icon-button-state-layer-size: 48px;
   width: var(--mdc-icon-button-state-layer-size);
   height: var(--mdc-icon-button-state-layer-size);
   padding: 12px;
+}
+igo-list {
+  --mdc-list-list-item-one-line-container-height: 48px;
+  --mdc-list-list-item-two-line-container-height: 64px;
+  --mdc-list-list-item-three-line-container-height: 88px;
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-list .mdc-list-item__start,
 igo-list .mdc-list-item__end {
@@ -2630,22 +2634,19 @@ igo-home-button > #homeButton:hover {
 
 igo-context-list {
   --mat-icon-button-touch-target-display: none;
-  --mdc-list-list-item-one-line-container-height: 40px;
-  --mdc-list-list-item-two-line-container-height: 56px;
-  --mdc-list-list-item-three-line-container-height: 80px;
-  --mat-list-list-item-leading-icon-start-space: 16px;
-  --mat-list-list-item-leading-icon-end-space: 32px;
-  --mat-form-field-container-height: 48px;
-  --mat-form-field-filled-label-display: none;
-  --mat-form-field-container-vertical-padding: 12px;
-  --mat-form-field-filled-with-label-container-padding-top: 12px;
-  --mat-form-field-filled-with-label-container-padding-bottom: 12px;
 }
 igo-context-list .mat-mdc-icon-button.mat-mdc-button-base {
   --mdc-icon-button-state-layer-size: 40px;
   width: var(--mdc-icon-button-state-layer-size);
   height: var(--mdc-icon-button-state-layer-size);
   padding: 8px;
+}
+igo-context-list {
+  --mdc-list-list-item-one-line-container-height: 40px;
+  --mdc-list-list-item-two-line-container-height: 56px;
+  --mdc-list-list-item-three-line-container-height: 80px;
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-context-list .mdc-list-item__start,
 igo-context-list .mdc-list-item__end {
@@ -2656,6 +2657,13 @@ igo-context-list .mat-mdc-list-item.mdc-list-item--with-leading-avatar.mdc-list-
 }
 igo-context-list .mat-mdc-list-item.mdc-list-item--with-leading-avatar.mdc-list-item--with-two-lines, igo-context-list .mat-mdc-list-item.mdc-list-item--with-leading-checkbox.mdc-list-item--with-two-lines, igo-context-list .mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-two-lines {
   height: 64px;
+}
+igo-context-list {
+  --mat-form-field-container-height: 48px;
+  --mat-form-field-filled-label-display: none;
+  --mat-form-field-container-vertical-padding: 12px;
+  --mat-form-field-filled-with-label-container-padding-top: 12px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 12px;
 }
 
 igo-context-item {
@@ -2770,17 +2778,19 @@ igo-layer-list-tool mat-form-field .mat-mdc-form-field-focus-overlay {
 
 igo-layer-list-tool {
   --mat-icon-button-touch-target-display: none;
-  --mat-form-field-container-height: 48px;
-  --mat-form-field-filled-label-display: none;
-  --mat-form-field-container-vertical-padding: 12px;
-  --mat-form-field-filled-with-label-container-padding-top: 12px;
-  --mat-form-field-filled-with-label-container-padding-bottom: 12px;
 }
 igo-layer-list-tool .mat-mdc-icon-button.mat-mdc-button-base {
   --mdc-icon-button-state-layer-size: 40px;
   width: var(--mdc-icon-button-state-layer-size);
   height: var(--mdc-icon-button-state-layer-size);
   padding: 8px;
+}
+igo-layer-list-tool {
+  --mat-form-field-container-height: 48px;
+  --mat-form-field-filled-label-display: none;
+  --mat-form-field-container-vertical-padding: 12px;
+  --mat-form-field-filled-with-label-container-padding-top: 12px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 12px;
 }
 
 igo-layer-item {
@@ -2926,17 +2936,19 @@ igo-confirmation-popup-component h1 {
 
 igo-catalog-browser {
   --mat-icon-button-touch-target-display: none;
-  --mdc-list-list-item-one-line-container-height: 40px;
-  --mdc-list-list-item-two-line-container-height: 56px;
-  --mdc-list-list-item-three-line-container-height: 80px;
-  --mat-list-list-item-leading-icon-start-space: 16px;
-  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-catalog-browser .mat-mdc-icon-button.mat-mdc-button-base {
   --mdc-icon-button-state-layer-size: 40px;
   width: var(--mdc-icon-button-state-layer-size);
   height: var(--mdc-icon-button-state-layer-size);
   padding: 8px;
+}
+igo-catalog-browser {
+  --mdc-list-list-item-one-line-container-height: 40px;
+  --mdc-list-list-item-two-line-container-height: 56px;
+  --mdc-list-list-item-three-line-container-height: 80px;
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 32px;
 }
 igo-catalog-browser .mdc-list-item__start,
 igo-catalog-browser .mdc-list-item__end {
