@@ -65,7 +65,7 @@ export function addLayerAndFeaturesToMap(
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
-    idbInfo: { firstLoad: true, storeToIdb, contextUri: contextUri || '*' },
+    idbInfo: { storeToIdb, contextUri: contextUri },
     style: randomStyle
   }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));

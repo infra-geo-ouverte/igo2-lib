@@ -29,6 +29,7 @@ import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation, withStaticConfig } from '@igo2/core/language';
 import { provideSentryMonitoring } from '@igo2/core/monitoring';
+import { provideOffline } from '@igo2/geo';
 
 import { environment } from '../environments/environment';
 import { routes } from './app.routing';
@@ -55,6 +56,7 @@ export const appConfig: ApplicationConfig = {
     provideIcon(),
     provideSentryMonitoring(environment.igo.monitoring),
     provideAuthUserMonitoring(environment.igo.monitoring),
+    provideOffline({ enable: true }),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' } satisfies MatFormFieldDefaultOptions

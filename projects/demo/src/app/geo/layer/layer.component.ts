@@ -6,6 +6,7 @@ import {
   AnyLayerOptions,
   DownloadButtonComponent,
   FILTER_DIRECTIVES,
+  FeatureDataSourceOptions,
   IgoMap,
   ImageLayerOptions,
   LAYER_DIRECTIVES,
@@ -16,6 +17,7 @@ import {
   METADATA_DIRECTIVES,
   MapViewOptions,
   ProjectionService,
+  VectorLayerOptions,
   WFSDataSourceOptions
 } from '@igo2/geo';
 
@@ -199,7 +201,18 @@ export class AppLayerComponent {
           url: 'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
           extern: true
         }
-      }
+      },
+      {
+        id: 'mandatory_to_retrieve_layerData_in_IDB',
+        title: "Aéroport préloadé et chargé dans l'Indexed-db",
+        visible: false,
+        idbInfo: { storeToIdb: true },
+        sourceOptions: {
+          preload: { bypassResolution: true, bypassVisible: true },
+          type: 'vector',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=aeroport&srsname=EPSG:4326&outputformat=geojson'
+        } satisfies FeatureDataSourceOptions
+      } satisfies VectorLayerOptions
     ];
 
     this.layerService

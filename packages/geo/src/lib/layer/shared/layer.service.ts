@@ -35,7 +35,7 @@ import {
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
-import { LayerDBService } from '../../offline/layerDB/layerDB.service';
+import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleService } from '../../style/style-service/style.service';
 import {
@@ -72,7 +72,6 @@ export class LayerService {
     private dataSourceService: DataSourceService,
     private messageService: MessageService,
     @Optional() private geoNetworkService?: GeoNetworkService,
-    @Optional() private layerDBService?: LayerDBService,
     @Optional() private authInterceptor?: AuthInterceptor
   ) {}
 
@@ -252,9 +251,7 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService,
-        this.geoNetworkService?.geoDBService,
-        this.layerDBService
+        this.geoNetworkService
       );
     }
 
@@ -274,9 +271,7 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService,
-        this.geoNetworkService?.geoDBService,
-        this.layerDBService
+        this.geoNetworkService
       );
     }
 
@@ -289,9 +284,7 @@ export class LayerService {
         layerOptionsOl,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService,
-        this.geoNetworkService?.geoDBService,
-        this.layerDBService
+        this.geoNetworkService
       );
     }
 
@@ -438,7 +431,8 @@ export class LayerService {
   }
 
   createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
-    return this.layerDBService?.getAll().pipe(
+    const layerDB = new LayerDB();
+    return layerDB.getAll().pipe(
       concatMap((res) => {
         const idbLayers =
           contextUri !== '*'
