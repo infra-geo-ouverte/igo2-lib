@@ -106,10 +106,11 @@
     "ngx-toastr": "^19.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@sentry/angular": "^9.10.0",
+    "@sentry/angular": "^10.0.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
+    "@sentry/types": "^10.0.0",
     "typescript": "~5.5.4"
   },
   "engines": {
