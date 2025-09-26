@@ -946,6 +946,11 @@ export class IChercheReverseSearchSource
     const titleHtml = data.properties.nom;
     const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
 
+    let icon: string | IconSvg = data.icon;
+    if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
+      icon = ICHERCHE_ICONS[icon];
+    }
+
     return {
       source: this,
       data: {
@@ -964,7 +969,7 @@ export class IChercheReverseSearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'location_on',
+        icon: icon || 'location_on',
         pointerSummaryTitle: this.getSubtitle(data) + ': ' + data.properties.nom
       }
     };
