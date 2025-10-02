@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;46d049dc738cb2d83613243e3e1ac98f3bc108a7f053c7e0bdbaa9adaa81a355;/home/runner/work/igo2-lib/igo2-lib/packages/integration/src/lib/search/search-results-tool/search-results-tool.component.ts"],
+  "sourcesContent": ["\n      :host {\n        display: block;\n        padding: 16px;\n      }\n    "],
+  "mappings": "AACM,MACE,QAAS,MAFjB,QAGiB,IACX",
+  "names": []
+}

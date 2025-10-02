@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/catalog/catalog-library-tool/catalog-library-tool.component.scss"],
+  "sourcesContent": [".get-catalog-list-button {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n"],
+  "mappings": "AAAA,CAAA,wBACE,QAAA,KACA,gBAAA,OACA,YAAA",
+  "names": []
+}

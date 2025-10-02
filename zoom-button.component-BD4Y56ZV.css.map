@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/src/style/partial/common-utils.scss", "packages/geo/src/lib/map/zoom-button/zoom-button.component.scss"],
+  "sourcesContent": ["@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    background-color: var(--mat-sys-inverse-on-surface);\n\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n", "@use '@angular/material' as mat;\n@use '../../../../../common/src/style/partial/common-utils';\n\n:host {\n  @include common-utils.square-button();\n}\n\n.igo-zoom-button-container {\n  width: min-content;\n}\n\n.igo-zoom-button-container button:first-child {\n  margin-bottom: 2px;\n}\n"],
+  "mappings": "AACE,MAAA,OAAA,cACE,YACA,iBAAA,IAAA,8BAEA,MAAA,OAAA,CAAA,WAAA,MAAA,OAAA,CAAA,wBAJF,cAMI,YCAN,CAAA,0BACE,MAAA,YAGF,CAJA,0BAIA,MAAA,aACE,cAAA",
+  "names": []
+}

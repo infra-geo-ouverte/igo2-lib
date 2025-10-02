@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/catalog/catalog-library/add-catalog-dialog.component.scss"],
+  "sourcesContent": [":host {\n  mat-tab-group {\n    padding: 10px;\n  }\n  igo-form {\n    overflow: hidden;\n  }\n\n  .actions-container {\n    button:not(:last-child) {\n      margin-right: 8px;\n    }\n  }\n  .form-container {\n    width: 100%;\n    height: auto;\n    padding: 10px;\n\n    igo-form-field {\n      display: block;\n      height: auto;\n    }\n  }\n  .error {\n    color: red;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,cAAA,QACE,KAEF,MAAA,SACE,SAAA,OAIA,MAAA,CAAA,kBAAA,MAAA,KAAA,aACE,aAAA,IAGJ,MAAA,CAAA,eACE,MAAA,KACA,OAAA,KAdF,QAeE,KAEA,MAAA,CALF,eAKE,eACE,QAAA,MACA,OAAA,KAGJ,MAAA,CAAA,MACE,MAAA",
+  "names": []
+}

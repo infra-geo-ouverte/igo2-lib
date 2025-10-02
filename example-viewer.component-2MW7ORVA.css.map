@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/components/example/example-viewer/example-viewer.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n  margin-top: 24px;\n\n  mat-card-header {\n    display: flex;\n    justify-content: space-between;\n  }\n\n  mat-card-content {\n    padding-top: 16px;\n  }\n  mat-card-subtitle {\n    font-size: 16px;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MACA,WAAA,KAEA,MAAA,gBACE,QAAA,KACA,gBAAA,cAGF,MAAA,iBACE,YAAA,KAEF,MAAA,kBACE,UAAA",
+  "names": []
+}

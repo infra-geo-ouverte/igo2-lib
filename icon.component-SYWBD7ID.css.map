@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;3f59715483bfe3b4501e3cdabffb87870aedf352e49ec961ab98a9f3c8ee03a9;/home/runner/work/igo2-lib/igo2-lib/packages/common/icon/src/icon/icon.component.ts"],
+  "sourcesContent": ["\n    :host {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n  "],
+  "mappings": "AACI,MACE,QAAS,KACT,YAAa,OACb,gBAAiB,MACnB",
+  "names": []
+}

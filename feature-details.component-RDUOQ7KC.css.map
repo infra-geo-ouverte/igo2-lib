@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/feature/feature-details/feature-details.component.scss"],
+  "sourcesContent": ["table {\n  width: 100%;\n\n  .igo-striped tbody tr:nth-child(odd) {\n    background-color: var(--mat-sys-surface-container-low);\n    color: black;\n  }\n}\n\ntable td {\n  padding: 4px;\n}\n\n#keyValue {\n  width: 30%;\n}\n\ntable ::ng-deep .routing {\n  cursor: pointer;\n}\n\niframe {\n  height: calc(100% - 4px);\n  width: 100%;\n  border: 0;\n}\n.copyClipboard {\n  border: none;\n  background: transparent;\n  cursor: pointer;\n}\n"],
+  "mappings": "AAAA,MACE,MAAA,KAEA,MAAA,CAAA,YAAA,MAAA,EAAA,gBACE,iBAAA,IAAA,iCACA,MAAA,KAIJ,MAAA,GATA,QAUE,IAGF,CAAA,SACE,MAAA,IAGF,MAAA,UAAA,CAAA,QACE,OAAA,QAGF,OACE,OAAA,KAAA,KAAA,EAAA,KACA,MAAA,KACA,OAAA,EAEF,CAAA,cACE,OAAA,KACA,WAAA,YACA,OAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-legend/layer-legend.component.scss"],
+  "sourcesContent": [":host {\n  @-moz-document url-prefix() {\n    img:after {\n      margin-left: 19px;\n    }\n  }\n\n  @keyframes spin {\n    0% {\n      transform: rotate(0deg);\n    }\n    100% {\n      transform: rotate(360deg);\n    }\n  }\n}\n\n.igo-layer-legend.with-title {\n  padding-left: 18px;\n}\n\nimg {\n  max-width: 100%;\n\n  &:after {\n    content: ' ';\n    position: relative;\n    height: 17px;\n    float: left;\n    width: 17px;\n    top: -3px;\n    right: 19px;\n    background-color: #fff;\n    border: 3px solid #f3f3f3;\n    border-radius: 50%;\n    border-top-color: var(--mat-sys-primary-container);\n    animation: 2s linear infinite spin;\n  }\n}\n\nmat-form-field {\n  margin-bottom: 4px;\n}\n"],
+  "mappings": "AACE,eAAA,aACE,MAAA,GAAA,OACE,YAAA,MAIJ,WAAA,KACE,GACE,UAAA,OAAA,GAEF,GACE,UAAA,OAAA,SAKN,CAAA,gBAAA,CAAA,WACE,aAAA,KAGF,IACE,UAAA,KAEA,GAAA,OACE,QAAA,IACA,SAAA,SACA,OAAA,KACA,MAAA,KACA,MAAA,KACA,IAAA,KACA,MAAA,KACA,iBAAA,KACA,OAAA,IAAA,MAAA,QAhCF,cAiCE,IACA,iBAAA,IAAA,6BACA,UAAA,GAAA,OAAA,SAAA,KAIJ,eACE,cAAA",
+  "names": []
+}

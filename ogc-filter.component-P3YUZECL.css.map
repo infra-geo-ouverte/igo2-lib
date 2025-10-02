@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/workspace/widgets/ogc-filter/ogc-filter.component.scss"],
+  "sourcesContent": [":host {\n  igo-ogc-filterable-item {\n    width: 95%;\n    display: grid;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,wBACE,MAAA,IACA,QAAA",
+  "names": []
+}

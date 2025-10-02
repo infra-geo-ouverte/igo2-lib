@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/interactive-tour/src/interactive-tour.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep {\n    button {\n      &.tour-button-tool-icon {\n        color: var(--mat-sys-primary-container);\n\n        &:hover {\n          background-color: var(--mat-sys-secondary-container);\n          color: var(--mat-sys-on-secondary-container);\n        }\n      }\n    }\n\n    .mat-primary .mat-mdc-icon-button {\n      color: white;\n    }\n  }\n\n  > button.mat-mdc-raised-button.tour-button-tool-icon {\n    box-shadow: none;\n  }\n}\n\n.shepherd-has-title .shepherd-content .shepherd-header {\n  padding: 0.5em 0.75em;\n  h3 {\n    font-size: 14px;\n  }\n}\n\n.shepherd-title {\n  margin: 0px !important;\n  font-weight: revert !important;\n}\n\n.shepherd-progress {\n  margin-right: 15px;\n  color: hsla(0, 0%, 45%, 1);\n}\n\n.shepherd-element {\n  border: 1px solid;\n  border-color: #474747;\n  box-shadow: 4px 5px rgb(101, 101, 101, 0.6);\n}\n"],
+  "mappings": "AAGM,MAAA,UAAA,MAAA,CAAA,sBACE,MAAA,IAAA,6BAEA,MAAA,UAAA,MAAA,CAHF,qBAGE,OACE,iBAAA,IAAA,+BACA,MAAA,IAAA,kCAKN,MAAA,UAAA,CAAA,YAAA,CAAA,oBACE,MAAA,KAIJ,KAAA,CAAA,MAAA,CAAA,qBAAA,CAfI,sBAgBF,WAAA,KAIJ,CAAA,mBAAA,CAAA,iBAAA,CAAA,gBApBM,QAqBJ,KAAA,MACA,CAFF,mBAEE,CAFF,iBAEE,CAFF,gBAEE,GACE,UAAA,KAIJ,CAAA,eA3BM,OA4BJ,YACA,YAAA,iBAGF,CAAA,kBACE,aAAA,KACA,MAAA,QAGF,CAAA,iBACE,OAAA,IAAA,MACA,aAAA,QACA,WAAA,IAAA,IAAA",
+  "names": []
+}

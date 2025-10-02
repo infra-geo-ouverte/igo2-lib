@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-visibility-button/layer-visibility-button.component.scss"],
+  "sourcesContent": ["@use 'sass:color';\n\n:host {\n  .disabled,\n  .visibility-hidden {\n    &.out-of-range {\n      opacity: 0.44;\n    }\n  }\n\n  $color-disabled: var(--mat-sys-on-secondary-fixed);\n\n  ::ng-deep {\n    button {\n      &.mat-default {\n        mat-icon {\n          color: $color-disabled;\n          fill: $color-disabled;\n          opacity: 0.64;\n        }\n      }\n\n      &.out-of-range,\n      &.disabled {\n        mat-icon {\n          color: $color-disabled;\n          fill: $color-disabled;\n          opacity: 0.64;\n        }\n      }\n    }\n  }\n}\n\nmat-icon {\n  &[matBadge] ::ng-deep .mat-badge-content {\n    font-size: 12px;\n  }\n}\n"],
+  "mappings": "AAKI,MAAA,CAAA,QAAA,CAAA,aAAA,MAAA,CAAA,iBAAA,CAAA,aACE,QAAA,IASE,MAAA,UAAA,MAAA,CAAA,YAAA,SACE,MANS,IAAA,8BAOT,KAPS,IAAA,8BAQT,QAAA,IAMF,MAAA,UAAA,MAAA,CAnBJ,aAmBI,SAAA,MAAA,UAAA,MAAA,CAnBJ,SAmBI,SACE,MAfS,IAAA,8BAgBT,KAhBS,IAAA,8BAiBT,QAAA,IAQR,QAAA,CAAA,UAAA,UAAA,CAAA,kBACE,UAAA",
+  "names": []
+}

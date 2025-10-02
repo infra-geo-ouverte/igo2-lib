@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/share-map/share-map/share-map-url.component.scss"],
+  "sourcesContent": ["mat-form-field {\n  width: 100%;\n}\n\n.igo-share-map-url-content {\n  padding: 16px;\n}\n\n.igo-form-button-group {\n  text-align: center;\n}\n\nigo-custom-html.shareCustomPadding {\n  padding: 0px;\n}\n"],
+  "mappings": "AAAA,eACE,MAAA,KAGF,CAAA,0BAJA,QAKE,KAGF,CAAA,sBACE,WAAA,OAGF,eAAA,CAAA,mBAZA,QAaE",
+  "names": []
+}
