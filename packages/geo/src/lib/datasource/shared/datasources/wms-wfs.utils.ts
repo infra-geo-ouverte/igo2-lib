@@ -6,8 +6,22 @@ import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
 
+import {
+  TimeFrame,
+  parseDateOperation,
+  searchFilter
+} from '../../../filter/shared/filter.utils';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import {
+  AnyBaseOgcFilterOptions,
+  IOgcFiltersOptionSaveable,
+  IOgcInterfaceFilterOptions,
+  IgoLogicalArrayOptions,
+  OgcFiltersOptions,
+  OgcInterfaceFilterOptions,
+  OgcSelectorFields
+} from '../../../filter/shared/ogc-filter.interface';
+import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 
@@ -30,9 +44,9 @@ export function buildUrl(
   options: WFSDataSourceOptions,
   extent: Extent,
   proj: olProjection,
-  ogcFilters: OgcFiltersOptions,
   randomParam?: boolean
 ): string {
+  const ogcFilters = options.ogcFilters;
   const paramsWFS = options.paramsWFS;
   const queryStringValues = formatWFSQueryString(
     options,
@@ -157,6 +171,10 @@ export function formatWFSQueryString(
   let getFeature = `${url}${separator}service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
 
+  if (dataSourceOptions[EventRefresh]) {
+    getFeature += `&${EventRefresh}=${dataSourceOptions[EventRefresh]}`;
+  }
+
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
   getpropertyvalue += `&${cnt}&${valueReference}`;
 
@@ -271,4 +289,77 @@ export function getFormatFromOptions(
   }
 
   return new olFormatCls();
+}
+
+export function getSaveableOgcParams(
+  options: OgcFiltersOptions
+): IOgcFiltersOptionSaveable {
+  const selectors = OgcSelectorFields.reduce((selector, selectorName) => {
+    if (options[selectorName]) {
+      selector[selectorName] = {
+        groups: options[selectorName].groups
+      };
+    }
+    return selector;
+  }, {});
+
+  return {
+    ...selectors,
+    ...(options?.interfaceOgcFilters && {
+      interfaceOgcFilters: options.interfaceOgcFilters.map((interfaceOgc) => {
+        const filters = searchFilter(
+          options.filters,
+          'filterid',
+          interfaceOgc.filterid
+        );
+        return interfaceOgcFilters(filters, interfaceOgc);
+      })
+    })
+  };
+}
+
+function interfaceOgcFilters(
+  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions,
+  interfaceOgc: OgcInterfaceFilterOptions
+): IOgcInterfaceFilterOptions {
+  const saveableInterface: IOgcInterfaceFilterOptions = {
+    propertyName: interfaceOgc?.propertyName,
+    operator: interfaceOgc?.operator,
+    active: interfaceOgc?.active,
+    expression: interfaceOgc?.expression
+  };
+
+  Object.keys(saveableInterface).forEach((key) => {
+    if (isEmpty(saveableInterface[key])) {
+      delete saveableInterface[key];
+    }
+  });
+
+  handleFilterDate(filters, interfaceOgc, saveableInterface);
+
+  return saveableInterface;
+}
+
+function isEmpty(value: unknown): boolean {
+  return value === null || value === undefined || value === '';
+}
+
+function handleFilterDate(
+  filter: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions,
+  interfaceOgc: OgcInterfaceFilterOptions,
+  saveableInterface: IOgcInterfaceFilterOptions
+) {
+  const keys: (keyof OgcInterfaceFilterOptions)[] = ['begin', 'end'];
+  const formatDate = (date: string) =>
+    TimeFrame.some((timeFrame) => date.toLocaleLowerCase().includes(timeFrame))
+      ? new Date(parseDateOperation(date)).toISOString().split('.')[0] + 'Z'
+      : new Date(date).toISOString().split('.')[0] + 'Z';
+
+  keys.forEach((key) => {
+    if (filter && !isEmpty(filter[key])) {
+      if (formatDate(filter[key]) !== formatDate(interfaceOgc[key])) {
+        saveableInterface[key] = interfaceOgc[key];
+      }
+    }
+  });
 }

@@ -29,7 +29,6 @@ import {
   selector: 'igo-form-field-textarea',
   templateUrl: './form-field-textarea.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

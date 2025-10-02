@@ -6,7 +6,7 @@ import { MediaService } from '@igo2/core/media';
 
 import { autoPlacement, offset } from '@floating-ui/dom';
 import { ShepherdService } from 'angular-shepherd';
-import Shepherd from 'shepherd.js';
+import { StepOptions, Tour } from 'shepherd.js';
 
 import {
   InteractiveTourAction,
@@ -15,12 +15,16 @@ import {
 } from './interactive-tour.interface';
 import { InteractiveTourLoader } from './interactive-tour.loader';
 
+interface IIndexTour {
+  index: number;
+  tour: Tour;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class InteractiveTourService {
   private previousStep: InteractiveTourStep;
-  private nextIndex = 1;
 
   constructor(
     private configService: ConfigService,
@@ -173,14 +177,6 @@ export class InteractiveTourService {
           return;
         } else {
           const currentStepElement = self.getCurrentStep().getElement();
-          if (currentStepElement) {
-            const shepherdList = currentStepElement.querySelectorAll(
-              '.shepherd-content, .shepherd-text'
-            );
-            shepherdList.forEach((element) => {
-              element.classList.add('mat-typography');
-            });
-          }
           const header = currentStepElement
             ? currentStepElement.querySelector('.shepherd-header')
             : undefined;
@@ -207,7 +203,7 @@ export class InteractiveTourService {
     }, 100);
   }
 
-  private checkNext(index, tour, service) {
+  private checkNext(index: IIndexTour, tour) {
     if (tour.getCurrentStep()) {
       if (
         tour.getCurrentStep().options.attachTo.element &&
@@ -228,7 +224,8 @@ export class InteractiveTourService {
         nextStep.options.attachTo.element &&
         !document.querySelector(nextStep.options.attachTo.element)
       ) {
-        service.checkNext(index, tour, service);
+        index.index = index.index + 1;
+        this.checkNext(index, tour);
       } else {
         tour._setupModal();
         tour.show(nextStep.id);
@@ -286,7 +283,7 @@ export class InteractiveTourService {
   }
 
   private getShepherdSteps(tourConfig: InteractiveTourOptions) {
-    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
+    const shepherdSteps: StepOptions[] = [];
 
     let i = 0;
     for (const step of tourConfig.steps) {
@@ -339,7 +336,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      } satisfies Shepherd.Step.StepOptions);
+      } satisfies StepOptions);
       i++;
     }
 
@@ -369,7 +366,7 @@ export class InteractiveTourService {
 
     this.shepherdService.tourObject.on('show', this.addProgress);
     this.shepherdService.tourObject.on('cancel', (index) => {
-      this.checkNext(index, this.shepherdService.tourObject, this);
+      this.checkNext(index, this.shepherdService.tourObject);
     });
 
     this.shepherdService.start();

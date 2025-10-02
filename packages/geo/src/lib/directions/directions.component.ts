@@ -63,7 +63,6 @@ import {
   selector: 'igo-directions',
   templateUrl: './directions.component.html',
   styleUrls: ['./directions.component.scss'],
-  standalone: true,
   imports: [
     CommonModule,
     MatSlideToggleModule,

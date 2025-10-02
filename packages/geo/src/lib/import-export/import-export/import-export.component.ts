@@ -1,4 +1,4 @@
-import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -84,7 +84,6 @@ type SelectMode = 'import' | 'export';
   selector: 'igo-import-export',
   templateUrl: './import-export.component.html',
   styleUrls: ['./import-export.component.scss'],
-  standalone: true,
   imports: [
     MatButtonToggleModule,
     NgIf,
@@ -102,7 +101,6 @@ type SelectMode = 'import' | 'export';
     MatSlideToggleModule,
     MatInputModule,
     AsyncPipe,
-    KeyValuePipe,
     IgoLanguageModule
   ],
   providers: [ConfirmDialogService]

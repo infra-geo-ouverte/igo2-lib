@@ -36,7 +36,6 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
   selector: 'igo-catalog-browser',
   templateUrl: './catalog-browser.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ListComponent,
     NgFor,

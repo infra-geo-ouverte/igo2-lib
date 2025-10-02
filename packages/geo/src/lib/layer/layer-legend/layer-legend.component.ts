@@ -46,7 +46,6 @@ import {
   templateUrl: './layer-legend.component.html',
   styleUrls: ['./layer-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     NgFor,
@@ -317,7 +316,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
         .LAYERS.split(',')
         .map(() => (STYLES += this.currentStyle + ','));
       STYLES = STYLES.slice(0, -1);
-      this.layer.dataSource.ol.updateParams({ STYLES });
+      this.layer.dataSource.stylesParams = STYLES;
     }
   }
 

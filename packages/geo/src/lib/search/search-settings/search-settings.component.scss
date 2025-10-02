@@ -1,5 +1,5 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   display: flex;
@@ -29,8 +29,8 @@
 
 .igo-search-settings-search-source mat-checkbox {
   display: flex;
-  margin-left: $igo-margin;
-  margin-right: $igo-margin;
+  margin-left: core.$igo-margin;
+  margin-right: core.$igo-margin;
 }
 
 .search-option {

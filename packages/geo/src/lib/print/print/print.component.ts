@@ -19,7 +19,6 @@ import {
 @Component({
   selector: 'igo-print',
   templateUrl: './print.component.html',
-  standalone: true,
   imports: [PrintFormComponent]
 })
 export class PrintComponent {

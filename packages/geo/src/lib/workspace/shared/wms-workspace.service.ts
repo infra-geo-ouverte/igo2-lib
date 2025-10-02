@@ -98,6 +98,9 @@ export class WmsWorkspaceService {
     if (!layer.options.workspace?.maxResolution) {
       linkProperties.properties.push(LinkedProperties.MAXRESOLUTION);
     }
+    if (dataSource.options.refreshIntervalSec) {
+      linkProperties.properties.push(LinkedProperties.REFRESH);
+    }
 
     let clonedLinks: LayersLinkProperties[] = [];
     if (layer.options.linkedLayers.links) {

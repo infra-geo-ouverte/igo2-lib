@@ -1,8 +1,33 @@
+@use 'sass:color';
+
 :host {
   .disabled,
   .visibility-hidden {
     &.out-of-range {
-      opacity: 0.54;
+      opacity: 0.44;
+    }
+  }
+
+  $color-disabled: var(--mat-sys-on-secondary-fixed);
+
+  ::ng-deep {
+    button {
+      &.mat-default {
+        mat-icon {
+          color: $color-disabled;
+          fill: $color-disabled;
+          opacity: 0.64;
+        }
+      }
+
+      &.out-of-range,
+      &.disabled {
+        mat-icon {
+          color: $color-disabled;
+          fill: $color-disabled;
+          opacity: 0.64;
+        }
+      }
     }
   }
 }

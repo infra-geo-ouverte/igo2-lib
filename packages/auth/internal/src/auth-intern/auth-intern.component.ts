@@ -27,7 +27,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
   templateUrl: './auth-intern.component.html',
   styleUrls: ['./auth-intern.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

@@ -1,14 +1,5 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/core.variables';
 
 :host {
   @include common-utils.square-button();
-
-  .igo-geolocate-button-container {
-    width: $igo-icon-size;
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
-    }
-  }
 }

@@ -19,7 +19,6 @@ import { IgoMap } from '../map/shared/map';
   selector: 'igo-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
-  standalone: true,
   imports: [
     FlexibleComponent,
     PanelComponent,
@@ -86,11 +85,7 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

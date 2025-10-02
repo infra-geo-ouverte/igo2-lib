@@ -19,7 +19,6 @@ import { getControlErrorMessage } from '../shared/form.utils';
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     NgFor,

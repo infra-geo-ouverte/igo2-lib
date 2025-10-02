@@ -3,6 +3,5 @@
   "dest": "../../dist/utils",
   "lib": {
     "entryFile": "src/public_api.ts"
-  },
-  "allowedNonPeerDependencies": ["bowser", "xlsx"]
+  }
 }

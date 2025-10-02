@@ -828,7 +828,6 @@ export class PrintService {
     mapResultCanvas.width = size[0];
     mapResultCanvas.height = size[1];
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let index = 0; index < mapCanvas.length; index++) {
       const canvas = mapCanvas[index];
       if (canvas.width > 0) {

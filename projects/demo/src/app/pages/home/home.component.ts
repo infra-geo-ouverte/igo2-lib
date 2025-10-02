@@ -11,7 +11,6 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, IgoInteractiveTourModule]
 })
 export class AppHomeComponent {

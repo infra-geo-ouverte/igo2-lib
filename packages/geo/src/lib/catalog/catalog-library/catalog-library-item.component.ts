@@ -25,7 +25,6 @@ import { Catalog } from '../shared/catalog.abstract';
   templateUrl: './catalog-library-item.component.html',
   styleUrls: ['./catalog-library-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgIf,
@@ -35,7 +34,7 @@ import { Catalog } from '../shared/catalog.abstract';
     IgoLanguageModule
   ]
 })
-export class CatalogLibaryItemComponent {
+export class CatalogLibraryItemComponent {
   /**
    * Catalog
    */

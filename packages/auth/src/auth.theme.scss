@@ -1,9 +1,0 @@
-@use '../form/src/auth-form.theme.scss' as auth-form;
-
-@mixin themes($theme) {
-  @include auth-form.themes($theme);
-}
-
-@mixin colors($theme) {
-  @include auth-form.colors($theme);
-}

@@ -31,6 +31,7 @@ import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { AnyWorkspace } from '../shared/workspace.interface';
 
 @Directive({
   selector: '[igoWorkspaceSelector]',
@@ -64,6 +65,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       .pipe(debounceTime(50))
       .subscribe((layers) => this.onLayersChange(layers));
 
+    this.workspaceStore?.activeWorkspace$.subscribe((ws: AnyWorkspace) => {
+      this.updateActiveWorkspaceRefreshState(ws);
+    });
     this.featureWorkspaceService.ws$.subscribe((ws) => {
       this.changeWorkspace.emit(ws);
     });
@@ -92,6 +96,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.entities$$.map((entities) => entities.unsubscribe());
+    this.disableAllLayerRefresh();
   }
 
   private onLayersChange(layers: AnyLayer[]) {
@@ -209,5 +214,40 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     }
 
     return false;
+  }
+
+  private updateActiveWorkspaceRefreshState(
+    workspace: AnyWorkspace | undefined
+  ) {
+    if (!workspace) return;
+
+    this.disableAllLayerRefresh();
+    this.enableLayerRefreshForWorkspace(workspace);
+  }
+
+  private enableLayerRefreshForWorkspace(workspace: AnyWorkspace) {
+    const dataSource = workspace.layer.linkMaster?.layer?.dataSource;
+    if (!dataSource || !(dataSource instanceof WMSDataSource)) {
+      return;
+    }
+    if (dataSource.options?.refreshIntervalSec && !dataSource.enableRefresh) {
+      dataSource.enableRefresh = true;
+    }
+  }
+
+  private disableAllLayerRefresh() {
+    this.workspaceStore.all().forEach((wks: AnyWorkspace) => {
+      const datasourceMaster = wks.layer.linkMaster?.layer?.dataSource;
+      if (!datasourceMaster || !(datasourceMaster instanceof WMSDataSource)) {
+        return;
+      }
+
+      if (
+        datasourceMaster.options.refreshIntervalSec &&
+        datasourceMaster.enableRefresh
+      ) {
+        datasourceMaster.enableRefresh = false;
+      }
+    });
   }
 }

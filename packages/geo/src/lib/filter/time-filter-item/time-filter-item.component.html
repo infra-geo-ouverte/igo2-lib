@@ -47,7 +47,7 @@
     [layer]="layer"
     [options]="datasource.options.timeFilter"
     [currentValue]="datasource.options.params.TIME"
-    (change)="handleDateChange($event)"
+    (dateChange)="handleDateChange($event)"
     (yearChange)="handleYearChange($event)"
   >
   </igo-time-filter-form>

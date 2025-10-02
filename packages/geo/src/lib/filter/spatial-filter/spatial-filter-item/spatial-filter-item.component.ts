@@ -74,7 +74,6 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
   templateUrl: './spatial-filter-item.component.html',
   styleUrls: ['./spatial-filter-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     GeometryFormFieldInputComponent,
     FormsModule,

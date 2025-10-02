@@ -1,0 +1,21 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme() {
+  .toast-error {
+    background-color: var(--mat-sys-error) !important;
+  }
+
+  .toast-info {
+    background-color: var(--mat-sys-primary) !important;
+  }
+
+  .toast-no-icon {
+    background-image: none;
+    padding-left: 6%;
+  }
+
+  .toast-title {
+    font-weight: bold;
+  }
+}

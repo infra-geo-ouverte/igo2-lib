@@ -1,19 +1,23 @@
 :host {
   overflow: hidden;
+}
 
-  .igo-actions-container {
-    flex-shrink: 0;
-  }
+.igo-actions-container {
+  flex-shrink: 0;
+}
 
-  .igo-actions-expand-container {
-    display: inline-flex;
-  }
+.igo-actions-expand-container {
+  display: inline-flex;
+}
 
-  mat-icon.disabled {
-    color: rgba(0, 0, 0, 0.38);
-  }
+mat-icon.disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
 
-  button[matlistitemavatar] {
-    margin-right: 8px;
-  }
+.mdc-list-item--with-leading-avatar .mdc-list-item__start {
+  margin: 0 8px 0 0;
+}
+
+button[matlistitemavatar] {
+  background-color: inherit;
 }

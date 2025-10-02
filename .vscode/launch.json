@@ -19,7 +19,7 @@
       "name": "igo2-client/start (LINK)",
       "preLaunchTask": "npm: link.start",
       "url": "http://127.0.0.1:4201",
-      "webRoot": "${workspaceFolder}/projects/igo2",
+      "webRoot": "${workspaceFolder}/projects/client",
       "sourceMaps": true
     },
     {
@@ -30,10 +30,24 @@
       "url": "http://localhost:9876/debug.html"
     },
     {
+      "name": "test.core",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.core",
+      "url": "http://localhost:9876/debug.html"
+    },
+    {
       "name": "test.common",
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: test.common",
+      "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "name": "test.context",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test.context",
       "url": "http://localhost:9876/debug.html"
     },
   ]

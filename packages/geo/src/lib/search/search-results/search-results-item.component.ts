@@ -32,7 +32,6 @@ import { SearchResult } from '../shared/search.interfaces';
   templateUrl: './search-results-item.component.html',
   styleUrls: ['./search-results-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatListModule,
     NgIf,
@@ -104,11 +103,7 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
-    moveToOlFeatures(
-      this.map.viewController,
-      [olFeature],
-      FeatureMotion.Default
-    );
+    moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Default);
   }
 
   /**

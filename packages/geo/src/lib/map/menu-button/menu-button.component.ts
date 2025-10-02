@@ -11,7 +11,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
   selector: 'igo-menu-button',
   templateUrl: './menu-button.component.html',
   styleUrls: ['./menu-button.component.scss'],
-  standalone: true,
   imports: [
     MatButtonModule,
     NgClass,

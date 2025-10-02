@@ -26,7 +26,6 @@ import {
   templateUrl: './ogc-filter-button.component.html',
   styleUrls: ['./ogc-filter-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

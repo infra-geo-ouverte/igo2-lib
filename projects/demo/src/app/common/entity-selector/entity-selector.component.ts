@@ -18,7 +18,6 @@ interface DemoEntity {
   selector: 'app-entity-selector',
   templateUrl: './entity-selector.component.html',
   styleUrls: ['./entity-selector.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

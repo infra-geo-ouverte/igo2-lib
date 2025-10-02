@@ -25,7 +25,6 @@ import { getAllFormFields } from '../shared/form.utils';
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [FormsModule, ReactiveFormsModule, NgClass]
 })
 export class FormComponent implements OnChanges {

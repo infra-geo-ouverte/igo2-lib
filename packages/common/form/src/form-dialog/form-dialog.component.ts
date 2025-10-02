@@ -30,7 +30,6 @@ import { FormDialogData } from './form-dialog.interface';
   selector: 'igo-form-dialog',
   templateUrl: './form-dialog.component.html',
   styleUrls: ['./form-dialog.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     NgIf,

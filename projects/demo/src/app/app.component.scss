@@ -1,3 +1,17 @@
+@use '@angular/material' as mat;
+
+@include mat.toolbar-overrides(
+  (
+    container-background-color: var(--mat-sys-on-primary-container),
+    container-text-color: var(--mat-sys-on-primary),
+    // standard-height: 56px
+  )
+);
+
+.active-link span {
+  color: var(--mat-sys-on-primary-fixed-variant);
+}
+
 .example-container {
   display: flex;
   flex-direction: column;
@@ -17,12 +31,14 @@
     margin: 0;
   }
 }
-mat-panel-title {
-  font-size: 14px;
-}
 
 mat-nav-list {
   padding: 0;
+}
+
+mat-sidenav {
+  width: 240px;
+  border-right-color: rgba(0, 0, 0, 0.13);
 }
 
 mat-expansion-panel {
@@ -58,4 +74,20 @@ mat-expansion-panel {
 
 mat-sidenav-content {
   box-sizing: border-box;
+}
+
+mat-toolbar {
+  color: var(--mat-sys-on-primary);
+  background-color: var(--mat-sys-on-primary-container);
+
+  h2,
+  h5 {
+    color: var(--mat-sys-on-primary);
+  }
+
+  @include mat.icon-overrides(
+    (
+      color: white
+    )
+  );
 }

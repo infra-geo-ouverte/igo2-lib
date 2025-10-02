@@ -1,13 +1,3 @@
-<p></p>
-<igo-interactive-tour
-  mat-raised-button
-  tourToStart="global"
-  menuIsOpen="true"
-  styleButton="raised"
-  [discoverTitleInLocale$]="discoverTitleInLocale$"
->
-</igo-interactive-tour>
-
 <button
   *ngIf="
     auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1
@@ -50,15 +40,8 @@
   </button>
 </mat-menu>
 
-<igo-custom-html
-  *ngIf="headerHtml !== ''"
-  class="mat-typography"
-  [html]="headerHtml | translate"
->
+<igo-custom-html *ngIf="headerHtml !== ''" [html]="headerHtml | translate">
 </igo-custom-html>
 
-<igo-custom-html
-  class="mat-typography"
-  [html]="html | translate: { version: effectiveVersion }"
->
+<igo-custom-html [html]="html | translate: { version: effectiveVersion }">
 </igo-custom-html>

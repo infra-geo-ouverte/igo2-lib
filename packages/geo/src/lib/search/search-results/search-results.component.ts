@@ -48,7 +48,6 @@ export enum SearchResultMode {
   templateUrl: './search-results.component.html',
   styleUrls: ['./search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     ListComponent,

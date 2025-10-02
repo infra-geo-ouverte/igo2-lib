@@ -69,7 +69,14 @@ import { SearchState } from '../search.state';
   selector: 'igo-search-results-tool',
   templateUrl: './search-results-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 16px;
+      }
+    `
+  ],
   imports: [
     NgIf,
     FlexibleComponent,
@@ -604,7 +611,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     const igoList =
       this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
     let selectedItem;
-    // eslint-disable-next-line
+
     for (let i = 0; i < items.length; i++) {
       if (items[i].className.includes('igo-list-item-selected')) {
         selectedItem = items[i];
@@ -642,7 +649,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       });
       moveToOlFeatures(
         this.map.viewController,
-        [localOlFeature],
+        localOlFeature,
         FeatureMotion.Zoom
       );
     }

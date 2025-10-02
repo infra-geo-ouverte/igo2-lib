@@ -23,7 +23,6 @@ import { MeasureState } from '../measure.state';
   selector: 'igo-measurer-tool',
   templateUrl: './measurer-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {

@@ -2,7 +2,6 @@ import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
-import olFeature from 'ol/Feature';
 import OlFeature from 'ol/Feature';
 import { ObjectEvent } from 'ol/Object';
 import { unByKey } from 'ol/Observable';
@@ -12,6 +11,7 @@ import BaseEvent from 'ol/events/Event';
 import { Extent } from 'ol/extent';
 import { FeatureLoader } from 'ol/featureloader';
 import * as olformat from 'ol/format';
+import { ReadOptions } from 'ol/format/Feature';
 import Geometry from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import * as olproj from 'ol/proj';
@@ -35,17 +35,15 @@ import { ClusterDataSource } from '../../../datasource/shared/datasources/cluste
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
-import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
+import {
+  WFSDataSourceOptions,
+  WFSDataSourceOptionsParams
+} from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import {
   buildUrl,
   defaultMaxFeatures
 } from '../../../datasource/shared/datasources/wms-wfs.utils';
-import {
-  OgcFilterableDataSourceOptions,
-  OgcFiltersOptions
-} from '../../../filter/shared/ogc-filter.interface';
-import type { MapBase } from '../../../map/shared/map.abstract';
-import { MapExtent } from '../../../map/shared/map.interface';
+import type { MapBase, MapExtent } from '../../../map/shared';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { GeoDB } from '../../../offline/geoDB/geoDB';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
@@ -61,12 +59,17 @@ import { Layer } from './layer';
 import { LayerType } from './layer.interface';
 import type { VectorLayerOptions } from './vector-layer.interface';
 
+interface VectorRequest {
+  xhr: XMLHttpRequest | undefined;
+  extent: Extent;
+  resolution: number;
+}
+
 export class VectorLayer extends Layer {
   type: LayerType = 'vector';
-  private previousLoadExtent: Extent;
-  private previousLoadResolution: number;
-  private previousOgcFilters: OgcFiltersOptions;
-  private xhrAccumulator: XMLHttpRequest[] = [];
+
+  private lastRequest: VectorRequest;
+  private ongoingRequests: VectorRequest[] = [];
   declare public dataSource:
     | FeatureDataSource
     | WFSDataSource
@@ -140,7 +143,6 @@ export class VectorLayer extends Layer {
           this.customWFSLoader(
             vectorSource,
             wfsOptions,
-            this.authInterceptor,
             extent,
             resolution,
             proj,
@@ -165,7 +167,11 @@ export class VectorLayer extends Layer {
         vectorSource.setLoader(loader);
       }
     }
-    this.handleIdbStorage(vector);
+
+    if (this.options.idbInfo?.storeToIdb) {
+      this.handleIdbStorage(vector);
+    }
+
     return vector;
   }
 
@@ -178,46 +184,41 @@ export class VectorLayer extends Layer {
         | WebSocketDataSource
         | ClusterDataSource
       ) &
-        olSourceVector<olFeature<Geometry>>
+        olSourceVector<OlFeature<Geometry>>
     >
   ): void {
-    if (this.options.idbInfo?.storeToIdb) {
-      fromEvent<BaseEvent>(vector, 'sourceready')
-        .pipe(
-          tap(() => {
-            if (this.options.idbInfo.firstLoad !== false) {
-              this.maintainFeaturesInIdb();
-              this.maintainOptionsInIdb();
-            }
-          }),
-          switchMap(() =>
-            merge(
-              fromEvent<VectorSourceEvent>(
-                vector.getSource(),
-                'featuresloadend'
-              ),
-              fromEvent<VectorSourceEvent>(vector.getSource(), 'addfeature'),
-              fromEvent<VectorSourceEvent>(vector.getSource(), 'changefeature'),
-              fromEvent<VectorSourceEvent>(vector.getSource(), 'clear'),
-              fromEvent<VectorSourceEvent>(vector.getSource(), 'removefeature')
-            )
+    fromEvent<BaseEvent>(vector, 'sourceready')
+      .pipe(
+        tap(() => {
+          if (this.options.idbInfo.firstLoad !== false) {
+            this.maintainFeaturesInIdb();
+            this.maintainOptionsInIdb();
+          }
+        }),
+        switchMap(() =>
+          merge(
+            fromEvent<VectorSourceEvent>(vector.getSource(), 'featuresloadend'),
+            fromEvent<VectorSourceEvent>(vector.getSource(), 'addfeature'),
+            fromEvent<VectorSourceEvent>(vector.getSource(), 'changefeature'),
+            fromEvent<VectorSourceEvent>(vector.getSource(), 'clear'),
+            fromEvent<VectorSourceEvent>(vector.getSource(), 'removefeature')
           )
         )
-        .pipe(debounceTime(750))
-        .subscribe(() => this.maintainFeaturesInIdb());
+      )
+      .pipe(debounceTime(750))
+      .subscribe(() => this.maintainFeaturesInIdb());
 
-      fromEvent<BaseEvent>(vector, 'sourceready')
-        .pipe(
-          switchMap(() =>
-            merge(
-              fromEvent<BaseEvent>(vector, 'change'),
-              fromEvent<ObjectEvent>(vector, 'change:zIndex')
-            )
+    fromEvent<BaseEvent>(vector, 'sourceready')
+      .pipe(
+        switchMap(() =>
+          merge(
+            fromEvent<BaseEvent>(vector, 'change'),
+            fromEvent<ObjectEvent>(vector, 'change:zIndex')
           )
         )
-        .pipe(debounceTime(750))
-        .subscribe(() => this.maintainOptionsInIdb());
-    }
+      )
+      .pipe(debounceTime(750))
+      .subscribe(() => this.maintainOptionsInIdb());
   }
 
   private handlePreload(): void {
@@ -322,7 +323,7 @@ export class VectorLayer extends Layer {
       .subscribe();
   }
 
-  protected flash(feature) {
+  protected flash(feature: OlFeature) {
     const start = new Date().getTime();
     const listenerKey = this.ol.on('postrender', animate.bind(this));
 
@@ -411,7 +412,7 @@ export class VectorLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => void 1);
+      this.watcher.subscribe(() => void 0);
     }
     super.init(map);
   }
@@ -436,12 +437,13 @@ export class VectorLayer extends Layer {
     );
   }
 
-  public enableTrackFeature(id: string | number) {
+  public enableTrackFeature(id: string | number): void {
     this.trackFeatureListenerId = this.dataSource.ol.on(
       'addfeature',
       this.trackFeature.bind(this, id)
     );
   }
+
   public centerMapOnFeature(id: string | number) {
     const feat = this.dataSource.ol.getFeatureById(id);
     if (feat) {
@@ -451,7 +453,7 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public trackFeature(id, feat) {
+  public trackFeature(id: string | number, feat: { feature: OlFeature }) {
     if (feat.feature.getId() === id && this.visible) {
       this.centerMapOnFeature(id);
     }
@@ -466,7 +468,6 @@ export class VectorLayer extends Layer {
    * @internal
    * @param vectorSource the vector source to be created
    * @param options olOptions from source
-   * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
    * @param proj the projection to retrieve the data
@@ -477,84 +478,119 @@ export class VectorLayer extends Layer {
   public customWFSLoader(
     vectorSource: olSourceVector,
     options: WFSDataSourceOptions,
-    interceptor: AuthInterceptor,
     extent: Extent,
     resolution: number,
     proj: olProjection,
-    success: (features: olFeature[]) => void,
+    success: (features: OlFeature[]) => void,
     failure: () => void,
     randomParam?: boolean
   ) {
-    {
-      const paramsWFS = options.paramsWFS;
-      const wfsProj = paramsWFS.srsName
-        ? new olProjection({ code: paramsWFS.srsName })
-        : proj;
-      const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
-      const ogcFilters = (options as OgcFilterableDataSourceOptions).ogcFilters;
+    const paramsWFS = options.paramsWFS;
+    const wfsProj = this.getProjection(proj, paramsWFS);
+    const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
 
-      if (
-        (this.previousLoadExtent &&
-          this.previousLoadExtent !== currentExtent) ||
-        (this.previousLoadResolution &&
-          this.previousLoadResolution !== resolution) ||
-        (this.previousOgcFilters && this.previousOgcFilters !== ogcFilters)
-      ) {
-        vectorSource.removeLoadedExtent(this.previousLoadExtent);
-        for (const xhr of this.xhrAccumulator) {
-          xhr.abort();
-        }
-      }
+    if (
+      this.lastRequest &&
+      (this.lastRequest.extent !== currentExtent ||
+        this.lastRequest.resolution !== resolution)
+    ) {
+      this.abortRequests(vectorSource);
+    }
 
-      this.previousLoadExtent = currentExtent;
-      this.previousLoadResolution = resolution;
-      this.previousOgcFilters = ogcFilters;
+    const properties = this.dataSource.properties.getAll();
+    const url = buildUrl(
+      { ...options, ...properties },
+      currentExtent,
+      wfsProj,
+      randomParam
+    );
 
-      paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
+    const request: VectorRequest = {
+      xhr: undefined,
+      extent,
+      resolution
+    };
 
-      const url = buildUrl(
-        options,
-        currentExtent,
-        wfsProj,
-        ogcFilters,
-        randomParam
+    const readOptions: ReadOptions = {
+      dataProjection: wfsProj,
+      featureProjection: proj
+    };
+
+    if (
+      paramsWFS.version === '2.0.0' &&
+      paramsWFS.maxFeatures > defaultMaxFeatures
+    ) {
+      this.batchGetFeatures(
+        url,
+        request,
+        vectorSource,
+        paramsWFS,
+        readOptions,
+        success,
+        failure
       );
-      let startIndex = 0;
-      if (
-        paramsWFS.version === '2.0.0' &&
-        paramsWFS.maxFeatures > defaultMaxFeatures
-      ) {
-        const nbOfFeature = 1000;
-        while (startIndex < paramsWFS.maxFeatures) {
-          let alteredUrl = url.replace(
-            'count=' + paramsWFS.maxFeatures,
-            'count=' + nbOfFeature
-          );
-          alteredUrl = alteredUrl.replace('startIndex=0', '0');
-          alteredUrl += '&startIndex=' + startIndex;
-          alteredUrl.replace(/&&/g, '&');
-          this.getFeatures(
-            vectorSource,
-            currentExtent,
-            wfsProj,
-            proj,
-            alteredUrl,
-            success,
-            failure
-          );
-          startIndex += nbOfFeature;
-        }
-      } else {
-        this.getFeatures(
-          vectorSource,
-          currentExtent,
-          wfsProj,
-          proj,
-          url,
-          success,
-          failure
-        );
-      }
+    } else {
+      this.getFeatures(
+        url,
+        request,
+        vectorSource,
+        readOptions,
+        success,
+        failure
+      );
+    }
+  }
+
+  private abortRequests(vectorSource: olSourceVector): void {
+    vectorSource.removeLoadedExtent(this.lastRequest.extent);
+    for (const request of this.ongoingRequests) {
+      request.xhr?.abort();
+      this.removeRequest(request);
+    }
+  }
+
+  private getProjection(
+    proj: olProjection,
+    params: WFSDataSourceOptionsParams
+  ) {
+    const newProj = params.srsName
+      ? new olProjection({ code: params.srsName })
+      : proj;
+
+    params.srsName = newProj.getCode();
+
+    return newProj;
+  }
+
+  private batchGetFeatures(
+    url: string,
+    request: VectorRequest,
+    vectorSource: olSourceVector,
+    paramsWFS: WFSDataSourceOptionsParams,
+    readOptions: ReadOptions,
+    success: (features: OlFeature[]) => void,
+    failure: () => void
+  ) {
+    const nbOfFeature = 1000;
+    let startIndex = 0;
+    while (startIndex < paramsWFS.maxFeatures) {
+      let alteredUrl = url.replace(
+        'count=' + paramsWFS.maxFeatures,
+        'count=' + nbOfFeature
+      );
+      alteredUrl = alteredUrl.replace('startIndex=0', '0');
+      alteredUrl += '&startIndex=' + startIndex;
+      alteredUrl.replace(/&&/g, '&');
+
+      this.getFeatures(
+        alteredUrl,
+        request,
+        vectorSource,
+        readOptions,
+        success,
+        failure
+      );
+      startIndex += nbOfFeature;
     }
   }
 
@@ -570,14 +606,13 @@ export class VectorLayer extends Layer {
    * @param failure failure callback
    */
   private getFeatures(
-    vectorSource: olSourceVector,
-    extent: Extent,
-    dataProjection: olProjection,
-    featureProjection: olProjection,
     url: string,
-    success: (features: olFeature[]) => void,
+    request: VectorRequest,
+    vectorSource: olSourceVector,
+    readOptions: ReadOptions,
+    success: (features: OlFeature[]) => void,
     failure: () => void
-  ) {
+  ): void {
     const xhr = new XMLHttpRequest();
     const alteredUrlWithKeyAuth = this.authInterceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
@@ -589,8 +624,10 @@ export class VectorLayer extends Layer {
     if (this.authInterceptor) {
       this.authInterceptor.interceptXhr(xhr, modifiedUrl);
     }
+
     const onError = () => {
-      vectorSource.removeLoadedExtent(extent);
+      vectorSource.removeLoadedExtent(request.extent);
+      this.removeRequest(request);
       failure();
     };
     xhr.onerror = onError;
@@ -600,8 +637,8 @@ export class VectorLayer extends Layer {
         this.handleOnLoad(
           vectorSource,
           xhr.responseText,
-          extent,
-          featureProjection,
+          request,
+          readOptions,
           success,
           onError
         );
@@ -609,16 +646,30 @@ export class VectorLayer extends Layer {
         onError();
       }
     };
-    this.xhrAccumulator.push(xhr);
+
+    request.xhr = xhr;
+    this.lastRequest = request;
+    this.ongoingRequests.push(request);
+
     xhr.send();
+  }
+
+  private removeRequest(request: VectorRequest): void {
+    if (request === this.lastRequest) {
+      this.lastRequest = undefined;
+    }
+    const index = this.ongoingRequests.indexOf(request);
+    if (index > -1) {
+      this.ongoingRequests.splice(index, 1);
+    }
   }
 
   private handleOnLoad(
     vectorSource: olSourceVector,
     content: string | object | Document | Element | ArrayBuffer,
-    extent: Extent,
-    projection: olProjection,
-    success: (features: olFeature[]) => void,
+    request: VectorRequest,
+    readOptions: ReadOptions,
+    success: (features: OlFeature[]) => void,
     onError: () => void
   ) {
     const format = vectorSource.getFormat();
@@ -641,12 +692,18 @@ export class VectorLayer extends Layer {
           break;
       }
       if (source) {
-        const features = format.readFeatures(source, {
-          extent,
-          featureProjection: projection
-        }) as OlFeature[];
-        vectorSource.addFeatures(features);
-        success(features);
+        const features = format.readFeatures(
+          source,
+          readOptions
+        ) as OlFeature[];
+
+        if (features) {
+          vectorSource.addFeatures(features);
+          success(features);
+        } else {
+          success([]);
+        }
+        this.removeRequest(request);
       } else {
         onError();
       }
@@ -659,7 +716,6 @@ export class VectorLayer extends Layer {
    * @param vectorSource the vector source to be created
    * @param url the url string or function to retrieve the data
    * @param extent the extent of the requested data
-   * @param resolution the current resolution
    * @param projection the projection to retrieve the data
    */
   private customLoader(
@@ -668,7 +724,7 @@ export class VectorLayer extends Layer {
     extent: Extent,
     resolution: number,
     projection: olProjection,
-    success: (features: olFeature[]) => void,
+    success: (features: OlFeature[]) => void,
     failure: () => void
   ) {
     const onError = () => {
@@ -676,6 +732,18 @@ export class VectorLayer extends Layer {
       failure();
     };
     const xhr = new XMLHttpRequest();
+
+    const request: VectorRequest = {
+      xhr,
+      extent,
+      resolution
+    };
+
+    const readOptions: ReadOptions = {
+      extent,
+      featureProjection: projection
+    };
+
     let modifiedUrl = url;
     if (typeof url !== 'function') {
       const alteredUrlWithKeyAuth =
@@ -710,8 +778,8 @@ export class VectorLayer extends Layer {
         this.handleOnLoad(
           vectorSource,
           content,
-          extent,
-          projection,
+          request,
+          readOptions,
           success,
           onError
         );
@@ -730,8 +798,8 @@ export class VectorLayer extends Layer {
           this.handleOnLoad(
             vectorSource,
             xhr.responseText,
-            extent,
-            projection,
+            request,
+            readOptions,
             success,
             onError
           );

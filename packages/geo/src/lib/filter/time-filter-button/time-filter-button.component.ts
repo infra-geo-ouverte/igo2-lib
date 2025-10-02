@@ -24,7 +24,6 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
   templateUrl: './time-filter-button.component.html',
   styleUrls: ['./time-filter-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

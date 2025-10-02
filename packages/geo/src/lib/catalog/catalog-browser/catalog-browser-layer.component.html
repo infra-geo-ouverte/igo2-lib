@@ -55,7 +55,7 @@
         matBadgeSize="small"
         matBadgePosition="after"
       >
-        {{ (isPreview$ | async) ? 'plus' : added ? 'delete' : 'add' }}
+        {{ (isPreview$ | async) ? 'preview' : added ? 'delete' : 'add' }}
       </mat-icon>
     </button>
   </div>

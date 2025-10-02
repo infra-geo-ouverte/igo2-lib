@@ -36,7 +36,6 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
   templateUrl: './spatial-filter-type.component.html',
   styleUrls: ['./spatial-filter-type.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTabsModule,
     MatFormFieldModule,

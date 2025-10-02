@@ -14,7 +14,6 @@ import {
 @Component({
   selector: 'igo-ogc-filter-tool',
   templateUrl: './ogc-filter-tool.component.html',
-  standalone: true,
   imports: [OgcFilterableListComponent, OgcFilterableListBindingDirective]
 })
 export class OgcFilterToolComponent {}

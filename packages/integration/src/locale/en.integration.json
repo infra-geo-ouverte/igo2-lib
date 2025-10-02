@@ -22,6 +22,24 @@
         "advancedMap": "Advanced map tools",
         "closestFeature": "Closest feature tool"
       },
+      "catalog": {
+        "library.getCatalogList": "Get the catalogs's content list",
+        "listExport": {
+          "rank": "Rank",
+          "layerTitle": "Layer Title",
+          "layerGroup": "Layer Group",
+          "catalog": "Catalog",
+          "externalProvider": "Provider",
+          "url": "URL",
+          "layerName": "Layer name",
+          "context": "Context/Thematic",
+          "metadataAbstract": "Data description",
+          "metadataUrl": "Metadata hyperlink",
+          "documentName": "LayerList_{{value}}",
+          "internal": "Internal",
+          "external": "External"
+        }
+      },
       "dataIssueReporterTool": {
         "submit": {
           "title": "Submit a data inconsistency",
@@ -29,9 +47,7 @@
           "setupMessage": "Please configure a server component to submit an inconsistency",
           "button": "Submit location"
         },
-        "reset": {
-          "button": "Reset input"
-        },
+        "reset": { "button": "Reset input" },
         "geometry": "Enter geometry",
         "drawGuidePlaceholder": "Drawing Guide",
         "layer": "Layers of information",
@@ -85,7 +101,9 @@
         "maximize": "Extend",
         "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
-        "standardExtentTooltip": "Reduce panel"
+        "standardExtentTooltip": "Reduce panel",
+        "interactiveSelection.title": "Select features by geometry",
+        "interactiveSelection.tooltip": "Select features by geometry"
       },
       "directions": {
         "warning": {

@@ -35,7 +35,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-ogc-filter',
   templateUrl: './ogc-filter.component.html',
   styleUrls: ['./ogc-filter.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

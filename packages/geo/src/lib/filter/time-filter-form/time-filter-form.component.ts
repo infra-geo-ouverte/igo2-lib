@@ -35,6 +35,8 @@ import {
 import { default as moment } from 'moment';
 
 import { Layer } from '../../layer';
+import { isDateOrRangeInRange, parseDateString } from '../shared/date.utils';
+import { isTimeFrame, parseDateOperation } from '../shared/filter.utils';
 import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
@@ -42,7 +44,6 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   selector: 'igo-time-filter-form',
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatFormFieldModule,
@@ -78,7 +79,7 @@ export class TimeFilterFormComponent implements OnInit {
   public endListYears: string[] = [];
 
   public interval: number;
-  public playIcon = 'play-circle';
+  public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
   @Input() layer: Layer;
@@ -104,7 +105,8 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  @Output() change = new EventEmitter<Date | [Date, Date]>();
+  @Output() dateChange = new EventEmitter<Date | [Date, Date]>();
+
   @Output()
   yearChange = new EventEmitter<string | [string, string]>();
   @ViewChild(MatSlider) mySlider;
@@ -160,7 +162,9 @@ export class TimeFilterFormComponent implements OnInit {
 
   get min(): Date {
     if (this.options.min) {
-      const min = new Date(this.options.min);
+      const min = isTimeFrame(this.options.min)
+        ? new Date(parseDateOperation(this.options.min))
+        : new Date(this.options.min);
       return new Date(min.getTime() + min.getTimezoneOffset() * 60000);
     } else {
       return undefined;
@@ -169,7 +173,10 @@ export class TimeFilterFormComponent implements OnInit {
 
   get max(): Date {
     if (this.options.max) {
-      const max = new Date(this.options.max);
+      const max = isTimeFrame(this.options.max)
+        ? new Date(parseDateOperation(this.options.max))
+        : new Date(this.options.max);
+
       return new Date(max.getTime() + max.getTimezoneOffset() * 60000);
     } else {
       return undefined;
@@ -178,6 +185,14 @@ export class TimeFilterFormComponent implements OnInit {
 
   get is(): boolean {
     return this.options.range === undefined ? false : this.options.range;
+  }
+
+  get allYearsInterval(): string[] {
+    const options = [];
+    for (let i = this.initStartYear; i <= this.initEndYear; i++) {
+      options.push(i);
+    }
+    return options;
   }
 
   constructor(private dateAdapter: DateAdapter<Date>) {
@@ -200,21 +215,16 @@ export class TimeFilterFormComponent implements OnInit {
       this.initEndYear = this.endYear;
     }
 
+    this.checkFilterValue();
+
     if (!this.isRange) {
-      for (let i = this.startYear; i <= this.endYear + 1; i++) {
-        this.listYears.push(i);
-      }
+      this.listYears = this.allYearsInterval;
     } else {
-      for (let i = this.startYear; i < this.endYear; i++) {
-        this.startListYears.push(i);
-      }
-      for (let i = this.startYear + 1; i <= this.endYear; i++) {
-        this.endListYears.push(i);
-      }
+      this.setUpYearsInterval();
     }
+
     this.options.enabled =
       this.options.enabled === undefined ? true : this.options.enabled;
-    this.checkFilterValue();
     if (this.options.enabled) {
       if (!this.isRange && this.style === 'slider' && this.type === 'year') {
         this.yearChange.emit(this.year);
@@ -236,42 +246,106 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  checkFilterValue() {
-    const olSource = this.layer.dataSource.ol as olSourceImageWMS;
-    const timeFromWms = olSource.getParams().TIME;
-    if (
-      !this.isRange &&
-      this.style === TimeFilterStyle.SLIDER &&
-      this.type === TimeFilterType.YEAR
-    ) {
-      if (timeFromWms) {
-        this.year = new Date(timeFromWms.toString()).getFullYear() + 1;
-      } else if (this.options.value) {
-        this.year = new Date(this.options.value.toString()).getFullYear() + 1;
+  private processSliderValue() {
+    // if style is Slider the range always false
+    const dateValue = this.getDateValue();
+    const inRange = dateValue
+      ? isDateOrRangeInRange(dateValue, [this.min, this.max])
+      : undefined;
+
+    if (inRange && dateValue instanceof Date) {
+      if (this.type === TimeFilterType.YEAR) {
+        this.year = dateValue.getFullYear();
       } else {
-        this.year = new Date(this.min).getFullYear() + 1;
+        this.date = dateValue;
       }
-    } else if (
-      this.isRange &&
-      this.style === TimeFilterStyle.CALENDAR &&
-      this.type === TimeFilterType.YEAR
-    ) {
-      if (timeFromWms) {
-        this.startYear = parseInt(timeFromWms.substr(0, 4), 10);
-        this.endYear = parseInt(timeFromWms.substr(5, 4), 10);
-        const newStartListYears: any[] = [];
-        const newEndListYears: any[] = [];
-        for (let i = this.initStartYear; i < this.endYear; i++) {
-          newStartListYears.push(i);
-        }
-        for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
-          newEndListYears.push(i);
-        }
-        this.startListYears = newStartListYears;
-        this.endListYears = newEndListYears;
+    } else {
+      if (this.type === TimeFilterType.YEAR) {
+        this.year = this.min.getFullYear();
+      } else {
+        this.date = this.min;
       }
     }
-    // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+  }
+
+  private processCalendarYearType() {
+    const dateValue = this.getDateValue();
+
+    const inRange = dateValue
+      ? isDateOrRangeInRange(dateValue, [this.min, this.max])
+      : undefined;
+
+    if (!this.isRange) {
+      if (inRange && dateValue instanceof Date) {
+        this.year = dateValue.getFullYear();
+      } else {
+        this.year = this.min.getFullYear();
+      }
+    } else {
+      if (
+        inRange &&
+        Array.isArray(dateValue) &&
+        dateValue[0].getFullYear() !== dateValue[1].getFullYear()
+      ) {
+        this.startYear = dateValue[0].getFullYear();
+        this.endYear = dateValue[1].getFullYear();
+      }
+    }
+  }
+
+  private processCalendarDateType() {
+    const dateValue = this.getDateValue();
+
+    const inRange = dateValue
+      ? isDateOrRangeInRange(dateValue, [this.min, this.max])
+      : undefined;
+
+    if (!this.isRange) {
+      if (inRange && dateValue instanceof Date) {
+        this.date = dateValue;
+      } else {
+        this.date = this.min;
+      }
+    } else {
+      if (
+        inRange &&
+        Array.isArray(dateValue) &&
+        dateValue[0] !== dateValue[1]
+      ) {
+        this.startDate = dateValue[0];
+        this.endDate = dateValue[1];
+      }
+    }
+  }
+
+  private getDateValue(): Date | [min: Date, max: Date] | undefined {
+    const olSource = this.layer.dataSource.ol as olSourceImageWMS;
+    const timeFromWms = olSource.getParams().TIME
+      ? parseDateString(String(olSource.getParams().TIME))
+      : undefined;
+
+    const dateValue =
+      this.options.value && !timeFromWms
+        ? parseDateString(this.options.value)
+        : undefined;
+
+    return timeFromWms ?? dateValue;
+  }
+
+  private checkCalendarValue() {
+    if (this.type === TimeFilterType.YEAR) {
+      this.processCalendarYearType();
+    } else {
+      this.processCalendarDateType();
+    }
+  }
+
+  private checkFilterValue() {
+    if (this.style === TimeFilterStyle.SLIDER) {
+      this.processSliderValue();
+    } else if (this.style === TimeFilterStyle.CALENDAR) {
+      this.checkCalendarValue();
+    }
   }
 
   handleDateChange() {
@@ -280,34 +354,32 @@ export class TimeFilterFormComponent implements OnInit {
 
     // Only if is range, use 2 dates to make the range
     if (this.isRange) {
-      this.change.emit([this.startDate, this.endDate]);
+      this.dateChange.emit([this.startDate, this.endDate]);
     } else {
-      this.change.emit(this.startDate);
+      this.dateChange.emit(this.startDate);
     }
   }
 
   handleYearChange() {
     if (this.isRange) {
       this.endListYears = [];
-      for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
-        this.endListYears.push(i);
-      }
       this.startListYears = [];
-      for (let i = this.initStartYear + 1; i < this.endYear; i++) {
-        this.startListYears.push(i);
-      }
+      this.setUpYearsInterval();
+
       this.yearChange.emit([this.startYear, this.endYear]);
     } else {
       this.yearChange.emit(this.year);
     }
   }
 
-  handleListYearChange() {
-    this.handleYearChange();
-  }
-
-  handleListYearStartChange() {
-    this.change.emit([this.startDate, this.endDate]);
+  private setUpYearsInterval() {
+    this.endListYears = this.allYearsInterval.slice(
+      this.startYear + 1 - this.initStartYear
+    );
+    this.startListYears = this.allYearsInterval.slice(
+      0,
+      this.endYear - this.initStartYear
+    );
   }
 
   dateToNumber(date: Date): number {
@@ -359,7 +431,7 @@ export class TimeFilterFormComponent implements OnInit {
     } else {
       this.stopFilter();
       this.storeCurrentFilterValue();
-      this.change.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+      this.dateChange.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
     }
   }
 
@@ -374,7 +446,7 @@ export class TimeFilterFormComponent implements OnInit {
       this.yearChange.emit(this.year);
     } else {
       this.setupDateOutput();
-      this.change.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+      this.dateChange.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
     }
   }
 
@@ -441,7 +513,8 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   handleSliderDateChange(event: any) {
-    this.date = new Date(event.value);
+    const date = new Date(event.value);
+    this.date = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
     this.setSliderThumbLabel(this.handleSliderTooltip());
     this.handleDateChange();
   }
@@ -463,40 +536,24 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  handleSliderTooltip() {
-    let label: string;
-
+  handleSliderTooltip(): string {
+    // 24h = 86400000 ms
+    const oneDayMs = 86400000;
+    const date = this.date === undefined ? this.min : this.date;
     switch (this.type) {
       case TimeFilterType.DATE:
-        label =
-          this.date === undefined
-            ? this.min.toDateString()
-            : this.date.toDateString();
-        break;
+        return this.step >= oneDayMs ? date.toDateString() : date.toUTCString();
       case TimeFilterType.TIME:
-        label =
-          this.date === undefined
-            ? this.min.toTimeString()
-            : this.date.toTimeString();
-        break;
-      // datetime
+        return date.toTimeString();
       default:
-        label =
-          this.date === undefined
-            ? this.min.toUTCString()
-            : this.date.toUTCString();
-        break;
+        return this.date.toUTCString();
     }
-
-    return label;
   }
 
   setupDateOutput() {
     if (this.style === TimeFilterStyle.SLIDER) {
       this.startDate = new Date(this.date);
-      this.startDate.setSeconds(-(this.step / 1000));
       this.endDate = new Date(this.startDate);
-      this.endDate.setSeconds(this.step / 1000);
     } else if (!this.isRange && !!this.date) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
@@ -516,13 +573,15 @@ export class TimeFilterFormComponent implements OnInit {
   applyTypeChange() {
     switch (this.type) {
       case TimeFilterType.DATE:
-        if (this.startDate !== undefined || this.endDate !== undefined) {
-          this.startDate.setHours(0);
-          this.startDate.setMinutes(0);
-          this.startDate.setSeconds(0);
-          this.endDate.setHours(23);
-          this.endDate.setMinutes(59);
-          this.endDate.setSeconds(59);
+        if (this.style === TimeFilterStyle.CALENDAR) {
+          if (this.startDate !== undefined || this.endDate !== undefined) {
+            this.startDate.setHours(0);
+            this.startDate.setMinutes(0);
+            this.startDate.setSeconds(0);
+            this.endDate.setHours(23);
+            this.endDate.setMinutes(59);
+            this.endDate.setSeconds(59);
+          }
         }
         break;
       case TimeFilterType.TIME:

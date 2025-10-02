@@ -10,12 +10,14 @@ import {
   IgoMap,
   ImageLayerOptions,
   LAYER_DIRECTIVES,
+  LayerGroupOptions,
   LayerService,
   LayerViewerComponent,
   LayerViewerOptions,
   MAP_DIRECTIVES,
   METADATA_DIRECTIVES,
   MapViewOptions,
+  ProjectionService,
   VectorLayerOptions,
   WFSDataSourceOptions
 } from '@igo2/geo';
@@ -27,7 +29,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-layer',
   templateUrl: './layer.component.html',
   styleUrls: ['./layer.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
@@ -65,7 +66,10 @@ export class AppLayerComponent {
     };
   }
 
-  constructor(private layerService: LayerService) {
+  constructor(
+    private layerService: LayerService,
+    private projectionService: ProjectionService // Don't remove this or it'll never be injected,
+  ) {
     const layers: AnyLayerOptions[] = [
       {
         title: 'OSM',
@@ -105,16 +109,22 @@ export class AppLayerComponent {
         } as WFSDataSourceOptions
       },
       {
-        title: 'Parcs routiers',
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          params: {
-            LAYERS: 'parc_routier',
-            VERSION: '1.3.0'
-          }
-        }
-      } satisfies ImageLayerOptions,
+        title: 'Groupe',
+        type: 'group',
+        children: [
+          {
+            title: 'Parcs routiers',
+            sourceOptions: {
+              type: 'wms',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+              params: {
+                LAYERS: 'parc_routier',
+                VERSION: '1.3.0'
+              }
+            }
+          } satisfies ImageLayerOptions
+        ]
+      } satisfies LayerGroupOptions,
       {
         title: 'Réseau routier',
         visible: false,

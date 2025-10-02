@@ -83,12 +83,12 @@ export class ConfigService<T extends object = Record<string, any>> {
   /**
    * This method loads "[path]" to get all config's variables
    */
-  public load(options: ConfigOptions<T>) {
+  public load(options: ConfigOptions<T>): void | Promise<unknown> {
     const baseConfig = options.default;
     if (!options.path) {
       this.config = baseConfig;
       this._isLoaded$.next(true);
-      return true;
+      return;
     }
 
     return new Promise((resolve) => {

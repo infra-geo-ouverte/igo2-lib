@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
-import { CatalogLibaryComponent } from './catalog-library.component';
+import { CatalogLibraryComponent } from './catalog-library.component';
 
 export const CATALOG_LIBRARY_DIRECTIVES = [
-  CatalogLibaryComponent,
+  CatalogLibraryComponent,
   AddCatalogDialogComponent
 ] as const;
 
 /**
- * @deprecated import the CatalogLibaryComponent, AddCatalogDialogComponent directly
+ * @deprecated import the CatalogLibraryComponent, AddCatalogDialogComponent directly
  */
 @NgModule({
-  imports: [CatalogLibaryComponent, AddCatalogDialogComponent],
-  exports: [CatalogLibaryComponent, AddCatalogDialogComponent]
+  imports: [CatalogLibraryComponent, AddCatalogDialogComponent],
+  exports: [CatalogLibraryComponent, AddCatalogDialogComponent]
 })
 export class IgoCatalogLibraryModule {}

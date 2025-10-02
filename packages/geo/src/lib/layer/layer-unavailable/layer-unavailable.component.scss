@@ -1,8 +1,4 @@
 :host {
-  mat-list-item {
-    padding-left: 1px;
-  }
-
   ::ng-deep {
     .mdc-list-item__content {
       display: flex;
@@ -22,6 +18,18 @@
   }
 }
 
+mat-list-item {
+  padding-left: 1px;
+}
+
+.mat-warn.layer-indicator {
+  color: var(--mat-icon-color) !important;
+}
+
 .align-disabled-button-with-tooltip {
   display: inline-block;
+}
+
+.unavailable-layer {
+  background-color: var(--mat-sys-surface-container);
 }

@@ -33,7 +33,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-geometry',
   templateUrl: './geometry.component.html',
   styleUrls: ['./geometry.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

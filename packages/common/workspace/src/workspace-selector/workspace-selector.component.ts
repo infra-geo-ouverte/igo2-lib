@@ -23,7 +23,6 @@ import { Workspace } from '../shared/workspace';
   templateUrl: './workspace-selector.component.html',
   styleUrls: ['./workspace-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [EntitySelectorComponent]
 })
 export class WorkspaceSelectorComponent {

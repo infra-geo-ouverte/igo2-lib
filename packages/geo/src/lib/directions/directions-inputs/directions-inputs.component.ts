@@ -5,7 +5,7 @@ import {
   CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -55,12 +55,10 @@ import { DirectionRelativePositionType } from './../shared/directions.enum';
   selector: 'igo-directions-inputs',
   templateUrl: './directions-inputs.component.html',
   styleUrls: ['./directions-inputs.component.scss'],
-  standalone: true,
   imports: [
     CdkDropList,
     NgFor,
     CdkDrag,
-    NgClass,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,

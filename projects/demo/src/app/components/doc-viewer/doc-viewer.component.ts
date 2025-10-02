@@ -5,7 +5,6 @@ import { Component, Input } from '@angular/core';
   selector: 'app-doc-viewer',
   templateUrl: './doc-viewer.component.html',
   styleUrls: ['./doc-viewer.component.scss'],
-  standalone: true,
   imports: [NgIf, NgFor]
 })
 export class DocViewerComponent {

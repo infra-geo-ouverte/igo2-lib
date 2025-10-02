@@ -5,3 +5,4 @@ export * from './feature-workspace.service';
 export * from './edition-workspace';
 export * from './edition-workspace.service';
 export * from './workspace.utils';
+export * from './workspace.interface';

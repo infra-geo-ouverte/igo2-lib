@@ -1,0 +1,150 @@
+$barHeight: 12px;
+$barWidth: 3px;
+
+:host {
+  display: block;
+  position: absolute;
+  transform: translateZ(0);
+  z-index: 3000;
+
+  &.horizontal {
+    left: 0;
+    right: 0;
+    height: $barHeight;
+  }
+
+  &.vertical {
+    top: 0;
+    bottom: 0;
+    width: $barWidth;
+    height: 100%;
+  }
+
+  &.top {
+    bottom: 100%;
+  }
+
+  &.bottom {
+    bottom: 3px;
+  }
+
+  &.right {
+    left: auto;
+    right: 0;
+  }
+
+  &.left {
+    left: 0;
+    right: auto;
+  }
+}
+
+.resize-container {
+  &:hover {
+    .resize-item,
+    .expand-btn {
+      opacity: 1;
+    }
+  }
+}
+
+.resize-indicator {
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  transition-duration: 200ms;
+  transition-property: left, opacity, width;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  background: rgba(0, 0, 0, 0.1);
+
+  &.horizontal {
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: $barWidth;
+  }
+
+  &.vertical {
+    top: 0;
+    bottom: 0;
+    right: -2px;
+    width: $barWidth;
+  }
+}
+
+.resize-bar {
+  position: relative;
+
+  &.horizontal {
+    cursor: n-resize;
+    width: 100%;
+    height: $barHeight;
+    bottom: -3px;
+  }
+
+  &.vertical {
+    cursor: e-resize;
+    width: $barWidth;
+    height: 100%;
+    right: -3px;
+    position: absolute;
+  }
+}
+
+.resize-item {
+  opacity: 0;
+  position: absolute;
+  background-color: var(--mat-sys-secondary-fixed-dim);
+
+  &.horizontal {
+    height: $barWidth;
+    width: 100%;
+    bottom: 2px;
+  }
+
+  &.vertical {
+    height: 100%;
+    width: $barWidth;
+    right: 2px;
+  }
+}
+
+.expand-btn {
+  pointer-events: none;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  opacity: 0;
+
+  color: var(--mat-sys-primary);
+  background-color: var(--mat-sys-on-primary);
+  transition:
+    opacity 300ms cubic-bezier(0.2, 0, 0, 1) 0s,
+    transform 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
+
+  &.horizontal {
+    top: 0;
+    left: 50%;
+  }
+
+  &.vertical {
+    top: 50%;
+
+    &.right {
+      left: -8px;
+    }
+
+    &.left {
+      right: -8px;
+    }
+  }
+
+  .mat-icon {
+    color: inherit;
+    height: 20px;
+    width: 20px;
+    font-size: 20px;
+    transition: color 100ms linear;
+  }
+}

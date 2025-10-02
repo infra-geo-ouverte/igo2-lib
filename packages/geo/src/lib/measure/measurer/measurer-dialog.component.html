@@ -1,6 +1,6 @@
 <h3 mat-dialog-title>{{ 'igo.geo.measure.dialog.title' | translate }}</h3>
 <div mat-dialog-content>
-  <table *ngIf="data.length > 0" class="mat-typography">
+  <table *ngIf="data.length > 0">
     <thead>
       <tr>
         <th colspan="2">
@@ -30,7 +30,7 @@
     </tbody>
   </table>
 
-  <table *ngIf="data.area > 0" class="mat-typography">
+  <table *ngIf="data.area > 0">
     <thead>
       <tr>
         <th colspan="2">

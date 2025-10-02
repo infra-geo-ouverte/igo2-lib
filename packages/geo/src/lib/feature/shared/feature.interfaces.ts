@@ -10,7 +10,7 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlRenderFeature from 'ol/render/Feature';
 
-import { GeoJsonGeometryTypes } from 'geojson';
+import { Geometry } from 'geojson';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources';
 import type { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -42,10 +42,7 @@ export interface FeatureMeta {
   excludeAttributeOffline?: string[];
 }
 
-export interface FeatureGeometry {
-  type: GeoJsonGeometryTypes;
-  coordinates: any;
-}
+export type FeatureGeometry = { coordinates: any[] } & Geometry;
 
 export interface FeatureStoreOptions extends EntityStoreOptions {
   map: IgoMap;

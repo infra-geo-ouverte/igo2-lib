@@ -9,7 +9,8 @@ export async function compileStyle(
   outputFileName: string
 ) {
   const result = compile(input, {
-    loadPaths: [PATHS.nodeModules]
+    loadPaths: [PATHS.nodeModules],
+    silenceDeprecations: ['color-functions', 'global-builtin', 'import']
   });
   await createFile(outputFileName, destination, result.css);
 }

@@ -34,7 +34,6 @@ import {
   selector: 'igo-style-modal-drawing',
   templateUrl: './style-modal-drawing.component.html',
   styleUrls: ['./style-modal-drawing.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

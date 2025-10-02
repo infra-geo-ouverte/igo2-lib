@@ -1,11 +1,6 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -33,7 +28,6 @@ import {
   formatScale
 } from '@igo2/geo';
 import { computeProjectionsConstraints, zoneMtm, zoneUtm } from '@igo2/geo';
-import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
@@ -49,7 +43,6 @@ import { MapState } from '../../map.state';
   selector: 'igo-advanced-coordinates',
   templateUrl: './advanced-coordinates.component.html',
   styleUrls: ['./advanced-coordinates.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatFormFieldModule,
@@ -103,10 +96,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private clipboard: Clipboard,
     public mapState: MapState,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
     private config: ConfigService,
     private formBuilder: UntypedFormBuilder
@@ -229,7 +222,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Copy the coordinates to a clipboard
    */
   copyTextToClipboard(): void {
-    const successful = Clipboard.copy(this.coordinates.toString());
+    const successful = this.clipboard.copy(this.coordinates.toString());
     if (successful) {
       this.messageService.success(
         'igo.integration.advanced-map-tool.advanced-coordinates.copyMsg',

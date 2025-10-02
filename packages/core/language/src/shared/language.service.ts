@@ -11,10 +11,11 @@ export class LanguageService {
   readonly language$ = new BehaviorSubject<string>(undefined);
 
   constructor(public translate: TranslateService) {
-    if (
-      !this.translate.defaultLang ||
-      !this.matchLanguage(this.translate.defaultLang)
-    ) {
+    const defaultLang = this.translate.defaultLang;
+    if (defaultLang && this.matchLanguage(defaultLang)) {
+      this.language = defaultLang;
+      this.language$.next(defaultLang);
+    } else {
       this.setBrowserLanguage();
     }
   }

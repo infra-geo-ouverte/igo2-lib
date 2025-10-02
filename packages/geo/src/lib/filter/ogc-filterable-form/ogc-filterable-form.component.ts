@@ -24,7 +24,6 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
       useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
     }
   ],
-  standalone: true,
   imports: [
     NgIf,
     OgcFilterSelectionComponent,

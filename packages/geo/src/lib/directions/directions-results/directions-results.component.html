@@ -19,10 +19,10 @@
     </mat-select>
   </mat-form-field>
 
-  <h3 mat-header class="igo-route-title">
+  <h4 mat-header class="igo-route-title">
     {{ activeRoute.title }}
     {{ getTitleDurationAndDistance() }}
-  </h3>
+  </h4>
   <mat-list (mouseleave)="onLeaveList()">
     <ng-container *ngFor="let step of activeRoute.steps; let stepIndex = index">
       <mat-list-item

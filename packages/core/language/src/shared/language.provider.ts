@@ -1,19 +1,23 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpBackend } from '@angular/common/http';
 import {
-  APP_INITIALIZER,
   EnvironmentProviders,
   Provider,
-  importProvidersFrom,
-  makeEnvironmentProviders
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer
 } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
 import {
+  Language,
   MissingTranslationHandler,
+  TRANSLATE_SERVICE_CONFIG,
   TranslateLoader,
-  TranslateModule,
-  TranslateModuleConfig
+  TranslateModuleConfig,
+  TranslateServiceConfig,
+  provideTranslateService
 } from '@ngx-translate/core';
 import { first } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -35,7 +39,8 @@ export interface TranslationFeature<KindT extends TranslationFeatureKind> {
 }
 
 export enum TranslationFeatureKind {
-  Translation = 0
+  Translation = 0,
+  DefaultLanguage = 1
 }
 
 /**
@@ -46,23 +51,19 @@ export function provideTranslation(
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     ...featureConfig.providers,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (languageService: LanguageService) => () => {
-        return (
-          languageService.translate.currentLoader as LanguageLoaderBase
-        ).isLoaded$?.pipe(
-          timeout(TIMEOUT_DURATION),
-          first((isLoaded) => isLoaded === true),
-          catchError((error) => {
-            error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
-            throw error;
-          })
-        );
-      },
-      deps: [LanguageService],
-      multi: true
-    }
+    provideAppInitializer(() => {
+      const languageService = inject(LanguageService);
+      return (
+        languageService.translate.currentLoader as LanguageLoaderBase
+      ).isLoaded$?.pipe(
+        timeout(TIMEOUT_DURATION),
+        first((isLoaded) => isLoaded === true),
+        catchError((error) => {
+          error.message += ` - Request timed out for language loader after: ${TIMEOUT_DURATION}`;
+          throw error;
+        })
+      );
+    })
   ]);
 }
 
@@ -78,9 +79,7 @@ export function withStaticConfig(
   return {
     kind: TranslationFeatureKind.Translation,
     providers: [
-      importProvidersFrom(
-        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
-      )
+      provideTranslateService(setTranslationConfig(loader, defaultLanguage))
     ]
   };
 }
@@ -96,10 +95,54 @@ export function withAsyncConfig(
   return {
     kind: TranslationFeatureKind.Translation,
     providers: [
-      importProvidersFrom(
-        TranslateModule.forRoot(setTranslationConfig(loader, defaultLanguage))
-      )
+      provideTranslateService(setTranslationConfig(loader, defaultLanguage))
     ]
+  };
+}
+
+/**
+ * Get the first segment of the path (e.g., '/en/alerts' => 'en')
+ * @param allowedLanguages default to ['fr', 'en']
+ */
+export function withUrlDefaultLanguage(
+  fallbackLang?: Language,
+  allowedLanguages: Language[] = ['fr', 'en']
+): TranslationFeature<TranslationFeatureKind.DefaultLanguage> {
+  return {
+    kind: TranslationFeatureKind.DefaultLanguage,
+    providers: [
+      {
+        provide: TRANSLATE_SERVICE_CONFIG,
+        useFactory: defaultLanguageSegmentFactory(
+          allowedLanguages,
+          fallbackLang
+        )
+      }
+    ]
+  };
+}
+
+function defaultLanguageSegmentFactory(
+  allowedLanguages: Language[],
+  fallbackLang?: Language
+): () => TranslateServiceConfig {
+  return () => {
+    const doc = inject(DOCUMENT);
+    const url = new URL(doc.location.href);
+
+    const firstSegment = url.pathname.split('/').filter(Boolean)[0];
+    if (allowedLanguages.includes(firstSegment)) {
+      return {
+        extend: true,
+        lang: firstSegment
+      } satisfies TranslateServiceConfig;
+    }
+
+    return {
+      extend: true,
+      lang: fallbackLang,
+      fallbackLang: fallbackLang ?? 'fr'
+    } satisfies TranslateServiceConfig;
   };
 }
 

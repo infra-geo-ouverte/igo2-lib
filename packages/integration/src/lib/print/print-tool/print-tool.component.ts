@@ -13,7 +13,6 @@ import { MapState } from '../../map/map.state';
 @Component({
   selector: 'igo-print-tool',
   templateUrl: './print-tool.component.html',
-  standalone: true,
   imports: [PrintComponent]
 })
 export class PrintToolComponent {

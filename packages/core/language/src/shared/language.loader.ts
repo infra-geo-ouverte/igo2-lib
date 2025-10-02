@@ -1,4 +1,6 @@
+import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { HttpBackend, HttpClient } from '@angular/common/http';
+import { PLATFORM_ID, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { ObjectUtils } from '@igo2/utils';
@@ -26,13 +28,28 @@ export class LanguageLoader implements LanguageLoaderBase {
   prefix?: string | string[];
   options: LanguageOptions;
 
+  baseUrl: string;
+
   constructor(handler: HttpBackend, options: LanguageOptions) {
     this.httpClient = new HttpClient(handler);
     this.options = options;
+
+    const document = inject(DOCUMENT);
+    const platformId = inject(PLATFORM_ID);
+    this.baseUrl = isPlatformServer(platformId)
+      ? this.getServerUrl(document)
+      : '';
+  }
+
+  private getServerUrl(document: Document): string {
+    const origin = document.location.origin;
+    return origin.endsWith('/') ? origin : origin + '/';
   }
 
   public getTranslation(lang: string): Observable<any> {
-    const igoLocale$ = this.httpClient.get(`locale/libs_locale/${lang}.json`);
+    const igoLocale$ = this.httpClient.get(
+      `${this.baseUrl}locale/libs_locale/${lang}.json`
+    );
     if (!this.prefix) {
       const prefix = this.options.prefix;
       this.prefix = !prefix || Array.isArray(prefix) ? prefix : [prefix];
@@ -44,7 +61,7 @@ export class LanguageLoader implements LanguageLoaderBase {
     }
 
     const appLocale$ = (this.prefix as string[]).map((prefix) =>
-      this.httpClient.get(`${prefix}${lang}${this.suffix}`)
+      this.httpClient.get(`${this.baseUrl}${prefix}${lang}${this.suffix}`)
     );
 
     const locale$ = [...appLocale$];

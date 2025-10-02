@@ -45,7 +45,9 @@ export type IgoOgcFilterObject =
 export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
-  filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
+  filters?: (IgoLogicalArrayOptions | AnyBaseOgcFilterOptions) & {
+    filterid?: string;
+  };
   pushButtons?: IgoOgcSelector;
   checkboxes?: IgoOgcSelector;
   radioButtons?: IgoOgcSelector;
@@ -69,6 +71,14 @@ export interface IgoOgcSelector {
     | 'autocomplete';
   order?: number;
 }
+
+export const OgcSelectorFields = [
+  'pushButtons',
+  'checkboxes',
+  'radioButtons',
+  'select',
+  'autocomplete'
+] as const;
 
 export interface SelectorGroup {
   enabled?: boolean;
@@ -209,7 +219,7 @@ export interface OgcInterfaceFilterOptions {
   end?: string;
   step?: string;
   restrictToStep?: boolean;
-  sliderOptions: SliderOptionsInterface;
+  sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
   escapeChar?: string;
   expression?: string | number;
@@ -240,3 +250,13 @@ export interface SliderOptionsInterface extends OgcFilterDuringOptions {
   displayFormat?: string;
   enabled?: boolean;
 }
+
+export interface IOgcFiltersOptionSaveable
+  extends Omit<OgcFiltersOptions, 'interfaceOgcFilters'> {
+  interfaceOgcFilters: IOgcInterfaceFilterOptions[];
+}
+
+export type IOgcInterfaceFilterOptions = Pick<
+  OgcInterfaceFilterOptions,
+  'propertyName' | 'begin' | 'end' | 'active' | 'operator' | 'expression'
+>;

@@ -20,7 +20,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-draw',
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss'],
-  standalone: true,
   imports: [
     MapBrowserComponent,
     ZoomButtonComponent,

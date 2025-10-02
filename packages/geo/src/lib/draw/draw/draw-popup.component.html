@@ -35,7 +35,6 @@
       <ng-container *ngIf="olGeometryType === 'Polygon'">
         <mat-checkbox
           *ngFor="let option of arrayBuiltInType"
-          class="mat-typography"
           [value]="option.value"
           [disabled]="optionAvailable(option.value)"
           (change)="

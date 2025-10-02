@@ -8,9 +8,13 @@ import OlPoint from 'ol/geom/Point';
 import OlPolygon from 'ol/geom/Polygon';
 import * as olstyle from 'ol/style';
 
-import { lineString } from '@turf/helpers';
+import booleanIntersects from '@turf/boolean-intersects';
+import buffer from '@turf/buffer';
+import { Units, lineString } from '@turf/helpers';
+import { feature as turfFeature } from '@turf/helpers';
 import lineIntersect from '@turf/line-intersect';
 
+import { FeatureGeometry } from '../../feature';
 import {
   GeometrySliceLineStringError,
   GeometrySliceMultiPolygonError,
@@ -144,4 +148,28 @@ export function getMousePositionFromOlGeometryEvent(olEvent: BasicEvent) {
   }
   const olGeometryCast = olGeometry as OlPoint | OlLineString | OlCircle;
   return olGeometryCast.getFlatCoordinates().slice(-2) as [number, number];
+}
+
+export function doesOlGeometryIntersects(
+  olGeometry1: OlGeometry,
+  olGeometry2: OlGeometry
+): boolean {
+  const olGeoJSON = new OlGeoJSON();
+  const firstGeom = olGeoJSON.writeGeometryObject(olGeometry1);
+  const secondGeom = olGeoJSON.writeGeometryObject(olGeometry2);
+  return booleanIntersects(
+    firstGeom as FeatureGeometry,
+    secondGeom as FeatureGeometry
+  );
+}
+
+export function bufferOlGeometry(
+  olGeometry: OlGeometry,
+  dist: number,
+  units: Units = 'meters'
+): FeatureGeometry {
+  const olGeoJSON = new OlGeoJSON();
+  const bufferedGeom = olGeoJSON.writeGeometryObject(olGeometry);
+  const buffered = buffer(turfFeature(bufferedGeom), dist, { units });
+  return buffered.geometry;
 }

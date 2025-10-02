@@ -32,7 +32,6 @@ import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.compo
   selector: 'igo-ogc-filter-form',
   templateUrl: './ogc-filter-form.component.html',
   styleUrls: ['./ogc-filter-form.component.scss'],
-  standalone: true,
   imports: [
     MatCheckboxModule,
     MatTooltipModule,

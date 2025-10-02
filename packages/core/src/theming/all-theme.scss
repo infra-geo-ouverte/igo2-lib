@@ -1,14 +1,9 @@
 @use '@angular/material' as mat;
 
 @use '../packages.import' as igo;
-@use './material-theme-override';
-@use './typography' as typo;
 
 @mixin all-component-themes($config) {
-  @include material-theme-override.material-override($config);
-
-  @include igo.core-component-themes($config);
-  @include igo.auth-component-themes($config);
+  @include igo.core-component-themes();
   @include igo.common-component-themes($config);
   @include igo.context-component-themes($config);
   @include igo.geo-component-themes($config);

@@ -31,7 +31,6 @@ import { AuthFormOptions } from '../shared';
   templateUrl: './auth-form.component.html',
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
-  standalone: true,
   imports: [
     NgIf,
     AuthGoogleComponent,

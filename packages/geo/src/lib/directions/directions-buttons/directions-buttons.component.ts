@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, Input, Optional } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,6 @@ import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
-import { Clipboard } from '@igo2/utils';
 
 import { Coordinate } from 'ol/coordinate';
 
@@ -32,15 +31,7 @@ import {
   selector: 'igo-directions-buttons',
   templateUrl: './directions-buttons.component.html',
   styleUrls: ['./directions-buttons.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    NgIf,
-    AsyncPipe,
-    IgoLanguageModule
-  ]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class DirectionsButtonsComponent {
   @Input({ required: true }) contextUri: string;
@@ -52,6 +43,7 @@ export class DirectionsButtonsComponent {
   public downloadDirectionsBtnDisabled = false;
 
   constructor(
+    private clipboard: Clipboard,
     private languageService: LanguageService,
     private messageService: MessageService,
     @Optional() private routeService: RouteService,
@@ -91,7 +83,7 @@ export class DirectionsButtonsComponent {
    */
   copyDirectionsToClipboard(): void {
     const directions: string = this.directionsToText();
-    const successful: boolean = Clipboard.copy(directions);
+    const successful: boolean = this.clipboard.copy(directions);
     if (successful) {
       this.messageService.success(
         'igo.geo.directions.buttons.message.copyDirections'
@@ -104,7 +96,7 @@ export class DirectionsButtonsComponent {
    *
    */
   copyLinkToClipboard(): void {
-    const copySuccessful: boolean = Clipboard.copy(this.getLink());
+    const copySuccessful: boolean = this.clipboard.copy(this.getLink());
     if (copySuccessful) {
       this.messageService.success(
         'igo.geo.directions.buttons.message.copyLink'

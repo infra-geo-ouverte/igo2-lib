@@ -22,7 +22,6 @@ import { TooltipType } from '../shared/layers/layer.interface';
   templateUrl: './layer-legend-item.component.html',
   styleUrls: ['./layer-legend-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {

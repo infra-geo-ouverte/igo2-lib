@@ -8,6 +8,7 @@ import { ObjectUtils } from '@igo2/utils';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { OGCFilterService } from '../../filter/shared/ogc-filter.service';
 import { CapabilitiesService } from './capabilities.service';
 import {
   AnyDataSourceOptions,
@@ -34,6 +35,7 @@ import {
   WFSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
+  WMSDataSourceOptionsParams,
   WMTSDataSource,
   WMTSDataSourceOptions,
   WebSocketDataSource,
@@ -53,6 +55,7 @@ export class DataSourceService {
     private capabilitiesService: CapabilitiesService,
     @Optional() private optionsService: OptionsService,
     private wfsDataSourceService: WFSService,
+    private ogcFilterService: OGCFilterService,
     private languageService: LanguageService,
     private messageService: MessageService,
     private authInterceptor?: AuthInterceptor
@@ -170,6 +173,7 @@ export class DataSourceService {
         new WFSDataSource(
           context,
           this.wfsDataSourceService,
+          this.ogcFilterService,
           this.authInterceptor
         )
       )
@@ -225,12 +229,34 @@ export class DataSourceService {
         const optionsMerged = options.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
-        return new WMSDataSource(optionsMerged, this.wfsDataSourceService);
+
+        if (optionsMerged?.params) {
+          optionsMerged.params = this.normalizeParams(optionsMerged.params);
+        }
+
+        return new WMSDataSource(
+          optionsMerged,
+          this.wfsDataSourceService,
+          this.ogcFilterService
+        );
       }),
       catchError(() => {
         return of(undefined);
       })
     );
+  }
+
+  private normalizeParams(
+    params: WMSDataSourceOptionsParams
+  ): WMSDataSourceOptionsParams {
+    const uppercasedParams: Partial<WMSDataSourceOptionsParams> = {};
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        uppercasedParams[key.toUpperCase()] = params[key];
+      }
+    }
+
+    return uppercasedParams as WMSDataSourceOptionsParams;
   }
 
   private createWMTSDataSource(

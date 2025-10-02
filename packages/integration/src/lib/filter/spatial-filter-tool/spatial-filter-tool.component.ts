@@ -11,7 +11,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 
 import { EntityStore } from '@igo2/common/entity';
 import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
-import { PanelComponent } from '@igo2/common/panel';
 import { ToolComponent } from '@igo2/common/tool';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -73,11 +72,9 @@ import {
   templateUrl: './spatial-filter-tool.component.html',
   styleUrls: ['./spatial-filter-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SpatialFilterTypeComponent,
     SpatialFilterItemComponent,
-    PanelComponent,
     FeatureDetailsComponent,
     NgIf,
     AsyncPipe
@@ -669,11 +666,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

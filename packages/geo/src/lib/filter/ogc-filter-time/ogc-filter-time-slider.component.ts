@@ -19,7 +19,6 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
   selector: 'igo-ogc-filter-time-slider',
   templateUrl: './ogc-filter-time-slider.component.html',
   styleUrls: ['./ogc-filter-time-slider.component.scss'],
-  standalone: true,
   imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule],
   providers: [OGCFilterTimeService]
 })

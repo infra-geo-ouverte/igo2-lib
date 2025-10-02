@@ -16,7 +16,7 @@ export async function setDistributionVersion(
   packageJSON.version = version;
 
   Object.keys(packageJSON.peerDependencies).forEach((key) => {
-    if (key.includes('@igo2')) {
+    if (key.includes('@igo2') && !key.includes('@igo2/sdg-')) {
       packageJSON.peerDependencies[key] = `^${version}`;
     }
   });

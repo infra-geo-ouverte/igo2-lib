@@ -97,7 +97,6 @@ interface RowData {
     { provide: MatFormFieldControl, useExisting: EntityTableComponent },
     provideMomentDateAdapter()
   ],
-  standalone: true,
   imports: [
     AsyncPipe,
     EntityTablePaginatorComponent,

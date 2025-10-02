@@ -3,8 +3,11 @@
   (selectedIndexChange)="selectedTypeIndex.setValue($event)"
   (selectedTabChange)="onTypeChange()"
 >
-  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
-    <mat-form-field>
+  <mat-tab
+    [label]="'igo.geo.spatialFilter.predefined' | translate"
+    id="spatial-filter-predefined-tab"
+  >
+    <mat-form-field id="spatial-filter-field-type">
       <mat-label>{{
         'igo.geo.spatialFilter.searchLabel' | translate
       }}</mat-label>
@@ -30,7 +33,10 @@
     </igo-spatial-filter-list>
   </mat-tab>
 
-  <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
+  <mat-tab
+    [label]="'igo.geo.spatialFilter.draw' | translate"
+    id="spatial-filter-draw-tab"
+  >
     <div class="spatial-type-toggle">
       <mat-button-toggle-group
         [value]="activeDrawType"

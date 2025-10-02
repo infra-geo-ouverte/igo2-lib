@@ -14,7 +14,6 @@ import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
   templateUrl: './ogc-filterable-list.component.html',
   styleUrls: ['./ogc-filterable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ListComponent,
     NgIf,

@@ -25,7 +25,6 @@ import { DrawState } from '../draw.state';
   selector: 'igo-drawing-tool',
   templateUrl: './drawing-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [DrawComponent]
 })
 export class DrawingToolComponent {

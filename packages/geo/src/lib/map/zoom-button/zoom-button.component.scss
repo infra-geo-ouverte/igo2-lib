@@ -1,20 +1,14 @@
+@use '@angular/material' as mat;
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/core.variables';
 
 :host {
   @include common-utils.square-button();
+}
 
-  .igo-zoom-button-container {
-    width: $igo-icon-size;
-    button {
-      background-color: #fff;
-      &:hover {
-        background-color: #efefef;
-      }
-    }
-  }
+.igo-zoom-button-container {
+  width: min-content;
+}
 
-  .igo-zoom-button-container button:first-child {
-    margin-bottom: 2px;
-  }
+.igo-zoom-button-container button:first-child {
+  margin-bottom: 2px;
 }

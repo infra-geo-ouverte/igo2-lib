@@ -4,7 +4,6 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["@ngx-translate"],
   "assets": [
     { "input": "src", "glob": "*.scss", "output": "src" },
     { "input": "", "glob": "**/*.them*.scss", "output": "" },

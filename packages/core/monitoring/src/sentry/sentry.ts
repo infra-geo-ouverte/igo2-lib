@@ -1,15 +1,12 @@
 import {
   BrowserOptions,
   SentryErrorHandler,
-  browserTracingIntegration,
   createErrorHandler,
   getClient,
-  init,
-  replayIntegration
+  init
 } from '@sentry/angular';
 
 import { SentryMonitoringOptions } from './sentry.interface';
-import { isReplayEnabled, isTracingEnabled } from './sentry.utils';
 
 export const createSentryErrorHandler = (
   options: SentryMonitoringOptions
@@ -29,13 +26,5 @@ export const initSentry = (
     return;
   }
 
-  const baseConfig: BrowserOptions = {
-    ...options,
-    integrations: [
-      isTracingEnabled(options) && browserTracingIntegration(),
-      isReplayEnabled(options) && replayIntegration()
-    ].filter(Boolean)
-  };
-
-  init(baseConfig);
+  init(options as unknown as BrowserOptions);
 };

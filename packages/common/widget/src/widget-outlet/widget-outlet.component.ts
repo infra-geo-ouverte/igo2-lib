@@ -25,7 +25,6 @@ import { WidgetComponent } from '../shared/widget.interfaces';
   templateUrl: './widget-outlet.component.html',
   styleUrls: ['./widget-outlet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {

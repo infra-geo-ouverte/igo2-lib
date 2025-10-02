@@ -19,7 +19,6 @@ import { UserDialogComponent } from './user-dialog.component';
   templateUrl: './user-button.component.html',
   styleUrls: ['./user-button.component.scss'],
   animations: [userButtonSlideInOut()],
-  standalone: true,
   imports: [
     NgIf,
     PoiButtonComponent,

@@ -16,7 +16,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-simple-map',
   templateUrl: './simple-map.component.html',
   styleUrls: ['./simple-map.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
 })
 export class AppSimpleMapComponent {

@@ -51,7 +51,6 @@ import { MapState } from './../map.state';
   templateUrl: './map-tool.component.html',
   styleUrls: ['./map-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTabsModule,
     WorkspaceButtonComponent,

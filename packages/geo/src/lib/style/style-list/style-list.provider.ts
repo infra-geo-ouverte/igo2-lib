@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, InjectionToken } from '@angular/core';
+import { InjectionToken, inject, provideAppInitializer } from '@angular/core';
 
 import { StyleListOptions } from './style-list.interface';
 import { StyleListService } from './style-list.service';
@@ -14,18 +14,10 @@ export function provideStyleListOptions(options: StyleListOptions) {
   };
 }
 
-export function styleListFactory(
-  styleListService: StyleListService,
-  options: StyleListOptions
-) {
-  return () => styleListService.load(options);
-}
-
 export function provideStyleListLoader() {
-  return {
-    provide: APP_INITIALIZER,
-    useFactory: styleListFactory,
-    multi: true,
-    deps: [StyleListService, STYLELIST_OPTIONS]
-  };
+  return provideAppInitializer(() => {
+    const styleListService = inject(StyleListService);
+    const options = inject(STYLELIST_OPTIONS);
+    return styleListService.load(options);
+  });
 }

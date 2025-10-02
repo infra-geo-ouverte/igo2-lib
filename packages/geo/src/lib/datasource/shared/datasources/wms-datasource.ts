@@ -1,20 +1,27 @@
+import { Optional } from '@angular/core';
+
 import { ObjectUtils } from '@igo2/utils';
 
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, interval, tap } from 'rxjs';
 
+import {
+  isDateOrRangeInRange,
+  parseDateString
+} from '../../../filter/shared/date.utils';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
   OgcFilterDuringOptions,
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
-import { Legend } from './datasource.interface';
+import { DatasourceEvent, EventRefresh, Legend } from './datasource.interface';
 import { WFSService } from './wfs.service';
 import {
   TimeFilterableDataSourceOptions,
@@ -23,7 +30,8 @@ import {
 import {
   checkWfsParams,
   defaultFieldNameGeometry,
-  formatWFSQueryString
+  formatWFSQueryString,
+  getSaveableOgcParams
 } from './wms-wfs.utils';
 
 export interface TimeFilterableDataSource extends WMSDataSource {
@@ -38,7 +46,12 @@ export class WMSDataSource extends DataSource {
   declare public ol: olSourceImageWMS;
 
   get params(): any {
-    return this.options.params as any;
+    return this.options.params;
+  }
+
+  set stylesParams(value: string) {
+    this.options.params.STYLES = value;
+    this.ol.updateParams({ STYLES: value });
   }
 
   get queryTitle(): string {
@@ -73,16 +86,38 @@ export class WMSDataSource extends DataSource {
   readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
 
   get saveableOptions(): Partial<WMSDataSourceOptions> {
-    const baseOptions = super.saveableOptions;
+    const baseOptions = super.saveableOptions as WMSDataSourceOptions;
+
+    if (
+      this.timeFilter?.value &&
+      this.timeFilter?.value.toString() !== this.timeFilter?.default.toString()
+    ) {
+      baseOptions.timeFilter = {
+        value: this.timeFilter.value
+      };
+    }
+
     return {
       ...baseOptions,
-      params: this.params
+      params: this.params,
+      ...(this.ogcFilters && {
+        ogcFilters: getSaveableOgcParams(this.ogcFilters)
+      })
     };
   }
 
+  /**
+   * @workaround
+   * We need a external way to desactive the refresh of a linked layer for the workspace
+   * The workspace services create all workspace layer on init and the refresh
+   * is enable by default even if the workspace is not use the layer will still be refreshed.
+   */
+  enableRefresh = false;
+
   constructor(
     public options: WMSDataSourceOptions,
-    protected wfsService: WFSService
+    @Optional() protected wfsService?: WFSService,
+    @Optional() private ogcFilterService?: OGCFilterService
   ) {
     super(options);
     const sourceParams: any = options.params;
@@ -91,12 +126,6 @@ export class WMSDataSource extends DataSource {
     sourceParams.DPI = dpi;
     sourceParams.MAP_RESOLUTION = dpi;
     sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
-
-    if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
-      setInterval(() => {
-        this.refresh();
-      }, options.refreshIntervalSec * 1000); // Convert seconds to MS
-    }
 
     let fieldNameGeometry = defaultFieldNameGeometry;
 
@@ -187,7 +216,11 @@ export class WMSDataSource extends DataSource {
       initOgcFilters.editable &&
       (options.sourceFields || []).filter((sf) => !sf.values).length > 0
     ) {
-      this.wfsService.getSourceFieldsFromWFS(options);
+      this.wfsService?.getSourceFieldsFromWFS(options);
+    }
+
+    if (options.ogcFilters?.enabled && options.ogcFilters?.filters) {
+      this.ogcFilterService?.setOgcWMSFiltersOptions(this);
     }
 
     const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(
@@ -204,20 +237,47 @@ export class WMSDataSource extends DataSource {
       timeFilterableDataSourceOptions?.timeFilterable &&
       timeFilterableDataSourceOptions?.timeFilter
     ) {
+      if (timeFilterableDataSourceOptions.timeFilter.value) {
+        const date = this.dateFormat(
+          timeFilterableDataSourceOptions.timeFilter
+        );
+
+        this.ol.updateParams({
+          TIME: date
+        });
+      }
       this.setTimeFilter(timeFilterableDataSourceOptions.timeFilter, true);
     }
   }
 
-  refresh() {
-    this.ol.updateParams({ igoRefresh: Math.random() });
+  private dateFormat(timeFilterOptions: TimeFilterOptions): string {
+    const date = parseDateString(timeFilterOptions.value);
+    const minMax = parseDateString([
+      timeFilterOptions.min,
+      timeFilterOptions.max
+    ]) as [min: Date, max: Date];
+    const valueInRange = isDateOrRangeInRange(date, minMax);
+
+    if (date instanceof Date) {
+      return valueInRange
+        ? `${date.toISOString().split('.')[0]}Z`
+        : `${minMax[0].toISOString().split('.')[0]}Z`;
+    } else {
+      return valueInRange
+        ? `${date[0].toISOString().split('.')[0]}Z/${date[1].toISOString().split('.')[0]}Z`
+        : `${minMax[0].toISOString().split('.')[0]}Z/${minMax[1].toISOString().split('.')[0]}Z`;
+    }
   }
 
-  private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
-    const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
-    const downloadUrl = queryStringValues.find(
-      (f) => f.name === 'getfeature'
-    ).value;
-    return downloadUrl;
+  addEvents(): void {
+    const events: DatasourceEvent[] = [];
+
+    const refreshInterval = this.options.refreshIntervalSec;
+    if (refreshInterval && refreshInterval > 0) {
+      events.push([EventRefresh, this.addRefreshInterval(refreshInterval)]);
+    }
+
+    super.addEvents(events);
   }
 
   protected createOlSource(): olSourceImageWMS {
@@ -235,7 +295,7 @@ export class WMSDataSource extends DataSource {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
-      this.ol.notify('timeFilter', this.ogcFilters);
+      this.ol.notify('timeFilter', this.timeFilter);
     }
   }
 
@@ -303,6 +363,26 @@ export class WMSDataSource extends DataSource {
 
   public onUnwatch() {
     // empty
+  }
+
+  private addRefreshInterval(refreshInterval: number): Observable<number> {
+    const intervalMs = refreshInterval * 1000; // secondes to MS
+    return interval(intervalMs).pipe(
+      tap(() => {
+        this.ol.updateParams({ [EventRefresh]: Math.random() });
+        if (this.enableRefresh) {
+          this.ol.notify(EventRefresh, this.enableRefresh);
+        }
+      })
+    );
+  }
+
+  private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
+    const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
+    const downloadUrl = queryStringValues.find(
+      (f) => f.name === 'getfeature'
+    ).value;
+    return downloadUrl;
   }
 }
 

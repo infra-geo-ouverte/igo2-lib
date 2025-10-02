@@ -1,5 +1,5 @@
+@use '@angular/material' as mat;
 @use '../../../../../core/src/style/partial/core-utils';
-@import '../../../../../core/src/style/partial/core.variables';
 
 :host {
   ::ng-deep {
@@ -28,8 +28,23 @@
       input {
         @include core-utils.text-ellipsis();
       }
+
+      .mat-mdc-text-field-wrapper,
+      .mat-mdc-form-field-focus-overlay {
+        color: var(--mat-sys-on-surface);
+        background-color: var(--mat-sys-surface-container-lowest);
+      }
     }
   }
+}
+
+mat-form-field {
+  @include mat.form-field-overrides(
+    (
+      container-height: 48px,
+      container-vertical-padding: 12px
+    )
+  );
 }
 
 .igo-search-bar-container {

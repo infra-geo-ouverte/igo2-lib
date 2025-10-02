@@ -19,14 +19,16 @@
           "layer": "Cette couche provient d'une organisation externe.",
           "unavailableWithEmail": "Le catalogue '{{value}}' est indisponible pour le moment. Pour ajouter un service externe à la liste prédéfinie, veuillez contacter {{email}}. Des délais peuvent s'appliquer si problème il y a avec le fournisseur externe."
         },
+        "library.predefined.select": "Sélectionner un catalogue",
+        "library.custom.title": "Titre",
         "library.add": "Ajouter ce catalogue",
-        "library.cancel": "Annuler",
+        "library.predefined": "Liste prédéfinie",
+        "library.custom": "Configuration avancées",
         "library.remove": "Retirer ce catalogue de la liste",
         "library.inlist": {
           "title": "Catalogue déjà contenu",
           "message": "Le catalogue à ajouter est déjà dans la liste"
         },
-        "library.addTitle": "Ajout d'un catalogue",
         "library.addBtn": "Ajouter un catalogue"
       },
       "clickOnMap": {
@@ -579,6 +581,17 @@
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "reset": {
+              "button": "Réinitialiser les options de recherche",
+              "dialog": {
+                "title": "Choisir les services de recherche à réinitialiser",
+                "form.field.title": "Choisir le(s) service(s) de recherche"
+              },
+              "notice": {
+                "multiple": "Les options des services de recherche sélectionnés ont été réinitialisés.",
+                "single": "Les options du service de recherche sélectionné ont été réinitialisés."
+              }
+            },
             "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
@@ -825,7 +838,19 @@
         "modifyError": "Un problème est survenu. L'entité n'a pas pu être modifiée.",
         "cancel": "Annuler",
         "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
+        "widget": {
+          "interactiveSelection": {
+            "selection.add": "Ajouter à la présente sélection",
+            "selection.new": "Effectuer la sélection",
+            "selection.remove": "Supprimer les résultats de la sélection",
+            "reset": {
+              "button": "Réinitialiser"
+            },
+            "action.title": "Action à faire avec le résultat de la présente sélection",
+            "buffer.title": "Taille de la zone tampon en mètre"
+          }
+        }
       },
       "formValidation": {
         "mandatory": "{{column}}est un champ obligatoire",

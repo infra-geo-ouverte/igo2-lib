@@ -19,7 +19,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-import-export',
   templateUrl: './import-export.component.html',
   styleUrls: ['./import-export.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

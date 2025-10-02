@@ -66,7 +66,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './spatial-filter.component.html',
   styleUrls: ['./spatial-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
@@ -376,7 +375,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         }
       }
       this.defaultStyle = (_feature, resolution) => {
-        const coordinates: Coordinate = features[0].geometry.coordinates;
+        const coordinates = features[0].geometry.coordinates as Coordinate;
         return new olstyle.Style({
           image: new olstyle.Circle({
             radius: coordinates
@@ -609,11 +608,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projectionCode
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

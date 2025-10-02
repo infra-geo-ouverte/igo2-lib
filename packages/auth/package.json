@@ -1,6 +1,6 @@
 {
   "name": "@igo2/auth",
-  "version": "18.0.6",
+  "version": "19.0.0-next.31",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -49,24 +49,24 @@
     }
   },
   "dependencies": {
-    "jwt-decode": "^4.0.0",
-    "ts-cacheable": "^1.0.6",
-    "ts-md5": "^1.3.0",
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^18.0.0",
-    "@angular/common": "^18.0.0",
-    "@angular/core": "^18.0.0",
-    "@angular/forms": "^18.0.0",
-    "@angular/material": "^18.0.0",
-    "@angular/router": "^18.0.0",
+    "@angular/cdk": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/material": "^19.0.0",
+    "@angular/router": "^19.0.0",
     "@azure/msal-angular": "^3.0.4",
     "@azure/msal-browser": "^3.0.4",
     "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "rxjs": "^7.8.0"
+    "jwt-decode": "^4.0.0",
+    "rxjs": "^7.8.0",
+    "ts-cacheable": "^1.0.6",
+    "ts-md5": "^1.3.0"
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"

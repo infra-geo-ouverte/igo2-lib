@@ -11,7 +11,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-request',
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.scss'],
-  standalone: true,
   imports: [
     // IgoErrorModule,
     // IgoLoggingModule, // Import in your root module or main.ts, only if you want register http calls in console

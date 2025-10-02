@@ -1,142 +1,128 @@
-@import '../../../../../../core/src/style/partial/media';
 $slide-toggle-width: 60px;
 
-:host {
-  .header {
-    margin-top: 5px;
+.header {
+  margin-top: 5px;
+  width: 100%;
+}
+
+.mat-mdc-slide-toggle {
+  padding: 5px;
+  width: 100%;
+
+  ::ng-deep .mdc-form-field {
     width: 100%;
   }
 
-  .mat-mdc-slide-toggle {
-    padding: 5px;
-    width: 100%;
-
-    ::ng-deep .mdc-form-field {
-      width: 100%;
-    }
-
-    ::ng-deep .mdc-label {
-      margin-left: 0;
-      width: calc(100% - #{$slide-toggle-width});
-    }
+  ::ng-deep .mdc-label {
+    margin-left: 0;
+    width: calc(100% - #{$slide-toggle-width});
   }
+}
 
-  .title {
-    margin-left: 5px;
-    font-size: initial;
+.title {
+  margin-left: 5px;
+  font-size: initial;
+}
+
+.mat-mdc-radio-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-mdc-radio-button {
+  display: inline-flex;
+  position: relative;
+  margin-left: 12px;
+}
+
+.mat-mdc-form-field {
+  margin-top: 5px;
+}
+
+.mat-column-select {
+  overflow: auto;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.results {
+  overflow: auto;
+  max-height: 250px;
+}
+
+.mat-column-typeResults {
+  max-width: 100px;
+  margin-right: 5px;
+}
+
+.buffer-unit,
+.radius-unit {
+  display: flex;
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.radius,
+.buffer {
+  flex-flow: column nowrap;
+  flex: 2;
+}
+
+.unit-field {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.example-tree-invisible {
+  display: none;
+}
+
+.tree-ul {
+  margin: 0px;
+  padding: 0px;
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.tree-check,
+.tree-check-2 {
+  position: relative;
+  margin-left: auto;
+}
+
+.thematics-header {
+  flex: 1;
+}
+
+.checks-header {
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+.mat-tree-node {
+  position: relative;
+  min-height: 42px;
+}
+
+.mat-mdc-header-cell {
+  height: 56px;
+}
+
+.results {
+  max-height: 45%;
+
+  igo-entity-table ::ng-deep div.table-container {
+    overflow: unset;
   }
+}
 
-  .mat-mdc-radio-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mat-mdc-radio-button {
-    display: inline-flex;
-    position: relative;
-    margin-left: 12px;
-  }
-
-  .mat-mdc-form-field {
-    margin-top: 5px;
-  }
-
-  .mat-column-select {
-    overflow: auto;
-  }
-
-  .buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin: 16px 0;
-  }
-
-  .thematics {
-    max-height: 35%;
-    overflow: auto;
-    margin-top: 5px;
-    width: 98%;
-  }
-
-  .results {
-    overflow: auto;
-    max-height: 250px;
-    width: 98%;
-  }
-
-  .mat-column-typeResults {
-    max-width: 100px;
-    margin-right: 5px;
-  }
-
-  .buffer-unit,
-  .radius-unit {
-    display: flex;
-    width: 100%;
-    padding: 5px;
-    box-sizing: border-box;
-  }
-
-  .radius,
-  .buffer {
-    flex-flow: column nowrap;
-    flex: 2;
-  }
-
-  .unit-field {
-    flex: 1;
-    margin-left: 8px;
-  }
-
-  .example-tree-invisible {
-    display: none;
-  }
-
-  .tree-ul {
-    margin: 0px;
-    padding: 0px;
-    padding-left: 20px;
-    list-style-type: none;
-  }
-
-  .tree-check,
-  .tree-check-2 {
-    position: relative;
-    margin-left: auto;
-    margin-right: 5px;
-  }
-
-  .thematics-header {
-    max-width: 250px;
-  }
-
-  .checks-header {
-    padding: none;
-    max-width: calc(100% - 316px);
-    overflow: hidden;
-  }
-
-  .mat-mdc-checkbox {
-    padding: 5px;
-  }
-
-  .mat-tree-node {
-    position: relative;
-    min-height: 42px;
-    width: 280px;
-  }
-
-  .mat-mdc-header-cell {
-    height: 56px;
-  }
-
-  .results {
-    max-height: 45%;
-    width: 98%;
-
-    igo-entity-table ::ng-deep div.table-container {
-      overflow: unset;
-    }
-  }
+li {
+  margin: 0;
 }

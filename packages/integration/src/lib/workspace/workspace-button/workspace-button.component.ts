@@ -22,7 +22,6 @@ import { WorkspaceState } from '../workspace.state';
   templateUrl: './workspace-button.component.html',
   styleUrls: ['./workspace-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

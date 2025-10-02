@@ -37,7 +37,6 @@ import { CatalogState } from '../catalog.state';
   selector: 'igo-catalog-browser-tool',
   templateUrl: './catalog-browser-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {

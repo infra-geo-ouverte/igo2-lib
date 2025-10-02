@@ -75,6 +75,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   static propertiesBlacklist: string[] = [];
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
+  static defaultIchercheTypes = [
+    'adresses',
+    'codes-postaux',
+    'routes',
+    'intersections',
+    'municipalites',
+    'mrc',
+    'regadmin',
+    'lieux'
+  ];
+
   private hashtagsLieuxToKeep = [];
 
   get title(): string {
@@ -118,7 +129,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return IChercheSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     const limit =
       this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)
@@ -130,16 +141,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const types = this.options.params?.type
       ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-      : [
-          'adresses',
-          'codes-postaux',
-          'routes',
-          'intersections',
-          'municipalites',
-          'mrc',
-          'regadmin',
-          'lieux'
-        ];
+      : IChercheSearchSource.defaultIchercheTypes;
 
     const showAdvancedParams = this.options.showAdvancedSettings;
 
@@ -404,7 +406,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       catchError((err) => {
         err.error.toDisplay = true;
         err.error.title = this.languageService.translate.instant(
-          this.getDefaultOptions().title
+          this.defaultOptions.title
         );
         throw err;
       })
@@ -682,6 +684,13 @@ export class IChercheReverseSearchSource
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
 
+  static defaultIchercheTypes = [
+    'adresses',
+    'municipalites',
+    'mrc',
+    'regadmin'
+  ];
+
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   get title(): string {
@@ -723,11 +732,11 @@ export class IChercheReverseSearchSource
     return IChercheReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     const types =
       this.options.params && this.options.params.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-        : ['adresses', 'municipalites', 'mrc', 'regadmin'];
+        : IChercheReverseSearchSource.defaultIchercheTypes;
 
     return {
       title: 'igo.geo.search.ichercheReverse.name',

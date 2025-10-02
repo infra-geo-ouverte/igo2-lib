@@ -21,7 +21,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-overlay',
   templateUrl: './overlay.component.html',
   styleUrls: ['./overlay.component.scss'],
-  standalone: true,
   imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES]
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {

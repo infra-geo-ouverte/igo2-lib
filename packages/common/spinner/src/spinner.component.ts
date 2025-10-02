@@ -8,7 +8,6 @@ import { BehaviorSubject } from 'rxjs';
   selector: 'igo-spinner',
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss'],
-  standalone: true,
   imports: [NgClass, MatProgressSpinner, AsyncPipe]
 })
 export class SpinnerComponent {

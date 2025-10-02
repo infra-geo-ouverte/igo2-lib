@@ -35,7 +35,6 @@ import { SEARCH_TYPES } from '../shared/search.enums';
   templateUrl: './search-selector.component.html',
   styleUrls: ['./search-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     MatTooltipModule,

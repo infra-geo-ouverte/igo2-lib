@@ -20,7 +20,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-print',
   templateUrl: './print.component.html',
   styleUrls: ['./print.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

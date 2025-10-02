@@ -45,7 +45,6 @@ import { SearchService } from '../shared/search.service';
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgClass,
     MatFormFieldModule,
@@ -168,6 +167,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   readonly disabled$ = new BehaviorSubject<boolean>(false);
 
   @Input() pointerSummaryEnabled = false;
+  @Input() allowResetSearchSourcesOptions = true;
   @Input() searchResultsGeometryEnabled = false;
 
   /**

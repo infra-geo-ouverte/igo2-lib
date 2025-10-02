@@ -23,7 +23,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-context',
   templateUrl: './context.component.html',
   styleUrls: ['./context.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

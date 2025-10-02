@@ -15,7 +15,6 @@ import { IgoMap } from '../shared/map';
   selector: 'igo-geolocate-button',
   templateUrl: './geolocate-button.component.html',
   styleUrls: ['./geolocate-button.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatButtonModule,

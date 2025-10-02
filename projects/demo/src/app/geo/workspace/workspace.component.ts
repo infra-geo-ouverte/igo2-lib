@@ -40,7 +40,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.scss'],
-  standalone: true,
   imports: [
     AsyncPipe,
     DocViewerComponent,

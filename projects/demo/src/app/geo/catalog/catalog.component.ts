@@ -8,7 +8,7 @@ import {
   Catalog,
   CatalogBrowserComponent,
   CatalogItem,
-  CatalogLibaryComponent,
+  CatalogLibraryComponent,
   CatalogService,
   IgoMap,
   LayerService,
@@ -24,30 +24,22 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
     MAP_DIRECTIVES,
     PanelComponent,
-    CatalogLibaryComponent,
+    CatalogLibraryComponent,
     CatalogBrowserComponent
   ]
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;
   public map: IgoMap = new IgoMap({
-    controls: {
-      attribution: {
-        collapsed: true
-      }
-    }
+    controls: { attribution: { collapsed: true } }
   });
 
-  public view: MapViewOptions = {
-    center: [-73, 47.2],
-    zoom: 7
-  };
+  public view: MapViewOptions = { center: [-73, 47.2], zoom: 7 };
 
   public catalogStore: EntityStore = new EntityStore<Catalog>([]);
 
@@ -67,9 +59,7 @@ export class AppCatalogComponent implements OnInit {
     const layers: AnyLayerOptions[] = [
       {
         title: 'OSM',
-        sourceOptions: {
-          type: 'osm'
-        },
+        sourceOptions: { type: 'osm' },
         baseLayer: true,
         visible: true
       }

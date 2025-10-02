@@ -6,8 +6,6 @@ import {
   Output
 } from '@angular/core';
 
-import { userAgent } from '@igo2/utils';
-
 /**
  * IgoLongPress trigger longpress event after a define duration.
  * This directive exist to patch the unavailable contextmenu event on iOS.
@@ -31,13 +29,7 @@ export class LongPressDirective {
       return;
     }
     this.touchTimeout = setTimeout(() => {
-      if (this.onlyIOS) {
-        if (userAgent.getOSName() === 'iOS') {
-          this.longpress.emit(e);
-        }
-      } else {
-        this.longpress.emit(e);
-      }
+      this.longpress.emit(e);
     }, this.touchDuration);
   }
   @HostListener('touchmove')

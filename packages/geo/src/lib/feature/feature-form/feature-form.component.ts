@@ -29,7 +29,6 @@ import { Feature, FeatureMeta } from '../shared/feature.interfaces';
   templateUrl: './feature-form.component.html',
   styleUrls: ['./feature-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [FormComponent, AsyncPipe]
 })
 export class FeatureFormComponent {

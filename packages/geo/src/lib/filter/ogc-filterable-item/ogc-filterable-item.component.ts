@@ -13,7 +13,10 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import {
+  WFSDataSourceOptions,
+  WFSDataSourceOptionsParams
+} from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { Layer } from '../../layer';
@@ -32,7 +35,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
   styleUrls: ['./ogc-filterable-item.component.scss'],
-  standalone: true,
   imports: [
     NgClass,
     MatListModule,
@@ -107,7 +109,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         this.ogcFilterService.setOgcWMSFiltersOptions(this.datasource);
         break;
       case 'wfs':
-        this.ogcFilterService.setOgcWFSFiltersOptions(this.datasource);
+        this.ogcFilterService.setOgcWFSFiltersOptions(
+          this.datasource.options as WFSDataSourceOptions
+        );
         break;
       default:
         break;

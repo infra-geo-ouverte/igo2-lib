@@ -39,7 +39,6 @@ import {
   selector: 'igo-context-import-export',
   templateUrl: './context-import-export.component.html',
   styleUrls: ['./context-import-export.component.scss'],
-  standalone: true,
   imports: [
     MatButtonToggleModule,
     NgIf,

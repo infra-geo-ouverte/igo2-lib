@@ -303,6 +303,10 @@ export class Linked {
       return this.handleDisplayChange(change, layers);
     }
 
+    if (property === LinkedProperties.REFRESH) {
+      this.handleRefreshChanges(layers);
+    }
+
     handleLayerPropertyChange(layers, change, this.map.viewController);
   };
 
@@ -335,5 +339,11 @@ export class Linked {
 
       return linked.concat(layerFromLink);
     }, []);
+  }
+
+  private handleRefreshChanges(children: Layer[]) {
+    children.forEach((child) => {
+      child.dataSource.refresh();
+    });
   }
 }

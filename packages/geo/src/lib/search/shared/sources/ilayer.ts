@@ -104,7 +104,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return ILayerSearchSource.type;
   }
 
-  protected getDefaultOptions(): ILayerSearchSourceOptions {
+  protected getEffectiveOptions(): ILayerSearchSourceOptions {
     const limit =
       this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)

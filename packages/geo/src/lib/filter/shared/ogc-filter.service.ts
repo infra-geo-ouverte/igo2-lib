@@ -2,11 +2,20 @@ import { Injectable } from '@angular/core';
 
 import olProjection from 'ol/proj/Projection';
 
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import type { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import type { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { searchFilter } from './filter.utils';
 import { OgcFilterWriter } from './ogc-filter';
-import { OgcFilterableDataSource } from './ogc-filter.interface';
+import {
+  AnyBaseOgcFilterOptions,
+  IgoLogicalArrayOptions,
+  OgcFilterableDataSource,
+  OgcInterfaceFilterOptions
+} from './ogc-filter.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'platform'
+})
 export class OGCFilterService {
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
     const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(
@@ -16,8 +25,7 @@ export class OGCFilterService {
     wmsDatasource.ol.updateParams({ FILTER: appliedFilter });
   }
 
-  public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
-    const options: any = wfsDatasource.options;
+  public setOgcWFSFiltersOptions(options: WFSDataSourceOptions) {
     const ogcFilterWriter = new OgcFilterWriter();
 
     if (options.ogcFilters.enabled && options.ogcFilters.filters) {
@@ -31,6 +39,17 @@ export class OGCFilterService {
         options.ogcFilters.interfaceOgcFilters =
           ogcFilterWriter.defineInterfaceFilterSequence(
             options.ogcFilters.filters,
+            options.paramsWFS.fieldNameGeometry
+          );
+      } else {
+        const mergedInterfaceOgcFilters = this.mergeInterfaceFilters(
+          options.ogcFilters.filters,
+          options.ogcFilters.interfaceOgcFilters
+        );
+
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            mergedInterfaceOgcFilters,
             options.paramsWFS.fieldNameGeometry
           );
       }
@@ -55,6 +74,17 @@ export class OGCFilterService {
             options.ogcFilters.filters,
             options.fieldNameGeometry
           );
+      } else {
+        const mergedInterfaceOgcFilters = this.mergeInterfaceFilters(
+          options.ogcFilters.filters,
+          options.ogcFilters.interfaceOgcFilters
+        );
+
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            mergedInterfaceOgcFilters,
+            options.fieldNameGeometry
+          );
       }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
@@ -72,5 +102,23 @@ export class OGCFilterService {
       options.ogcFilters.interfaceOgcFilters = [];
       options.filtered = false;
     }
+  }
+
+  private mergeInterfaceFilters(
+    filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions,
+    interfaceOgcFilters: OgcInterfaceFilterOptions[]
+  ) {
+    return interfaceOgcFilters.map((interfaceOgc) => {
+      const filter = searchFilter(
+        filters,
+        'propertyName',
+        interfaceOgc.propertyName
+      );
+
+      if (filter) {
+        return { ...interfaceOgc, filterid: filter.filterid };
+      }
+      return interfaceOgc;
+    });
   }
 }

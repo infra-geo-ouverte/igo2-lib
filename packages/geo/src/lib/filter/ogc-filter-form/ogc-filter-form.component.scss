@@ -1,5 +1,4 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../common/src/style/partial/common.variables';
+@use '../../../../../core/src/style/partial/media';
 
 :host {
   width: 100%;
@@ -78,7 +77,7 @@
   .singleInput {
     width: 150px;
     margin-right: 5px;
-    @include mobile {
+    @include media.mobile {
       width: 27%;
     }
   }

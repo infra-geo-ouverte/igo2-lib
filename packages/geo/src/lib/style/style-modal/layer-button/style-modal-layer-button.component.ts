@@ -15,7 +15,6 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
   templateUrl: './style-modal-layer-button.component.html',
   styleUrls: ['./style-modal-layer-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class StyleModalLayerButtonComponent {

@@ -25,7 +25,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-time-filter',
   templateUrl: './time-filter.component.html',
   styleUrls: ['./time-filter.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

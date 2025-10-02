@@ -131,7 +131,6 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonToggleModule,
     MatSlideToggleModule,

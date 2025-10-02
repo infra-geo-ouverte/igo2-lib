@@ -17,7 +17,9 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { DataSource } from './datasource';
+import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 import {
@@ -25,7 +27,8 @@ import {
   checkWfsParams,
   defaultFieldNameGeometry,
   defaultMaxFeatures,
-  getFormatFromOptions
+  getFormatFromOptions,
+  getSaveableOgcParams
 } from './wms-wfs.utils';
 
 interface FetchFeatureOptions {
@@ -48,13 +51,17 @@ export class WFSDataSource extends DataSource {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,
-      params: this.options.params
+      params: this.options.params,
+      ...(this.ogcFilters && {
+        ogcFilters: getSaveableOgcParams(this.ogcFilters) as OgcFiltersOptions // Workaround we force IOgcFiltersOptionSaveable to be detectd as OgcFiltersOptions
+      })
     };
   }
 
   constructor(
     public options: WFSDataSourceOptions,
     protected wfsService: WFSService,
+    private ogcFilterService: OGCFilterService,
     private authInterceptor?: AuthInterceptor
   ) {
     super(checkWfsParams(options, 'wfs'));
@@ -93,6 +100,10 @@ export class WFSDataSource extends DataSource {
       ogcFilters.autocomplete.selectorType = 'autocomplete';
     }
 
+    if (options?.ogcFilters?.enabled && options?.ogcFilters?.filters) {
+      this.ogcFilterService.setOgcWFSFiltersOptions(this.options);
+    }
+
     this.setOgcFilters(
       (this.options as OgcFilterableDataSourceOptions).ogcFilters,
       true
@@ -118,6 +129,11 @@ export class WFSDataSource extends DataSource {
     // empty
   }
 
+  refresh(): void {
+    this.properties.set(EventRefresh, Math.random());
+    super.refresh();
+  }
+
   fetchFeatures({
     extent,
     projection,
@@ -131,10 +147,9 @@ export class WFSDataSource extends DataSource {
     const currentExtent = extent
       ? OlProj.transformExtent(extent, projection, wfsProj)
       : undefined;
-    const ogcFilters = this.ogcFilters;
 
     paramsWFS.srsName = paramsWFS.srsName || projection.getCode();
-    let url = buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
+    let url = buildUrl(this.options, currentExtent, wfsProj);
 
     // Exportation want to fetch without extent/bbox restrictions
     if (!extent && url.includes('bbox')) {

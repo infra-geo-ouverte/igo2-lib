@@ -26,7 +26,6 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
   selector: 'igo-sidenav',
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss'],
-  standalone: true,
   imports: [
     MatSidenavModule,
     FlexibleComponent,
@@ -112,11 +111,7 @@ export class SidenavComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.viewProjection
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

@@ -3,7 +3,11 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
-import { RouteServiceOptions } from './route.interface';
+import {
+  LEGACY_ROUTE_OPTIONS,
+  ROUTE_OPTIONS,
+  RouteServiceOptions
+} from './route.interface';
 
 export const ROUTE_SERVICE_OPTIONS = new InjectionToken<RouteServiceOptions>(
   'routeServiceOptions'
@@ -22,37 +26,20 @@ export function provideRouteServiceOptions(options: RouteServiceOptions) {
 export class RouteService {
   public options: RouteServiceOptions;
 
+  /**
+   * @deprecated use the new option of context-service
+   */
+  public legacyOptions: RouteServiceOptions;
+
   constructor(
     private router: Router,
     public route: ActivatedRoute,
     @Inject(ROUTE_SERVICE_OPTIONS)
     @Optional()
-    options: RouteServiceOptions
+    configs: RouteServiceOptions
   ) {
-    const defaultOptions = {
-      centerKey: 'center',
-      zoomKey: 'zoom',
-      projectionKey: 'projection',
-      contextKey: 'context',
-      searchKey: 'search',
-      visibleOnLayersKey: 'visiblelayers',
-      visibleOffLayersKey: 'invisiblelayers',
-      directionsCoordKey: 'routing',
-      directionsOptionsKey: 'routingOptions',
-      toolKey: 'tool',
-      wmsUrlKey: 'wmsUrl',
-      wmsLayersKey: 'wmsLayers',
-      wmtsUrlKey: 'wmtsUrl',
-      wmtsLayersKey: 'wmtsLayers',
-      arcgisUrlKey: 'arcgisUrl',
-      arcgisLayersKey: 'arcgisLayers',
-      iarcgisUrlKey: 'iarcgisUrl',
-      iarcgisLayersKey: 'iarcgisLayers',
-      tarcgisUrlKey: 'tarcgisUrl',
-      tarcgisLayersKey: 'tarcgisLayers',
-      vectorKey: 'vector'
-    };
-    this.options = Object.assign({}, defaultOptions, options);
+    this.options = { ...ROUTE_OPTIONS, ...configs };
+    this.legacyOptions = LEGACY_ROUTE_OPTIONS;
   }
 
   get queryParams(): Observable<Params> {

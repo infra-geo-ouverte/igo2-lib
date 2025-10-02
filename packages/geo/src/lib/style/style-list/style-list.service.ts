@@ -29,11 +29,11 @@ export class StyleListService {
   /**
    * This method loads "[path]" to get all styleList's variables
    */
-  public load(options: StyleListOptions) {
+  public load(options: StyleListOptions): void | Promise<unknown> {
     const baseStyleList = options.default || {};
     if (!options.path) {
       this.styleList = baseStyleList;
-      return true;
+      return;
     }
 
     return new Promise((resolve) => {

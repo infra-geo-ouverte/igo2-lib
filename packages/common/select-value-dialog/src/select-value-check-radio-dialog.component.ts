@@ -28,7 +28,6 @@ import { SelectValueData } from './select-value-dialog.interface';
   selector: 'igo-select-value-check-radio-dialog',
   templateUrl: './select-value-check-radio-dialog.component.html',
   styleUrls: ['./select-value-check-radio-dialog.component.scss'],
-  standalone: true,
   imports: [
     MatDialogTitle,
     FormsModule,

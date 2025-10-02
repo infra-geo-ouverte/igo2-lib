@@ -88,29 +88,12 @@ export class TimeFilterService {
     }
   }
 
-  private reformatDateTime(value) {
+  private reformatDateTime(value: Date) {
     const year = value.getFullYear();
-    let month = value.getMonth() + 1;
-    let day = value.getUTCDate();
-    let hour = value.getUTCHours();
-    let minute = value.getUTCMinutes();
-
-    if (Number(month) < 10) {
-      month = '0' + month;
-    }
-
-    if (Number(day) < 10) {
-      day = '0' + day;
-    }
-
-    if (Number(hour) < 10) {
-      hour = '0' + hour;
-    }
-
-    if (Number(minute) < 10) {
-      minute = '0' + minute;
-    }
-
-    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00Z';
+    const month = (value.getMonth() + 1).toString().padStart(2, '0');
+    const day = value.getUTCDate().toString().padStart(2, '0');
+    const hour = value.getUTCHours().toString().padStart(2, '0');
+    const minute = value.getUTCMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hour}:${minute}:00Z`;
   }
 }

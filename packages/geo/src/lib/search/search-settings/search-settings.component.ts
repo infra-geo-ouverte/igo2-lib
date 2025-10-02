@@ -8,6 +8,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatCheckboxChange,
@@ -20,8 +21,14 @@ import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import {
+  FormDialogService,
+  FormFieldConfig,
+  IgoFormDialogModule
+} from '@igo2/common/form';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
+import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -49,7 +56,6 @@ import {
   templateUrl: './search-settings.component.html',
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     MatTooltipModule,
@@ -63,6 +69,7 @@ import {
     MatRadioModule,
     MatDividerModule,
     MatSlideToggleModule,
+    IgoFormDialogModule,
     IgoLanguageModule
   ]
 })
@@ -82,6 +89,7 @@ export class SearchSettingsComponent implements OnInit {
   @Input() pointerSummaryEnabled = false;
   @Input() searchResultsGeometryEnabled = false;
   @Input() reverseSearchCoordsFormatEnabled = false;
+  @Input() allowResetSearchSourcesOptions = true;
 
   /**
    * Event emitted when the enabled search source changes
@@ -112,6 +120,8 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   constructor(
+    private formDialogService: FormDialogService,
+    private messageService: MessageService,
     private searchSourceService: SearchSourceService,
     private mediaService: MediaService,
     private storageService: StorageService
@@ -203,6 +213,56 @@ export class SearchSettingsComponent implements OnInit {
     ).length;
     this.searchSourcesAllEnabled =
       enabledSourcesCnt >= disabledSourcesCnt ? false : true;
+  }
+
+  resetSourceOptions(event) {
+    event.stopPropagation();
+    const formFieldConfigs: FormFieldConfig[] = [
+      {
+        name: 'sources',
+        title:
+          'igo.geo.search.searchSources.settings.reset.dialog.form.field.title',
+        type: 'select',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          multiple: true,
+          choices: this.getSearchSources()
+            .filter((s) => s.settings.length)
+            .map((source) => {
+              return {
+                value: source,
+                title: source.title
+              };
+            })
+        }
+      }
+    ];
+
+    this.formDialogService
+      .open(
+        { formFieldConfigs },
+        {
+          minWidth: '50vw',
+          minHeight: '15vh',
+          title: 'igo.geo.search.searchSources.settings.reset.dialog.title'
+        }
+      )
+      .subscribe((data) => {
+        if (data) {
+          data.sources.forEach((source) => {
+            source.resetSourceOptions();
+            this.searchSourceChange.emit(source);
+          });
+          const message =
+            data.sources.length > 1
+              ? 'igo.geo.search.searchSources.settings.reset.notice.multiple'
+              : 'igo.geo.search.searchSources.settings.reset.notice.single';
+          this.messageService.success(message);
+        }
+      });
   }
 
   /**

@@ -11,7 +11,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze Pull Rrequest
+    name: Analyze Pull Request
     runs-on: ubuntu-latest
     steps:
       - name: The branch or tag ref that triggered the workflow run.
@@ -38,3 +38,6 @@ jobs:
 
       - name: Build
         run: npm run build.libs
+
+      - name: Build demo
+        run: npm run build.demo

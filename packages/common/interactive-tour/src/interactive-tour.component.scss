@@ -1,9 +1,31 @@
-igo-interactive-tour > button.mat-mdc-raised-button.tour-button-tool-icon {
-  box-shadow: none;
+:host {
+  ::ng-deep {
+    button {
+      &.tour-button-tool-icon {
+        color: var(--mat-sys-primary-container);
+
+        &:hover {
+          background-color: var(--mat-sys-secondary-container);
+          color: var(--mat-sys-on-secondary-container);
+        }
+      }
+    }
+
+    .mat-primary .mat-mdc-icon-button {
+      color: white;
+    }
+  }
+
+  > button.mat-mdc-raised-button.tour-button-tool-icon {
+    box-shadow: none;
+  }
 }
 
 .shepherd-has-title .shepherd-content .shepherd-header {
   padding: 0.5em 0.75em;
+  h3 {
+    font-size: 14px;
+  }
 }
 
 .shepherd-title {
@@ -14,10 +36,6 @@ igo-interactive-tour > button.mat-mdc-raised-button.tour-button-tool-icon {
 .shepherd-progress {
   margin-right: 15px;
   color: hsla(0, 0%, 45%, 1);
-}
-
-.shepherd-text {
-  font-size: 14px !important;
 }
 
 .shepherd-element {

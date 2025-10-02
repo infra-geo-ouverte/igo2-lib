@@ -1,44 +1,83 @@
 import {
-  APP_INITIALIZER,
-  ConstructorProvider,
+  EnvironmentProviders,
   ErrorHandler,
-  FactoryProvider
+  Provider,
+  inject,
+  provideAppInitializer
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { TraceService } from '@sentry/angular';
+import { TraceService, browserTracingIntegration } from '@sentry/angular';
 
+import { MONITORING_OPTIONS } from '../shared';
 import { createSentryErrorHandler, initSentry } from './sentry';
 import { SentryMonitoringOptions } from './sentry.interface';
-import { isTracingEnabled } from './sentry.utils';
 
 export const provideSentryMonitoring = (
-  options: SentryMonitoringOptions
-): (FactoryProvider | ConstructorProvider)[] => {
+  options: SentryMonitoringOptions,
+  integrations?: SentryIntegrationFactory<SentryIntegrationKind>[]
+): (Provider | EnvironmentProviders)[] => {
   const isEnabled = options.enabled !== undefined ? options.enabled : true;
   if (!isEnabled) {
     return [];
   }
 
-  initSentry(options);
-
-  const tracingEnabled = isTracingEnabled(options);
-
-  return [
+  const providers: (Provider | EnvironmentProviders)[] = [
+    { provide: MONITORING_OPTIONS, useValue: options },
     {
       provide: ErrorHandler,
       useFactory: () => createSentryErrorHandler(options)
-    },
-    tracingEnabled && {
-      provide: TraceService,
-      deps: [Router]
-    },
-    // Force instantiate TraceService to avoid require it in any constructor.
-    tracingEnabled && {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => void 1,
-      deps: [TraceService],
-      multi: true
     }
-  ].filter(Boolean);
+  ];
+
+  if (integrations) {
+    for (const integration of integrations) {
+      const value = integration(options);
+      providers.push(...value.providers);
+    }
+  }
+
+  initSentry(options);
+
+  return providers;
 };
+
+export interface SentryIntegration<KindT extends SentryIntegrationKind> {
+  kind: KindT;
+  providers: (Provider | EnvironmentProviders)[];
+}
+
+type SentryIntegrationFactory<KindT extends SentryIntegrationKind> = (
+  sentryOptions: SentryMonitoringOptions
+) => SentryIntegration<KindT>;
+
+export enum SentryIntegrationKind {
+  Tracing = 0,
+  Replay = 1
+}
+
+export function withTracingIntegration(
+  options: Parameters<typeof browserTracingIntegration>[0]
+): SentryIntegrationFactory<SentryIntegrationKind.Tracing> {
+  return (sentryOptions: SentryMonitoringOptions) => {
+    sentryOptions.integrations = [
+      ...(sentryOptions.integrations ?? []),
+      browserTracingIntegration(options)
+    ];
+
+    return {
+      kind: SentryIntegrationKind.Tracing,
+      providers: [
+        {
+          provide: TraceService,
+          deps: [Router]
+        },
+        // Force instantiate TraceService to avoid require it in any constructor.
+        provideAppInitializer(() => {
+          inject(TraceService);
+          return;
+        })
+      ]
+    };
+  };
+}

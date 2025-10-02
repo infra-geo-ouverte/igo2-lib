@@ -2,27 +2,11 @@
 @use '@angular/material' as mat;
 
 @mixin theme($theme) {
-  @include color($theme);
   @include density($theme);
 }
 
-@mixin color($theme) {
-  $primary: map.get($theme, primary);
-  $accent: map.get($theme, accent);
-  $background: map-get($theme, background);
-  igo-entity-table
-    table.igo-entity-table-with-selection
-    tr.igo-entity-table-row-highlighted {
-    background-color: mat.m2-get-color-from-palette($primary, A100);
-    color: mat.m2-get-color-from-palette($primary, default-contrast);
-  }
-  igo-entity-table .mat-mdc-table thead {
-    background-color: mat.m2-get-color-from-palette($background, background);
-  }
-}
-
 @mixin density($theme) {
-  $density: mat.m2-get-density-config($theme);
+  $density: mat.get-theme-density($theme);
 
   $theme: map.merge(
     $theme,

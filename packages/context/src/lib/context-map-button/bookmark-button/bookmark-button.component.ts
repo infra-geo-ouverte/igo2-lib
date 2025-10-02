@@ -17,7 +17,6 @@ import { BookmarkDialogComponent } from './bookmark-dialog.component';
   selector: 'igo-bookmark-button',
   templateUrl: './bookmark-button.component.html',
   styleUrls: ['./bookmark-button.component.scss'],
-  standalone: true,
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class BookmarkButtonComponent {

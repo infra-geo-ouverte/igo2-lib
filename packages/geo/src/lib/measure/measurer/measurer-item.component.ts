@@ -35,7 +35,6 @@ import { MeasureFormatPipe } from './measure-format.pipe';
   templateUrl: './measurer-item.component.html',
   styleUrls: ['./measurer-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

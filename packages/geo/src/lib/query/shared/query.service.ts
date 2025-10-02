@@ -147,7 +147,7 @@ export class QueryService {
         );
       }
       const observables: any = [];
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         if (this.checkScaleAndResolution(resolution, scale, element)) {

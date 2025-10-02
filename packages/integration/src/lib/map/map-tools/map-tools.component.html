@@ -63,7 +63,7 @@
     ></ng-template>
 
     <p
-      class="map-empty mat-typography"
+      class="map-empty"
       *ngIf="
         !allowShowAllLegends &&
         (layers$ | async).length !== 0 &&
@@ -80,7 +80,7 @@
 
   <ng-template #emptyLayers>
     <mat-list *ngIf="delayedShowEmptyMapContent">
-      <p class="map-empty mat-typography">
+      <p class="map-empty">
         {{ 'igo.integration.mapTool.empty' | translate }}
       </p>
       <p
@@ -88,38 +88,26 @@
           layerAdditionAllowed &&
           (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
         "
-        class="map-empty mat-typography"
+        class="map-empty"
       >
         {{ 'igo.integration.mapTool.customize' | translate }}
       </p>
 
       <mat-list-item *ngIf="layerAdditionAllowed && searchToolInToolbar">
         <mat-icon matListItemIcon>search</mat-icon>
-        <span
-          matListItemTitle
-          class="search-tool mat-typography"
-          (click)="searchEmit()"
-        >
+        <span matListItemTitle class="search-tool" (click)="searchEmit()">
           {{ 'igo.integration.mapTool.search-tool' | translate }}
         </span>
       </mat-list-item>
       <mat-list-item *ngIf="layerAdditionAllowed && catalogToolInToolbar">
         <mat-icon matListItemIcon>library_add</mat-icon>
-        <span
-          matListItemTitle
-          class="catalog-tool mat-typography"
-          (click)="catalogEmit()"
-        >
+        <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
           {{ 'igo.integration.mapTool.catalog-tool' | translate }}
         </span>
       </mat-list-item>
       <mat-list-item *ngIf="layerAdditionAllowed && contextToolInToolbar">
         <mat-icon matListItemIcon>star</mat-icon>
-        <span
-          matListItemTitle
-          class="context-tool mat-typography"
-          (click)="contextEmit()"
-        >
+        <span matListItemTitle class="context-tool" (click)="contextEmit()">
           {{ 'igo.integration.mapTool.context-tool' | translate }}
         </span>
       </mat-list-item>

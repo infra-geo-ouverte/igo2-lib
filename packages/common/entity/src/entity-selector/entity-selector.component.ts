@@ -29,7 +29,6 @@ export interface EntitySelectorChange<T = any> {
   templateUrl: './entity-selector.component.html',
   styleUrls: ['./entity-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatSelectModule,

@@ -8,7 +8,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
-import { InteractiveTourComponent } from '@igo2/common/interactive-tour';
 import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -28,9 +27,7 @@ import { AllEnvironmentOptions } from '../../environment';
   selector: 'igo-about-tool',
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss'],
-  standalone: true,
   imports: [
-    InteractiveTourComponent,
     NgIf,
     MatButtonModule,
     MatTooltipModule,

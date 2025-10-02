@@ -19,14 +19,16 @@
           "layer": "This layer comes from an external organization.",
           "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
         },
+        "library.predefined.select": "Select a catalog",
+        "library.custom.title": "Title",
         "library.add": "Add this catalog to the list",
-        "library.cancel": "Cancel",
+        "library.predefined": "Predefined list",
+        "library.custom": "Advanced configuration",
         "library.remove": "Remove this catalog from the list",
         "library.inlist": {
           "title": "Catalog already contained",
           "message": "The catalog is already contained in the list."
         },
-        "library.addTitle": "Adding a catalog",
         "library.addBtn": "Add a catalog"
       },
       "clickOnMap": {
@@ -580,6 +582,17 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "reset": {
+              "button": "Reset search options",
+              "dialog": {
+                "title": "Choose search services to reset",
+                "form.field.title": "Choose search service(s)"
+              },
+              "notice": {
+                "multiple": "The options for the selected search services have been reset.",
+                "single": "The options for the selected search service have been reset."
+              }
+            },
             "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",
@@ -824,8 +837,20 @@
         "addError": "An error has occured. Entity could not be added.",
         "modifyError": "An error has occured. Entity could not be modified.",
         "cancel": "Cancel",
-        "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+        "inMapExtent.active.tooltip": "Show only features contained in the map",
+        "inMapExtent.inactive.tooltip": "Show all features",
+        "widget": {
+          "interactiveSelection": {
+            "selection.add": "Add to the current selection",
+            "selection.new": "Select",
+            "selection.remove": "Remove from the current selection",
+            "reset": {
+              "button": "Reset"
+            },
+            "action.title": "How to handle results",
+            "buffer.title": "Buffer size (meters)"
+          }
+        }
       },
       "formValidation": {
         "mandatory": "{{column}} is mandatory",

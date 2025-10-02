@@ -29,7 +29,6 @@ import { Action } from '../shared/action.interfaces';
   templateUrl: './actionbar-item.component.html',
   styleUrls: ['./actionbar-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     MatListModule,

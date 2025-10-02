@@ -30,7 +30,6 @@ import { PoiService } from './shared/poi.service';
   selector: 'igo-poi-button',
   templateUrl: './poi-button.component.html',
   styleUrls: ['./poi-button.component.scss'],
-  standalone: true,
   imports: [
     MatSelectModule,
     MatOptionModule,

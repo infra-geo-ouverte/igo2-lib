@@ -14,7 +14,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-theme',
   templateUrl: './theme.component.html',
   styleUrls: ['./theme.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
@@ -25,17 +24,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppThemeComponent {
-  isDark: boolean;
+  lastTheme: string = 'blue-theme';
   themes = [
-    { value: 'blue', title: 'Blue' },
-    { value: 'bluedark', title: 'Blue-dark' },
-    { value: 'bluedq', title: 'Données Québec' },
-    { value: 'bluegrey', title: 'Blue grey' },
-    { value: 'dark', title: 'Dark' },
-    { value: 'deeppurple', title: 'Purple' },
-    { value: 'indigo', title: 'Indigo' },
-    { value: 'orange', title: 'Orange' },
-    { value: 'teal', title: 'Teal' }
+    { value: 'blue-theme', title: 'Blue' },
+    { value: 'bluedark-theme', title: 'Blue-dark' },
+    { value: 'bluedq-theme', title: 'Données Québec' },
+    { value: 'teal-theme', title: 'Teal' }
   ];
 
   constructor(
@@ -44,16 +38,12 @@ export class AppThemeComponent {
   ) {}
 
   loadTheme(matSelectChange: MatSelectChange): void {
-    if (matSelectChange.value === 'dark-demo-test') {
-      this.isDark = true;
-      this.renderer.addClass(document.body, 'dark-theme');
-      return;
-    }
+    const theme = matSelectChange.value;
 
-    if (this.isDark) {
-      this.renderer.removeClass(document.body, 'dark-theme');
-    }
+    this.renderer.removeClass(document.body, this.lastTheme);
+    this.renderer.addClass(document.body, theme);
 
-    loadTheme(window.document, matSelectChange.value + '-theme');
+    loadTheme(window.document, theme);
+    this.lastTheme = theme;
   }
 }

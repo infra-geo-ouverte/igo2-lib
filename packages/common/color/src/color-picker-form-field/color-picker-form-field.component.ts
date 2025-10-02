@@ -30,7 +30,6 @@ type ColorFormat = 'hex' | 'rgba' | 'hsla';
       multi: true
     }
   ],
-  standalone: true,
   imports: [
     MatFormFieldModule,
     CdkOverlayOrigin,

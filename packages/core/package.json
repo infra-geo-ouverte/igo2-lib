@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "18.0.6",
+  "version": "19.0.0-next.31",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -34,6 +34,9 @@
     "./style": {
       "style": "./style/style.css"
     },
+    "./themes": {
+      "sass": "./src/theming/themes/_index.scss"
+    },
     "./*": {
       "sass": "./src/style/*.scss",
       "style": "./style/*.css"
@@ -42,7 +45,7 @@
       "sass": "./src/style/partial/*.scss"
     },
     "./theme": {
-      "sass": "./src/core-theme.scss"
+      "sass": "./src/core.theme.scss"
     },
     "./theming/*": {
       "sass": "./src/theming/*.scss"
@@ -61,9 +64,6 @@
     },
     "./environment": {
       "import": "./environment/src/public_api.ts"
-    },
-    "./gesture": {
-      "import": "./gesture/src/public_api.ts"
     },
     "./language": {
       "import": "./language/src/public_api.ts"
@@ -100,19 +100,22 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^18.0.0",
-    "@angular/common": "^18.0.0",
-    "@angular/core": "^18.0.0",
-    "@angular/platform-browser": "^18.0.0",
-    "@angular/router": "^18.0.0",
+    "@angular/cdk": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/router": "^19.0.0",
+    "@igo2/sdg-core": "^1.0.0-next.105",
     "@igo2/utils": "*",
-    "@sentry/angular": "^8.26.0",
     "ngx-toastr": "^19.0.0",
-    "@ngx-translate/core": "^15.0.0",
-    "@ngx-translate/http-loader": "^8.0.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
+    "@sentry/angular": "^10.0.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
+    "@sentry/types": "^10.0.0",
     "typescript": "~5.5.4"
   },
   "engines": {

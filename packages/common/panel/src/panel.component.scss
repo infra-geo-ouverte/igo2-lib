@@ -1,22 +1,25 @@
-@import '../../../core/src/style/partial/core.variables';
-@import '../../src/style/partial/common.variables';
+@use '../../src/style/partial/common.variables' as common;
 
 :host {
   display: flex;
   flex-direction: column;
   overflow: hidden;
 
-  igo-interactive-tour {
-    position: absolute;
-    top: 0;
-    right: 0;
+  > .igo-panel-header {
+    color: var(--mat-sys-on-primary) !important;
+    background-color: var(--mat-sys-on-primary-container);
+
+    ::ng-deep mat-icon {
+      fill: var(--mat-sys-on-primary);
+      color: var(--mat-sys-on-primary);
+    }
   }
 
   .igo-panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: $igo-panel-header-height;
+    height: common.$igo-panel-header-height;
     text-align: center;
   }
 
@@ -27,6 +30,7 @@
     margin: 0;
     font-weight: 600;
     flex: 1;
+    color: var(--mat-sys-on-primary) !important;
   }
 
   .igo-panel-content {

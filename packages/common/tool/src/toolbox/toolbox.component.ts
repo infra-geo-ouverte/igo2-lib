@@ -25,7 +25,6 @@ import { toolSlideInOut } from './toolbox.animation';
   styleUrls: ['toolbox.component.scss'],
   animations: [toolSlideInOut()],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     ActionbarComponent,

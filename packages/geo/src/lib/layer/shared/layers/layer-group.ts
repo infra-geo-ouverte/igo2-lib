@@ -9,7 +9,7 @@ import { type AnyLayer } from './any-layer';
 import { LayerGroupBase } from './layer-base';
 import { type LayerGroupOptions } from './layer-group.interface';
 
-const ID_PREFIX = 'local-group_';
+export const ID_GROUP_PREFIX = 'local-group_';
 
 export class LayerGroup extends LayerGroupBase {
   parent: LayerGroup;
@@ -21,7 +21,9 @@ export class LayerGroup extends LayerGroupBase {
   get saveableOptions(): Partial<LayerGroupOptions> {
     return {
       ...super.saveableOptions,
-      id: String(this.options.id).includes(ID_PREFIX) ? null : this.options.id,
+      id: String(this.options.id).includes(ID_GROUP_PREFIX)
+        ? null
+        : this.options.id,
       type: this.options.type,
       children: [...this.children]
         .map((layer) => layer.saveableOptions)
@@ -49,7 +51,7 @@ export class LayerGroup extends LayerGroupBase {
     this.expanded = options.expanded === undefined ? false : options.expanded;
 
     if (!options.id) {
-      options.id = ID_PREFIX + uuid();
+      options.id = ID_GROUP_PREFIX + uuid();
     }
 
     this.ol = this.createOlLayer();

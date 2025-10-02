@@ -23,7 +23,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-feature',
   templateUrl: './feature.component.html',
   styleUrls: ['./feature.component.scss'],
-  standalone: true,
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,

@@ -38,7 +38,7 @@ export abstract class LayerBase {
   }
 
   get parentId(): string {
-    return this.options.parentId;
+    return this.parent?.id ?? this.options.parentId;
   }
 
   get alias(): string {
@@ -203,6 +203,7 @@ export abstract class LayerBase {
     this.parent
       ? this.parent.removeChild(this)
       : this.map.ol.removeLayer(this.ol);
+    this.dataSource?.destroy();
   }
 
   reset(parent?: LayerGroupBase): void {

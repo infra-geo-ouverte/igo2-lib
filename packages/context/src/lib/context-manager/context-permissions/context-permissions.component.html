@@ -41,7 +41,7 @@
       >
         <mat-option *ngFor="let profil of this.profils" [value]="profil">
           {{ profil.title }}<br />
-          <small class="mat-typography">{{ profil.name }}</small>
+          <small>{{ profil.name }}</small>
         </mat-option>
       </mat-autocomplete>
       <mat-error>
@@ -76,7 +76,7 @@
             <mat-icon matListItemIcon>person</mat-icon>
             <h4 matListItemTitle>
               {{ permission.profilTitle }}
-              <small class="mat-typography">{{ permission.profil }}</small>
+              <small>{{ permission.profil }}</small>
             </h4>
 
             <div

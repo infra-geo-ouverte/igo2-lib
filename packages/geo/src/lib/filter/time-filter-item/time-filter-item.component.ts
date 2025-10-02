@@ -20,7 +20,6 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
   selector: 'igo-time-filter-item',
   templateUrl: './time-filter-item.component.html',
   styleUrls: ['./time-filter-item.component.scss'],
-  standalone: true,
   imports: [
     NgIf,
     MatListModule,
@@ -67,10 +66,19 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
 
   handleYearChange(year: string | [string, string]) {
     this.timeFilterService.filterByYear(this.datasource, year);
+    this.datasource.options.timeFilter.value = year.toString();
   }
 
   handleDateChange(date: Date | [Date, Date]) {
     this.timeFilterService.filterByDate(this.datasource, date);
+    this.datasource.options.timeFilter.value =
+      date instanceof Date
+        ? this.reformDate(date)
+        : [this.reformDate(date[0]), this.reformDate(date[1])];
+  }
+
+  private reformDate(date: Date): string {
+    return date.toISOString().split('.')[0] + 'Z';
   }
 
   private toggleLegend(collapsed: boolean) {
