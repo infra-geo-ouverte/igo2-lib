@@ -1,7 +1,5 @@
-// In production use @igo2/core/all-style
-@use '../../../packages/core/src/style/all-style';
-// In production use @igo2/core/layout
-@use '../../../packages/core/src/style/layout';
+@use '@igo2/core/all-style';
+@use '@igo2/core/layout';
 
 @use 'style/theme.scss';
 

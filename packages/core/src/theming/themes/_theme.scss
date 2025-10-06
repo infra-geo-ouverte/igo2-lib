@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @use '@igo2/sdg-core' as sdg;
+
 @use '../all-theme';
 @use './overrides';
 
@@ -17,8 +18,6 @@
   @include overrides.overrides();
 
   @include all-theme.all-component-themes($theme);
-
-  @include sdg.typo-set-base-styles();
 }
 
 @mixin customCss() {
