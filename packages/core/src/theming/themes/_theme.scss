@@ -18,7 +18,7 @@
 
   @include all-theme.all-component-themes($theme);
 
-  @include sdg.typo-set-base-styles();
+  @include sdg.typo-base();
 }
 
 @mixin customCss() {

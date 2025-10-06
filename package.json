@@ -42,8 +42,7 @@
     "circular-deps": "madge --circular --extensions ts packages",
     "publish": "node --import tsx scripts/src/publish.mts",
     "pre-release": "node --import tsx scripts/src/pre-release.mts",
-    "release": "node --import tsx scripts/src/release.mts",
-    "release.demo": "node --import tsx scripts/src/release-demo.mts"
+    "release": "node --import tsx scripts/src/release.mts"
   },
   "dependencies": {
     "@angular/animations": "^19.0.0",
@@ -82,7 +81,6 @@
     "@types/lodash-es": "^4.17.0",
     "@types/node": "^22.13.0",
     "@types/tinycolor2": "^1.4.4",
-    "angular-cli-ghpages": "^2.0.0",
     "angular-eslint": "^19.3.0",
     "conventional-changelog-cli": "^5.0.0",
     "cypress": "^14.0.0",

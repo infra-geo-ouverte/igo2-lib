@@ -34,10 +34,7 @@ executor('Library release', async () => {
               'npm run pre-release ${nextRelease.version}',
               'npm i --package-lock-only --no-audit' // Regenerate the package-lock.json with the latest version
             ].join(' && '),
-            publishCmd: [
-              'npm run publish ${nextRelease.version}',
-              'npm run release.demo ${nextRelease.version}'
-            ].join(' && ')
+            publishCmd: 'npm run publish ${nextRelease.version}'
           }
         ],
         '@semantic-release/github',
