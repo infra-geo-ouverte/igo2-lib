@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -15,9 +15,11 @@ import { Context } from '../shared/context.interface';
 @Component({
   selector: 'igo-context-edit',
   templateUrl: './context-edit.component.html',
-  imports: [NgIf, ContextFormComponent, IgoLanguageModule]
+  imports: [ContextFormComponent, IgoLanguageModule]
 })
 export class ContextEditComponent {
+  private cd = inject(ChangeDetectorRef);
+
   @Input()
   get context(): Context {
     return this._context;
@@ -29,8 +31,6 @@ export class ContextEditComponent {
   private _context: Context;
 
   @Output() submitForm = new EventEmitter<Context>();
-
-  constructor(private cd: ChangeDetectorRef) {}
 
   refresh() {
     this.cd.detectChanges();

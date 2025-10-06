@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -19,15 +20,15 @@ import { AuthFacebookOptions } from '../shared/auth-facebook.interface';
   standalone: true
 })
 export class AuthFacebookComponent {
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private appRef = inject(ApplicationRef);
+
   private options?: AuthFacebookOptions;
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private appRef: ApplicationRef
-  ) {
+  constructor() {
     this.options = this.config.getConfig('auth.facebook');
 
     if (this.options?.appId) {

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -10,13 +10,13 @@ import { InteractiveTourOptions } from './interactive-tour.interface';
 
 @Injectable()
 export class InteractiveTourLoader {
+  private http = inject(HttpClient);
+  private configService = inject(ConfigService);
+
   private jsonURL: string;
   private allToursOptions;
 
-  constructor(
-    private http: HttpClient,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this.jsonURL = this.getPathToConfigFile();
   }
 

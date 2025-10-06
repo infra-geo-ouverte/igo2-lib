@@ -12,41 +12,45 @@
 >
 </igo-geometry-form-field-input>
 
-<div *ngIf="geometryTypeField" class="geometry-type-toggle">
-  <mat-button-toggle-group
-    [disabled]="(value$ | async) !== undefined"
-    [(ngModel)]="geometryType"
-  >
-    <mat-button-toggle
-      value="Point"
-      [disabled]="geometryTypes.indexOf('Point') < 0"
+@if (geometryTypeField) {
+  <div class="geometry-type-toggle">
+    <mat-button-toggle-group
+      [disabled]="(value$ | async) !== undefined"
+      [(ngModel)]="geometryType"
     >
-      {{ 'igo.geo.geometry.point' | translate }}
-    </mat-button-toggle>
-    <mat-button-toggle
-      value="LineString"
-      [disabled]="geometryTypes.indexOf('LineString') < 0"
-    >
-      {{ 'igo.geo.geometry.line' | translate }}
-    </mat-button-toggle>
-    <mat-button-toggle
-      value="Polygon"
-      [disabled]="geometryTypes.indexOf('Polygon') < 0"
-    >
-      {{ 'igo.geo.geometry.polygon' | translate }}
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-</div>
+      <mat-button-toggle
+        value="Point"
+        [disabled]="geometryTypes.indexOf('Point') < 0"
+      >
+        {{ 'igo.geo.geometry.point' | translate }}
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="LineString"
+        [disabled]="geometryTypes.indexOf('LineString') < 0"
+      >
+        {{ 'igo.geo.geometry.line' | translate }}
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="Polygon"
+        [disabled]="geometryTypes.indexOf('Polygon') < 0"
+      >
+        {{ 'igo.geo.geometry.polygon' | translate }}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+}
 
-<mat-form-field *ngIf="drawGuideField" class="draw-guide-field">
-  <input
-    matInput
-    type="number"
-    [placeholder]="drawGuidePlaceholder"
-    [(ngModel)]="drawGuide"
-  />
-  <mat-icon matPrefix [color]="'primary'">adjust </mat-icon>
-  <span matSuffix class="draw-guide-units">{{
-    'igo.geo.measure.meters' | translate
-  }}</span>
-</mat-form-field>
+@if (drawGuideField) {
+  <mat-form-field class="draw-guide-field">
+    <input
+      matInput
+      type="number"
+      [placeholder]="drawGuidePlaceholder"
+      [(ngModel)]="drawGuide"
+    />
+    <mat-icon matPrefix [color]="'primary'">adjust </mat-icon>
+    <span matSuffix class="draw-guide-units">{{
+      'igo.geo.measure.meters' | translate
+    }}</span>
+  </mat-form-field>
+}

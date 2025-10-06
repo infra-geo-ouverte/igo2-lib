@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { IconSvg } from '../shared';
@@ -17,6 +17,8 @@ import { IconService } from '../shared/icon.service';
   `
 })
 export class IgoIconComponent {
+  private iconService = inject(IconService);
+
   @Input() color: string | null | undefined;
 
   @Input({ required: true })
@@ -31,8 +33,6 @@ export class IgoIconComponent {
     return this._icon;
   }
   private _icon: string | IconSvg;
-
-  constructor(private iconService: IconService) {}
 
   registerSvg(icon: IconSvg): void {
     this.iconService.registerSvg(icon);

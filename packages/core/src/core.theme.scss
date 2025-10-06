@@ -1,5 +1,0 @@
-@use '../message/src/message.theme.scss' as message;
-
-@mixin themes() {
-  @include message.theme();
-}

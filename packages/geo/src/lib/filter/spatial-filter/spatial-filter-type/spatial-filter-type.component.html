@@ -15,9 +15,11 @@
         (selectionChange)="onSelectionChange()"
         [(value)]="selectedQueryType"
       >
-        <mat-option *ngFor="let queryType of queryType" [value]="queryType">
-          {{ 'igo.geo.terrapi.' + queryType | translate }}
-        </mat-option>
+        @for (queryType of queryType; track queryType) {
+          <mat-option [value]="queryType">
+            {{ 'igo.geo.terrapi.' + queryType | translate }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <igo-spatial-filter-list

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 
 import {
   DataSourceService,
@@ -24,6 +24,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES]
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     overlay: true,
     controls: {
@@ -37,11 +40,6 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     center: [-73, 47.2],
     zoom: 6
   };
-
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {}
 
   ngOnInit(): void {
     this.dataSourceService

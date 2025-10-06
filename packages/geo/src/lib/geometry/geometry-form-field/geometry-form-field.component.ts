@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -43,7 +43,6 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
     GeometryFormFieldInputComponent,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatButtonToggleModule,
     MatFormFieldModule,
     MatInputModule,

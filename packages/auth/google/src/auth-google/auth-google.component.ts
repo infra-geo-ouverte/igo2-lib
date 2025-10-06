@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -20,16 +21,16 @@ import { AuthGoogleOptions } from '../shared/auth-google.interface';
   standalone: true
 })
 export class AuthGoogleComponent {
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private appRef = inject(ApplicationRef);
+
   private options?: AuthGoogleOptions;
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private appRef: ApplicationRef
-  ) {
+  constructor() {
     this.options = this.config.getConfig('auth.google');
 
     if (this.options?.apiKey && this.options?.clientId) {

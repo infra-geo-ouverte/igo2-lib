@@ -13,17 +13,19 @@
     </igo-map-browser>
 
     <igo-panel title="Details">
-      <ng-container *ngIf="features$ | async as features">
-        <div *ngFor="let feature of features">
-          <h1>
-            Query Title :
-            <span style="background-color: #e0e0e0">{{
-              getTitle($any(feature))
-            }}</span>
-          </h1>
-          <igo-feature-details [feature]="feature"></igo-feature-details>
-        </div>
-      </ng-container>
+      @if (features$ | async; as features) {
+        @for (feature of features; track feature) {
+          <div>
+            <h1>
+              Query Title :
+              <span style="background-color: #e0e0e0">{{
+                getTitle($any(feature))
+              }}</span>
+            </h1>
+            <igo-feature-details [feature]="feature"></igo-feature-details>
+          </div>
+        }
+      }
     </igo-panel>
   </app-example-viewer>
 </app-doc-viewer>

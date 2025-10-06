@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
@@ -22,6 +22,15 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class FeatureActionsService implements OnDestroy {
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private toolState = inject(ToolState);
+  private mediaService = inject(MediaService);
+  private interactiveSelectionFormWidget = inject<Widget>(
+    InteractiveSelectionFormWidget,
+    { optional: true }
+  );
+
   public maximize$: BehaviorSubject<boolean>;
 
   zoomAuto$ = new BehaviorSubject<boolean>(false);
@@ -35,15 +44,7 @@ export class FeatureActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private toolState: ToolState,
-    private mediaService: MediaService,
-    @Optional()
-    @Inject(InteractiveSelectionFormWidget)
-    private interactiveSelectionFormWidget?: Widget
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );

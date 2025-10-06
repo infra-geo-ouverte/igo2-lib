@@ -1,22 +1,24 @@
 <div class="advanced-coordinates__coordinates-container">
   <div class="advanced-coordinates__coordinates-container__inner">
-    <mat-form-field *ngIf="units; else elseBlock" subscriptSizing="dynamic">
-      <mat-label>{{
-        'igo.integration.advanced-map-tool.advanced-coordinates.lon' | translate
-      }}</mat-label>
-      <textarea
-        #textArea
-        matInput
-        readonly
-        rows="1"
-        [placeholder]="
+    @if (units) {
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>{{
           'igo.integration.advanced-map-tool.advanced-coordinates.lon'
             | translate
-        "
-        [value]="coordinates[0]"
-      ></textarea>
-    </mat-form-field>
-    <ng-template #elseBlock>
+        }}</mat-label>
+        <textarea
+          #textArea
+          matInput
+          readonly
+          rows="1"
+          [placeholder]="
+            'igo.integration.advanced-map-tool.advanced-coordinates.lon'
+              | translate
+          "
+          [value]="coordinates[0]"
+        ></textarea>
+      </mat-form-field>
+    } @else {
       <mat-form-field subscriptSizing="dynamic">
         <textarea
           #textArea
@@ -30,25 +32,27 @@
           [value]="coordinates[0]"
         ></textarea>
       </mat-form-field>
-    </ng-template>
+    }
 
-    <mat-form-field *ngIf="units; else elseBlock2" subscriptSizing="dynamic">
-      <mat-label>{{
-        'igo.integration.advanced-map-tool.advanced-coordinates.lat' | translate
-      }}</mat-label>
-      <textarea
-        #textArea
-        matInput
-        readonly
-        rows="1"
-        [placeholder]="
+    @if (units) {
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>{{
           'igo.integration.advanced-map-tool.advanced-coordinates.lat'
             | translate
-        "
-        [value]="coordinates[1]"
-      ></textarea>
-    </mat-form-field>
-    <ng-template #elseBlock2>
+        }}</mat-label>
+        <textarea
+          #textArea
+          matInput
+          readonly
+          rows="1"
+          [placeholder]="
+            'igo.integration.advanced-map-tool.advanced-coordinates.lat'
+              | translate
+          "
+          [value]="coordinates[1]"
+        ></textarea>
+      </mat-form-field>
+    } @else {
       <mat-form-field subscriptSizing="dynamic">
         <textarea
           #textArea
@@ -62,7 +66,7 @@
           [value]="coordinates[1]"
         ></textarea>
       </mat-form-field>
-    </ng-template>
+    }
     <button
       mat-icon-button
       [attr.aria-label]="
@@ -84,14 +88,15 @@
             | translate
         }}</mat-label>
         <mat-select [(value)]="inputProj">
-          <mat-option
-            matTooltipShowDelay="500"
-            *ngFor="let projection of projections$ | async"
-            [value]="projection"
-            (click)="$event.stopPropagation()"
-          >
-            {{ projection.translatedValue || projection.alias }}
-          </mat-option>
+          @for (projection of projections$ | async; track projection) {
+            <mat-option
+              matTooltipShowDelay="500"
+              [value]="projection"
+              (click)="$event.stopPropagation()"
+            >
+              {{ projection.translatedValue || projection.alias }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>

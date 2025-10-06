@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Inject,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -41,6 +41,13 @@ import { MsalServiceb2c } from './auth-msalServiceb2c.service';
   providers: [MsalServiceb2c]
 })
 export class AuthMicrosoftb2cComponent {
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private appRef = inject(ApplicationRef);
+  private msalService = inject(MsalServiceb2c);
+  private msalGuardConfig =
+    inject<MSPMsalGuardConfiguration[]>(MSAL_GUARD_CONFIG);
+
   private options: AuthMicrosoftb2cOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -48,14 +55,7 @@ export class AuthMicrosoftb2cComponent {
 
   svgIcon: IconSvg = MICROSOFT_ICON;
 
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private appRef: ApplicationRef,
-    private msalService: MsalServiceb2c,
-    @Inject(MSAL_GUARD_CONFIG)
-    private msalGuardConfig: MSPMsalGuardConfiguration[]
-  ) {
+  constructor() {
     this.options = this.config.getConfig('auth.microsoftb2c') || {};
 
     this.msalService.instance = new PublicClientApplication({
@@ -65,10 +65,7 @@ export class AuthMicrosoftb2cComponent {
       }
     });
 
-    this.broadcastService = new MsalBroadcastServiceb2c(
-      this.msalService.instance,
-      this.msalService
-    );
+    this.broadcastService = new MsalBroadcastServiceb2c();
 
     if (this.options.browserAuthOptions.clientId) {
       this.broadcastService.inProgress$

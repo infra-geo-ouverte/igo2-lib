@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input
+  Input,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -21,9 +22,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   standalone: true
 })
 export class AppSalutationComponent implements OnUpdateInputs {
-  @Input() name: string;
+  private cdRef = inject(ChangeDetectorRef);
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  @Input() name: string;
 
   onUpdateInputs() {
     this.cdRef.detectChanges();
@@ -38,7 +39,7 @@ export class AppSalutationComponent implements OnUpdateInputs {
   standalone: true
 })
 export class AppExplanationComponent implements OnUpdateInputs {
-  constructor(private cdRef: ChangeDetectorRef) {}
+  private cdRef = inject(ChangeDetectorRef);
 
   onUpdateInputs() {
     this.cdRef.detectChanges();

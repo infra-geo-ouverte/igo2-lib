@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
@@ -16,8 +15,6 @@ import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgIf,
-    NgFor,
     OgcFilterableItemComponent,
     ListItemDirective,
     IgoLanguageModule,

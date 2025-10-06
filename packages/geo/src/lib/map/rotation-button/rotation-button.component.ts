@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgStyle } from '@angular/common';
 import { AfterContentInit, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,6 @@ import { IgoMap } from '../shared/map';
   templateUrl: './rotation-button.component.html',
   styleUrls: ['./rotation-button.component.scss'],
   imports: [
-    NgIf,
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,

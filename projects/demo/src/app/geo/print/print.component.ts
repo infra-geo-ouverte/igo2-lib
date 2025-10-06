@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
@@ -29,6 +29,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppPrintComponent {
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -42,7 +44,7 @@ export class AppPrintComponent {
     zoom: 9
   };
 
-  constructor(private layerService: LayerService) {
+  constructor() {
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',

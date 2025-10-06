@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
@@ -12,6 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
   providers: [MatIconModule]
 })
 export class IgoBadgeIconDirective implements OnInit {
+  private el = inject(ElementRef);
+
   @Input()
   set igoMatBadgeIcon(value: string) {
     this.html = `
@@ -68,8 +70,6 @@ export class IgoBadgeIconDirective implements OnInit {
   }
 
   private originalColor: string;
-
-  constructor(private el: ElementRef) {}
 
   ngOnInit() {
     this.badge.style.alignItems = 'center';

@@ -4,7 +4,7 @@ import {
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { ActivityService } from './activity.service';
 
 @Injectable()
 export class ActivityInterceptor implements HttpInterceptor {
-  constructor(private activityService: ActivityService) {}
+  private activityService = inject(ActivityService);
 
   intercept(
     req: HttpRequest<any>,

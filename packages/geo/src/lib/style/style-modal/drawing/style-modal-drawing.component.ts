@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import {
   FormsModule,
@@ -39,13 +38,11 @@ import {
     MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatIconModule,
     ColorPickerFormFieldComponent,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatDialogActions,
     MatButtonModule,

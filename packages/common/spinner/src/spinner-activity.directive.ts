@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { ActivityService } from '@igo2/core/activity';
 
@@ -18,15 +18,13 @@ import { SpinnerComponent } from './spinner.component';
   standalone: true
 })
 export class SpinnerActivityDirective implements OnInit, OnDestroy {
+  private spinner = inject(SpinnerComponent, { self: true });
+  private activityService = inject(ActivityService);
+
   /**
    * Subscription to the activity service counter
    */
   private counter$$: Subscription;
-
-  constructor(
-    @Self() private spinner: SpinnerComponent,
-    private activityService: ActivityService
-  ) {}
 
   /**
    * Subscribe to the activity service counter and display the spinner

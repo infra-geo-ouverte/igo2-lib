@@ -7,7 +7,8 @@ import {
   HostListener,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
@@ -25,6 +26,8 @@ import { ListItemDirective } from './list-item.directive';
   imports: [MatListModule, ClickoutDirective, NgClass]
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
+  private el = inject(ElementRef);
+
   @Input()
   get navigation() {
     return this._navigation;
@@ -82,8 +85,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
   }
-
-  constructor(private el: ElementRef) {}
 
   ngOnInit() {
     this.enableNavigation();

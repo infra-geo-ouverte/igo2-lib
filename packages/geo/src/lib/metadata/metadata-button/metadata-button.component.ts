@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,7 +32,6 @@ import { MetadataService } from '../shared/metadata.service';
   styleUrls: ['./metadata-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -88,13 +86,7 @@ export class MetadataButtonComponent {
   templateUrl: './metadata-abstract.component.html',
   styleUrls: ['./metadata-abstract.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    MatDialogTitle,
-    MatButtonModule,
-    MatDialogClose,
-    NgIf,
-    MatDialogContent
-  ]
+  imports: [MatDialogTitle, MatButtonModule, MatDialogClose, MatDialogContent]
 })
 export class MetadataAbstractComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: MetadataOptions) {}

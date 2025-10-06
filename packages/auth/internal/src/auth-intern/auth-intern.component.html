@@ -24,24 +24,29 @@
     </mat-form-field>
   </div>
 
-  <button mat-raised-button type="submit">
+  <button matButton="elevated" type="submit">
     {{ 'igo.auth.login' | translate }}
   </button>
-  <button
-    *ngIf="allowAnonymous"
-    mat-raised-button
-    class="anonymous"
-    type="button"
-    (click)="loginAnonymous()"
-  >
-    {{ 'igo.auth.accessAnonymous' | translate }}
-  </button>
-  <div *ngIf="error">
-    <br />
-    <font size="3" color="red">{{ error }}</font>
-  </div>
+  @if (allowAnonymous) {
+    <button
+      matButton="elevated"
+      class="anonymous"
+      type="button"
+      (click)="loginAnonymous()"
+    >
+      {{ 'igo.auth.accessAnonymous' | translate }}
+    </button>
+  }
+  @if (error) {
+    <div>
+      <br />
+      <font size="3" color="red">{{ error }}</font>
+    </div>
+  }
 </form>
 
-<div *ngIf="loading" class="loading-container">
-  <mat-spinner [diameter]="40"></mat-spinner>
-</div>
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner [diameter]="40"></mat-spinner>
+  </div>
+}

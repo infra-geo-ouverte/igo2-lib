@@ -1,10 +1,11 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +29,6 @@ import { DetailedContext } from '../shared/context.interface';
   imports: [
     MatListModule,
     NgClass,
-    NgIf,
     MatButtonModule,
     StopPropagationDirective,
     MatTooltipModule,
@@ -38,6 +38,9 @@ import { DetailedContext } from '../shared/context.interface';
   ]
 })
 export class ContextItemComponent {
+  auth = inject(AuthService);
+  private storageService = inject(StorageService);
+
   public typePermission = TypePermission;
   public color = 'primary';
   public collapsed = true;
@@ -64,11 +67,6 @@ export class ContextItemComponent {
   get canShare(): boolean {
     return this.storageService.get('canShare') === true;
   }
-
-  constructor(
-    public auth: AuthService,
-    private storageService: StorageService
-  ) {}
 
   favoriteClick(context: DetailedContext) {
     this.favorite.emit(context);

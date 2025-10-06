@@ -1,5 +1,0 @@
-@use './directions-inputs/directions-inputs.theming' as directions-inputs-theme;
-
-@mixin themes($theme) {
-  @include directions-inputs-theme.theme($theme);
-}

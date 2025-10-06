@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -86,12 +86,10 @@ type SelectMode = 'import' | 'export';
   styleUrls: ['./import-export.component.scss'],
   imports: [
     MatButtonToggleModule,
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatTooltipModule,
     MatButtonModule,

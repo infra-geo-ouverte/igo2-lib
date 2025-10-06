@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -55,7 +55,6 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   styleUrls: ['./search-results-add-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatButtonModule,
     StopPropagationDirective,
     MatTooltipModule,

@@ -148,13 +148,13 @@ export function formatMeasure(
     locale?: string;
   },
   languageService?: LanguageService
-) {
+): string {
   let decimal = options.decimal;
   if (decimal === undefined || decimal < 0) {
     decimal = 1;
   }
 
-  const parts = [];
+  const parts: string[] = [];
   if (options.locale !== undefined) {
     parts.push(
       measure.toLocaleString(options.locale, {

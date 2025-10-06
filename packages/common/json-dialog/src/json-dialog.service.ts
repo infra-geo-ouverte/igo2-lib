@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Observable } from 'rxjs';
@@ -7,7 +7,7 @@ import { JsonDialogComponent } from './json-dialog.component';
 
 @Injectable()
 export class JsonDialogService {
-  constructor(private dialog: MatDialog) {}
+  private dialog = inject(MatDialog);
 
   public open(title: any, data, ignoreKeys?: string[]): Observable<any> {
     const dialogRef = this.dialog.open(JsonDialogComponent, {

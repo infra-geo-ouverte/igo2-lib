@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -48,11 +47,9 @@ import { DDtoDMS } from '../shared/draw.utils';
   styleUrls: ['./draw-popup.component.scss'],
   imports: [
     MatDialogTitle,
-    NgIf,
     MatDialogContent,
     MatButtonToggleModule,
     MatRadioModule,
-    NgFor,
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { ToolComponent } from '@igo2/common/tool';
@@ -31,6 +31,14 @@ import { DirectionState } from '../directions.state';
   imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {
+  private directionState = inject(DirectionState);
+  private mapState = inject(MapState);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  contextState = inject(ContextState);
+  private authService = inject(AuthService);
+
   public currentContextUri: string;
   /**
    * stops
@@ -87,16 +95,6 @@ export class DirectionsToolComponent implements OnInit {
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private directionState: DirectionState,
-    private mapState: MapState,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private storageService: StorageService,
-    public contextState: ContextState,
-    private authService: AuthService
-  ) {}
 
   ngOnInit(): void {
     const warningShown = this.storageService.get(

@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageOptions } from '@igo2/core/language';
@@ -14,9 +14,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, JsonPipe]
 })
 export class AppConfigComponent {
+  private configService = inject(ConfigService);
+
   public configLanguage: LanguageOptions;
 
-  constructor(private configService: ConfigService) {
+  constructor() {
     this.configLanguage = this.configService.getConfig('language');
   }
 }

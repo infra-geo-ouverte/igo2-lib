@@ -1,4 +1,23 @@
+@use '@angular/material' as mat;
+
 :host {
+  @include mat.list-overrides(
+    (
+      list-item-one-line-container-height: 40px
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      container-height: 48px,
+      container-vertical-padding: 12px
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      state-layer-size: 40px
+    )
+  );
+
   ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
     display: none;
   }

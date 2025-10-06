@@ -1,7 +1,8 @@
-import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DOCUMENT,
   Inject,
   Input,
   OnDestroy,
@@ -87,7 +88,6 @@ import { MeasurerItemComponent } from './measurer-item.component';
   imports: [
     MatButtonToggleModule,
     MatSlideToggleModule,
-    NgIf,
     MatDividerModule,
     MeasurerItemComponent,
     MatButtonModule,

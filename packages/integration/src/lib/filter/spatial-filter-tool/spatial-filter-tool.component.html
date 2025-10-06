@@ -38,6 +38,6 @@
   (entityChange)="activateWorkspace($event)"
 >
 </igo-spatial-filter-item>
-<ng-container *ngIf="selectedFeature$ | async as feature">
+@if (selectedFeature$ | async; as feature) {
   <igo-feature-details [feature]="feature"></igo-feature-details>
-</ng-container>
+}

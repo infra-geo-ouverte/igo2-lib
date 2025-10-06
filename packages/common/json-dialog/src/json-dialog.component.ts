@@ -1,5 +1,5 @@
-import { KeyValuePipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { Component } from '@angular/core';
+import { KeyValuePipe, NgTemplateOutlet } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -15,19 +15,17 @@ import {
     MatDialogTitle,
     MatDialogContent,
     NgTemplateOutlet,
-    NgFor,
-    NgIf,
     MatDialogActions,
     MatButtonModule,
     KeyValuePipe
   ]
 })
 export class JsonDialogComponent {
+  dialogRef = inject<MatDialogRef<JsonDialogComponent>>(MatDialogRef);
+
   public title: string;
   public data: any;
   public ignoreKeys: string[];
-
-  constructor(public dialogRef: MatDialogRef<JsonDialogComponent>) {}
 
   isObject(val) {
     return typeof val === 'object' && !Array.isArray(val);

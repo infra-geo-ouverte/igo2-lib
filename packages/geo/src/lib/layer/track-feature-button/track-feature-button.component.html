@@ -1,12 +1,13 @@
-<button
-  *ngIf="options.trackFeature"
-  mat-icon-button
-  collapsibleButton
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.layer.trackFeature' | translate"
-  [color]="color"
-  (click)="toggleTrackFeature()"
->
-  <mat-icon>my_location</mat-icon>
-</button>
+@if (options.trackFeature) {
+  <button
+    mat-icon-button
+    collapsibleButton
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.layer.trackFeature' | translate"
+    [color]="color"
+    (click)="toggleTrackFeature()"
+  >
+    <mat-icon>my_location</mat-icon>
+  </button>
+}

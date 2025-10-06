@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import {
   DataSourceService,
@@ -31,6 +31,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppMeasureComponent {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -50,10 +53,7 @@ export class AppMeasureComponent {
     map: this.map
   });
 
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {
+  constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

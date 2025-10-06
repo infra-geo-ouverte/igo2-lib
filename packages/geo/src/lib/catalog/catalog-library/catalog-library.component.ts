@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,10 +41,8 @@ import { CatalogLibraryItemComponent } from './catalog-library-item.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgFor,
     CatalogLibraryItemComponent,
     ListItemDirective,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

@@ -1,5 +1,5 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -37,7 +37,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MAP_DIRECTIVES,
-    NgIf,
     FormComponent,
     FormGroupComponent,
     MatButtonModule,
@@ -45,6 +44,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
+  private formService = inject(FormService);
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -66,12 +69,6 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
   submitDisabled = true;
 
   private valueChanges$$: Subscription;
-
-  constructor(
-    private formService: FormService,
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {}
 
   ngOnInit(): void {
     this.dataSourceService

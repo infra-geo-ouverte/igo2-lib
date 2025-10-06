@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 
 import {
@@ -56,7 +56,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    NgIf,
     MapBrowserComponent,
     ZoomButtonComponent,
     CONTEXT_MENU_DIRECTIVES,
@@ -74,6 +73,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
+  private mapService = inject(MapService);
+  private layerService = inject(LayerService);
+  private searchState = inject(SearchState);
+  private mediaService = inject(MediaService);
+  private storageService = inject(StorageService);
+
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
   public igoSearchPointerSummaryEnabled = false;
@@ -115,13 +120,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public selectedFeature: Feature;
   public igoReverseSearchCoordsFormatEnabled: boolean;
 
-  constructor(
-    private mapService: MapService,
-    private layerService: LayerService,
-    private searchState: SearchState,
-    private mediaService: MediaService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.mapService.setMap(this.map);
 
     this.layerService

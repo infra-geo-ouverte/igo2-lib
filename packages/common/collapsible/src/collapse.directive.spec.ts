@@ -1,19 +1,35 @@
-import { ElementRef, Renderer2 } from '@angular/core';
-import { TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+
+import { mergeTestConfig } from 'packages/auth/test-config';
 
 import { CollapseDirective } from './collapse.directive';
 
-export class MockElementRef extends ElementRef {}
+@Component({
+  imports: [CollapseDirective],
+  template: `<div igoCollapse></div>`
+})
+class TestHostComponent {}
 
 describe('CollapseDirective', () => {
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      providers: [Renderer2]
-    }).compileComponents();
-  }));
+  let fixture: ComponentFixture<TestHostComponent>;
 
-  it('should create an instance', inject([Renderer2], (renderer: Renderer2) => {
-    const directive = new CollapseDirective(renderer, new MockElementRef({}));
-    expect(directive).toBeTruthy();
-  }));
+  beforeEach(async () => {
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [TestHostComponent]
+      })
+    ).compileComponents();
+
+    fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+  });
+
+  it('should create an instance', () => {
+    const directiveEl = fixture.debugElement.query(
+      By.directive(CollapseDirective)
+    );
+    expect(directiveEl).not.toBeNull();
+  });
 });

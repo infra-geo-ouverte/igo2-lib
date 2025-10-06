@@ -1,6 +1,11 @@
-import { NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -28,17 +33,21 @@ import { AllEnvironmentOptions } from '../../environment';
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss'],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
     MatMenuModule,
-    NgFor,
     CustomHtmlComponent,
     IgoLanguageModule
   ]
 })
 export class AboutToolComponent implements OnInit {
+  configService = inject(ConfigService);
+  auth = inject(AuthService);
+  private http = inject(HttpClient);
+  private cdRef = inject(ChangeDetectorRef);
+  private languageService = inject(LanguageService);
+
   private configOptions: AllEnvironmentOptions;
   @Input()
   get headerHtml() {
@@ -80,13 +89,7 @@ export class AboutToolComponent implements OnInit {
 
   public loading = false;
 
-  constructor(
-    public configService: ConfigService,
-    public auth: AuthService,
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     this.headerHtml = this.languageService.translate.instant(
       'igo.integration.aboutTool.headerHtml'
     );

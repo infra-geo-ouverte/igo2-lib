@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import {
@@ -26,6 +26,9 @@ import { MeasureState } from '../measure.state';
   imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {
+  private measureState = inject(MeasureState);
+  private mapState = inject(MapState);
+
   /**
    * Map to measure on
    * @internal
@@ -41,9 +44,4 @@ export class MeasurerToolComponent {
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private measureState: MeasureState,
-    private mapState: MapState
-  ) {}
 }

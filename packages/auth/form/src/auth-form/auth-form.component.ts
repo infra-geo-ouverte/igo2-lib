@@ -1,12 +1,11 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnInit,
-  Optional,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
@@ -32,7 +31,6 @@ import { AuthFormOptions } from '../shared';
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
-    NgIf,
     AuthGoogleComponent,
     AuthMicrosoftComponent,
     AuthMicrosoftb2cComponent,
@@ -43,6 +41,10 @@ import { AuthFormOptions } from '../shared';
   ]
 })
 export class AuthFormComponent implements OnInit {
+  auth = inject(AuthService);
+  private config = inject(ConfigService);
+  private router = inject(Router, { optional: true });
+
   @Input()
   get backgroundDisable(): boolean {
     if (this.isLogoutRoute || this.isLogoutRoute) {
@@ -112,11 +114,7 @@ export class AuthFormComponent implements OnInit {
 
   private isLogoutRoute: boolean;
 
-  constructor(
-    public auth: AuthService,
-    private config: ConfigService,
-    @Optional() private router: Router
-  ) {
+  constructor() {
     this.options = this.config.getConfig('auth');
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
   }

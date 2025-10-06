@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -34,7 +34,6 @@ import {
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatIconModule,
     AsyncPipe,
     IgoLanguageModule

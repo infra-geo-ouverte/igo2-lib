@@ -4,7 +4,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -41,6 +42,14 @@ import { ContextService } from './context.service';
   selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
+  private component = inject(MapBrowserComponent);
+  private contextService = inject(ContextService);
+  private layerService = inject(LayerService);
+  private configService = inject(ConfigService);
+  private styleListService = inject(StyleListService);
+  private styleService = inject(StyleService);
+  private shareMapService = inject(ShareMapService);
+
   private context$$: Subscription;
   private queryParams: Params;
 
@@ -53,16 +62,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   get map(): IgoMap {
     return this.component.map;
   }
-
-  constructor(
-    private component: MapBrowserComponent,
-    private contextService: ContextService,
-    private layerService: LayerService,
-    private configService: ConfigService,
-    private styleListService: StyleListService,
-    private styleService: StyleService,
-    private shareMapService: ShareMapService
-  ) {}
 
   ngOnInit() {
     this.context$$ = this.shareMapService.routeService.queryParams

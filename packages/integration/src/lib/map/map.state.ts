@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
@@ -11,6 +11,11 @@ import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
   providedIn: 'root'
 })
 export class MapState {
+  private mapService = inject(MapService);
+  private projectionService = inject(ProjectionService);
+  private storageService = inject(StorageService);
+  private configService = inject(ConfigService);
+
   get showAllLegendsValue(): boolean {
     return this._legendToolShowAll;
   }
@@ -28,12 +33,7 @@ export class MapState {
   }
   private _map: IgoMap;
 
-  constructor(
-    private mapService: MapService,
-    private projectionService: ProjectionService, // Don't remove this or it'll never be injected,
-    private storageService: StorageService,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this._map = new IgoMap(
       {
         controls: {

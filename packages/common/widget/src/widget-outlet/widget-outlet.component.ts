@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +24,7 @@ import { WidgetComponent } from '../shared/widget.interfaces';
   templateUrl: './widget-outlet.component.html',
   styleUrls: ['./widget-outlet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, DynamicOutletComponent]
+  imports: [DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {
   /**

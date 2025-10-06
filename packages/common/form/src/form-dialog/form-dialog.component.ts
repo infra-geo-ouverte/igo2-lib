@@ -1,5 +1,5 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -32,9 +32,7 @@ import { FormDialogData } from './form-dialog.interface';
   styleUrls: ['./form-dialog.component.scss'],
   imports: [
     MatDialogTitle,
-    NgIf,
     FormComponent,
-    NgFor,
     FormFieldComponent,
     FormGroupComponent,
     MatDialogActions,
@@ -45,15 +43,14 @@ import { FormDialogData } from './form-dialog.interface';
   ]
 })
 export class FormDialogComponent {
+  languageService = inject(LanguageService);
+  dialogRef = inject<MatDialogRef<FormDialogComponent>>(MatDialogRef);
+  private formService = inject(FormService);
+  data = inject<FormDialogData>(MAT_DIALOG_DATA);
+
   form$ = new BehaviorSubject<Form>(undefined);
   data$ = new BehaviorSubject<Record<string, any>>(undefined);
-  constructor(
-    public languageService: LanguageService,
-    public dialogRef: MatDialogRef<FormDialogComponent>,
-    private formService: FormService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: FormDialogData
-  ) {
+  constructor() {
     this.data.processButtonText =
       this.data.processButtonText ?? 'igo.common.formDialog.processButtonText';
     this.data.cancelButtonText =

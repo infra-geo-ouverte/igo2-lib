@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -48,7 +48,6 @@ import { SearchService } from '../shared/search.service';
   imports: [
     NgClass,
     MatFormFieldModule,
-    NgIf,
     MatInputModule,
     MatButtonModule,
     MatTooltipModule,

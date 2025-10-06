@@ -4,24 +4,26 @@
       {{ title }}
     </mat-card-subtitle>
     <div class="actions">
-      <a
-        *ngIf="codeFolder"
-        mat-icon-button
-        [href]="codeUrl"
-        target="_blank"
-        matTooltip="View code example"
-      >
-        <mat-icon>code-tags</mat-icon>
-      </a>
-      <a
-        *ngIf="configFolder"
-        mat-icon-button
-        [href]="configUrl"
-        target="_blank"
-        matTooltip="View config example"
-      >
-        <mat-icon>settings</mat-icon>
-      </a>
+      @if (codeFolder) {
+        <a
+          mat-icon-button
+          [href]="codeUrl"
+          target="_blank"
+          matTooltip="View code example"
+        >
+          <mat-icon>code-tags</mat-icon>
+        </a>
+      }
+      @if (configFolder) {
+        <a
+          mat-icon-button
+          [href]="configUrl"
+          target="_blank"
+          matTooltip="View config example"
+        >
+          <mat-icon>settings</mat-icon>
+        </a>
+      }
     </div>
   </mat-card-header>
 

@@ -1,9 +1,10 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -38,7 +39,6 @@ import {
   styleUrls: ['./import-export-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatTabsModule,
     ImportExportComponent,
     ContextImportExportComponent,
@@ -47,6 +47,11 @@ import {
   ]
 })
 export class ImportExportToolComponent implements OnInit {
+  private mapState = inject(MapState);
+  importExportState = inject(ImportExportState);
+  private workspaceState = inject(WorkspaceState);
+  contextState = inject(ContextState);
+
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
   @Input() selectFirstProj = false;
@@ -65,13 +70,6 @@ export class ImportExportToolComponent implements OnInit {
 
   @Input() importExportType: ImportExportType = ImportExportType.layer;
   @Input() importExportShowBothType = true;
-
-  constructor(
-    private mapState: MapState,
-    public importExportState: ImportExportState,
-    private workspaceState: WorkspaceState,
-    public contextState: ContextState
-  ) {}
 
   ngOnInit(): void {
     this.selectType();

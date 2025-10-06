@@ -1,4 +1,4 @@
-import { Directive, HostListener, Renderer2, Self } from '@angular/core';
+import { Directive, HostListener, Renderer2, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 
 /**
@@ -12,6 +12,8 @@ import { MatSidenav } from '@angular/material/sidenav';
   standalone: true
 })
 export class SidenavShimDirective {
+  private renderer = inject(Renderer2);
+
   private focusedElement: HTMLElement;
   private blurElement: HTMLElement;
 
@@ -39,9 +41,4 @@ export class SidenavShimDirective {
     this.blurElement = undefined;
     this.focusedElement = undefined;
   }
-
-  constructor(
-    @Self() component: MatSidenav,
-    private renderer: Renderer2
-  ) {}
 }

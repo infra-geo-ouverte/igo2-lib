@@ -5,7 +5,8 @@ import {
   HostListener,
   Input,
   Output,
-  Renderer2
+  Renderer2,
+  inject
 } from '@angular/core';
 
 @Directive({
@@ -13,6 +14,9 @@ import {
   standalone: true
 })
 export class CollapseDirective {
+  private renderer = inject(Renderer2);
+  private el = inject(ElementRef);
+
   @Input()
   get target() {
     return this._target;
@@ -39,11 +43,6 @@ export class CollapseDirective {
   click() {
     this.collapsed = !this.collapsed;
   }
-
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {}
 
   private collapseTarget() {
     this.renderer.addClass(this.target, 'igo-collapsed');

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,7 +38,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   imports: [
     NgClass,
     MatListModule,
-    NgIf,
     MatIconModule,
     CollapseDirective,
     NgStyle,

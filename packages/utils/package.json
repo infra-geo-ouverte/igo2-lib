@@ -33,9 +33,9 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "engines": {

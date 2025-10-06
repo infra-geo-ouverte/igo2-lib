@@ -5,7 +5,7 @@ import {
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 
@@ -16,7 +16,7 @@ import { catchError, finalize } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private messageService: MessageService) {}
+  private messageService = inject(MessageService);
 
   intercept(
     originalReq: HttpRequest<any>,

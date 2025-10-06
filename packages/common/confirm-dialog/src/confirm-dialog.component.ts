@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -22,10 +22,10 @@ import { IgoLanguageModule } from '@igo2/core/language';
   ]
 })
 export class ConfirmDialogComponent {
+  dialogRef = inject<MatDialogRef<ConfirmDialogComponent>>(MatDialogRef);
+
   public confirmMessage: string;
   public titleKey = 'igo.common.confirmDialog.title';
   public proccessKey = 'igo.common.confirmDialog.confirmBtn';
   public cancelKey = 'igo.common.confirmDialog.cancelBtn';
-
-  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
 }

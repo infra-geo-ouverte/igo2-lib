@@ -1,4 +1,4 @@
-import { KeyValuePipe, NgFor, NgIf } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
@@ -6,7 +6,8 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -47,14 +48,12 @@ import {
   templateUrl: './context-permissions.component.html',
   styleUrls: ['./context-permissions.component.scss'],
   imports: [
-    NgIf,
     MatRadioModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    NgFor,
     MatOptionModule,
     MatButtonModule,
     ListComponent,
@@ -68,6 +67,12 @@ import {
   ]
 })
 export class ContextPermissionsComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private cd = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
+  authService = inject(AuthService);
+  private config = inject(ConfigService);
+
   public form: UntypedFormGroup;
 
   @Input()
@@ -111,14 +116,6 @@ export class ContextPermissionsComponent implements OnInit {
   @Output() addPermission = new EventEmitter<ContextPermission>();
   @Output() removePermission = new EventEmitter<ContextPermission>();
   @Output() scopeChanged = new EventEmitter<Context>();
-
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private cd: ChangeDetectorRef,
-    private http: HttpClient,
-    public authService: AuthService,
-    private config: ConfigService
-  ) {}
 
   ngOnInit(): void {
     this.buildForm();

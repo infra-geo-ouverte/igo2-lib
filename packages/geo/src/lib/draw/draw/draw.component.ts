@@ -5,7 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -134,13 +134,11 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   imports: [
     MatButtonToggleModule,
     MatSlideToggleModule,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatDividerModule,
     MatButtonModule,

@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { mergeTestConfig } from 'projects/demo/src/test-config';
+
 import { ExampleSeeCodeComponent } from './example-see-code.component';
 
 describe('ExampleSeeCodeComponent', () => {
@@ -7,9 +9,11 @@ describe('ExampleSeeCodeComponent', () => {
   let fixture: ComponentFixture<ExampleSeeCodeComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ExampleSeeCodeComponent]
-    }).compileComponents();
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [ExampleSeeCodeComponent]
+      })
+    ).compileComponents();
 
     fixture = TestBed.createComponent(ExampleSeeCodeComponent);
     component = fixture.componentInstance;

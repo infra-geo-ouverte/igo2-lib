@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
@@ -43,6 +43,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppLayerComponent {
+  private layerService = inject(LayerService);
+  private projectionService = inject(ProjectionService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -66,10 +69,7 @@ export class AppLayerComponent {
     };
   }
 
-  constructor(
-    private layerService: LayerService,
-    private projectionService: ProjectionService // Don't remove this or it'll never be injected,
-  ) {
+  constructor() {
     const layers: AnyLayerOptions[] = [
       {
         title: 'OSM',

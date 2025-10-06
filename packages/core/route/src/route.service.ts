@@ -1,4 +1,4 @@
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
@@ -24,6 +24,9 @@ export function provideRouteServiceOptions(options: RouteServiceOptions) {
   providedIn: 'root'
 })
 export class RouteService {
+  private router = inject(Router);
+  route = inject(ActivatedRoute);
+
   public options: RouteServiceOptions;
 
   /**
@@ -31,13 +34,11 @@ export class RouteService {
    */
   public legacyOptions: RouteServiceOptions;
 
-  constructor(
-    private router: Router,
-    public route: ActivatedRoute,
-    @Inject(ROUTE_SERVICE_OPTIONS)
-    @Optional()
-    configs: RouteServiceOptions
-  ) {
+  constructor() {
+    const configs = inject<RouteServiceOptions>(ROUTE_SERVICE_OPTIONS, {
+      optional: true
+    });
+
     this.options = { ...ROUTE_OPTIONS, ...configs };
     this.legacyOptions = LEGACY_ROUTE_OPTIONS;
   }

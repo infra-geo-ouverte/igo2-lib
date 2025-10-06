@@ -1,5 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
 import {
   ActionStore,
@@ -20,6 +20,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, ActionbarComponent]
 })
 export class AppActionComponent implements OnInit, OnDestroy {
+  overlay = inject(Overlay);
+  private mediaService = inject(MediaService);
+
   public store: ActionStore = new ActionStore([]);
 
   private added$ = new BehaviorSubject<boolean>(false);
@@ -32,11 +35,6 @@ export class AppActionComponent implements OnInit, OnDestroy {
     }
     return ActionbarMode.Overlay;
   }
-
-  constructor(
-    public overlay: Overlay,
-    private mediaService: MediaService
-  ) {}
 
   ngOnInit(): void {
     this.store.load([

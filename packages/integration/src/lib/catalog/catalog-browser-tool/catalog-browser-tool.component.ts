@@ -1,10 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -37,9 +38,14 @@ import { CatalogState } from '../catalog.state';
   selector: 'igo-catalog-browser-tool',
   templateUrl: './catalog-browser-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
+  imports: [CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
+  private catalogService = inject(CatalogService);
+  private catalogState = inject(CatalogState);
+  private mapState = inject(MapState);
+  private authService = inject(AuthService);
+
   catalog: Catalog;
 
   /**
@@ -67,13 +73,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private catalogService: CatalogService,
-    private catalogState: CatalogState,
-    private mapState: MapState,
-    private authService: AuthService
-  ) {}
 
   /**
    * @internal

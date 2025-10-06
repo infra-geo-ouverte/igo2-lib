@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { Media, MediaService } from '@igo2/core/media';
 import {
@@ -16,9 +15,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-simple-map',
   templateUrl: './simple-map.component.html',
   styleUrls: ['./simple-map.component.scss'],
-  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES, NgIf]
+  imports: [DocViewerComponent, ExampleViewerComponent, MAP_DIRECTIVES]
 })
 export class AppSimpleMapComponent {
+  private layerService = inject(LayerService);
+  private mediaService = inject(MediaService);
+
   public pointerCoord: [number, number];
   public pointerCoordDelay = 0;
   public map: IgoMap = new IgoMap({
@@ -44,10 +46,7 @@ export class AppSimpleMapComponent {
     return this.mediaService.isTouchScreen();
   }
 
-  constructor(
-    private layerService: LayerService,
-    private mediaService: MediaService
-  ) {
+  constructor() {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',

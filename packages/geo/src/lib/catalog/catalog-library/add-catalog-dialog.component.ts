@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -39,12 +39,10 @@ import { Catalog } from '../shared/catalog.abstract';
     MatInputModule,
     MatAutocompleteModule,
     MatTabsModule,
-    NgFor,
     MatOptionModule,
     MatTooltipModule,
     MatSelectModule,
     MatListModule,
-    NgIf,
     MatButtonModule,
     AsyncPipe,
     IgoLanguageModule,

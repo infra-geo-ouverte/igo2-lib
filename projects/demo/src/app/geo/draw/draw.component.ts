@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import {
   AnyLayerOptions,
@@ -29,6 +29,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppDrawComponent {
+  private layerService = inject(LayerService);
+  private mapService = inject(MapService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -46,10 +49,7 @@ export class AppDrawComponent {
 
   public stores: FeatureStore<FeatureWithDraw>[] = [];
 
-  constructor(
-    private layerService: LayerService,
-    private mapService: MapService
-  ) {
+  constructor() {
     this.mapService.setMap(this.map);
 
     const layers: AnyLayerOptions[] = [

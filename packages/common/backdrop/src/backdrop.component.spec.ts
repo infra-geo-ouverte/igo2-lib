@@ -1,4 +1,6 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { mergeTestConfig } from 'packages/common/test-config';
 
 import { BackdropComponent } from './backdrop.component';
 
@@ -6,13 +8,13 @@ describe('BackdropComponent', () => {
   let component: BackdropComponent;
   let fixture: ComponentFixture<BackdropComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [BackdropComponent]
-    }).compileComponents();
-  }));
+  beforeEach(async () => {
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [BackdropComponent]
+      })
+    ).compileComponents();
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(BackdropComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -5,7 +5,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 
 import { MediaService } from '@igo2/core/media';
@@ -21,6 +22,10 @@ import { FlexibleDirection, FlexibleState } from './flexible.type';
   standalone: true
 })
 export class FlexibleComponent implements OnInit, OnDestroy {
+  private el = inject(ElementRef);
+  private mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
+
   static transitionTime = 250;
 
   @ViewChild('flexibleMain', { static: true }) main;
@@ -118,12 +123,6 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   private _state: FlexibleState = 'initial';
 
   private mediaService$$: Subscription;
-
-  constructor(
-    private el: ElementRef,
-    private mediaService: MediaService,
-    private cdr: ChangeDetectorRef
-  ) {}
 
   ngOnInit() {
     this.el.nativeElement.className += this.direction;

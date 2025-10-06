@@ -1,10 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,7 +24,6 @@ import { WorkspaceState } from '../workspace.state';
   styleUrls: ['./workspace-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -32,6 +32,8 @@ import { WorkspaceState } from '../workspace.state';
   ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
+  private workspaceState = inject(WorkspaceState);
+
   public hasWorkspace$ = new BehaviorSubject<boolean>(false);
   private hasWorkspace$$: Subscription;
 
@@ -47,8 +49,6 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   private _layer: AnyLayer;
 
   @Input() color = 'primary';
-
-  constructor(private workspaceState: WorkspaceState) {}
 
   ngOnInit(): void {
     this.hasWorkspace$$ = combineLatest([

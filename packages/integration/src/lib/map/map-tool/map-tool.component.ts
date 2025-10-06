@@ -3,7 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -66,6 +67,13 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapToolComponent implements OnInit {
+  private mapState = inject(MapState);
+  private toolState = inject(ToolState);
+  private importExportState = inject(ImportExportState);
+  private configService = inject(ConfigService);
+  mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
+
   isDesktop: boolean;
 
   @Input() toggleLegendOnVisibilityChange = false;
@@ -125,14 +133,7 @@ export class MapToolComponent implements OnInit {
     };
   }
 
-  constructor(
-    private mapState: MapState,
-    private toolState: ToolState,
-    private importExportState: ImportExportState,
-    private configService: ConfigService,
-    public mediaService: MediaService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor() {
     this._layerViewerOptions = this.configService.getConfig('layer');
   }
 

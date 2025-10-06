@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
@@ -21,6 +21,9 @@ import { ContextEditComponent } from './context-edit.component';
   standalone: true
 })
 export class ContextEditBindingDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private messageService = inject(MessageService);
+
   private component: ContextEditComponent;
   private editedContext$$: Subscription;
 
@@ -43,11 +46,9 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
     });
   }
 
-  constructor(
-    @Self() component: ContextEditComponent,
-    private contextService: ContextService,
-    private messageService: MessageService
-  ) {
+  constructor() {
+    const component = inject(ContextEditComponent, { self: true });
+
     this.component = component;
   }
 

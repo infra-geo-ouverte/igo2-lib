@@ -1,8 +1,17 @@
+@use '@angular/material' as mat;
+
 :host {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
+
+  @include mat.form-field-overrides(
+    (
+      container-height: 48px,
+      container-vertical-padding: 12px
+    )
+  );
 }
 
 .sort-alpha {

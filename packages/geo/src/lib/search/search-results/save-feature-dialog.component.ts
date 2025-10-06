@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import {
   FormsModule,
@@ -47,7 +47,6 @@ import { SearchResultsItemComponent } from './search-results-item.component';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    NgFor,
     MatOptionModule,
     MatListModule,
     MatDialogActions,

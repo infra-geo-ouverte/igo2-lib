@@ -1,5 +1,4 @@
-import { NgFor } from '@angular/common';
-import { Component, Renderer2 } from '@angular/core';
+import { Component, Renderer2, inject } from '@angular/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -19,11 +18,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MatFormFieldModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule
   ]
 })
 export class AppThemeComponent {
+  languageService = inject(LanguageService);
+  private renderer = inject(Renderer2);
+
   lastTheme: string = 'blue-theme';
   themes = [
     { value: 'blue-theme', title: 'Blue' },
@@ -31,11 +32,6 @@ export class AppThemeComponent {
     { value: 'bluedq-theme', title: 'Données Québec' },
     { value: 'teal-theme', title: 'Teal' }
   ];
-
-  constructor(
-    public languageService: LanguageService,
-    private renderer: Renderer2
-  ) {}
 
   loadTheme(matSelectChange: MatSelectChange): void {
     const theme = matSelectChange.value;

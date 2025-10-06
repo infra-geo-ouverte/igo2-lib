@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ import {
   styleUrls: ['./ogc-filter-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

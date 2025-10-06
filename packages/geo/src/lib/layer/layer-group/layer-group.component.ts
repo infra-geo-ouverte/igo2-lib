@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,7 +30,6 @@ import type { LayerGroup } from '../shared/layers/layer-group';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    NgIf,
     MatButtonModule,
     MatCheckboxModule,
     MatTooltipModule,

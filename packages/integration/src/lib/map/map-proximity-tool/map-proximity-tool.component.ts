@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,7 +35,6 @@ import { MapState } from '../map.state';
   styleUrls: ['./map-proximity-tool.component.scss'],
   imports: [
     EntityTableComponent,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -47,6 +46,12 @@ import { MapState } from '../map.state';
   ]
 })
 export class MapProximityToolComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  mapState = inject(MapState);
+  mapProximityState = inject(MapProximityState);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+
   private subs$$: Subscription[] = [];
   @ViewChild('table', { static: true }) table: EntityTableComponent;
 
@@ -68,13 +73,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
    */
   public tableTemplate: EntityTableTemplate;
 
-  constructor(
-    private clipboard: Clipboard,
-    public mapState: MapState,
-    public mapProximityState: MapProximityState,
-    private languageService: LanguageService,
-    private messageService: MessageService
-  ) {
+  constructor() {
     this.tableTemplate = {
       selection: true,
       selectMany: false,

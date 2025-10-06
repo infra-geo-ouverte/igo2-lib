@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import {
@@ -21,16 +21,14 @@ import { ToolState } from '../../tool/tool.state';
   imports: [ContextListComponent, ContextListBindingDirective]
 })
 export class ContextManagerToolComponent {
+  private toolState = inject(ToolState);
+  private mapState = inject(MapState);
+
   @Input() toolToOpenOnContextChange = 'mapTools';
 
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private toolState: ToolState,
-    private mapState: MapState
-  ) {}
 
   editContext() {
     this.toolState.toolbox.activateTool('contextEditor');

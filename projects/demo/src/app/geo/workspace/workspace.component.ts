@@ -1,5 +1,5 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
@@ -52,11 +52,14 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     WorkspaceSelectorComponent,
     WorkspaceSelectorDirective,
     WorkspaceWidgetOutletComponent,
-    MatCardModule,
-    NgIf
+    MatCardModule
   ]
 })
 export class AppWorkspaceComponent implements OnInit {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+  workspaceState = inject(WorkspaceState);
+
   public workspacePaginator: MatPaginator;
   entitySortChange$ = new BehaviorSubject<boolean>(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
@@ -88,12 +91,6 @@ export class AppWorkspaceComponent implements OnInit {
 
   public scrollBehavior: EntityTableScrollBehavior =
     EntityTableScrollBehavior.Instant;
-
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    public workspaceState: WorkspaceState
-  ) {}
 
   ngOnInit(): void {
     this.selectedWorkspace$ = this.workspaceStore.stateView

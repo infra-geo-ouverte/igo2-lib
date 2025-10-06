@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { AnalyticsService } from '@igo2/core/analytics';
@@ -24,17 +24,11 @@ import { ToolState } from '../tool/tool.state';
   providedIn: 'root'
 })
 export class AnalyticsListenerService {
-  /**
-   * Toolbox that holds main tools
-   */
-
-  constructor(
-    private analyticsService: AnalyticsService,
-    private authService: AuthService,
-    private contextState: ContextState,
-    private toolState: ToolState,
-    private mapState: MapState
-  ) {}
+  private analyticsService = inject(AnalyticsService);
+  private authService = inject(AuthService);
+  private contextState = inject(ContextState);
+  private toolState = inject(ToolState);
+  private mapState = inject(MapState);
 
   listen() {
     this.listenUser();

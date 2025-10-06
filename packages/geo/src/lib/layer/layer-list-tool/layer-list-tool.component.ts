@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -36,7 +35,6 @@ import { LayerListToolService } from './layer-list-tool.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,

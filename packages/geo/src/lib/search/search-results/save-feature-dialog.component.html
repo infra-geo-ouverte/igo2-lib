@@ -24,12 +24,11 @@
           formControlName="layerName"
         />
         <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
-          <mat-option
-            *ngFor="let layer of filteredLayers$ | async"
-            [value]="layer"
-          >
-            <p matListItemTitle>{{ layer.title }}</p>
-          </mat-option>
+          @for (layer of filteredLayers$ | async; track layer) {
+            <mat-option [value]="layer">
+              <p matListItemTitle>{{ layer.title }}</p>
+            </mat-option>
+          }
         </mat-autocomplete>
       </mat-form-field>
     </div>
@@ -38,12 +37,12 @@
 
 <div mat-dialog-actions style="justify-content: center">
   <div class="igo-form-button-group create-layer-button-top-padding">
-    <button mat-raised-button type="button" (click)="cancel()">
+    <button matButton="elevated" type="button" (click)="cancel()">
       {{ 'igo.geo.layer.cancelBtn' | translate }}
     </button>
     <button
       id="createLayerBtnDialog"
-      mat-raised-button
+      matButton="elevated"
       type="button"
       color="primary"
       (click)="save()"

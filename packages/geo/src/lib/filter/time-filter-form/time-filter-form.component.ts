@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -45,16 +44,14 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.scss'],
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatDatetimepickerModule,
     MatMomentDateModule,
     MatNativeDatetimeModule,
-    MatNativeDateModule, // For the DateAdapter provider
+    MatNativeDateModule,
     MatInputModule,
     FormsModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatSliderModule,
     MatSlideToggleModule,

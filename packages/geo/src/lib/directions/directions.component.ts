@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
@@ -64,7 +63,6 @@ import {
   templateUrl: './directions.component.html',
   styleUrls: ['./directions.component.scss'],
   imports: [
-    CommonModule,
     MatSlideToggleModule,
     DirectionsButtonsComponent,
     DirectionsInputsComponent,

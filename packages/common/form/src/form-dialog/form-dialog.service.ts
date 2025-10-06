@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Observable } from 'rxjs';
@@ -12,7 +12,7 @@ import {
 
 @Injectable()
 export class FormDialogService {
-  constructor(private dialog: MatDialog) {}
+  private dialog = inject(MatDialog);
 
   public open(
     formDialogConfig?: FormDialogFormConfig,

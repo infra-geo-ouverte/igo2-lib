@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -16,13 +16,15 @@ import { getFileExtension } from './context-import.utils';
   providedIn: 'root'
 })
 export class ContextImportService {
+  private config = inject(ConfigService);
+
   static allowedMimeTypes = ['application/json'];
 
   static allowedExtensions = 'json';
 
   private clientSideFileSizeMax: number;
 
-  constructor(private config: ConfigService) {
+  constructor() {
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
     );

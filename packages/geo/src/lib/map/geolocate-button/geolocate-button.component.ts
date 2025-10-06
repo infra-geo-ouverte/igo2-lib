@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,6 @@ import { IgoMap } from '../shared/map';
   templateUrl: './geolocate-button.component.html',
   styleUrls: ['./geolocate-button.component.scss'],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

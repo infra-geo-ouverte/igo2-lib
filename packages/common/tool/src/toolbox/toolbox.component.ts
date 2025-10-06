@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,13 +25,7 @@ import { toolSlideInOut } from './toolbox.animation';
   styleUrls: ['toolbox.component.scss'],
   animations: [toolSlideInOut()],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    ActionbarComponent,
-    NgClass,
-    DynamicOutletComponent,
-    AsyncPipe
-  ]
+  imports: [ActionbarComponent, NgClass, DynamicOutletComponent, AsyncPipe]
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
   /**

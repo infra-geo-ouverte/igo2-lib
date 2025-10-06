@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -78,12 +78,10 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
     GeometryFormFieldInputComponent,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatSlideToggleModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatRadioModule,
     MatTableModule,

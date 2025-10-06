@@ -7,7 +7,8 @@ import {
   OnDestroy,
   SimpleChanges,
   ViewChild,
-  ViewContainerRef
+  ViewContainerRef,
+  inject
 } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
@@ -23,6 +24,9 @@ import { DynamicComponentService } from '../shared/dynamic-component.service';
   standalone: true
 })
 export class DynamicOutletComponent implements OnChanges, OnDestroy {
+  private dynamicComponentService = inject(DynamicComponentService);
+  private cdRef = inject(ChangeDetectorRef);
+
   /**
    * The dynamic component base class or the dynamic component itself
    */
@@ -49,11 +53,6 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    */
   @ViewChild('target', { read: ViewContainerRef, static: true })
   private target: ViewContainerRef;
-
-  constructor(
-    private dynamicComponentService: DynamicComponentService,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   /**
    * If the dynamic component changes, create it.

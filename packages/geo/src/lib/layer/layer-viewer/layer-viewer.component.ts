@@ -1,4 +1,4 @@
-import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -50,7 +50,6 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
   styleUrls: ['./layer-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     NgTemplateOutlet,
     MatButtonModule,
     MatCheckboxModule,

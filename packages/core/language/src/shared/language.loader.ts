@@ -1,6 +1,6 @@
-import { DOCUMENT, isPlatformServer } from '@angular/common';
+import { isPlatformServer } from '@angular/common';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { PLATFORM_ID, inject } from '@angular/core';
+import { DOCUMENT, PLATFORM_ID, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { ObjectUtils } from '@igo2/utils';

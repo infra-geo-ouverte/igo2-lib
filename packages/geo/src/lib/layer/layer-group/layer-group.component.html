@@ -1,11 +1,12 @@
 <div class="layer-content">
-  <mat-checkbox
-    *ngIf="viewerOptions.mode === 'selection'"
-    [checked]="selected"
-    [disabled]="selectionDisabled"
-    (change)="handleSelect($event)"
-  >
-  </mat-checkbox>
+  @if (viewerOptions.mode === 'selection') {
+    <mat-checkbox
+      [checked]="selected"
+      [disabled]="selectionDisabled"
+      (change)="handleSelect($event)"
+    >
+    </mat-checkbox>
+  }
   <ng-content></ng-content>
   <span class="igo-layer-title" (click)="handleExpand()">{{
     layer.title

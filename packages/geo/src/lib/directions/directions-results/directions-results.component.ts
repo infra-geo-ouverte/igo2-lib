@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -48,11 +47,9 @@ import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
   templateUrl: './directions-results.component.html',
   styleUrls: ['./directions-results.component.scss'],
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
-    NgFor,
     MatOptionModule,
     MatDividerModule,
     MatTooltipModule,

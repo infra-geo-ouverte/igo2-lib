@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { MessageService } from '@igo2/core/message';
@@ -13,7 +13,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMessageComponent {
-  constructor(private messageService: MessageService) {}
+  private messageService = inject(MessageService);
 
   success(): void {
     this.messageService.success('Congratulations', 'Success');
