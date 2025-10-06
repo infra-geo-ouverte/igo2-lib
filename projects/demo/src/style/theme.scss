@@ -1,7 +1,8 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use '../../../../packages/core/src/theming/themes' as igo-themes;
+@use '@igo2/sdg-core' as sdg;
+@use '@igo2/core/themes' as igo-themes;
 
 html {
   @include igo-themes.theme(
@@ -9,4 +10,6 @@ html {
     igo-themes.$bluedq-defined-theme,
     'bluedq'
   );
+
+  @include sdg.typo-base();
 }
