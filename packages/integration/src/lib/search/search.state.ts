@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {
   EntityRecord,
@@ -38,6 +38,12 @@ export interface SearchFeatureMotion {
  */
 @Injectable()
 export class SearchState {
+  private searchSourceService = inject(SearchSourceService);
+  private storageService = inject(StorageService);
+  private workspaceState = inject(WorkspaceState);
+  private configService = inject(ConfigService);
+  private mapState = inject(MapState);
+
   public searchLayerStores: FeatureStore<Feature>[] = [];
   public searchOverlayStyle: CommonVectorStyleOptions = {};
   public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
@@ -84,13 +90,7 @@ export class SearchState {
       .map((source: SearchSource) => (source.constructor as any).type);
   }
 
-  constructor(
-    private searchSourceService: SearchSourceService,
-    private storageService: StorageService,
-    private workspaceState: WorkspaceState,
-    private configService: ConfigService,
-    private mapState: MapState
-  ) {
+  constructor() {
     const searchOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('searchOverlayStyle');
     if (searchOverlayStyle) {

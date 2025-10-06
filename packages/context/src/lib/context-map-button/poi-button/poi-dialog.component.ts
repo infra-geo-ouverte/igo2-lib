@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -27,7 +27,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
   ]
 })
 export class PoiDialogComponent {
-  public title: string;
+  dialogRef = inject<MatDialogRef<PoiDialogComponent>>(MatDialogRef);
 
-  constructor(public dialogRef: MatDialogRef<PoiDialogComponent>) {}
+  public title: string;
 }

@@ -23,7 +23,7 @@ export class MeasureFormatPipe implements PipeTransform {
     value: number,
     unit: MeasureAreaUnit | MeasureLengthUnit,
     unitAbbr = false
-  ): number {
+  ): number | string {
     let out;
     if (Object.values(MeasureAreaUnit).indexOf(unit as MeasureAreaUnit) >= 0) {
       out = squareMetersToUnit(value, unit as MeasureAreaUnit);

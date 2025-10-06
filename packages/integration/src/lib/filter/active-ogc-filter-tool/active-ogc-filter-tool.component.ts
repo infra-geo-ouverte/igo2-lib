@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import {
@@ -24,6 +24,8 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   imports: [OgcFilterableItemComponent]
 })
 export class ActiveOgcFilterToolComponent {
+  mapState = inject(MapState);
+
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -38,6 +40,4 @@ export class ActiveOgcFilterToolComponent {
   }
 
   public animate = 'enter';
-
-  constructor(public mapState: MapState) {}
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
@@ -20,6 +20,11 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class QueryState {
+  private configService = inject(ConfigService);
+  private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
+  private capabilitiesService = inject(CapabilitiesService);
+  private mapState = inject(MapState);
+
   /**
    * Store that holds the query results
    */
@@ -28,12 +33,7 @@ export class QueryState {
   public queryOverlayStyleSelection: CommonVectorStyleOptions = {};
   public queryOverlayStyleFocus: CommonVectorStyleOptions = {};
 
-  constructor(
-    private configService: ConfigService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService,
-    private capabilitiesService: CapabilitiesService,
-    private mapState: MapState
-  ) {
+  constructor() {
     const queryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
     if (queryOverlayStyle) {

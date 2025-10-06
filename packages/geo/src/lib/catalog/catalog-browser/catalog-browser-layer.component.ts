@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -39,7 +39,6 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgIf,
     MatIconModule,
     NgClass,
     MatTooltipModule,

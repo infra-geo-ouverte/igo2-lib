@@ -1,7 +1,3 @@
-import {
-  provideHttpClient,
-  withInterceptorsFromDi
-} from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
 import { AuthService } from '@igo2/auth';
@@ -16,22 +12,24 @@ import {
 } from '@igo2/core/monitoring';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { mergeTestConfig } from 'packages/auth/test-config';
 
 import { AuthMonitoringService } from './auth-monitoring.service';
 
 const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
-  TestBed.configureTestingModule({
-    imports: [IgoAuthFormModule, ToastrModule],
-    providers: [
-      provideMockTranslation(),
-      { provide: MONITORING_OPTIONS, useValue: options },
-      ToastrService,
-      MessageService,
-      provideHttpClient(withInterceptorsFromDi())
-    ]
-  });
+  TestBed.configureTestingModule(
+    mergeTestConfig({
+      imports: [IgoAuthFormModule, ToastrModule],
+      providers: [
+        { provide: MONITORING_OPTIONS, useValue: options },
+        ToastrService,
+        MessageService,
+        provideMockTranslation()
+      ]
+    })
+  );
 
   const configService = TestBed.inject(ConfigService);
   const authService = TestBed.inject(AuthService);

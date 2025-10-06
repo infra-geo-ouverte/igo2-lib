@@ -1,4 +1,3 @@
-import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -61,11 +60,7 @@ import {
     MatTooltipModule,
     MatMenuModule,
     MatIconModule,
-    NgIf,
-    NgFor,
     MatCheckboxModule,
-    NgSwitch,
-    NgSwitchCase,
     MatRadioModule,
     MatDividerModule,
     MatSlideToggleModule,

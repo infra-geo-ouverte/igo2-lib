@@ -1,90 +1,104 @@
-<div
-  *ngIf="heightCondition && positionConditionTop && isDesktop"
-  id="topChevron"
->
-  <button
-    mat-icon-button
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.common.actionbar.scrollUp' | translate"
-    (click)="scrollUp()"
-  >
-    <mat-icon>expand_less</mat-icon>
-  </button>
-</div>
-<mat-list *ngIf="mode === actionbarMode.Dock" matListItemIcon>
-  <igo-actionbar-item
-    *ngIf="withToggleButton"
-    color="accent"
-    [withTitle]="false"
-    [withIcon]="true"
-    [color]="color"
-    [disabled]="store.view.empty"
-    [action]="toggleCollapseAction"
-    (trigger)="onTriggerAction(toggleCollapseAction)"
-  >
-  </igo-actionbar-item>
-
-  <ng-template
-    #buttonContent
-    *ngIf="!collapsed"
-    ngFor
-    let-action
-    [ngForOf]="store.view.all$() | async"
-  >
-    <igo-actionbar-item
-      color="accent"
-      [withTitle]="withTitle"
-      [withIcon]="withIcon"
-      [withTooltip]="withTooltip"
-      [color]="color"
-      [disabled]="store.state.get(action).disabled"
-      [action]="action"
-      (trigger)="onTriggerAction(action)"
+@if (heightCondition && positionConditionTop && isDesktop) {
+  <div id="topChevron">
+    <button
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.common.actionbar.scrollUp' | translate"
+      (click)="scrollUp()"
     >
-    </igo-actionbar-item>
-  </ng-template>
-</mat-list>
+      <mat-icon>expand_less</mat-icon>
+    </button>
+  </div>
+}
+@if (mode === actionbarMode.Dock) {
+  <mat-list matListItemIcon>
+    @if (withToggleButton) {
+      <igo-actionbar-item
+        color="accent"
+        [withTitle]="false"
+        [withIcon]="true"
+        [color]="color"
+        [disabled]="store.view.empty"
+        [action]="toggleCollapseAction"
+        (trigger)="onTriggerAction(toggleCollapseAction)"
+      >
+      </igo-actionbar-item>
+    }
+    @if (!collapsed; as action) {
+      @for (action of store.view.all$() | async; track action) {
+        <igo-actionbar-item
+          color="accent"
+          [withTitle]="withTitle"
+          [withIcon]="withIcon"
+          [withTooltip]="withTooltip"
+          [color]="color"
+          [disabled]="store.state.get(action).disabled"
+          [action]="action"
+          (trigger)="onTriggerAction(action)"
+        >
+        </igo-actionbar-item>
+      }
+    }
+  </mat-list>
+}
 
-<div
-  *ngIf="heightCondition && positionConditionLow && isDesktop"
-  id="lowChevron"
->
-  <button
-    mat-icon-button
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.common.actionbar.scrollDown' | translate"
-    (click)="scrollDown()"
-  >
-    <mat-icon>expand_more</mat-icon>
-  </button>
-</div>
+@if (heightCondition && positionConditionLow && isDesktop) {
+  <div id="lowChevron">
+    <button
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.common.actionbar.scrollDown' | translate"
+      (click)="scrollDown()"
+    >
+      <mat-icon>expand_more</mat-icon>
+    </button>
+  </div>
+}
 
-<div *ngIf="mode === actionbarMode.Overlay">
-  <button
-    class="buttonOverlay"
-    mat-icon-button
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.common.actionbar.icon' | translate"
-    [matMenuTriggerFor]="actionbarMenu"
-    [disabled]="store.view.empty"
-    [color]="iconColor"
-  >
-    <mat-icon>{{ icon }}</mat-icon>
-  </button>
-
-  <mat-menu
-    #actionbarMenu="matMenu"
-    class="igo-compact-menu igo-no-min-width-menu"
-    overlapTrigger="true"
-    [xPosition]="xPosition"
-    [yPosition]="yPosition"
-    [class]="overlayClass"
-  >
+@if (mode === actionbarMode.Overlay) {
+  <div>
+    <button
+      class="buttonOverlay"
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.common.actionbar.icon' | translate"
+      [matMenuTriggerFor]="actionbarMenu"
+      [disabled]="store.view.empty"
+      [color]="iconColor"
+    >
+      <mat-icon>{{ icon }}</mat-icon>
+    </button>
+    <mat-menu
+      #actionbarMenu="matMenu"
+      class="igo-compact-menu igo-no-min-width-menu"
+      overlapTrigger="true"
+      [xPosition]="xPosition"
+      [yPosition]="yPosition"
+      [class]="overlayClass"
+    >
+      <mat-list>
+        @for (action of store.view.all$() | async; track action) {
+          <igo-actionbar-item
+            color="accent"
+            [withTitle]="withTitle"
+            [withIcon]="withIcon"
+            [color]="color"
+            [action]="action"
+            (trigger)="onTriggerAction(action)"
+          >
+          </igo-actionbar-item>
+        }
+      </mat-list>
+    </mat-menu>
+  </div>
+}
+@if (mode === actionbarMode.Context) {
+  <mat-card class="context-menu-card mat-elevation-z4">
     <mat-list>
-      <ng-template ngFor let-action [ngForOf]="store.view.all$() | async">
+      @for (action of store.view.all$() | async; track action) {
         <igo-actionbar-item
           color="accent"
           [withTitle]="withTitle"
@@ -94,26 +108,8 @@
           (trigger)="onTriggerAction(action)"
         >
         </igo-actionbar-item>
-      </ng-template>
+        <br />
+      }
     </mat-list>
-  </mat-menu>
-</div>
-<mat-card
-  *ngIf="mode === actionbarMode.Context"
-  class="context-menu-card mat-elevation-z4"
->
-  <mat-list>
-    <ng-template ngFor let-action [ngForOf]="store.view.all$() | async">
-      <igo-actionbar-item
-        color="accent"
-        [withTitle]="withTitle"
-        [withIcon]="withIcon"
-        [color]="color"
-        [action]="action"
-        (trigger)="onTriggerAction(action)"
-      >
-      </igo-actionbar-item>
-      <br />
-    </ng-template>
-  </mat-list>
-</mat-card>
+  </mat-card>
+}

@@ -4,10 +4,12 @@
   [dependencies]="['ConfigService', 'LanguageService']"
 >
   <app-example-viewer codeFolder="geo/search" configFolder="environments">
-    <span *ngIf="!isTouchScreen" title="Details">
-      Pointer activated: {{ igoSearchPointerSummaryEnabled }} (F2
-      activate/deactivate the pointer location).
-    </span>
+    @if (!isTouchScreen) {
+      <span title="Details">
+        Pointer activated: {{ igoSearchPointerSummaryEnabled }} (F2
+        activate/deactivate the pointer location).
+      </span>
+    }
     <igo-map-browser
       #mapBrowser
       [map]="map"
@@ -59,9 +61,11 @@
       </igo-search-results>
     </igo-panel>
 
-    <igo-panel *ngIf="selectedFeature" title="Details">
-      <igo-feature-details [feature]="selectedFeature"></igo-feature-details>
-    </igo-panel>
+    @if (selectedFeature) {
+      <igo-panel title="Details">
+        <igo-feature-details [feature]="selectedFeature"></igo-feature-details>
+      </igo-panel>
+    }
 
     <ng-template #actionbarMenu>
       <igo-actionbar

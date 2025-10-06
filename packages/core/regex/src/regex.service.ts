@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -8,9 +8,11 @@ import { RegexOptions } from './regex.interface';
   providedIn: 'root'
 })
 export class RegexService {
+  private config = inject(ConfigService);
+
   protected options: RegexOptions;
 
-  constructor(private config: ConfigService) {
+  constructor() {
     this.options = this.config.getConfig('regex');
   }
 

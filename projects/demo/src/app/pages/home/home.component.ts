@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import {
   IgoInteractiveTourModule,
@@ -14,7 +14,7 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
   imports: [DocViewerComponent, IgoInteractiveTourModule]
 })
 export class AppHomeComponent {
-  constructor(private interactiveTourService: InteractiveTourService) {}
+  private interactiveTourService = inject(InteractiveTourService);
 
   startTour() {
     this.interactiveTourService.startTour('global');

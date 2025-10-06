@@ -1,5 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
@@ -45,7 +51,6 @@ import { MapState } from './../map.state';
   templateUrl: './map-details-tool.component.html',
   styleUrls: ['./map-details-tool.component.scss'],
   imports: [
-    NgIf,
     LayerViewerComponent,
     WorkspaceButtonComponent,
     ExportButtonComponent,
@@ -60,6 +65,14 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapDetailsToolComponent implements OnInit {
+  private mapState = inject(MapState);
+  private toolState = inject(ToolState);
+  private searchSourceService = inject(SearchSourceService);
+  private importExportState = inject(ImportExportState);
+  private configService = inject(ConfigService);
+  mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
+
   isDesktop: boolean;
   public delayedShowEmptyMapContent = false;
 
@@ -144,15 +157,7 @@ export class MapDetailsToolComponent implements OnInit {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
-  constructor(
-    private mapState: MapState,
-    private toolState: ToolState,
-    private searchSourceService: SearchSourceService,
-    private importExportState: ImportExportState,
-    private configService: ConfigService,
-    public mediaService: MediaService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor() {
     this._layerViewerOptions = this.configService.getConfig('layer');
   }
 

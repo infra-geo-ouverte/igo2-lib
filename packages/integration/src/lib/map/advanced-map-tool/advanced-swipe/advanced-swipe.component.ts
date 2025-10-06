@@ -1,5 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -27,14 +26,12 @@ import { MapState } from '../../map.state';
   templateUrl: './advanced-swipe.component.html',
   styleUrls: ['./advanced-swipe.component.scss'],
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
     MatDividerModule,
-    NgFor,
     MatSlideToggleModule,
     MatListModule,
     MatIconModule,
@@ -42,6 +39,10 @@ import { MapState } from '../../map.state';
   ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
+  mapState = inject(MapState);
+  private formBuilder = inject(UntypedFormBuilder);
+  private toolState = inject(ToolState);
+
   public swipe = false;
   public layerList: AnyLayer[];
   public userControlledLayerList: AnyLayer[];
@@ -57,11 +58,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  constructor(
-    public mapState: MapState,
-    private formBuilder: UntypedFormBuilder,
-    private toolState: ToolState
-  ) {
+  constructor() {
     this.buildForm();
   }
 

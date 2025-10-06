@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -34,7 +33,6 @@ import { SearchResult } from '../shared/search.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgIf,
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,

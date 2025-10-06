@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -30,7 +29,6 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
     MatSidenavModule,
     FlexibleComponent,
     PanelComponent,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -39,6 +37,8 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
   ]
 })
 export class SidenavComponent {
+  titleService = inject(Title);
+
   private format = new olFormatGeoJSON();
   @Input()
   get map(): IgoMap {
@@ -101,7 +101,7 @@ export class SidenavComponent {
     return this.feature ? getEntityTitle(this.feature) : undefined;
   }
 
-  constructor(public titleService: Title) {
+  constructor() {
     this._title = this.titleService.getTitle();
   }
 

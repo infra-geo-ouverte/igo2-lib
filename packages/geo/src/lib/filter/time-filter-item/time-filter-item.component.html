@@ -1,47 +1,50 @@
-<mat-list-item *ngIf="header">
-  <mat-icon
-    class="igo-chevron"
-    matListItemIcon
-    igoCollapse
-    [target]="filters"
-    [collapsed]="filtersCollapsed"
-    (click)="toggleFiltersCollapsed()"
-  >
-    expand_less
-  </mat-icon>
-
-  <span
-    matListItemTitle
-    (click)="toggleLegendOnClick()"
-    [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
-    >{{ layer.title }}</span
-  >
-
-  <button
-    *ngIf="header"
-    mat-icon-button
-    matListItemMeta
-    [color]="layer.visible ? 'primary' : 'default'"
-    collapsibleButton
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="
-      layer.visible
-        ? ('igo.geo.layer.hideLayer' | translate)
-        : ('igo.geo.layer.showLayer' | translate)
-    "
-    (click)="layer.visible = !layer.visible"
-  >
-    <mat-icon [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-      >{{ layer.visible ? 'visibility' : 'visibility_off' }}
+@if (header) {
+  <mat-list-item>
+    <mat-icon
+      class="igo-chevron"
+      matListItemIcon
+      igoCollapse
+      [target]="filters"
+      [collapsed]="filtersCollapsed"
+      (click)="toggleFiltersCollapsed()"
+    >
+      expand_less
     </mat-icon>
-  </button>
-</mat-list-item>
+    <span
+      matListItemTitle
+      (click)="toggleLegendOnClick()"
+      [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
+      >{{ layer.title }}</span
+    >
+    @if (header) {
+      <button
+        mat-icon-button
+        matListItemMeta
+        [color]="layer.visible ? 'primary' : 'default'"
+        collapsibleButton
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="
+          layer.visible
+            ? ('igo.geo.layer.hideLayer' | translate)
+            : ('igo.geo.layer.showLayer' | translate)
+        "
+        (click)="layer.visible = !layer.visible"
+      >
+        <mat-icon
+          [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+          >{{ layer.visible ? 'visibility' : 'visibility_off' }}
+        </mat-icon>
+      </button>
+    }
+  </mat-list-item>
+}
 
 <div #filters class="igo-datasource-filters-container">
   <div #legend class="igo-layer-legend-container">
-    <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
-    </igo-layer-legend>
+    @if (showLegend$ | async) {
+      <igo-layer-legend [layer]="layer"> </igo-layer-legend>
+    }
   </div>
   <igo-time-filter-form
     [layer]="layer"

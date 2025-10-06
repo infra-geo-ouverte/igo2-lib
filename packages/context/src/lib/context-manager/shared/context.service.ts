@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { Tool } from '@igo2/common/tool';
@@ -47,6 +47,16 @@ import {
   providedIn: 'root'
 })
 export class ContextService {
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private languageService = inject(LanguageService);
+  private config = inject(ConfigService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  private exportService = inject(ExportService);
+  private shareMapService = inject(ShareMapService);
+  private route = inject(RouteService, { optional: true });
+
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
@@ -74,17 +84,7 @@ export class ContextService {
   }
   private _defaultContextUri: string;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService,
-    private languageService: LanguageService,
-    private config: ConfigService,
-    private messageService: MessageService,
-    private storageService: StorageService,
-    private exportService: ExportService,
-    private shareMapService: ShareMapService,
-    @Optional() private route: RouteService
-  ) {
+  constructor() {
     this.options = Object.assign(
       {
         basePath: 'contexts',

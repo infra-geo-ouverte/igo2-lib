@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -44,7 +44,6 @@ import { MapState } from '../../map.state';
   templateUrl: './advanced-coordinates.component.html',
   styleUrls: ['./advanced-coordinates.component.scss'],
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -52,7 +51,6 @@ import { MapState } from '../../map.state';
     FormsModule,
     ReactiveFormsModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatSlideToggleModule,
     AsyncPipe,
@@ -61,6 +59,14 @@ import { MapState } from '../../map.state';
   ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  mapState = inject(MapState);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  private config = inject(ConfigService);
+  private formBuilder = inject(UntypedFormBuilder);
+
   public formattedScale$ = new BehaviorSubject<string>('');
   public projections$ = new BehaviorSubject<InputProjections[]>([]);
   public form: UntypedFormGroup;
@@ -95,15 +101,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this._projectionsLimitations = value;
   }
 
-  constructor(
-    private clipboard: Clipboard,
-    public mapState: MapState,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private storageService: StorageService,
-    private config: ConfigService,
-    private formBuilder: UntypedFormBuilder
-  ) {
+  constructor() {
     this.defaultProj = {
       translatedValue: this.languageService.translate.instant(
         'igo.geo.importExportForm.projections.wgs84',

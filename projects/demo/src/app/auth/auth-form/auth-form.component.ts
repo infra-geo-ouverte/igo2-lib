@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '@igo2/auth';
@@ -21,9 +21,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppAuthFormComponent implements OnInit, OnDestroy {
+  private _authService = inject(AuthService);
+
   public logged = false;
   public logged$$: Subscription;
-  constructor(private _authService: AuthService) {}
 
   ngOnInit() {
     this.logged$$ = this._authService.logged$.subscribe((logged: boolean) => {

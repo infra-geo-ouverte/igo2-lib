@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,12 +20,10 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
   styleUrls: ['./baselayers-switcher.component.scss'],
   animations: [baseLayersSwitcherSlideInOut()],
   imports: [
-    NgIf,
     NgClass,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    NgFor,
     MiniBaseMapComponent,
     IgoLanguageModule
   ]

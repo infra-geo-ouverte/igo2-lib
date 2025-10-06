@@ -1,17 +1,17 @@
-import {
-  provideHttpClient,
-  withInterceptorsFromDi
-} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
+
+import { mergeTestConfig } from 'packages/geo/test-config';
 
 import { StyleListService } from './style-list.service';
 
 describe('StyleListService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [],
-      providers: [StyleListService, provideHttpClient(withInterceptorsFromDi())]
-    });
+    TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [],
+        providers: [StyleListService]
+      })
+    );
   });
 
   it('should ...', inject([StyleListService], (service: StyleListService) => {

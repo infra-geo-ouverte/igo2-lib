@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,7 +23,6 @@ import { IgoMap } from '../map/shared/map';
     PanelComponent,
     MatButtonModule,
     MatIconModule,
-    NgIf,
     FeatureDetailsComponent
   ]
 })

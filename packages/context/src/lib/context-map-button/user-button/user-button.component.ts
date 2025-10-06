@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +19,6 @@ import { UserDialogComponent } from './user-dialog.component';
   styleUrls: ['./user-button.component.scss'],
   animations: [userButtonSlideInOut()],
   imports: [
-    NgIf,
     PoiButtonComponent,
     MatButtonModule,
     MatTooltipModule,
@@ -29,6 +27,10 @@ import { UserDialogComponent } from './user-dialog.component';
   ]
 })
 export class UserButtonComponent {
+  private dialog = inject(MatDialog);
+  private config = inject(ConfigService);
+  auth = inject(AuthService);
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -51,11 +53,7 @@ export class UserButtonComponent {
   public visible = false;
   public hasApi = false;
 
-  constructor(
-    private dialog: MatDialog,
-    private config: ConfigService,
-    public auth: AuthService
-  ) {
+  constructor() {
     this.visible = this.config.getConfig('auth') ? true : false;
     this.hasApi = this.config.getConfig('context.url') !== undefined;
   }

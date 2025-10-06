@@ -1,10 +1,5 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import {
-  ModuleWithProviders,
-  NgModule,
-  Optional,
-  SkipSelf
-} from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 
 import { ErrorInterceptor } from './error.interceptor';
 
@@ -27,7 +22,12 @@ export class IgoErrorModule {
     };
   }
 
-  constructor(@Optional() @SkipSelf() parentModule: IgoErrorModule) {
+  constructor() {
+    const parentModule = inject(IgoErrorModule, {
+      optional: true,
+      skipSelf: true
+    });
+
     if (parentModule) {
       throw new Error(
         'IgoErrorModule is already loaded. Import it in the AppModule only'

@@ -11,10 +11,10 @@
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button (click)="cancelDrawing()">
+  <button matButton="elevated" (click)="cancelDrawing()">
     {{ 'igo.geo.draw.cancel' | translate }}
   </button>
-  <button mat-raised-button color="primary" (click)="confirm(input.value)">
+  <button matButton="elevated" color="primary" (click)="confirm(input.value)">
     OK
   </button>
 </div>

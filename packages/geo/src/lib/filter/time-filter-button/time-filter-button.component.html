@@ -1,31 +1,27 @@
-<button
-  *ngIf="header && options.timeFilterable && options.timeFilter"
-  mat-icon-button
-  collapsibleButton
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.filter.filterBy' | translate"
-  [color]="color"
->
-  <mat-icon
-    aria-hidden="false"
-    [matBadge]="badge"
-    matBadgeColor="warn"
-    matBadgeSize="medium"
-    >history</mat-icon
+@if (header && options.timeFilterable && options.timeFilter) {
+  <button
+    mat-icon-button
+    collapsibleButton
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.filter.filterBy' | translate"
+    [color]="color"
   >
-</button>
+    <mat-icon
+      aria-hidden="false"
+      [matBadge]="badge"
+      matBadgeColor="warn"
+      matBadgeSize="medium"
+      >history</mat-icon
+    >
+  </button>
+}
 
-<div
-  #ogcFilter
-  class="igo-layer-actions-container"
-  *ngIf="header && options.timeFilterable && options.timeFilter"
->
-  <igo-time-filter-item
-    *ngIf="timeFilterCollapse && options.timeFilter"
-    igoListItem
-    [header]="false"
-    [layer]="layer"
-  >
-  </igo-time-filter-item>
-</div>
+@if (header && options.timeFilterable && options.timeFilter) {
+  <div #ogcFilter class="igo-layer-actions-container">
+    @if (timeFilterCollapse && options.timeFilter) {
+      <igo-time-filter-item igoListItem [header]="false" [layer]="layer">
+      </igo-time-filter-item>
+    }
+  </div>
+}

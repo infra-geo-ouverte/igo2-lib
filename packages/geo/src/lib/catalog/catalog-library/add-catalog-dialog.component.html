@@ -5,65 +5,71 @@
     [label]="'igo.geo.catalog.library.predefined' | translate"
     [disabled]="!data.predefinedCatalogs.length"
   >
-    <igo-form
-      *ngIf="predefinedForm$ | async as form"
-      [form]="form"
-      [formData]="data$ | async"
-      (submitForm)="onPredefinedSubmit($any($event))"
-    >
-      <div *ngIf="form.fields.length" class="form-container">
-        <igo-form-field
-          *ngFor="let field of form.fields"
-          [field]="field"
-        ></igo-form-field>
-      </div>
-
-      <div formButtons class="actions-container">
-        <button mat-flat-button type="submit" color="primary">
-          {{ 'igo.geo.catalog.library.add' | translate }}
-        </button>
-      </div>
-    </igo-form>
+    @if (predefinedForm$ | async; as form) {
+      <igo-form
+        [form]="form"
+        [formData]="data$ | async"
+        (submitForm)="onPredefinedSubmit($any($event))"
+      >
+        @if (form.fields.length) {
+          <div class="form-container">
+            @for (field of form.fields; track field) {
+              <igo-form-field [field]="field"></igo-form-field>
+            }
+          </div>
+        }
+        <div formButtons class="actions-container">
+          <button matButton="filled" type="submit" color="primary">
+            {{ 'igo.geo.catalog.library.add' | translate }}
+          </button>
+        </div>
+      </igo-form>
+    }
   </mat-tab>
 
   <mat-tab class="tabs" [label]="'igo.geo.catalog.library.custom' | translate">
-    <igo-form
-      *ngIf="customForm$ | async as form"
-      [form]="form"
-      [formData]="customData$ | async"
-      (submitForm)="onCustomSubmit($any($event))"
-    >
-      <div *ngIf="form.fields.length" class="form-container">
-        <igo-form-field
-          *ngFor="let field of form.fields"
-          [field]="field"
-        ></igo-form-field>
-      </div>
-
-      <div formButtons class="actions-container">
-        <button mat-flat-button type="submit" color="primary">
-          {{ 'igo.geo.catalog.library.add' | translate }}
-        </button>
-      </div>
-    </igo-form>
-    <span *ngIf="data.error && data.addedCatalog && emailAddress">
-      <p class="error">
-        {{
-          languageService.translate.instant(
-            'igo.geo.catalog.externalProvider.unavailableWithEmail',
-            { value: data.addedCatalog.url, email: emailAddress }
-          )
-        }}
-      </p>
-    </span>
-    <span *ngIf="data.error && data.addedCatalog && !emailAddress">
-      <p class="error">
-        {{
-          languageService.translate.instant('igo.geo.catalog.unavailable', {
-            value: data.addedCatalog.url
-          })
-        }}
-      </p>
-    </span>
+    @if (customForm$ | async; as form) {
+      <igo-form
+        [form]="form"
+        [formData]="customData$ | async"
+        (submitForm)="onCustomSubmit($any($event))"
+      >
+        @if (form.fields.length) {
+          <div class="form-container">
+            @for (field of form.fields; track field) {
+              <igo-form-field [field]="field"></igo-form-field>
+            }
+          </div>
+        }
+        <div formButtons class="actions-container">
+          <button matButton="filled" type="submit" color="primary">
+            {{ 'igo.geo.catalog.library.add' | translate }}
+          </button>
+        </div>
+      </igo-form>
+    }
+    @if (data.error && data.addedCatalog && emailAddress) {
+      <span>
+        <p class="error">
+          {{
+            languageService.translate.instant(
+              'igo.geo.catalog.externalProvider.unavailableWithEmail',
+              { value: data.addedCatalog.url, email: emailAddress }
+            )
+          }}
+        </p>
+      </span>
+    }
+    @if (data.error && data.addedCatalog && !emailAddress) {
+      <span>
+        <p class="error">
+          {{
+            languageService.translate.instant('igo.geo.catalog.unavailable', {
+              value: data.addedCatalog.url
+            })
+          }}
+        </p>
+      </span>
+    }
   </mat-tab>
 </mat-tab-group>

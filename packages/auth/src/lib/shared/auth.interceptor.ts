@@ -5,7 +5,7 @@ import {
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -23,17 +23,17 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
+  private config = inject(ConfigService);
+  private tokenService = inject(TokenService);
+  private http = inject(HttpClient);
+
   private authOptions: AuthOptions;
   private refreshInProgress = false;
   private trustHosts: string[];
   private hostsWithCredentials: WithCredentialsOptions[];
   private hostsWithAuthByKey: AuthByKeyOptions[];
 
-  constructor(
-    private config: ConfigService,
-    private tokenService: TokenService,
-    private http: HttpClient
-  ) {
+  constructor() {
     this.authOptions = this.config.getConfig('auth') as AuthOptions;
 
     this.trustHosts = this.authOptions?.trustHosts || [];

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +37,6 @@ import { TooltipType } from '../shared/layers/layer.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgIf,
     MatCheckboxModule,
     MatTooltipModule,
     MatButtonModule,
@@ -149,7 +148,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   handleVisibilityChange(event: Event) {
     event.stopPropagation();
 
-    if (this.viewerOptions.legend.showOnVisibilityChange) {
+    if (this.viewerOptions.legend?.showOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
     }
     this.updateQueryBadge();

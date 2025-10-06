@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { EntityStore } from '@igo2/common/entity';
@@ -24,7 +24,9 @@ export class CatalogState {
    */
   private catalogItemsStores = new Map<string, EntityStore<CatalogItem>>();
 
-  constructor(authService: AuthService) {
+  constructor() {
+    const authService = inject(AuthService);
+
     this._catalogStore = new EntityStore([]);
 
     authService.authenticate$.subscribe(() => {

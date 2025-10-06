@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   ApplicationRef,
@@ -24,7 +23,7 @@ import { IgoMap } from '../shared/map';
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, MapBrowserComponent]
+  imports: [MapBrowserComponent]
 })
 export class MiniBaseMapComponent implements AfterViewInit {
   @Input() map: IgoMap;

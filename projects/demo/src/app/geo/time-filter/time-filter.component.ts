@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
@@ -35,6 +35,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppTimeFilterComponent {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -48,10 +51,7 @@ export class AppTimeFilterComponent {
     zoom: 7
   };
 
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {
+  constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

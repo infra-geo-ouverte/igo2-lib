@@ -1,8 +1,12 @@
 <h2 mat-dialog-title>{{ data.layerTitle }}</h2>
-<button class="close-button" mat-button mat-dialog-close>X</button>
-<mat-dialog-content *ngIf="data.type !== 'arcgisrest'">
-  <h3>{{ data.abstract }}</h3>
-</mat-dialog-content>
-<mat-dialog-content *ngIf="data.type === 'arcgisrest'">
-  <h3 [innerHTML]="data.abstract"></h3>
-</mat-dialog-content>
+<button class="close-button" matButton mat-dialog-close>X</button>
+@if (data.type !== 'arcgisrest') {
+  <mat-dialog-content>
+    <h3>{{ data.abstract }}</h3>
+  </mat-dialog-content>
+}
+@if (data.type === 'arcgisrest') {
+  <mat-dialog-content>
+    <h3 [innerHTML]="data.abstract"></h3>
+  </mat-dialog-content>
+}

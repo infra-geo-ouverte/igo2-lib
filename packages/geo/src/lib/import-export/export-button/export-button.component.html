@@ -1,10 +1,11 @@
-<button
-  *ngIf="layerIsExportable()"
-  mat-icon-button
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.download.action' | translate"
-  [color]="color"
->
-  <mat-icon>file_save</mat-icon>
-</button>
+@if (layerIsExportable()) {
+  <button
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.download.action' | translate"
+    [color]="color"
+  >
+    <mat-icon>file_save</mat-icon>
+  </button>
+}

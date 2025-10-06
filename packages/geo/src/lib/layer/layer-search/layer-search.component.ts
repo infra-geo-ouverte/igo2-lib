@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +18,6 @@ import { debounceTime } from 'rxjs';
   templateUrl: './layer-search.component.html',
   styleUrls: ['./layer-search.component.scss'],
   imports: [
-    NgIf,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatButtonModule,

@@ -1,3 +1,5 @@
-<div *ngIf="infoContent && infoContent.length" class="infoSection">
-  <pre>{{ infoContent }}</pre>
-</div>
+@if (infoContent && infoContent.length) {
+  <div class="infoSection">
+    <pre>{{ infoContent }}</pre>
+  </div>
+}

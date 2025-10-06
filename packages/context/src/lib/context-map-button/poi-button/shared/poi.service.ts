@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -9,12 +9,12 @@ import { Poi } from './poi.interface';
 
 @Injectable()
 export class PoiService {
+  private http = inject(HttpClient);
+  private config = inject(ConfigService);
+
   private baseUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService
-  ) {
+  constructor() {
     this.baseUrl = this.config.getConfig('context.url');
   }
 

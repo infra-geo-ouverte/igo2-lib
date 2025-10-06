@@ -1,9 +1,7 @@
 <mat-list-item>
-  <mat-icon
-    *ngIf="haveGroup()"
-    class="catalog-browser-layer-carret"
-    matListItemIcon
-  ></mat-icon>
+  @if (haveGroup()) {
+    <mat-icon class="catalog-browser-layer-carret" matListItemIcon></mat-icon>
+  }
   <span
     matListItemTitle
     matTooltipShowDelay="500"
@@ -15,18 +13,20 @@
   </span>
 
   <div matListItemMeta>
-    <button *ngIf="layer.externalProvider" disabled="true" mat-icon-button>
-      <mat-icon
-        class="igo-cataloglayer-external-icon"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
-        color="primary"
-        (click)="$event.stopPropagation()"
-      >
-        public
-      </mat-icon>
-    </button>
+    @if (layer.externalProvider) {
+      <button disabled="true" mat-icon-button>
+        <mat-icon
+          class="igo-cataloglayer-external-icon"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
+          color="primary"
+          (click)="$event.stopPropagation()"
+        >
+          public
+        </mat-icon>
+      </button>
+    }
     <igo-metadata-button [layer]="$any(layer)"></igo-metadata-button>
 
     <button
@@ -62,11 +62,9 @@
 </mat-list-item>
 
 <div #legend class="igo-cataloglayer-legend-container">
-  <igo-layer-legend
-    *ngIf="
-      (layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend
-    "
-    [layer]="igoLayer$ | async"
-  >
-  </igo-layer-legend>
+  @if (
+    (layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend
+  ) {
+    <igo-layer-legend [layer]="igoLayer$ | async"> </igo-layer-legend>
+  }
 </div>

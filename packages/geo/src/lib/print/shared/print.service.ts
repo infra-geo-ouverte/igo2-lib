@@ -1,8 +1,7 @@
-import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, Inject, Injectable } from '@angular/core';
 
-import { SecureImagePipe } from '@igo2/common/image';
+import { fetchImageFromDepotUrl } from '@igo2/common/image';
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -55,10 +54,10 @@ export class PrintService {
 
   constructor(
     private http: HttpClient,
+    private config: ConfigService,
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService,
-    private configService: ConfigService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
@@ -319,8 +318,8 @@ export class PrintService {
   }
 
   getDataImage(url: string): Observable<string> {
-    const secureIMG = new SecureImagePipe(this.http, this.configService);
-    return secureIMG.transform(url);
+    const depotUrl = this.config?.getConfig('depot.url');
+    return fetchImageFromDepotUrl(url, depotUrl, this.http);
   }
 
   /**

@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -20,7 +19,6 @@ import { MeasureFormatPipe } from './measure-format.pipe';
   imports: [
     MatDialogTitle,
     MatDialogContent,
-    NgIf,
     IgoLanguageModule,
     MeasureFormatPipe
   ]

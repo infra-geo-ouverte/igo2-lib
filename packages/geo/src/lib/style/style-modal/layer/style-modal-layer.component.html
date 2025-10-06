@@ -5,17 +5,16 @@
   <div class="edit-colorpicker">
     <form class="igo-form" [formGroup]="form">
       <div class="color-picker">
-        <ng-container *ngIf="linestringOnly !== true">
+        @if (linestringOnly !== true) {
           <span>
             <mat-icon class="stroke-palette-icon">format_color_fill</mat-icon>
             {{ 'igo.geo.style.fill' | translate }}
           </span>
-
           <igo-color-picker-form-field
             formControlName="fill"
             (colorChange)="setLayerFillColor($event)"
           ></igo-color-picker-form-field>
-        </ng-container>
+        }
 
         <span>
           <mat-icon class="stroke-palette-icon">border_color</mat-icon>
@@ -30,8 +29,8 @@
   </div>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button (click)="cancel()">
+  <button matButton="elevated" (click)="cancel()">
     {{ 'igo.geo.style.cancel' | translate }}
   </button>
-  <button mat-raised-button color="primary" (click)="confirm()">OK</button>
+  <button matButton="elevated" color="primary" (click)="confirm()">OK</button>
 </div>

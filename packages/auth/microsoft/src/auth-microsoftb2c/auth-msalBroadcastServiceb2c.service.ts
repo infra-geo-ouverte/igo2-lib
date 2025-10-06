@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MSAL_INSTANCE } from '@azure/msal-angular';
 import {
@@ -17,15 +17,15 @@ import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 
 @Injectable()
 export class MsalBroadcastServiceb2c {
+  private msalInstance = inject<IPublicClientApplication>(MSAL_INSTANCE);
+  private authService = inject(MsalServiceb2c);
+
   private _msalSubject: Subject<EventMessage>;
   public msalSubject$: Observable<EventMessage>;
   private _inProgress: BehaviorSubject<InteractionStatus>;
   public inProgress$: Observable<InteractionStatus>;
 
-  constructor(
-    @Inject(MSAL_INSTANCE) private msalInstance: IPublicClientApplication,
-    private authService: MsalServiceb2c
-  ) {
+  constructor() {
     this._msalSubject = new Subject<EventMessage>();
     this.msalSubject$ = this._msalSubject.asObservable();
 

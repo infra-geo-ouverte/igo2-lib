@@ -1,51 +1,51 @@
-<button
-  *ngIf="
-    header &&
-    options.ogcFilters &&
-    options.ogcFilters.enabled &&
-    (options.ogcFilters.pushButtons ||
-      options.ogcFilters.checkboxes ||
-      options.ogcFilters.radioButtons ||
-      options.ogcFilters.select ||
-      options.ogcFilters.autocomplete ||
-      options.ogcFilters.editable)
-  "
-  mat-icon-button
-  collapsibleButton
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.filter.filterBy' | translate"
-  [color]="color"
->
-  <mat-icon
-    aria-hidden="false"
-    [matBadge]="badge"
-    matBadgeColor="warn"
-    matBadgeSize="medium"
-    >filter_alt</mat-icon
+@if (
+  header &&
+  options.ogcFilters &&
+  options.ogcFilters.enabled &&
+  (options.ogcFilters.pushButtons ||
+    options.ogcFilters.checkboxes ||
+    options.ogcFilters.radioButtons ||
+    options.ogcFilters.select ||
+    options.ogcFilters.autocomplete ||
+    options.ogcFilters.editable)
+) {
+  <button
+    mat-icon-button
+    collapsibleButton
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.filter.filterBy' | translate"
+    [color]="color"
   >
-</button>
+    <mat-icon
+      aria-hidden="false"
+      [matBadge]="badge"
+      matBadgeColor="warn"
+      matBadgeSize="medium"
+      >filter_alt</mat-icon
+    >
+  </button>
+}
 
-<div
-  #ogcFilter
-  class="igo-layer-actions-container"
-  *ngIf="
-    options.ogcFilters &&
-    options.ogcFilters.enabled &&
-    (options.ogcFilters.pushButtons ||
-      options.ogcFilters.checkboxes ||
-      options.ogcFilters.radioButtons ||
-      options.ogcFilters.select ||
-      options.ogcFilters.autocomplete ||
-      options.ogcFilters.editable)
-  "
->
-  <igo-ogc-filterable-item
-    *ngIf="ogcFilterCollapse && options.ogcFilters.enabled"
-    igoListItem
-    [header]="false"
-    [map]="layer.map"
-    [layer]="layer"
-  >
-  </igo-ogc-filterable-item>
-</div>
+@if (
+  options.ogcFilters &&
+  options.ogcFilters.enabled &&
+  (options.ogcFilters.pushButtons ||
+    options.ogcFilters.checkboxes ||
+    options.ogcFilters.radioButtons ||
+    options.ogcFilters.select ||
+    options.ogcFilters.autocomplete ||
+    options.ogcFilters.editable)
+) {
+  <div #ogcFilter class="igo-layer-actions-container">
+    @if (ogcFilterCollapse && options.ogcFilters.enabled) {
+      <igo-ogc-filterable-item
+        igoListItem
+        [header]="false"
+        [map]="layer.map"
+        [layer]="layer"
+      >
+      </igo-ogc-filterable-item>
+    }
+  </div>
+}

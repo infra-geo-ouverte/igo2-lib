@@ -7,7 +7,8 @@ import {
   HostListener,
   Input,
   Output,
-  ViewContainerRef
+  ViewContainerRef,
+  inject
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
@@ -19,17 +20,15 @@ import { filter, take } from 'rxjs/operators';
   standalone: true
 })
 export class ContextMenuDirective {
+  overlay = inject(Overlay);
+  viewContainerRef = inject(ViewContainerRef);
+  private elementRef = inject(ElementRef);
+
   private overlayRef: OverlayRef | null;
   private sub: Subscription;
 
   @Input('igoContextMenu') menuContext: TemplateRef<any>;
   @Output() menuPosition = new EventEmitter<{ x: number; y: number }>();
-
-  constructor(
-    public overlay: Overlay,
-    public viewContainerRef: ViewContainerRef,
-    private elementRef: ElementRef
-  ) {}
 
   @HostListener('longpress', ['$event'])
   @HostListener('contextmenu', ['$event'])

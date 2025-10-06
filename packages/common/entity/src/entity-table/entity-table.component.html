@@ -10,8 +10,9 @@
   >
     <ng-container matColumnDef="selectionCheckbox" class="mat-cell-checkbox">
       <th mat-header-cell *matHeaderCellDef>
-        <ng-container *ngIf="selectMany">
-          <ng-container *ngIf="selectionState$ | async as selectionState">
+        @if (selectMany) {
+          @let selectionState = selectionState$ | async;
+          @if (selectionState) {
             <mat-checkbox
               (change)="onToggleRows($event.checked)"
               [checked]="selectionState === entityTableSelectionState.All"
@@ -20,8 +21,8 @@
               "
             >
             </mat-checkbox>
-          </ng-container>
-        </ng-container>
+          }
+        }
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
@@ -38,332 +39,381 @@
       </td>
     </ng-container>
 
-    <ng-container
-      [matColumnDef]="column.name"
-      *ngFor="let column of template.columns"
-    >
-      <ng-container *ngIf="columnIsSortable(column)">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [matTooltip]="column.tooltip ? column.tooltip : undefined"
-        >
-          {{ column.title }}
-        </th>
-      </ng-container>
+    @for (column of template.columns; track column) {
+      <ng-container [matColumnDef]="column.name">
+        @if (columnIsSortable(column)) {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            [matTooltip]="column.tooltip ? column.tooltip : undefined"
+          >
+            {{ column.title }}
+          </th>
+        } @else {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [matTooltip]="column.tooltip ? column.tooltip : undefined"
+          >
+            {{ column.title }}
+          </th>
+        }
 
-      <ng-container *ngIf="!columnIsSortable(column)">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          [matTooltip]="column.tooltip ? column.tooltip : undefined"
-        >
-          {{ column.title }}
-        </th>
-      </ng-container>
-
-      <ng-container *ngIf="getColumnRenderer(column) as columnRenderer">
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.Default"
-        >
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlDefault"
-              [ngClass]="row.cellData[column.name].class"
-            >
-              {{ row.cellData[column.name].value }}
-            </td>
-            <ng-template #isAnUrlDefault>
-              <td
-                mat-cell
-                class="mat-cell-text"
-                [ngClass]="row.cellData[column.name].class"
-              >
-                <a
-                  href="{{ row.cellData[column.name].value }}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  (click)="$event.stopPropagation()"
-                >
-                  <img
-                    igoImageError
-                    *ngIf="row.cellData[column.name].isImg; else notImg"
-                    src="{{
-                      row.cellData[column.name].value | secureImage | async
-                    }}"
-                    width="50"
-                    heigth="auto"
-                  />
-                  <ng-template #notImg
-                    ><span
-                      >{{ 'igo.common.entity-table.targetHtmlUrl' | translate }}
-                    </span></ng-template
+        @let columnRenderer = getColumnRenderer(column);
+        @if (columnRenderer) {
+          @switch (columnRenderer) {
+            @case (entityTableColumnRenderer.HTML) {
+              <ng-container *matCellDef="let row">
+                @if (!row.cellData[column.name].isUrl) {
+                  <td
+                    mat-cell
+                    class="mat-cell-text"
+                    [ngClass]="row.cellData[column.name].class"
+                    [innerHTML]="row.cellData[column.name].value"
+                  ></td>
+                } @else {
+                  <td
+                    mat-cell
+                    class="mat-cell-text"
+                    [ngClass]="row.cellData[column.name].class"
                   >
-                </a>
-              </td>
-            </ng-template>
-          </ng-container>
-        </ng-container>
-        <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.HTML">
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlHTML"
-              [ngClass]="row.cellData[column.name].class"
-              [innerHTML]="row.cellData[column.name].value"
-            ></td>
-            <ng-template #isAnUrlHTML>
-              <td
-                mat-cell
-                class="mat-cell-text"
-                [ngClass]="row.cellData[column.name].class"
-              >
-                <a
-                  href="{{ row.cellData[column.name].value }}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  (click)="$event.stopPropagation()"
-                >
-                  <img
-                    igoImageError
-                    *ngIf="row.cellData[column.name].isImg; else notImg"
-                    src="{{
-                      row.cellData[column.name].value | secureImage | async
-                    }}"
-                    width="50"
-                    heigth="auto"
-                  />
-                  <ng-template #notImg
-                    ><span
-                      >{{ 'igo.geo.targetHtmlUrl' | translate }}
-                    </span></ng-template
+                    <a
+                      href="{{ row.cellData[column.name].value }}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      (click)="$event.stopPropagation()"
+                    >
+                      @if (row.cellData[column.name].isImg) {
+                        <img
+                          igoImageError
+                          src="{{
+                            row.cellData[column.name].value
+                              | secureImage
+                              | async
+                          }}"
+                          width="50"
+                          heigth="auto"
+                        />
+                      } @else {
+                        <span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span>
+                      }
+                      >
+                    </a>
+                  </td>
+                }
+              </ng-container>
+            }
+            @case (entityTableColumnRenderer.UnsanitizedHTML) {
+              <ng-container *matCellDef="let row">
+                @if (isEdition(row.record)) {
+                  <td
+                    mat-cell
+                    class="mat-cell-text edition"
+                    [formGroup]="formGroup"
+                    [ngClass]="row.cellData[column.name].class"
                   >
-                </a>
-              </td>
-            </ng-template>
-          </ng-container>
-        </ng-container>
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.UnsanitizedHTML"
-        >
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text edition"
-              [formGroup]="formGroup"
-              *ngIf="isEdition(row.record); else isUnsanitizedHTML"
-              [ngClass]="row.cellData[column.name].class"
-            >
-              <div class="date-picker" *ngIf="column.type === 'date'">
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="picker"
-                ></mat-datepicker-toggle>
-                <input
-                  matInput
-                  [matDatepicker]="picker"
-                  [formControlName]="column.name"
-                  value="{{ row.cellData[column.name].value }}"
-                  (dateChange)="onDateChange(column.name, row.record, $event)"
-                />
-                <mat-datepicker #picker></mat-datepicker>
-              </div>
-              <input
-                matInput
-                type="time"
-                *ngIf="column.type === 'time'"
-                [formControlName]="column.name"
-                step="900"
-                (focus)="column.onFocus($event)"
-                (keypress)="column.onChange($event)"
-                (blur)="column.onBlur($event)"
-              />
-              <input
-                matInput
-                type="number"
-                class="class_number_edition"
-                *ngIf="column.type === 'number'"
-                [formControlName]="column.name"
-                step="{{ column.step }}"
-                value="{{ row.cellData[column.name].value }}"
-                (input)="onValueChange(column.name, row.record, $event)"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-                min="{{ getValidationAttributeValue(column, 'minValue') }}"
-                max="{{ getValidationAttributeValue(column, 'maxValue') }}"
-              />
-              <input
-                matInput
-                type="text"
-                *ngIf="!column.type || column.type === 'string'"
-                [formControlName]="column.name"
-                value="{{ row.cellData[column.name].value }}"
-                (input)="onValueChange(column.name, row.record, $event)"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-              />
-              <mat-checkbox
-                *ngIf="column.type === 'boolean'"
-                [formControlName]="column.name"
-                [checked]="row.cellData[column.name].value"
-                (change)="onBooleanValueChange(column.name, row.record, $event)"
-              ></mat-checkbox>
-              <mat-select
-                *ngIf="column.type === 'list'"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-                [formControlName]="column.name"
-                [multiple]="column.multiple"
-                (selectionChange)="
-                  onSelectValueChange(column.name, row.record, $event)
-                "
-                [value]="row.cellData[column.name].value"
-              >
-                <mat-option
-                  *ngFor="let option of column.domainValues"
-                  [value]="option.id"
-                  [disabled]="option.disabled"
-                >
-                  {{ option.value }}
-                </mat-option>
-              </mat-select>
-              <input
-                matInput
-                type="text"
-                [formControlName]="column.name"
-                *ngIf="column.type === 'autocomplete'"
-                [matAutocomplete]="auto"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-                value="{{ row.cellData[column.name].value }}"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-              />
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="
-                  onAutocompleteValueChange(column, row.record, $event)
-                "
-                panelWidth="430px"
-              >
-                <mat-option
-                  *ngFor="let option of filteredOptions[column.name] | async"
-                  [value]="option.id"
-                >
-                  {{ option.value }}
-                </mat-option>
-              </mat-autocomplete>
-            </td>
-            <ng-template #isUnsanitizedHTML>
+                    @switch (column.type) {
+                      @case ('date') {
+                        <div class="date-picker">
+                          <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                          ></mat-datepicker-toggle>
+                          <input
+                            matInput
+                            [matDatepicker]="picker"
+                            [formControlName]="column.name"
+                            value="{{ row.cellData[column.name].value }}"
+                            (dateChange)="
+                              onDateChange(column.name, row.record, $event)
+                            "
+                          />
+                          <mat-datepicker #picker></mat-datepicker>
+                        </div>
+                      }
+                      @case ('time') {
+                        <input
+                          matInput
+                          type="time"
+                          [formControlName]="column.name"
+                          step="900"
+                          (focus)="column.onFocus($event)"
+                          (keypress)="column.onChange($event)"
+                          (blur)="column.onBlur($event)"
+                        />
+                      }
+                      @case ('number') {
+                        <input
+                          matInput
+                          type="number"
+                          class="class_number_edition"
+                          [formControlName]="column.name"
+                          step="{{ column.step }}"
+                          value="{{ row.cellData[column.name].value }}"
+                          (input)="
+                            onValueChange(column.name, row.record, $event)
+                          "
+                          readonly="{{
+                            getValidationAttributeValue(column, 'readonly')
+                          }}"
+                          required="{{
+                            getValidationAttributeValue(column, 'mandatory')
+                          }}"
+                          min="{{
+                            getValidationAttributeValue(column, 'minValue')
+                          }}"
+                          max="{{
+                            getValidationAttributeValue(column, 'maxValue')
+                          }}"
+                        />
+                      }
+                      @case ('boolean') {
+                        <mat-checkbox
+                          [formControlName]="column.name"
+                          [checked]="row.cellData[column.name].value"
+                          (change)="
+                            onBooleanValueChange(
+                              column.name,
+                              row.record,
+                              $event
+                            )
+                          "
+                        ></mat-checkbox>
+                      }
+                      @case ('list') {
+                        <mat-select
+                          required="{{
+                            getValidationAttributeValue(column, 'mandatory')
+                          }}"
+                          [formControlName]="column.name"
+                          [multiple]="column.multiple"
+                          (selectionChange)="
+                            onSelectValueChange(column.name, row.record, $event)
+                          "
+                          [value]="row.cellData[column.name].value"
+                        >
+                          <mat-option
+                            *ngFor="let option of column.domainValues"
+                            [value]="option.id"
+                            [disabled]="option.disabled"
+                          >
+                            {{ option.value }}
+                          </mat-option>
+                        </mat-select>
+                      }
+                      @case ('autocomplete') {
+                        <input
+                          matInput
+                          type="text"
+                          [formControlName]="column.name"
+                          [matAutocomplete]="auto"
+                          required="{{
+                            getValidationAttributeValue(column, 'mandatory')
+                          }}"
+                          value="{{ row.cellData[column.name].value }}"
+                          readonly="{{
+                            getValidationAttributeValue(column, 'readonly')
+                          }}"
+                        />
+                        <mat-autocomplete
+                          #auto="matAutocomplete"
+                          (optionSelected)="
+                            onAutocompleteValueChange(
+                              column,
+                              row.record,
+                              $event
+                            )
+                          "
+                          panelWidth="430px"
+                        >
+                          <mat-option
+                            *ngFor="
+                              let option of filteredOptions[column.name] | async
+                            "
+                            [value]="option.id"
+                          >
+                            {{ option.value }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      }
+                      @default {
+                        <input
+                          matInput
+                          type="text"
+                          [formControlName]="column.name"
+                          value="{{ row.cellData[column.name].value }}"
+                          (input)="
+                            onValueChange(column.name, row.record, $event)
+                          "
+                          readonly="{{
+                            getValidationAttributeValue(column, 'readonly')
+                          }}"
+                          required="{{
+                            getValidationAttributeValue(column, 'mandatory')
+                          }}"
+                        />
+                      }
+                    }
+                  </td>
+                } @else {
+                  @if (!row.cellData[column.name].isUrl) {
+                    <td
+                      mat-cell
+                      class="mat-cell-text"
+                      [ngClass]="row.cellData[column.name].class"
+                      [innerHTML]="
+                        row.cellData[column.name].value | sanitizeHtml
+                      "
+                    ></td>
+                  } @else {
+                    <td
+                      mat-cell
+                      class="mat-cell-text"
+                      [ngClass]="row.cellData[column.name].class"
+                    >
+                      <a
+                        href="{{ row.cellData[column.name].value }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        (click)="$event.stopPropagation()"
+                      >
+                        @if (row.cellData[column.name].isImg) {
+                          <img
+                            igoImageError
+                            src="{{
+                              row.cellData[column.name].value
+                                | secureImage
+                                | async
+                            }}"
+                            width="50"
+                            heigth="auto"
+                          />
+                        } @else {
+                          ><span
+                            >{{ 'igo.geo.targetHtmlUrl' | translate }}
+                          </span>
+                        }
+                        >
+                      </a>
+                    </td>
+                  }
+                }
+              </ng-container>
+            }
+            @case (entityTableColumnRenderer.Icon) {
               <td
                 mat-cell
+                *matCellDef="let row"
                 class="mat-cell-text"
-                *ngIf="
-                  !row.cellData[column.name].isUrl;
-                  else isAnUrlUnsanitizedHTML
-                "
                 [ngClass]="row.cellData[column.name].class"
-                [innerHTML]="row.cellData[column.name].value | sanitizeHtml"
-              ></td>
-              <ng-template #isAnUrlUnsanitizedHTML>
+              >
+                @if (column.onClick) {
+                  <mat-icon (click)="column.onClick($event)">{{
+                    row.cellData[column.name].value || column.icon
+                  }}</mat-icon>
+                } @else {
+                  <mat-icon>{{
+                    row.cellData[column.name].value || column.icon
+                  }}</mat-icon>
+                }
+              </td>
+            }
+            @case (entityTableColumnRenderer.ButtonGroup) {
+              <ng-container *matCellDef="let row">
                 <td
                   mat-cell
                   class="mat-cell-text"
                   [ngClass]="row.cellData[column.name].class"
                 >
-                  <a
-                    href="{{ row.cellData[column.name].value }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    (click)="$event.stopPropagation()"
-                  >
-                    <img
-                      igoImageError
-                      *ngIf="row.cellData[column.name].isImg; else notImg"
-                      src="{{
-                        row.cellData[column.name].value | secureImage | async
-                      }}"
-                      width="50"
-                      heigth="auto"
-                    />
-                    <ng-template #notImg
-                      ><span
-                        >{{ 'igo.geo.targetHtmlUrl' | translate }}
-                      </span></ng-template
-                    >
-                  </a>
+                  @for (
+                    button of row.cellData[column.name].value;
+                    track button
+                  ) {
+                    @if (
+                      isEdition(row.record) === button.editMode ||
+                      button.editMode === undefined
+                    ) {
+                      <span>
+                        @if (button.style === 'mat-icon-button') {
+                          <button
+                            igoStopPropagation
+                            mat-icon-button
+                            [color]="button.color"
+                            (mousedown)="
+                              onButtonClick(button.click, row.record)
+                            "
+                            [disabled]="button.disabled"
+                          >
+                            <mat-icon>{{ button.icon }}</mat-icon>
+                          </button>
+                        } @else {
+                          <button
+                            igoStopPropagation
+                            mat-mini-fab
+                            [color]="button.color"
+                            (mousedown)="
+                              onButtonClick(button.click, row.record)
+                            "
+                            [disabled]="button.disabled"
+                          >
+                            <mat-icon>{{ button.icon }}</mat-icon>
+                          </button>
+                        }
+                      </span>
+                    }
+                  }
                 </td>
-              </ng-template>
-            </ng-template>
-          </ng-container>
-        </ng-container>
-        <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
-          <td
-            mat-cell
-            *matCellDef="let row"
-            class="mat-cell-text"
-            [ngClass]="row.cellData[column.name].class"
-          >
-            <mat-icon *ngIf="column.onClick" (click)="column.onClick($event)">{{
-              row.cellData[column.name].value || column.icon
-            }}</mat-icon>
-            <mat-icon *ngIf="!column.onClick">{{
-              row.cellData[column.name].value || column.icon
-            }}</mat-icon>
-          </td>
-        </ng-container>
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup"
-        >
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              [ngClass]="row.cellData[column.name].class"
-            >
-              <span *ngFor="let button of row.cellData[column.name].value">
-                <ng-container
-                  *ngIf="
-                    isEdition(row.record) === button.editMode ||
-                    button.editMode === undefined
-                  "
-                >
-                  <button
-                    *ngIf="button.style === 'mat-icon-button'"
-                    igoStopPropagation
-                    mat-icon-button
-                    [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, row.record)"
-                    [disabled]="button.disabled"
+              </ng-container>
+            }
+            @default {
+              <ng-container *matCellDef="let row">
+                @if (!row.cellData[column.name].isUrl) {
+                  <td
+                    mat-cell
+                    class="mat-cell-text"
+                    [ngClass]="row.cellData[column.name].class"
                   >
-                    <mat-icon>{{ button.icon }}</mat-icon>
-                  </button>
-                  <button
-                    *ngIf="button.style !== 'mat-icon-button'"
-                    igoStopPropagation
-                    mat-mini-fab
-                    [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, row.record)"
-                    [disabled]="button.disabled"
+                    {{ row.cellData[column.name].value }}
+                  </td>
+                } @else {
+                  <td
+                    mat-cell
+                    class="mat-cell-text"
+                    [ngClass]="row.cellData[column.name].class"
                   >
-                    <mat-icon>{{ button.icon }}</mat-icon>
-                  </button>
-                </ng-container>
-              </span>
-            </td>
-          </ng-container>
-        </ng-container>
+                    <a
+                      href="{{ row.cellData[column.name].value }}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      (click)="$event.stopPropagation()"
+                    >
+                      @if (row.cellData[column.name].isImg) {
+                        <img
+                          igoImageError
+                          src="{{
+                            row.cellData[column.name].value
+                              | secureImage
+                              | async
+                          }}"
+                          width="50"
+                          heigth="auto"
+                        />
+                      } @else {
+                        <span>{{
+                          'igo.common.entity-table.targetHtmlUrl' | translate
+                        }}</span>
+                      }
+                      >
+                    </a>
+                  </td>
+                }
+              </ng-container>
+            }
+          }
+        }
       </ng-container>
-    </ng-container>
+    }
 
     <tr
       mat-header-row
@@ -382,12 +432,13 @@
       (click)="onRowClick(row.record)"
     ></tr>
   </table>
-  <igo-entity-table-paginator
-    *ngIf="withPaginator"
-    [store]="store"
-    [paginatorOptions]="paginatorOptions"
-    [entitySortChange$]="entitySortChange$"
-    (paginatorChange)="paginatorChange($event)"
-  >
-  </igo-entity-table-paginator>
+  @if (withPaginator) {
+    <igo-entity-table-paginator
+      [store]="store"
+      [paginatorOptions]="paginatorOptions"
+      [entitySortChange$]="entitySortChange$"
+      (paginatorChange)="paginatorChange($event)"
+    >
+    </igo-entity-table-paginator>
+  }
 </div>

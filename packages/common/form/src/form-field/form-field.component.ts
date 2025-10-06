@@ -1,5 +1,9 @@
-import { NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
 
 import { DynamicOutletComponent } from '@igo2/common/dynamic-component';
 
@@ -21,9 +25,11 @@ import {
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, DynamicOutletComponent]
+  imports: [DynamicOutletComponent]
 })
 export class FormFieldComponent {
+  private formFieldService = inject(FormFieldService);
+
   /**
    * Field configuration
    */
@@ -42,8 +48,6 @@ export class FormFieldComponent {
   get fieldOptions(): FormFieldOptions {
     return this.field.options || {};
   }
-
-  constructor(private formFieldService: FormFieldService) {}
 
   getFieldComponent(): any {
     return this.formFieldService.getFieldByType(this.field.type || 'text');

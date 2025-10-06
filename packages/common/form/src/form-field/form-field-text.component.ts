@@ -1,10 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
@@ -36,7 +37,6 @@ import {
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatIconModule,
     MatButtonModule,
     AsyncPipe,
@@ -44,6 +44,8 @@ import {
   ]
 })
 export class FormFieldTextComponent implements OnInit {
+  private cdRef = inject(ChangeDetectorRef);
+
   disabled$ = new BehaviorSubject<boolean>(false);
   hide = true;
   private lastTimeoutRequest;
@@ -79,8 +81,6 @@ export class FormFieldTextComponent implements OnInit {
   get required(): boolean {
     return formControlIsRequired(this.formControl);
   }
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.disabled$.next(this.formControl.disabled);

@@ -1,3 +1,14 @@
+@use '@angular/material' as mat;
+
+:host {
+  @include mat.form-field-overrides(
+    (
+      container-height: 48px,
+      container-vertical-padding: 12px
+    )
+  );
+}
+
 mat-form-field {
   width: 100%;
 }

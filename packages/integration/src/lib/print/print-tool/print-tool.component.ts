@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import { IgoMap, PrintComponent } from '@igo2/geo';
@@ -16,9 +16,9 @@ import { MapState } from '../../map/map.state';
   imports: [PrintComponent]
 })
 export class PrintToolComponent {
+  private mapState = inject(MapState);
+
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(private mapState: MapState) {}
 }

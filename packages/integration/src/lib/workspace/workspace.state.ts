@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
 import {
   EntityRecord,
@@ -24,6 +24,11 @@ import { WfsActionsService } from './shared/wfs-actions.service';
   providedIn: 'root'
 })
 export class WorkspaceState implements OnDestroy {
+  private featureActionsService = inject(FeatureActionsService);
+  private wfsActionsService = inject(WfsActionsService);
+  private editionActionsService = inject(EditionActionsService);
+  private storageService = inject(StorageService);
+
   public workspacePanelExpanded = false;
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> =
@@ -82,12 +87,7 @@ export class WorkspaceState implements OnDestroy {
     }
   }
 
-  constructor(
-    private featureActionsService: FeatureActionsService,
-    private wfsActionsService: WfsActionsService,
-    private editionActionsService: EditionActionsService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.workspaceMaximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -46,9 +46,7 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
     MatIconModule,
     CollapseDirective,
     MatTooltipModule,
-    NgIf,
     MatButtonModule,
-    NgFor,
     CatalogBrowserLayerComponent,
     ListItemDirective,
     AsyncPipe,

@@ -1,11 +1,12 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -78,7 +79,6 @@ import { SearchState } from '../search.state';
     `
   ],
   imports: [
-    NgIf,
     FlexibleComponent,
     SearchResultsComponent,
     SearchResultAddButtonComponent,
@@ -94,6 +94,12 @@ import { SearchState } from '../search.state';
   ]
 })
 export class SearchResultsToolComponent implements OnInit, OnDestroy {
+  private mapState = inject(MapState);
+  private searchState = inject(SearchState);
+  private elRef = inject(ElementRef);
+  toolState = inject(ToolState);
+  private directionState = inject(DirectionState);
+
   /**
    * to show hide results icons
    */
@@ -181,14 +187,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return this.searchState.searchLayerStores;
   }
 
-  constructor(
-    private mapState: MapState,
-    private searchState: SearchState,
-    private elRef: ElementRef,
-    public toolState: ToolState,
-    private directionState: DirectionState,
-    configService: ConfigService
-  ) {
+  constructor() {
+    const configService = inject(ConfigService);
+
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
     );

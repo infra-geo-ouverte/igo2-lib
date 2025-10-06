@@ -1,52 +1,60 @@
-:host {
-  .igo-input-container {
-    display: flex;
-    width: 100%;
+@use '@angular/material' as mat;
 
-    mat-form-field {
-      flex: 1;
-    }
+.prefix-actions {
+  @include mat.icon-button-overrides(
+    (
+      state-layer-size: 28px
+    )
+  );
+}
+
+.igo-input-container {
+  display: flex;
+  width: 100%;
+
+  mat-form-field {
+    flex: 1;
   }
+}
 
-  .stops-list,
-  .stop {
-    display: flex;
-    flex-flow: column;
-    row-gap: 12px;
-  }
+.stops-list,
+.stop {
+  display: flex;
+  flex-flow: column;
+  row-gap: 12px;
+}
 
-  .stop:hover {
-    .swipe-vertical,
-    .delete-button {
-      visibility: visible;
-      display: block;
-    }
-  }
-
-  .swipe-vertical {
-    visibility: hidden;
-    cursor: move;
-  }
-
+.stop:hover {
+  .swipe-vertical,
   .delete-button {
-    display: none;
+    visibility: visible;
+    display: block;
   }
+}
 
-  .stop-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.swipe-vertical {
+  visibility: hidden;
+  cursor: move;
+}
 
-  .cdk-drag-placeholder {
-    opacity: 0;
-  }
+.delete-button {
+  display: none;
+}
 
-  .cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
+.stop-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .stops-list.cdk-drop-list-dragging .stop-box:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stops-list.cdk-drop-list-dragging .stop-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

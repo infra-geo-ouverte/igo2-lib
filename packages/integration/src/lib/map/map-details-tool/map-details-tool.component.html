@@ -1,64 +1,70 @@
-<igo-layer-viewer
-  class="mapDetailsList"
-  *ngIf="(layers$ | async).length; else empty"
-  [map]="map"
-  [options]="layerViewerOptions"
-  [excludeBaseLayers]="excludeBaseLayers"
-  [isDesktop]="isDesktop"
->
-  <ng-template #customBottomActions let-layer="layer">
-    <igo-workspace-button [layer]="layer"></igo-workspace-button>
-    <igo-export-button
-      [layer]="layer"
-      (click)="activateExport(layer)"
-    ></igo-export-button>
-    <igo-ogc-filter-button
-      [header]="ogcButton"
-      [layer]="layer"
-    ></igo-ogc-filter-button>
-    <igo-time-filter-button
-      [header]="timeButton"
-      [layer]="layer"
-    ></igo-time-filter-button>
-    <igo-track-feature-button
-      [trackFeature]="true"
-      [layer]="layer"
-    ></igo-track-feature-button>
-    <igo-metadata-button [layer]="layer"></igo-metadata-button>
-  </ng-template>
-</igo-layer-viewer>
-
-<ng-template #empty>
-  <mat-list *ngIf="delayedShowEmptyMapContent">
-    <p class="map-empty">
-      {{ 'igo.integration.mapTool.empty' | translate }}
-    </p>
-    <p
-      *ngIf="
+@if ((layers$ | async).length) {
+  <igo-layer-viewer
+    class="mapDetailsList"
+    [map]="map"
+    [options]="layerViewerOptions"
+    [excludeBaseLayers]="excludeBaseLayers"
+    [isDesktop]="isDesktop"
+  >
+    <ng-template #customBottomActions let-layer="layer">
+      <igo-workspace-button [layer]="layer"></igo-workspace-button>
+      <igo-export-button
+        [layer]="layer"
+        (click)="activateExport(layer)"
+      ></igo-export-button>
+      <igo-ogc-filter-button
+        [header]="ogcButton"
+        [layer]="layer"
+      ></igo-ogc-filter-button>
+      <igo-time-filter-button
+        [header]="timeButton"
+        [layer]="layer"
+      ></igo-time-filter-button>
+      <igo-track-feature-button
+        [trackFeature]="true"
+        [layer]="layer"
+      ></igo-track-feature-button>
+      <igo-metadata-button [layer]="layer"></igo-metadata-button>
+    </ng-template>
+  </igo-layer-viewer>
+} @else {
+  @if (delayedShowEmptyMapContent) {
+    <mat-list>
+      <p class="map-empty">
+        {{ 'igo.integration.mapTool.empty' | translate }}
+      </p>
+      @if (
         layerAdditionAllowed &&
         (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
-      "
-      class="map-empty"
-    >
-      {{ 'igo.integration.mapTool.customize' | translate }}
-    </p>
-    <mat-list-item *ngIf="layerAdditionAllowed && searchToolInToolbar">
-      <mat-icon matListItemIcon>search</mat-icon>
-      <span matListItemTitle class="search-tool" (click)="searchEmit()">
-        {{ 'igo.integration.mapTool.search-tool' | translate }}
-      </span>
-    </mat-list-item>
-    <mat-list-item *ngIf="layerAdditionAllowed && catalogToolInToolbar">
-      <mat-icon matListItemIcon>library_add</mat-icon>
-      <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
-        {{ 'igo.integration.mapTool.catalog-tool' | translate }}
-      </span>
-    </mat-list-item>
-    <mat-list-item *ngIf="layerAdditionAllowed && contextToolInToolbar">
-      <mat-icon matListItemIcon>star</mat-icon>
-      <span matListItemTitle class="context-tool" (click)="contextEmit()">
-        {{ 'igo.integration.mapTool.context-tool' | translate }}
-      </span>
-    </mat-list-item>
-  </mat-list>
-</ng-template>
+      ) {
+        <p class="map-empty">
+          {{ 'igo.integration.mapTool.customize' | translate }}
+        </p>
+      }
+      @if (layerAdditionAllowed && searchToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>search</mat-icon>
+          <span matListItemTitle class="search-tool" (click)="searchEmit()">
+            {{ 'igo.integration.mapTool.search-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+      @if (layerAdditionAllowed && catalogToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>library_add</mat-icon>
+          <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
+            {{ 'igo.integration.mapTool.catalog-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+      @if (layerAdditionAllowed && contextToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>star</mat-icon>
+          <span matListItemTitle class="context-tool" (click)="contextEmit()">
+            {{ 'igo.integration.mapTool.context-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+}

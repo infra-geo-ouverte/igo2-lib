@@ -4,7 +4,7 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  Self
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -32,6 +32,15 @@ import { ContextListComponent } from './context-list.component';
   providers: [ConfirmDialogService]
 })
 export class ContextListBindingDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private mapService = inject(MapService);
+  private languageService = inject(LanguageService);
+  private confirmDialogService = inject(ConfirmDialogService);
+  private messageService = inject(MessageService);
+  private auth = inject(AuthService);
+  private storageService = inject(StorageService);
+  private cdRef = inject(ChangeDetectorRef);
+
   private component: ContextListComponent;
   private contexts$$: Subscription;
   private selectedContext$$: Subscription;
@@ -206,17 +215,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     this.contextService.hideContext(context.id).subscribe();
   }
 
-  constructor(
-    @Self() component: ContextListComponent,
-    private contextService: ContextService,
-    private mapService: MapService,
-    private languageService: LanguageService,
-    private confirmDialogService: ConfirmDialogService,
-    private messageService: MessageService,
-    private auth: AuthService,
-    private storageService: StorageService,
-    private cdRef: ChangeDetectorRef
-  ) {
+  constructor() {
+    const component = inject(ContextListComponent, { self: true });
+
     this.component = component;
   }
 
@@ -246,7 +247,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     // See feature-list.component for an explanation about the debounce time
     this.selectedContext$$ = this.contextService.context$
       .pipe(debounceTime(100))
-      .subscribe((context) => (this.component.selectedContext = context));
+      .subscribe((context) => {
+        this.component.selectedContext = context;
+        this.cdRef.markForCheck();
+      });
 
     this.auth.authenticate$.subscribe((authenticate) => {
       if (authenticate) {

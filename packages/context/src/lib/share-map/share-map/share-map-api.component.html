@@ -15,7 +15,9 @@
 
   <div id="uriInput" class="igo-input-container">
     <mat-form-field>
-      <span *ngIf="userId" class="prefix">{{ userId }}-</span>
+      @if (userId) {
+        <span class="prefix">{{ userId }}-</span>
+      }
       <span class="fieldWrapper">
         <input
           matInput
@@ -32,46 +34,46 @@
   </div>
 
   <div class="igo-form-button-group">
-    <button
-      *ngIf="!url"
-      mat-raised-button
-      type="submit"
-      [disabled]="!form.valid"
-    >
-      {{ 'igo.context.shareMap.button' | translate }}
-    </button>
-    <button
-      *ngIf="url"
-      mat-raised-button
-      type="button"
-      (click)="updateContextShared(form.value)"
-    >
-      {{ 'igo.context.shareMap.refreshBtn' | translate }}
-    </button>
+    @if (!url) {
+      <button matButton="elevated" type="submit" [disabled]="!form.valid">
+        {{ 'igo.context.shareMap.button' | translate }}
+      </button>
+    }
+    @if (url) {
+      <button
+        matButton="elevated"
+        type="button"
+        (click)="updateContextShared(form.value)"
+      >
+        {{ 'igo.context.shareMap.refreshBtn' | translate }}
+      </button>
+    }
   </div>
 </form>
 
-<div *ngIf="url" class="igo-input-container linkToShare">
-  <mat-form-field>
-    <textarea
-      #textArea
-      matInput
-      readonly
-      rows="3"
-      class="textAreaWithButton"
-      [placeholder]="'igo.context.shareMap.placeholderLink' | translate"
-      [value]="url"
-    ></textarea>
-    <button
-      mat-icon-button
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.context.shareMap.copy' | translate"
-      color="primary"
-      (click)="copyTextToClipboard(textArea)"
-    >
-      <mat-icon>content_copy</mat-icon>
-    </button>
-  </mat-form-field>
-  <div></div>
-</div>
+@if (url) {
+  <div class="igo-input-container linkToShare">
+    <mat-form-field>
+      <textarea
+        #textArea
+        matInput
+        readonly
+        rows="3"
+        class="textAreaWithButton"
+        [placeholder]="'igo.context.shareMap.placeholderLink' | translate"
+        [value]="url"
+      ></textarea>
+      <button
+        mat-icon-button
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.context.shareMap.copy' | translate"
+        color="primary"
+        (click)="copyTextToClipboard(textArea)"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
+    <div></div>
+  </div>
+}

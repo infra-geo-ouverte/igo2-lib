@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
@@ -18,10 +18,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppLanguageComponent {
+  private languageService = inject(LanguageService);
+
   public app = {
     title: 'IGO'
   };
-  constructor(private languageService: LanguageService) {}
 
   changeLanguage(language: string) {
     this.languageService.setLanguage(language);

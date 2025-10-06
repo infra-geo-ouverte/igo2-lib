@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -8,13 +8,15 @@ import { AnalyticsBaseUser, AnalyticsOptions } from './analytics.interface';
   providedIn: 'root'
 })
 export class AnalyticsService {
+  private config = inject(ConfigService);
+
   private options: AnalyticsOptions;
 
   get paq() {
     return ((window as any)._paq = (window as any)._paq || []);
   }
 
-  constructor(private config: ConfigService) {
+  constructor() {
     this.options = this.config.getConfig('analytics') || {};
 
     if (this.options.provider === 'matomo') {

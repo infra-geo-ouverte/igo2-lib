@@ -1,4 +1,3 @@
-import { NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -40,7 +39,6 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
     MatTabsModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     SpatialFilterListComponent,
     MatButtonToggleModule,

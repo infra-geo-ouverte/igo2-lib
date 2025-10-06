@@ -5,7 +5,8 @@ import {
   HostListener,
   Input,
   Output,
-  Renderer2
+  Renderer2,
+  inject
 } from '@angular/core';
 
 import scrollIntoView from 'scroll-into-view-if-needed';
@@ -20,6 +21,9 @@ import { EntityTableScrollBehavior } from '../shared/entity.enums';
   standalone: true
 })
 export class EntityTableRowDirective {
+  private renderer = inject(Renderer2);
+  private el = inject(ElementRef);
+
   /**
    * Class added to a selected row
    */
@@ -89,11 +93,6 @@ export class EntityTableRowDirective {
     this.toggleSelected(true);
     this.select.emit(this);
   }
-
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {}
 
   /**
    * Select a row and add or remove the selected class from it

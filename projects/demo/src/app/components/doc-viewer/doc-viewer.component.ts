@@ -1,11 +1,10 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-doc-viewer',
   templateUrl: './doc-viewer.component.html',
   styleUrls: ['./doc-viewer.component.scss'],
-  imports: [NgIf, NgFor]
+  imports: []
 })
 export class DocViewerComponent {
   @Input() title: string;

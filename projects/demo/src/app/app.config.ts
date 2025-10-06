@@ -1,5 +1,8 @@
 import { provideHttpClient, withJsonpSupport } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideZonelessChangeDetection
+} from '@angular/core';
 import { importProvidersFrom } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -36,6 +39,7 @@ import { routes } from './app.routing';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZonelessChangeDetection(),
     importProvidersFrom(
       IgoCoreModule,
       BrowserModule,

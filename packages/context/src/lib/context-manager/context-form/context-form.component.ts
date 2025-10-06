@@ -1,6 +1,12 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -28,7 +34,6 @@ import { Context } from '../shared/context.interface';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -36,6 +41,10 @@ import { Context } from '../shared/context.interface';
   ]
 })
 export class ContextFormComponent implements OnInit {
+  private clipboard = inject(Clipboard);
+  private formBuilder = inject(UntypedFormBuilder);
+  private messageService = inject(MessageService);
+
   public form: UntypedFormGroup;
   public prefix: string;
 
@@ -71,12 +80,6 @@ export class ContextFormComponent implements OnInit {
   @Output() submitForm = new EventEmitter<any>();
   @Output() clone = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
-
-  constructor(
-    private clipboard: Clipboard,
-    private formBuilder: UntypedFormBuilder,
-    private messageService: MessageService
-  ) {}
 
   ngOnInit(): void {
     this.buildForm();

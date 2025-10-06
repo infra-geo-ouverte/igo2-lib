@@ -1,9 +1,0 @@
-@use '@angular/material' as mat;
-
-@use './layer-legend/layer-legend.theme.scss' as layer-legend;
-@use './layer-list-tool/layer-list-tool.theming.scss' as layer-list-tool;
-
-@mixin themes($theme) {
-  @include layer-legend.theme($theme);
-  @include layer-list-tool.theme($theme);
-}

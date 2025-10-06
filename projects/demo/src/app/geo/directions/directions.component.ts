@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AuthService } from '@igo2/auth';
@@ -43,6 +43,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppDirectionsComponent {
+  private layerService = inject(LayerService);
+  private mapService = inject(MapService);
+  private authService = inject(AuthService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -71,11 +75,7 @@ export class AppDirectionsComponent {
 
   public authenticated$: BehaviorSubject<boolean>;
 
-  constructor(
-    private layerService: LayerService,
-    private mapService: MapService,
-    private authService: AuthService
-  ) {
+  constructor() {
     this.authenticated$ = this.authService.authenticate$;
     this.mapService.setMap(this.map);
 

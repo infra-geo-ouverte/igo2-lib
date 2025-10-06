@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { Location } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MSAL_INSTANCE } from '@azure/msal-angular';
 import { IMsalService } from '@azure/msal-angular';
@@ -23,14 +23,14 @@ import { Observable, from } from 'rxjs';
 
 @Injectable()
 export class MsalServiceb2c implements IMsalService {
+  instance = inject<IPublicClientApplication>(MSAL_INSTANCE);
+  private location = inject(Location);
+
   private redirectHash: string;
   private logger: Logger;
   private name = '@azure/msal-angular';
   private version = '2.0.0-beta.2';
-  constructor(
-    @Inject(MSAL_INSTANCE) public instance: IPublicClientApplication,
-    private location: Location
-  ) {
+  constructor() {
     const hash = this.location.path(true).split('#').pop();
     if (hash) {
       this.redirectHash = `#${hash}`;

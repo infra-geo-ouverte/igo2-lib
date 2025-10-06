@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import { IgoMap, Layer, TimeFilterItemComponent, isLayerItem } from '@igo2/geo';
@@ -19,6 +19,8 @@ import { toolSlideInOut } from './active-time-filter-tool.animation';
   imports: [TimeFilterItemComponent]
 })
 export class ActiveTimeFilterToolComponent {
+  mapState = inject(MapState);
+
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -33,6 +35,4 @@ export class ActiveTimeFilterToolComponent {
   }
 
   public animate = 'enter';
-
-  constructor(public mapState: MapState) {}
 }

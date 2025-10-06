@@ -1,20 +1,17 @@
-import {
-  provideHttpClient,
-  withInterceptorsFromDi
-} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
+
+import { mergeTestConfig } from 'packages/geo/test-config';
 
 import { CapabilitiesService } from './capabilities.service';
 
 describe('CapabilitiesService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [],
-      providers: [
-        CapabilitiesService,
-        provideHttpClient(withInterceptorsFromDi())
-      ]
-    });
+    TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [],
+        providers: [CapabilitiesService]
+      })
+    );
   });
 
   it('should ...', inject(

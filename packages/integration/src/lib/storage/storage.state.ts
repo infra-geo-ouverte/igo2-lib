@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { StorageService } from '@igo2/core/storage';
 
@@ -9,9 +9,9 @@ import { StorageService } from '@igo2/core/storage';
   providedIn: 'root'
 })
 export class StorageState {
+  private igoStorageService = inject(StorageService);
+
   get storageService(): StorageService {
     return this.igoStorageService;
   }
-
-  constructor(private igoStorageService: StorageService) {}
 }

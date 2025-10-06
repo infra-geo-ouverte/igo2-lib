@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -42,7 +41,6 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
   templateUrl: './ogc-filter-time.component.html',
   styleUrls: ['./ogc-filter-time.component.scss'],
   imports: [
-    NgIf,
     MatSlideToggleModule,
     FormsModule,
     OgcFilterTimeSliderComponent,
@@ -54,7 +52,6 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
     MatIconModule,
     MatSelectModule,
     ReactiveFormsModule,
-    NgFor,
     MatOptionModule,
     IgoLanguageModule
   ],

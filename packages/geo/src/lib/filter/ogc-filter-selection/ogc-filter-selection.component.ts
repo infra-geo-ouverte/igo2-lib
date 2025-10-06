@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgStyle } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -59,8 +59,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgFor,
-    NgIf,
     MatDividerModule,
     MatFormFieldModule,
     MatSelectModule,

@@ -1,4 +1,4 @@
-// import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+// import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { By } from '@angular/platform-browser';
 // import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
 //
@@ -36,8 +36,8 @@
 //   // const dateYAfterHandleTime = new Date('1999-02-02T11:00:00Z');
 //   // const dateZAfterHandleTime = new Date('1999-02-02T17:00:00Z');
 //
-//   beforeEach(waitForAsync(() => {
-//     TestBed.configureTestingModule({
+//   beforeEach(async () => {
+//     await TestBed.configureTestingModule({
 //       imports: [
 //         MatDatepickerModule,
 //         MatNativeDateModule,
@@ -47,9 +47,7 @@
 //       ],
 //       declarations: [TimeFilterFormComponent]
 //     }).compileComponents();
-//   }));
-//
-//   beforeEach(() => {
+
 //     fixture = TestBed.createComponent(TimeFilterFormComponent);
 //     component = fixture.componentInstance;
 //   });

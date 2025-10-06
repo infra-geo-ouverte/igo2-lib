@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
 import {
@@ -31,6 +31,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -65,11 +68,6 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
   };
 
   public store: FeatureStore = new FeatureStore([], { map: this.map });
-
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {}
 
   ngOnInit(): void {
     const loadingStrategy: FeatureStoreLoadingStrategy =

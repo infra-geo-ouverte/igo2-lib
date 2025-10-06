@@ -1,5 +1,5 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -41,7 +41,6 @@ import {
   styleUrls: ['./context-import-export.component.scss'],
   imports: [
     MatButtonToggleModule,
-    NgIf,
     FormsModule,
     MatButtonModule,
     SpinnerComponent,
@@ -51,12 +50,18 @@ import {
     MatSelectModule,
     MatOptionModule,
     MatDividerModule,
-    NgFor,
     AsyncPipe,
     IgoLanguageModule
   ]
 })
 export class ContextImportExportComponent implements OnInit {
+  private contextImportService = inject(ContextImportService);
+  private contextExportService = inject(ContextExportService);
+  private messageService = inject(MessageService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private config = inject(ConfigService);
+  private contextService = inject(ContextService);
+
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public inputProj = 'EPSG:4326';
@@ -71,14 +76,7 @@ export class ContextImportExportComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  constructor(
-    private contextImportService: ContextImportService,
-    private contextExportService: ContextExportService,
-    private messageService: MessageService,
-    private formBuilder: UntypedFormBuilder,
-    private config: ConfigService,
-    private contextService: ContextService
-  ) {
+  constructor() {
     this.buildForm();
   }
 

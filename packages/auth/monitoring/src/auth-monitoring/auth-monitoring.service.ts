@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector, Optional } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { AuthService, User } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
@@ -14,16 +14,17 @@ import { first, switchMap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthMonitoringService {
+  private configService = inject(ConfigService);
+  private monitoringOptions = inject<AnyMonitoringOptions | null>(
+    MONITORING_OPTIONS,
+    { optional: true }
+  );
+  private injector = inject(Injector);
+
   // The AuthService need to be lazy provided because this service is provided in the APP_INITIALIZER
   authService?: AuthService;
 
-  constructor(
-    private configService: ConfigService,
-    @Optional()
-    @Inject(MONITORING_OPTIONS)
-    private monitoringOptions: AnyMonitoringOptions | null,
-    private injector: Injector
-  ) {
+  constructor() {
     if (!this.monitoringOptions?.identifyUser) {
       return;
     }

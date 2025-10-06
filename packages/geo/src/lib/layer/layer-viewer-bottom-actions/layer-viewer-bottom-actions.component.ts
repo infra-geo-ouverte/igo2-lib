@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +29,6 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
   templateUrl: './layer-viewer-bottom-actions.component.html',
   styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

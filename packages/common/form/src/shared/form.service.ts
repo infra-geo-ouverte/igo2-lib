@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   FormControlState,
   UntypedFormBuilder,
@@ -18,7 +18,7 @@ import {
   providedIn: 'root'
 })
 export class FormService {
-  constructor(private formBuilder: UntypedFormBuilder) {}
+  private formBuilder = inject(UntypedFormBuilder);
 
   form(fields: FormField[], groups: FormFieldGroup[]): Form {
     const control = this.formBuilder.group({});

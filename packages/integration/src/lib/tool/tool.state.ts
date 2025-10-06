@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ToolService, Toolbox } from '@igo2/common/tool';
 import { ExportOptions } from '@igo2/geo';
@@ -17,16 +17,14 @@ import {
   providedIn: 'root'
 })
 export class ToolState {
+  private toolService = inject(ToolService);
+  private importExportState = inject(ImportExportState);
+
   get toolbox(): Toolbox {
     return this.toolService.toolbox;
   }
 
   public openSidenav$ = new BehaviorSubject<boolean>(undefined);
-
-  constructor(
-    private toolService: ToolService,
-    private importExportState: ImportExportState
-  ) {}
 
   toolToActivateFromOptions(toolToActivate: {
     tool: string;

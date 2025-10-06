@@ -1,5 +1,5 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
@@ -51,13 +51,14 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     MAP_DIRECTIVES,
     IgoQueryModule,
     PanelComponent,
-    NgIf,
-    NgFor,
     FEATURE_DETAILS_DIRECTIVES,
     AsyncPipe
   ]
 })
 export class AppQueryComponent {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+
   public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
     []
   );
@@ -75,10 +76,7 @@ export class AppQueryComponent {
     zoom: 6
   };
 
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {
+  constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

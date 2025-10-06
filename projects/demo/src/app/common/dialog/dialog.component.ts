@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -43,12 +43,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppDialogComponent {
-  constructor(
-    private confirmDialogService: ConfirmDialogService,
-    private selectValueDialogService: SelectValueDialogService,
-    private jsonDialogService: JsonDialogService,
-    private formDialogService: FormDialogService
-  ) {}
+  private confirmDialogService = inject(ConfirmDialogService);
+  private selectValueDialogService = inject(SelectValueDialogService);
+  private jsonDialogService = inject(JsonDialogService);
+  private formDialogService = inject(FormDialogService);
 
   confirm(): void {
     this.confirmDialogService

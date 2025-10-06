@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -46,7 +46,6 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
     FormsModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
-    NgFor,
     MatOptionModule,
     MatSelectModule,
     AsyncPipe,

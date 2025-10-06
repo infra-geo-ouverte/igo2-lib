@@ -5,7 +5,7 @@ import {
   CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -57,14 +57,12 @@ import { DirectionRelativePositionType } from './../shared/directions.enum';
   styleUrls: ['./directions-inputs.component.scss'],
   imports: [
     CdkDropList,
-    NgFor,
     CdkDrag,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     MatAutocompleteModule,
     MatTooltipModule,
-    NgIf,
     MatButtonModule,
     MatIconModule,
     MatOptionModule,

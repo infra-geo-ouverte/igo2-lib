@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import {
@@ -20,7 +20,7 @@ import { ToolState } from '../../tool/tool.state';
   imports: [ContextEditComponent, ContextEditBindingDirective]
 })
 export class ContextEditorToolComponent {
-  constructor(private toolState: ToolState) {}
+  private toolState = inject(ToolState);
 
   submitSuccessed() {
     this.toolState.toolbox.activatePreviousTool();

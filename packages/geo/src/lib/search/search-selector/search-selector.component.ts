@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,7 +41,6 @@ import { SEARCH_TYPES } from '../shared/search.enums';
     MatMenuModule,
     MatIconModule,
     MatRadioModule,
-    NgFor,
     AsyncPipe,
     IgoLanguageModule
   ]

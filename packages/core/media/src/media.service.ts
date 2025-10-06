@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,7 +12,9 @@ export class MediaService {
   public media$ = new BehaviorSubject<Media>(undefined);
   public orientation$ = new BehaviorSubject<MediaOrientation>(undefined);
 
-  constructor(breakpointObserver: BreakpointObserver) {
+  constructor() {
+    const breakpointObserver = inject(BreakpointObserver);
+
     breakpointObserver
       .observe([Breakpoints.HandsetLandscape])
       .subscribe((res) => {

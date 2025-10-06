@@ -19,8 +19,8 @@
       fixedTopGap="48"
     >
       <mat-accordion displayMode="flat" multi>
-        <ng-container *ngFor="let routeConfig of routesConfig">
-          <ng-container *ngIf="!routeConfig.children; else routeWithChildren">
+        @for (routeConfig of routesConfig; track routeConfig) {
+          @if (!routeConfig.children) {
             <mat-nav-list>
               <a
                 mat-list-item
@@ -32,26 +32,25 @@
               >
             </mat-nav-list>
             <mat-divider></mat-divider>
-          </ng-container>
-          <ng-template #routeWithChildren>
+          } @else {
             <mat-expansion-panel expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title> {{ routeConfig.title }} </mat-panel-title>
               </mat-expansion-panel-header>
               <mat-nav-list>
-                <a
-                  *ngFor="let route of routeConfig.children"
-                  mat-list-item
-                  [routerLink]="routeConfig.path + '/' + route.path"
-                  routerLinkActive="active-link"
-                  >{{ route.title }}</a
-                >
+                @for (route of routeConfig.children; track route) {
+                  <a
+                    mat-list-item
+                    [routerLink]="routeConfig.path + '/' + route.path"
+                    routerLinkActive="active-link"
+                    >{{ route.title }}</a
+                  >
+                }
               </mat-nav-list>
             </mat-expansion-panel>
-
             <mat-divider></mat-divider>
-          </ng-template>
-        </ng-container>
+          }
+        }
       </mat-accordion>
     </mat-sidenav>
 

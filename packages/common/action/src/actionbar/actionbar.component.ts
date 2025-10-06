@@ -1,5 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,7 +9,8 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  SimpleChanges
+  SimpleChanges,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -43,13 +44,11 @@ import { ActionbarItemComponent } from './actionbar-item.component';
   styleUrls: ['./actionbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
     MatListModule,
     ActionbarItemComponent,
-    NgFor,
     MatMenuModule,
     MatCardModule,
     AsyncPipe,
@@ -57,6 +56,11 @@ import { ActionbarItemComponent } from './actionbar-item.component';
   ]
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
+  overlay = inject(Overlay);
+  private elRef = inject(ElementRef);
+  private cdRef = inject(ChangeDetectorRef);
+  mediaService = inject(MediaService);
+
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -237,13 +241,6 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   get isDesktop(): boolean {
     return this.mediaService.getMedia() === Media.Desktop;
   }
-
-  constructor(
-    public overlay: Overlay,
-    private elRef: ElementRef,
-    private cdRef: ChangeDetectorRef,
-    public mediaService: MediaService
-  ) {}
 
   /**
    * @internal

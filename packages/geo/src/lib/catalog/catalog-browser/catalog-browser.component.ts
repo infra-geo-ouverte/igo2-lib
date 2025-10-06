@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -38,8 +38,6 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgFor,
-    NgIf,
     CatalogBrowserGroupComponent,
     CatalogBrowserLayerComponent,
     ListItemDirective,

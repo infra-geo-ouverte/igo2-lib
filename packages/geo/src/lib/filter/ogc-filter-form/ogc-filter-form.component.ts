@@ -1,4 +1,4 @@
-import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, KeyValuePipe, NgClass } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,10 +39,8 @@ import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.compo
     NgClass,
     MatSelectModule,
     MatOptionModule,
-    NgIf,
     MatInputModule,
     MatAutocompleteModule,
-    NgFor,
     MatButtonModule,
     MatIconModule,
     OgcFilterTimeComponent,

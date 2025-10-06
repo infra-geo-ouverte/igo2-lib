@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Router,
@@ -14,11 +14,9 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class AdminGuard {
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private router: Router
-  ) {}
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private router = inject(Router);
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authService.isAdmin) {

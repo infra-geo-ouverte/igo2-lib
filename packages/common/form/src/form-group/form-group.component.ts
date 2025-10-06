@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,14 +19,7 @@ import { getControlErrorMessage } from '../shared/form.utils';
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    NgFor,
-    NgClass,
-    FormFieldComponent,
-    MatFormFieldModule,
-    IgoLanguageModule
-  ]
+  imports: [NgClass, FormFieldComponent, MatFormFieldModule, IgoLanguageModule]
 })
 export class FormGroupComponent {
   /**

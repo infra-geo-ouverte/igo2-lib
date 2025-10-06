@@ -1,12 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import {
-  AsyncPipe,
-  JsonPipe,
-  KeyValuePipe,
-  NgFor,
-  NgIf,
-  NgStyle
-} from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValuePipe, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -42,8 +35,6 @@ import { Feature } from '../shared';
   styleUrls: ['./feature-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
-    NgFor,
     MatIconModule,
     NgStyle,
     ImageErrorDirective,

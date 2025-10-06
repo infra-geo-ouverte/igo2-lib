@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { EntityRecord, EntityStore } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
@@ -34,6 +34,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppCatalogComponent implements OnInit {
+  private layerService = inject(LayerService);
+  private catalogService = inject(CatalogService);
+  private storageService = inject(StorageService);
+  private mapService = inject(MapService);
+
   catalog: Catalog;
   public map: IgoMap = new IgoMap({
     controls: { attribution: { collapsed: true } }
@@ -44,13 +49,6 @@ export class AppCatalogComponent implements OnInit {
   public catalogStore: EntityStore = new EntityStore<Catalog>([]);
 
   public catalogItemStore: EntityStore = new EntityStore<CatalogItem>([]);
-
-  constructor(
-    private layerService: LayerService,
-    private catalogService: CatalogService,
-    private storageService: StorageService,
-    private mapService: MapService
-  ) {}
 
   /**
    * @internal

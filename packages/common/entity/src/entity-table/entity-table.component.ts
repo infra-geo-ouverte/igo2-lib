@@ -1,5 +1,5 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,11 +10,10 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  Optional,
   Output,
-  Self,
   SimpleChanges,
-  TrackByFunction
+  TrackByFunction,
+  inject
 } from '@angular/core';
 import {
   FormControlName,
@@ -117,8 +116,6 @@ interface RowData {
     MatTableModule,
     MatTooltipModule,
     NgClass,
-    NgFor,
-    NgIf,
     NgStyle,
     ReactiveFormsModule,
     SanitizeHtmlPipe,
@@ -128,6 +125,16 @@ interface RowData {
   ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+  private formBuilder = inject(UntypedFormBuilder);
+  protected _focusMonitor = inject(FocusMonitor);
+  protected _elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  ngControl = inject(NgControl, { optional: true, self: true });
+  protected _parentForm = inject(NgForm, { optional: true });
+  protected _controlName = inject(FormControlName, { optional: true });
+  protected _defaultErrorStateMatcher = inject(ErrorStateMatcher);
+  private dateAdapter = inject<DateAdapter<Date>>(DateAdapter);
+
   entitySortChange$ = new BehaviorSubject<boolean>(false);
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
@@ -298,17 +305,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return this.template.tableHeight ? this.template.tableHeight : 'auto';
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private formBuilder: UntypedFormBuilder,
-    protected _focusMonitor: FocusMonitor,
-    protected _elementRef: ElementRef<HTMLElement>,
-    @Optional() @Self() public ngControl: NgControl,
-    @Optional() protected _parentForm: NgForm,
-    @Optional() protected _controlName: FormControlName,
-    protected _defaultErrorStateMatcher: ErrorStateMatcher,
-    private dateAdapter: DateAdapter<Date>
-  ) {
+  constructor() {
     this.dateAdapter.setLocale('fr-CA');
   }
 

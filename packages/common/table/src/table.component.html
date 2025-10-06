@@ -1,13 +1,15 @@
 <div class="table-box">
-  <div class="table-header" *ngIf="hasFilterInput">
-    <mat-form-field floatPlaceholder="never">
-      <input
-        matInput
-        #filter
-        [placeholder]="'igo.common.table.filter' | translate"
-      />
-    </mat-form-field>
-  </div>
+  @if (hasFilterInput) {
+    <div class="table-header">
+      <mat-form-field floatPlaceholder="never">
+        <input
+          matInput
+          #filter
+          [placeholder]="'igo.common.table.filter' | translate"
+        />
+      </mat-form-field>
+    </div>
+  }
 
   <div class="table-container">
     <table mat-table #table [dataSource]="dataSource" matSort>
@@ -31,58 +33,54 @@
         </td>
       </ng-container>
 
-      <ng-container
-        [matColumnDef]="column.name"
-        *ngFor="let column of model.columns"
-      >
-        <ng-container *ngIf="column.sortable">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{ column.title }}
-          </th>
+      @for (column of model.columns; track column) {
+        <ng-container [matColumnDef]="column.name">
+          @if (column.sortable) {
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ column.title }}
+            </th>
+          }
+          @if (!column.sortable) {
+            <th mat-header-cell *matHeaderCellDef>{{ column.title }}</th>
+          }
+          @if (!column.html) {
+            <td
+              mat-cell
+              *matCellDef="let row"
+              class="mat-cell-text"
+              [ngClass]="
+                model.cellClassFunc ? model.cellClassFunc(row, column) : {}
+              "
+            >
+              {{ getValue(row, column.name) }}
+            </td>
+          } @else {
+            <td
+              mat-cell
+              *matCellDef="let row"
+              class="mat-cell-text"
+              [ngClass]="
+                model.cellClassFunc ? model.cellClassFunc(row, column) : {}
+              "
+              [innerHTML]="getValue(row, column.name)"
+            ></td>
+          }
         </ng-container>
-
-        <ng-container *ngIf="!column.sortable">
-          <th mat-header-cell *matHeaderCellDef>{{ column.title }}</th>
-        </ng-container>
-
-        <ng-container *ngIf="!column.html; else cellHTML">
-          <td
-            mat-cell
-            *matCellDef="let row"
-            class="mat-cell-text"
-            [ngClass]="
-              model.cellClassFunc ? model.cellClassFunc(row, column) : {}
-            "
-          >
-            {{ getValue(row, column.name) }}
-          </td>
-        </ng-container>
-
-        <ng-template #cellHTML>
-          <td
-            mat-cell
-            *matCellDef="let row"
-            class="mat-cell-text"
-            [ngClass]="
-              model.cellClassFunc ? model.cellClassFunc(row, column) : {}
-            "
-            [innerHTML]="getValue(row, column.name)"
-          ></td>
-        </ng-template>
-      </ng-container>
+      }
 
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">
-          <button
-            *ngFor="let action of model.actions"
-            mat-mini-fab
-            [color]="getActionColor(action.color)"
-            (click)="handleClickAction($event, action, row)"
-          >
-            <mat-icon>{{ action.icon }}</mat-icon>
-          </button>
+          @for (action of model.actions; track action) {
+            <button
+              mat-mini-fab
+              [color]="getActionColor(action.color)"
+              (click)="handleClickAction($event, action, row)"
+            >
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

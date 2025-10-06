@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
@@ -36,6 +36,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppContextComponent {
+  private mapService = inject(MapService);
+  private contextService = inject(ContextService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -49,10 +52,7 @@ export class AppContextComponent {
     zoom: 6
   };
 
-  constructor(
-    private mapService: MapService,
-    private contextService: ContextService
-  ) {
+  constructor() {
     this.mapService.setMap(this.map);
     this.contextService.loadDefaultContext();
     this.contextService.loadContexts();

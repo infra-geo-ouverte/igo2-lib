@@ -6,11 +6,9 @@
   ></ng-container>
 
   <ng-template #loopObject let-obj="obj" let-baseKey="baseKey">
-    <ng-container *ngFor="let property of obj | keyvalue">
-      <ng-container
-        *ngIf="ignoreKeys.indexOf(getKey(baseKey, property.key)) === -1"
-      >
-        <ng-container *ngIf="isObject(property.value); else notObject">
+    @for (property of obj | keyvalue; track property) {
+      @if (ignoreKeys.indexOf(getKey(baseKey, property.key)) === -1) {
+        @if (isObject(property.value)) {
           <ng-container
             *ngTemplateOutlet="
               loopObject;
@@ -20,22 +18,18 @@
               }
             "
           ></ng-container>
-        </ng-container>
-
-        <ng-template #notObject>
+        } @else {
           <p>
             <span
               ><b>{{ getKey(baseKey, property.key) }}</b> : </span
             ><span class="propertyValue" [innerHtml]="property.value"></span>
           </p>
-        </ng-template>
-      </ng-container>
-    </ng-container>
+        }
+      }
+    }
   </ng-template>
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button color="primary" (click)="dialogRef.close(false)">
-    OK
-  </button>
+  <button matButton color="primary" (click)="dialogRef.close(false)">OK</button>
 </div>
