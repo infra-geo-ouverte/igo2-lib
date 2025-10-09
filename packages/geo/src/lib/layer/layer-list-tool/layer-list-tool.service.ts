@@ -27,7 +27,6 @@ export class LayerListToolService {
   private layerService = inject(LayerService);
   private formDialogService = inject(FormDialogService);
 
-
   createGroup(): Observable<LayerGroup | undefined> {
     return this.formDialogService
       .open(FORM_GROUP_CONFIG, {

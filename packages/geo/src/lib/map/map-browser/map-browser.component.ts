@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
 import { ActivityService } from '@igo2/core/activity';
 import { SubjectStatus, uuid } from '@igo2/utils';

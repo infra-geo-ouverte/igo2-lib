@@ -1,5 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { EntityStoreWatcher } from '@igo2/common/entity';

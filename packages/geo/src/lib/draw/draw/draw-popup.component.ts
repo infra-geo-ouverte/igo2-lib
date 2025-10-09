@@ -66,7 +66,7 @@ export class DrawPopupComponent {
   data = inject<{
     olGeometry: any;
     map: IgoMap;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   @Input() confirmFlag = false;
   @Input() labelFlag: LabelType | [LabelType, LabelType] = LabelType.Custom;

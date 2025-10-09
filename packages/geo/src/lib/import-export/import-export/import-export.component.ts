@@ -1,5 +1,13 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,

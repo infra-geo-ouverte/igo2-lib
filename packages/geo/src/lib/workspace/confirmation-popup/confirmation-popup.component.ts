@@ -26,8 +26,7 @@ export class ConfirmationPopupComponent {
   data = inject<{
     type: string;
     cancel: boolean;
-}>(MAT_DIALOG_DATA);
-
+  }>(MAT_DIALOG_DATA);
 
   cancelAction() {
     this.data.cancel = true;

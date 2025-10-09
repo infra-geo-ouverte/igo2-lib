@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject
+} from '@angular/core';
 
 import { OnUpdateInputs } from '@igo2/common/dynamic-component';
 import { WidgetComponent } from '@igo2/common/widget';

@@ -13,7 +13,6 @@ export class SearchUrlParamDirective implements OnInit {
   private ref = inject(ChangeDetectorRef);
   private route = inject(RouteService, { optional: true });
 
-
   ngOnInit() {
     if (this.route && this.route.options.searchKey) {
       this.route.queryParams.subscribe((params) => {

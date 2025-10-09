@@ -6,7 +6,17 @@ import {
   trigger
 } from '@angular/animations';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+  inject
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,

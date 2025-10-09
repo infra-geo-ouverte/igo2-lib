@@ -29,7 +29,6 @@ export class DirectionsService {
   private document = inject<Document>(DOCUMENT);
   private activityService = inject(ActivityService);
 
-
   /**
    * Routes the given coordinates using the specified directions source and options.
    *

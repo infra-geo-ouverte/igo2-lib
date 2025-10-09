@@ -1,4 +1,12 @@
-import { Directive, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
 
 import {
   Workspace,

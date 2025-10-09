@@ -6,7 +6,14 @@ import {
   moveItemInArray
 } from '@angular/cdk/drag-drop';
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  inject
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   MatAutocomplete,

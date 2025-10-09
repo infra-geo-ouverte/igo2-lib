@@ -60,7 +60,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     store: EntityStore<Catalog>;
     error: boolean;
     addedCatalog: Catalog;
-}>(MAT_DIALOG_DATA, { optional: true });
+  }>(MAT_DIALOG_DATA, { optional: true });
 
   predefinedForm$ = new BehaviorSubject<Form>(undefined);
   customForm$ = new BehaviorSubject<Form>(undefined);

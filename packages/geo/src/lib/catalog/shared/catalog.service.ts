@@ -53,7 +53,6 @@ export class CatalogService {
   private messageService = inject(MessageService);
   private capabilitiesService = inject(CapabilitiesService);
 
-
   loadCatalogs(): Observable<Catalog[]> {
     const contextConfig = this.config.getConfig('context') || {};
 

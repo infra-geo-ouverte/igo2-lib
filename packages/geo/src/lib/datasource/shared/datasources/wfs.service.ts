@@ -24,7 +24,6 @@ import {
 export class WFSService extends DataService {
   private http = inject(HttpClient);
 
-
   getData() {
     console.log('This is defining a data service.');
     return 'This is defining a data service.';
