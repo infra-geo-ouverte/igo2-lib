@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 

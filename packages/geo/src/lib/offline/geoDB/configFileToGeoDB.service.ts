@@ -17,7 +17,6 @@ export class ConfigFileToGeoDBService {
   private http = inject(HttpClient);
   private messageService = inject(MessageService);
 
-
   load(urlFile: string) {
     const geoDB = new GeoDB();
     let downloadMessage: ActiveToast<any>;

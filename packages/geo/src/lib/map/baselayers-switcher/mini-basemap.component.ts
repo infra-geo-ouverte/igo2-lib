@@ -1,4 +1,11 @@
-import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ApplicationRef,
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
 
 import {
   AnyLayerOptions,

@@ -1,4 +1,12 @@
-import { AfterContentChecked, Directive, HostListener, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  AfterContentChecked,
+  Directive,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
 import { MediaService } from '@igo2/core/media';

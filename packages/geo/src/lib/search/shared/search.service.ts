@@ -1,4 +1,10 @@
-import { Injectable, WritableSignal, effect, signal, inject } from '@angular/core';
+import {
+  Injectable,
+  WritableSignal,
+  effect,
+  inject,
+  signal
+} from '@angular/core';
 
 import { AnalyticsService } from '@igo2/core/analytics';
 import { StorageService } from '@igo2/core/storage';
@@ -35,7 +41,9 @@ export class SearchService {
   searchTerm: WritableSignal<string> = signal(null);
 
   constructor() {
-    const analytics = inject<boolean>('searchAnalytics' as any, { optional: true });
+    const analytics = inject<boolean>('searchAnalytics' as any, {
+      optional: true
+    });
 
     if (analytics) {
       this.handleAnalytics();

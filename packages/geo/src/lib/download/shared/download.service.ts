@@ -18,7 +18,6 @@ import { Layer } from '../../layer';
 export class DownloadService {
   private messageService = inject(MessageService);
 
-
   open(layer: Layer) {
     this.messageService.success(
       'igo.geo.download.start',

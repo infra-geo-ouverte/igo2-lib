@@ -1,5 +1,12 @@
 import { AsyncPipe, NgStyle } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  inject
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,

@@ -62,7 +62,7 @@ export class SaveFeatureDialogComponent implements OnInit {
   data = inject<{
     feature: SearchResult;
     layers: Layer[];
-}>(MAT_DIALOG_DATA, { optional: true });
+  }>(MAT_DIALOG_DATA, { optional: true });
 
   public form: UntypedFormGroup;
   feature: SearchResult;

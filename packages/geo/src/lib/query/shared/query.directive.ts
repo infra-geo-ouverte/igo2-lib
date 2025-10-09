@@ -1,4 +1,12 @@
-import { AfterViewInit, Directive, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  inject
+} from '@angular/core';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';

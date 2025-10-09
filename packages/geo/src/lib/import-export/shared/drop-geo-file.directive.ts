@@ -1,4 +1,12 @@
-import { Directive, EventEmitter, HostListener, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { DragAndDropDirective } from '@igo2/common/drag-drop';

@@ -1,5 +1,12 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
