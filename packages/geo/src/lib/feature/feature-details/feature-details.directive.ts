@@ -1,12 +1,4 @@
-import {
-  Directive,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  OnInit,
-  Output,
-  Self
-} from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, OnInit, Output, inject } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,6 +10,8 @@ import { FeatureDetailsComponent } from './feature-details.component';
   standalone: true
 })
 export class FeatureDetailsDirective implements OnInit {
+  private el = inject(ElementRef);
+
   private component: FeatureDetailsComponent;
 
   get feature() {
@@ -32,10 +26,9 @@ export class FeatureDetailsDirective implements OnInit {
     this.feature$.next(this.feature);
   }
 
-  constructor(
-    @Self() component: FeatureDetailsComponent,
-    private el: ElementRef
-  ) {
+  constructor() {
+    const component = inject(FeatureDetailsComponent, { self: true });
+
     this.component = component;
   }
 

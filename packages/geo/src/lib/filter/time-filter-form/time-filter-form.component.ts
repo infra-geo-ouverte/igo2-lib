@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -62,6 +55,8 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
+  private dateAdapter = inject<DateAdapter<Date>>(DateAdapter);
+
   public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
@@ -192,7 +187,7 @@ export class TimeFilterFormComponent implements OnInit {
     return options;
   }
 
-  constructor(private dateAdapter: DateAdapter<Date>) {
+  constructor() {
     this.dateAdapter.setLocale('fr');
   }
 

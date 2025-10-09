@@ -1,11 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Optional,
-  WritableSignal,
-  effect,
-  signal
-} from '@angular/core';
+import { Injectable, WritableSignal, effect, signal, inject } from '@angular/core';
 
 import { AnalyticsService } from '@igo2/core/analytics';
 import { StorageService } from '@igo2/core/storage';
@@ -34,17 +27,16 @@ import {
  */
 @Injectable()
 export class SearchService {
+  private searchSourceService = inject(SearchSourceService);
+  private mapService = inject(MapService);
+  private storageService = inject(StorageService);
+  private analyticsService = inject(AnalyticsService);
+
   searchTerm: WritableSignal<string> = signal(null);
 
-  constructor(
-    private searchSourceService: SearchSourceService,
-    private mapService: MapService,
-    private storageService: StorageService,
-    private analyticsService: AnalyticsService,
-    @Inject('searchAnalytics')
-    @Optional()
-    analytics: boolean
-  ) {
+  constructor() {
+    const analytics = inject<boolean>('searchAnalytics' as any, { optional: true });
+
     if (analytics) {
       this.handleAnalytics();
     }

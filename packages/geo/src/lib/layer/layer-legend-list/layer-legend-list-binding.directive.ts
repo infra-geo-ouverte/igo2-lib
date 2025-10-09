@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -14,14 +14,15 @@ import { LayerLegendListComponent } from './layer-legend-list.component';
   standalone: true
 })
 export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
+  private mapService = inject(MapService);
+
   private component: LayerLegendListComponent;
   private layersOrResolutionChange$$: Subscription;
   layersVisibility$$: Subscription;
 
-  constructor(
-    @Self() component: LayerLegendListComponent,
-    private mapService: MapService
-  ) {
+  constructor() {
+    const component = inject(LayerLegendListComponent, { self: true });
+
     this.component = component;
   }
 

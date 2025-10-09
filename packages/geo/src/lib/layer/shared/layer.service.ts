@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
@@ -64,16 +64,14 @@ import { LayerGroup } from './layers/layer-group';
   providedIn: 'root'
 })
 export class LayerService {
-  public unavailableLayers: AnyLayerItemOptions[] = [];
+  private http = inject(HttpClient);
+  private styleService = inject(StyleService);
+  private dataSourceService = inject(DataSourceService);
+  private messageService = inject(MessageService);
+  private geoNetworkService = inject(GeoNetworkService, { optional: true });
+  private authInterceptor = inject(AuthInterceptor, { optional: true });
 
-  constructor(
-    private http: HttpClient,
-    private styleService: StyleService,
-    private dataSourceService: DataSourceService,
-    private messageService: MessageService,
-    @Optional() private geoNetworkService?: GeoNetworkService,
-    @Optional() private authInterceptor?: AuthInterceptor
-  ) {}
+  public unavailableLayers: AnyLayerItemOptions[] = [];
 
   createLayers(
     layersOption: AnyLayerOptions[],

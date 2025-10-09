@@ -1,5 +1,5 @@
 import { AsyncPipe, KeyValuePipe, NgClass } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -50,6 +50,8 @@ import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.compo
   ]
 })
 export class OgcFilterFormComponent implements OnInit {
+  private wktService = inject(WktService);
+
   ogcFilterOperator = OgcFilterOperator;
   filteredValues$: Observable<string[]>;
   filteredFields$: Observable<SourceFieldsOptionsParams[]>;
@@ -114,7 +116,7 @@ export class OgcFilterFormComponent implements OnInit {
     );
   }
 
-  constructor(private wktService: WktService) {
+  constructor() {
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...

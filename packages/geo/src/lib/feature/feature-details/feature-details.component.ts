@@ -1,16 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, JsonPipe, KeyValuePipe, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -46,6 +37,14 @@ import { Feature } from '../shared';
   ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  private http = inject(HttpClient);
+  private cdRef = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
+  private networkService = inject(NetworkService);
+  private messageService = inject(MessageService);
+  private configService = inject(ConfigService);
+
   private state: ConnectionState;
   private unsubscribe$ = new Subject<void>();
   ready = false;
@@ -94,15 +93,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return getEntityIcon(this.feature) || 'link';
   }
 
-  constructor(
-    private clipboard: Clipboard,
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer,
-    private networkService: NetworkService,
-    private messageService: MessageService,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this.networkService
       .currentState()
       .pipe(takeUntil(this.unsubscribe$))

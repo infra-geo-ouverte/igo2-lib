@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { uuid } from '@igo2/utils';
@@ -21,6 +21,9 @@ import {
 
 @Injectable()
 export class OsrmDirectionsSource extends DirectionsSource {
+  private _http = inject(HttpClient);
+  private _config = inject(ConfigService);
+
   get options(): OsrmDirectionsSourceOptions {
     return this._options;
   }
@@ -59,10 +62,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
 
   private _options: OsrmDirectionsSourceOptions;
 
-  constructor(
-    private _http: HttpClient,
-    private _config: ConfigService
-  ) {
+  constructor() {
     super();
     this._options = this._config.getConfig('directionsSources.osrm');
     if (!this.baseUrl) {

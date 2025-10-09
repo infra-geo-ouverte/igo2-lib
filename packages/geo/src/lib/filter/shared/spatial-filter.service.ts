@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -19,6 +19,10 @@ import { SpatialFilterThematic } from './spatial-filter.interface';
   providedIn: 'root'
 })
 export class SpatialFilterService {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private configService = inject(ConfigService);
+
   public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
 
   /*
@@ -38,11 +42,7 @@ export class SpatialFilterService {
     routes: 'routes'
   };
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this.baseUrl =
       this.configService.getConfig('spatialFilter.url') || this.baseUrl;
   }

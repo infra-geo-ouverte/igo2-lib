@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -6,9 +6,11 @@ import { ConfigService } from '@igo2/core/config';
   providedIn: 'root'
 })
 export class DrawIconService {
+  protected config = inject(ConfigService);
+
   protected icons: string[];
 
-  constructor(protected config: ConfigService) {
+  constructor() {
     this.getIconsList();
   }
 

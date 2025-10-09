@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -36,6 +36,8 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
   providers: [TimeFilterService]
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
+  private timeFilterService = inject(TimeFilterService);
+
   public color = 'primary';
   showLegend$ = new BehaviorSubject<boolean>(false);
   inResolutionRange$ = new BehaviorSubject<boolean>(true);
@@ -50,7 +52,6 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   get datasource(): TimeFilterableDataSource {
     return this.layer.dataSource as TimeFilterableDataSource;
   }
-  constructor(private timeFilterService: TimeFilterService) {}
 
   ngOnInit(): void {
     const resolution$ = this.layer.map.viewController.resolution$;

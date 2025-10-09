@@ -1,12 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common/entity';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
@@ -45,6 +38,9 @@ import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component'
   ]
 })
 export class CatalogBrowserComponent implements OnInit, OnDestroy {
+  private layerService = inject(LayerService);
+  private cdRef = inject(ChangeDetectorRef);
+
   /**
    * Catalog items store watcher
    */
@@ -77,11 +73,6 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Whether a group can be toggled when it's collapsed
    */
   @Input() toggleCollapsedGroup = true;
-
-  constructor(
-    private layerService: LayerService,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   /**
    * @internal

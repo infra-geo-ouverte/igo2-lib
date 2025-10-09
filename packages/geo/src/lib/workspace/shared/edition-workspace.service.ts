@@ -4,7 +4,7 @@ import {
   HttpErrorResponse,
   HttpHeaders
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { AuthInterceptor } from '@igo2/auth';
@@ -66,6 +66,15 @@ import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
   providedIn: 'root'
 })
 export class EditionWorkspaceService {
+  private layerService = inject(LayerService);
+  private storageService = inject(StorageService);
+  private configService = inject(ConfigService);
+  private messageService = inject(MessageService);
+  private http = inject(HttpClient);
+  private dialog = inject(MatDialog);
+  private styleService = inject(StyleService);
+  authInterceptor? = inject(AuthInterceptor);
+
   public ws$ = new BehaviorSubject<string>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);
   public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(
@@ -79,17 +88,6 @@ export class EditionWorkspaceService {
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
-
-  constructor(
-    private layerService: LayerService,
-    private storageService: StorageService,
-    private configService: ConfigService,
-    private messageService: MessageService,
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private styleService: StyleService,
-    public authInterceptor?: AuthInterceptor
-  ) {}
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
     if (

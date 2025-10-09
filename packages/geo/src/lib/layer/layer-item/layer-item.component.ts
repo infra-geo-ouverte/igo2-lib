@@ -1,14 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -49,6 +40,8 @@ import { TooltipType } from '../shared/layers/layer.interface';
   ]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
+  private networkService = inject(NetworkService);
+
   showLegend$ = new BehaviorSubject(true);
   inResolutionRange$ = new BehaviorSubject(true);
   queryBadgeHidden$ = new BehaviorSubject(true);
@@ -98,8 +91,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
         : 'igo.geo.layer.hideLayer'
       : 'igo.geo.layer.showLayer';
   }
-
-  constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
     this.layer.displayed$.subscribe((displayed) => {

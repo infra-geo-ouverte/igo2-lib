@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { LanguageService } from '@igo2/core/language';
@@ -49,17 +49,15 @@ import { OptionsService } from './options/options.service';
   providedIn: 'root'
 })
 export class DataSourceService {
-  public datasources$ = new BehaviorSubject<DataSource[]>([]);
+  private capabilitiesService = inject(CapabilitiesService);
+  private optionsService = inject(OptionsService, { optional: true });
+  private wfsDataSourceService = inject(WFSService);
+  private ogcFilterService = inject(OGCFilterService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private authInterceptor = inject(AuthInterceptor);
 
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    @Optional() private optionsService: OptionsService,
-    private wfsDataSourceService: WFSService,
-    private ogcFilterService: OGCFilterService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private authInterceptor?: AuthInterceptor
-  ) {}
+  public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
   createAsyncDataSource(
     context: AnyDataSourceOptions,

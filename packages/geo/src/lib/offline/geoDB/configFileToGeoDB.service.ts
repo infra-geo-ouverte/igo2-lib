@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 
@@ -14,10 +14,9 @@ import { DatasToIDB, GeoDBData } from './geoDB.interface';
 
 @Injectable()
 export class ConfigFileToGeoDBService {
-  constructor(
-    private http: HttpClient,
-    private messageService: MessageService
-  ) {}
+  private http = inject(HttpClient);
+  private messageService = inject(MessageService);
+
 
   load(urlFile: string) {
     const geoDB = new GeoDB();

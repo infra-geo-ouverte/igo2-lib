@@ -1,15 +1,5 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import {
@@ -60,6 +50,10 @@ import { SearchService } from '../shared/search.service';
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
+  private configService = inject(ConfigService);
+  private searchService = inject(SearchService);
+  private searchSourceService = inject(SearchSourceService);
+
   /**
    * Invalid keys
    */
@@ -271,12 +265,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get empty(): boolean {
     return this.term.length === 0;
   }
-
-  constructor(
-    private configService: ConfigService,
-    private searchService: SearchService,
-    private searchSourceService: SearchSourceService
-  ) {}
 
   /**
    * Subscribe to the search term stream and trigger researches

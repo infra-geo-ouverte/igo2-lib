@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 
@@ -16,7 +16,8 @@ import { Layer } from '../../layer';
   providedIn: 'root'
 })
 export class DownloadService {
-  constructor(private messageService: MessageService) {}
+  private messageService = inject(MessageService);
+
 
   open(layer: Layer) {
     this.messageService.success(

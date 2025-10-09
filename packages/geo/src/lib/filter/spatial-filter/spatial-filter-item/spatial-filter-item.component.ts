@@ -1,16 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -96,6 +87,11 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
   ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
+  private cdRef = inject(ChangeDetectorRef);
+  private spatialFilterService = inject(SpatialFilterService);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+
   @Input() map: IgoMap;
 
   @Input()
@@ -326,13 +322,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public listIsVisible = true;
   public tableTemplate: EntityTableTemplate;
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService,
-    private languageService: LanguageService
-  ) {}
 
   ngOnInit() {
     this.spatialFilterService

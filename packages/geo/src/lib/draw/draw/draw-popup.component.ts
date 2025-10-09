@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -61,6 +61,13 @@ import { DDtoDMS } from '../shared/draw.utils';
   ]
 })
 export class DrawPopupComponent {
+  private languageService = inject(LanguageService);
+  dialogRef = inject<MatDialogRef<DrawPopupComponent>>(MatDialogRef);
+  data = inject<{
+    olGeometry: any;
+    map: IgoMap;
+}>(MAT_DIALOG_DATA);
+
   @Input() confirmFlag = false;
   @Input() labelFlag: LabelType | [LabelType, LabelType] = LabelType.Custom;
   @Input() coordinatesMeasureUnit: CoordinatesUnit;
@@ -87,11 +94,9 @@ export class DrawPopupComponent {
 
   public polygonCheck = 0; // Count for polygon label types checkboxes
 
-  constructor(
-    private languageService: LanguageService,
-    public dialogRef: MatDialogRef<DrawPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any; map: IgoMap }
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.currentLabel = this.data.olGeometry.get('draw');
     this.labelLength = this.currentLabel ? this.currentLabel.length : 0;
     let olGeometry;

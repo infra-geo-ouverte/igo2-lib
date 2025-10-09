@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -54,6 +54,8 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   providers: [OGCFilterService]
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
+  private ogcFilterService = inject(OGCFilterService);
+
   public color = 'primary';
   private lastRunOgcFilter;
   private defaultLogicalParent = OgcFilterOperator.And;
@@ -80,7 +82,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  constructor(private ogcFilterService: OGCFilterService) {
+  constructor() {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 

@@ -1,14 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -69,6 +60,10 @@ enum SelectionAction {
 export class InteractiveSelectionFormComponent
   implements OnInit, OnDestroy, OnUpdateInputs, WidgetComponent
 {
+  private cdRef = inject(ChangeDetectorRef);
+  private formService = inject(FormService);
+  private languageService = inject(LanguageService);
+
   public form$ = new BehaviorSubject<Form>(undefined);
   public submitButtonText$ = new BehaviorSubject<string>(undefined);
   public submitDisabled = true;
@@ -90,12 +85,6 @@ export class InteractiveSelectionFormComponent
    * Event emitted on cancel
    */
   @Output() cancel = new EventEmitter<void>();
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private formService: FormService,
-    private languageService: LanguageService
-  ) {}
   ngOnInit(): void {
     const fieldConfigs = [
       {

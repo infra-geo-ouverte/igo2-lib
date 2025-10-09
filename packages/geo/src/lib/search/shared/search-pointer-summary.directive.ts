@@ -1,12 +1,4 @@
-import {
-  AfterContentChecked,
-  Directive,
-  HostListener,
-  Input,
-  OnDestroy,
-  OnInit,
-  Self
-} from '@angular/core';
+import { AfterContentChecked, Directive, HostListener, Input, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
 import { MediaService } from '@igo2/core/media';
@@ -49,6 +41,11 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
 export class SearchPointerSummaryDirective
   implements OnInit, OnDestroy, AfterContentChecked
 {
+  private component = inject(MapBrowserComponent, { self: true });
+  private searchService = inject(SearchService);
+  private searchSourceService = inject(SearchSourceService);
+  private mediaService = inject(MediaService);
+
   public store: FeatureStore<Feature>;
   private lonLat: [number, number];
   private pointerSearchStore: EntityStore<SearchResult> =
@@ -91,13 +88,6 @@ export class SearchPointerSummaryDirective
   get mapProjection(): string {
     return (this.component.map as IgoMap).projection;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private searchService: SearchService,
-    private searchSourceService: SearchSourceService,
-    private mediaService: MediaService
-  ) {}
 
   /**
    * Start listening to pointermove and reverse search results.

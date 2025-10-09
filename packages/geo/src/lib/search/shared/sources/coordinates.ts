@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
@@ -30,8 +31,6 @@ import { ReverseSearchOptions, SearchSourceOptions } from './source.interfaces';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
-
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
   }
@@ -44,6 +43,8 @@ export class CoordinatesReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private languageService = inject(LanguageService);
+
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
@@ -55,12 +56,14 @@ export class CoordinatesReverseSearchSource
     return this.title$.getValue();
   }
 
-  constructor(
-    @Inject('options') options: SearchSourceOptions,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('projections') projections: Projection[]
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig(
+      `searchSources.${CoordinatesReverseSearchSource.id}`
+    );
+    const projections = config.getConfig<Projection[]>('projections') ?? [];
+
     super(options, storageService);
     this.projections = projections;
     this.languageService.language$.subscribe(() => {

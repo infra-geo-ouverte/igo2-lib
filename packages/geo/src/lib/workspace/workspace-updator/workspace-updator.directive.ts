@@ -1,4 +1,4 @@
-import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { Workspace } from '@igo2/common/workspace';
 import type { WorkspaceStore } from '@igo2/common/workspace';
@@ -27,19 +27,17 @@ import { WmsWorkspaceService } from '../shared/wms-workspace.service';
   standalone: true
 })
 export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
+  private wfsWorkspaceService = inject(WfsWorkspaceService);
+  private wmsWorkspaceService = inject(WmsWorkspaceService);
+  private editionWorkspaceService = inject(EditionWorkspaceService);
+  private featureWorkspaceService = inject(FeatureWorkspaceService);
+
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
   @Input() map: IgoMap;
 
   @Input() workspaceStore: WorkspaceStore;
-
-  constructor(
-    private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService,
-    private editionWorkspaceService: EditionWorkspaceService,
-    private featureWorkspaceService: FeatureWorkspaceService
-  ) {}
 
   ngOnInit() {
     this.layers$$ = this.map.layerController.all$

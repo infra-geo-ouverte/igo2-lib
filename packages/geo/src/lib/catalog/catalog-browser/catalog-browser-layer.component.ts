@@ -1,13 +1,5 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,6 +44,8 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
+  private layerService = inject(LayerService);
+
   public inRange$ = new BehaviorSubject<boolean>(true);
   public isPreview$ = new BehaviorSubject<boolean>(false);
   public isVisible$ = new BehaviorSubject<boolean>(false);
@@ -101,8 +95,6 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   get icon(): string {
     return getEntityIcon(this.layer) || 'layers';
   }
-
-  constructor(private layerService: LayerService) {}
 
   ngOnInit(): void {
     this.isPreview$$ = this.isPreview$.subscribe((value) =>

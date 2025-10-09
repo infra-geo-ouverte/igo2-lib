@@ -1,4 +1,4 @@
-import { DOCUMENT, Inject, Injectable } from '@angular/core';
+import { DOCUMENT, Injectable, inject } from '@angular/core';
 
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
@@ -22,14 +22,13 @@ import { formatDistance, formatDuration, formatStep } from './directions.utils';
 
 @Injectable()
 export class DirectionsService {
-  constructor(
-    private directionsSourceService: DirectionsSourceService,
-    private configService: ConfigService,
-    private languageService: LanguageService,
-    private printService: PrintService,
-    @Inject(DOCUMENT) private document: Document,
-    private activityService: ActivityService
-  ) {}
+  private directionsSourceService = inject(DirectionsSourceService);
+  private configService = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private printService = inject(PrintService);
+  private document = inject<Document>(DOCUMENT);
+  private activityService = inject(ActivityService);
+
 
   /**
    * Routes the given coordinates using the specified directions source and options.

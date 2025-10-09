@@ -6,16 +6,7 @@ import {
   trigger
 } from '@angular/animations';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -159,6 +150,12 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
+  private languageService = inject(LanguageService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private drawStyleService = inject(DrawStyleService);
+  private dialog = inject(MatDialog);
+  private drawIconService = inject(DrawIconService);
+
   /**
    * Table template
    * @internal
@@ -246,13 +243,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   @ViewChild('selectedLayer') select;
 
-  constructor(
-    private languageService: LanguageService,
-    private formBuilder: UntypedFormBuilder,
-    private drawStyleService: DrawStyleService,
-    private dialog: MatDialog,
-    private drawIconService: DrawIconService
-  ) {
+  constructor() {
     this.tableTemplate = {
       selection: true,
       selectMany: true,

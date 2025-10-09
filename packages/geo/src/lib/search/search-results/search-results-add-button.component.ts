@@ -1,11 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -66,6 +60,11 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
+  private layerService = inject(LayerService);
+  private dialog = inject(MatDialog);
+  private dataSourceService = inject(DataSourceService);
+  private mediaService = inject(MediaService);
+
   public tooltip$ = new BehaviorSubject<string>(
     'igo.geo.catalog.layer.addToMap'
   );
@@ -126,12 +125,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
   private mediaService$$: Subscription;
   public isMobile = false;
-  constructor(
-    private layerService: LayerService,
-    private dialog: MatDialog,
-    private dataSourceService: DataSourceService,
-    private mediaService: MediaService
-  ) {}
 
   /**
    * @internal

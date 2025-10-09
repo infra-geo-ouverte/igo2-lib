@@ -1,12 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -52,6 +45,8 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
   ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+
   readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
 
   private value$$: Subscription;
@@ -147,8 +142,6 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * If not specified, drawStyle applies
    */
   @Input() overlayStyle: OlStyleLike;
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
    * Set up a value stream
