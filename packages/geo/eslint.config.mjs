@@ -23,8 +23,7 @@ export default defineConfig(
           prefix: 'igo',
           style: 'kebab-case'
         }
-      ],
-      '@angular-eslint/prefer-inject': 'warn'
+      ]
     }
   },
   {
