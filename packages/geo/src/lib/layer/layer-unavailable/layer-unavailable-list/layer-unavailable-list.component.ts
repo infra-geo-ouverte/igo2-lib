@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
@@ -14,9 +14,9 @@ import { LayerUnavailableComponent } from '../layer-unavailable.component';
   imports: [ListComponent, ListItemDirective, LayerUnavailableComponent]
 })
 export class LayerUnavailableListComponent {
-  @Input() layersOptions: AnyLayerOptions[];
+  private layerService = inject(LayerService);
 
-  constructor(private layerService: LayerService) {}
+  @Input() layersOptions: AnyLayerOptions[];
 
   deleteUnavailableLayer(options: AnyLayerOptions): void {
     this.layerService.deleteUnavailableLayers(options);

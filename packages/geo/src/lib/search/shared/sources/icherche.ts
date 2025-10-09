@@ -3,10 +3,11 @@ import {
   HttpParameterCodec,
   HttpParams
 } from '@angular/common/http';
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { IconSvg } from '@igo2/common/icon';
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
@@ -38,8 +39,6 @@ import {
 
 @Injectable()
 export class IChercheSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
-
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
   }
@@ -70,6 +69,12 @@ export class IgoHttpParameterCodec implements HttpParameterCodec {
  */
 @Injectable()
 export class IChercheSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private formatter = inject<IChercheSearchResultFormatter>(
+    IChercheSearchResultFormatter
+  );
+
   static id = 'icherche';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -92,18 +97,16 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions,
-    @Inject(IChercheSearchResultFormatter)
-    private formatter: IChercheSearchResultFormatter,
-    injector: Injector
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig(
+      `searchSources.${IChercheSearchSource.id}`
+    );
+
     super(options, storageService);
 
-    const authService = injector.get(AuthService);
+    const authService = inject(AuthService);
     if (this.settings.length) {
       if (!authService) {
         this.getAllowedTypes();
@@ -680,6 +683,9 @@ export class IChercheReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'icherchereverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -697,13 +703,14 @@ export class IChercheReverseSearchSource
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions,
-    injector: Injector
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig(
+      `searchSources.${IChercheReverseSearchSource.id}`
+    );
+    const injector = inject(Injector);
+
     super(options, storageService);
 
     this.languageService.language$.subscribe(() => {

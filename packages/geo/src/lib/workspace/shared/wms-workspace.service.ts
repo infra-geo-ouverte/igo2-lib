@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ActionStore } from '@igo2/common/action';
 import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
@@ -48,20 +48,18 @@ import {
   providedIn: 'root'
 })
 export class WmsWorkspaceService {
+  private layerService = inject(LayerService);
+  private storageService = inject(StorageService);
+  private capabilitiesService = inject(CapabilitiesService);
+  private styleService = inject(StyleService);
+  private configService = inject(ConfigService);
+  private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
+
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
   public ws$ = new BehaviorSubject<string>(undefined);
-
-  constructor(
-    private layerService: LayerService,
-    private storageService: StorageService,
-    private capabilitiesService: CapabilitiesService,
-    private styleService: StyleService,
-    private configService: ConfigService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService
-  ) {}
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (

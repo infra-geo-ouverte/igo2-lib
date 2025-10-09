@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Self
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 import OlFeature from 'ol/Feature';
@@ -64,6 +55,9 @@ interface HasRadius {
 export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
+  private cdRef = inject(ChangeDetectorRef);
+  ngControl = inject(NgControl, { optional: true, self: true });
+
   private olOverlayLayer: OlVectorLayer<OlVectorSource>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
@@ -283,10 +277,7 @@ export class GeometryFormFieldInputComponent
     }
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    @Optional() @Self() public ngControl: NgControl
-  ) {
+  constructor() {
     if (this.ngControl !== undefined) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.

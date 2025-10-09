@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
@@ -46,16 +46,14 @@ import {
   providedIn: 'root'
 })
 export class QueryService {
+  private http = inject(HttpClient);
+  private messageService = inject(MessageService);
+
   public queryEnabled = true;
   public defaultFeatureCount = 20;
   public featureCount = 20;
 
   private previousMessageIds = [];
-
-  constructor(
-    private http: HttpClient,
-    private messageService: MessageService
-  ) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     if (this.previousMessageIds.length) {

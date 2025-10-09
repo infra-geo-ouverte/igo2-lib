@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -22,6 +22,8 @@ Button to center the map to the home extent
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeExtentButtonComponent {
+  configService = inject(ConfigService);
+
   @Input() map: IgoMap;
   @Input() color: string;
   @Input() extentOverride?: MapExtent;
@@ -32,7 +34,7 @@ export class HomeExtentButtonComponent {
   private homeExtentButtonCenter;
   private homeExtentButtonZoom;
 
-  constructor(public configService: ConfigService) {
+  constructor() {
     this.computeHomeExtent();
   }
 

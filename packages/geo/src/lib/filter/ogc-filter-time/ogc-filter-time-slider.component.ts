@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +16,8 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
   providers: [OGCFilterTimeService]
 })
 export class OgcFilterTimeSliderComponent implements OnInit {
+  ogcFilterTimeService = inject(OGCFilterTimeService);
+
   @Input() currentFilter: any;
   @Input() begin: any;
   @Input() max: any;
@@ -73,7 +68,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     );
   }
 
-  constructor(public ogcFilterTimeService: OGCFilterTimeService) {
+  constructor() {
     this.sliderDisplayWith = this.sliderDisplayWith.bind(this);
   }
 

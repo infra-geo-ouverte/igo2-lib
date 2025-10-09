@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -58,6 +50,8 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
   providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
+  ogcFilterTimeService = inject(OGCFilterTimeService);
+
   @Input() datasource: OgcFilterableDataSource;
   @Input() currentFilter: any;
   @Output() changeProperty: EventEmitter<{
@@ -146,8 +140,6 @@ export class OgcFilterTimeComponent implements OnInit {
 
   public filterBeginFunction;
   public filterEndFunction;
-
-  constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit() {
     this.filterOriginConfig = this.datasource.options.ogcFilters

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -21,11 +21,13 @@ export interface DialogData {
   imports: [MatDialogContent, MatDialogActions, MatButtonModule]
 })
 export class ConfirmationPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationPopupComponent>,
-    public languageService: LanguageService,
-    @Inject(MAT_DIALOG_DATA) public data: { type: string; cancel: boolean }
-  ) {}
+  dialogRef = inject<MatDialogRef<ConfirmationPopupComponent>>(MatDialogRef);
+  languageService = inject(LanguageService);
+  data = inject<{
+    type: string;
+    cancel: boolean;
+}>(MAT_DIALOG_DATA);
+
 
   cancelAction() {
     this.data.cancel = true;

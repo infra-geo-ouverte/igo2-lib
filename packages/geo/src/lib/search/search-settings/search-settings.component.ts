@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -69,6 +61,12 @@ import {
   ]
 })
 export class SearchSettingsComponent implements OnInit {
+  private formDialogService = inject(FormDialogService);
+  private messageService = inject(MessageService);
+  private searchSourceService = inject(SearchSourceService);
+  private mediaService = inject(MediaService);
+  private storageService = inject(StorageService);
+
   public hasPointerReverseSearchSource = false;
   public searchSourcesAllEnabled = false;
 
@@ -113,14 +111,6 @@ export class SearchSettingsComponent implements OnInit {
       this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
     }
   }
-
-  constructor(
-    private formDialogService: FormDialogService,
-    private messageService: MessageService,
-    private searchSourceService: SearchSourceService,
-    private mediaService: MediaService,
-    private storageService: StorageService
-  ) {}
 
   ngOnInit(): void {
     this.hasPointerReverseSearchSource =

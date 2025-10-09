@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Directive,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-  Self
-} from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
@@ -42,6 +34,9 @@ import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
   standalone: true
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
+  private component = inject(MapBrowserComponent, { self: true });
+  private queryService = inject(QueryService);
+
   /**
    * Subscriptions to ongoing queries
    */
@@ -97,11 +92,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   get map(): IgoMap {
     return this.component.map as any as IgoMap;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private queryService: QueryService
-  ) {}
 
   /**
    * Start listening to click and drag box events

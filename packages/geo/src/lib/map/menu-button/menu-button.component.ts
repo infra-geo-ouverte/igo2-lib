@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -20,6 +20,8 @@ import { IgoLanguageModule } from '@igo2/core/language';
   ]
 })
 export class MenuButtonComponent {
+  configService = inject(ConfigService);
+
   @Input()
   get sidenavOpened(): boolean {
     return this._sidenavOpenend;
@@ -36,7 +38,7 @@ export class MenuButtonComponent {
 
   public menuButtonClass;
 
-  constructor(public configService: ConfigService) {
+  constructor() {
     const configValue = this.configService.getConfig(
       'menu.button.useThemeColor'
     );

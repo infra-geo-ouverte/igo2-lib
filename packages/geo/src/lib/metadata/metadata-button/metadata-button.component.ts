@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  Input,
-  ViewEncapsulation
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -40,14 +34,12 @@ import { MetadataService } from '../shared/metadata.service';
   ]
 })
 export class MetadataButtonComponent {
+  private metadataService = inject(MetadataService);
+  private dialog = inject(MatDialog);
+
   @Input() layer: Layer;
 
   @Input() color = 'primary';
-
-  constructor(
-    private metadataService: MetadataService,
-    private dialog: MatDialog
-  ) {}
 
   openMetadata(metadata: MetadataOptions) {
     if (metadata.extern) {
@@ -89,5 +81,5 @@ export class MetadataButtonComponent {
   imports: [MatDialogTitle, MatButtonModule, MatDialogClose, MatDialogContent]
 })
 export class MetadataAbstractComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: MetadataOptions) {}
+  data = inject<MetadataOptions>(MAT_DIALOG_DATA);
 }

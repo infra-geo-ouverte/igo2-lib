@@ -1,10 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
@@ -59,17 +53,15 @@ import { RoutesFeatureStore, StepsFeatureStore } from '../shared/store';
   ]
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
+  private languageService = inject(LanguageService);
+  private cdRef = inject(ChangeDetectorRef);
+
   @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
   @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
 
   public activeRoute: Directions;
   public routes: Directions[];
   private entities$$: Subscription;
-
-  constructor(
-    private languageService: LanguageService,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   ngOnInit(): void {
     this.entities$$ = this.routesFeatureStore.entities$

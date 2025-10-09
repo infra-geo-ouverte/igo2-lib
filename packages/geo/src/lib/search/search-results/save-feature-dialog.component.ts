@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -56,19 +56,20 @@ import { SearchResultsItemComponent } from './search-results-item.component';
   ]
 })
 export class SaveFeatureDialogComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  languageService = inject(LanguageService);
+  dialogRef = inject<MatDialogRef<SaveFeatureDialogComponent>>(MatDialogRef);
+  data = inject<{
+    feature: SearchResult;
+    layers: Layer[];
+}>(MAT_DIALOG_DATA, { optional: true });
+
   public form: UntypedFormGroup;
   feature: SearchResult;
   layers: Layer[] = [];
   filteredLayers$: Observable<Layer[]>;
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    public languageService: LanguageService,
-    public dialogRef: MatDialogRef<SaveFeatureDialogComponent>,
-    @Optional()
-    @Inject(MAT_DIALOG_DATA)
-    public data: { feature: SearchResult; layers: Layer[] }
-  ) {
+  constructor() {
     this.form = this.formBuilder.group({
       layerName: ['', [Validators.required]]
     });

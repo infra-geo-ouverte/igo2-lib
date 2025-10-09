@@ -1,9 +1,3 @@
-import { ConfigService } from '@igo2/core/config';
-import { LanguageService } from '@igo2/core/language';
-import { StorageService } from '@igo2/core/storage';
-
-import { Projection } from '../../../map/shared/projection.interfaces';
-import { ProjectionService } from '../../../map/shared/projection.service';
 import {
   CoordinatesReverseSearchSource,
   CoordinatesSearchResultFormatter
@@ -15,10 +9,8 @@ import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
  * Coordinate search result formatter factory
  * @ignore
  */
-export function defaultCoordinatesSearchResultFormatterFactory(
-  languageService: LanguageService
-) {
-  return new CoordinatesSearchResultFormatter(languageService);
+export function defaultCoordinatesSearchResultFormatterFactory() {
+  return new CoordinatesSearchResultFormatter();
 }
 
 /**
@@ -27,8 +19,7 @@ export function defaultCoordinatesSearchResultFormatterFactory(
 export function provideDefaultCoordinatesSearchResultFormatter() {
   return {
     provide: CoordinatesSearchResultFormatter,
-    useFactory: defaultCoordinatesSearchResultFormatterFactory,
-    deps: [LanguageService]
+    useFactory: defaultCoordinatesSearchResultFormatterFactory
   };
 }
 
@@ -36,17 +27,8 @@ export function provideDefaultCoordinatesSearchResultFormatter() {
  * CoordinatesReverse search source factory
  * @ignore
  */
-export function CoordinatesReverseSearchSourceFactory(
-  config: ConfigService,
-  languageService: LanguageService,
-  storageService: StorageService
-) {
-  return new CoordinatesReverseSearchSource(
-    config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),
-    languageService,
-    storageService,
-    (config.getConfig('projections') as Projection[]) || []
-  );
+export function CoordinatesReverseSearchSourceFactory() {
+  return new CoordinatesReverseSearchSource();
 }
 
 /**
@@ -56,8 +38,7 @@ export function provideCoordinatesReverseSearchSource() {
   return {
     provide: SearchSource,
     useFactory: CoordinatesReverseSearchSourceFactory,
-    multi: true,
-    deps: [ConfigService, LanguageService, StorageService, ProjectionService]
+    multi: true
   };
 }
 

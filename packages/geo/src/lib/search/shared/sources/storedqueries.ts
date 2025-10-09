@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
@@ -39,6 +40,9 @@ export class StoredQueriesSearchSource
   extends SearchSource
   implements TextSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'storedqueries';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [
@@ -51,12 +55,13 @@ export class StoredQueriesSearchSource
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${StoredQueriesSearchSource.id}`
+    );
+
     super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions;
     if (this.storedQueriesOptions && !this.storedQueriesOptions.available) {
@@ -396,6 +401,9 @@ export class StoredQueriesReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'storedqueriesreverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -403,12 +411,13 @@ export class StoredQueriesReverseSearchSource
   public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${StoredQueriesReverseSearchSource.id}`
+    );
+
     super(options, storageService);
     this.storedQueriesOptions =
       options as StoredQueriesReverseSearchSourceOptions;

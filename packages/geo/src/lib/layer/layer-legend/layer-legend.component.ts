@@ -1,15 +1,6 @@
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChildren
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChildren, inject } from '@angular/core';
 import type { QueryList } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
@@ -67,6 +58,12 @@ import {
   ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
+  private capabilitiesService = inject(CapabilitiesService);
+  private languageService = inject(LanguageService);
+  private cdRef = inject(ChangeDetectorRef);
+  private config = inject(ConfigService);
+  private http = inject(HttpClient);
+
   @Input() updateLegendOnResolutionChange = false;
 
   /**
@@ -109,18 +106,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * if getLegendGraphic is authorized
    */
   public getLegend = true;
-
-  /**
-   * activeLegend
-   */
-
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService,
-    private cdRef: ChangeDetectorRef,
-    private config: ConfigService,
-    private http: HttpClient
-  ) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly

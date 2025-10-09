@@ -1,12 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -67,6 +61,8 @@ type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
   ]
 })
 export class LayerListComponent {
+  private messageService = inject(MessageService);
+
   public toggleOpacity = false;
   isInit: boolean;
 
@@ -119,7 +115,7 @@ export class LayerListComponent {
 
   dataSource: MatTreeFlatDataSource<AnyLayer, LayerFlatNode>;
 
-  constructor(private messageService: MessageService) {
+  constructor() {
     this.dataSource = new MatTreeFlatDataSource(
       this.treeControl,
       this.treeFlattener,

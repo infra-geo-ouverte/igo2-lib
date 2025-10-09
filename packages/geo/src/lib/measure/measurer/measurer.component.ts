@@ -1,14 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DOCUMENT,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DOCUMENT, Input, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
@@ -99,6 +90,11 @@ import { MeasurerItemComponent } from './measurer-item.component';
   ]
 })
 export class MeasurerComponent implements OnInit, OnDestroy {
+  private languageService = inject(LanguageService);
+  private dialog = inject(MatDialog);
+  private storageService = inject(StorageService);
+  private document = inject<Document>(DOCUMENT);
+
   /**
    * Table template
    * @internal
@@ -314,12 +310,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     return this.map.ol.getView().getProjection().getCode();
   }
 
-  constructor(
-    private languageService: LanguageService,
-    private dialog: MatDialog,
-    private storageService: StorageService,
-    @Inject(DOCUMENT) private document: Document
-  ) {
+  constructor() {
     this.tableTemplate = {
       selection: true,
       selectMany: true,

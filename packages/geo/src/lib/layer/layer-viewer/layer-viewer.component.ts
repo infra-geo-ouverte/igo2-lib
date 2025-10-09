@@ -1,15 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ContentChild,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  TemplateRef
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -63,6 +53,9 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
   ]
 })
 export class LayerViewerComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private layerService = inject(LayerService);
+
   layers: AnyLayer[];
   baselayers: AnyLayer[];
   keyword$ = new BehaviorSubject<string>(undefined);
@@ -93,11 +86,6 @@ export class LayerViewerComponent implements OnInit {
   get unavailableLayers(): LayerOptionsBase[] {
     return this.layerService.unavailableLayers;
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private layerService: LayerService
-  ) {}
 
   isLayerItem = isLayerItem;
 

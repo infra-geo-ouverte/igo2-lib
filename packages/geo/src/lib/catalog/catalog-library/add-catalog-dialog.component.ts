@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,26 +51,23 @@ import { Catalog } from '../shared/catalog.abstract';
   ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
+  languageService = inject(LanguageService);
+  private configService = inject(ConfigService);
+  private formService = inject(FormService);
+  dialogRef = inject<MatDialogRef<AddCatalogDialogComponent>>(MatDialogRef);
+  data = inject<{
+    predefinedCatalogs: Catalog[];
+    store: EntityStore<Catalog>;
+    error: boolean;
+    addedCatalog: Catalog;
+}>(MAT_DIALOG_DATA, { optional: true });
+
   predefinedForm$ = new BehaviorSubject<Form>(undefined);
   customForm$ = new BehaviorSubject<Form>(undefined);
   data$ = new BehaviorSubject<Catalog>(undefined);
   customData$ = new BehaviorSubject<Catalog>(undefined);
   emailAddress: string;
   private storeViewAll$$: Subscription;
-  constructor(
-    public languageService: LanguageService,
-    private configService: ConfigService,
-    private formService: FormService,
-    public dialogRef: MatDialogRef<AddCatalogDialogComponent>,
-    @Optional()
-    @Inject(MAT_DIALOG_DATA)
-    public data: {
-      predefinedCatalogs: Catalog[];
-      store: EntityStore<Catalog>;
-      error: boolean;
-      addedCatalog: Catalog;
-    }
-  ) {}
 
   ngOnInit() {
     if (this.data.addedCatalog) {

@@ -1,5 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -51,6 +51,9 @@ import {
   providers: [SecureImagePipe]
 })
 export class PrintFormComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private mediaService = inject(MediaService);
+
   public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
@@ -241,10 +244,7 @@ export class PrintFormComponent implements OnInit {
 
   maxLength = 180;
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private mediaService: MediaService
-  ) {
+  constructor() {
     this.form = this.formBuilder.group({
       title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
       subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],
