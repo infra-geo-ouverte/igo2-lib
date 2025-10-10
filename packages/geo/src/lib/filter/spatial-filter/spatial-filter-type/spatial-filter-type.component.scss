@@ -8,21 +8,15 @@
   }
 
   .mat-mdc-tab-group ::ng-deep .mat-mdc-tab-label {
-    padding: 10px;
+    padding: 12px;
   }
 
   .mat-mdc-tab-group ::ng-deep .mat-mdc-tab-body-wrapper {
-    margin-top: 5px;
+    margin-top: 4px;
   }
 
   .spatial-type-toggle {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
-    mat-button-toggle-group {
-      width: 50%;
-      mat-button-toggle {
-        width: 50%;
-      }
-    }
   }
 }
