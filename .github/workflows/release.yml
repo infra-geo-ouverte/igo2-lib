@@ -51,4 +51,5 @@ jobs:
   deploy-gh-pages:
     name: Deploy demo content to Pages
     needs: release
+    if: github.ref == 'refs/heads/master'
     uses: ./.github/workflows/deploy-gh-page.yml
