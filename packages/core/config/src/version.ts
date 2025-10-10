@@ -6,6 +6,6 @@ export interface Version {
 }
 
 export const version: Version = {
-  lib: '20.0.0-next.1',
-  releaseDate: 1760106114174
+  lib: '20.0.0-next.2',
+  releaseDate: 1760107728338
 };
