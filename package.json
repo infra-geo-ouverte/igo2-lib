@@ -4,7 +4,7 @@
     "packages/*",
     "projects/*"
   ],
-  "version": "20.0.0-next.2",
+  "version": "20.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
