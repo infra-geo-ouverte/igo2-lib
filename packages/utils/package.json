@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "19.0.3",
+  "version": "20.0.0-next.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -33,9 +33,6 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "engines": {

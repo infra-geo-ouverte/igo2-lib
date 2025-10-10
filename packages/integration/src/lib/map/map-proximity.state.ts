@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { StorageService } from '@igo2/core/storage';
 import {
@@ -38,6 +38,9 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class MapProximityState {
+  private mapState = inject(MapState);
+  private storageService = inject(StorageService);
+
   private defaultProximityRadiusValue = 30;
 
   public enabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
@@ -56,10 +59,7 @@ export class MapProximityState {
     return this.mapState.map;
   }
 
-  constructor(
-    private mapState: MapState,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.proximityFeatureStore = new FeatureStore<Feature>([], {
       map: this.mapState.map
     });

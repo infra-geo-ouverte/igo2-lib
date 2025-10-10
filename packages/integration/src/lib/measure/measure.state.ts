@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { FeatureStore, FeatureWithMeasure } from '@igo2/geo';
 
@@ -11,12 +11,14 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class MeasureState {
+  private mapState = inject(MapState);
+
   /**
    * Store that holds the measures
    */
   public store: FeatureStore<FeatureWithMeasure>;
 
-  constructor(private mapState: MapState) {
+  constructor() {
     this.store = new FeatureStore<FeatureWithMeasure>([], {
       map: this.mapState.map
     });

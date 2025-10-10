@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ import { Catalog } from '../shared/catalog.abstract';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgIf,
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,

@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Inject,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -42,6 +42,13 @@ import {
   imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
 })
 export class AuthMicrosoftComponent {
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private appRef = inject(ApplicationRef);
+  private msalService = inject(MsalService);
+  private msalGuardConfig =
+    inject<MSPMsalGuardConfiguration[]>(MSAL_GUARD_CONFIG);
+
   private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -49,14 +56,7 @@ export class AuthMicrosoftComponent {
 
   svgIcon: IconSvg = MICROSOFT_ICON;
 
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private appRef: ApplicationRef,
-    private msalService: MsalService,
-    @Inject(MSAL_GUARD_CONFIG)
-    private msalGuardConfig: MSPMsalGuardConfiguration[]
-  ) {
+  constructor() {
     this.options = this.config.getConfig('auth.microsoft');
 
     this.msalService.instance = new PublicClientApplication({
@@ -66,10 +66,7 @@ export class AuthMicrosoftComponent {
       }
     });
 
-    this.broadcastService = new MsalBroadcastService(
-      this.msalService.instance,
-      this.msalService
-    );
+    this.broadcastService = new MsalBroadcastService(this.msalService.instance);
 
     if (this.options?.clientId) {
       this.broadcastService.inProgress$

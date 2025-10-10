@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { Form, FormService } from '@igo2/common/form';
@@ -35,6 +35,12 @@ interface DataIssueReporterData {
   standalone: false
 })
 export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
+  private mapState = inject(MapState);
+  private formService = inject(FormService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private httpClient = inject(HttpClient);
+
   /**
    * Url to report the data issue. Use the Post protocol to send the form.
    */
@@ -55,14 +61,6 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
   submitDisabled = true;
 
   private valueChanges$$: Subscription;
-
-  constructor(
-    private mapState: MapState,
-    private formService: FormService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private httpClient: HttpClient
-  ) {}
 
   ngOnInit() {
     combineLatest([

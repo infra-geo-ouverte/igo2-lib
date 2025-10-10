@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { LanguageService } from '@igo2/core/language';
@@ -20,10 +20,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppRequestComponent {
-  constructor(
-    private http: HttpClient,
-    public languageService: LanguageService
-  ) {}
+  private http = inject(HttpClient);
+  languageService = inject(LanguageService);
 
   callHttp() {
     const url = 'https://geoegl.msp.gouv.qc.ca/apis/icherche/info';

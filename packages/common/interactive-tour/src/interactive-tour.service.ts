@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -24,15 +24,15 @@ interface IIndexTour {
   providedIn: 'root'
 })
 export class InteractiveTourService {
+  private configService = inject(ConfigService);
+  private mediaService = inject(MediaService);
+  private languageService = inject(LanguageService);
+  private interactiveTourLoader = inject(InteractiveTourLoader);
+  private shepherdService = inject(ShepherdService);
+
   private previousStep: InteractiveTourStep;
 
-  constructor(
-    private configService: ConfigService,
-    private mediaService: MediaService,
-    private languageService: LanguageService,
-    private interactiveTourLoader: InteractiveTourLoader,
-    private shepherdService: ShepherdService
-  ) {
+  constructor() {
     if (this.isAppHaveTour()) {
       this.interactiveTourLoader.loadConfigTour();
     }

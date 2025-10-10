@@ -60,9 +60,9 @@
           </igo-panel>
 
           <igo-panel class="w-100">
-            <ng-container *ngIf="selectedFeature$ | async as feature">
+            @if (selectedFeature$ | async; as feature) {
               <igo-feature-details [feature]="feature"></igo-feature-details>
-            </ng-container>
+            }
           </igo-panel>
         </div>
       </mat-grid-tile>

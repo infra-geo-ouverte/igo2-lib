@@ -5,7 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +14,8 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -134,13 +135,11 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   imports: [
     MatButtonToggleModule,
     MatSlideToggleModule,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatDividerModule,
     MatButtonModule,
@@ -161,6 +160,12 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
   ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
+  private languageService = inject(LanguageService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private drawStyleService = inject(DrawStyleService);
+  private dialog = inject(MatDialog);
+  private drawIconService = inject(DrawIconService);
+
   /**
    * Table template
    * @internal
@@ -248,13 +253,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   @ViewChild('selectedLayer') select;
 
-  constructor(
-    private languageService: LanguageService,
-    private formBuilder: UntypedFormBuilder,
-    private drawStyleService: DrawStyleService,
-    private dialog: MatDialog,
-    private drawIconService: DrawIconService
-  ) {
+  constructor() {
     this.tableTemplate = {
       selection: true,
       selectMany: true,

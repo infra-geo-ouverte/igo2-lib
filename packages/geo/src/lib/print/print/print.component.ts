@@ -1,4 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+
+import { SecureImagePipe } from '@igo2/common/image';
 
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -19,9 +21,12 @@ import {
 @Component({
   selector: 'igo-print',
   templateUrl: './print.component.html',
-  imports: [PrintFormComponent]
+  imports: [PrintFormComponent],
+  providers: [SecureImagePipe]
 })
 export class PrintComponent {
+  private printService = inject(PrintService);
+
   public disabled$ = new BehaviorSubject(false);
 
   @Input()
@@ -86,8 +91,6 @@ export class PrintComponent {
     this._resolution = value;
   }
   private _resolution: PrintResolution;
-
-  constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
     this.disabled$.next(true);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -9,7 +9,8 @@ import { StorageOptions } from './storage.interface';
   providedIn: 'root'
 })
 export class StorageService extends BaseStorage<StorageOptions> {
-  constructor(private config: ConfigService) {
+  constructor() {
+    const config = inject(ConfigService);
     super(config);
   }
 }

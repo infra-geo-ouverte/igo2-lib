@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 
@@ -21,11 +21,11 @@ export interface SimpleGetOptions {
 }
 @Injectable()
 export class GeoNetworkService {
+  private http = inject(HttpClient);
+  private networkService = inject(NetworkService);
+
   private networkOnline = true;
-  constructor(
-    private http: HttpClient,
-    private networkService: NetworkService
-  ) {
+  constructor() {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.networkOnline = state.connection;
     });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { Media, MediaOrientation, MediaService } from '@igo2/core/media';
 
@@ -12,7 +12,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent]
 })
 export class AppMediaComponent {
-  constructor(private mediaService: MediaService) {}
+  private mediaService = inject(MediaService);
 
   get media(): Media {
     return this.mediaService.getMedia();

@@ -2,11 +2,13 @@
 <h2>{{ title }}</h2>
 
 <div>
-  <ng-container *ngIf="dependencies?.length">
+  @if (dependencies?.length) {
     <label for="">Dependencies:</label>
     <ul>
-      <li *ngFor="let dep of dependencies">{{ dep }}</li>
+      @for (dep of dependencies; track dep) {
+        <li>{{ dep }}</li>
+      }
     </ul>
-  </ng-container>
+  }
   <ng-content></ng-content>
 </div>

@@ -8,9 +8,11 @@
           (selectionChange)="loadTheme($event)"
           placeholder="Select a theme"
         >
-          <mat-option *ngFor="let theme of themes" [value]="theme.value">
-            {{ theme.title }}
-          </mat-option>
+          @for (theme of themes; track theme) {
+            <mat-option [value]="theme.value">
+              {{ theme.title }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>

@@ -1,11 +1,10 @@
-import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'igo-info-section',
   templateUrl: './info-section.component.html',
   styleUrls: ['./info-section.component.scss'],
-  imports: [NgIf]
+  imports: []
 })
 export class InfoSectionComponent {
   @Input() infoContent = '';

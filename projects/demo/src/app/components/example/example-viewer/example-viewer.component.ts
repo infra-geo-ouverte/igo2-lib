@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,7 +14,6 @@ const SRC_PATH =
   styleUrls: ['./example-viewer.component.scss'],
   imports: [
     MatCardModule,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

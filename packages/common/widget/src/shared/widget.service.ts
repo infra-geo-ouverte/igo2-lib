@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { DynamicComponentService } from '@igo2/common/dynamic-component';
 
@@ -9,7 +9,7 @@ import { WidgetComponent } from './widget.interfaces';
   providedIn: 'root'
 })
 export class WidgetService {
-  constructor(private dynamicComponentService: DynamicComponentService) {}
+  private dynamicComponentService = inject(DynamicComponentService);
 
   create(widgetCls: any): Widget {
     return this.dynamicComponentService.create(widgetCls as WidgetComponent);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -27,7 +27,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
   ]
 })
 export class BookmarkDialogComponent {
-  public title: string;
+  dialogRef = inject<MatDialogRef<BookmarkDialogComponent>>(MatDialogRef);
 
-  constructor(public dialogRef: MatDialogRef<BookmarkDialogComponent>) {}
+  public title: string;
 }

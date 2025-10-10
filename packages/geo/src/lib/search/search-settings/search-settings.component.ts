@@ -1,4 +1,3 @@
-import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +5,8 @@ import {
   HostListener,
   Input,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -61,11 +61,7 @@ import {
     MatTooltipModule,
     MatMenuModule,
     MatIconModule,
-    NgIf,
-    NgFor,
     MatCheckboxModule,
-    NgSwitch,
-    NgSwitchCase,
     MatRadioModule,
     MatDividerModule,
     MatSlideToggleModule,
@@ -74,6 +70,12 @@ import {
   ]
 })
 export class SearchSettingsComponent implements OnInit {
+  private formDialogService = inject(FormDialogService);
+  private messageService = inject(MessageService);
+  private searchSourceService = inject(SearchSourceService);
+  private mediaService = inject(MediaService);
+  private storageService = inject(StorageService);
+
   public hasPointerReverseSearchSource = false;
   public searchSourcesAllEnabled = false;
 
@@ -118,14 +120,6 @@ export class SearchSettingsComponent implements OnInit {
       this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
     }
   }
-
-  constructor(
-    private formDialogService: FormDialogService,
-    private messageService: MessageService,
-    private searchSourceService: SearchSourceService,
-    private mediaService: MediaService,
-    private storageService: StorageService
-  ) {}
 
   ngOnInit(): void {
     this.hasPointerReverseSearchSource =

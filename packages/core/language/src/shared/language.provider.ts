@@ -1,6 +1,6 @@
-import { DOCUMENT } from '@angular/common';
 import { HttpBackend } from '@angular/common/http';
 import {
+  DOCUMENT,
   EnvironmentProviders,
   Provider,
   inject,

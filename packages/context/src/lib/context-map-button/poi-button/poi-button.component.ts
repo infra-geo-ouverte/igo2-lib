@@ -1,5 +1,4 @@
-import { NgFor } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,12 +36,18 @@ import { PoiService } from './shared/poi.service';
     StopPropagationDirective,
     MatIconModule,
     MatDividerModule,
-    NgFor,
     IgoLanguageModule
   ],
   providers: [PoiService]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
+  private dialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private poiService = inject(PoiService);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+  private confirmDialogService = inject(ConfirmDialogService);
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -63,15 +68,6 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
 
   public pois: Poi[];
   private authenticate$$: Subscription;
-
-  constructor(
-    private dialog: MatDialog,
-    private authService: AuthService,
-    private poiService: PoiService,
-    private messageService: MessageService,
-    private languageService: LanguageService,
-    private confirmDialogService: ConfirmDialogService
-  ) {}
 
   ngOnInit() {
     this.authenticate$$ = this.authService.authenticate$.subscribe((auth) => {

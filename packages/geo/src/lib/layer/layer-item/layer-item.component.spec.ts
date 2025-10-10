@@ -1,4 +1,4 @@
-// import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+// import { ComponentFixture, TestBed } from '@angular/core/testing';
 //
 // import { IgoTestModule } from '../../../test/module';
 // import { IgoSharedModule } from '../../shared';
@@ -17,9 +17,8 @@
 //   let component: LayerItemComponent;
 //   let fixture: ComponentFixture<LayerItemComponent>;
 //
-//   beforeEach(
-//     waitForAsync(() => {
-//       TestBed.configureTestingModule({
+//   beforeEach(async () => {
+//       await TestBed.configureTestingModule({
 //         imports: [IgoTestModule, IgoSharedModule, IgoFilterModule],
 //         declarations: [LayerItemComponent, LayerLegendComponent],
 //         providers: [
@@ -29,10 +28,7 @@
 //           DownloadService
 //         ]
 //       }).compileComponents();
-//     })
-//   );
-//
-//   beforeEach(() => {
+
 //     fixture = TestBed.createComponent(LayerItemComponent);
 //     component = fixture.componentInstance;
 //   });

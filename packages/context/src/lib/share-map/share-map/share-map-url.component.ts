@@ -1,11 +1,11 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,12 +33,18 @@ import { ShareMapService } from '../shared/share-map.service';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    NgIf,
     CustomHtmlComponent,
     IgoLanguageModule
   ]
 })
 export class ShareMapUrlComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  private messageService = inject(MessageService);
+  private shareMapService = inject(ShareMapService);
+  private contextService = inject(ContextService);
+  private cdRef = inject(ChangeDetectorRef);
+  private route = inject(RouteService);
+
   private mapState$$: Subscription;
 
   @Input() map: IgoMap;
@@ -49,14 +55,7 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   };
   private language: string;
 
-  constructor(
-    private clipboard: Clipboard,
-    private messageService: MessageService,
-    private shareMapService: ShareMapService,
-    private contextService: ContextService,
-    private cdRef: ChangeDetectorRef,
-    private route: RouteService
-  ) {
+  constructor() {
     this.route.queryParams.subscribe((params) => {
       const lang = params[this.route.options.languageKey];
       if (lang) {

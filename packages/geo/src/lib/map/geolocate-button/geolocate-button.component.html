@@ -1,15 +1,17 @@
-<div class="igo-geolocate-button-container" *ngIf="map.geolocationController">
-  <button
-    mat-icon-button
-    [matTooltip]="
-      map.geolocationController.tracking
-        ? ('igo.geo.mapButtons.geolocateInactive' | translate)
-        : ('igo.geo.mapButtons.geolocate' | translate)
-    "
-    matTooltipPosition="left"
-    [color]="color"
-    (click)="onGeolocationClick()"
-  >
-    <mat-icon>{{ icon$ | async }}</mat-icon>
-  </button>
-</div>
+@if (map.geolocationController) {
+  <div class="igo-geolocate-button-container">
+    <button
+      mat-icon-button
+      [matTooltip]="
+        map.geolocationController.tracking
+          ? ('igo.geo.mapButtons.geolocateInactive' | translate)
+          : ('igo.geo.mapButtons.geolocate' | translate)
+      "
+      matTooltipPosition="left"
+      [color]="color"
+      (click)="onGeolocationClick()"
+    >
+      <mat-icon>{{ icon$ | async }}</mat-icon>
+    </button>
+  </div>
+}

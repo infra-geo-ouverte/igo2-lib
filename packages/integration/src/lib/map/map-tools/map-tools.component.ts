@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -65,7 +66,6 @@ import { MapState } from '../map.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatTabsModule,
-    NgIf,
     NgTemplateOutlet,
     LayerViewerComponent,
     StyleModalLayerButtonComponent,
@@ -84,6 +84,15 @@ import { MapState } from '../map.state';
   ]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
+  layerListToolState = inject(LayerListToolState);
+  private toolState = inject(ToolState);
+  mapState = inject(MapState);
+  private searchSourceService = inject(SearchSourceService);
+  private importExportState = inject(ImportExportState);
+  private configService = inject(ConfigService);
+  mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
+
   isDesktop: boolean;
   layers$ = new BehaviorSubject<AnyLayer[]>([]);
   showAllLegendsValue$ = new BehaviorSubject<boolean>(false);
@@ -211,16 +220,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
-  constructor(
-    public layerListToolState: LayerListToolState,
-    private toolState: ToolState,
-    public mapState: MapState,
-    private searchSourceService: SearchSourceService,
-    private importExportState: ImportExportState,
-    private configService: ConfigService,
-    public mediaService: MediaService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor() {
     this._layerViewerOptions = this.configService.getConfig('layer');
   }
 

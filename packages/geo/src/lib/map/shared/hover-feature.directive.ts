@@ -4,7 +4,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Self
+  inject
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
@@ -47,6 +47,10 @@ import { StyleService } from '../../style/style-service/style.service';
   standalone: true
 })
 export class HoverFeatureDirective implements OnInit, OnDestroy {
+  private component = inject(MapBrowserComponent, { self: true });
+  private mediaService = inject(MediaService);
+  private styleService = inject(StyleService);
+
   public store: FeatureStore<Feature>;
   private pointerHoverFeatureStore: EntityStore<OlFeature<OlGeometry>> =
     new EntityStore<OlFeature<OlGeometry>>([]);
@@ -92,12 +96,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   get mapProjection(): string {
     return (this.component.map as IgoMap).projection;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private mediaService: MediaService,
-    private styleService: StyleService
-  ) {}
 
   /**
    * Start listening to pointermove and reverse search results.

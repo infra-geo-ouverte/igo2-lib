@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
@@ -22,6 +22,12 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class EditionActionsService implements OnDestroy {
+  private ogcFilterWidget = inject<Widget>(OgcFilterWidget, { optional: true });
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private mediaService = inject(MediaService);
+  private toolState = inject(ToolState);
+
   public maximize$: BehaviorSubject<boolean>;
 
   zoomAuto$ = new BehaviorSubject<boolean>(false);
@@ -35,15 +41,7 @@ export class EditionActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    @Optional()
-    @Inject(OgcFilterWidget)
-    private ogcFilterWidget: Widget,
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private mediaService: MediaService,
-    private toolState: ToolState
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );

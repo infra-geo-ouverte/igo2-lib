@@ -23,16 +23,17 @@
     }}</mat-icon>
   </button>
 
-  <button
-    *ngIf="viewerOptions?.group?.canCreate"
-    mat-icon-button
-    [disabled]="!viewerOptions.group.enable"
-    [matTooltip]="'igo.geo.layer.group.create' | translate"
-    matTooltipShowDelay="500"
-    type="button"
-    color="primary"
-    (click)="createGroup()"
-  >
-    <mat-icon>create_new_folder</mat-icon>
-  </button>
+  @if (viewerOptions?.group?.canCreate) {
+    <button
+      mat-icon-button
+      [disabled]="!viewerOptions.group.enable"
+      [matTooltip]="'igo.geo.layer.group.create' | translate"
+      matTooltipShowDelay="500"
+      type="button"
+      color="primary"
+      (click)="createGroup()"
+    >
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+  }
 </div>

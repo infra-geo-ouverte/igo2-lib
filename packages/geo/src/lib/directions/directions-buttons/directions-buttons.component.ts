@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, Input, Optional } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -34,6 +34,12 @@ import {
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class DirectionsButtonsComponent {
+  private clipboard = inject(Clipboard);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private routeService = inject(RouteService, { optional: true });
+  private directionsService = inject(DirectionsService);
+
   @Input({ required: true }) contextUri: string;
   @Input({ required: true }) zoomOnActiveRoute$ = new Subject<void>();
   @Input({ required: true }) stopsStore: StopsStore;
@@ -41,14 +47,6 @@ export class DirectionsButtonsComponent {
   @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
 
   public downloadDirectionsBtnDisabled = false;
-
-  constructor(
-    private clipboard: Clipboard,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    @Optional() private routeService: RouteService,
-    private directionsService: DirectionsService
-  ) {}
 
   /**
    * Returns the active route from the routesFeatureStore.

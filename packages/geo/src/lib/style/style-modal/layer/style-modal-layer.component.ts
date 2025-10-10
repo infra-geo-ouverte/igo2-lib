@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -36,7 +35,6 @@ import {
     MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatIconModule,
     ColorPickerFormFieldComponent,
     MatDialogActions,
@@ -45,6 +43,10 @@ import {
   ]
 })
 export class StyleModalLayerComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<StyleModalLayerComponent>>(MatDialogRef);
+  private formBuilder = inject(UntypedFormBuilder);
+  data = inject<LayerMatDialogData>(MAT_DIALOG_DATA);
+
   @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
@@ -63,12 +65,6 @@ export class StyleModalLayerComponent implements OnInit {
     const style = this.data.layer.ol.getStyle();
     return style instanceof Function ? undefined : (style as olStyle).clone();
   }
-
-  constructor(
-    public dialogRef: MatDialogRef<StyleModalLayerComponent>,
-    private formBuilder: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData
-  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;

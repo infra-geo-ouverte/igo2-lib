@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -8,7 +8,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChildren
+  ViewChildren,
+  inject
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +22,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CollapseDirective } from '@igo2/common/collapsible';
 import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
-import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
+import {
+  ImageErrorDirective,
+  fetchImageFromDepotUrl
+} from '@igo2/common/image';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -47,8 +51,6 @@ import {
   styleUrls: ['./layer-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
-    NgFor,
     MatListModule,
     MatIconModule,
     CollapseDirective,
@@ -66,6 +68,12 @@ import {
   ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
+  private capabilitiesService = inject(CapabilitiesService);
+  private languageService = inject(LanguageService);
+  private cdRef = inject(ChangeDetectorRef);
+  private config = inject(ConfigService);
+  private http = inject(HttpClient);
+
   @Input() updateLegendOnResolutionChange = false;
 
   /**
@@ -89,11 +97,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   public currentStyle;
 
   /**
-   * The scale used to make the legend
-   */
-  private scale: number = undefined;
-
-  /**
    * The extent used to make the legend
    */
   private view: LegendMapViewOptions = undefined;
@@ -113,18 +116,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * if getLegendGraphic is authorized
    */
   public getLegend = true;
-
-  /**
-   * activeLegend
-   */
-
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService,
-    private configService: ConfigService,
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -183,9 +174,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   getLegendGraphic(item: Legend) {
     if (item.url) {
-      const secureIMG = new SecureImagePipe(this.http, this.configService);
-      secureIMG
-        .transform(item.url)
+      const depotUrl = this.config?.getConfig('depot.url');
+      fetchImageFromDepotUrl(item.url, depotUrl, this.http)
         .pipe(
           catchError((err) => {
             if (err.error) {

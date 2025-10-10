@@ -1,11 +1,12 @@
-<button
-  *ngIf="hasWorkspace$ | async"
-  mat-icon-button
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.integration.workspace.toggleWorkspace' | translate"
-  [color]="color"
-  (click)="activateWorkspace()"
->
-  <mat-icon>table</mat-icon>
-</button>
+@if (hasWorkspace$ | async) {
+  <button
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.integration.workspace.toggleWorkspace' | translate"
+    [color]="color"
+    (click)="activateWorkspace()"
+  >
+    <mat-icon>table</mat-icon>
+  </button>
+}

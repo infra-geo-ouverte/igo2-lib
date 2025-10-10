@@ -1,9 +1,0 @@
-@use './actionbar/actionbar-item.theming.scss' as actionbar-item;
-
-@mixin themes($theme) {
-  @include actionbar-item.theme($theme);
-}
-
-@mixin densities($theme) {
-  @include actionbar-item.density($theme);
-}

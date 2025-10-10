@@ -4,7 +4,8 @@ import {
   HostListener,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
@@ -37,6 +38,15 @@ export class DropGeoFileDirective
   extends DragAndDropDirective
   implements OnInit, OnDestroy
 {
+  private component = inject(MapBrowserComponent);
+  private importService = inject(ImportService);
+  private styleListService = inject(StyleListService);
+  private styleService = inject(StyleService);
+  private config = inject(ConfigService);
+  private messageService = inject(MessageService);
+  private layerService = inject(LayerService);
+  private confirmDialogService = inject(ConfirmDialogService);
+
   protected filesDropped = new EventEmitter<File[]>();
   protected filesInvalid = new EventEmitter<File[]>();
   private epsgCode$$: Subscription[] = [];
@@ -47,19 +57,6 @@ export class DropGeoFileDirective
   }
 
   @Input() contextUri: string;
-
-  constructor(
-    private component: MapBrowserComponent,
-    private importService: ImportService,
-    private styleListService: StyleListService,
-    private styleService: StyleService,
-    private config: ConfigService,
-    private messageService: MessageService,
-    private layerService: LayerService,
-    private confirmDialogService: ConfirmDialogService
-  ) {
-    super();
-  }
 
   ngOnInit() {
     this.filesDropped$$ = this.filesDropped.subscribe((files: File[]) => {

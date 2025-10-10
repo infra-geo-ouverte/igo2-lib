@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
@@ -7,10 +7,12 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
   providedIn: 'root'
 })
 export class LanguageService {
+  translate = inject(TranslateService);
+
   private language: string;
   readonly language$ = new BehaviorSubject<string>(undefined);
 
-  constructor(public translate: TranslateService) {
+  constructor() {
     const defaultLang = this.translate.defaultLang;
     if (defaultLang && this.matchLanguage(defaultLang)) {
       this.language = defaultLang;

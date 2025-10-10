@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,13 +18,7 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
   templateUrl: './track-feature-button.component.html',
   styleUrls: ['./track-feature-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class TrackFeatureButtonComponent implements OnInit {
   @Input() layer: VectorLayer;

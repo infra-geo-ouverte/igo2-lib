@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,7 +7,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,16 +30,11 @@ export interface EntitySelectorChange<T = any> {
   templateUrl: './entity-selector.component.html',
   styleUrls: ['./entity-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    NgIf,
-    MatOptionModule,
-    NgFor,
-    AsyncPipe
-  ]
+  imports: [MatFormFieldModule, MatSelectModule, MatOptionModule, AsyncPipe]
 })
 export class EntitySelectorComponent implements OnInit, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+
   /**
    * The selected entity
    * @internal
@@ -109,8 +105,6 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * Event emitted when the selection changes
    */
   @Output() selectedChange = new EventEmitter<EntitySelectorChange>();
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
    * Create a store watcher and subscribe to the selected entity

@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -36,7 +36,6 @@ import { LayerListToolService } from './layer-list-tool.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
@@ -50,6 +49,8 @@ import { LayerListToolService } from './layer-list-tool.service';
   providers: [LayerListToolService, FormDialogService]
 })
 export class LayerListToolComponent {
+  private layerListToolService = inject(LayerListToolService);
+
   @Input({ required: true }) mode: LayerToolMode;
   @Input() viewerOptions: LayerViewerOptions;
   @Input() floatLabel: FloatLabelType = 'auto';
@@ -64,8 +65,6 @@ export class LayerListToolComponent {
   get selectionActive(): boolean {
     return this.mode === 'selection';
   }
-
-  constructor(private layerListToolService: LayerListToolService) {}
 
   handleTermChange(value: string | undefined): void {
     this.searchChange.emit(value);

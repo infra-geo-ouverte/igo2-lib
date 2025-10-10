@@ -1,8 +1,9 @@
-<igo-catalog-browser
-  *ngIf="store$ | async as store"
-  [catalog]="catalog"
-  [store]="store"
-  [map]="map"
-  [toggleCollapsedGroup]="toggleCollapsedGroup"
->
-</igo-catalog-browser>
+@if (store$ | async; as store) {
+  <igo-catalog-browser
+    [catalog]="catalog"
+    [store]="store"
+    [map]="map"
+    [toggleCollapsedGroup]="toggleCollapsedGroup"
+  >
+  </igo-catalog-browser>
+}

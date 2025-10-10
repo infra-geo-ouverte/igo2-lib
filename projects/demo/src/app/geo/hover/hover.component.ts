@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { Media, MediaService } from '@igo2/core/media';
 import {
@@ -24,6 +24,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+  private mediaService = inject(MediaService);
+
   public pointerCoordDelay = 0;
   public pointerHoverFeatureDelay = 0;
   public map: IgoMap = new IgoMap({
@@ -49,11 +53,7 @@ export class AppHoverComponent {
     return this.mediaService.isTouchScreen();
   }
 
-  constructor(
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    private mediaService: MediaService
-  ) {
+  constructor() {
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',

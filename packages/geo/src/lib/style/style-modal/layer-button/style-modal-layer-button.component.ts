@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,8 +23,9 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class StyleModalLayerButtonComponent {
+  private dialog = inject(MatDialog);
+
   @Input() layer: VectorLayer;
-  constructor(private dialog: MatDialog) {}
 
   /**
    * Open the style modal dialog box

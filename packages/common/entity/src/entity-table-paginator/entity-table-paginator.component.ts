@@ -6,7 +6,8 @@ import {
   OnChanges,
   OnDestroy,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import {
   MatPaginator,
@@ -30,6 +31,9 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   imports: [MatPaginatorModule]
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
+  private languageService = inject(LanguageService);
+  private mediaService = inject(MediaService);
+
   public disabled = false;
   public hidePageSize = false;
   public pageIndex = 0;
@@ -64,11 +68,6 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> =
     new EventEmitter<MatPaginator>();
-
-  constructor(
-    private languageService: LanguageService,
-    private mediaService: MediaService
-  ) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 

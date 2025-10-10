@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Tool, ToolService } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
@@ -15,17 +15,17 @@ import { ToolState } from '../tool/tool.state';
   providedIn: 'root'
 })
 export class ContextState {
+  private contextService = inject(ContextService);
+  private toolService = inject(ToolService);
+  private toolState = inject(ToolState);
+  private languageService = inject(LanguageService);
+
   /**
    * Observable of the active context
    */
   context$ = new BehaviorSubject<DetailedContext>(undefined);
 
-  constructor(
-    private contextService: ContextService,
-    private toolService: ToolService,
-    private toolState: ToolState,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     this.contextService.context$.subscribe((context: DetailedContext) => {
       this.onContextChange(context);
     });

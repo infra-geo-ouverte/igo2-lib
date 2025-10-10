@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -23,14 +23,14 @@ import { StorageService } from '@igo2/core/storage';
   ]
 })
 export class UserDialogComponent {
+  dialogRef = inject<MatDialogRef<UserDialogComponent>>(MatDialogRef);
+  private auth = inject(AuthService);
+  private storageService = inject(StorageService);
+
   public user;
   public exp;
 
-  constructor(
-    public dialogRef: MatDialogRef<UserDialogComponent>,
-    private auth: AuthService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     const decodeToken = this.auth.decodeToken();
     this.user = decodeToken?.user;
     this.exp = new Date(decodeToken.exp * 1000).toLocaleString();

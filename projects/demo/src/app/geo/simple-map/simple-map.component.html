@@ -40,6 +40,8 @@
         <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
       </div>
     </igo-map-browser>
-    <p *ngIf="!isTouchScreen">{{ pointerCoord }}</p>
+    @if (!isTouchScreen) {
+      <p>{{ pointerCoord }}</p>
+    }
   </app-example-viewer>
 </app-doc-viewer>

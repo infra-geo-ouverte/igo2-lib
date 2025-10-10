@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +29,6 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
   templateUrl: './layer-viewer-bottom-actions.component.html',
   styleUrls: ['./layer-viewer-bottom-actions.component.scss'],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -43,6 +41,8 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
   providers: [LayerListToolService, FormDialogService]
 })
 export class LayerViewerBottomActionsComponent {
+  private layerListToolService = inject(LayerListToolService);
+
   orderable = true;
 
   @Input({ required: true }) map: MapBase;
@@ -90,8 +90,6 @@ export class LayerViewerBottomActionsComponent {
     const layer = this.selected[0];
     return isLayerGroup(layer);
   }
-
-  constructor(private layerListToolService: LayerListToolService) {}
 
   isLayerItem = isLayerItem;
 

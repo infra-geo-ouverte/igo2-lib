@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -41,10 +42,8 @@ import { CatalogLibraryItemComponent } from './catalog-library-item.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgFor,
     CatalogLibraryItemComponent,
     ListItemDirective,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -53,6 +52,11 @@ import { CatalogLibraryItemComponent } from './catalog-library-item.component';
   ]
 })
 export class CatalogLibraryComponent implements OnInit, OnDestroy {
+  private capabilitiesService = inject(CapabilitiesService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  private dialog = inject(MatDialog);
+
   /**
    * Store holding the catalogs
    */
@@ -98,13 +102,6 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   set selectedCatalogId(id) {
     this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
   }
-
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    private messageService: MessageService,
-    private storageService: StorageService,
-    private dialog: MatDialog
-  ) {}
 
   /**
    * @internal

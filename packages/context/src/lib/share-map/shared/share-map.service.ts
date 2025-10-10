@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, Injectable, inject } from '@angular/core';
 import { Params } from '@angular/router';
 
 import { RouteService, RouteServiceOptions } from '@igo2/core/route';
@@ -17,6 +16,9 @@ import {
   providedIn: 'root'
 })
 export class ShareMapService {
+  routeService = inject(RouteService);
+  document = inject<Document>(DOCUMENT);
+
   private language = '';
 
   options: ShareMapRouteKeysOptions;
@@ -25,10 +27,9 @@ export class ShareMapService {
   encoder: ShareMapEncoder;
   parser: ShareMapParser;
 
-  constructor(
-    public routeService: RouteService,
-    @Inject(DOCUMENT) public document: Document
-  ) {
+  constructor() {
+    const document = this.document;
+
     this.options = SHARE_MAP_KEYS_DEFAULT_OPTIONS;
     this.optionsLegacy = this.routeService.legacyOptions;
     this.keysDefinitions = shareMapKeyDefs({

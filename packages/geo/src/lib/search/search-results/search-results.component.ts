@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,7 +8,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -49,9 +50,7 @@ export enum SearchResultMode {
   styleUrls: ['./search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     ListComponent,
-    NgFor,
     CollapsibleComponent,
     NgTemplateOutlet,
     SearchResultsItemComponent,
@@ -62,6 +61,10 @@ export enum SearchResultMode {
   ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+  private searchService = inject(SearchService);
+  private configService = inject(ConfigService);
+
   private showResultsCount = true;
 
   /**
@@ -168,12 +171,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   private _results$: Observable<
     { source: SearchSource; results: SearchResult[] }[]
   >;
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private searchService: SearchService,
-    private configService: ConfigService
-  ) {}
 
   /**
    * Bind the search results store to the watcher

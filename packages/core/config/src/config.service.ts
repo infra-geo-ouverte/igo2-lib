@@ -1,5 +1,5 @@
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -24,7 +24,9 @@ export class ConfigService<T extends object = Record<string, any>> {
   private _isLoaded$ = new BehaviorSubject<boolean>(null);
   isLoaded$ = this._isLoaded$.asObservable();
 
-  constructor(handler: HttpBackend) {
+  constructor() {
+    const handler = inject(HttpBackend);
+
     this.httpClient = new HttpClient(handler);
   }
 

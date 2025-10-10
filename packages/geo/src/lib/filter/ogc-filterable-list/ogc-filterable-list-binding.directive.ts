@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -10,13 +10,14 @@ import { OgcFilterableListComponent } from './ogc-filterable-list.component';
   standalone: true
 })
 export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
+  private mapService = inject(MapService);
+
   private component: OgcFilterableListComponent;
   private layers$$: Subscription;
 
-  constructor(
-    @Self() component: OgcFilterableListComponent,
-    private mapService: MapService
-  ) {
+  constructor() {
+    const component = inject(OgcFilterableListComponent, { self: true });
+
     this.component = component;
   }
 

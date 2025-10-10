@@ -1,9 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  provideHttpClient,
-  withInterceptorsFromDi
-} from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -16,6 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { provideMockTranslation } from '@igo2/core/language';
 
+import { mergeTestConfig } from 'packages/geo/test-config';
+
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
@@ -26,7 +24,7 @@ describe('SearchSettingsComponent', () => {
   let component: SearchSettingsComponent;
   let fixture: ComponentFixture<SearchSettingsComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     const spy = jasmine.createSpyObj('SearchSourceService', [
       'getSources',
       'getEnabledSources'
@@ -34,32 +32,31 @@ describe('SearchSettingsComponent', () => {
     spy.getSources = jasmine.createSpy().and.returnValue([]);
     spy.getEnabledSources = jasmine.createSpy().and.returnValue([]);
 
-    TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatButtonModule,
-        MatMenuModule,
-        MatRadioModule,
-        MatCheckboxModule,
-        MatDividerModule,
-        MatSlideToggleModule,
-        MatIconTestingModule,
-        SearchSettingsComponent
-      ],
-      providers: [
-        { provide: SearchSourceService, useValue: spy },
-        provideMockTranslation(),
-        provideDefaultIChercheSearchResultFormatter(),
-        provideDefaultCoordinatesSearchResultFormatter(),
-        provideILayerSearchResultFormatter(),
-        provideHttpClient(withInterceptorsFromDi())
-      ]
-    }).compileComponents();
-  }));
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [
+          CommonModule,
+          MatTooltipModule,
+          MatIconModule,
+          MatButtonModule,
+          MatMenuModule,
+          MatRadioModule,
+          MatCheckboxModule,
+          MatDividerModule,
+          MatSlideToggleModule,
+          MatIconTestingModule,
+          SearchSettingsComponent
+        ],
+        providers: [
+          { provide: SearchSourceService, useValue: spy },
+          provideMockTranslation(),
+          provideDefaultIChercheSearchResultFormatter(),
+          provideDefaultCoordinatesSearchResultFormatter(),
+          provideILayerSearchResultFormatter()
+        ]
+      })
+    ).compileComponents();
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(SearchSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

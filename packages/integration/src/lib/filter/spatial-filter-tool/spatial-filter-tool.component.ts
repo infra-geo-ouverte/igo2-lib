@@ -1,11 +1,12 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
@@ -76,11 +77,21 @@ import {
     SpatialFilterTypeComponent,
     SpatialFilterItemComponent,
     FeatureDetailsComponent,
-    NgIf,
     AsyncPipe
   ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
+  private matIconRegistry = inject(MatIconRegistry);
+  private spatialFilterService = inject(SpatialFilterService);
+  private layerService = inject(LayerService);
+  private mapState = inject(MapState);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+  private importExportState = inject(ImportExportState);
+  private toolState = inject(ToolState);
+  private workspaceState = inject(WorkspaceState);
+  private cdRef = inject(ChangeDetectorRef);
+
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -116,19 +127,6 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
-
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private spatialFilterService: SpatialFilterService,
-    private layerService: LayerService,
-    private mapState: MapState,
-    private messageService: MessageService,
-    private languageService: LanguageService,
-    private importExportState: ImportExportState,
-    private toolState: ToolState,
-    private workspaceState: WorkspaceState,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   ngOnInit() {
     for (const layer of this.map.layerController.all) {

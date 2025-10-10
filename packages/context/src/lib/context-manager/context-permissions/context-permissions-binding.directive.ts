@@ -4,7 +4,7 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  Self
+  inject
 } from '@angular/core';
 
 import { LanguageService } from '@igo2/core/language';
@@ -25,6 +25,11 @@ import { ContextPermissionsComponent } from './context-permissions.component';
   standalone: true
 })
 export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private cd = inject(ChangeDetectorRef);
+
   private component: ContextPermissionsComponent;
   private editedContext$$: Subscription;
 
@@ -96,13 +101,9 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     });
   }
 
-  constructor(
-    @Self() component: ContextPermissionsComponent,
-    private contextService: ContextService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private cd: ChangeDetectorRef
-  ) {
+  constructor() {
+    const component = inject(ContextPermissionsComponent, { self: true });
+
     this.component = component;
   }
 

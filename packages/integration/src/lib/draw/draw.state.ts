@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {
   DrawControl,
@@ -16,12 +16,14 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DrawState {
+  private mapState = inject(MapState);
+
   public stores: FeatureStore<FeatureWithDraw>[] = [];
   public layersID: string[] = [];
   public drawControls: [string, DrawControl][] = [];
   public activeDrawingLayer: VectorLayer;
 
-  constructor(private mapState: MapState) {
+  constructor() {
     this.mapState.map.layerController.all$.subscribe(() => {
       this.layersID.forEach((layerId) => {
         if (!this.mapState.map.layerController.getById(layerId)) {

@@ -1,11 +1,12 @@
-import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import {
   FormControl,
@@ -86,12 +87,10 @@ type SelectMode = 'import' | 'export';
   styleUrls: ['./import-export.component.scss'],
   imports: [
     MatButtonToggleModule,
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatTooltipModule,
     MatButtonModule,
@@ -106,6 +105,19 @@ type SelectMode = 'import' | 'export';
   providers: [ConfirmDialogService]
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
+  private importService = inject(ImportService);
+  private exportService = inject(ExportService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private styleListService = inject(StyleListService);
+  private styleService = inject(StyleService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private config = inject(ConfigService);
+  private storageService = inject(StorageService);
+  private downloadService = inject(DownloadService);
+  private layerService = inject(LayerService);
+  private confirmDialogService = inject(ConfirmDialogService);
+
   public form: UntypedFormGroup;
   public importForm: UntypedFormGroup;
   public formats$ = new BehaviorSubject<ExportFormat[]>(undefined);
@@ -198,20 +210,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.storageService.set('importExportPopupAllowed', value);
   }
 
-  constructor(
-    private importService: ImportService,
-    private exportService: ExportService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private styleListService: StyleListService,
-    private styleService: StyleService,
-    private formBuilder: UntypedFormBuilder,
-    private config: ConfigService,
-    private storageService: StorageService,
-    private downloadService: DownloadService,
-    private layerService: LayerService,
-    private confirmDialogService: ConfirmDialogService
-  ) {
+  constructor() {
     this.loadConfig();
     this.buildForm();
     this.computeProjections();

@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
@@ -26,11 +27,15 @@ import {
   ILayerServiceResponse
 } from './ilayer.interfaces';
 import { SearchSource } from './source';
-import { SearchSourceSettings, TextSearchOptions } from './source.interfaces';
+import {
+  SearchSourceOptions,
+  SearchSourceSettings,
+  TextSearchOptions
+} from './source.interfaces';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
+  private languageService = inject(LanguageService);
 
   formatResult(data: ILayerData): ILayerData {
     const allowedKey = [
@@ -71,6 +76,12 @@ export class ILayerSearchResultFormatter {
  */
 @Injectable()
 export class ILayerSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private formatter = inject<ILayerSearchResultFormatter>(
+    ILayerSearchResultFormatter
+  );
+
   static id = 'ilayer';
   static type = LAYER;
 
@@ -80,14 +91,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: ILayerSearchSourceOptions,
-    @Inject(ILayerSearchResultFormatter)
-    private formatter: ILayerSearchResultFormatter
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${ILayerSearchSource.id}`
+    );
+
     super(options, storageService);
     this.languageService.language$.subscribe(() => {
       this.title$.next(

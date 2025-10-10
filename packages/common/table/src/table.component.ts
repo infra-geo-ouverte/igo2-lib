@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -35,13 +35,11 @@ import { TableModel } from './table-model.interface';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
-    NgFor,
     NgClass,
     MatButtonModule,
     MatIconModule,

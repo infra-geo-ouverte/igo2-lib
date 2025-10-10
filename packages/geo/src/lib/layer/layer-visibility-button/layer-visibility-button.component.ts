@@ -6,7 +6,8 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,6 +37,8 @@ const EYE_CLOSE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 2
   ]
 })
 export class LayerVisibilityButtonComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+
   eyeClosedSvg: IconSvg = {
     name: 'eye-closed',
     svg: EYE_CLOSE_SVG
@@ -60,8 +63,6 @@ export class LayerVisibilityButtonComponent implements OnInit {
   }
 
   @Output() visibilityChange = new EventEmitter<Event>();
-
-  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.layer.parent?.displayed$.subscribe((displayed) => {

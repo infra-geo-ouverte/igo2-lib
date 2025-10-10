@@ -1,8 +1,7 @@
-import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, Injectable, inject } from '@angular/core';
 
-import { SecureImagePipe } from '@igo2/common/image';
+import { fetchImageFromDepotUrl } from '@igo2/common/image';
 import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -37,6 +36,13 @@ declare global {
   providedIn: 'root'
 })
 export class PrintService {
+  private http = inject(HttpClient);
+  private config = inject(ConfigService);
+  private messageService = inject(MessageService);
+  private activityService = inject(ActivityService);
+  private languageService = inject(LanguageService);
+  private document = inject<Document>(DOCUMENT);
+
   zipFile: JSZip;
   nbFileToProcess: number;
   activityId: string;
@@ -52,15 +58,6 @@ export class PrintService {
     commentFontStyle: 'normal',
     commentFontSize: 12
   };
-
-  constructor(
-    private http: HttpClient,
-    private messageService: MessageService,
-    private activityService: ActivityService,
-    private languageService: LanguageService,
-    private configService: ConfigService,
-    @Inject(DOCUMENT) private document: Document
-  ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
     const status$ = new Subject();
@@ -319,8 +316,8 @@ export class PrintService {
   }
 
   getDataImage(url: string): Observable<string> {
-    const secureIMG = new SecureImagePipe(this.http, this.configService);
-    return secureIMG.transform(url);
+    const depotUrl = this.config?.getConfig('depot.url');
+    return fetchImageFromDepotUrl(url, depotUrl, this.http);
   }
 
   /**

@@ -1,5 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -39,13 +38,11 @@ import {
     MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     MatIconModule,
     ColorPickerFormFieldComponent,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatDialogActions,
     MatButtonModule,
@@ -53,19 +50,17 @@ import {
   ]
 })
 export class StyleModalDrawingComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<StyleModalDrawingComponent>>(MatDialogRef);
+  private formBuilder = inject(UntypedFormBuilder);
+  private drawStyleService = inject(DrawStyleService);
+  data = inject<DrawingMatDialogData>(MAT_DIALOG_DATA);
+
   @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
 
   public styleModalData: StyleModalData;
   public linestringOnly: boolean;
-
-  constructor(
-    public dialogRef: MatDialogRef<StyleModalDrawingComponent>,
-    private formBuilder: UntypedFormBuilder,
-    private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData
-  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;

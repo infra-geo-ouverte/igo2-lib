@@ -1,47 +1,48 @@
-<div
-  *ngIf="baseLayers.length > 0"
-  class="igo-baselayers-switcher-container"
-  [ngClass]="{ 'container-expand': expand }"
-  [@baseLayerSwitcherState]="
-    expand ? 'expand' : useStaticIcon ? 'collapseIcon' : 'collapseMap'
-  "
-  (@baseLayerSwitcherState.start)="showButton = false"
-  (@baseLayerSwitcherState.done)="showButton = true"
-  (click)="collapseOrExpand()"
->
+@if (baseLayers.length > 0) {
   <div
-    *ngIf="useStaticIcon && !expand && showButton"
-    class="igo-baselayers-switcher-button-container"
+    class="igo-baselayers-switcher-container"
+    [ngClass]="{ 'container-expand': expand }"
+    [@baseLayerSwitcherState]="
+      expand ? 'expand' : useStaticIcon ? 'collapseIcon' : 'collapseMap'
+    "
+    (@baseLayerSwitcherState.start)="showButton = false"
+    (@baseLayerSwitcherState.done)="showButton = true"
+    (click)="collapseOrExpand()"
   >
-    <button
-      mat-icon-button
-      [matTooltip]="'igo.geo.mapButtons.baselayerSwitcher' | translate"
-      matTooltipPosition="right"
-      color="primary"
-    >
-      <mat-icon>photo_library</mat-icon>
-    </button>
+    @if (useStaticIcon && !expand && showButton) {
+      <div class="igo-baselayers-switcher-button-container">
+        <button
+          mat-icon-button
+          [matTooltip]="'igo.geo.mapButtons.baselayerSwitcher' | translate"
+          matTooltipPosition="right"
+          color="primary"
+        >
+          <mat-icon>photo_library</mat-icon>
+        </button>
+      </div>
+    }
+    <div class="basemap-list">
+      @for (baseLayer of baseLayers; track baseLayer; let i = $index) {
+        <igo-mini-basemap
+          [map]="map"
+          [baseLayer]="baseLayer"
+          [title]="
+            baseLayers.length > 2 && !expand
+              ? ('igo.geo.baselayersSwitcher.title' | translate)
+              : baseLayer.title
+          "
+          [display]="expand || (i === 0 && !useStaticIcon)"
+          [disabled]="!expand && baseLayers.length > 1"
+        >
+        </igo-mini-basemap>
+      }
+    </div>
+    @if (hasMoreThanTwo) {
+      <div class="more-baselayers">
+        <mat-icon class="material-icons mat-icon" color="primary"
+          >arrow_drop_down</mat-icon
+        >
+      </div>
+    }
   </div>
-
-  <div class="basemap-list">
-    <igo-mini-basemap
-      *ngFor="let baseLayer of baseLayers; let i = index"
-      [map]="map"
-      [baseLayer]="baseLayer"
-      [title]="
-        baseLayers.length > 2 && !expand
-          ? ('igo.geo.baselayersSwitcher.title' | translate)
-          : baseLayer.title
-      "
-      [display]="expand || (i === 0 && !useStaticIcon)"
-      [disabled]="!expand && baseLayers.length > 1"
-    >
-    </igo-mini-basemap>
-  </div>
-
-  <div *ngIf="hasMoreThanTwo" class="more-baselayers">
-    <mat-icon class="material-icons mat-icon" color="primary"
-      >arrow_drop_down</mat-icon
-    >
-  </div>
-</div>
+}

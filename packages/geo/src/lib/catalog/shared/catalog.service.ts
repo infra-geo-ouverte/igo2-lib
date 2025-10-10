@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -47,13 +47,11 @@ import {
   providedIn: 'root'
 })
 export class CatalogService {
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private capabilitiesService: CapabilitiesService
-  ) {}
+  private http = inject(HttpClient);
+  private config = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private capabilitiesService = inject(CapabilitiesService);
 
   loadCatalogs(): Observable<Catalog[]> {
     const contextConfig = this.config.getConfig('context') || {};

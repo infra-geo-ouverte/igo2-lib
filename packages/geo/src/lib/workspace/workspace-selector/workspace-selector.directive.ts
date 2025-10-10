@@ -4,7 +4,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import {
@@ -38,6 +39,12 @@ import { AnyWorkspace } from '../shared/workspace.interface';
   standalone: true
 })
 export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
+  private component = inject(WorkspaceSelectorComponent);
+  private wfsWorkspaceService = inject(WfsWorkspaceService);
+  private wmsWorkspaceService = inject(WmsWorkspaceService);
+  private editionWorkspaceService = inject(EditionWorkspaceService);
+  private featureWorkspaceService = inject(FeatureWorkspaceService);
+
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
@@ -51,14 +58,6 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   get workspaceStore(): WorkspaceStore {
     return this.component.store;
   }
-
-  constructor(
-    private component: WorkspaceSelectorComponent,
-    private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService,
-    private editionWorkspaceService: EditionWorkspaceService,
-    private featureWorkspaceService: FeatureWorkspaceService
-  ) {}
 
   ngOnInit() {
     this.layers$$ = this.map.layerController.all$

@@ -1,5 +1,5 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -24,7 +24,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    NgIf,
     FormComponent,
     FormGroupComponent,
     MatButtonModule,
@@ -32,6 +31,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppFormComponent implements OnInit, OnDestroy {
+  private formService = inject(FormService);
+
   form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
   data$: BehaviorSubject<object> = new BehaviorSubject<Record<string, any>>(
@@ -41,8 +42,6 @@ export class AppFormComponent implements OnInit, OnDestroy {
   submitDisabled = true;
 
   private valueChanges$$: Subscription;
-
-  constructor(private formService: FormService) {}
 
   ngOnInit() {
     const fieldConfigs: FormFieldConfig[] = [

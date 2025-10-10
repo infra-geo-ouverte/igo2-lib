@@ -1,4 +1,4 @@
-import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,7 +8,8 @@ import {
   Input,
   OnInit,
   Output,
-  TemplateRef
+  TemplateRef,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -50,7 +51,6 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
   styleUrls: ['./layer-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     NgTemplateOutlet,
     MatButtonModule,
     MatCheckboxModule,
@@ -64,6 +64,9 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
   ]
 })
 export class LayerViewerComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private layerService = inject(LayerService);
+
   layers: AnyLayer[];
   baselayers: AnyLayer[];
   keyword$ = new BehaviorSubject<string>(undefined);
@@ -94,11 +97,6 @@ export class LayerViewerComponent implements OnInit {
   get unavailableLayers(): LayerOptionsBase[] {
     return this.layerService.unavailableLayers;
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private layerService: LayerService
-  ) {}
 
   isLayerItem = isLayerItem;
 

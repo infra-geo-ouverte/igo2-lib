@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -46,7 +47,6 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
     FormsModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
-    NgFor,
     MatOptionModule,
     MatSelectModule,
     AsyncPipe,
@@ -54,6 +54,9 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
+  private spatialFilterService = inject(SpatialFilterService);
+  private messageService = inject(MessageService);
+
   @Input() store: EntityStore<Feature>;
 
   @Input()
@@ -105,11 +108,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
-
-  constructor(
-    private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService
-  ) {}
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(

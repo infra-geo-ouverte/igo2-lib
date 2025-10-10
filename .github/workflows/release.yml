@@ -47,3 +47,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run release
+
+  deploy-gh-pages:
+    name: Deploy demo content to Pages
+    needs: release
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/deploy-gh-page.yml

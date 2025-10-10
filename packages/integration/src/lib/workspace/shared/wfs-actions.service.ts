@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
 import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
@@ -26,6 +26,16 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class WfsActionsService implements OnDestroy {
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private mediaService = inject(MediaService);
+  private toolState = inject(ToolState);
+  private interactiveSelectionFormWidget = inject<Widget>(
+    InteractiveSelectionFormWidget,
+    { optional: true }
+  );
+  private ogcFilterWidget = inject<Widget>(OgcFilterWidget, { optional: true });
+
   public maximize$: BehaviorSubject<boolean>;
 
   selectOnlyCheckCondition$ = new BehaviorSubject<boolean>(false);
@@ -41,18 +51,7 @@ export class WfsActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private mediaService: MediaService,
-    private toolState: ToolState,
-    @Optional()
-    @Inject(InteractiveSelectionFormWidget)
-    private interactiveSelectionFormWidget?: Widget,
-    @Optional()
-    @Inject(OgcFilterWidget)
-    private ogcFilterWidget?: Widget
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );

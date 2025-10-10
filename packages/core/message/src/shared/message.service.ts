@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -22,15 +22,15 @@ interface ActiveMessageTranslation {
   providedIn: 'root'
 })
 export class MessageService {
+  private injector = inject<Injector>(Injector);
+  private configService = inject(ConfigService);
+  private languageService = inject(LanguageService);
+
   public messages$ = new BehaviorSubject<Message[]>([]);
   private options?: MessageOptions;
   private activeMessageTranslations: ActiveMessageTranslation[] = [];
 
-  constructor(
-    @Inject(Injector) private injector: Injector,
-    private configService: ConfigService,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     this.options = this.configService.getConfig('message');
     this.languageService.language$.pipe(debounceTime(500)).subscribe(() => {
       if (this.toastr.toasts.length === 0) {

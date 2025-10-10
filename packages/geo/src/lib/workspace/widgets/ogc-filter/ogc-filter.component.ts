@@ -4,7 +4,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import { OnUpdateInputs } from '@igo2/common/dynamic-component';
@@ -22,6 +23,8 @@ import { IgoMap } from '../../../map/shared/map';
   imports: [OgcFilterableItemComponent]
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
+  private cdRef = inject(ChangeDetectorRef);
+
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
@@ -35,8 +38,6 @@ export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
    * Event emitted on cancel
    */
   @Output() cancel = new EventEmitter<void>();
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
    * Implemented as part of OnUpdateInputs

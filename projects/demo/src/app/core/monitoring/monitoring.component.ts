@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import {
@@ -18,12 +18,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class AppMonitoringComponent {
+  options = inject<AnyMonitoringOptions | null>(MONITORING_OPTIONS);
+  private json = inject(JsonPipe);
+
   exampleProviderCode: string = EXAMPLE_PROVIDER;
-  constructor(
-    @Inject(MONITORING_OPTIONS)
-    public options: AnyMonitoringOptions | null,
-    private json: JsonPipe
-  ) {}
 
   throwTestError(): void {
     throw new Error('Sentry Test Error');

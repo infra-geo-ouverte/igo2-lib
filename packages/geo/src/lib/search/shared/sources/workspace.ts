@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
@@ -21,6 +22,8 @@ import { WorkspaceData } from './workspace.interfaces';
  */
 @Injectable()
 export class WorkspaceSearchSource extends SearchSource implements TextSearch {
+  private languageService = inject(LanguageService);
+
   static id = 'workspace';
   static type = FEATURE;
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -29,11 +32,13 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${WorkspaceSearchSource.id}`
+    );
+
     super(options, storageService);
 
     this.languageService.translate

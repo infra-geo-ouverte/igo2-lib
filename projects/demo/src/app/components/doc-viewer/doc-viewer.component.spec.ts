@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { mergeTestConfig } from 'projects/demo/src/test-config';
+
 import { DocViewerComponent } from './doc-viewer.component';
 
 describe('DocViewerComponent', () => {
@@ -7,9 +9,11 @@ describe('DocViewerComponent', () => {
   let fixture: ComponentFixture<DocViewerComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [DocViewerComponent]
-    }).compileComponents();
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [DocViewerComponent]
+      })
+    ).compileComponents();
 
     fixture = TestBed.createComponent(DocViewerComponent);
     component = fixture.componentInstance;

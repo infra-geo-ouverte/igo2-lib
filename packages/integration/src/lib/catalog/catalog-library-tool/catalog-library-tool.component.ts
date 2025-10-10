@@ -1,10 +1,11 @@
-import { NgIf, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -59,11 +60,17 @@ import { getInfoFromSourceOptions } from './catalog-library-tool.utils';
     CatalogLibraryComponent,
     MatButtonModule,
     MatTooltipModule,
-    NgIf,
     TranslateModule
   ]
 })
 export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private catalogService = inject(CatalogService);
+  private catalogState = inject(CatalogState);
+  private toolState = inject(ToolState);
+  private storageService = inject(StorageService);
+  private languageService = inject(LanguageService);
+
   private generatelist$$: Subscription;
   /**
    * Store that contains the catalogs
@@ -99,15 +106,6 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   get lastTool() {
     return this.toolState.toolbox.getCurrentPreviousToolName()[0];
   }
-
-  constructor(
-    private contextService: ContextService,
-    private catalogService: CatalogService,
-    private catalogState: CatalogState,
-    private toolState: ToolState,
-    private storageService: StorageService,
-    private languageService: LanguageService
-  ) {}
 
   /**
    * @internal

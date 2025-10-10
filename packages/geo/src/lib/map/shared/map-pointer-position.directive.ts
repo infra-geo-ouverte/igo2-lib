@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
 import { MediaService } from '@igo2/core/media';
@@ -27,6 +27,9 @@ import { IgoMap } from '../../map/shared/map';
   standalone: true
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
+  private component = inject(MapBrowserComponent, { self: true });
+  private mediaService = inject(MediaService);
+
   private lastTimeoutRequest;
 
   /**
@@ -60,11 +63,6 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   get mapProjection(): string {
     return (this.component.map as IgoMap).projection;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private mediaService: MediaService
-  ) {}
 
   /**
    * Start listening to pointermove

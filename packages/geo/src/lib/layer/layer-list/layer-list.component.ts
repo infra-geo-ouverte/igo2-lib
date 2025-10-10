@@ -5,7 +5,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -67,6 +68,8 @@ type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
   ]
 })
 export class LayerListComponent {
+  private messageService = inject(MessageService);
+
   public toggleOpacity = false;
   isInit: boolean;
 
@@ -119,7 +122,7 @@ export class LayerListComponent {
 
   dataSource: MatTreeFlatDataSource<AnyLayer, LayerFlatNode>;
 
-  constructor(private messageService: MessageService) {
+  constructor() {
     this.dataSource = new MatTreeFlatDataSource(
       this.treeControl,
       this.treeFlattener,

@@ -1,11 +1,12 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -74,12 +75,19 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     IgoQueryModule,
     PanelComponent,
     FILTER_DIRECTIVES,
-    NgIf,
     FEATURE_DETAILS_DIRECTIVES,
     AsyncPipe
   ]
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
+  private matIconRegistry = inject(MatIconRegistry);
+  private spatialFilterService = inject(SpatialFilterService);
+  private dataSourceService = inject(DataSourceService);
+  private layerService = inject(LayerService);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+  private cdRef = inject(ChangeDetectorRef);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -125,15 +133,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
 
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private spatialFilterService: SpatialFilterService,
-    private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    private messageService: MessageService,
-    private languageService: LanguageService,
-    private cdRef: ChangeDetectorRef
-  ) {
+  constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

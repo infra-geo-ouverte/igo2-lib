@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -34,11 +34,13 @@ import { IgoLanguageModule } from '@igo2/core/language';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinner,
-    NgIf,
     IgoLanguageModule
   ]
 })
 export class AuthInternComponent {
+  auth = inject(AuthService);
+  private languageService = inject(LanguageService);
+
   @Input()
   get allowAnonymous(): boolean {
     return this._allowAnonymous;
@@ -54,11 +56,9 @@ export class AuthInternComponent {
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(
-    public auth: AuthService,
-    private languageService: LanguageService,
-    fb: UntypedFormBuilder
-  ) {
+  constructor() {
+    const fb = inject(UntypedFormBuilder);
+
     this.form = fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]

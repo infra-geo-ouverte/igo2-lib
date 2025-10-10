@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  Input
+  Input,
+  inject
 } from '@angular/core';
 
 import {
@@ -24,9 +24,12 @@ import { IgoMap } from '../shared/map';
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, MapBrowserComponent]
+  imports: [MapBrowserComponent]
 })
 export class MiniBaseMapComponent implements AfterViewInit {
+  private layerService = inject(LayerService);
+  private appRef = inject(ApplicationRef);
+
   @Input() map: IgoMap;
   @Input() disabled: boolean;
   @Input() title: string;
@@ -55,11 +58,6 @@ export class MiniBaseMapComponent implements AfterViewInit {
     controls: {},
     interactions: false
   });
-
-  constructor(
-    private layerService: LayerService,
-    private appRef: ApplicationRef
-  ) {}
 
   ngAfterViewInit() {
     this.basemap.ol.setView(this.map.ol.getView());

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { SpinnerComponent } from '@igo2/common/spinner';
@@ -19,9 +19,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppActivityComponent {
-  private idsActivity: string[] = [];
+  private activityService = inject(ActivityService);
 
-  constructor(private activityService: ActivityService) {}
+  private idsActivity: string[] = [];
 
   register() {
     this.idsActivity.push(this.activityService.register());

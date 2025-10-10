@@ -29,7 +29,7 @@
     <color-chrome (onChange)="handleChange($event)" [color]="colorPicker">
     </color-chrome>
     <div class="buttons">
-      <button mat-flat-button color="primary" (click)="handleClick($event)">
+      <button matButton="filled" color="primary" (click)="handleClick($event)">
         {{ 'igo.common.confirmDialog.applyBtn' | translate }}
       </button>
     </div>

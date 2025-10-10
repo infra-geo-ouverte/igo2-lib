@@ -13,51 +13,52 @@
     >
     </igo-workspace-selector>
 
-    <ng-container *ngIf="selectedWorkspace$ | async as workspace">
-      <igo-entity-table-paginator
-        *ngIf="$any(workspace).inResolutionRange$ | async"
-        [store]="workspace.entityStore"
-        [paginatorOptions]="paginatorOptions"
-        [entitySortChange$]="entitySortChange$"
-        (paginatorChange)="paginatorChange($event)"
-      >
-      </igo-entity-table-paginator>
-    </ng-container>
+    @if (selectedWorkspace$ | async; as workspace) {
+      @if ($any(workspace).inResolutionRange$ | async) {
+        <igo-entity-table-paginator
+          [store]="workspace.entityStore"
+          [paginatorOptions]="paginatorOptions"
+          [entitySortChange$]="entitySortChange$"
+          (paginatorChange)="paginatorChange($event)"
+        >
+        </igo-entity-table-paginator>
+      }
+    }
 
-    <ng-container *ngIf="selectedWorkspace$ | async as workspace">
-      <igo-actionbar
-        *ngIf="workspace.actionStore"
-        [store]="workspace.actionStore"
-        [horizontal]="true"
-        [withToggleButton]="true"
-        [withTitle]="true"
-        [mode]="actionbarMode"
-      >
-      </igo-actionbar>
-
-      <igo-entity-table
-        *ngIf="
-          workspace.entityStore &&
-          workspace.meta &&
-          workspace.meta.tableTemplate &&
-          ($any(workspace).inResolutionRange$ | async)
-        "
-        class="table-compact table-centered"
-        [paginator]="workspacePaginator"
-        [scrollBehavior]="scrollBehavior"
-        [store]="workspace.entityStore"
-        [template]="workspace.meta.tableTemplate"
-      >
-      </igo-entity-table>
-      <mat-card-content
-        *ngIf="($any(workspace).inResolutionRange$ | async) === false"
-      >
-        No data available at this scale. Please zoom in.
-      </mat-card-content>
-
+    @if (selectedWorkspace$ | async; as workspace) {
+      @if (workspace.actionStore) {
+        <igo-actionbar
+          [store]="workspace.actionStore"
+          [horizontal]="true"
+          [withToggleButton]="true"
+          [withTitle]="true"
+          [mode]="actionbarMode"
+        >
+        </igo-actionbar>
+      }
+      @if (
+        workspace.entityStore &&
+        workspace.meta &&
+        workspace.meta.tableTemplate &&
+        ($any(workspace).inResolutionRange$ | async)
+      ) {
+        <igo-entity-table
+          class="table-compact table-centered"
+          [paginator]="workspacePaginator"
+          [scrollBehavior]="scrollBehavior"
+          [store]="workspace.entityStore"
+          [template]="workspace.meta.tableTemplate"
+        >
+        </igo-entity-table>
+      }
+      @if (($any(workspace).inResolutionRange$ | async) === false) {
+        <mat-card-content>
+          No data available at this scale. Please zoom in.
+        </mat-card-content>
+      }
       <igo-workspace-widget-outlet
         [workspace]="workspace"
       ></igo-workspace-widget-outlet>
-    </ng-container>
+    }
   </app-example-viewer>
 </app-doc-viewer>

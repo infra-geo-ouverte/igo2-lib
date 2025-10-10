@@ -1,7 +1,6 @@
 @use '@angular/material' as mat;
 @use '@igo2/sdg-core' as sdg;
 
-@use '../all-theme';
 @use './overrides';
 
 @mixin theme($theme, $definedTheme, $name) {
@@ -11,13 +10,12 @@
   @include sdg.system-tokens();
 
   @include customCss();
+
   @include mat.theme($theme);
 
   @include mat.color-variants-backwards-compatibility($definedTheme);
 
   @include overrides.overrides();
-
-  @include all-theme.all-component-themes($theme);
 }
 
 @mixin customCss() {

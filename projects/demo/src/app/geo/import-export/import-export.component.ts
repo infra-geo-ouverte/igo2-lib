@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common/workspace';
@@ -28,6 +28,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppImportExportComponent {
+  private layerService = inject(LayerService);
+
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -43,7 +45,7 @@ export class AppImportExportComponent {
 
   public store: WorkspaceStore = new WorkspaceStore([]);
 
-  constructor(private layerService: LayerService) {
+  constructor() {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',

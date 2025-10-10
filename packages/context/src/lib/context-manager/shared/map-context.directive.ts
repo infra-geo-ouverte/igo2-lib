@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 import { Params } from '@angular/router';
 
 import { MediaService } from '@igo2/core/media';
@@ -21,6 +21,10 @@ import { ContextService } from './context.service';
   selector: '[igoMapContext]'
 })
 export class MapContextDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private mediaService = inject(MediaService);
+  private shareMapService = inject(ShareMapService);
+
   private component: MapBrowserComponent;
   private context$$: Subscription;
 
@@ -30,12 +34,9 @@ export class MapContextDirective implements OnInit, OnDestroy {
 
   private queryParams: Params;
 
-  constructor(
-    component: MapBrowserComponent,
-    private contextService: ContextService,
-    private mediaService: MediaService,
-    private shareMapService: ShareMapService
-  ) {
+  constructor() {
+    const component = inject(MapBrowserComponent);
+
     this.component = component;
   }
 

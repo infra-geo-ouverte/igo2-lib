@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive } from '@angular/core';
+import { AfterViewInit, Directive, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 import { NetworkService } from '@igo2/core/network';
@@ -20,6 +20,9 @@ interface OfflinableSourceOptions extends DataSourceOptions {
   standalone: true
 })
 export class MapOfflineDirective implements AfterViewInit {
+  private networkService = inject(NetworkService);
+  private messageService = inject(MessageService);
+
   private component: MapBrowserComponent;
 
   get map(): IgoMap {
@@ -28,11 +31,9 @@ export class MapOfflineDirective implements AfterViewInit {
 
   private previousMessageId;
 
-  constructor(
-    component: MapBrowserComponent,
-    private networkService: NetworkService,
-    private messageService: MessageService
-  ) {
+  constructor() {
+    const component = inject(MapBrowserComponent);
+
     this.component = component;
   }
 

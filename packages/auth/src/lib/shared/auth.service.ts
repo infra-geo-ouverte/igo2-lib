@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
@@ -19,6 +19,13 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private config = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private router = inject(Router, { optional: true });
+
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
@@ -35,14 +42,7 @@ export class AuthService {
     return decodedToken?.user ? decodedToken.user : null;
   }
 
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    @Optional() private router: Router
-  ) {
+  constructor() {
     this.authOptions = this.config.getConfig('auth');
     this.authenticate$.next(this.authenticated);
     this.authenticate$.subscribe((authenticated) => {

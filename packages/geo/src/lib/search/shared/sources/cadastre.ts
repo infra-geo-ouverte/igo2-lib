@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
@@ -27,15 +28,19 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
  */
 @Injectable()
 export class CadastreSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'cadastre';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig(
+      `searchSources.${CadastreSearchSource.id}`
+    );
+
     super(options, storageService);
   }
 

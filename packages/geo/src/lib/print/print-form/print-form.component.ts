@@ -1,5 +1,12 @@
-import { AsyncPipe, KeyValuePipe, NgFor, NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -15,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { SecureImagePipe } from '@igo2/common/image';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
 
@@ -39,18 +47,20 @@ import {
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgIf,
     MatSlideToggleModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatButtonModule,
     AsyncPipe,
     KeyValuePipe,
     IgoLanguageModule
-  ]
+  ],
+  providers: [SecureImagePipe]
 })
 export class PrintFormComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private mediaService = inject(MediaService);
+
   public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
@@ -241,10 +251,7 @@ export class PrintFormComponent implements OnInit {
 
   maxLength = 180;
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private mediaService: MediaService
-  ) {
+  constructor() {
     this.form = this.formBuilder.group({
       title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
       subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],

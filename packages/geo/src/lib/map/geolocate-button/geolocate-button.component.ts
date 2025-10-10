@@ -1,5 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  AfterContentInit,
+  Component,
+  Input,
+  OnDestroy,
+  inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -16,7 +22,6 @@ import { IgoMap } from '../shared/map';
   templateUrl: './geolocate-button.component.html',
   styleUrls: ['./geolocate-button.component.scss'],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -25,6 +30,8 @@ import { IgoMap } from '../shared/map';
   ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
+  private configService = inject(ConfigService);
+
   private tracking$$: Subscription;
   readonly icon$ = new BehaviorSubject<string>('my_location');
 
@@ -45,8 +52,6 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
     this._color = value;
   }
   private _color: string;
-
-  constructor(private configService: ConfigService) {}
   ngAfterContentInit(): void {
     this.map.ol.once('rendercomplete', () => {
       this.tracking$$ = this.map.geolocationController.tracking$.subscribe(

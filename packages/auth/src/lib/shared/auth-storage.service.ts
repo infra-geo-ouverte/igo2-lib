@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { BaseStorage, StorageScope } from '@igo2/core/storage';
@@ -12,12 +12,13 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
-  constructor(
-    config: ConfigService,
-    private http: HttpClient,
-    private authService: AuthService,
-    private tokenService: TokenService
-  ) {
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private tokenService = inject(TokenService);
+
+  constructor() {
+    const config = inject(ConfigService);
+
     super(config);
 
     this.authService.authenticate$.subscribe((isAuthenticated) => {

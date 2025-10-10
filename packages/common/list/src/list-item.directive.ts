@@ -5,7 +5,8 @@ import {
   HostListener,
   Input,
   Output,
-  Renderer2
+  Renderer2,
+  inject
 } from '@angular/core';
 
 @Directive({
@@ -13,6 +14,9 @@ import {
   standalone: true
 })
 export class ListItemDirective {
+  renderer = inject(Renderer2);
+  el = inject(ElementRef);
+
   static focusedCls = 'igo-list-item-focused';
   static selectedCls = 'igo-list-item-selected';
   static disabledCls = 'igo-list-item-disabled';
@@ -110,11 +114,6 @@ export class ListItemDirective {
   onClick() {
     this.selected = true;
   }
-
-  constructor(
-    public renderer: Renderer2,
-    public el: ElementRef
-  ) {}
 
   getOffsetTop(): number {
     const padding = 5;

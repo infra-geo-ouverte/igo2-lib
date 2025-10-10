@@ -1,5 +1,0 @@
-@use './map-browser/map-browser.theming.scss' as map-browser;
-
-@mixin themes($theme) {
-  @include map-browser.theme($theme);
-}

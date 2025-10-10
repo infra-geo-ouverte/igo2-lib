@@ -1,14 +1,20 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  inject
+} from '@angular/core';
 
 @Directive({
   selector: '[igoImageError]',
   standalone: true
 })
 export class ImageErrorDirective {
+  private el = inject(ElementRef);
+
   @Input() errorImageUrl = './assets/igo2/common/images/na.png';
   @Input() hideError = false;
-
-  constructor(private el: ElementRef) {}
 
   @HostListener('error', ['$event'])
   public onError(event: any): void {

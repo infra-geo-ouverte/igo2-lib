@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,10 @@ import { BookmarkDialogComponent } from './bookmark-dialog.component';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class BookmarkButtonComponent {
+  private dialog = inject(MatDialog);
+  private contextService = inject(ContextService);
+  private messageService = inject(MessageService);
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -37,12 +41,6 @@ export class BookmarkButtonComponent {
     this._color = value;
   }
   private _color: string;
-
-  constructor(
-    private dialog: MatDialog,
-    private contextService: ContextService,
-    private messageService: MessageService
-  ) {}
 
   createContext() {
     this.dialog

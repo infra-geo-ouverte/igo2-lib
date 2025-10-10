@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { FormDialogFormConfig, FormDialogService } from '@igo2/common/form';
@@ -24,10 +24,8 @@ const FORM_GROUP_CONFIG: FormDialogFormConfig = {
 
 @Injectable()
 export class LayerListToolService {
-  constructor(
-    private layerService: LayerService,
-    private formDialogService: FormDialogService
-  ) {}
+  private layerService = inject(LayerService);
+  private formDialogService = inject(FormDialogService);
 
   createGroup(): Observable<LayerGroup | undefined> {
     return this.formDialogService

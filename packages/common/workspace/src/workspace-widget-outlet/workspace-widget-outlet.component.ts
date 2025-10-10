@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,7 +23,7 @@ import { Workspace } from '../shared/workspace';
   templateUrl: './workspace-widget-outlet.component.html',
   styleUrls: ['./workspace-widget-outlet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, WidgetOutletComponent, AsyncPipe]
+  imports: [WidgetOutletComponent, AsyncPipe]
 })
 export class WorkspaceWidgetOutletComponent {
   /**

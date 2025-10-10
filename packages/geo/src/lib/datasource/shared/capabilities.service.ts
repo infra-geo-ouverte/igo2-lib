@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -43,16 +43,14 @@ import { WMTSDataSourceOptions } from './datasources/wmts-datasource.interface';
   providedIn: 'root'
 })
 export class CapabilitiesService {
+  private http = inject(HttpClient);
+  private mapService = inject(MapService);
+
   private parsers = {
     wms: new WMSCapabilities(),
     wmts: new WMTSCapabilities(),
     esriJSON: new EsriJSON()
   };
-
-  constructor(
-    private http: HttpClient,
-    private mapService: MapService
-  ) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions

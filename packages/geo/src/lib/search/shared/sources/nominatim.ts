@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
+import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
@@ -24,14 +25,18 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
  */
 @Injectable()
 export class NominatimSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+
   static id = 'nominatim';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: SearchSourceOptions,
-    storageService: StorageService
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${NominatimSearchSource.id}`
+    );
+
     super(options, storageService);
   }
 

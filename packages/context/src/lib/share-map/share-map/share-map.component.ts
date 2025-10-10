@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ConfigService } from '@igo2/core/config';
@@ -14,7 +13,6 @@ import { ShareMapUrlComponent } from './share-map-url.component';
   templateUrl: './share-map.component.html',
   styleUrls: ['./share-map.component.scss'],
   imports: [
-    NgIf,
     MatTabsModule,
     ShareMapApiComponent,
     ShareMapUrlComponent,
@@ -22,11 +20,13 @@ import { ShareMapUrlComponent } from './share-map-url.component';
   ]
 })
 export class ShareMapComponent {
+  private config = inject(ConfigService);
+
   @Input() map: IgoMap;
 
   public hasApi = false;
 
-  constructor(private config: ConfigService) {
+  constructor() {
     this.hasApi = this.config.getConfig('context.url') ? true : false;
   }
 }

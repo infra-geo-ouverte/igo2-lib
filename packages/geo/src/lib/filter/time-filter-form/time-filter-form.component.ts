@@ -1,11 +1,11 @@
-import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -45,16 +45,14 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.scss'],
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatDatetimepickerModule,
     MatMomentDateModule,
     MatNativeDatetimeModule,
-    MatNativeDateModule, // For the DateAdapter provider
+    MatNativeDateModule,
     MatInputModule,
     FormsModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     MatSliderModule,
     MatSlideToggleModule,
@@ -65,6 +63,8 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   ]
 })
 export class TimeFilterFormComponent implements OnInit {
+  private dateAdapter = inject<DateAdapter<Date>>(DateAdapter);
+
   public color: ThemePalette = 'primary';
   public date: Date;
   public startDate: Date;
@@ -195,7 +195,7 @@ export class TimeFilterFormComponent implements OnInit {
     return options;
   }
 
-  constructor(private dateAdapter: DateAdapter<Date>) {
+  constructor() {
     this.dateAdapter.setLocale('fr');
   }
 

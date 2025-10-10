@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -32,14 +32,14 @@ import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.componen
   ]
 })
 export class AdvancedMapToolComponent {
+  mapState = inject(MapState);
+
   get tracking$() {
     return this.mapState.map.geolocationController?.tracking$;
   }
   get followPosition$() {
     return this.mapState.map.geolocationController?.followPosition$;
   }
-
-  constructor(public mapState: MapState) {}
 
   toggleTracking(value) {
     if (!this.mapState.map.geolocationController) {

@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "19.0.3",
+  "version": "20.0.0-next.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -31,9 +31,6 @@
     },
     "./style": {
       "style": "./style/style.css"
-    },
-    "./theme": {
-      "sass": "./src/common.theme.scss"
     },
     "./partial/*": {
       "sass": "./src/style/partial/*.scss"
@@ -142,23 +139,20 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/forms": "^19.0.0",
-    "@angular/material-moment-adapter": "^19.0.0",
-    "@angular/material": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/material-moment-adapter": "^20.0.0",
+    "@angular/material": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
     "@floating-ui/utils": "^0.2.0",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "angular-shepherd": "^19.0.0",
+    "angular-shepherd": "^20.0.0",
     "ngx-color": "^10.0.0",
     "scroll-into-view-if-needed": "^3.1.0",
     "tinycolor2": "^1.6.0",
     "typy": "^3.3.0"
-  },
-  "devDependencies": {
-    "typescript": "~5.5.4"
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"

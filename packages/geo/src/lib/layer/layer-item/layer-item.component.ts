@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +7,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,7 +38,6 @@ import { TooltipType } from '../shared/layers/layer.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgIf,
     MatCheckboxModule,
     MatTooltipModule,
     MatButtonModule,
@@ -50,6 +50,8 @@ import { TooltipType } from '../shared/layers/layer.interface';
   ]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
+  private networkService = inject(NetworkService);
+
   showLegend$ = new BehaviorSubject(true);
   inResolutionRange$ = new BehaviorSubject(true);
   queryBadgeHidden$ = new BehaviorSubject(true);
@@ -100,8 +102,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       : 'igo.geo.layer.showLayer';
   }
 
-  constructor(private networkService: NetworkService) {}
-
   ngOnInit() {
     this.layer.displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
@@ -149,7 +149,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   handleVisibilityChange(event: Event) {
     event.stopPropagation();
 
-    if (this.viewerOptions.legend.showOnVisibilityChange) {
+    if (this.viewerOptions.legend?.showOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
     }
     this.updateQueryBadge();

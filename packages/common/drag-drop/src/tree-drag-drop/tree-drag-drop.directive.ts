@@ -13,7 +13,8 @@ import {
   Output,
   QueryList,
   Renderer2,
-  booleanAttribute
+  booleanAttribute,
+  inject
 } from '@angular/core';
 import { MatTreeNode } from '@angular/material/tree';
 
@@ -53,6 +54,9 @@ export interface DropPermission {
   standalone: true
 })
 export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
+  private elementRef = inject(ElementRef);
+  private renderer = inject(Renderer2);
+
   draggedNode: TreeFlatNode;
   dropNodeTarget: TreeFlatNode;
   expandTimeout: number;
@@ -93,10 +97,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
   @ContentChildren(MatTreeNode, { descendants: true })
   nodes: QueryList<MatTreeNode<TreeFlatNode>>;
 
-  constructor(
-    private elementRef: ElementRef,
-    private renderer: Renderer2
-  ) {
+  constructor() {
     this.onDrop.subscribe(() => this.dragEnd());
 
     this.highlightedNode.changed.subscribe((change) => {

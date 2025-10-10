@@ -1,5 +1,9 @@
-import { NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -15,20 +19,14 @@ import { DownloadService } from '../shared/download.service';
   templateUrl: './download-button.component.html',
   styleUrls: ['./download-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    IgoLanguageModule
-  ]
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class DownloadButtonComponent {
+  private downloadService = inject(DownloadService);
+
   @Input() layer: Layer;
 
   @Input() color = 'primary';
-
-  constructor(private downloadService: DownloadService) {}
 
   openDownload() {
     this.downloadService.open(this.layer);

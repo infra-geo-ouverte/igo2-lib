@@ -1,5 +1,11 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { NgClass } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnDestroy,
+  inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -20,17 +26,17 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
   styleUrls: ['./baselayers-switcher.component.scss'],
   animations: [baseLayersSwitcherSlideInOut()],
   imports: [
-    NgIf,
     NgClass,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    NgFor,
     MiniBaseMapComponent,
     IgoLanguageModule
   ]
 })
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
+  private mediaService = inject(MediaService);
+
   @Input() map: IgoMap;
   @Input() useStaticIcon: boolean;
 
@@ -44,7 +50,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
     return this.baseLayers.length > 1;
   }
 
-  constructor(private mediaService: MediaService) {
+  constructor() {
     const media = this.mediaService.media$.value;
     if (media === Media.Mobile && this.useStaticIcon === undefined) {
       this.useStaticIcon = true;

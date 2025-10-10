@@ -8,14 +8,15 @@
     type="text"
     [formControl]="control"
   />
-  <button
-    *ngIf="control.value"
-    matSuffix
-    mat-icon-button
-    aria-label="Clear"
-    color="warn"
-    (click)="clearTerm()"
-  >
-    <mat-icon>close</mat-icon>
-  </button>
+  @if (control.value) {
+    <button
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      color="warn"
+      (click)="clearTerm()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  }
 </mat-form-field>

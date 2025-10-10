@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -64,7 +64,6 @@ import {
   templateUrl: './directions.component.html',
   styleUrls: ['./directions.component.scss'],
   imports: [
-    CommonModule,
     MatSlideToggleModule,
     DirectionsButtonsComponent,
     DirectionsInputsComponent,
@@ -73,6 +72,15 @@ import {
   ]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private directionsService = inject(DirectionsService);
+  private directionsSourceService = inject(DirectionsSourceService);
+  private searchService = inject(SearchService);
+  private queryService = inject(QueryService);
+  private messageService = inject(MessageService);
+
   private watcher: EntityStoreWatcher<Stop>;
 
   public projection = 'EPSG:4326';
@@ -122,17 +130,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     return this.directionsSourceService.sources[0].getEnabledProfile()
       .authorization;
   }
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private http: HttpClient,
-    private languageService: LanguageService,
-    private directionsService: DirectionsService,
-    private directionsSourceService: DirectionsSourceService,
-    private searchService: SearchService,
-    private queryService: QueryService,
-    private messageService: MessageService
-  ) {}
 
   ngOnInit(): void {
     this.authenticated$$ = this.authenticated$.subscribe(

@@ -1,13 +1,13 @@
-import { AsyncPipe, KeyValuePipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -55,7 +55,6 @@ import { ContextListControlsEnum } from './context-list.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
@@ -64,7 +63,6 @@ import { ContextListControlsEnum } from './context-list.enum';
     MatTooltipModule,
     ActionbarComponent,
     MatMenuModule,
-    NgFor,
     MatCheckboxModule,
     CollapsibleComponent,
     ContextItemComponent,
@@ -75,6 +73,12 @@ import { ContextListControlsEnum } from './context-list.enum';
   ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
+  configService = inject(ConfigService);
+  auth = inject(AuthService);
+  private dialog = inject(MatDialog);
+  private languageService = inject(LanguageService);
+  private storageService = inject(StorageService);
+
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
   contexts$ = new BehaviorSubject<ContextsList>(this.contextsInitial);
@@ -178,14 +182,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     );
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    public configService: ConfigService,
-    public auth: AuthService,
-    private dialog: MatDialog,
-    private languageService: LanguageService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.contextConfigs = this.configService.getConfig('context');
   }
 
@@ -460,5 +457,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   showContext(context: DetailedContext) {
     context.hidden = false;
     this.show.emit(context);
+  }
+
+  onSelect(context: DetailedContext) {
+    this.select.emit(context);
   }
 }

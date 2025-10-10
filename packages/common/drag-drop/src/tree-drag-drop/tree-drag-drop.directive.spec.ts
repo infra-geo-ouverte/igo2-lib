@@ -9,6 +9,8 @@ import {
 } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 
+import { mergeTestConfig } from 'packages/common/test-config';
+
 import { TreeDragDropDirective } from './tree-drag-drop.directive';
 import { DropPositionType, TreeFlatNode } from './tree-drag-drop.interface';
 import { TREE_MOCK } from './tree-drag-drop.mock';
@@ -63,10 +65,12 @@ describe('DragDropTreeDirective', () => {
   let treeNodesDebug: DebugElement[];
 
   beforeEach(() => {
-    fixture = TestBed.configureTestingModule({
-      imports: [MatTreeModule, TreeDragDropDirective],
-      declarations: [TestComponent]
-    }).createComponent(TestComponent);
+    fixture = TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [MatTreeModule, TreeDragDropDirective],
+        declarations: [TestComponent]
+      })
+    ).createComponent(TestComponent);
 
     fixture.detectChanges();
     const debugElement = fixture.debugElement.query(

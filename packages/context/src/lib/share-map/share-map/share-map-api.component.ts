@@ -1,6 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -32,7 +31,6 @@ import { ShareMapService } from '../shared/share-map.service';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -40,6 +38,14 @@ import { ShareMapService } from '../shared/share-map.service';
   ]
 })
 export class ShareMapApiComponent implements OnInit {
+  private clipboard = inject(Clipboard);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private auth = inject(AuthService);
+  private shareMapService = inject(ShareMapService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private contextService = inject(ContextService);
+
   public form: UntypedFormGroup;
 
   @Input() map: IgoMap;
@@ -47,16 +53,6 @@ export class ShareMapApiComponent implements OnInit {
   public url: string;
   public userId: string;
   public idContextShared: string;
-
-  constructor(
-    private clipboard: Clipboard,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private auth: AuthService,
-    private shareMapService: ShareMapService,
-    private formBuilder: UntypedFormBuilder,
-    private contextService: ContextService
-  ) {}
 
   ngOnInit(): void {
     this.auth.authenticate$.subscribe(() => {

@@ -1,10 +1,11 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -44,7 +45,6 @@ import { MapState } from './../map.state';
   templateUrl: './map-legend-tool.component.html',
   styleUrls: ['./map-legend-tool.component.scss'],
   imports: [
-    NgIf,
     LayerLegendListComponent,
     LayerLegendListBindingDirective,
     MatListModule,
@@ -54,6 +54,11 @@ import { MapState } from './../map.state';
   ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
+  private mapState = inject(MapState);
+  private toolState = inject(ToolState);
+  private searchSourceService = inject(SearchSourceService);
+  private cdRef = inject(ChangeDetectorRef);
+
   public delayedShowEmptyMapContent = false;
 
   layers$ = new BehaviorSubject<AnyLayer[]>([]);
@@ -110,12 +115,6 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   get contextToolInToolbar(): boolean {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
-  constructor(
-    private mapState: MapState,
-    private toolState: ToolState,
-    private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   ngOnInit(): void {
     this.resolution$$ = combineLatest([

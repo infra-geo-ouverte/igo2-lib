@@ -1,5 +1,5 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -32,8 +32,6 @@ import { SelectValueData } from './select-value-dialog.interface';
     MatDialogTitle,
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
-    NgFor,
     MatCheckboxModule,
     MatRadioModule,
     MatDialogActions,
@@ -43,17 +41,16 @@ import { SelectValueData } from './select-value-dialog.interface';
   ]
 })
 export class SelectValueCheckRadioDialogComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  languageService = inject(LanguageService);
+  dialogRef =
+    inject<MatDialogRef<SelectValueCheckRadioDialogComponent>>(MatDialogRef);
+  data = inject<SelectValueData>(MAT_DIALOG_DATA, { optional: true });
+
   public formGroup: UntypedFormGroup;
   public isDisabled$ = new BehaviorSubject<boolean>(true);
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    public languageService: LanguageService,
-    public dialogRef: MatDialogRef<SelectValueCheckRadioDialogComponent>,
-    @Optional()
-    @Inject(MAT_DIALOG_DATA)
-    public data: SelectValueData
-  ) {
+  constructor() {
     this.formGroup = this.formBuilder.group(this.getFg());
     this.data.selectFieldText =
       this.data.selectFieldText ??

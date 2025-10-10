@@ -1,12 +1,13 @@
 <div class="igo-layer-list-item">
   <div class="layer-content">
-    <mat-checkbox
-      *ngIf="viewerOptions.mode === 'selection'"
-      [checked]="selected"
-      [disabled]="selectionDisabled"
-      (change)="handleSelect($event)"
-    >
-    </mat-checkbox>
+    @if (viewerOptions.mode === 'selection') {
+      <mat-checkbox
+        [checked]="selected"
+        [disabled]="selectionDisabled"
+        (change)="handleSelect($event)"
+      >
+      </mat-checkbox>
+    }
     <ng-content></ng-content>
     <span
       class="igo-layer-title"
@@ -20,18 +21,19 @@
 
   <div class="list-actions">
     <div class="list-secondary-actions">
-      <button
-        *ngIf="viewerOptions.mode !== 'selection'"
-        class="actions-button"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.moreOptions' | translate"
-        mat-icon-button
-        color="primary"
-        (click)="toggleLayerTool()"
-      >
-        <mat-icon>more_horiz</mat-icon>
-      </button>
+      @if (viewerOptions.mode !== 'selection') {
+        <button
+          class="actions-button"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.layer.moreOptions' | translate"
+          mat-icon-button
+          color="primary"
+          (click)="toggleLayerTool()"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+      }
     </div>
 
     <igo-layer-visibility-button
@@ -45,12 +47,14 @@
   </div>
 </div>
 
-<div *ngIf="showLegend$ | async" class="igo-layer-legend-container">
-  <igo-layer-legend
-    [layer]="layer"
-    [updateLegendOnResolutionChange]="
-      viewerOptions.legend.updateOnResolutionChange
-    "
-  >
-  </igo-layer-legend>
-</div>
+@if (showLegend$ | async) {
+  <div class="igo-layer-legend-container">
+    <igo-layer-legend
+      [layer]="layer"
+      [updateLegendOnResolutionChange]="
+        viewerOptions.legend.updateOnResolutionChange
+      "
+    >
+    </igo-layer-legend>
+  </div>
+}

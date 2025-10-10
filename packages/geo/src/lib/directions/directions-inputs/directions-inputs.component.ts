@@ -5,13 +5,14 @@ import {
   CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
   Input,
   OnDestroy,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -57,14 +58,12 @@ import { DirectionRelativePositionType } from './../shared/directions.enum';
   styleUrls: ['./directions-inputs.component.scss'],
   imports: [
     CdkDropList,
-    NgFor,
     CdkDrag,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     MatAutocompleteModule,
     MatTooltipModule,
-    NgIf,
     MatButtonModule,
     MatIconModule,
     MatOptionModule,
@@ -74,6 +73,8 @@ import { DirectionRelativePositionType } from './../shared/directions.enum';
   ]
 })
 export class DirectionsInputsComponent implements OnDestroy {
+  private languageService = inject(LanguageService);
+
   @Input({ required: true }) stopsStore: StopsStore;
   @Input({ required: true }) stopsFeatureStore: StopsFeatureStore;
   @Input({ required: true }) projection: string;
@@ -87,8 +88,6 @@ export class DirectionsInputsComponent implements OnDestroy {
   private onMapClickEventKeys = [];
   public stopWithHover: Stop;
   public stopIsDragged = false;
-
-  constructor(private languageService: LanguageService) {}
 
   /**
    * Returns the position property of the geolocationController.

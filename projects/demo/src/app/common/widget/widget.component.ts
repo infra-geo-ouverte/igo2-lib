@@ -4,7 +4,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -36,13 +37,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSalutationWidgetComponent
   implements OnUpdateInputs, WidgetComponent
 {
+  private cdRef = inject(ChangeDetectorRef);
+
   @Input() name: string;
 
   @Output() complete = new EventEmitter<string>();
 
   @Output() cancel = new EventEmitter<string>();
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   onUpdateInputs() {
     this.cdRef.detectChanges();
@@ -56,11 +57,13 @@ export class AppSalutationWidgetComponent
   imports: [DocViewerComponent, ExampleViewerComponent, IgoWidgetOutletModule]
 })
 export class AppWidgetComponent {
+  private widgetService = inject(WidgetService);
+
   widget: DynamicComponent<WidgetComponent>;
 
   inputs = { name: 'Bob' };
 
-  constructor(private widgetService: WidgetService) {
+  constructor() {
     this.widget = this.widgetService.create(AppSalutationWidgetComponent);
   }
 

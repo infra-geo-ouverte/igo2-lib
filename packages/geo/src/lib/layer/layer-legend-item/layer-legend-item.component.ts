@@ -3,7 +3,8 @@ import {
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,6 +26,8 @@ import { TooltipType } from '../shared/layers/layer.interface';
   imports: [MatListModule, MatTooltipModule, LayerLegendComponent]
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
+  private networkService = inject(NetworkService);
+
   inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   tooltipText: string;
@@ -37,8 +40,6 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
   @Input() layer: Layer;
 
   @Input() updateLegendOnResolutionChange = false;
-
-  constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
     const resolution$ = this.layer.map.viewController.resolution$;

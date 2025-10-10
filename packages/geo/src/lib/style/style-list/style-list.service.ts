@@ -1,5 +1,5 @@
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -15,7 +15,9 @@ export class StyleListService {
   private styleList: object = {};
   private httpClient: HttpClient;
 
-  constructor(handler: HttpBackend) {
+  constructor() {
+    const handler = inject(HttpBackend);
+
     this.httpClient = new HttpClient(handler);
   }
 

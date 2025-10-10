@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -34,12 +34,10 @@ import { isBaseLayer, isLayerItem, sortLayersByZindex } from '../utils';
   styleUrls: ['./layer-legend-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     MatSlideToggleModule,
     MatTooltipModule,
     MatDividerModule,
     ListComponent,
-    NgFor,
     LayerLegendItemComponent,
     ListItemDirective,
     AsyncPipe,

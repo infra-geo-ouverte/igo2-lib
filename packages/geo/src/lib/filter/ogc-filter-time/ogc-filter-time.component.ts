@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -6,7 +5,8 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -42,7 +42,6 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
   templateUrl: './ogc-filter-time.component.html',
   styleUrls: ['./ogc-filter-time.component.scss'],
   imports: [
-    NgIf,
     MatSlideToggleModule,
     FormsModule,
     OgcFilterTimeSliderComponent,
@@ -54,13 +53,14 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
     MatIconModule,
     MatSelectModule,
     ReactiveFormsModule,
-    NgFor,
     MatOptionModule,
     IgoLanguageModule
   ],
   providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
+  ogcFilterTimeService = inject(OGCFilterTimeService);
+
   @Input() datasource: OgcFilterableDataSource;
   @Input() currentFilter: any;
   @Output() changeProperty: EventEmitter<{
@@ -149,8 +149,6 @@ export class OgcFilterTimeComponent implements OnInit {
 
   public filterBeginFunction;
   public filterEndFunction;
-
-  constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit() {
     this.filterOriginConfig = this.datasource.options.ogcFilters

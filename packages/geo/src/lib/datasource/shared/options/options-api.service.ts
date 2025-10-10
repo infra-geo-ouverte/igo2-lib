@@ -1,5 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+
+import { ConfigService } from '@igo2/core/config';
 
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,17 +20,19 @@ import { OptionsService } from './options.service';
   providedIn: 'root'
 })
 export class OptionsApiService extends OptionsService {
+  private http = inject(HttpClient);
+
   private urlApi: string;
   private provideContextUri: boolean;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: OptionsApiOptions = {}
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const options = config.getConfig<OptionsApiOptions>('optionsApi');
+
     super();
-    this.urlApi = options.url || this.urlApi;
+    this.urlApi = options?.url || this.urlApi;
     this.provideContextUri =
-      options.provideContextUri || this.provideContextUri;
+      options?.provideContextUri || this.provideContextUri;
   }
 
   getWMSOptions(

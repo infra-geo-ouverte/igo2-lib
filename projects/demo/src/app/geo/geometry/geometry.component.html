@@ -7,41 +7,41 @@
         </div>
       </igo-map-browser>
 
-      <igo-form
-        *ngIf="form$ | async as form"
-        [form]="form"
-        [formData]="data$ | async"
-        (submitForm)="onSubmit($event)"
-      >
-        <igo-form-group [group]="form.groups[0]"></igo-form-group>
-
-        <div formButtons class="actions-container">
-          <button
-            mat-stroked-button
-            type="button"
-            color="primary"
-            (click)="fillForm()"
-          >
-            Fill Form
-          </button>
-          <button
-            mat-stroked-button
-            type="button"
-            color="primary"
-            (click)="clearForm()"
-          >
-            Clear Form
-          </button>
-          <button
-            mat-flat-button
-            type="submit"
-            color="primary"
-            [disabled]="submitDisabled"
-          >
-            Submit
-          </button>
-        </div>
-      </igo-form>
+      @if (form$ | async; as form) {
+        <igo-form
+          [form]="form"
+          [formData]="data$ | async"
+          (submitForm)="onSubmit($event)"
+        >
+          <igo-form-group [group]="form.groups[0]"></igo-form-group>
+          <div formButtons class="actions-container">
+            <button
+              mat-stroked-button
+              type="button"
+              color="primary"
+              (click)="fillForm()"
+            >
+              Fill Form
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              color="primary"
+              (click)="clearForm()"
+            >
+              Clear Form
+            </button>
+            <button
+              mat-flat-button
+              type="submit"
+              color="primary"
+              [disabled]="submitDisabled"
+            >
+              Submit
+            </button>
+          </div>
+        </igo-form>
+      }
     </div>
   </app-example-viewer>
 </app-doc-viewer>

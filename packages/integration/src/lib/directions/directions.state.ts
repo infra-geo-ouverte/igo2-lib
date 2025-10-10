@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {
   RoutesFeatureStore,
@@ -18,6 +18,8 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
+  private mapState = inject(MapState);
+
   public zoomToActiveRoute$ = new Subject<void>();
 
   /**
@@ -39,7 +41,7 @@ export class DirectionState {
 
   public debounceTime = 200;
 
-  constructor(private mapState: MapState) {
+  constructor() {
     this.stopsFeatureStore = new StopsFeatureStore([], {
       map: this.mapState.map
     });

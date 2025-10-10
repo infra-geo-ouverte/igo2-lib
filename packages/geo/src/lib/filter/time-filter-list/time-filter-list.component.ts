@@ -1,4 +1,3 @@
-import { NgFor } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
@@ -13,7 +12,6 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListComponent,
-    NgFor,
     TimeFilterItemComponent,
     ListItemDirective,
     FilterableDataSourcePipe

@@ -1,10 +1,11 @@
-import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgStyle } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnInit,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import {
   FormsModule,
@@ -59,8 +60,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgFor,
-    NgIf,
     MatDividerModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -80,6 +79,12 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
+  private ogcFilterService = inject(OGCFilterService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private domService = inject(DOMService);
+  private configService = inject(ConfigService);
+  private cdRef = inject(ChangeDetectorRef);
+
   @ViewChild('selection') sel: MatSelect;
   @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger })
   matAutocomplete: MatAutocompleteTrigger;
@@ -255,13 +260,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     return this.autocompleteEnableds.includes(autocompleteFilter);
   }
 
-  constructor(
-    private ogcFilterService: OGCFilterService,
-    private formBuilder: UntypedFormBuilder,
-    private domService: DOMService,
-    private configService: ConfigService,
-    private cdRef: ChangeDetectorRef
-  ) {
+  constructor() {
     this.ogcFilterWriter = new OgcFilterWriter();
     this.buildForm();
   }

@@ -20,23 +20,24 @@
   >
 
   <div matListItemMeta>
-    <button *ngIf="group.externalProvider" disabled="true" mat-icon-button>
-      <mat-icon
-        class="igo-cataloggroup-external-icon"
-        *ngIf="group.externalProvider"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
-        color="primary"
-        (click)="$event.stopPropagation()"
-      >
-        public
-      </mat-icon>
-    </button>
+    @if (group.externalProvider) {
+      <button disabled="true" mat-icon-button>
+        @if (group.externalProvider) {
+          <mat-icon
+            class="igo-cataloggroup-external-icon"
+            tooltip-position="below"
+            matTooltipShowDelay="500"
+            [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
+            color="primary"
+            (click)="$event.stopPropagation()"
+          >
+            public
+          </mat-icon>
+        }
+      </button>
+    }
 
-    <ng-container
-      *ngIf="(added$ | async) && (preview$ | async) === false; else notadded"
-    >
+    @if ((added$ | async) && (preview$ | async) === false) {
       <button
         mat-icon-button
         tooltip-position="below"
@@ -48,9 +49,7 @@
       >
         <mat-icon>delete</mat-icon>
       </button>
-    </ng-container>
-
-    <ng-template #notadded>
+    } @else {
       <button
         mat-icon-button
         tooltip-position="below"
@@ -61,16 +60,16 @@
       >
         <mat-icon>add</mat-icon>
       </button>
-    </ng-template>
+    }
   </div>
 </mat-list-item>
 
 <div #items>
-  <ng-template ngFor let-item [ngForOf]="store.view.all$() | async">
-    <ng-container *ngIf="isGroup(item)">
+  @for (item of store.view.all$() | async; track item) {
+    @if (isGroup(item)) {
       <!-- todo: add display ans manage CatalogItemGroup -->
-    </ng-container>
-    <ng-container *ngIf="isLayer(item)">
+    }
+    @if (isLayer(item)) {
       <igo-catalog-browser-layer
         igoListItem
         [layer]="$any(item)"
@@ -82,6 +81,6 @@
         (addedChange)="onLayerAddedChange($event)"
       >
       </igo-catalog-browser-layer>
-    </ng-container>
-  </ng-template>
+    }
+  }
 </div>

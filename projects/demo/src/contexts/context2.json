@@ -11,12 +11,12 @@
   "layers": [
     {
       "title": "Quebec Base Map",
+      "baseLayer": true,
+      "visible": true,
       "sourceOptions": {
-        "type": "wmts",
-        "url": "https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts",
-        "layer": "carte_gouv_qc_ro",
-        "matrixSet": "EPSG_3857",
-        "version": "1.3.0"
+        "type": "xyz",
+        "url": "https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png",
+        "crossOrigin": "anonymous"
       }
     }
   ]

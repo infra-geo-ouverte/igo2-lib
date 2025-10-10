@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -33,6 +33,8 @@ import { BehaviorSubject } from 'rxjs';
  * and replace it by a WakeLock API implementation.
  */
 export class WakeLockButtonComponent {
+  private storageService = inject(StorageService);
+
   @Input() color = 'primary';
   @Input()
   get enabled(): boolean {
@@ -46,7 +48,7 @@ export class WakeLockButtonComponent {
   readonly icon$ = new BehaviorSubject<string>('bedtime');
   public visible = false;
 
-  constructor(private storageService: StorageService) {
+  constructor() {
     this.noSleep = new NoSleep();
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }

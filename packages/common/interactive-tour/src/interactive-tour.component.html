@@ -1,29 +1,28 @@
-<ng-container *ngIf="showTourButton">
-  <button
-    *ngIf="styleButton === 'icon'; else raisedButton"
-    (click)="startInteractiveTour()"
-    [ngClass]="getClass()"
-    color="primary"
-    mat-icon-button
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="
-      disabledTourButton
-        ? ('igo.common.interactiveTour.disaledTooltipTourToolButton'
-          | translate)
-        : ('igo.common.interactiveTour.tooltipTourToolButton' | translate)
-    "
-    [disabled]="disabledTourButton"
-  >
-    <igo-icon [icon]="presentationIcon" iconPositionEnd />
-  </button>
-
-  <ng-template #raisedButton>
+@if (showTourButton) {
+  @if (styleButton === 'icon') {
     <button
       (click)="startInteractiveTour()"
       [ngClass]="getClass()"
       color="primary"
-      mat-raised-button
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="
+        disabledTourButton
+          ? ('igo.common.interactiveTour.disaledTooltipTourToolButton'
+            | translate)
+          : ('igo.common.interactiveTour.tooltipTourToolButton' | translate)
+      "
+      [disabled]="disabledTourButton"
+    >
+      <igo-icon [icon]="presentationIcon" iconPositionEnd />
+    </button>
+  } @else {
+    <button
+      (click)="startInteractiveTour()"
+      [ngClass]="getClass()"
+      color="primary"
+      matButton="elevated"
       tooltip-position="below"
       matTooltipShowDelay="500"
       [disabled]="disabledTourButton"
@@ -42,5 +41,5 @@
       >
       </mat-icon>
     </button>
-  </ng-template>
-</ng-container>
+  }
+}

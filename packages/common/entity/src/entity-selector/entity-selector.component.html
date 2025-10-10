@@ -6,18 +6,18 @@
     [placeholder]="placeholder"
     (selectionChange)="onSelectionChange($event)"
   >
-    <mat-option
-      *ngIf="emptyText !== undefined && multi === false"
-      [value]="emptyValue"
-      >{{ emptyText }}</mat-option
-    >
-    <mat-option *ngIf="multi === true" [value]="multiSelectValue">{{
-      multiText$ | async
-    }}</mat-option>
-    <ng-template ngFor let-record [ngForOf]="store.stateView.all$() | async">
+    @if (emptyText !== undefined && multi === false) {
+      <mat-option [value]="emptyValue">{{ emptyText }}</mat-option>
+    }
+    @if (multi === true) {
+      <mat-option [value]="multiSelectValue">{{
+        multiText$ | async
+      }}</mat-option>
+    }
+    @for (record of store.stateView.all$() | async; track record) {
       <mat-option [value]="record.entity">
         {{ titleAccessor(record.entity) }}
       </mat-option>
-    </ng-template>
+    }
   </mat-select>
 </mat-form-field>

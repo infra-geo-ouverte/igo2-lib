@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogContent,
@@ -20,20 +19,17 @@ import { MeasureFormatPipe } from './measure-format.pipe';
   imports: [
     MatDialogTitle,
     MatDialogContent,
-    NgIf,
     IgoLanguageModule,
     MeasureFormatPipe
   ]
 })
 export class MeasurerDialogComponent {
+  dialogRef = inject<MatDialogRef<MeasurerDialogComponent>>(MatDialogRef);
+  data = inject<MeasurerDialogData>(MAT_DIALOG_DATA);
+
   measureAreaUnit = MeasureAreaUnit;
 
   measureLengthUnit = MeasureLengthUnit;
-
-  constructor(
-    public dialogRef: MatDialogRef<MeasurerDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MeasurerDialogData
-  ) {}
 
   onNoClick(): void {
     this.dialogRef.close();

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { EntityRecord } from '@igo2/common/entity';
 import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
@@ -44,6 +44,9 @@ const SHAPEFILE_FIELD_MAX_LENGHT = 255;
   providedIn: 'root'
 })
 export class ExportService {
+  private config = inject(ConfigService);
+  private httpClient = inject(HttpClient);
+
   static ogreFormats: Record<ExportOgreFormat, string> = {
     GML: 'gml',
     GPX: 'gpx',
@@ -61,10 +64,7 @@ export class ExportService {
   private ogreUrl: string;
   private aggregateInComment = true;
 
-  constructor(
-    private config: ConfigService,
-    private httpClient: HttpClient
-  ) {
+  constructor() {
     this.ogreUrl = this.config.getConfig('importExport.url');
     const gpxAggregateInComment = this.config.getConfig(
       'importExport.gpxAggregateInComment'

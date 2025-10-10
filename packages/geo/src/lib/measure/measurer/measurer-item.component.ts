@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -39,7 +39,6 @@ import { MeasureFormatPipe } from './measure-format.pipe';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgFor,
     MatOptionModule,
     AsyncPipe,
     IgoLanguageModule,

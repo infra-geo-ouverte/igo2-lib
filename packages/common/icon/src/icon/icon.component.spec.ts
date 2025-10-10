@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { mergeTestConfig } from 'packages/common/test-config';
+
 import { IgoIconComponent } from './icon.component';
 
 describe('IconComponent', () => {
@@ -7,9 +9,11 @@ describe('IconComponent', () => {
   let fixture: ComponentFixture<IgoIconComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [IgoIconComponent]
-    }).compileComponents();
+    await TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [IgoIconComponent]
+      })
+    ).compileComponents();
 
     fixture = TestBed.createComponent(IgoIconComponent);
     component = fixture.componentInstance;

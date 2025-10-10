@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -10,13 +10,14 @@ import { TimeFilterListComponent } from './time-filter-list.component';
   standalone: true
 })
 export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
+  private mapService = inject(MapService);
+
   private component: TimeFilterListComponent;
   private layers$$: Subscription;
 
-  constructor(
-    @Self() component: TimeFilterListComponent,
-    private mapService: MapService
-  ) {
+  constructor() {
+    const component = inject(TimeFilterListComponent, { self: true });
+
     this.component = component;
   }
 

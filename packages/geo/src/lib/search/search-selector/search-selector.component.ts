@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,12 +42,13 @@ import { SEARCH_TYPES } from '../shared/search.enums';
     MatMenuModule,
     MatIconModule,
     MatRadioModule,
-    NgFor,
     AsyncPipe,
     IgoLanguageModule
   ]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
+  private searchSourceService = inject(SearchSourceService);
+
   readonly searchType$ = new BehaviorSubject<string>(undefined);
 
   /**
@@ -74,8 +76,6 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    * Event emitted when the enabled search type changes
    */
   @Output() searchTypeChange = new EventEmitter<string>();
-
-  constructor(private searchSourceService: SearchSourceService) {}
 
   ngOnInit() {
     this.searchType$$ = this.searchType$

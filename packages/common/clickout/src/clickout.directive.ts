@@ -3,7 +3,8 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 @Directive({
@@ -11,6 +12,8 @@ import {
   standalone: true
 })
 export class ClickoutDirective {
+  private el = inject(ElementRef);
+
   @Output() clickout = new EventEmitter<MouseEvent>();
 
   @HostListener('document:click', ['$event', '$event.target'])
@@ -23,6 +26,4 @@ export class ClickoutDirective {
       this.clickout.emit(event);
     }
   }
-
-  constructor(private el: ElementRef) {}
 }

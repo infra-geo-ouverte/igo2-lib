@@ -1,11 +1,11 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { DOCUMENT, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
-  Inject,
+  DOCUMENT,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -33,8 +33,6 @@ import { ROUTES_CONFIG } from './app.routing';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   imports: [
-    NgFor,
-    NgIf,
     MatExpansionModule,
     MatToolbarModule,
     MatButtonModule,
@@ -47,6 +45,11 @@ import { ROUTES_CONFIG } from './app.routing';
   ]
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private document = inject<Document>(DOCUMENT);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+  private media = inject(MediaMatcher);
+  private router = inject(Router);
+
   mobileQuery: MediaQueryList;
 
   routesConfig = ROUTES_CONFIG;
@@ -55,12 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public version = version;
   private _mobileQueryListener: () => void;
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private changeDetectorRef: ChangeDetectorRef,
-    private media: MediaMatcher,
-    private router: Router
-  ) {
+  constructor() {
     this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
