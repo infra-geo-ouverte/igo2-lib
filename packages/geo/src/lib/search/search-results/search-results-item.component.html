@@ -7,18 +7,15 @@
   }
 
   @if (titleHtml) {
-    <div
-      matListItemTitle
+    <span
       [innerHtml]="titleHtml"
       matTooltipShowDelay="500"
       [matTooltip]="tooltipHtml"
       matTooltipClass="search-result-tooltip"
-    ></div>
+    ></span>
   } @else {
     @if (!titleHtml) {
-      <span matListItemTitle matTooltipShowDelay="500" [matTooltip]="title">{{
-        title
-      }}</span>
+      <span matTooltipShowDelay="500" [matTooltip]="title">{{ title }}</span>
     }
   }
 
