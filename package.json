@@ -78,7 +78,7 @@
     "@types/geojson": "^7946.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/lodash-es": "^4.17.0",
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.7.2",
     "@types/tinycolor2": "^1.4.4",
     "angular-eslint": "^20.3.0",
     "conventional-changelog-cli": "^5.0.0",
