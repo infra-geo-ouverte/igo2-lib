@@ -1,8 +1,10 @@
 :host {
   .actions-container {
-    button:not(:last-child) {
-      margin-right: 8px;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
   }
   .form-container {
     width: 100%;
