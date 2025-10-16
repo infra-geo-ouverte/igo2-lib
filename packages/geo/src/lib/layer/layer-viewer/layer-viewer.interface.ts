@@ -18,7 +18,6 @@ export interface LayerViewerOptions extends LayerConfig {
 
 interface ViewerLegendOptions {
   showOnVisibilityChange: boolean;
-  updateOnResolutionChange: boolean;
   showForVisibleLayers: boolean;
 }
 
