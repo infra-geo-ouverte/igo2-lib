@@ -20,8 +20,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
+import { StorageService } from '@igo2/core/storage';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, skip } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
@@ -30,6 +31,7 @@ import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerVisibilityButtonComponent } from '../layer-visibility-button';
 import type { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
+import { LegendState } from '../shared/layers/legend.interface';
 
 @Component({
   selector: 'igo-layer-item',
@@ -51,6 +53,7 @@ import { TooltipType } from '../shared/layers/layer.interface';
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
   private networkService = inject(NetworkService);
+  private storageservice = inject(StorageService);
 
   showLegend$ = new BehaviorSubject(true);
   inResolutionRange$ = new BehaviorSubject(true);
@@ -60,6 +63,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private resolution$$: Subscription;
   private network$$: Subscription;
+  private showLegend$$: Subscription;
 
   @Input({ required: true }) layer: Layer;
 
@@ -106,16 +110,23 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.layer.displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
     });
+
+    this.showLegend$$ = this.showLegend$.pipe(skip(1)).subscribe(() => {
+      this.maintainLegendStateStorage();
+    });
+
     if (
       this.layer.visible &&
       this.viewerOptions?.legend?.showForVisibleLayers &&
       this.layer.firstLoadComponent === true
     ) {
       this.layer.firstLoadComponent = false;
-      this.layer.legendCollapsed = false;
+      this.showLegend$.next(true);
     }
-
-    this.toggleLegend(this.layer.legendCollapsed);
+    const legendState = this.getLegendState();
+    if (legendState?.shown !== undefined) {
+      this.showLegend$.next(legendState?.shown);
+    }
     this.updateQueryBadge();
 
     const resolution$ = this.layer.map.viewController.resolution$;
@@ -132,13 +143,37 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       });
   }
 
+  private getLegendStates(): LegendState[] {
+    return (this.storageservice.get('legendStates') as LegendState[]) ?? [];
+  }
+  private getLegendState(): LegendState {
+    const legendsStates = this.getLegendStates();
+    return legendsStates.find((l) => l.id === this.layer.id);
+  }
+
+  maintainLegendStateStorage() {
+    let legendStates = this.getLegendStates();
+    let legendState = this.getLegendState();
+    if (!legendState) {
+      legendState = {
+        id: this.layer.id,
+        shown: undefined
+      };
+    }
+    legendState.shown = this.showLegend$.value;
+
+    legendStates = legendStates.filter((l) => l.id !== legendState.id);
+    legendStates.push(legendState);
+    this.storageservice.set('legendStates', legendStates);
+  }
+
   ngOnDestroy() {
+    this.showLegend$$?.unsubscribe();
     this.resolution$$?.unsubscribe();
     this.network$$?.unsubscribe();
   }
 
-  toggleLegend(collapsed: boolean) {
-    this.layer.legendCollapsed = collapsed;
+  private toggleLegend(collapsed: boolean) {
     this.showLegend$.next(!collapsed);
   }
 
@@ -185,14 +220,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   private onResolutionChange() {
-    const inResolutionRange = this.layer.isInResolutionsRange;
-    if (
-      inResolutionRange === false &&
-      this.viewerOptions.legend.updateOnResolutionChange === true
-    ) {
-      this.toggleLegend(true);
-    }
-    this.inResolutionRange$.next(inResolutionRange);
+    this.inResolutionRange$.next(this.layer.isInResolutionsRange);
   }
 
   private updateQueryBadge() {

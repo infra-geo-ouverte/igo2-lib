@@ -12,10 +12,10 @@ import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { default as JSZip } from 'jszip';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
-import { getLayersLegends } from '../../layer/utils/outputLegend';
+import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
 import GeoPdfPlugin from './geopdf';
@@ -266,50 +266,64 @@ export class PrintService {
    */
   getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
     return new Observable((observer) => {
-      let html = '';
-      const legends = getLayersLegends(map.layerController.all);
+      let legendsToPrint = [];
+      map.layerController.all
+        .filter((l) => l.isInResolutionsRange && l.visible !== false)
+        .forEach((layer: Layer) => {
+          const legends = layer.legends;
+          legends
+            .filter((legend) => !legend.title)
+            .forEach((legend) => (legend.title = layer.title));
+          legendsToPrint = legendsToPrint.concat(legends);
+        });
 
-      if (legends.filter((l) => l.display === true).length === 0) {
-        observer.next(html);
+      if (!legendsToPrint.length) {
+        observer.next('');
         observer.complete();
         return;
       }
+      // For each legend, define an html table cell
+      const legendHtmlContents$ = legendsToPrint.map((legendToPrint) => {
+        let htmlContent = '';
+
+        if (legendToPrint.title) {
+          htmlContent += `<tr><td>${legendToPrint.title}</td></tr>`;
+        }
+        if (legendToPrint.html) {
+          htmlContent += `<tr><td>${legendToPrint.html}</td></tr>`;
+        }
+        if (legendToPrint.url) {
+          const fromUrl = this.getDataImage(legendToPrint.url).pipe(
+            rxMap((dataImage) => {
+              htmlContent += '<tr><td><img src="' + dataImage + '"></td></tr>';
+              return htmlContent;
+            })
+          );
+          return fromUrl;
+        }
+
+        return of(htmlContent);
+      });
       // Define important style to be sure that all container is convert
       // to image not just visible part
-      html += '<style media="screen" type="text/css">';
-      html +=
-        '.html2canvas-container { width: ' +
-        width +
-        'mm !important; height: 2000px !important; }';
-      html += 'table.tableLegend {table-layout: auto;}';
-      html +=
-        'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
-      html += '</style>';
       // The font size will also be lowered afterwards (globally along the legend size)
       // this allows having a good relative font size here and to keep ajusting the legend size
       // while keeping good relative font size
-      html += '<font size="3" face="Times" >';
-      html += '<div class="styleLegend">';
-      html += '<table class="tableLegend" >';
+      let legendsHtml = `<style media="screen" type="text/css">
+      .html2canvas-container { width: ${width}mm !important; height: 2000px !important; }
+      table.tableLegend {table-layout: auto;}
+      div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}
+      </style><font size="3" face="Times" ><div class="styleLegend">
+      <table class="tableLegend" >`;
 
-      // For each legend, define an html table cell
-      const images$ = legends
-        .filter((l) => l.display && l.isInResolutionsRange === true)
-        .map((legend) =>
-          this.getDataImage(legend.url).pipe(
-            rxMap((dataImage) => {
-              let htmlImg =
-                '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
-              htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
-              return htmlImg;
-            })
-          )
+      forkJoin(legendHtmlContents$).subscribe((legendHtmlContents) => {
+        legendsHtml = legendHtmlContents.reduce(
+          (acc, current) => (acc += current),
+          legendsHtml
         );
-      forkJoin(images$).subscribe((dataImages) => {
-        html = dataImages.reduce((acc, current) => (acc += current), html);
-        html += '</table>';
-        html += '</div>';
-        observer.next(html);
+        legendsHtml += '</table>';
+        legendsHtml += '</div>';
+        observer.next(legendsHtml);
         observer.complete();
       });
     });

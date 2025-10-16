@@ -39,8 +39,6 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
 
   @Input() layer: Layer;
 
-  @Input() updateLegendOnResolutionChange = false;
-
   ngOnInit() {
     const resolution$ = this.layer.map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {

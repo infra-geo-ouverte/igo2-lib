@@ -80,8 +80,6 @@ export class MapToolComponent implements OnInit {
 
   @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange = false;
-
   @Input() ogcButton = true;
 
   @Input() timeButton = true;
@@ -125,8 +123,7 @@ export class MapToolComponent implements OnInit {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
         showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange
       },
       queryBadge: this.queryBadge,
       ...this._layerViewerOptions
