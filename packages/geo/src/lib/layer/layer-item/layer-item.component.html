@@ -45,12 +45,7 @@
   </div>
 </div>
 
-<div *ngIf="showLegend$ | async" class="igo-layer-legend-container">
-  <igo-layer-legend
-    [layer]="layer"
-    [updateLegendOnResolutionChange]="
-      viewerOptions.legend.updateOnResolutionChange
-    "
-  >
+<div class="igo-layer-legend-container">
+  <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
   </igo-layer-legend>
 </div>

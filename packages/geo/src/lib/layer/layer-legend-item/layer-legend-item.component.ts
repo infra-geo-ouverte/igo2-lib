@@ -36,8 +36,6 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
 
   @Input() layer: Layer;
 
-  @Input() updateLegendOnResolutionChange = false;
-
   constructor(private networkService: NetworkService) {}
 
   ngOnInit() {

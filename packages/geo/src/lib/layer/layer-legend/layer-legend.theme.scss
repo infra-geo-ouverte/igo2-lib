@@ -23,8 +23,4 @@
       density: $density - 3
     )
   );
-
-  igo-layer-legend {
-    @include mat.form-field-density($theme);
-  }
 }

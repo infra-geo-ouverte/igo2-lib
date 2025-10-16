@@ -117,8 +117,7 @@ export class MapToolComponent implements OnInit {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
         showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange
       },
       queryBadge: this.queryBadge,
       ...this._layerViewerOptions

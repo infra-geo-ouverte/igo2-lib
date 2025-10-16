@@ -1,3 +1,6 @@
+import { MapExtent } from '@igo2/geo';
+
+import { ProjectionLike } from 'ol/proj';
 import type { ServerType } from 'ol/source/wms';
 
 import type { OgcFiltersOptions } from '../../../filter';
@@ -17,6 +20,9 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   serverType?: ServerType;
   ratio?: number;
   refreshIntervalSec?: number;
+  /**
+   * @deprecated rely on layer.options.legendSpecifications.updateOnViewChange instead
+   */
   contentDependentLegend?: boolean;
   excludeAttribute?: string[];
   ogcFilters?: OgcFiltersOptions;
@@ -36,7 +42,58 @@ export interface WMSDataSourceOptionsParams {
   STYLES?: string;
 }
 
+export interface WMSDataSourceOptionsGetLegendGraphicParams {
+  LAYER?: string;
+  STYLE?: string;
+  SCALE?: number;
+  SLD?: string;
+  SLD_BODY?: string;
+  SLD_VERSION: string;
+  FORMAT?: string;
+  WIDTH?: number;
+  HEIGHT?: number;
+  VERSION?: string;
+  BBOX?: string;
+  CRS?: string;
+  SRS?: string;
+}
+
 export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
   timeFilterable?: boolean;
   timeFilter?: TimeFilterOptions;
+}
+
+export interface WmsLayerFromCapabilitiesParsing {
+  Abstract?: string;
+  Attribution?: string;
+  BoundingBox?: unknown[];
+  CRS?: ProjectionLike[];
+  DataURL?: UrlObjectFromCapabilities[];
+  Dimension?: unknown;
+  EX_GeographicBoundingBox?: MapExtent;
+  KeywordList?: unknown;
+  MaxScaleDenominator?: number;
+  MetadataURL?: UrlObjectFromCapabilities[];
+  MinScaleDenominator?: number;
+
+  Name?: string;
+  Style?: WmsCapabilitiesParsedLayerStyleObject[];
+  Title?: string;
+  cascaded?: number;
+  fixedHeight?: number;
+  fixedWidth?: number;
+  // unknown usage noSubsets?: boolean
+  opaque?: boolean;
+  queryable?: boolean;
+}
+
+interface UrlObjectFromCapabilities {
+  Format?: string;
+  OnlineResource?: string;
+}
+
+export interface WmsCapabilitiesParsedLayerStyleObject {
+  Name?: string;
+  Title?: string;
+  LegendURL?: UrlObjectFromCapabilities[];
 }

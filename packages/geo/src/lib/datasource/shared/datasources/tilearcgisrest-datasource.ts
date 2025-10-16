@@ -3,7 +3,6 @@ import { Options } from 'ol/source/TileArcGISRest';
 
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
-import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 
 export class TileArcGISRestDataSource extends DataSource {
@@ -40,36 +39,6 @@ export class TileArcGISRestDataSource extends DataSource {
 
   protected createOlSource(): olSourceTileArcGISRest {
     return new olSourceTileArcGISRest(this.options as Options);
-  }
-
-  getLegend(): Legend[] {
-    const legendInfo = this.options.legendInfo;
-    const legend = super.getLegend();
-    if (
-      legendInfo === undefined ||
-      this.options.layer === undefined ||
-      legend.length > 0
-    ) {
-      return legend;
-    }
-
-    if (!legendInfo) {
-      return;
-    }
-    let htmlString = '<table>';
-
-    for (const legendElement of legendInfo.legend) {
-      const src = `${this.options.url}/${legendInfo.layerId}/images/${legendElement.url}`;
-      const label = legendElement.label.replace('<Null>', 'Null');
-      htmlString +=
-        `<tr><td align='left'><img src="` +
-        src +
-        `" alt ='' /></td><td class="mat-typography">` +
-        label +
-        '</td></tr>';
-    }
-    htmlString += '</table>';
-    return [{ html: htmlString }];
   }
 
   public onUnwatch() {

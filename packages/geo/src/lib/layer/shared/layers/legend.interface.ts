@@ -1,16 +1,19 @@
-import { MapViewOptions } from '../../../map/shared/map.interface';
+import { Size } from 'ol/size';
 
-export interface LegendOptions {
-  collapsed?: boolean;
+import { MapExtent, MapViewOptions } from '../../../map/shared/map.interface';
+
+export interface Legend {
+  title?: string;
+  urls?: string[];
+  htmls?: string[];
   display?: boolean;
-  url?: string;
-  html?: string;
-  stylesAvailable?: ItemStyleOptions[];
 }
 
 export interface LegendMapViewOptions extends MapViewOptions {
-  scale?: number;
-  size?: [number, number];
+  scale: number;
+  size: Size;
+  projection: string;
+  extent: MapExtent;
 }
 
 export interface ItemStyleOptions {
@@ -18,9 +21,15 @@ export interface ItemStyleOptions {
   title?: string;
 }
 
-export interface OutputLayerLegend {
-  title: string;
-  url: string;
-  display: boolean;
-  isInResolutionsRange: boolean;
+export interface LegendsSpecifications {
+  legends?: Legend[];
+  handleLegendMethod?: 'merge' | 'impose';
+  updateOnViewChange?: boolean;
+}
+
+export interface LegendState {
+  id: string;
+  state: {
+    shown?: boolean;
+  };
 }

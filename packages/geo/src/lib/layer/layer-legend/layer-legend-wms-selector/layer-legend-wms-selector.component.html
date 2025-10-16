@@ -1,0 +1,25 @@
+<ng-container *ngIf="layer && currentLegend$ | async as currentLegend">
+  <div
+    class="igo-layer-legend-wms-selector"
+    [ngClass]="{ 'with-title': (legends$ | async).length > 1 }"
+  >
+    <ng-container *ngIf="legends$ | async as legends">
+      <mat-select
+        *ngIf="legends.length > 1"
+        [value]="currentLegend"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate"
+        (selectionChange)="onChangeLegend($event)"
+      >
+        <mat-option *ngFor="let legend of legends" [value]="legend">{{
+          legend.title ??
+            layer.title +
+              ' (' +
+              ('igo.geo.layer.legend.default' | translate) +
+              ')'
+        }}</mat-option>
+      </mat-select>
+    </ng-container>
+  </div>
+</ng-container>

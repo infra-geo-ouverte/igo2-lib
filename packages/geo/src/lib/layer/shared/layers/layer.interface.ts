@@ -8,7 +8,7 @@ import type {
   DataSource
 } from '../../../datasource/shared/datasources';
 import type { MapExtent } from '../../../map/shared/map.interface';
-import type { LegendOptions } from './legend.interface';
+import { Legend, LegendsSpecifications } from './legend.interface';
 import type { LayersLink } from './linked/linked-layer.interface';
 
 export interface LayerOptions extends LayerOptionsBase {
@@ -23,7 +23,8 @@ export interface LayerOptions extends LayerOptionsBase {
   maxScaleDenom?: number;
   removable?: boolean;
   workspace?: GeoWorkspaceOptions;
-  legendOptions?: LegendOptions;
+  legendsSpecifications?: LegendsSpecifications;
+  _legends?: Legend[];
   ol?: olLayer<olSource>;
   tooltip?: TooltipContent;
   _internal?: Record<string, string>;

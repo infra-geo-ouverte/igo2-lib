@@ -81,14 +81,9 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
     return date.toISOString().split('.')[0] + 'Z';
   }
 
-  private toggleLegend(collapsed: boolean) {
-    this.layer.legendCollapsed = collapsed;
-    this.showLegend$.next(!collapsed);
-  }
-
   toggleLegendOnClick() {
     if (!this.filtersCollapsed) {
-      this.toggleLegend(this.showLegend$.value);
+      this.showLegend$.next(!this.showLegend$.value);
     }
   }
 

@@ -16,10 +16,9 @@ import {
 } from '../../../filter/shared/ogc-filter.interface';
 import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
-import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
-import { DatasourceEvent, EventRefresh, Legend } from './datasource.interface';
+import { DatasourceEvent, EventRefresh } from './datasource.interface';
 import { WFSService } from './wfs.service';
 import {
   TimeFilterableDataSourceOptions,
@@ -295,68 +294,6 @@ export class WMSDataSource extends DataSource {
       this.timeFilter$.next(this.timeFilter);
       this.ol.notify('timeFilter', this.timeFilter);
     }
-  }
-
-  getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
-    let legend = super.getLegend();
-    if (legend.length > 0 && style === undefined && !view?.scale) {
-      return legend;
-    }
-
-    let contentDependent = false;
-    let projParam;
-
-    if (
-      view?.size &&
-      view?.extent &&
-      view?.projection &&
-      this.options.contentDependentLegend
-    ) {
-      projParam =
-        this.params.VERSION === '1.3.0' || this.params.VERSION === undefined
-          ? 'CRS'
-          : 'SRS';
-      contentDependent = true;
-    }
-
-    const sourceParams = this.params;
-
-    let layers = [];
-    if (sourceParams.LAYERS !== undefined) {
-      layers = sourceParams.LAYERS.split(',');
-    }
-
-    const baseUrl = this.options.url.replace(/\?$/, '');
-    const params = [
-      'REQUEST=GetLegendGraphic',
-      'SERVICE=WMS',
-      'FORMAT=image/png',
-      'SLD_VERSION=1.1.0',
-      `VERSION=${sourceParams.VERSION || '1.3.0'}`
-    ];
-    if (style !== undefined) {
-      params.push(`STYLE=${style}`);
-    }
-    if (view?.scale !== undefined) {
-      params.push(`SCALE=${view.scale}`);
-    }
-    if (contentDependent) {
-      params.push(`WIDTH=${view.size[0]}`);
-      params.push(`HEIGHT=${view.size[1]}`);
-      params.push(`BBOX=${view.extent.join(',')}`);
-      params.push(`${projParam}=${view.projection}`);
-    }
-
-    legend = layers.map((layer: string) => {
-      const separator = baseUrl.match(/\?/) ? '&' : '?';
-      return {
-        url: `${baseUrl}${separator}${params.join('&')}&LAYER=${layer}`,
-        title: layers.length > 1 ? layer : undefined,
-        currentStyle: style === undefined ? undefined : (style as string)
-      };
-    });
-
-    return legend;
   }
 
   public onUnwatch() {

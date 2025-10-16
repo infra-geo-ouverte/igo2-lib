@@ -4,20 +4,17 @@ import olVectorSource from 'ol/source/Vector';
 
 import { Observable, Subscription } from 'rxjs';
 
-import { LegendOptions } from '../../../layer/shared/layers/legend.interface';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { DataService } from './data.service';
 import {
   AnyEventName,
   DataSourceOptions,
-  DatasourceEvent,
-  Legend
+  DatasourceEvent
 } from './datasource.interface';
 
 export abstract class DataSource {
   public id: string;
   public ol: olSource | olVectorSource | olClusterSource;
-  private legend: Legend[];
 
   get saveableOptions(): Partial<DataSourceOptions> {
     return {
@@ -44,22 +41,6 @@ export abstract class DataSource {
 
   protected generateId(): string {
     return generateIdFromSourceOptions(this.options);
-  }
-
-  public getLegend(): Legend[] {
-    return this.legend ? this.legend : [];
-  }
-
-  public setLegend(options: LegendOptions): Legend[] {
-    if (options.url) {
-      this.legend = [{ url: options.url }];
-    } else if (options.html) {
-      this.legend = [{ html: options.html }];
-    } else {
-      this.legend = [];
-    }
-
-    return this.legend;
   }
 
   refresh(): void {

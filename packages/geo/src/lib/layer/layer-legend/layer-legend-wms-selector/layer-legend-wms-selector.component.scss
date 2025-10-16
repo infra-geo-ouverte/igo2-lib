@@ -1,0 +1,20 @@
+:host {
+  .igo-layer-legend-wms-selector.with-title {
+    padding-left: 18px;
+  }
+
+  @-moz-document url-prefix() {
+    img:after {
+      margin-left: 19px;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

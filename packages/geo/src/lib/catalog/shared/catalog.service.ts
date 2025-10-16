@@ -18,7 +18,8 @@ import {
   ArcGISRestDataSourceOptions,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
-  WMTSDataSourceOptions
+  WMTSDataSourceOptions,
+  WmsLayerFromCapabilitiesParsing
 } from '../../datasource/shared/datasources';
 import { ImageLayerOptions, LayerOptions } from '../../layer/shared';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
@@ -453,16 +454,18 @@ export class CatalogService {
 
   /// WMS
 
-  private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
+  private prepareCatalogItemLayer(
+    layer: WmsLayerFromCapabilitiesParsing,
+    idParent,
+    layersQueryFormat,
+    catalog
+  ) {
     const configuredQueryFormat = this.retrieveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
     );
 
-    const legendOptions =
-      catalog.showLegend && layer.Style
-        ? this.capabilitiesService.getStyle(layer.Style)
-        : undefined;
+    const legends = this.capabilitiesService.getLegendsFromWmsStyle(layer);
 
     const params = Object.assign({}, catalog.queryParams, {
       LAYERS: layer.Name,
@@ -544,7 +547,7 @@ export class CatalogService {
           abstract: metadataAbstract,
           type: baseSourceOptions.type
         },
-        legendOptions,
+        _legends: legends,
         tooltip: { type: catalog.tooltipType },
         sourceOptions
       }

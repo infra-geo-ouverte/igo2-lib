@@ -20,7 +20,6 @@
         *ngIf="!(excludeBaseLayers && isLayerItem(layer) && layer.baseLayer)"
         igoListItem
         [layer]="$any(layer)"
-        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
       >
       </igo-layer-legend-item>
     </ng-template>

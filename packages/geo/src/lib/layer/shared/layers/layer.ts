@@ -1,22 +1,25 @@
 import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 
+import BaseEvent from 'ol/events/Event';
 import OlLayer from 'ol/layer/Layer';
 import { Source } from 'ol/source';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, fromEvent } from 'rxjs';
 
-import { DataSource, Legend } from '../../../datasource/shared/datasources';
+import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import {
   isLayerLinked,
   isLinkMaster
 } from '../../shared/layers/linked/linked-layer.utils';
 import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
+import { getLayerLegend } from '../../utils/legend.utils';
 import { AnyLayer } from './any-layer';
 import { LayerBase, LayerGroupBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
 import { type LayerOptions } from './layer.interface';
+import { Legend, LegendMapViewOptions } from './legend.interface';
 import { Linked } from './linked/linked-layer';
 
 export abstract class Layer extends LayerBase {
@@ -25,8 +28,7 @@ export abstract class Layer extends LayerBase {
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
-  legend: Legend[];
-  legendCollapsed = true;
+  legends$ = new BehaviorSubject<Legend[]>([]);
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
@@ -79,27 +81,44 @@ export abstract class Layer extends LayerBase {
     };
   }
 
+  get legends(): Legend[] {
+    return this.legends$.getValue();
+  }
+  set legends(legends: Legend[]) {
+    this.legends$.next(legends);
+  }
+
+  public setLegends(legendMapViewOptions?: LegendMapViewOptions) {
+    let legendToAssign: Legend[] = [];
+    if (this.options?.legendsSpecifications?.legends) {
+      const legendsFromSpecifications =
+        this.options?.legendsSpecifications?.legends;
+      if (this.options?.legendsSpecifications?.handleLegendMethod === 'merge') {
+        legendToAssign = legendToAssign.concat(legendsFromSpecifications);
+      } else if (
+        this.options?.legendsSpecifications?.handleLegendMethod === 'impose'
+      ) {
+        legendToAssign = legendsFromSpecifications;
+        return;
+      }
+    }
+
+    if (this.options._legends) {
+      legendToAssign = legendToAssign.concat(this.options._legends);
+    }
+
+    const localLayerLegend = getLayerLegend(this, legendMapViewOptions);
+    this.legends = legendToAssign.concat(localLayerLegend);
+  }
+
   constructor(
     public options: LayerOptions,
     protected messageService?: MessageService,
     protected authInterceptor?: AuthInterceptor
   ) {
     super(options);
-
+    this.legends = [];
     this.dataSource = options.source;
-
-    this.legendCollapsed = options.legendOptions
-      ? options.legendOptions.collapsed
-        ? options.legendOptions.collapsed
-        : true
-      : true;
-
-    if (
-      options.legendOptions &&
-      (options.legendOptions.url || options.legendOptions.html)
-    ) {
-      this.legend = this.dataSource.setLegend(options.legendOptions);
-    }
 
     if (this.visible) {
       this.dataSource.addEvents();
@@ -108,6 +127,7 @@ export abstract class Layer extends LayerBase {
     this.ol = this.createOlLayer();
     this.ol.set('_layer', this, true);
 
+    this.setLegends();
     super.afterCreated();
   }
 
@@ -126,8 +146,25 @@ export abstract class Layer extends LayerBase {
         });
       }
     });
-
+    this.handleOrMaintainLegends(map);
     this.createLink();
+  }
+
+  private handleOrMaintainLegends(map?: MapBase) {
+    if (map && this.options.legendsSpecifications?.updateOnViewChange) {
+      fromEvent<BaseEvent>(map.viewController.olView, 'change')
+        .pipe(debounceTime(750))
+        .subscribe(() =>
+          this.setLegends({
+            scale: map.viewController.getScale(),
+            size: map.ol.getSize(),
+            extent: map.viewController.getExtent(),
+            projection: map.projectionCode
+          })
+        );
+    } else {
+      this.setLegends();
+    }
   }
 
   createLink(): void {

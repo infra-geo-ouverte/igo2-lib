@@ -7,16 +7,17 @@ import { ActivityService } from '@igo2/core/activity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { SubjectStatus } from '@igo2/utils';
+import { ObjectUtils, SubjectStatus } from '@igo2/utils';
 
 import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { default as JSZip } from 'jszip';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
-import { getLayersLegends } from '../../layer/utils/outputLegend';
+import { Legend } from '../../layer/shared/layers/legend.interface';
+import { getLayerLegend } from '../../layer/utils/legend.utils';
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
 import GeoPdfPlugin from './geopdf';
@@ -269,50 +270,70 @@ export class PrintService {
    */
   getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
     return new Observable((observer) => {
-      let html = '';
-      const legends = getLayersLegends(map.layerController.all);
+      const legendsToPrint: Legend[] = [];
+      map.layerController.all
+        .filter((l) => l.isInResolutionsRange && l.visible !== false)
+        .forEach((layer) => {
+          const layerLegends = getLayerLegend(layer);
+          layerLegends
+            .filter((layerLegend) => layerLegend.display !== false)
+            .forEach((layerLegend) => {
+              legendsToPrint.push(
+                Object.assign(
+                  {},
+                  { title: layer.title ?? '', display: true },
+                  ObjectUtils.removeUndefined(layerLegend)
+                )
+              );
+            });
+        });
 
-      if (legends.filter((l) => l.display === true).length === 0) {
-        observer.next(html);
+      if (!legendsToPrint.length) {
+        observer.next('');
         observer.complete();
         return;
       }
+      // For each legend, define an html table cell
+      const legendHtmlContents$ = legendsToPrint
+        .map((legendToPrint) => {
+          let htmlContent = '<tr><td>' + legendToPrint.title + '</td></tr>';
+          const htmlContentsFromUrl = legendToPrint.urls?.map((url) => {
+            return this.getDataImage(url).pipe(
+              rxMap((dataImage) => {
+                htmlContent +=
+                  '<tr><td><img src="' + dataImage + '"></td></tr>';
+                return htmlContent;
+              })
+            );
+          });
+          const htmlContentsFromHtml = legendToPrint.htmls?.map((html) => {
+            htmlContent += `<tr><td>${html}</td></tr>`;
+            return of(htmlContent);
+          });
+
+          return (htmlContentsFromUrl ?? []).concat(htmlContentsFromHtml ?? []);
+        })
+        .reduce((acc, value) => acc.concat(value), []);
       // Define important style to be sure that all container is convert
       // to image not just visible part
-      html += '<style media="screen" type="text/css">';
-      html +=
-        '.html2canvas-container { width: ' +
-        width +
-        'mm !important; height: 2000px !important; }';
-      html += 'table.tableLegend {table-layout: auto;}';
-      html +=
-        'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
-      html += '</style>';
       // The font size will also be lowered afterwards (globally along the legend size)
       // this allows having a good relative font size here and to keep ajusting the legend size
       // while keeping good relative font size
-      html += '<font size="3" face="Times" >';
-      html += '<div class="styleLegend">';
-      html += '<table class="tableLegend" >';
+      let imagesHtml = `<style media="screen" type="text/css">
+      .html2canvas-container { width: ${width}mm !important; height: 2000px !important; }
+      table.tableLegend {table-layout: auto;}
+      div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}
+      </style><font size="3" face="Times" ><div class="styleLegend">
+      <table class="tableLegend" >`;
 
-      // For each legend, define an html table cell
-      const images$ = legends
-        .filter((l) => l.display && l.isInResolutionsRange === true)
-        .map((legend) =>
-          this.getDataImage(legend.url).pipe(
-            rxMap((dataImage) => {
-              let htmlImg =
-                '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
-              htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
-              return htmlImg;
-            })
-          )
+      forkJoin(legendHtmlContents$).subscribe((legendHtmlContent) => {
+        imagesHtml = legendHtmlContent.reduce(
+          (acc, current) => (acc += current),
+          imagesHtml
         );
-      forkJoin(images$).subscribe((dataImages) => {
-        html = dataImages.reduce((acc, current) => (acc += current), html);
-        html += '</table>';
-        html += '</div>';
-        observer.next(html);
+        imagesHtml += '</table>';
+        imagesHtml += '</div>';
+        observer.next(imagesHtml);
         observer.complete();
       });
     });
