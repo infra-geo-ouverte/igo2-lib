@@ -68,8 +68,6 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   private resolution$$: Subscription;
   private visibleOrInRangeLayers$$: Subscription;
 
-  readonly updateLegendOnResolutionChange = input(false);
-
   readonly layerAdditionAllowed = input(true);
 
   readonly allowShowAllLegends = input(false);

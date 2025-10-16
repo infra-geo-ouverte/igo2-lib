@@ -48,11 +48,6 @@
 
 @if (showLegend()) {
   <div class="igo-layer-legend-container">
-    <igo-layer-legend
-      [layer]="layer()"
-      [updateLegendOnResolutionChange]="
-        viewerOptions().legend.updateOnResolutionChange
-      "
-    />
+    <igo-layer-legend [layer]="layer()"> </igo-layer-legend>
   </div>
 }

@@ -152,15 +152,8 @@ export class AppLayerComponent {
       {
         title: 'Direction du vent',
         visible: false,
-        legendOptions: {
-          stylesAvailable: [
-            { name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR' },
-            { name: 'WDIR6', title: 'WDIR6' },
-            { name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR' },
-            { name: 'WDIR3', title: 'WDIR3' }
-          ]
-        },
         sourceOptions: {
+          optionsFromCapabilities: true,
           type: 'wms',
           url: 'https://geo.weather.gc.ca/geomet?lang=fr',
           params: {
