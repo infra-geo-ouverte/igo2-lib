@@ -2,11 +2,11 @@
   <textarea
     matInput
     [required]="required"
-    [placeholder]="placeholder | translate"
-    [formControl]="formControl"
+    [placeholder]="placeholder() | translate"
+    [formControl]="formControl()"
   >
   </textarea>
-  @if (disableSwitch === true) {
+  @if (disableSwitch() === true) {
     <mat-icon
       class="igo-form-disable-switch"
       (click)="onDisableSwitchClick()"
@@ -16,7 +16,7 @@
       }}
     </mat-icon>
   }
-  @if (formControl.errors) {
+  @if (formControl().errors) {
     <mat-error>{{ getErrorMessage() | translate }}</mat-error>
   }
 </mat-form-field>

@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -10,8 +10,6 @@ import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 
 import { Coordinate } from 'ol/coordinate';
-
-import { Subject } from 'rxjs';
 
 import { roundCoordTo, roundCoordToString } from '../../map/shared/map.utils';
 import { DirectionsService } from '../shared';
@@ -40,11 +38,11 @@ export class DirectionsButtonsComponent {
   private routeService = inject(RouteService, { optional: true });
   private directionsService = inject(DirectionsService);
 
-  @Input({ required: true }) contextUri: string;
-  @Input({ required: true }) zoomOnActiveRoute$ = new Subject<void>();
-  @Input({ required: true }) stopsStore: StopsStore;
-  @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
-  @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
+  readonly contextUri = input.required<string>();
+  readonly zoomOnActiveRoute = model.required<boolean>();
+  readonly stopsStore = input.required<StopsStore>();
+  readonly routesFeatureStore = input.required<RoutesFeatureStore>();
+  readonly stepsFeatureStore = input.required<StepsFeatureStore>();
 
   public downloadDirectionsBtnDisabled = false;
 
@@ -54,7 +52,7 @@ export class DirectionsButtonsComponent {
    * @return {FeatureWithDirections | undefined} The active route, or undefined if no active route is found.
    */
   get activeRoute(): FeatureWithDirections {
-    return this.routesFeatureStore
+    return this.routesFeatureStore()
       .all()
       .find((route) => route.properties.active);
   }
@@ -64,15 +62,15 @@ export class DirectionsButtonsComponent {
    *
    */
   resetStops(): void {
-    this.stopsStore.clearStops();
+    this.stopsStore().clearStops();
   }
 
   /**
    * Triggers the zoom on the active route.
    *
    */
-  zoomOnActiveRoute(): void {
-    this.zoomOnActiveRoute$.next();
+  setZoomOnActiveRoute(): void {
+    this.zoomOnActiveRoute.set(true);
   }
 
   /**
@@ -107,11 +105,11 @@ export class DirectionsButtonsComponent {
    *
    */
   downloadDirections(): void {
-    this.stepsFeatureStore.clear();
+    this.stepsFeatureStore().clear();
     this.downloadDirectionsBtnDisabled = true;
     this.directionsService
       .downloadDirections(
-        this.routesFeatureStore.map,
+        this.routesFeatureStore().map,
         this.activeRoute.properties.directions
       )
       .subscribe(() => {
@@ -158,26 +156,28 @@ export class DirectionsButtonsComponent {
       newLine;
 
     let stopNumber = 1;
-    this.stopsStore.view.all().forEach((stop) => {
-      let coords = '';
-      let stopText = '';
-      if (stop.text !== roundCoordToString(stop.coordinates, 6).join(', ')) {
-        stopText = stop.text;
-        coords = ` (${roundCoordToString(stop.coordinates, 6).join(', ')})`;
-      } else {
-        stopText = roundCoordToString(stop.coordinates, 6).join(', ');
-      }
+    this.stopsStore()
+      .view.all()
+      .forEach((stop) => {
+        let coords = '';
+        let stopText = '';
+        if (stop.text !== roundCoordToString(stop.coordinates, 6).join(', ')) {
+          stopText = stop.text;
+          coords = ` (${roundCoordToString(stop.coordinates, 6).join(', ')})`;
+        } else {
+          stopText = roundCoordToString(stop.coordinates, 6).join(', ');
+        }
 
-      stops =
-        stops +
-        indent +
-        stopNumber.toLocaleString() +
-        '. ' +
-        stopText +
-        coords +
-        newLine;
-      stopNumber++;
-    });
+        stops =
+          stops +
+          indent +
+          stopNumber.toLocaleString() +
+          '. ' +
+          stopText +
+          coords +
+          newLine;
+        stopNumber++;
+      });
     stops += newLine;
 
     const url: string =
@@ -252,11 +252,12 @@ export class DirectionsButtonsComponent {
     }
 
     let context = '';
-    if (this.contextUri) {
-      context = `context=${this.contextUri}&`;
+    const contextUri = this.contextUri();
+    if (contextUri) {
+      context = `context=${contextUri}&`;
     }
 
-    const routeIndex: number = this.routesFeatureStore
+    const routeIndex: number = this.routesFeatureStore()
       .all()
       .map((direction) => direction.properties.id)
       .indexOf(this.activeRoute.properties.id);
@@ -268,8 +269,8 @@ export class DirectionsButtonsComponent {
     }
     const directionsKey: string | boolean =
       this.routeService.options.directionsCoordKey;
-    const stopsCoordinates: Coordinate[] = this.stopsStore.view
-      .all()
+    const stopsCoordinates: Coordinate[] = this.stopsStore()
+      .view.all()
       .map((stop) => roundCoordTo(stop.coordinates, 6));
     let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {

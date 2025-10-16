@@ -1,6 +1,6 @@
 <igo-geometry-form-field-input
   [formControl]="formControl"
-  [map]="map"
+  [map]="map()"
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
@@ -10,8 +10,7 @@
   [overlayStyle]="overlayStyle$ | async"
   [radius]="radius"
   [predefinedRadius]="$any(predefinedRadius)"
->
-</igo-geometry-form-field-input>
+/>
 
 <div class="header">
   @if (!isPredefined()) {
@@ -121,12 +120,11 @@
             (change)="$event ? masterToggle() : null"
             [checked]="isAllSelected()"
             [indeterminate]="selectedThematics.hasValue() && !isAllSelected()"
-          >
-          </mat-checkbox>
+          />
         </mat-header-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedColumns" />
+      <mat-row *matRowDef="let row; columns: displayedColumns" />
     </mat-table>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
       <!-- This is the tree node template for leaf nodes -->
@@ -141,8 +139,7 @@
             (click)="$event.stopPropagation()"
             (change)="$event ? onToggleChange(node) : null"
             [checked]="selectedThematics.isSelected(node)"
-          >
-          </mat-checkbox>
+          />
         </li>
       </mat-tree-node>
       <!-- This is the tree node template for expandable nodes -->
@@ -159,14 +156,13 @@
             (change)="$event ? childrensToggle(node) : null"
             [checked]="isAllSelected(node)"
             [indeterminate]="hasChildrenSelected(node) && !isAllSelected(node)"
-          >
-          </mat-checkbox>
+          />
         </div>
         <ul
           class="tree-ul"
           [class.example-tree-invisible]="!treeControl.isExpanded(node)"
         >
-          <ng-container matTreeNodeOutlet></ng-container>
+          <ng-container matTreeNodeOutlet />
         </ul>
       </mat-nested-tree-node>
     </mat-tree>
@@ -209,7 +205,7 @@
   <button
     matButton="elevated"
     class="remove-button"
-    [disabled]="allLayers.length === 0"
+    [disabled]="allLayers().length === 0"
     (click)="clearButton()"
   >
     {{ 'igo.geo.spatialFilter.removeLayer' | translate }}
@@ -218,14 +214,14 @@
   <button
     matButton="elevated"
     class="export-button"
-    [disabled]="!store.entities$.getValue().length"
+    [disabled]="!store().entities$.getValue().length"
     (click)="export.emit()"
   >
     {{ 'igo.geo.spatialFilter.exportLayer' | translate }}
   </button>
 </div>
 
-@if (store.all().length && tableTemplate && !listIsVisible) {
+@if (store().all().length && tableTemplate && !listIsVisible) {
   <button
     class="expand-more"
     mat-icon-button
@@ -237,7 +233,7 @@
   </button>
 }
 
-@if (store.all().length && tableTemplate && listIsVisible) {
+@if (store().all().length && tableTemplate && listIsVisible) {
   <div class="results">
     @if (listIsVisible) {
       <button
@@ -252,9 +248,8 @@
     <igo-entity-table
       class="results-list"
       [template]="tableTemplate"
-      [store]="store"
+      [store]="store()"
       (entitySelectChange)="entityChange.emit($event)"
-    >
-    </igo-entity-table>
+    />
   </div>
 }

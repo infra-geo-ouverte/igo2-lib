@@ -1,5 +1,5 @@
 @if (
-  auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1
+  auth.authenticated && trainingGuideURLs() && trainingGuideURLs().length === 1
 ) {
   <button
     class="training-guide-button"
@@ -15,7 +15,9 @@
   </button>
 }
 
-@if (auth.authenticated && trainingGuideURLs && trainingGuideURLs.length > 1) {
+@if (
+  auth.authenticated && trainingGuideURLs() && trainingGuideURLs().length > 1
+) {
   <button
     class="training-guide-button"
     matButton="elevated"
@@ -31,7 +33,7 @@
 }
 
 <mat-menu #menu="matMenu">
-  @for (guide of trainingGuideURLs; track guide) {
+  @for (guide of trainingGuideURLs(); track guide) {
     <button mat-menu-item (click)="openGuide(guide)">
       {{ formatFileName(guide) }}
     </button>
@@ -39,8 +41,7 @@
 </mat-menu>
 
 @if (headerHtml !== '') {
-  <igo-custom-html [html]="headerHtml | translate"> </igo-custom-html>
+  <igo-custom-html [html]="headerHtml | translate" />
 }
 
-<igo-custom-html [html]="html | translate: { version: effectiveVersion }">
-</igo-custom-html>
+<igo-custom-html [html]="html | translate: { version: effectiveVersion }" />

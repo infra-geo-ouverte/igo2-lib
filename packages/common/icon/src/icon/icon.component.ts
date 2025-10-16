@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { IconSvg } from '../shared';
@@ -19,20 +19,18 @@ import { IconService } from '../shared/icon.service';
 export class IgoIconComponent {
   private iconService = inject(IconService);
 
-  @Input() color: string | null | undefined;
+  readonly color = input<string | null | undefined>(undefined);
 
-  @Input({ required: true })
-  set icon(icon: string | IconSvg) {
-    if (this.isSvg(icon)) {
-      this.registerSvg(icon);
-    }
+  readonly icon = input.required<string | IconSvg>();
 
-    this._icon = icon;
+  constructor() {
+    effect(() => {
+      const currentIcon = this.icon();
+      if (this.isSvg(currentIcon)) {
+        this.registerSvg(currentIcon);
+      }
+    });
   }
-  get icon(): string | IconSvg {
-    return this._icon;
-  }
-  private _icon: string | IconSvg;
 
   registerSvg(icon: IconSvg): void {
     this.iconService.registerSvg(icon);

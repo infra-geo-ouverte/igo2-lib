@@ -1,11 +1,11 @@
 <mat-list-item>
   @if (haveGroup()) {
-    <mat-icon class="catalog-browser-layer-carret" matListItemIcon></mat-icon>
+    <mat-icon class="catalog-browser-layer-carret" matListItemIcon />
   }
   <span
     matListItemTitle
     matTooltipShowDelay="500"
-    [ngClass]="catalogAllowLegend ? 'igo-cataloglayer-title' : ''"
+    [ngClass]="catalogAllowLegend() ? 'igo-cataloglayer-title' : ''"
     (click)="askForLegend()"
     [matTooltip]="computeTitleTooltip()"
   >
@@ -13,7 +13,7 @@
   </span>
 
   <div matListItemMeta>
-    @if (layer.externalProvider) {
+    @if (layer().externalProvider) {
       <button disabled="true" mat-icon-button>
         <mat-icon
           class="igo-cataloglayer-external-icon"
@@ -27,8 +27,11 @@
         </mat-icon>
       </button>
     }
-    <igo-metadata-button [layer]="$any(layer)"></igo-metadata-button>
+    <igo-metadata-button [layer]="$any(layer())" />
 
+    @let isRange = inRange$ | async;
+    @let isVisible = isVisible$ | async;
+    @let isPreview = isPreview$ | async;
     <button
       (mouseenter)="onMouseEvent($event)"
       (mouseleave)="onMouseEvent($event)"
@@ -36,7 +39,7 @@
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="computeTooltip() | translate"
-      [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+      [color]="isPreview ? '' : added() ? 'warn' : ''"
       (click)="onToggleClick($event)"
     >
       <mat-icon
@@ -47,24 +50,23 @@
         igoMatBadgeBackgroundColor="none"
         [igoMatBadgeInverseColor]="true"
         [matBadgeHidden]="
-          ((inRange$ | async) && (isVisible$ | async) === true) ||
-          ((inRange$ | async) && !added) ||
-          ((inRange$ | async) && (isPreview$ | async))
+          (isRange && isVisible) ||
+          (isRange && !added()) ||
+          (isRange && isPreview)
         "
-        [matBadgeDisabled]="(inRange$ | async) === false"
+        [matBadgeDisabled]="isRange === false"
         matBadgeSize="small"
         matBadgePosition="after"
       >
-        {{ (isPreview$ | async) ? 'preview' : added ? 'delete' : 'add' }}
+        {{ isPreview ? 'preview' : added() ? 'delete' : 'add' }}
       </mat-icon>
     </button>
   </div>
 </mat-list-item>
 
 <div #legend class="igo-cataloglayer-legend-container">
-  @if (
-    (layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend
-  ) {
-    <igo-layer-legend [layer]="igoLayer$ | async"> </igo-layer-legend>
+  @let igoLayer = igoLayer$ | async;
+  @if ((layerLegendShown$ | async) && igoLayer && catalogAllowLegend()) {
+    <igo-layer-legend [layer]="igoLayer" />
   }
 </div>

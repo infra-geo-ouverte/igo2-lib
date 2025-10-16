@@ -2,8 +2,8 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
-  inject
+  inject,
+  input
 } from '@angular/core';
 
 @Directive({
@@ -13,15 +13,15 @@ import {
 export class ImageErrorDirective {
   private el = inject(ElementRef);
 
-  @Input() errorImageUrl = './assets/igo2/common/images/na.png';
-  @Input() hideError = false;
+  readonly errorImageUrl = input('./assets/igo2/common/images/na.png');
+  readonly hideError = input(false);
 
   @HostListener('error', ['$event'])
   public onError(event: any): void {
-    if (this.hideError) {
+    if (this.hideError()) {
       this.el.nativeElement.style.display = 'none';
     } else {
-      event.target.src = this.errorImageUrl;
+      event.target.src = this.errorImageUrl();
     }
   }
 }

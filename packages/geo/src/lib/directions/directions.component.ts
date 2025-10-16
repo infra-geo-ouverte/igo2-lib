@@ -2,10 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
+  EffectRef,
   OnDestroy,
   OnInit,
-  inject
+  effect,
+  inject,
+  input
 } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -21,7 +23,7 @@ import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
 import * as olProj from 'ol/proj';
 
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
@@ -81,13 +83,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private queryService = inject(QueryService);
   private messageService = inject(MessageService);
 
-  private watcher: EntityStoreWatcher<Stop>;
-
   public projection = 'EPSG:4326';
   public hasOsrmPrivateAccess = false;
   public twoSourcesAvailable = false;
 
-  private zoomOnActiveRoute$$: Subscription;
+  private zoomOnActiveRoute$$: EffectRef;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   private routesQueries$$: Subscription[] = [];
@@ -103,16 +103,16 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private searchs$$: Subscription[] = [];
   private authenticated$$: Subscription;
 
-  @Input() contextUri: string;
-  @Input({ required: true }) stopsStore: StopsStore;
-  @Input({ required: true }) stopsFeatureStore: StopsFeatureStore;
-  @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
-  @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
-  @Input() debounce = 200;
-  @Input() length = 2;
-  @Input() coordRoundedDecimals = 6;
-  @Input({ required: true }) zoomOnActiveRoute$ = new Subject<void>();
-  @Input({ required: true }) authenticated$: BehaviorSubject<boolean>;
+  readonly contextUri = input<string>(undefined);
+  readonly stopsStore = input.required<StopsStore>();
+  readonly stopsFeatureStore = input.required<StopsFeatureStore>();
+  readonly routesFeatureStore = input.required<RoutesFeatureStore>();
+  readonly stepsFeatureStore = input.required<StepsFeatureStore>();
+  readonly debounce = input(200);
+  readonly length = input(2);
+  readonly coordRoundedDecimals = input(6);
+  readonly zoomOnActiveRoute = input.required<boolean>();
+  readonly authenticated$ = input.required<BehaviorSubject<boolean>>();
 
   /**
    * Wheter one of the direction control is active
@@ -131,8 +131,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       .authorization;
   }
 
+  constructor() {
+    this.monitorActiveRouteZoom();
+  }
+
   ngOnInit(): void {
-    this.authenticated$$ = this.authenticated$.subscribe(
+    this.authenticated$$ = this.authenticated$().subscribe(
       (authenticated: boolean) => {
         if (authenticated) {
           const profileWithAuth: BaseDirectionsSourceOptionsProfile =
@@ -155,9 +159,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
-      initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
-      initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
-      initStepsFeatureStore(this.stepsFeatureStore);
+      initStopsFeatureStore(this.stopsFeatureStore(), this.languageService);
+      initRoutesFeatureStore(this.routesFeatureStore(), this.languageService);
+      initStepsFeatureStore(this.stepsFeatureStore());
       this.initOlInteraction();
     }, 1);
   }
@@ -167,53 +171,51 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
-    this.zoomOnActiveRoute$$.unsubscribe();
+    this.zoomOnActiveRoute$$.destroy();
     this.authenticated$$.unsubscribe();
     this.freezeStores();
 
-    if (this.stopsFeatureStore.empty) {
-      this.stopsFeatureStore.map.layerController.remove(
-        this.stopsFeatureStore.layer
-      );
+    const stopsFeatureStore = this.stopsFeatureStore();
+    if (stopsFeatureStore.empty) {
+      stopsFeatureStore.map.layerController.remove(stopsFeatureStore.layer);
     }
-    if (this.routesFeatureStore.empty) {
-      this.routesFeatureStore.map.layerController.remove(
-        this.routesFeatureStore.layer
-      );
+    const routesFeatureStore = this.routesFeatureStore();
+    if (routesFeatureStore.empty) {
+      routesFeatureStore.map.layerController.remove(routesFeatureStore.layer);
     }
   }
 
   private freezeStores() {
     this.interactions.map((interaction) =>
-      this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
+      this.routesFeatureStore().layer.map.ol.removeInteraction(interaction)
     );
-    this.stopsFeatureStore.deactivateStrategyOfType(
+    this.stopsFeatureStore().deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
-    this.routesFeatureStore.deactivateStrategyOfType(
+    this.routesFeatureStore().deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
-    this.stepsFeatureStore.deactivateStrategyOfType(
+    this.stepsFeatureStore().deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
   }
 
   private initEntityStores() {
-    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
+    new EntityStoreWatcher(this.stopsStore(), this.cdRef);
     this.monitorEmptyEntityStore();
     this.monitorEntityStoreChange();
-    this.monitorActiveRouteZoom();
   }
 
   private monitorActiveRouteZoom() {
-    this.zoomOnActiveRoute$$ = this.zoomOnActiveRoute$.subscribe(() => {
-      if (this.routesFeatureStore.count >= 1) {
-        const activeRoute: FeatureWithDirections = this.routesFeatureStore
+    this.zoomOnActiveRoute$$ = effect(() => {
+      this.zoomOnActiveRoute();
+      if (this.routesFeatureStore().count >= 1) {
+        const activeRoute: FeatureWithDirections = this.routesFeatureStore()
           .all()
           .find((route) => route.properties.active);
 
         if (activeRoute) {
-          const stopsCoordinates: Coordinate[] = this.stopsStore
+          const stopsCoordinates: Coordinate[] = this.stopsStore()
             .all()
             .map((stop) =>
               olProj.transform(stop.coordinates, 'EPSG:4326', 'EPSG:3857')
@@ -233,7 +235,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
             ],
             [Infinity, Infinity, -Infinity, -Infinity]
           );
-          this.routesFeatureStore.layer.map.viewController.zoomToExtent(
+          this.routesFeatureStore().layer.map.viewController.zoomToExtent(
             routeExtent as [number, number, number, number]
           );
         }
@@ -243,7 +245,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private initOlInteraction() {
     this.selectStopInteraction = new olInteraction.Select({
-      layers: [this.stopsFeatureStore.layer.ol],
+      layers: [this.stopsFeatureStore().layer.ol],
       hitTolerance: 7,
       condition: (event) => {
         return event.type === 'pointermove' && !event.dragging;
@@ -263,7 +265,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
 
     this.selectedRoute = new olInteraction.Select({
-      layers: [this.routesFeatureStore.layer.ol],
+      layers: [this.routesFeatureStore().layer.ol],
       condition: olCondition.click,
       hitTolerance: 7,
       filter: (feature) => {
@@ -278,29 +280,31 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       if (this.focusOnStop === false) {
         const selectCoordinates: Coordinate = olProj.transform(
           (evt as any).mapBrowserEvent.coordinate,
-          this.routesFeatureStore.layer.map.projection,
+          this.routesFeatureStore().layer.map.projection,
           this.projection
         );
-        const addedStop: Stop = addStopToStore(this.stopsStore);
+        const addedStop: Stop = addStopToStore(this.stopsStore());
         addedStop.text = roundCoordToString(
           selectCoordinates,
-          this.coordRoundedDecimals
+          this.coordRoundedDecimals()
         ).join(', ');
         addedStop.coordinates = [selectCoordinates[0], selectCoordinates[1]];
       }
     });
 
     this.interactions.map((interaction) =>
-      this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
+      this.routesFeatureStore().layer.map.ol.addInteraction(interaction)
     );
   }
 
   onStopInputHasFocusChange(stopInputHasFocus: boolean) {
     stopInputHasFocus
-      ? this.routesFeatureStore.layer.map.ol.removeInteraction(
+      ? this.routesFeatureStore().layer.map.ol.removeInteraction(
           this.selectedRoute
         )
-      : this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
+      : this.routesFeatureStore().layer.map.ol.addInteraction(
+          this.selectedRoute
+        );
   }
 
   private executeStopTranslation(features: Collection<any>) {
@@ -312,45 +316,46 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
     const translationCoordinates = olProj.transform(
       firstFeature.getGeometry().getCoordinates(),
-      this.stopsFeatureStore.layer.map.projection,
+      this.stopsFeatureStore().layer.map.projection,
       this.projection
     );
-    const translatedStop = this.stopsStore.get(translatedStopId);
+    const translatedStop = this.stopsStore().get(translatedStopId);
     const roundedCoord = roundCoordTo(
       translationCoordinates,
-      this.coordRoundedDecimals
+      this.coordRoundedDecimals()
     );
     translatedStop.coordinates = roundedCoord;
     translatedStop.text = roundCoordToString(
       translationCoordinates,
-      this.coordRoundedDecimals
+      this.coordRoundedDecimals()
     ).join(', ');
-    this.stopsStore.update(translatedStop);
+    this.stopsStore().update(translatedStop);
   }
 
   private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
-    this.storeEmpty$$ = this.stopsStore.count$
-      .pipe(distinctUntilChanged())
+    this.storeEmpty$$ = this.stopsStore()
+      .count$.pipe(distinctUntilChanged())
       .subscribe((count) => {
         if (count < 2) {
-          addStopToStore(this.stopsStore);
-          if (this.stopsStore.count === 2) {
-            this.stopsStore.storeInitialized$.next(true);
+          const stopsStore = this.stopsStore();
+          addStopToStore(stopsStore);
+          if (stopsStore.count === 2) {
+            stopsStore.storeInitialized$.next(true);
             return;
           }
-          this.stopsStore.storeInitialized$.next(false);
+          stopsStore.storeInitialized$.next(false);
         }
         this.routesQueries$$.map((u) => u.unsubscribe());
       });
   }
 
   private monitorEntityStoreChange() {
-    this.storeChange$$ = this.stopsStore.entities$
-      .pipe(debounceTime(this.debounce))
+    this.storeChange$$ = this.stopsStore()
+      .entities$.pipe(debounceTime(this.debounce()))
       .subscribe((stops) => {
         this.handleStopDiff(stops);
-        updateStoreSorting(this.stopsStore);
+        updateStoreSorting(this.stopsStore());
         this.handleStopsFeature();
         this.getRoutes(this.isTranslating);
       });
@@ -374,14 +379,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       stopIdToProcess.map((change) => {
         const changedStop = change.newValue as Stop;
         if (changedStop) {
-          const stop: Stop = this.stopsStore.get(changedStop.id);
+          const stop: Stop = this.stopsStore().get(changedStop.id);
           const term = stop.text;
           if (!term || term.length === 0) {
             return;
           }
           const response = stringToLonLat(
             term,
-            this.stopsFeatureStore.layer.map.projection
+            this.stopsFeatureStore().layer.map.projection
           );
           let isCoord = false;
           if (response.lonLat) {
@@ -450,38 +455,38 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private handleStopsFeature() {
-    const stops = this.stopsStore.all();
+    const stops = this.stopsStore().all();
     const stopsWithCoordinates = stops.filter((stop) => stop.coordinates);
     stopsWithCoordinates.map((stop) => this.addStopOverlay(stop));
-    this.stopsFeatureStore
+    this.stopsFeatureStore()
       .all()
       .map((stopFeature: Feature<FeatureWithStopProperties>) => {
-        if (!this.stopsStore.get(stopFeature.properties.id)) {
-          this.stopsFeatureStore.delete(stopFeature);
+        if (!this.stopsStore().get(stopFeature.properties.id)) {
+          this.stopsFeatureStore().delete(stopFeature);
         }
       });
     const stopsWithoutCoordinates = stops.filter((stop) => !stop.coordinates);
     stopsWithoutCoordinates.map((stop) => {
-      const stopFeature = this.stopsFeatureStore.get(stop.id);
+      const stopFeature = this.stopsFeatureStore().get(stop.id);
       if (stopFeature) {
-        this.stopsFeatureStore.delete(stopFeature);
+        this.stopsFeatureStore().delete(stopFeature);
       }
     });
   }
 
   private getRoutes(isOverview = false) {
-    const stopsWithCoordinates = this.stopsStore.view
-      .all()
+    const stopsWithCoordinates = this.stopsStore()
+      .view.all()
       .filter((stop) => stop.coordinates);
     if (stopsWithCoordinates.length < 2) {
-      this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+      this.routesFeatureStore().deleteMany(this.routesFeatureStore().all());
       return;
     }
 
     const roundedCoordinates = stopsWithCoordinates.map((stop) => {
       const roundedCoord = roundCoordTo(
         stop.coordinates,
-        this.coordRoundedDecimals
+        this.coordRoundedDecimals()
       );
       return roundedCoord;
     });
@@ -499,10 +504,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     if (routeResponse) {
       this.routesQueries$$.push(
         routeResponse.subscribe((directions) => {
-          this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+          this.routesFeatureStore().deleteMany(this.routesFeatureStore().all());
           directions.map((direction) =>
             addRouteToRoutesFeatureStore(
-              this.routesFeatureStore,
+              this.routesFeatureStore(),
               direction,
               this.projection,
               direction === directions[0] ? true : false
@@ -516,7 +521,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public addStopOverlay(stop: Stop) {
     addStopToStopsFeatureStore(
       stop,
-      this.stopsFeatureStore,
+      this.stopsFeatureStore(),
       this.projection,
       this.languageService
     );
@@ -524,7 +529,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   onToggleDirectionsControl(isActive: boolean) {
     this.queryService.queryEnabled = !isActive;
-    const ol = this.routesFeatureStore.layer.map.ol;
+    const ol = this.routesFeatureStore().layer.map.ol;
     this.interactions.map((interaction) =>
       isActive
         ? ol.addInteraction(interaction)

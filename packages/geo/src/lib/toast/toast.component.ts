@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -33,37 +33,14 @@ export class ToastComponent {
   };
   private format = new olFormatGeoJSON();
 
-  @Input()
-  get expanded(): boolean {
-    return this._expanded;
-  }
-  set expanded(value: boolean) {
-    this.state = value ? 'expanded' : 'collapsed';
-    this._expanded = value;
-  }
-  private _expanded: boolean;
+  readonly expanded = model<boolean>();
+  readonly map = input<IgoMap>();
+  readonly feature = input<Feature>();
+  readonly opened = output<boolean>();
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-
-  @Input()
-  get feature(): Feature {
-    return this._feature;
-  }
-  set feature(value: Feature) {
-    this._feature = value;
-  }
-  private _feature: Feature;
-
-  @Output() opened = new EventEmitter<boolean>();
-
-  public state: FlexibleState;
+  public state = computed<FlexibleState>(() =>
+    this.expanded ? 'expanded' : 'collapsed'
+  );
 
   /**
    * @internal
@@ -73,17 +50,19 @@ export class ToastComponent {
   }
 
   toggle() {
-    this.expanded = !this.expanded;
-    this.opened.emit(this.expanded);
+    this.expanded.update((previous) => !previous);
+    this.opened.emit(this.expanded());
   }
 
   zoomToFeatureExtent() {
-    if (this.feature.geometry) {
+    const feature = this.feature();
+    const map = this.map();
+    if (feature?.geometry) {
       const olFeature = this.format.readFeature(this.feature, {
-        dataProjection: this.feature.projection,
-        featureProjection: this.map.projection
+        dataProjection: feature?.projection,
+        featureProjection: map?.projection
       });
-      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
+      moveToOlFeatures(map?.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,12 +37,12 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
   private resolution$$: Subscription;
   private network$$: Subscription;
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
   ngOnInit() {
-    const resolution$ = this.layer.map.viewController.resolution$;
+    const resolution$ = this.layer().map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
       this.onResolutionChange();
     });
@@ -62,34 +62,34 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
   }
 
   computeTooltip(): string {
-    const layerOptions = this.layer.options;
+    const layerOptions = this.layer().options;
     if (!layerOptions.tooltip) {
-      return this.layer.title;
+      return this.layer().title;
     }
     const layerTooltip = layerOptions.tooltip;
     const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
     switch (layerOptions.tooltip.type) {
       case TooltipType.TITLE:
-        return this.layer.title;
+        return this.layer().title;
       case TooltipType.ABSTRACT:
         if (layerMetadata && layerMetadata.abstract) {
           return layerMetadata.abstract;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       case TooltipType.CUSTOM:
         if (layerTooltip && layerTooltip.text) {
           return layerTooltip.text;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       default:
-        return this.layer.title;
+        return this.layer().title;
     }
   }
 
   private onResolutionChange() {
-    const inResolutionRange = this.layer.isInResolutionsRange;
+    const inResolutionRange = this.layer().isInResolutionsRange;
     this.inResolutionRange$.next(inResolutionRange);
   }
 }

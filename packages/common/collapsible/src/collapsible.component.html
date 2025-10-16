@@ -4,14 +4,14 @@
     matListItemIcon
     igoCollapse
     [target]="content"
-    [collapsed]="collapsed"
-    (toggle)="collapsed = $event"
+    [collapsed]="collapsed()"
+    (toggle)="collapsed.set($event)"
   >
     expand_less
   </mat-icon>
-  <span matListItemTitle>{{ title }}</span>
+  <span matListItemTitle>{{ title() }}</span>
 </mat-list-item>
 
 <div #content>
-  <ng-content></ng-content>
+  <ng-content />
 </div>

@@ -2,11 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   HostBinding,
-  Input,
   OnInit,
-  Output
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -39,42 +38,43 @@ import type { LayerGroup } from '../shared/layers/layer-group';
   ]
 })
 export class LayerGroupComponent implements OnInit {
-  @Input() layer: LayerGroup;
-  @Input() viewerOptions: LayerViewerOptions;
+  readonly layer = input<LayerGroup>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
 
-  @Input() selected: boolean;
-  @Input() selectionDisabled: boolean;
+  readonly selected = input<boolean>(undefined);
+  readonly selectionDisabled = input<boolean>(undefined);
 
-  @Output() action = new EventEmitter<AnyLayer>(undefined);
-  @Output() visibilityChange = new EventEmitter<Event>(undefined);
-  @Output() expand = new EventEmitter<void>(undefined);
-  @Output() selectChange = new EventEmitter<boolean>();
+  readonly action = output<AnyLayer>();
+  readonly visibilityChange = output<Event>();
+  readonly expand = output();
+  readonly selectChange = output<boolean>();
 
   @HostBinding('class.disabled') isDisabled: boolean;
 
   get title(): string {
-    return this.layer.title;
+    return this.layer().title;
   }
 
   get collapsed(): boolean {
-    return this.layer.collapsed;
+    return this.layer().collapsed;
   }
   set collapsed(value: boolean) {
-    this.layer.collapsed = value;
+    this.layer().collapsed = value;
   }
 
   get tooltipMessage(): string {
-    return !this.layer.isInResolutionsRange
+    const layer = this.layer();
+    return !layer.isInResolutionsRange
       ? 'igo.geo.layer.notInResolution'
-      : this.layer.visible && this.isDisabled
+      : layer.visible && this.isDisabled
         ? 'igo.geo.layer.group.hideChildren'
-        : this.layer.visible
+        : layer.visible
           ? 'igo.geo.layer.group.hide'
           : 'igo.geo.layer.group.show';
   }
 
   ngOnInit(): void {
-    this.layer.displayed$.subscribe((displayed) => {
+    this.layer().displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
     });
   }
@@ -90,7 +90,7 @@ export class LayerGroupComponent implements OnInit {
 
   toggleLayerGroupTool(event: Event): void {
     event.stopPropagation();
-    this.action.emit(this.layer);
+    this.action.emit(this.layer());
   }
 
   toggleLayerTool(layer: AnyLayer): void {
@@ -98,6 +98,7 @@ export class LayerGroupComponent implements OnInit {
   }
 
   handleExpand(): void {
+    // TODO: The 'emit' function requires a mandatory void argument
     this.expand.emit();
   }
 

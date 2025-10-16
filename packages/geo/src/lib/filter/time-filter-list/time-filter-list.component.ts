@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
@@ -18,5 +18,5 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
   ]
 })
 export class TimeFilterListComponent {
-  @Input() layers: AnyLayer[] = [];
+  readonly layers = model<AnyLayer[]>([]);
 }

@@ -42,7 +42,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
       );
       return;
     }
-    const contextId = this.component.context.id;
+    const contextId = this.component.context().id;
     this.contextService
       .addPermissionAssociation(
         contextId,
@@ -66,7 +66,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('removePermission', ['$event'])
   onRemovePermission(permission: ContextPermission) {
-    const contextId = this.component.context.id;
+    const contextId = this.component.context().id;
     this.contextService
       .deletePermissionAssociation(contextId, permission.id)
       .subscribe(() => {
@@ -119,7 +119,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
   }
 
   private handleEditedContextChange(context: DetailedContext) {
-    this.component.context = context;
+    this.component.context.set(context);
 
     if (context) {
       this.contextService
@@ -134,7 +134,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
               return p.typePermission.toString() === 'write';
             })
           };
-          return (this.component.permissions = permissions);
+          return this.component.permissions.set(permissions);
         });
     }
   }

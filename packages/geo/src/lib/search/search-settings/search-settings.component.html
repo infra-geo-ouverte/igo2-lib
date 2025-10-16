@@ -30,8 +30,7 @@
           [value]="$any(source)"
           (click)="$event.stopPropagation()"
           (change)="onCheckSearchSource($event, source)"
-        >
-        </mat-checkbox>
+        />
         @if (source.settings.length > 0) {
           <button [matMenuTriggerFor]="sub_menu" mat-menu-item>
             {{ source.title }}
@@ -129,10 +128,10 @@
         }
       </mat-menu>
     }
-    <mat-divider></mat-divider>
+    <mat-divider />
     <span class="pointer-summary-slide-toggle-container">
-      <div mat-menu-item>
-        @if (hasPointerReverseSearchSource && !isTouchScreen) {
+      @if (hasPointerReverseSearchSource && !isTouchScreen) {
+        <div mat-menu-item>
           <mat-slide-toggle
             class="search-option"
             (change)="changePointerReverseSearch($event)"
@@ -142,12 +141,12 @@
               'igo.geo.search.pointerSearchSummary.tooltip' | translate
             "
             (click)="$event.stopPropagation()"
-            [checked]="pointerSummaryEnabled"
+            [checked]="pointerSummaryEnabled()"
           >
             {{ 'igo.geo.search.pointerSearchSummary.title' | translate }}
           </mat-slide-toggle>
-        }
-      </div>
+        </div>
+      }
       <div mat-menu-item>
         <mat-slide-toggle
           class="search-option"
@@ -158,7 +157,7 @@
             'igo.geo.search.searchResultsGeometry.tooltip' | translate
           "
           (click)="$event.stopPropagation()"
-          [checked]="searchResultsGeometryEnabled"
+          [checked]="searchResultsGeometryEnabled()"
         >
           {{ 'igo.geo.search.searchResultsGeometry.title' | translate }}
         </mat-slide-toggle>
@@ -170,17 +169,17 @@
           tooltip-position="below"
           matTooltipShowDelay="500"
           [matTooltip]="
-            reverseSearchCoordsFormatEnabled
+            reverseSearchCoordsFormatEnabled()
               ? ('igo.geo.search.reverseCoordFormat.tooltipLatLon' | translate)
               : ('igo.geo.search.reverseCoordFormat.tooltipLonLat' | translate)
           "
           (click)="$event.stopPropagation()"
-          [checked]="reverseSearchCoordsFormatEnabled"
+          [checked]="reverseSearchCoordsFormatEnabled()"
         >
           {{ 'igo.geo.search.reverseCoordFormat.title' | translate }}
         </mat-slide-toggle>
       </div>
-      @if (allowResetSearchSourcesOptions) {
+      @if (allowResetSearchSourcesOptions()) {
         <div mat-menu-item>
           <button
             matButton="elevated"

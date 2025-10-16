@@ -1,11 +1,11 @@
 import {
   Directive,
-  EventEmitter,
   HostListener,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  OutputRefSubscription,
+  inject,
+  input
 } from '@angular/core';
 
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
@@ -47,19 +47,17 @@ export class DropGeoFileDirective
   private layerService = inject(LayerService);
   private confirmDialogService = inject(ConfirmDialogService);
 
-  protected filesDropped = new EventEmitter<File[]>();
-  protected filesInvalid = new EventEmitter<File[]>();
   private epsgCode$$: Subscription[] = [];
-  private filesDropped$$: Subscription;
+  private filesDropped$$: OutputRefSubscription;
 
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
-  @Input() contextUri: string;
+  readonly contextUri = input<string>(undefined);
 
   ngOnInit() {
-    this.filesDropped$$ = this.filesDropped.subscribe((files: File[]) => {
+    this.filesDropped$$ = this.filesDropped.subscribe((files) => {
       this.onFilesDropped(files);
     });
   }
@@ -118,7 +116,7 @@ export class DropGeoFileDirective
         file,
         features,
         this.map,
-        this.contextUri,
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService
@@ -128,7 +126,7 @@ export class DropGeoFileDirective
         file,
         features,
         this.map,
-        this.contextUri,
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService,

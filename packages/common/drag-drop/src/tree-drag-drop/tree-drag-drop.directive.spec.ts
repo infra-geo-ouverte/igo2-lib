@@ -77,7 +77,7 @@ describe('DragDropTreeDirective', () => {
       By.directive(TreeDragDropDirective)
     );
     directive = debugElement.injector.get(TreeDragDropDirective);
-    treeControl = directive.treeControl;
+    treeControl = directive.treeControl();
 
     treeNodesDebug = fixture.debugElement.queryAll(By.directive(MatTreeNode));
   });

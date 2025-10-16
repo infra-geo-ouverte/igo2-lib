@@ -1,12 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -40,7 +33,7 @@ import { Context } from '../shared/context.interface';
     IgoLanguageModule
   ]
 })
-export class ContextFormComponent implements OnInit {
+export class ContextFormComponent {
   private clipboard = inject(Clipboard);
   private formBuilder = inject(UntypedFormBuilder);
   private messageService = inject(MessageService);
@@ -48,41 +41,20 @@ export class ContextFormComponent implements OnInit {
   public form: UntypedFormGroup;
   public prefix: string;
 
-  @Input()
-  get btnSubmitText(): string {
-    return this._btnSubmitText;
-  }
-  set btnSubmitText(value: string) {
-    this._btnSubmitText = value;
-  }
-  private _btnSubmitText: string;
-
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.buildForm();
-  }
-  private _context: Context;
-
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
-  }
-  set disabled(value: boolean) {
-    this._disabled = value;
-  }
-  private _disabled = false;
+  readonly btnSubmitText = input<string>();
+  readonly context = input<Context>();
+  readonly disabled = input(false);
 
   // TODO: replace any by ContextOptions or Context
-  @Output() submitForm = new EventEmitter<any>();
-  @Output() clone = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<any>();
+  readonly submitForm = output<any>();
+  readonly clone = output<any>();
+  readonly delete = output<any>();
 
-  ngOnInit(): void {
-    this.buildForm();
+  constructor() {
+    effect(() => {
+      const context = this.context();
+      this.buildForm(context);
+    });
   }
 
   public handleFormSubmit(value) {
@@ -108,9 +80,7 @@ export class ContextFormComponent implements OnInit {
     }
   }
 
-  private buildForm(): void {
-    const context: any = this.context || {};
-
+  private buildForm(context: Context): void {
     const uriSplit = context.uri.split('-');
     this.prefix = uriSplit.shift();
     const uri = uriSplit.join('-');

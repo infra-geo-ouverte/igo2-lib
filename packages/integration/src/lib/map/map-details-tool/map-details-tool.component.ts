@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -76,32 +76,32 @@ export class MapDetailsToolComponent implements OnInit {
   isDesktop: boolean;
   public delayedShowEmptyMapContent = false;
 
-  @Input() toggleLegendOnVisibilityChange = false;
+  readonly toggleLegendOnVisibilityChange = input(false);
 
-  @Input() expandLegendOfVisibleLayers = false;
+  readonly expandLegendOfVisibleLayers = input(false);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
-  @Input() ogcButton = true;
+  readonly ogcButton = input(true);
 
-  @Input() timeButton = true;
+  readonly timeButton = input(true);
 
-  @Input() layerListControls: LayerListControlsOptions = {};
+  readonly layerListControls = input<LayerListControlsOptions>({});
 
-  @Input() queryBadge = false;
+  readonly queryBadge = input(false);
 
-  @Input() layerAdditionAllowed = true;
+  readonly layerAdditionAllowed = input(true);
 
   private _layerViewerOptions: Partial<LayerViewerOptions>;
   get layerViewerOptions(): LayerViewerOptions {
     return {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
-        showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showForVisibleLayers: this.expandLegendOfVisibleLayers(),
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange(),
+        updateOnResolutionChange: this.updateLegendOnResolutionChange()
       },
-      queryBadge: this.queryBadge,
+      queryBadge: this.queryBadge(),
       ...this._layerViewerOptions
     };
   }
@@ -115,7 +115,7 @@ export class MapDetailsToolComponent implements OnInit {
   }
 
   get excludeBaseLayers(): boolean {
-    return this.layerListControls.excludeBaseLayers || false;
+    return this.layerListControls().excludeBaseLayers || false;
   }
 
   get layerFilterAndSortOptions(): any {
@@ -123,10 +123,10 @@ export class MapDetailsToolComponent implements OnInit {
       {
         showToolbar: LayerListControlsEnum.default
       },
-      this.layerListControls
+      this.layerListControls()
     );
 
-    switch (this.layerListControls.showToolbar) {
+    switch (this.layerListControls().showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
         break;

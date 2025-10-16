@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 
 import {
@@ -29,17 +28,17 @@ export class WorkspaceSelectorComponent {
   /**
    * Store that holds the available workspaces.
    */
-  @Input() store: WorkspaceStore;
+  readonly store = input<WorkspaceStore>(undefined);
 
   /**
    * Wheither the selector must be disabled or not.
    */
-  @Input() disabled: boolean;
+  readonly disabled = input<boolean>(undefined);
 
   /**
    * Event emitted when an workspace is selected or unselected
    */
-  @Output() selectedChange = new EventEmitter<{
+  readonly selectedChange = output<{
     selected: boolean;
     value: Workspace;
   }>();
@@ -59,7 +58,7 @@ export class WorkspaceSelectorComponent {
    */
   onSelectedChange(event: EntitySelectorChange<Workspace>) {
     const workspace = event.value;
-    this.store.activateWorkspace(workspace);
+    this.store().activateWorkspace(workspace);
     this.selectedChange.emit({ selected: true, value: workspace });
   }
 }

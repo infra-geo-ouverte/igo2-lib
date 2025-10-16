@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -48,8 +48,6 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
   ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
-  @Input() store: EntityStore<Feature>;
-
   public queryType: string[] = [
     'Arrond',
     'CircFed',
@@ -70,23 +68,24 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   public activeDrawType: SpatialFilterType = this.spatialType.Polygon;
 
-  @Input() selectedQueryType: SpatialFilterQueryType;
+  readonly store = input<EntityStore<Feature>>(undefined);
+  selectedQueryType = model<SpatialFilterQueryType>(undefined);
 
-  @Input() zone: Feature;
+  readonly zone = input<Feature>(undefined);
 
-  @Input() layers: AnyLayer[] = [];
+  readonly layers = input<AnyLayer[]>([]);
 
   public type: SpatialFilterType;
 
-  @Output() eventType = new EventEmitter<SpatialFilterType>();
+  readonly eventType = output<SpatialFilterType>();
 
-  @Output() eventQueryType = new EventEmitter<SpatialFilterQueryType>();
+  readonly eventQueryType = output<SpatialFilterQueryType>();
 
-  @Output() zoneChange = new EventEmitter<Feature>();
-  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
+  readonly zoneChange = output<Feature>();
+  readonly zoneWithBufferChange = output<Feature>();
 
-  @Output() bufferChange = new EventEmitter<number>();
-  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
+  readonly bufferChange = output<number>();
+  readonly measureUnitChange = output<MeasureLengthUnit>();
 
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
@@ -114,7 +113,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
 
   onSelectionChange() {
-    this.eventQueryType.emit(this.selectedQueryType);
+    this.eventQueryType.emit(this.selectedQueryType());
     this.zoneChange.emit(undefined);
   }
 }

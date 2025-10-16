@@ -7,13 +7,13 @@
             class="time-filter-mat-datetimepicker-toggle"
             [for]="datetimePicker"
             matSuffix
-          ></mat-datetimepicker-toggle>
+          />
           <mat-datetimepicker
             #datetimePicker
             [type]="type"
             [openOnFocus]="true"
             [timeInterval]="5"
-          ></mat-datetimepicker>
+          />
           <input
             matInput
             autocomplete="false"
@@ -36,13 +36,13 @@
               class="time-filter-mat-datetimepicker-toggle"
               [for]="minDatetimePicker"
               matSuffix
-            ></mat-datetimepicker-toggle>
+            />
             <mat-datetimepicker
               #minDatetimePicker
               [type]="type"
               [openOnFocus]="true"
               [timeInterval]="5"
-            ></mat-datetimepicker>
+            />
             <input
               matInput
               autocomplete="false"
@@ -63,13 +63,13 @@
               class="time-filter-mat-datetimepicker-toggle"
               [for]="maxDatetimePicker"
               matSuffix
-            ></mat-datetimepicker-toggle>
+            />
             <mat-datetimepicker
               #maxDatetimePicker
               [type]="type"
               [openOnFocus]="true"
               [timeInterval]="5"
-            ></mat-datetimepicker>
+            />
             <input
               matInput
               autocomplete="false"
@@ -150,7 +150,7 @@
       [max]="endYear"
       [color]="color"
       thumbLabel
-      [disabled]="!options.enabled || !layer.visible"
+      [disabled]="!enabled() || !layer().visible"
       #ngSlider
       ><input
         matSliderThumb
@@ -173,7 +173,7 @@
       />
     </mat-slider>
     <span>{{ endYear }}</span>
-    @if (options.enabled) {
+    @if (enabled()) {
       <p class="date-below">{{ year }}</p>
     }
     <div #actions class="igo-layer-actions-container">
@@ -183,12 +183,11 @@
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
         [color]="color"
-        [checked]="options.enabled"
-        [disabled]="!layer.visible"
-      >
-      </mat-slide-toggle>
+        [checked]="enabled()"
+        [disabled]="!layer().visible"
+      />
       <button
-        [disabled]="!options.enabled || !layer.visible"
+        [disabled]="!enabled() || !layer().visible"
         mat-icon-button
         color="primary"
         (click)="playYear()"
@@ -196,7 +195,7 @@
         <mat-icon>{{ playIcon }}</mat-icon>
       </button>
       <button
-        [disabled]="!options.enabled || !layer.visible"
+        [disabled]="!enabled() || !layer().visible"
         mat-icon-button
         color="primary"
         (click)="resetFilter()"

@@ -3,10 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  model
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 
@@ -96,9 +96,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  @Input() type: SpatialFilterType;
-  @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
-  @Input() freehandDrawIsActive: boolean;
+  readonly type = model<SpatialFilterType>(undefined);
+  readonly itemType = model<SpatialFilterItemType>(
+    SpatialFilterItemType.Address
+  );
+  readonly freehandDrawIsActive = model<boolean>(undefined);
 
   public layers: AnyLayer[] = [];
   public activeLayers: AnyLayer[] = [];
@@ -149,7 +151,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   }
 
   getOutputType(event: SpatialFilterType) {
-    this.type = event;
+    this.type.set(event);
     this.queryType = undefined;
   }
 
@@ -184,7 +186,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.workspaceState.store.all().length > 1
         ) {
           if (
-            this.itemType === SpatialFilterItemType.Thematics &&
+            this.itemType() === SpatialFilterItemType.Thematics &&
             this.thematics
           ) {
             for (const thematic of this.thematics) {
@@ -269,7 +271,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.activeLayers = [];
     this.thematicLength = 0;
     this.iterator = 1;
-    if (this.type === SpatialFilterType.Predefined) {
+    if (this.type() === SpatialFilterType.Predefined) {
       this.zone = undefined;
       this.queryType = undefined;
     }
@@ -279,10 +281,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.loading = true;
     let zeroResults = true;
     let thematics;
-    if (this.buffer === 0 || this.type === SpatialFilterType.Point) {
+    const type = this.type();
+    if (this.buffer === 0 || type === SpatialFilterType.Point) {
       this.tryAddFeaturesToMap([this.zone]);
     }
-    if (this.itemType !== SpatialFilterItemType.Thematics) {
+    if (this.itemType() !== SpatialFilterItemType.Thematics) {
       const theme: SpatialFilterThematic = {
         name: ''
       };
@@ -292,11 +295,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
     if (
       this.measureUnit === MeasureLengthUnit.Kilometers &&
-      this.type !== SpatialFilterType.Point
+      type !== SpatialFilterType.Point
     ) {
       this.buffer = this.buffer * 1000;
     }
-    if (this.type === SpatialFilterType.Polygon) {
+    if (type === SpatialFilterType.Polygon) {
       this.buffer = 0; // to avoid buffer enter a second time in terrAPI
     }
 
@@ -306,7 +309,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         this.spatialFilterService
           .loadFilterItem(
             this.zone,
-            this.itemType,
+            this.itemType(),
             this.queryType,
             thematic,
             this.buffer
@@ -382,7 +385,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public tryAddFeaturesToMap(features: Feature[], buffer?: boolean) {
     let i = 1;
     for (const feature of features) {
-      if (this.type === SpatialFilterType.Predefined) {
+      const typeValue = this.type();
+      if (typeValue === SpatialFilterType.Predefined) {
         for (const layer of this.layers) {
           if (
             isLayerItem(layer) &&
@@ -461,7 +465,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         workspace: { enabled: true },
         _internal: {
           code:
-            this.type === SpatialFilterType.Predefined
+            typeValue === SpatialFilterType.Predefined
               ? feature.properties.code
               : undefined
         },
@@ -480,9 +484,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             return featureToOl(f, this.map.projection);
           });
 
-          if (this.type !== SpatialFilterType.Predefined) {
+          const typeVal = this.type();
+          if (typeVal !== SpatialFilterType.Predefined) {
             const type =
-              this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
+              typeVal === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }

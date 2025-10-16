@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
 import {
@@ -24,7 +24,7 @@ export class ContextManagerToolComponent {
   private toolState = inject(ToolState);
   private mapState = inject(MapState);
 
-  @Input() toolToOpenOnContextChange = 'mapTools';
+  readonly toolToOpenOnContextChange = input('mapTools');
 
   get map(): IgoMap {
     return this.mapState.map;

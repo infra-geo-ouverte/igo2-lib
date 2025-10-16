@@ -23,16 +23,15 @@
       </mat-select>
     </mat-form-field>
     <igo-spatial-filter-list
-      [store]="store"
-      [queryType]="selectedQueryType"
-      [zone]="zone"
-      [layers]="layers"
+      [store]="store()"
+      [queryType]="selectedQueryType()"
+      [zone]="zone()"
+      [layers]="layers()"
       (zoneChange)="zoneChange.emit($event)"
       (zoneWithBufferChange)="zoneWithBufferChange.emit($event)"
       (bufferChange)="bufferChange.emit($event)"
       (measureUnitChange)="measureUnitChange.emit($event)"
-    >
-    </igo-spatial-filter-list>
+    />
   </mat-tab>
 
   <mat-tab

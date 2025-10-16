@@ -3,10 +3,10 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  effect,
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -73,24 +73,14 @@ export class LayerListComponent {
   public toggleOpacity = false;
   isInit: boolean;
 
-  @Input({ required: true }) controller: LayerController;
+  readonly controller = input.required<LayerController>();
+  readonly layers = input.required<AnyLayer[]>();
+  readonly isDesktop = input<boolean>(undefined);
+  readonly isDragDropDisabled = input<boolean>(undefined);
+  readonly selectAll = input<boolean>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
 
-  @Input({ required: true })
-  set layers(layers: AnyLayer[]) {
-    this._layers = layers;
-    this.updateDatasource(layers ?? []);
-  }
-  get layers(): AnyLayer[] {
-    return this._layers;
-  }
-  private _layers: AnyLayer[];
-
-  @Input() isDesktop: boolean;
-  @Input() isDragDropDisabled: boolean;
-  @Input() selectAll: boolean;
-  @Input() viewerOptions: LayerViewerOptions;
-
-  @Output() activeChange = new EventEmitter<AnyLayer>();
+  readonly activeChange = output<AnyLayer>();
 
   private _transformer = (layer: AnyLayer, level: number): LayerFlatNode => {
     return {
@@ -128,6 +118,8 @@ export class LayerListComponent {
       this.treeFlattener,
       []
     );
+
+    effect(() => this.updateDatasource(this.layers() ?? []));
   }
 
   isGroup = (_: number, node: LayerFlatNode) => node.isGroup;
@@ -135,23 +127,26 @@ export class LayerListComponent {
   isLayerGroup = isLayerGroup;
   isLayerItem = isLayerItem;
 
-  isSelected = (layer: AnyLayer): boolean => this.controller.isSelected(layer);
+  isSelected = (layer: AnyLayer): boolean =>
+    this.controller().isSelected(layer);
   isDescendantSelection = (layer: AnyLayer): boolean =>
-    this.controller.isDescendantSelection(layer);
+    this.controller().isDescendantSelection(layer);
 
   toggleActive(layer: AnyLayer): void {
-    const isSelected = this.controller.isSelected(layer);
+    const isSelected = this.controller().isSelected(layer);
 
-    this.controller.clearSelection();
+    this.controller().clearSelection();
 
     if (!isSelected) {
-      this.controller.select(layer);
+      this.controller().select(layer);
     }
     this.activeChange.emit(layer);
   }
 
   handleSelect(checked: boolean, layer: AnyLayer): void {
-    checked ? this.controller.select(layer) : this.controller.deselect(layer);
+    checked
+      ? this.controller().select(layer)
+      : this.controller().deselect(layer);
   }
 
   getLayerType(layer: Layer): LayerType | 'measure' | 'draw' {
@@ -180,9 +175,10 @@ export class LayerListComponent {
   dropNode({ node, ref, position }: TreeDropEvent<AnyLayer>): void {
     let nodesToDrop = [node.data];
 
-    if (this.controller.hasSelection) {
+    const controller = this.controller();
+    if (controller.hasSelection) {
       // The selection could contains data from the outside the TreeController
-      nodesToDrop = this.controller.selected.filter(
+      nodesToDrop = controller.selected.filter(
         (layer) => !!this.findNodeByLayerId(layer.id)
       );
     }
@@ -206,14 +202,14 @@ export class LayerListComponent {
 
     switch (position) {
       case 'above':
-        this.controller.moveAbove(ref.data, ...nodesToDrop);
+        controller.moveAbove(ref.data, ...nodesToDrop);
         break;
       case 'inside':
-        this.controller.moveInside(ref.data as LayerGroup, ...nodesToDrop);
+        controller.moveInside(ref.data as LayerGroup, ...nodesToDrop);
         break;
 
       default:
-        this.controller.moveBelow(ref.data, ...nodesToDrop);
+        controller.moveBelow(ref.data, ...nodesToDrop);
         break;
     }
   }
@@ -228,11 +224,11 @@ export class LayerListComponent {
   }
 
   dragStart(): void {
-    if (this.viewerOptions.mode === 'selection') {
+    if (this.viewerOptions().mode === 'selection') {
       return;
     }
 
-    this.controller.clearSelection();
+    this.controller().clearSelection();
   }
 
   handleNodeToggle(node: LayerFlatNode<LayerGroup>): void {

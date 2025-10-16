@@ -4,7 +4,8 @@ import {
   Component,
   Input,
   OnInit,
-  inject
+  inject,
+  model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -78,7 +79,7 @@ export class AboutToolComponent implements OnInit {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  @Input() trainingGuideURLs;
+  readonly trainingGuideURLs = model(undefined);
 
   public effectiveVersion: string;
   private _html = 'igo.integration.aboutTool.html';
@@ -108,7 +109,7 @@ export class AboutToolComponent implements OnInit {
     if (this.auth.authenticated && this.configOptions.context?.url) {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
-        this.trainingGuideURLs = recast.guides;
+        this.trainingGuideURLs.set(recast.guides);
         this.cdRef.detectChanges();
       });
     } else if (
@@ -116,7 +117,7 @@ export class AboutToolComponent implements OnInit {
       !this.configOptions.context?.url &&
       this.configOptions.depot?.trainingGuides
     ) {
-      this.trainingGuideURLs = this.configOptions.depot?.trainingGuides;
+      this.trainingGuideURLs.set(this.configOptions.depot?.trainingGuides);
     }
   }
 
@@ -124,7 +125,7 @@ export class AboutToolComponent implements OnInit {
     this.loading = true;
     const url = guide
       ? this.baseUrlGuide + guide + '?'
-      : this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+      : this.baseUrlGuide + this.trainingGuideURLs()[0] + '?';
     this.http
       .get(url, {
         responseType: 'blob'

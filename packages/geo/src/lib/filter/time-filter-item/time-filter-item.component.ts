@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -45,18 +45,18 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
 
   filtersCollapsed = false;
 
-  @Input() header = true;
+  readonly header = input(true);
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
   get datasource(): TimeFilterableDataSource {
-    return this.layer.dataSource as TimeFilterableDataSource;
+    return this.layer().dataSource as TimeFilterableDataSource;
   }
 
   ngOnInit(): void {
-    const resolution$ = this.layer.map.viewController.resolution$;
+    const resolution$ = this.layer().map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
-      this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+      this.inResolutionRange$.next(this.layer().isInResolutionsRange);
     });
   }
 
@@ -82,7 +82,7 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   private toggleLegend(collapsed: boolean) {
-    this.layer.legendCollapsed = collapsed;
+    this.layer().legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 
@@ -93,7 +93,12 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   public setVisible() {
-    this.layer.visible = true;
+    this.layer().visible = true;
+  }
+
+  toggleLayerVisibility() {
+    const layer = this.layer();
+    layer.visible = !layer.visible;
   }
 
   toggleFiltersCollapsed() {

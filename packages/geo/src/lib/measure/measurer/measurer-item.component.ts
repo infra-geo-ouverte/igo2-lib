@@ -2,10 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -61,13 +62,12 @@ export class MeasurerItemComponent implements OnDestroy {
   /**
    * Measure type
    */
-  @Input() measureType: MeasureType;
+  readonly measureType = input<MeasureType>(undefined);
 
   /**
    * Measure unit
    */
-  @Input() measureUnit: MeasureAreaUnit | MeasureLengthUnit;
-
+  readonly measureUnit = model<MeasureAreaUnit | MeasureLengthUnit>(undefined);
   /**
    * Measure
    */
@@ -94,21 +94,19 @@ export class MeasurerItemComponent implements OnDestroy {
   /**
    * Placeholder
    */
-  @Input() placeholder: string;
+  readonly placeholder = input<string>(undefined);
 
   /**
    * Event emitted when the measure unit changes
    */
-  @Output() measureUnitChange = new EventEmitter<
-    MeasureAreaUnit | MeasureLengthUnit
-  >();
+  readonly measureUnitChange = output<MeasureAreaUnit | MeasureLengthUnit>();
 
   /**
    * Available measure units for the measure type given
    * @internal
    */
   get measureUnits(): string[] {
-    if (this.measureType === MeasureType.Area) {
+    if (this.measureType() === MeasureType.Area) {
       return Object.values(MeasureAreaUnit);
     }
     return Object.values(MeasureLengthUnit);
@@ -127,7 +125,7 @@ export class MeasurerItemComponent implements OnDestroy {
    * @internal
    */
   onMeasureUnitChange(unit: MeasureAreaUnit | MeasureLengthUnit) {
-    this.measureUnit = unit;
+    this.measureUnit.set(unit);
     this.measureUnitChange.emit(unit);
   }
 
@@ -144,13 +142,14 @@ export class MeasurerItemComponent implements OnDestroy {
   }
 
   private computeBestMeasureUnit(measure: number) {
-    let measureUnit = this.measureUnit;
-    if (this.measureType === MeasureType.Area) {
+    let measureUnit = this.measureUnit();
+    const measureType = this.measureType();
+    if (measureType === MeasureType.Area) {
       measureUnit = computeBestAreaUnit(measure);
-    } else if (this.measureType === MeasureType.Length) {
+    } else if (measureType === MeasureType.Length) {
       measureUnit = computeBestLengthUnit(measure);
     }
-    if (measureUnit !== this.measureUnit) {
+    if (measureUnit !== this.measureUnit()) {
       this.onMeasureUnitChange(measureUnit);
     }
   }

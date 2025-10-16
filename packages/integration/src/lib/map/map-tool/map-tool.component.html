@@ -7,29 +7,17 @@
       [isDesktop]="isDesktop"
     >
       <ng-template #customBottomActions let-layer="layer">
-        <igo-workspace-button [layer]="layer"></igo-workspace-button>
-        <igo-export-button
-          [layer]="layer"
-          (click)="activateExport(layer)"
-        ></igo-export-button>
-        <igo-ogc-filter-button
-          [header]="ogcButton"
-          [layer]="layer"
-        ></igo-ogc-filter-button>
-        <igo-time-filter-button
-          [header]="timeButton"
-          [layer]="layer"
-        ></igo-time-filter-button>
-        <igo-track-feature-button
-          [trackFeature]="true"
-          [layer]="layer"
-        ></igo-track-feature-button>
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
+        <igo-workspace-button [layer]="layer" />
+        <igo-export-button [layer]="layer" (click)="activateExport(layer)" />
+        <igo-ogc-filter-button [header]="ogcButton()" [layer]="layer" />
+        <igo-time-filter-button [header]="timeButton()" [layer]="layer" />
+        <igo-track-feature-button [trackFeature]="true" [layer]="layer" />
+        <igo-metadata-button [layer]="layer" />
       </ng-template>
     </igo-layer-viewer>
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.contexts' | translate">
-    <igo-context-list igoContextListBinding></igo-context-list>
+    <igo-context-list igoContextListBinding />
   </mat-tab>
 </mat-tab-group>

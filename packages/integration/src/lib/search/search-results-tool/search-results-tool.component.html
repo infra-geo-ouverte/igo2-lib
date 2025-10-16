@@ -36,7 +36,7 @@
     <div class="igo-content">
       <igo-search-results
         [store]="store"
-        [showIcons]="showIcons"
+        [showIcons]="showIcons()"
         [term]="term"
         [termSplitter]="termSplitter"
         [settingsChange$]="settingsChange$"
@@ -56,8 +56,7 @@
             [stores]="stores"
             [layer]="result"
             [saveSearchResultInLayer]="saveSearchResultInLayer"
-          >
-          </igo-search-add-button>
+          />
         </ng-template>
       </igo-search-results>
     </div>
@@ -112,8 +111,7 @@
             [map]="map"
             [toolbox]="toolState.toolbox"
             (routingEvent)="getRoute()"
-          >
-          </igo-feature-details>
+          />
         </igo-panel>
       }
     </div>

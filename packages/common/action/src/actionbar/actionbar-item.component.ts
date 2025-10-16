@@ -2,11 +2,11 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -71,27 +71,27 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   /**
    * Action
    */
-  @Input() action: Action;
+  readonly action = input<Action>(undefined);
 
   /**
    * Color
    */
-  @Input() color = 'default';
+  readonly color = input('default');
 
   /**
    * Whether the action title is displayed
    */
-  @Input() withTitle = true;
+  readonly withTitle = input(true);
 
   /**
    * Whether the action icon is displayed
    */
-  @Input() withIcon = true;
+  readonly withIcon = input(true);
 
   /**
    * Whether a tooltip should be shown
    */
-  @Input() withTooltip = true;
+  readonly withTooltip = input(true);
 
   /**
    * Whether the action is disabled
@@ -118,44 +118,45 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the action button is clicked
    */
-  @Output() trigger = new EventEmitter<Action>();
+  readonly trigger = output<Action>();
 
   /**
    * @internal
    */
   get title(): string {
-    return this.action.title;
+    return this.action().title;
   }
 
   ngOnInit() {
-    const args = this.action.args || [];
+    const args = this.action().args || [];
 
-    if (this.action.ngClass !== undefined) {
-      this.ngClass$$ = this.action
+    const action = this.action();
+    if (action.ngClass !== undefined) {
+      this.ngClass$$ = action
         .ngClass(...args)
         .subscribe((ngClass: Record<string, boolean>) =>
           this.updateNgClass(ngClass)
         );
     }
 
-    if (isObservable(this.action.checkCondition)) {
-      this.checkCondition$$ = this.action.checkCondition.subscribe(
+    if (isObservable(action.checkCondition)) {
+      this.checkCondition$$ = action.checkCondition.subscribe(
         (checkCondition: boolean) => this.updateCheckCondition(checkCondition)
       );
     } else {
-      this.updateCheckCondition(this.action.checkCondition);
+      this.updateCheckCondition(action.checkCondition);
     }
 
-    if (isObservable(this.action.tooltip)) {
-      this.tooltip$$ = this.action.tooltip.subscribe((tooltip: string) =>
+    if (isObservable(action.tooltip)) {
+      this.tooltip$$ = action.tooltip.subscribe((tooltip: string) =>
         this.updateTooltip(tooltip)
       );
     } else {
-      this.updateTooltip(this.action.tooltip);
+      this.updateTooltip(action.tooltip);
     }
 
-    if (this.action.availability !== undefined) {
-      this.availability$$ = this.action
+    if (action.availability !== undefined) {
+      this.availability$$ = action
         .availability(...args)
         .subscribe((available: boolean) => (this.disabled = !available));
     }
@@ -164,8 +165,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.updateNgClass({ 'igo-actionbar-item-disabled': disabled })
     );
 
-    if (this.action.display !== undefined) {
-      this.display$$ = this.action
+    if (action.display !== undefined) {
+      this.display$$ = action
         .display(...args)
         .subscribe((display: boolean) => (this.noDisplay = !display));
     }
@@ -214,7 +215,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     if (this.disabled === true) {
       return;
     }
-    this.trigger.emit(this.action);
+    this.trigger.emit(this.action());
   }
 
   private updateNgClass(ngClass: Record<string, boolean>) {

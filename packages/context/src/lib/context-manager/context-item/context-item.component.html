@@ -13,45 +13,45 @@
           : ''
       "
       matTooltipShowDelay="500"
-      [color]="default ? 'primary' : 'default'"
-      (click)="favoriteClick(context)"
+      [color]="default() ? 'primary' : 'default'"
+      (click)="favoriteClick(context())"
     >
-      @if (!context.iconImage) {
+      @if (!context().iconImage) {
         <mat-icon>{{
-          context.icon
-            ? context.icon
-            : context.scope === 'public'
+          context().icon
+            ? context().icon
+            : context().scope === 'public'
               ? 'public'
               : 'star'
         }}</mat-icon>
       }
-      @if (context.iconImage) {
-        <img [src]="context.iconImage" />
+      @if (context().iconImage) {
+        <img [src]="context().iconImage" />
       }
     </button>
   }
-  @if (!auth.authenticated && showFavorite) {
+  @if (!auth.authenticated && showFavorite()) {
     <button
       matListItemAvatar
       mat-icon-button
       igoStopPropagation
       [matTooltip]="'igo.context.contextManager.favorite' | translate"
       matTooltipShowDelay="500"
-      [color]="default ? 'primary' : 'default'"
-      (click)="favoriteClick(context)"
+      [color]="default() ? 'primary' : 'default'"
+      (click)="favoriteClick(context())"
     >
       <mat-icon>star</mat-icon>
     </button>
   }
-  <span matListItemTitle>{{ context.title }}</span>
+  <span matListItemTitle>{{ context().title }}</span>
 
   @if (auth.authenticated) {
     <div matListItemMeta igoStopPropagation class="igo-actions-container">
       @if (
         collapsed &&
-        selected &&
-        (context.permission === typePermission[typePermission.write] ||
-          context.imported)
+        selected() &&
+        (context().permission === typePermission[typePermission.write] ||
+          context().imported)
       ) {
         <button
           class="save-button"
@@ -59,13 +59,13 @@
           [matTooltip]="'igo.context.contextManager.save' | translate"
           matTooltipShowDelay="500"
           [color]="color"
-          (click)="save.emit(context)"
+          (click)="save.emit(context())"
         >
           <mat-icon>save</mat-icon>
         </button>
       }
       <div #actions class="igo-actions-expand-container">
-        @if (canShare && !context.imported) {
+        @if (canShare && !context().imported) {
           <button
             mat-icon-button
             [matTooltip]="
@@ -73,26 +73,26 @@
             "
             matTooltipShowDelay="500"
             [color]="color"
-            (click)="managePermissions.emit(context)"
+            (click)="managePermissions.emit(context())"
           >
             <mat-icon>manage_accounts</mat-icon>
           </button>
         }
-        @if (!context.imported) {
+        @if (!context().imported) {
           <button
             class="clone-button"
             mat-icon-button
             [matTooltip]="'igo.context.contextManager.clone' | translate"
             matTooltipShowDelay="500"
             [color]="color"
-            (click)="clone.emit(context)"
+            (click)="clone.emit(context())"
           >
             <mat-icon>content_copy</mat-icon>
           </button>
         }
         @if (
-          context.permission === typePermission[typePermission.write] &&
-          !context.imported
+          context().permission === typePermission[typePermission.write] &&
+          !context().imported
         ) {
           <button
             class="edit-button"
@@ -100,38 +100,38 @@
             [color]="color"
             [matTooltip]="'igo.context.contextManager.edit' | translate"
             matTooltipShowDelay="500"
-            (click)="edit.emit(context)"
+            (click)="edit.emit(context())"
           >
             <mat-icon>edit</mat-icon>
           </button>
         }
-        @if (!context.hidden && !context.imported) {
+        @if (!context().hidden && !context().imported) {
           <button
             class="hide-button"
             mat-icon-button
             [color]="color"
             [matTooltip]="'igo.context.contextManager.hide' | translate"
             matTooltipShowDelay="500"
-            (click)="hide.emit(context)"
+            (click)="hide.emit(context())"
           >
             <mat-icon>visibility</mat-icon>
           </button>
         }
-        @if (context.hidden && !context.imported) {
+        @if (context().hidden && !context().imported) {
           <button
             class="hide-button"
             mat-icon-button
             [color]="color"
             [matTooltip]="'igo.context.contextManager.show' | translate"
             matTooltipShowDelay="500"
-            (click)="show.emit(context)"
+            (click)="show.emit(context())"
           >
             <mat-icon>visibility_off</mat-icon>
           </button>
         }
         @if (
-          context.permission === typePermission[typePermission.write] ||
-          context.imported
+          context().permission === typePermission[typePermission.write] ||
+          context().imported
         ) {
           <button
             class="delete-button"
@@ -139,7 +139,7 @@
             color="warn"
             [matTooltip]="'igo.context.contextManager.delete' | translate"
             matTooltipShowDelay="500"
-            (click)="delete.emit(context)"
+            (click)="delete.emit(context())"
           >
             <mat-icon>delete</mat-icon>
           </button>

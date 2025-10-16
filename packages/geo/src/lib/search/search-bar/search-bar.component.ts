@@ -3,13 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  ViewChild,
-  inject
+  inject,
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -115,9 +115,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * List of available search types
    */
-  @Input() searchTypes: string[] = SEARCH_TYPES;
+  readonly searchTypes = input<string[]>(SEARCH_TYPES);
 
-  @Input() withDivider: boolean;
+  readonly withDivider = input<boolean>(undefined);
 
   /**
    * Search term
@@ -134,17 +134,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the pointer summary is activated by the searchbar setting
    */
-  @Output() pointerSummaryStatus = new EventEmitter<boolean>();
+  readonly pointerSummaryStatus = output<boolean>();
 
   /**
    * Event emitted when the show geometry setting is changed
    */
-  @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+  readonly searchResultsGeometryStatus = output<boolean>();
 
   /**
    * Event emitted when the coords format setting is changed
    */
-  @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+  readonly reverseSearchCoordsFormatStatus = output<boolean>();
 
   /**
    * Search term
@@ -170,9 +170,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
   readonly disabled$ = new BehaviorSubject<boolean>(false);
 
-  @Input() pointerSummaryEnabled = false;
-  @Input() allowResetSearchSourcesOptions = true;
-  @Input() searchResultsGeometryEnabled = false;
+  readonly pointerSummaryEnabled = input(false);
+  readonly allowResetSearchSourcesOptions = input(true);
+  readonly searchResultsGeometryEnabled = input(false);
 
   /**
    * When reverse coordinates status change
@@ -190,60 +190,60 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Whether a float label should be displayed
    */
-  @Input() floatLabel: FloatLabelType = 'auto';
+  readonly floatLabel = input<FloatLabelType>('auto');
 
-  @Input() appearance: MatFormFieldAppearance = 'fill';
+  readonly appearance = input<MatFormFieldAppearance>('fill');
 
-  @Input() placeholder: string;
+  readonly placeholder = input<string>(undefined);
 
-  @Input() label: string;
+  readonly label = input<string>(undefined);
 
   /**
    * Icons color (search and clear)
    */
-  @Input() color = 'primary';
+  readonly color = input('primary');
 
-  @Input() termSplitter = '|';
+  readonly termSplitter = input('|');
 
   /**
    * Debounce time between each keystroke
    */
-  @Input() debounce = 200;
+  readonly debounce = input(200);
 
   /**
    * Minimum term length required to trigger a research
    */
-  @Input() minLength = 2;
+  readonly minLength = input(2);
 
   /**
    * Search Selector
    */
-  @Input() searchSelector = false;
+  readonly searchSelector = input(false);
 
   /**
    * Search Settings
    */
-  @Input() searchSettings = false;
+  readonly searchSettings = input(false);
 
   /**
    * Force coordinates in north america
    */
-  @Input() forceNA = false;
+  readonly forceNA = input(false);
 
   /**
    * Search results store
    */
-  @Input() store: EntityStore<SearchResult>;
+  readonly store = input<EntityStore<SearchResult>>(undefined);
 
   /**
    * Event emitted when the search term changes
    */
-  @Output() searchTermChange = new EventEmitter<string>();
+  readonly searchTermChange = output<string>();
 
   /**
    * Event emitted when a research is completed
    */
-  @Output() search = new EventEmitter<{
+  readonly search = output<{
     research: Research;
     results: SearchResult[];
   }>();
@@ -251,23 +251,23 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the search type changes
    */
-  @Output() searchTypeChange = new EventEmitter<string>();
+  readonly searchTypeChange = output<string>();
 
   /**
    * Event emitted when the search type changes
    */
-  @Output() clearFeature = new EventEmitter();
+  readonly clearFeature = output();
 
   /**
    * Event emitted when the search settings changes
    */
-  @Output() searchSettingsChange = new EventEmitter();
+  readonly searchSettingsChange = output();
 
   /**
    * Input element
    * @internal
    */
-  @ViewChild('input', { static: true }) input: ElementRef;
+  readonly input = viewChild<ElementRef>('input');
 
   /**
    * Whether the search bar is empty
@@ -287,7 +287,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
 
     this.stream$$ = this.stream$
-      .pipe(debounce(() => timer(this.debounce)))
+      .pipe(debounce(() => timer(this.debounce())))
       .subscribe((term: string) => this.onSetTerm(term));
 
     this.handlePlaceholder();
@@ -378,7 +378,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     const slug = term.replace(/(#[^\s]*)/g, '').trim();
-    if (slug.length >= this.minLength || slug.length === 0) {
+    if (slug.length >= this.minLength() || slug.length === 0) {
       this.stream$.next(term);
     }
   }
@@ -393,7 +393,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private clear() {
     this.term$.next('');
     this.stream$.next('');
-    this.input.nativeElement.focus();
+    this.input().nativeElement.focus();
   }
 
   /**
@@ -456,15 +456,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     let terms;
-    if (
-      this.termSplitter &&
-      rawTerm.match(new RegExp(this.termSplitter, 'g'))
-    ) {
+    const termSplitter = this.termSplitter();
+    if (termSplitter && rawTerm.match(new RegExp(termSplitter, 'g'))) {
       terms = rawTerm
-        .split(this.termSplitter)
-        .filter((t) => t.length >= this.minLength);
-      if (this.store) {
-        this.store.clear();
+        .split(termSplitter)
+        .filter((t) => t.length >= this.minLength());
+      const store = this.store();
+      if (store) {
+        store.clear();
       }
     } else {
       terms = [rawTerm];
@@ -474,15 +473,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     terms.map((term: string) => {
       const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
       if (slug === '') {
-        if (this.store !== undefined) {
-          this.store.clear();
+        const store = this.store();
+        if (store !== undefined) {
+          store.clear();
         }
         return;
       }
 
       researches = researches.concat(
         this.searchService.search(term, {
-          forceNA: this.forceNA
+          forceNA: this.forceNA()
         })
       );
     });
@@ -502,12 +502,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private onResearchCompleted(research: Research, results: SearchResult[]) {
     this.search.emit({ research, results });
 
-    if (this.store !== undefined) {
-      const newResults = this.store
+    const store = this.store();
+    if (store !== undefined) {
+      const newResults = store
         .all()
         .filter((result) => result.source !== research.source)
         .concat(results);
-      this.store.updateMany(newResults);
+      store.updateMany(newResults);
     }
   }
 }

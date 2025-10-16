@@ -14,7 +14,7 @@
       (optionSelected)="onZoneChange($event.option.value)"
       [displayWith]="displayFn"
     >
-      @for (entities of this.store.view.all$() | async; track entities) {
+      @for (entities of this.store().view.all$() | async; track entities) {
         <mat-option [value]="entities">
           {{ entities.properties.nom }}
         </mat-option>

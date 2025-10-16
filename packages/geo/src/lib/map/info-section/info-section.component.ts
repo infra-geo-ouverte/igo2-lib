@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'igo-info-section',
@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   imports: []
 })
 export class InfoSectionComponent {
-  @Input() infoContent = '';
+  readonly infoContent = input('');
 }

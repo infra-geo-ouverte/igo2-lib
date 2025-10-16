@@ -3,12 +3,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -64,57 +63,59 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Entity store
    */
-  @Input() store: EntityStore<object>;
+  readonly store = input<EntityStore<object>>(undefined);
 
   /**
    * Title accessor
    */
-  @Input() titleAccessor: (object) => string = getEntityTitle;
+  readonly titleAccessor = input<(object) => string>(getEntityTitle);
 
   /**
    * Text to display when nothing is selected
    */
-  @Input() emptyText: string = undefined;
+  readonly emptyText = input<string>(undefined);
 
   /**
    * Wheter selecting many entities is allowed
    */
-  @Input() multi = false;
+  readonly multi = input(false);
 
   /**
    * Text to display for the select all option
    */
-  @Input() multiAllText = 'All';
+  readonly multiAllText = input('All');
 
   /**
    * Text to display for the select none option
    */
-  @Input() multiNoneText = 'None';
+  readonly multiNoneText = input('None');
 
   /**
    * Field placeholder
    */
-  @Input() placeholder: string;
+  readonly placeholder = input<string>(undefined);
 
   /**
    * Wheter the selector is disabled or not
    */
-  @Input() disabled = false;
+  readonly disabled = input(false);
 
   /**
    * Event emitted when the selection changes
    */
-  @Output() selectedChange = new EventEmitter<EntitySelectorChange>();
+  readonly selectedChange = output<EntitySelectorChange>();
 
   /**
    * Create a store watcher and subscribe to the selected entity
    * @internal
    */
   ngOnInit() {
-    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
 
-    this.selected$$ = this.store.stateView
-      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+    this.selected$$ = this.store()
+      .stateView.manyBy$(
+        (record: EntityRecord<object>) => record.state.selected === true
+      )
       .subscribe((records: EntityRecord<object>[]) => {
         const entities = records.map(
           (record: EntityRecord<object>) => record.entity
@@ -145,27 +146,28 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
     let entities = values.filter(
       (_value: object) => _value !== this.multiSelectValue
     );
+    const store = this.store();
     if (multiSelect !== undefined) {
-      if (entities.length === this.store.count) {
+      if (entities.length === store.count) {
         entities = [];
-      } else if (entities.length < this.store.count) {
-        entities = this.store.all();
+      } else if (entities.length < store.count) {
+        entities = store.all();
       }
     }
 
     entities = entities.filter((entity: object) => entity !== this.emptyValue);
     if (entities.length === 0) {
-      this.store.state.updateAll({ selected: false });
+      store.state.updateAll({ selected: false });
     } else {
-      this.store.state.updateMany(entities, { selected: true }, true);
+      store.state.updateMany(entities, { selected: true }, true);
     }
 
-    const value = this.multi ? entities : event.value;
+    const value = this.multi() ? entities : event.value;
     this.selectedChange.emit({ selected: true, value });
   }
 
   private onSelectFromStore(entities: object[]) {
-    if (this.multi === true) {
+    if (this.multi() === true) {
       this.selected$.next(entities);
     } else {
       const entity = entities.length > 0 ? entities[0] : undefined;
@@ -176,16 +178,19 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   }
 
   private updateMultiToggleWithEntities(entities: object[]) {
+    const store = this.store();
+    const multiNoneText = this.multiNoneText();
+    const multiAllText = this.multiAllText();
     if (
-      entities.length === this.store.count &&
-      this.multiText$.value !== this.multiNoneText
+      entities.length === store.count &&
+      this.multiText$.value !== multiNoneText
     ) {
-      this.multiText$.next(this.multiNoneText);
+      this.multiText$.next(multiNoneText);
     } else if (
-      entities.length < this.store.count &&
-      this.multiText$.value !== this.multiAllText
+      entities.length < store.count &&
+      this.multiText$.value !== multiAllText
     ) {
-      this.multiText$.next(this.multiAllText);
+      this.multiText$.next(multiAllText);
     }
   }
 }

@@ -3,11 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,38 +45,39 @@ export class LayerVisibilityButtonComponent implements OnInit {
   hiddenByParent?: boolean;
   visible: boolean;
 
-  @Input({ required: true }) layer: AnyLayer;
-  @Input() tooltip: string;
-  @Input() disabled: boolean;
-  @Input() showQueryBadge: boolean;
-  @Input() inResolutionsRange: boolean;
+  readonly layer = input.required<AnyLayer>();
+  readonly tooltip = input<string>(undefined);
+  readonly disabled = input<boolean>(undefined);
+  readonly showQueryBadge = input<boolean>(undefined);
+  readonly inResolutionsRange = input<boolean>(undefined);
 
   get defaultTooltip(): string {
-    return !this.layer.isInResolutionsRange
+    const layer = this.layer();
+    return !layer.isInResolutionsRange
       ? 'igo.geo.layer.notInResolution'
-      : this.layer.visible && this.disabled
+      : layer.visible && this.disabled()
         ? 'igo.geo.layer.group.hideChildren'
-        : this.layer.visible
+        : layer.visible
           ? 'igo.geo.layer.hideLayer'
           : 'igo.geo.layer.showLayer';
   }
 
-  @Output() visibilityChange = new EventEmitter<Event>();
+  readonly visibilityChange = output<Event>();
 
   ngOnInit(): void {
-    this.layer.parent?.displayed$.subscribe((displayed) => {
+    this.layer().parent?.displayed$.subscribe((displayed) => {
       this.hiddenByParent = !displayed;
       this.cdr.markForCheck();
     });
 
-    this.layer.visible$.subscribe((visible) => {
+    this.layer().visible$.subscribe((visible) => {
       this.visible = visible;
       this.cdr.markForCheck();
     });
   }
 
   toggle(event: Event) {
-    this.layer.visible = !this.layer.visible;
+    this.layer().visible = !this.layer().visible;
     this.visibilityChange.emit(event);
   }
 }

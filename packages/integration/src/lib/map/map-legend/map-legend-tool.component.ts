@@ -2,10 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -68,15 +68,15 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   private resolution$$: Subscription;
   private visibleOrInRangeLayers$$: Subscription;
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
-  @Input() layerAdditionAllowed = true;
+  readonly layerAdditionAllowed = input(true);
 
-  @Input() allowShowAllLegends = false;
+  readonly allowShowAllLegends = input(false);
 
-  @Input() showAllLegendsValue = false;
+  readonly showAllLegendsValue = input(false);
 
-  @Input() layerListControls: LayerListControlsOptions = {};
+  readonly layerListControls = input<LayerListControlsOptions>({});
 
   get map(): IgoMap {
     return this.mapState.map;
@@ -95,7 +95,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   }
 
   get excludeBaseLayers(): boolean {
-    return this.layerListControls.excludeBaseLayers || false;
+    return this.layerListControls().excludeBaseLayers || false;
   }
 
   get searchToolInToolbar(): boolean {
@@ -132,11 +132,11 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
         );
       });
 
-    if (this.allowShowAllLegends) {
+    if (this.allowShowAllLegends()) {
       this.mapState.showAllLegendsValue =
         this.mapState.showAllLegendsValue !== undefined
           ? this.mapState.showAllLegendsValue
-          : this.showAllLegendsValue || false;
+          : this.showAllLegendsValue() || false;
       this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
     } else {
       this.showAllLegendsValue$.next(false);
@@ -159,7 +159,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
       return false;
     } else if (
       this.layers$.getValue().length !== 0 &&
-      this.allowShowAllLegends === false
+      this.allowShowAllLegends() === false
     ) {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(

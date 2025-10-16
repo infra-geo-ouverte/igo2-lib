@@ -5,7 +5,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,7 +49,7 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   }
   private _layer: AnyLayer;
 
-  @Input() color = 'primary';
+  readonly color = input('primary');
 
   ngOnInit(): void {
     this.hasWorkspace$$ = combineLatest([

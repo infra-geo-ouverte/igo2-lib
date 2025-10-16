@@ -3,7 +3,7 @@
     <div class="container">
       <igo-map-browser [map]="map" [view]="view">
         <div class="map-actions --vertical --bottom --right">
-          <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+          <igo-zoom-button [map]="map" color="primary" />
         </div>
       </igo-map-browser>
 
@@ -13,7 +13,7 @@
           [formData]="data$ | async"
           (submitForm)="onSubmit($event)"
         >
-          <igo-form-group [group]="form.groups[0]"></igo-form-group>
+          <igo-form-group [group]="form.groups[0]" />
           <div formButtons class="actions-container">
             <button
               mat-stroked-button

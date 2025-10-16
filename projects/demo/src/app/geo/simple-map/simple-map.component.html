@@ -11,9 +11,7 @@
       [pointerPositionDelay]="pointerCoordDelay"
       (pointerPositionCoord)="onPointerMove($event)"
     >
-      <igo-info-section
-        [infoContent]="pointerCoord?.toString()"
-      ></igo-info-section>
+      <igo-info-section [infoContent]="pointerCoord?.toString()" />
       <div class="map-actions --vertical --top --right">
         <div class="spinner-spacer"></div>
         <igo-rotation-button
@@ -21,23 +19,21 @@
           [showIfNoRotation]="true"
           [map]="map"
           color="primary"
-        ></igo-rotation-button>
+        />
       </div>
       <div class="map-actions --vertical --bottom --right">
         <igo-home-extent-button
           class="mat-elevation-z2"
           [map]="map"
           color="primary"
-        >
-        </igo-home-extent-button>
-        <igo-wake-lock-button></igo-wake-lock-button>
+        />
+        <igo-wake-lock-button />
         <igo-geolocate-button
           class="mat-elevation-z2"
           [map]="map"
           color="primary"
-        >
-        </igo-geolocate-button>
-        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        />
+        <igo-zoom-button [map]="map" color="primary" />
       </div>
     </igo-map-browser>
     @if (!isTouchScreen) {

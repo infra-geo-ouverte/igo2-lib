@@ -2,11 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -55,17 +55,17 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
 
-  @Input() layers: AnyLayer[];
+  readonly layers = input<AnyLayer[]>(undefined);
 
-  @Input() excludeBaseLayers = false;
+  readonly excludeBaseLayers = input(false);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
-  @Input() allowShowAllLegends = false;
+  readonly allowShowAllLegends = input(false);
 
-  @Input() showAllLegendsValue = false;
+  showAllLegendsValue = model(false);
 
-  @Output() allLegendsShown = new EventEmitter<boolean>(false);
+  readonly allLegendsShown = output<boolean>();
 
   isLayerItem = isLayerItem;
 
@@ -73,34 +73,35 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
     this.change$$ = this.change$
       .pipe(
         debounce(() => {
-          return this.layers.length === 0 ? EMPTY : timer(50);
+          return this.layers()?.length === 0 ? EMPTY : timer(50);
         })
       )
       .subscribe(() => {
-        const layers = this.computeShownLayers(this.layers.slice(0));
+        const layers = this.computeShownLayers(this.layers()?.slice(0) ?? []);
         this.layers$.next(layers);
+        const layersValue = this.layers();
         this.hasVisibleOrInRangeLayers$.next(
-          this.layers
-            .slice(0)
+          layersValue
+            ?.slice(0)
             .filter((layer) => !isBaseLayer(layer))
             .filter((layer) => layer.displayed).length > 0
         );
         this.hasVisibleAndNotInRangeLayers$.next(
-          this.layers
-            .slice(0)
+          layersValue
+            ?.slice(0)
             .filter((layer) => !isBaseLayer(layer))
             .filter((layer) => layer.visible && !layer.isInResolutionsRange)
             .length > 0
         );
 
         this.layersInUi$.next(
-          this.layers
-            .slice(0)
+          layersValue
+            ?.slice(0)
             .filter(
               (layer) =>
                 layer.showInLayerList !== false &&
-                (!this.excludeBaseLayers || !isBaseLayer(layer))
-            )
+                (!this.excludeBaseLayers() || !isBaseLayer(layer))
+            ) ?? []
         );
       });
   }
@@ -113,15 +114,21 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   }
   private computeShownLayers(layers: AnyLayer[]) {
     let shownLayers = layers.filter((layer) => layer.displayed);
-    if (this.showAllLegendsValue) {
+    if (this.showAllLegendsValue()) {
       shownLayers = layers;
     }
     return sortLayersByZindex(shownLayers, 'desc');
   }
 
   toggleShowAllLegends(toggle: boolean) {
-    this.showAllLegendsValue = toggle;
+    this.showAllLegendsValue.set(toggle);
     this.next();
     this.allLegendsShown.emit(toggle);
+  }
+
+  // Allow external directives to override layers without assigning to readonly input
+  setLayers(layers: AnyLayer[]) {
+    this.layers$.next(layers ?? []);
+    this.next();
   }
 }

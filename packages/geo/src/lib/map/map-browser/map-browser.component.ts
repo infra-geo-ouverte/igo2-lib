@@ -1,10 +1,12 @@
 import {
   AfterViewInit,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  effect,
+  inject,
+  input,
+  model
 } from '@angular/core';
 
 import { ActivityService } from '@igo2/core/activity';
@@ -27,19 +29,8 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityId: string;
   private status$$: Subscription;
 
-  @Input() map: IgoMap;
-
-  @Input()
-  get view(): MapViewOptions {
-    return this._view;
-  }
-  set view(value: MapViewOptions) {
-    this._view = value;
-    if (this.map !== undefined) {
-      this.map.updateView(value);
-    }
-  }
-  private _view: MapViewOptions;
+  readonly map = input<IgoMap>(undefined);
+  readonly view = model<MapViewOptions>(undefined);
 
   get controls(): MapControlsOptions {
     return this._controls;
@@ -47,28 +38,42 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   set controls(value: MapControlsOptions) {
     this._controls = value;
-    if (this.map !== undefined) {
-      this.map.updateControls(value);
+    const map = this.map();
+    if (map !== undefined) {
+      map.updateControls(value);
     }
   }
   private _controls: MapControlsOptions;
 
   public id = `igo-map-target-${uuid()}`;
 
+  constructor() {
+    effect(() => {
+      const map = this.map();
+      const view = this.view();
+      if (map && view) {
+        map.updateView(view);
+      }
+    });
+  }
   ngOnInit() {
-    this.status$$ = this.map.status$.subscribe((status) =>
+    this.status$$ = this.map().status$.subscribe((status) =>
       this.handleStatusChange(status)
     );
   }
 
   ngAfterViewInit() {
-    this.map.setTarget(this.id);
+    this.map().setTarget(this.id);
   }
 
   ngOnDestroy() {
-    this.map.setTarget(undefined);
+    this.map().setTarget(undefined);
     this.activityService.unregister(this.activityId);
     this.status$$.unsubscribe();
+  }
+
+  setView(view: MapViewOptions): void {
+    this.view.set(view);
   }
 
   private handleStatusChange(status: SubjectStatus) {

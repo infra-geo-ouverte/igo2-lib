@@ -5,12 +5,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -59,35 +58,14 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   ready = false;
 
-  @Input()
-  get source(): SearchSource {
-    return this._source;
-  }
-  set source(value: SearchSource) {
-    this._source = value;
-    this.cdRef.detectChanges();
-  }
+  readonly source = input<SearchSource>(undefined);
+  readonly map = input<IgoMap>(undefined);
+  readonly toolbox = input<Toolbox>(undefined);
+  readonly feature = input<Feature>(undefined);
 
-  @Input() map: IgoMap;
-
-  @Input() toolbox: Toolbox;
-
-  @Input()
-  get feature(): Feature {
-    return this._feature;
-  }
-  set feature(value: Feature) {
-    this._feature = value;
-    this.cdRef.detectChanges();
-    this.selectFeature.emit();
-  }
-
-  private _feature: Feature;
-  private _source: SearchSource;
-
-  @Output() routeEvent = new EventEmitter<boolean>();
-  @Output() selectFeature = new EventEmitter<boolean>();
-  @Output() htmlDisplayEvent = new EventEmitter<boolean>();
+  readonly routeEvent = output<boolean>();
+  readonly selectFeature = output<boolean>();
+  readonly htmlDisplayEvent = output<boolean>();
 
   /**
    * @internal
@@ -128,8 +106,8 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   isHtmlDisplay(): boolean {
     if (
       this.feature &&
-      this.isObject(this.feature.properties) &&
-      this.feature.properties.target === 'iframe'
+      this.isObject(this.feature().properties) &&
+      this.feature().properties.target === 'iframe'
     ) {
       this.htmlDisplayEvent.emit(true);
       return true;
@@ -251,19 +229,21 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     const properties = {};
     let offlineButtonState;
 
-    if (this.map) {
-      this.map.forcedOffline$
+    const map = this.map();
+    if (map) {
+      map.forcedOffline$
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((state) => {
           offlineButtonState = state;
         });
     }
 
+    const toolbox = this.toolbox();
     if (
       feature.properties &&
       feature.properties.Route &&
-      this.toolbox &&
-      !this.toolbox.getTool('directions')
+      toolbox &&
+      !toolbox.getTool('directions')
     ) {
       delete feature.properties.Route;
     }

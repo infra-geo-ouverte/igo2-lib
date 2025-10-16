@@ -1,5 +1,5 @@
 @if (showTourButton) {
-  @if (styleButton === 'icon') {
+  @if (styleButton() === 'icon') {
     <button
       (click)="startInteractiveTour()"
       [ngClass]="getClass()"
@@ -28,7 +28,7 @@
       [disabled]="disabledTourButton"
     >
       {{ 'igo.common.interactiveTour.buttonTitle' | translate }}
-      {{ discoverTitleInLocale$ | async | translate }}
+      {{ discoverTitleInLocale$() | async | translate }}
       <mat-icon
         [svgIcon]="presentationIcon.name"
         iconPositionEnd
@@ -38,8 +38,7 @@
               | translate)
             : ('igo.common.interactiveTour.tooltipTourToolButton' | translate)
         "
-      >
-      </mat-icon>
+      />
     </button>
   }
 }

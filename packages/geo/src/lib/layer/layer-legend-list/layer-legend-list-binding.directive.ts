@@ -28,7 +28,7 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Override input layers
-    this.component.layers = [];
+    this.component.setLayers([]);
     this.layersOrResolutionChange$$ = combineLatest([
       this.mapService.getMap().layerController.all$,
       this.mapService.getMap().viewController.resolution$
@@ -38,7 +38,7 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
         const shownLayers = bunch[0].filter((layer) => {
           return isLayerItem(layer) && layer.showInLayerList === true;
         }) as Layer[];
-        this.component.layers = shownLayers;
+        this.component.setLayers(shownLayers);
 
         this.layersVisibility$$ = combineLatest(
           shownLayers.map((layer) => layer.visible$)

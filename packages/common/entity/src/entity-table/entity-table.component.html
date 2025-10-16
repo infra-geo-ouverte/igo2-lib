@@ -19,8 +19,7 @@
               [indeterminate]="
                 selectionState === entityTableSelectionState.Some
               "
-            >
-            </mat-checkbox>
+            />
           }
         }
       </th>
@@ -34,12 +33,11 @@
           "
           (change)="onToggleRow($event.checked, row.record)"
           [checked]="rowIsSelected(row.record)"
-        >
-        </mat-checkbox>
+        />
       </td>
     </ng-container>
 
-    @for (column of template.columns; track column) {
+    @for (column of template().columns; track column) {
       <ng-container [matColumnDef]="column.name">
         @if (columnIsSortable(column)) {
           <th
@@ -116,10 +114,7 @@
                     @switch (column.type) {
                       @case ('date') {
                         <div class="date-picker">
-                          <mat-datepicker-toggle
-                            matSuffix
-                            [for]="picker"
-                          ></mat-datepicker-toggle>
+                          <mat-datepicker-toggle matSuffix [for]="picker" />
                           <input
                             matInput
                             [matDatepicker]="picker"
@@ -129,7 +124,7 @@
                               onDateChange(column.name, row.record, $event)
                             "
                           />
-                          <mat-datepicker #picker></mat-datepicker>
+                          <mat-datepicker #picker />
                         </div>
                       }
                       @case ('time') {
@@ -179,7 +174,7 @@
                               $event
                             )
                           "
-                        ></mat-checkbox>
+                        />
                       }
                       @case ('list') {
                         <mat-select
@@ -424,7 +419,7 @@
       mat-row
       igoEntityTableRow
       *matRowDef="let row; columns: headers"
-      [scrollBehavior]="scrollBehavior"
+      [scrollBehavior]="scrollBehavior()"
       [ngClass]="getRowClass(row.record)"
       [selection]="selection"
       [selected]="rowIsSelected(row.record)"
@@ -432,13 +427,12 @@
       (click)="onRowClick(row.record)"
     ></tr>
   </table>
-  @if (withPaginator) {
+  @if (withPaginator()) {
     <igo-entity-table-paginator
-      [store]="store"
-      [paginatorOptions]="paginatorOptions"
+      [store]="store()"
+      [paginatorOptions]="paginatorOptions()"
       [entitySortChange$]="entitySortChange$"
       (paginatorChange)="paginatorChange($event)"
-    >
-    </igo-entity-table-paginator>
+    />
   }
 </div>

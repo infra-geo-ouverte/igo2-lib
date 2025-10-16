@@ -3,12 +3,11 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
-  EventEmitter,
   HostListener,
-  Input,
-  Output,
   ViewContainerRef,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
@@ -27,8 +26,13 @@ export class ContextMenuDirective {
   private overlayRef: OverlayRef | null;
   private sub: Subscription;
 
-  @Input('igoContextMenu') menuContext: TemplateRef<any>;
-  @Output() menuPosition = new EventEmitter<{ x: number; y: number }>();
+  readonly menuContext = input<TemplateRef<any>>(undefined, {
+    alias: 'igoContextMenu'
+  });
+  readonly menuPosition = output<{
+    x: number;
+    y: number;
+  }>();
 
   @HostListener('longpress', ['$event'])
   @HostListener('contextmenu', ['$event'])
@@ -66,7 +70,7 @@ export class ContextMenuDirective {
       scrollStrategy: this.overlay.scrollStrategies.close()
     });
     this.overlayRef.attach(
-      new TemplatePortal(this.menuContext, this.viewContainerRef, {
+      new TemplatePortal(this.menuContext(), this.viewContainerRef, {
         $implicit: undefined
       })
     );

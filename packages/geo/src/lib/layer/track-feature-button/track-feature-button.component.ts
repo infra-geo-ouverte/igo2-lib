@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit
+  OnInit,
+  input,
+  model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +12,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { VectorLayer } from '../shared/layers/vector-layer';
-import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({
   selector: 'igo-track-feature-button',
@@ -21,31 +21,25 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class TrackFeatureButtonComponent implements OnInit {
-  @Input() layer: VectorLayer;
+  readonly layer = input<VectorLayer>(undefined);
 
-  @Input() trackFeature = false;
-
-  get options(): VectorLayerOptions {
-    if (!this.layer) {
-      return;
-    }
-    return this.layer.options;
-  }
+  trackFeature = model(false);
 
   public color = 'primary';
 
   ngOnInit() {
-    this.color = this.trackFeature ? 'primary' : 'basic';
+    this.color = this.trackFeature() ? 'primary' : 'basic';
   }
 
   toggleTrackFeature() {
-    if (this.trackFeature) {
-      this.layer.disableTrackFeature();
+    const trackFeature = this.trackFeature();
+    if (trackFeature) {
+      this.layer().disableTrackFeature();
       this.color = 'basic';
     } else {
-      this.layer.enableTrackFeature(this.layer.options.trackFeature);
+      this.layer().enableTrackFeature(this.layer().options.trackFeature);
       this.color = 'primary';
     }
-    this.trackFeature = !this.trackFeature;
+    this.trackFeature.set(!trackFeature);
   }
 }

@@ -1,10 +1,10 @@
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
@@ -63,16 +63,16 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   private languageService = inject(LanguageService);
   private cdRef = inject(ChangeDetectorRef);
 
-  @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
-  @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
+  readonly routesFeatureStore = input.required<RoutesFeatureStore>();
+  readonly stepsFeatureStore = input.required<StepsFeatureStore>();
 
   public activeRoute: Directions;
   public routes: Directions[];
   private entities$$: Subscription;
 
   ngOnInit(): void {
-    this.entities$$ = this.routesFeatureStore.entities$
-      .pipe(debounceTime(200))
+    this.entities$$ = this.routesFeatureStore()
+      .entities$.pipe(debounceTime(200))
       .subscribe((features) => {
         const activeFeature: FeatureWithDirections = features.find(
           (entity) => entity.properties.active
@@ -94,11 +94,11 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
    * the active state of their corresponding features in the layer.
    */
   chooseRouteOption(): void {
-    this.routesFeatureStore.entities$.value.map(
+    this.routesFeatureStore().entities$.value.map(
       (feature) => (feature.properties.active = !feature.properties.active)
     );
-    this.routesFeatureStore.layer.ol
-      .getSource()
+    this.routesFeatureStore()
+      .layer.ol.getSource()
       .getFeatures()
       .map((feature) => feature.set('active', !feature.get('active')));
   }
@@ -158,7 +158,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
    * Clears the step feature store when the user's mouse leaves the list.
    */
   onLeaveList(): void {
-    this.stepsFeatureStore.clear();
+    this.stepsFeatureStore().clear();
   }
 
   /**
@@ -177,7 +177,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     const geometry4326: olGeom.LineString = new olGeom.LineString(coordinates);
     const geometryMapProjection: olGeom.Geometry = geometry4326.transform(
       'EPSG:4326',
-      this.stepsFeatureStore.layer.map.projection
+      this.stepsFeatureStore().layer.map.projection
     );
     const routeSegmentCoordinates: Coordinate[] = (
       geometryMapProjection as any
@@ -195,13 +195,13 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(
       lastPointGeometry,
       {
-        featureProjection: this.stepsFeatureStore.layer.map.projection,
-        dataProjection: this.stepsFeatureStore.layer.map.projection
+        featureProjection: this.stepsFeatureStore().layer.map.projection,
+        dataProjection: this.stepsFeatureStore().layer.map.projection
       }
     ) as FeatureGeometry;
 
     const previousVertex: FeatureWithStep =
-      this.stepsFeatureStore.get(vertexId);
+      this.stepsFeatureStore().get(vertexId);
     const previousVertexRevision: number = previousVertex
       ? previousVertex.meta.revision
       : 0;
@@ -209,7 +209,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     const stepFeature: FeatureWithStep = {
       type: FEATURE,
       geometry: geojsonGeom,
-      projection: this.stepsFeatureStore.layer.map.projection,
+      projection: this.stepsFeatureStore().layer.map.projection,
       properties: {
         id: vertexId,
         step,
@@ -221,9 +221,9 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
       },
       ol: lastPointFeature
     };
-    this.stepsFeatureStore.update(stepFeature);
+    this.stepsFeatureStore().update(stepFeature);
     if (zoomToExtent) {
-      this.stepsFeatureStore.layer.map.viewController.zoomToExtent(
+      this.stepsFeatureStore().layer.map.viewController.zoomToExtent(
         lastPointFeature.getGeometry().getExtent() as [
           number,
           number,

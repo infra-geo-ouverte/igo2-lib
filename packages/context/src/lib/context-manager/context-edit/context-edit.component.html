@@ -1,8 +1,7 @@
-@if (context) {
+@if (context()) {
   <igo-context-form
     [btnSubmitText]="'igo.context.contextManager.save' | translate"
-    [context]="context"
+    [context]="context()"
     (submitForm)="submitForm.emit($event)"
-  >
-  </igo-context-form>
+  />
 }

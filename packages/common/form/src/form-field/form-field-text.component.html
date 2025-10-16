@@ -2,13 +2,13 @@
   <input
     matInput
     (blur)="delayedHide(0)"
-    [type]="isPassword ? (hide ? 'password' : 'text') : 'text'"
-    [required]="isPassword ? 'true' : required"
-    [placeholder]="placeholder | translate"
-    [formControl]="formControl"
+    [type]="isPassword() ? (hide ? 'password' : 'text') : 'text'"
+    [required]="isPassword() ? 'true' : required"
+    [placeholder]="placeholder() | translate"
+    [formControl]="formControl()"
     (change)="delayedHide()"
   />
-  @if (disableSwitch === true) {
+  @if (disableSwitch() === true) {
     <mat-icon
       class="igo-form-disable-switch"
       (click)="onDisableSwitchClick()"
@@ -19,7 +19,7 @@
     </mat-icon>
   }
 
-  @if (isPassword) {
+  @if (isPassword()) {
     <button type="button" matSuffix mat-icon-button (click)="togglePassword()">
       <mat-icon color="primary">{{
         hide ? 'visibility_off' : 'visibility'
@@ -27,7 +27,7 @@
     </button>
   }
 
-  @if (formControl.errors) {
+  @if (formControl().errors) {
     <mat-error>{{ getErrorMessage() | translate }}</mat-error>
   }
 </mat-form-field>

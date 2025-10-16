@@ -4,12 +4,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnChanges,
   OnInit,
-  Output,
-  ViewChild
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -47,59 +46,36 @@ import { TableModel } from './table-model.interface';
   ]
 })
 export class TableComponent implements OnChanges, OnInit, AfterViewInit {
-  @Input()
-  get database(): TableDatabase {
-    return this._database;
-  }
-  set database(value: TableDatabase) {
-    this._database = value;
-  }
-  private _database: TableDatabase;
-
-  @Input()
-  get model(): TableModel {
-    return this._model;
-  }
-  set model(value: TableModel) {
-    this._model = value;
-  }
-  private _model: TableModel;
-
-  @Input()
-  get hasFilterInput(): boolean {
-    return this._hasFIlterInput;
-  }
-  set hasFilterInput(value: boolean) {
-    this._hasFIlterInput = value;
-  }
-  private _hasFIlterInput = true;
+  readonly database = input<TableDatabase>(undefined);
+  readonly model = input<TableModel>(undefined);
+  readonly hasFilterInput = input(true);
 
   public displayedColumns;
   public dataSource: TableDataSource | null;
   public selection = new SelectionModel<any>(true, []);
 
-  @Output()
-  select = new EventEmitter<{
+  readonly select = output<{
     added: any[];
     removed: any[];
     source: SelectionModel<any>;
   }>();
 
-  @ViewChild('filter') filter: ElementRef;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  readonly filter = viewChild<ElementRef>('filter');
+  readonly sort = viewChild(MatSort);
 
   ngOnInit() {
-    this.dataSource = new TableDataSource(this.database, this.model, this.sort);
+    const model = this.model();
+    this.dataSource = new TableDataSource(this.database(), model, this.sort());
 
-    if (this.model) {
-      this.displayedColumns = this.model.columns
+    if (model) {
+      this.displayedColumns = model.columns
         .filter((c) => c.displayed !== false)
         .map((c) => c.name);
 
-      if (this.model.selectionCheckbox) {
+      if (model.selectionCheckbox) {
         this.displayedColumns.unshift('selectionCheckbox');
       }
-      if (this.model.actions && this.model.actions.length) {
+      if (model.actions && model.actions.length) {
         this.displayedColumns.push('action');
       }
     }
@@ -108,14 +84,15 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.filter) {
-      fromEvent(this.filter.nativeElement, 'keyup')
+    const filter = this.filter();
+    if (filter) {
+      fromEvent(filter.nativeElement, 'keyup')
         .pipe(debounceTime(150), distinctUntilChanged())
         .subscribe(() => {
           if (!this.dataSource) {
             return;
           }
-          this.dataSource.filter = this.filter.nativeElement.value;
+          this.dataSource.filter = this.filter().nativeElement.value;
         });
     }
   }
@@ -123,9 +100,9 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   ngOnChanges(change) {
     if (change.database) {
       this.dataSource = new TableDataSource(
-        this.database,
-        this.model,
-        this.sort
+        this.database(),
+        this.model(),
+        this.sort()
       );
       this.selection.clear();
     }
@@ -142,7 +119,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.database.data.length;
+    const numRows = this.database().data.length;
     return numSelected === numRows;
   }
 
@@ -150,7 +127,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.database.data.forEach((row) => this.selection.select(row));
+      : this.database().data.forEach((row) => this.selection.select(row));
   }
 
   handleClickAction(event, action, row) {

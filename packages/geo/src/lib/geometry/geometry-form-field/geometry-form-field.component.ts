@@ -1,18 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  inject
-} from '@angular/core';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  UntypedFormControl
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,8 +10,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-
-import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
@@ -48,129 +33,64 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    AsyncPipe,
     IgoLanguageModule
   ]
 })
-export class GeometryFormFieldComponent implements OnInit, OnDestroy {
-  private cdRef = inject(ChangeDetectorRef);
-
-  readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
-
-  private value$$: Subscription;
-
-  set drawControlIsActive(value: boolean) {
-    this._drawControlIsActive = value;
-    this.cdRef.detectChanges();
-  }
-
-  get drawControlIsActive(): boolean {
-    return this._drawControlIsActive;
-  }
-  private _drawControlIsActive = true;
-
-  set freehandDrawIsActive(value: boolean) {
-    this._freehandDrawIsActive = value;
-    this.cdRef.detectChanges();
-  }
-
-  get freehandDrawIsActive(): boolean {
-    return this._freehandDrawIsActive;
-  }
-  private _freehandDrawIsActive = false;
-
+export class GeometryFormFieldComponent {
   /**
    * The field's form control
    */
-  @Input() formControl: UntypedFormControl;
+  readonly formControl = input<FormControl<GeoJSONGeometry>>(undefined);
 
   /**
    * The map to draw the geometry on
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Input()
-  set geometryType(value: Type) {
-    this.geometryType$.next(value);
-  }
-  get geometryType(): Type {
-    return this.geometryType$.value;
-  }
-  readonly geometryType$ = new BehaviorSubject<Type>(undefined);
+  readonly geometryType = input<Type>(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
    */
-  @Input() geometryTypeField = false;
+  readonly geometryTypeField = input(false);
 
   /**
    * Available geometry types
    */
-  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
+  readonly geometryTypes = input<string[]>(['Point', 'LineString', 'Polygon']);
 
   /**
    * Whether a draw guide field should be displayed
    */
-  @Input() drawGuideField = false;
-
+  readonly drawGuideField = input(false);
   /**
    * The drawGuide around the mouse pointer to help drawing
    */
-  @Input()
-  set drawGuide(value: number) {
-    this.drawGuide$.next(value);
-  }
-  get drawGuide(): number {
-    return this.drawGuide$.value;
-  }
-  readonly drawGuide$ = new BehaviorSubject<number>(0);
+  readonly drawGuide = input(0);
 
   /**
    * Draw guide placeholder
    */
-  @Input() drawGuidePlaceholder = '';
+  readonly drawGuidePlaceholder = input('');
 
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure = false;
+  readonly measure = input(false);
 
   /**
    * Control options
    */
-  @Input() controlOptions: Record<string, any> = {};
+  readonly controlOptions = input<Record<string, any>>({});
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() drawStyle: OlStyleLike;
+  readonly drawStyle = input<OlStyleLike>(undefined);
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyleLike;
-
-  /**
-   * Set up a value stream
-   * @internal
-   */
-  ngOnInit() {
-    this.value$.next(
-      this.formControl.value ? this.formControl.value : undefined
-    );
-    this.value$$ = this.formControl.valueChanges.subscribe(
-      (value: GeoJSONGeometry) => {
-        this.value$.next(value ? value : undefined);
-      }
-    );
-  }
-
-  /**
-   * Unsubscribe to the value stream
-   * @internal
-   */
-  ngOnDestroy() {
-    this.value$$.unsubscribe();
-  }
+  readonly overlayStyle = input<OlStyleLike>(undefined);
 }

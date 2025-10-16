@@ -5,12 +5,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  effect,
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import {
   FormsModule,
@@ -102,170 +103,32 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
+  readonly type = input<SpatialFilterType>(undefined);
+  readonly queryType = input<SpatialFilterQueryType>(undefined);
+  readonly zone = input<Feature>(undefined);
+  readonly loading = model<boolean>(false);
+  readonly store = input<EntityStore<Feature>>();
+  readonly layers = input<AnyLayer[]>([]);
+  readonly allLayers = input<AnyLayer[]>([]);
+  readonly thematicLength = input<number>();
 
-  @Input()
-  get type(): SpatialFilterType {
-    return this._type;
-  }
-  set type(type: SpatialFilterType) {
-    this._type = type;
-    const index = this.geometryTypes.findIndex(
-      (geom) => geom === (this.type as any)
-    );
-    this.geometryType = this.geometryTypes[index];
-    this.formControl.reset();
-    this.radius = undefined;
-    this.drawGuide$.next(null);
-    this.drawStyle$.next(undefined);
+  readonly toggleSearch = output();
 
-    // Necessary to keep reference to the geometry form field input
-    if (this.type === SpatialFilterType.Predefined) {
-      const geojson: GeoJSONGeometry = {
-        type: 'Point',
-        coordinates: ''
-      };
-      this.formControl.setValue(geojson);
-    }
-
-    // Necessary to apply the right style when geometry type is Point
-    if (this.type === SpatialFilterType.Point) {
-      this.radius = 1000; // Base radius
-      this.radiusFormControl.setValue(this.radius);
-      this.PointStyle = (
-        feature: OlFeature<OlGeometry>,
-        resolution: number
-      ) => {
-        const geom = feature.getGeometry() as OlPoint;
-        const coordinates = olproj.transform(
-          geom.getCoordinates(),
-          this.map.projection,
-          'EPSG:4326'
-        );
-        return new olStyle.Style({
-          image: new olStyle.Circle({
-            radius:
-              this.radius /
-              Math.cos((Math.PI / 180) * coordinates[1]) /
-              resolution, // Latitude correction
-            stroke: new olStyle.Stroke({
-              width: 2,
-              color: 'rgba(0, 153, 255)'
-            }),
-            fill: new olStyle.Fill({
-              color: 'rgba(0, 153, 255, 0.2)'
-            })
-          })
-        });
-      };
-      this.overlayStyle = this.PointStyle;
-      this.drawStyle$.next(this.overlayStyle);
-    } else {
-      // If geometry types is Polygon
-      this.radius = undefined;
-      this.PolyStyle = () => {
-        return new olStyle.Style({
-          stroke: new olStyle.Stroke({
-            width: 2,
-            color: 'rgba(0, 153, 255)'
-          }),
-          fill: new olStyle.Fill({
-            color: 'rgba(0, 153, 255, 0.2)'
-          })
-        });
-      };
-      const color = [0, 153, 255];
-      const drawStyle = () => {
-        return new olStyle.Style({
-          image: new olStyle.Circle({
-            radius: 8,
-            stroke: new olStyle.Stroke({
-              width: 2,
-              color: 'rgba(0, 153, 255)'
-            }),
-            fill: new olStyle.Fill({
-              color: 'rgba(0, 153, 255, 0.2)'
-            })
-          }),
-          stroke: new olStyle.Stroke({
-            color: color.concat([1]),
-            width: 2
-          }),
-          fill: new olStyle.Fill({
-            color: color.concat([0.2])
-          })
-        });
-      };
-      this.overlayStyle = this.PolyStyle;
-      this.drawStyle$.next(drawStyle);
-    }
-    this.overlayStyle$.next(this.overlayStyle);
-  }
-  private _type: SpatialFilterType;
-
-  @Input() queryType: SpatialFilterQueryType;
-
-  @Input() zone: Feature;
-
-  @Input() loading;
-
-  @Input()
-  get store(): EntityStore<Feature> {
-    return this._store;
-  }
-  set store(store: EntityStore<Feature>) {
-    this._store = store;
-    this._store.entities$.subscribe(() => {
-      this.cdRef.detectChanges();
-    });
-  }
-  private _store: EntityStore<Feature>;
-
-  /**
-   * Available measure units for the measure type given
-   * @internal
-   */
-  get measureUnits(): string[] {
-    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
-  }
-
-  @Input() layers: AnyLayer[] = [];
-
-  @Input() allLayers: AnyLayer[] = [];
-
-  @Input()
-  get thematicLength(): number {
-    return this._thematicLength;
-  }
-  set thematicLength(value: number) {
-    this._thematicLength = value;
-  }
-  private _thematicLength: number;
-
-  @Output() toggleSearch = new EventEmitter();
-
-  @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
-
-  @Output() thematicChange = new EventEmitter<SpatialFilterThematic[]>();
-
-  @Output() drawZoneEvent = new EventEmitter<Feature>();
-
-  @Output() bufferEvent = new EventEmitter<number>();
-  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
-  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
-
-  @Output() radiusEvent = new EventEmitter<number>();
-  @Output() freehandControl = new EventEmitter<boolean>();
-  @Output() predefinedRadius = new EventEmitter<boolean>();
-
-  @Output() clearButtonEvent = new EventEmitter();
-
-  @Output() clearSearchEvent = new EventEmitter();
-
-  @Output() export = new EventEmitter();
-
-  @Output() openWorkspace = new EventEmitter();
-  @Output() entityChange = new EventEmitter<any>();
+  readonly itemTypeChange = output<SpatialFilterItemType>();
+  readonly thematicChange = output<SpatialFilterThematic[]>();
+  readonly drawZoneEvent = output<Feature>();
+  readonly bufferEvent = output<number>();
+  readonly zoneWithBufferChange = output<Feature>();
+  readonly measureUnitChange = output<MeasureLengthUnit>();
+  readonly radiusEvent = output<number>();
+  readonly freehandControl = output<boolean>();
+  readonly predefinedRadius = output<boolean>();
+  readonly clearButtonEvent = output();
+  readonly clearSearchEvent = output();
+  readonly export = output();
+  readonly openWorkspace = output();
+  readonly entityChange = output<any>();
 
   public itemType: SpatialFilterItemType[] = [
     SpatialFilterItemType.Address,
@@ -332,6 +195,21 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public listIsVisible = true;
   public tableTemplate: EntityTableTemplate;
+
+  constructor() {
+    effect(() => {
+      const type = this.type();
+      this.setFilterType(type);
+    });
+  }
+
+  /**
+   * Available measure units for the measure type given
+   * @internal
+   */
+  get measureUnits(): string[] {
+    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
+  }
 
   ngOnInit() {
     this.spatialFilterService
@@ -515,15 +393,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         exportable: false,
         browsable: false
       }),
-      map: this.map,
+      map: this.map(),
       hitTolerance: 15,
       motion: FeatureMotion.Default,
       many: true,
       dragBox: true
     });
 
-    this.store.addStrategy(selectionStrategy, true);
-    this.store.addStrategy(selectedRecordStrategy, false);
+    const store = this.store();
+    store.addStrategy(selectionStrategy, true);
+    store.addStrategy(selectedRecordStrategy, false);
   }
 
   /**
@@ -575,15 +454,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   isPredefined() {
-    return this.type === SpatialFilterType.Predefined;
+    return this.type() === SpatialFilterType.Predefined;
   }
 
   isPolygon() {
-    return this.type === SpatialFilterType.Polygon;
+    return this.type() === SpatialFilterType.Polygon;
   }
 
   isPoint() {
-    return this.type === SpatialFilterType.Point;
+    return this.type() === SpatialFilterType.Point;
   }
 
   hasChild(_: number, node: SpatialFilterThematic) {
@@ -784,7 +663,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         };
         this.zoneWithBuffer.properties = {
           nom: 'Zone',
-          type: this.type as string
+          type: this.type() as string
         };
         this.drawZoneEvent.emit(this.zoneWithBuffer);
       } else {
@@ -794,7 +673,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         };
         this.drawZone.properties = {
           nom: 'Zone',
-          type: this.type as string
+          type: this.type() as string
         };
         this.drawZoneEvent.emit(this.drawZone);
       }
@@ -805,21 +684,27 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.bufferEvent.emit(this.buffer);
     }
     this.toggleSearch.emit();
-    this.store.entities$.pipe(debounceTime(500)).subscribe((value) => {
-      if (value.length && this.layers.length === this.thematicLength + 1) {
-        this.openWorkspace.emit();
-        this.createTableTemplate();
-      }
-    });
+    this.store()
+      .entities$.pipe(debounceTime(500))
+      .subscribe((value) => {
+        if (
+          value.length &&
+          this.layers().length === this.thematicLength() + 1
+        ) {
+          this.openWorkspace.emit();
+          this.createTableTemplate();
+        }
+        this.cdRef.markForCheck();
+      });
   }
 
   /**
    * Launch clear button (clear store and map layers)
    */
   clearButton() {
-    this.loading = true;
+    this.loading.set(true);
     if (this.store) {
-      this.store.clear();
+      this.store().clear();
     }
     if (this.isPoint() || this.isPolygon()) {
       this.drawZone = undefined;
@@ -829,7 +714,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.buffer = 0;
     this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
-    this.loading = false;
+    this.loading.set(false);
     this.tableTemplate = undefined;
   }
 
@@ -855,38 +740,40 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Verify conditions of incomplete fields or busy service
    */
   disableSearchButton(): boolean {
-    if (this.type === SpatialFilterType.Predefined) {
+    if (this.type() === SpatialFilterType.Predefined) {
+      const queryType = this.queryType();
+      const zone = this.zone();
       if (this.selectedItemType === SpatialFilterItemType.Address) {
-        if (this.queryType !== undefined && this.zone !== undefined) {
-          return this.loading;
+        if (queryType !== undefined && zone !== undefined) {
+          return this.loading();
         }
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
-          this.queryType !== undefined &&
-          this.zone !== undefined &&
+          queryType !== undefined &&
+          zone !== undefined &&
           this.selectedThematics.selected.length > 0
         ) {
-          return this.loading;
+          return this.loading();
         }
       }
     }
     if (
-      this.type === SpatialFilterType.Polygon ||
-      this.type === SpatialFilterType.Point
+      this.type() === SpatialFilterType.Polygon ||
+      this.type() === SpatialFilterType.Point
     ) {
       if (
         this.selectedItemType === SpatialFilterItemType.Address &&
         this.formControl.value !== null
       ) {
-        return this.loading;
+        return this.loading();
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
           this.selectedThematics.selected.length > 0 &&
           this.formControl.value !== null
         ) {
-          return this.loading;
+          return this.loading();
         }
       }
     }
@@ -896,9 +783,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   disabledClearSearch() {
     let disable = true;
     this.selectedItemType === SpatialFilterItemType.Address
-      ? (disable = this.queryType === undefined)
+      ? (disable = this.queryType() === undefined)
       : (disable =
-          this.queryType === undefined &&
+          this.queryType() === undefined &&
           this.selectedThematics.selected.length === 0);
 
     return disable;
@@ -917,7 +804,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       formValue = undefined;
     }
 
-    if (this.type === SpatialFilterType.Point) {
+    if (this.type() === SpatialFilterType.Point) {
       if (!this.freehandDrawIsActive) {
         if (
           this.radiusFormControl.value < 0 ||
@@ -991,5 +878,98 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       sort: true,
       columns
     };
+  }
+
+  private setFilterType(type: SpatialFilterType): void {
+    const index = this.geometryTypes.findIndex(
+      (geom) => geom === (type as any)
+    );
+    this.geometryType = this.geometryTypes[index];
+    this.formControl.reset();
+    this.radius = undefined;
+    this.drawGuide$.next(null);
+    this.drawStyle$.next(undefined);
+
+    // Necessary to keep reference to the geometry form field input
+    if (type === SpatialFilterType.Predefined) {
+      const geojson: GeoJSONGeometry = {
+        type: 'Point',
+        coordinates: ''
+      };
+      this.formControl.setValue(geojson);
+    }
+
+    // Necessary to apply the right style when geometry type is Point
+    if (type === SpatialFilterType.Point) {
+      this.radius = 1000; // Base radius
+      this.radiusFormControl.setValue(this.radius);
+      this.PointStyle = (
+        feature: OlFeature<OlGeometry>,
+        resolution: number
+      ) => {
+        const geom = feature.getGeometry() as OlPoint;
+        const coordinates = olproj.transform(
+          geom.getCoordinates(),
+          this.map().projection,
+          'EPSG:4326'
+        );
+        return new olStyle.Style({
+          image: new olStyle.Circle({
+            radius:
+              this.radius /
+              Math.cos((Math.PI / 180) * coordinates[1]) /
+              resolution, // Latitude correction
+            stroke: new olStyle.Stroke({
+              width: 2,
+              color: 'rgba(0, 153, 255)'
+            }),
+            fill: new olStyle.Fill({
+              color: 'rgba(0, 153, 255, 0.2)'
+            })
+          })
+        });
+      };
+      this.overlayStyle = this.PointStyle;
+      this.drawStyle$.next(this.overlayStyle);
+    } else {
+      // If geometry types is Polygon
+      this.radius = undefined;
+      this.PolyStyle = () => {
+        return new olStyle.Style({
+          stroke: new olStyle.Stroke({
+            width: 2,
+            color: 'rgba(0, 153, 255)'
+          }),
+          fill: new olStyle.Fill({
+            color: 'rgba(0, 153, 255, 0.2)'
+          })
+        });
+      };
+      const color = [0, 153, 255];
+      const drawStyle = () => {
+        return new olStyle.Style({
+          image: new olStyle.Circle({
+            radius: 8,
+            stroke: new olStyle.Stroke({
+              width: 2,
+              color: 'rgba(0, 153, 255)'
+            }),
+            fill: new olStyle.Fill({
+              color: 'rgba(0, 153, 255, 0.2)'
+            })
+          }),
+          stroke: new olStyle.Stroke({
+            color: color.concat([1]),
+            width: 2
+          }),
+          fill: new olStyle.Fill({
+            color: color.concat([0.2])
+          })
+        });
+      };
+      this.overlayStyle = this.PolyStyle;
+      this.drawStyle$.next(drawStyle);
+    }
+    this.overlayStyle$.next(this.overlayStyle);
   }
 }

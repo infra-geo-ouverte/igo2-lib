@@ -2,12 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  effect,
+  inject,
+  input,
+  output
 } from '@angular/core';
 import {
   FormsModule,
@@ -57,32 +57,10 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   private spatialFilterService = inject(SpatialFilterService);
   private messageService = inject(MessageService);
 
-  @Input() store: EntityStore<Feature>;
-
-  @Input()
-  get queryType(): SpatialFilterQueryType {
-    return this._queryType;
-  }
-  set queryType(queryType: SpatialFilterQueryType) {
-    this.formControl.setValue('');
-    this._queryType = queryType;
-  }
-  private _queryType: SpatialFilterQueryType;
-
-  @Input()
-  get zone() {
-    return this._zone;
-  }
-  set zone(value) {
-    this._zone = value;
-    if (!value) {
-      this.zoneWithBuffer = undefined;
-      this.bufferFormControl.setValue(0);
-    }
-  }
-  private _zone;
-
-  @Input() layers: AnyLayer[] = [];
+  readonly store = input<EntityStore<Feature>>(undefined);
+  readonly queryType = input<SpatialFilterQueryType>();
+  readonly zone = input();
+  readonly layers = input<AnyLayer[]>([]);
 
   public zoneWithBuffer;
   public selectedZone: any;
@@ -101,19 +79,33 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Output() zoneChange = new EventEmitter<Feature>();
-  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
-  @Output() bufferChange = new EventEmitter<number>();
-  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
+  readonly zoneChange = output<Feature>();
+  readonly zoneWithBufferChange = output<Feature>();
+  readonly bufferChange = output<number>();
+  readonly measureUnitChange = output<MeasureLengthUnit>();
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
+
+  constructor() {
+    effect(() => {
+      this.queryType();
+      this.formControl.setValue('');
+    });
+    effect(() => {
+      const zone = this.zone();
+      if (!zone) {
+        this.zoneWithBuffer = undefined;
+        this.bufferFormControl.setValue(0);
+      }
+    });
+  }
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
       (value) => {
         if (value.length) {
-          this.store.view.filter((feature) => {
+          this.store().view.filter((feature) => {
             const filterNormalized = value
               .toLowerCase()
               .normalize('NFD')
@@ -142,7 +134,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
               this.selectedZone,
               SpatialFilterType.Predefined,
               value,
-              this.queryType
+              this.queryType()
             )
             .subscribe((featureGeom: Feature) => {
               this.zoneWithBuffer = featureGeom;
@@ -159,13 +151,13 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
               this.selectedZone,
               SpatialFilterType.Predefined,
               value * 1000,
-              this.queryType
+              this.queryType()
             )
             .subscribe((featureGeom: Feature) => {
               this.zoneWithBuffer = featureGeom;
               this.zoneWithBufferChange.emit(this.zoneWithBuffer);
             });
-        } else if (value === 0 && this.layers.length > 0) {
+        } else if (value === 0 && this.layers().length > 0) {
           this.bufferChange.emit(value);
           this.zoneWithBufferChange.emit(this.selectedZone);
         } else if (
@@ -193,7 +185,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   onZoneChange(feature) {
     if (feature && this.queryType) {
       this.spatialFilterService
-        .loadItemById(feature, this.queryType)
+        .loadItemById(feature, this.queryType())
         .subscribe((featureGeom: Feature) => {
           this.selectedZone = featureGeom;
           this.zoneChange.emit(featureGeom);

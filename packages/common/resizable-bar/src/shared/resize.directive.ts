@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
+import { Directive, HostListener, output } from '@angular/core';
 
 import { Subscription, fromEvent } from 'rxjs';
 
@@ -9,7 +9,7 @@ export class ResizeDirective {
   mouseMove$$: Subscription;
   mouseUp$$: Subscription;
 
-  @Output() change: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+  readonly change = output<MouseEvent>();
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {

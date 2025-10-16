@@ -1,14 +1,6 @@
 import { KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, OnInit, inject, model, output } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -68,44 +60,25 @@ import {
 })
 export class ContextPermissionsComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private cd = inject(ChangeDetectorRef);
   private http = inject(HttpClient);
   authService = inject(AuthService);
   private config = inject(ConfigService);
 
   public form: UntypedFormGroup;
 
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.cd.detectChanges();
-  }
-  private _context: Context;
-
-  @Input()
-  get permissions(): ContextPermissionsList {
-    return this._permissions;
-  }
-  set permissions(value: ContextPermissionsList) {
-    this._permissions = value;
-    this.cd.detectChanges();
-  }
-  private _permissions: ContextPermissionsList;
+  readonly context = model<Context>();
+  readonly permissions = model<ContextPermissionsList>();
 
   get profils(): ContextProfils[] {
     return this._profils;
   }
   set profils(value: ContextProfils[]) {
     this._profils = value;
-    this.cd.detectChanges();
   }
   private _profils: ContextProfils[] = [];
 
   get canWrite(): boolean {
-    return this.context.permission === TypePermission[TypePermission.write];
+    return this.context().permission === TypePermission[TypePermission.write];
   }
 
   private baseUrlProfils;
@@ -113,9 +86,9 @@ export class ContextPermissionsComponent implements OnInit {
   public formControl = new UntypedFormControl();
   formValueChanges$$: Subscription;
 
-  @Output() addPermission = new EventEmitter<ContextPermission>();
-  @Output() removePermission = new EventEmitter<ContextPermission>();
-  @Output() scopeChanged = new EventEmitter<Context>();
+  readonly addPermission = output<ContextPermission>();
+  readonly removePermission = output<ContextPermission>();
+  readonly scopeChanged = output<Context>();
 
   ngOnInit(): void {
     this.buildForm();

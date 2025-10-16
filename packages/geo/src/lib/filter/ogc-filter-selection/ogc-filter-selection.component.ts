@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
   ViewChild,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import {
   FormsModule,
@@ -89,15 +91,15 @@ export class OgcFilterSelectionComponent implements OnInit {
   @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger })
   matAutocomplete: MatAutocompleteTrigger;
 
-  @Input() refreshFilters: () => void;
+  readonly refreshFilters = input<() => void>(undefined);
 
-  @Input() datasource: OgcFilterableDataSource;
+  readonly datasource = input<OgcFilterableDataSource>(undefined);
 
-  @Input() map: MapBase;
+  readonly map = input<MapBase>(undefined);
 
-  @Input() checkboxesIndex = 5;
-  @Input() radioButtonsIndex = 5;
-  @Input() baseIndex = 5;
+  checkboxesIndex = model<number>(5);
+  radioButtonsIndex = model<number>(5);
+  baseIndex = model<number>(5);
 
   @Input()
   get currentFilter(): any {
@@ -127,20 +129,21 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   get ogcFiltersSelectors() {
     const ogcSelector = [];
-    if (this.datasource?.options?.ogcFilters?.pushButtons) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.pushButtons);
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.pushButtons) {
+      ogcSelector.push(datasource?.options?.ogcFilters?.pushButtons);
     }
-    if (this.datasource?.options?.ogcFilters?.checkboxes) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.checkboxes);
+    if (datasource?.options?.ogcFilters?.checkboxes) {
+      ogcSelector.push(datasource?.options?.ogcFilters?.checkboxes);
     }
-    if (this.datasource?.options?.ogcFilters?.radioButtons) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.radioButtons);
+    if (datasource?.options?.ogcFilters?.radioButtons) {
+      ogcSelector.push(datasource?.options?.ogcFilters?.radioButtons);
     }
-    if (this.datasource?.options?.ogcFilters?.select) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.select);
+    if (datasource?.options?.ogcFilters?.select) {
+      ogcSelector.push(datasource?.options?.ogcFilters?.select);
     }
-    if (this.datasource?.options?.ogcFilters?.autocomplete) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.autocomplete);
+    if (datasource?.options?.ogcFilters?.autocomplete) {
+      ogcSelector.push(datasource?.options?.ogcFilters?.autocomplete);
     }
     ogcSelector.sort((a, b) => {
       if (a.order < b.order) {
@@ -281,68 +284,74 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   getPushButtonsGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.pushButtons) {
-      return this.datasource.options.ogcFilters.pushButtons.groups;
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.pushButtons) {
+      return datasource.options.ogcFilters.pushButtons.groups;
     }
   }
 
   getCheckboxesGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.checkboxes) {
-      return this.datasource.options.ogcFilters.checkboxes.groups;
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.checkboxes) {
+      return datasource.options.ogcFilters.checkboxes.groups;
     }
   }
 
   getRadioButtonsGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.radioButtons) {
-      return this.datasource.options.ogcFilters.radioButtons.groups;
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.radioButtons) {
+      return datasource.options.ogcFilters.radioButtons.groups;
     }
   }
 
   getSelectGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.select) {
-      return this.datasource.options.ogcFilters.select.groups;
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.select) {
+      return datasource.options.ogcFilters.select.groups;
     }
   }
 
   getAutocompleteGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.autocomplete) {
-      return this.datasource.options.ogcFilters.autocomplete.groups;
+    const datasource = this.datasource();
+    if (datasource?.options?.ogcFilters?.autocomplete) {
+      return datasource.options.ogcFilters.autocomplete.groups;
     }
   }
 
   async ngOnInit() {
-    if (this.datasource.options.ogcFilters) {
-      if (this.datasource.options.ogcFilters.pushButtons) {
+    const datasource = this.datasource();
+    if (datasource.options.ogcFilters) {
+      if (datasource.options.ogcFilters.pushButtons) {
         this.currentPushButtonsGroup =
-          this.datasource.options.ogcFilters.pushButtons.groups.find(
+          datasource.options.ogcFilters.pushButtons.groups.find(
             (group) => group.enabled
-          ) || this.datasource.options.ogcFilters.pushButtons.groups[0];
+          ) || datasource.options.ogcFilters.pushButtons.groups[0];
       }
-      if (this.datasource.options.ogcFilters.checkboxes) {
+      if (datasource.options.ogcFilters.checkboxes) {
         this.currentCheckboxesGroup =
-          this.datasource.options.ogcFilters.checkboxes.groups.find(
+          datasource.options.ogcFilters.checkboxes.groups.find(
             (group) => group.enabled
-          ) || this.datasource.options.ogcFilters.checkboxes.groups[0];
+          ) || datasource.options.ogcFilters.checkboxes.groups[0];
       }
-      if (this.datasource.options.ogcFilters.radioButtons) {
+      if (datasource.options.ogcFilters.radioButtons) {
         this.currentRadioButtonsGroup =
-          this.datasource.options.ogcFilters.radioButtons.groups.find(
+          datasource.options.ogcFilters.radioButtons.groups.find(
             (group) => group.enabled
-          ) || this.datasource.options.ogcFilters.radioButtons.groups[0];
+          ) || datasource.options.ogcFilters.radioButtons.groups[0];
       }
-      if (this.datasource.options.ogcFilters.select) {
+      if (datasource.options.ogcFilters.select) {
         this.currentSelectGroup =
-          this.datasource.options.ogcFilters.select.groups.find(
+          datasource.options.ogcFilters.select.groups.find(
             (group) => group.enabled
-          ) || this.datasource.options.ogcFilters.select.groups[0];
+          ) || datasource.options.ogcFilters.select.groups[0];
         this.initSelectEnabled();
         await this.getSelectDomValues();
       }
-      if (this.datasource.options.ogcFilters.autocomplete) {
+      if (datasource.options.ogcFilters.autocomplete) {
         this.currentAutocompleteGroup =
-          this.datasource.options.ogcFilters.autocomplete.groups.find(
+          datasource.options.ogcFilters.autocomplete.groups.find(
             (group) => group.enabled
-          ) || this.datasource.options.ogcFilters.autocomplete.groups[0];
+          ) || datasource.options.ogcFilters.autocomplete.groups[0];
         this.initAutocompleteEnableds();
         await this.getAutocompleteDomValues();
       }
@@ -462,7 +471,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   async getSelectDomValues() {
-    for (const bundle of this.datasource.options.ogcFilters.select.bundles) {
+    for (const bundle of this.datasource().options.ogcFilters.select.bundles) {
       if (bundle.domSelectors) {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
@@ -539,7 +548,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   async getAutocompleteDomValues() {
-    for (const bundle of this.datasource.options.ogcFilters.autocomplete
+    for (const bundle of this.datasource().options.ogcFilters.autocomplete
       .bundles) {
       if (bundle.domSelectors) {
         let domValues: DOMValue[];
@@ -786,10 +795,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         });
       }
     }
+    const datasource = this.datasource();
     if (this.isTemporalOperator() && this._currentFilter.active) {
-      conditions.push(
-        this.datasource.options.ogcFilters.interfaceOgcFilters[0]
-      );
+      conditions.push(datasource.options.ogcFilters.interfaceOgcFilters[0]);
     }
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter.buildFilter(
@@ -798,44 +806,49 @@ export class OgcFilterSelectionComponent implements OnInit {
           : ({ logical: 'And', filters: conditions } as IgoOgcFilterObject)
       );
     }
-    if (this.datasource.options.type === 'wms') {
+    if (datasource.options.type === 'wms') {
       this.ogcFilterService.filterByOgc(
-        this.datasource as WMSDataSource,
+        datasource as WMSDataSource,
         filterQueryString
       );
     }
-    if (this.datasource.options.type === 'wfs') {
+    if (datasource.options.type === 'wfs') {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
-      this.datasource.ol.refresh();
+      datasource.ol.refresh();
     }
-    this.datasource.setOgcFilters(this.datasource.options.ogcFilters, true);
+    datasource.setOgcFilters(datasource.options.ogcFilters, true);
   }
 
   isMoreResults(bundle, type) {
     const selectorsLength = bundle.selectors.length;
     const index =
-      type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
+      type === 'radio' ? this.radioButtonsIndex() : this.checkboxesIndex();
     return selectorsLength > index;
   }
 
   displayMoreResults(type) {
-    type === 'radio'
-      ? (this.radioButtonsIndex += 5)
-      : (this.checkboxesIndex += 5);
+    if (type === 'radio') {
+      this.radioButtonsIndex.set(this.radioButtonsIndex() + 5);
+    } else {
+      this.checkboxesIndex.set(this.checkboxesIndex() + 5);
+    }
     return;
   }
 
   isLessResults(bundle, type) {
     const selectorsLength = bundle.selectors.length;
     const index =
-      type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
-    return this.baseIndex !== index && selectorsLength > this.baseIndex;
+      type === 'radio' ? this.radioButtonsIndex() : this.checkboxesIndex();
+    const baseIndex = this.baseIndex();
+    return baseIndex !== index && selectorsLength > baseIndex;
   }
 
   displayLessResults(type) {
-    type === 'radio'
-      ? (this.radioButtonsIndex = this.baseIndex)
-      : (this.checkboxesIndex = this.baseIndex);
+    if (type === 'radio') {
+      this.radioButtonsIndex.set(this.baseIndex());
+    } else {
+      this.checkboxesIndex.set(this.baseIndex());
+    }
     return;
   }
 
@@ -849,7 +862,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   changeProperty(value: any, pos?: number, refreshFilter = true) {
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
-      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+      this.datasource().options.ogcFilters.interfaceOgcFilters.find(
         (filter) => filter.filterid === this.currentFilter.filterid
       )[detectedProperty] = value;
 

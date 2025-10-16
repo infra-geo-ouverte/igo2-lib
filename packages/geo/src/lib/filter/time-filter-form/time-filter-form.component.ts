@@ -1,11 +1,12 @@
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
-  ViewChild,
-  inject
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -82,57 +83,57 @@ export class TimeFilterFormComponent implements OnInit {
   public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
-  @Input() layer: Layer;
-
-  @Input() options: TimeFilterOptions;
-
-  @Input()
-  set currentValue(value: string) {
-    if (value) {
-      if (this.type !== TimeFilterType.YEAR) {
-        const valueArray = value.split('/');
-        if (valueArray.length > 0) {
-          const startDate = new Date(valueArray[0]);
-          const endDate = new Date(valueArray[1]);
-          if (!isNaN(startDate.valueOf())) {
-            this.startDate = startDate;
-          }
-          if (!isNaN(endDate.valueOf())) {
-            this.endDate = endDate;
-          }
-        }
-      }
+  readonly enabled = signal(false);
+  readonly layer = input<Layer>(undefined);
+  readonly options = input<TimeFilterOptions>(undefined);
+  readonly currentValue = input<string>(undefined);
+  readonly rangeDate = computed(() => {
+    const value = this.currentValue();
+    if (!value || this.type !== TimeFilterType.YEAR) {
+      return;
     }
-  }
 
-  @Output() dateChange = new EventEmitter<Date | [Date, Date]>();
+    const valueArray = value.split('/');
+    if (valueArray.length > 0) {
+      const startDate = new Date(valueArray[0]);
+      const endDate = new Date(valueArray[1]);
+      if (!isNaN(startDate.valueOf())) {
+        this.startDate = startDate;
+      }
+      if (!isNaN(endDate.valueOf())) {
+        this.endDate = endDate;
+      }
+      return [this.startDate, this.endDate];
+    }
+  });
 
-  @Output()
-  yearChange = new EventEmitter<string | [string, string]>();
-  @ViewChild(MatSlider) mySlider;
+  readonly dateChange = output<Date | [Date, Date]>();
+
+  readonly yearChange = output<string | [string, string]>();
+  readonly mySlider = viewChild(MatSlider);
 
   get type(): TimeFilterType {
-    return this.options.type === undefined
-      ? TimeFilterType.DATE
-      : this.options.type;
+    const options = this.options();
+    return options.type === undefined ? TimeFilterType.DATE : options.type;
   }
 
   get isRange(): boolean {
-    return this.options.range === undefined ||
-      this.options.style === TimeFilterStyle.SLIDER
+    const options = this.options();
+    return options.range === undefined ||
+      options.style === TimeFilterStyle.SLIDER
       ? false
-      : this.options.range;
+      : options.range;
   }
 
   get style(): TimeFilterStyle {
-    return this.options.style === undefined
-      ? TimeFilterStyle.SLIDER
-      : this.options.style;
+    const options = this.options();
+    return options.style === undefined ? TimeFilterStyle.SLIDER : options.style;
   }
 
   get step(): number {
     let step = 10800000;
-    if (this.options.step === undefined) {
+    const options = this.options();
+    if (options.step === undefined) {
       switch (this.type) {
         case TimeFilterType.DATE:
         case TimeFilterType.DATETIME:
@@ -148,23 +149,23 @@ export class TimeFilterFormComponent implements OnInit {
           step = 10800000;
       }
     } else {
-      step = this.getStepDefinition(this.options.step);
+      step = this.getStepDefinition(options.step);
     }
 
     return step;
   }
 
   get timeInterval(): number {
-    return this.options.timeInterval === undefined
-      ? 2000
-      : this.options.timeInterval;
+    const options = this.options();
+    return options.timeInterval === undefined ? 2000 : options.timeInterval;
   }
 
   get min(): Date {
-    if (this.options.min) {
-      const min = isTimeFrame(this.options.min)
-        ? new Date(parseDateOperation(this.options.min))
-        : new Date(this.options.min);
+    const options = this.options();
+    if (options.min) {
+      const min = isTimeFrame(options.min)
+        ? new Date(parseDateOperation(options.min))
+        : new Date(options.min);
       return new Date(min.getTime() + min.getTimezoneOffset() * 60000);
     } else {
       return undefined;
@@ -172,10 +173,11 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   get max(): Date {
-    if (this.options.max) {
-      const max = isTimeFrame(this.options.max)
-        ? new Date(parseDateOperation(this.options.max))
-        : new Date(this.options.max);
+    const options = this.options();
+    if (options.max) {
+      const max = isTimeFrame(options.max)
+        ? new Date(parseDateOperation(options.max))
+        : new Date(options.max);
 
       return new Date(max.getTime() + max.getTimezoneOffset() * 60000);
     } else {
@@ -184,7 +186,8 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   get is(): boolean {
-    return this.options.range === undefined ? false : this.options.range;
+    const options = this.options();
+    return options.range === undefined ? false : options.range;
   }
 
   get allYearsInterval(): string[] {
@@ -200,6 +203,9 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.enabled.set(
+      this.options().enabled === undefined ? true : this.options().enabled
+    );
     if (this.startDate === undefined) {
       this.startDate = new Date(this.min);
     }
@@ -223,9 +229,7 @@ export class TimeFilterFormComponent implements OnInit {
       this.setUpYearsInterval();
     }
 
-    this.options.enabled =
-      this.options.enabled === undefined ? true : this.options.enabled;
-    if (this.options.enabled) {
+    if (this.enabled()) {
       if (!this.isRange && this.style === 'slider' && this.type === 'year') {
         this.yearChange.emit(this.year);
       }
@@ -242,7 +246,7 @@ export class TimeFilterFormComponent implements OnInit {
       this.style === TimeFilterStyle.SLIDER &&
       this.type === TimeFilterType.YEAR
     ) {
-      this.options.value = this.year.toString();
+      this.options().value = this.year.toString();
     }
   }
 
@@ -319,14 +323,15 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   private getDateValue(): Date | [min: Date, max: Date] | undefined {
-    const olSource = this.layer.dataSource.ol as olSourceImageWMS;
+    const olSource = this.layer().dataSource.ol as olSourceImageWMS;
     const timeFromWms = olSource.getParams().TIME
       ? parseDateString(String(olSource.getParams().TIME))
       : undefined;
 
+    const options = this.options();
     const dateValue =
-      this.options.value && !timeFromWms
-        ? parseDateString(this.options.value)
+      options.value && !timeFromWms
+        ? parseDateString(options.value)
         : undefined;
 
     return timeFromWms ?? dateValue;
@@ -395,7 +400,7 @@ export class TimeFilterFormComponent implements OnInit {
 
   setSliderThumbLabel(label: string) {
     const thumbLabel = this.findThumbLabel(
-      this.mySlider._elementRef.nativeElement.childNodes
+      Array.of(this.mySlider()._elementRef.nativeElement.childNodes)
     );
     if (thumbLabel) {
       thumbLabel.textContent = label;
@@ -418,9 +423,9 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   toggleFilterState() {
-    this.options.enabled = !this.options.enabled;
+    this.enabled.update((enabled) => !enabled);
 
-    if (this.options.enabled) {
+    if (this.enabled()) {
       if (
         !this.isRange &&
         TimeFilterStyle.SLIDER &&
@@ -479,8 +484,8 @@ export class TimeFilterFormComponent implements OnInit {
 
   playYear() {
     if (
-      this.year + this.mySlider.step >
-      this.max.getFullYear() + this.mySlider.step
+      this.year + this.mySlider().step >
+      this.max.getFullYear() + this.mySlider().step
     ) {
       this.stopFilter();
       this.resetFilter();
@@ -491,10 +496,10 @@ export class TimeFilterFormComponent implements OnInit {
       this.playIcon = 'pause_circle';
       this.interval = setInterval(
         () => {
-          if (this.year + this.mySlider.step > this.max.getFullYear()) {
+          if (this.year + this.mySlider().step > this.max.getFullYear()) {
             this.stopFilter();
           } else {
-            this.year = this.year + this.mySlider.step;
+            this.year = this.year + this.mySlider().step;
           }
           this.yearChange.emit(this.year);
         },
@@ -525,7 +530,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   handleSliderValue(): number {
-    if (this.options.current === true || !this.min) {
+    if (this.options().current === true || !this.min) {
       const currentDate = new Date();
       this.date = this.getRoundedDate(currentDate);
     }

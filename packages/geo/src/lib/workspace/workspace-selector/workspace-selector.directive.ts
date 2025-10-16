@@ -1,11 +1,10 @@
 import {
   Directive,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 
 import {
@@ -48,20 +47,20 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Output() changeWorkspace = new EventEmitter<string>();
-  @Output() disableSwitch = new EventEmitter<boolean>();
-  @Output() relationLayers = new EventEmitter<ImageLayer[] | VectorLayer[]>();
-  @Output() rowsInMapExtentCheckCondition = new EventEmitter<boolean>();
+  readonly changeWorkspace = output<string>();
+  readonly disableSwitch = output<boolean>();
+  readonly relationLayers = output<ImageLayer[] | VectorLayer[]>();
+  readonly rowsInMapExtentCheckCondition = output<boolean>();
 
   get workspaceStore(): WorkspaceStore {
-    return this.component.store;
+    return this.component.store();
   }
 
   ngOnInit() {
-    this.layers$$ = this.map.layerController.all$
-      .pipe(debounceTime(50))
+    this.layers$$ = this.map()
+      .layerController.all$.pipe(debounceTime(50))
       .subscribe((layers) => this.onLayersChange(layers));
 
     this.workspaceStore?.activeWorkspace$.subscribe((ws: AnyWorkspace) => {
@@ -146,7 +145,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map
+        this.map()
       );
       return wfsWks;
     } else if (
@@ -158,7 +157,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map
+        this.map()
       );
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
         (layer.dataSource.options as QueryableDataSourceOptions).queryable =
@@ -175,7 +174,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const featureWks = this.featureWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map
+        this.map()
       );
       return featureWks;
     } else if (
@@ -184,7 +183,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const editionWks = this.editionWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map
+        this.map()
       );
       return editionWks;
     }

@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 
 import {
@@ -39,27 +39,27 @@ export class WidgetOutletComponent implements OnDestroy {
   /**
    * Widget
    */
-  @Input() widget: DynamicComponent<WidgetComponent>;
+  readonly widget = model<DynamicComponent<WidgetComponent>>(undefined);
 
   /**
    * Widget inputs
    */
-  @Input() inputs: Record<string, any>;
+  readonly inputs = input<Record<string, any>>(undefined);
 
   /**
    * Widget subscribers
    */
-  @Input() subscribers: Record<string, (event: any) => void> = {};
+  readonly subscribers = input<Record<string, (event: any) => void>>({});
 
   /**
    * Event emitted when the widget emits 'complete'
    */
-  @Output() complete = new EventEmitter<any>();
+  readonly complete = output<any>();
 
   /**
    * Event emitted when the widget emits 'cancel'
    */
-  @Output() cancel = new EventEmitter<any>();
+  readonly cancel = output<any>();
 
   /**
    * Destroy the current widget and all it's inner subscriptions
@@ -76,7 +76,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * @internal
    */
   getEffectiveSubscribers(): Record<string, (event: any) => void> {
-    const subscribers = Object.assign({}, this.subscribers);
+    const subscribers = Object.assign({}, this.subscribers());
 
     // Base subscribers
     Object.keys(this.baseSubscribers).forEach((key: string) => {
@@ -117,9 +117,10 @@ export class WidgetOutletComponent implements OnDestroy {
    * Destroy the current widget
    */
   private destroyWidget() {
-    if (this.widget !== undefined) {
-      this.widget.destroy();
+    const widget = this.widget();
+    if (widget !== undefined) {
+      widget.destroy();
     }
-    this.widget = undefined;
+    this.widget.set(undefined);
   }
 }

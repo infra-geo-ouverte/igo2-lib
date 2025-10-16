@@ -65,7 +65,7 @@
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="
-        searchTerm
+        searchTerm()
           ? ('igo.geo.layer.filterLowerLayer' | translate)
           : ('igo.geo.layer.lowerLayer' | translate)
       "
@@ -74,7 +74,7 @@
     >
       <mat-icon
         aria-hidden="false"
-        [matBadge]="searchTerm ? '!' : ''"
+        [matBadge]="searchTerm() ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="!isSelectionLowerable"
@@ -89,7 +89,7 @@
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="
-        searchTerm
+        searchTerm()
           ? ('igo.geo.layer.filterRaiseLayer' | translate)
           : ('igo.geo.layer.raiseLayer' | translate)
       "
@@ -98,7 +98,7 @@
     >
       <mat-icon
         aria-hidden="false"
-        [matBadge]="searchTerm ? '!' : ''"
+        [matBadge]="searchTerm() ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
         [matBadgeHidden]="!isSelectionRaisable"
@@ -107,7 +107,7 @@
       </mat-icon>
     </button>
 
-    @if (controller.selected.length === 1) {
+    @if (controller().selected.length === 1) {
       <button
         class="opacity-button"
         color="primary"
@@ -188,6 +188,6 @@
       </button>
     }
 
-    <ng-content></ng-content>
+    <ng-content />
   </div>
 </igo-panel>

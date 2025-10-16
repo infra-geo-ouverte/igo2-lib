@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  model
+} from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -22,7 +27,11 @@ import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
   ]
 })
 export class OgcFilterableListComponent {
-  @Input() layers: AnyLayer[];
+  readonly layers = model<AnyLayer[]>(undefined);
 
-  @Input() map: MapBase;
+  readonly map = input<MapBase>(undefined);
+
+  setLayers(layers: AnyLayer[]): void {
+    this.layers.set(layers);
+  }
 }

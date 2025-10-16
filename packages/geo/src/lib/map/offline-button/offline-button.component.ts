@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, input, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -23,22 +23,22 @@ import { IgoMap } from '../shared/map';
 export class OfflineButtonComponent implements OnInit {
   btnStyle = 'onlineStyle';
 
-  @Input() map: IgoMap;
-  @Input() color: string;
-  @Input() enabled = false;
+  readonly map = input<IgoMap>(undefined);
+  readonly color = input<string>(undefined);
+  enabled = model(false);
 
   ngOnInit(): void {
-    this.map.forcedOffline$.next(this.enabled);
+    this.map().forcedOffline$.next(this.enabled());
   }
 
   onClick() {
-    this.enabled = !this.enabled;
+    this.enabled.set(!this.enabled());
     this.handleButtonStyle();
-    this.map.forcedOffline$.next(this.enabled);
+    this.map().forcedOffline$.next(this.enabled());
   }
 
   private handleButtonStyle() {
-    if (this.enabled) {
+    if (this.enabled()) {
       this.btnStyle = 'offlineStyle';
     } else {
       this.btnStyle = 'onlineStyle';

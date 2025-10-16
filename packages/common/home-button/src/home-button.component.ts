@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -12,9 +12,10 @@ import { IgoLanguageModule } from '@igo2/core/language';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeButtonComponent {
-  @Output() unselectButton = new EventEmitter<any>();
+  readonly unselectButton = output();
 
   onUnselectButtonClick() {
+    // TODO: The 'emit' function requires a mandatory any argument
     this.unselectButton.emit();
   }
 }

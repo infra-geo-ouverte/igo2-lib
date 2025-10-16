@@ -1,48 +1,47 @@
 <div class="layer-legend-list-container">
-  @if ((layersInUi$ | async).length && allowShowAllLegends) {
+  @if ((layersInUi$ | async).length && allowShowAllLegends()) {
     <mat-slide-toggle
       tooltip-position="above"
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.layer.legend.showAll' | translate"
-      [checked]="showAllLegendsValue"
+      [checked]="showAllLegendsValue()"
       [labelPosition]="'before'"
       (change)="toggleShowAllLegends($event.checked)"
     >
       {{ 'igo.geo.layer.legend.showAll' | translate }}
     </mat-slide-toggle>
   }
-  @if ((layersInUi$ | async).length && allowShowAllLegends) {
-    <mat-divider></mat-divider>
+  @if ((layersInUi$ | async).length && allowShowAllLegends()) {
+    <mat-divider />
   }
   <igo-list [navigation]="false" [selection]="false">
     @for (layer of layers$ | async; track layer; let i = $index) {
-      @if (!(excludeBaseLayers && isLayerItem(layer) && layer.baseLayer)) {
+      @if (!(excludeBaseLayers() && isLayerItem(layer) && layer.baseLayer)) {
         <igo-layer-legend-item
           igoListItem
           [layer]="$any(layer)"
-          [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-        >
-        </igo-layer-legend-item>
+          [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
+        />
       }
     }
   </igo-list>
   @if (
-    !showAllLegendsValue &&
+    !showAllLegendsValue() &&
     (layersInUi$ | async).length &&
     (hasVisibleOrInRangeLayers$ | async) === false &&
     (hasVisibleAndNotInRangeLayers$ | async) === false &&
-    allowShowAllLegends
+    allowShowAllLegends()
   ) {
     <p class="layers-empty">
       {{ 'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate }}
     </p>
   }
   @if (
-    !showAllLegendsValue &&
+    !showAllLegendsValue() &&
     (layersInUi$ | async).length &&
     (hasVisibleOrInRangeLayers$ | async) === false &&
     (hasVisibleAndNotInRangeLayers$ | async) &&
-    allowShowAllLegends
+    allowShowAllLegends()
   ) {
     <p class="layers-empty">
       {{
@@ -55,7 +54,7 @@
     (layersInUi$ | async).length &&
     (hasVisibleOrInRangeLayers$ | async) === false &&
     (hasVisibleAndNotInRangeLayers$ | async) === false &&
-    !allowShowAllLegends
+    !allowShowAllLegends()
   ) {
     <p class="layers-empty">
       {{ 'igo.geo.layer.legend.noLayersVisible' | translate }}
@@ -65,7 +64,7 @@
     (layersInUi$ | async).length &&
     (hasVisibleOrInRangeLayers$ | async) === false &&
     (hasVisibleAndNotInRangeLayers$ | async) &&
-    !allowShowAllLegends
+    !allowShowAllLegends()
   ) {
     <p class="layers-empty">
       {{ 'igo.geo.layer.legend.noLayersVisibleButZoom' | translate }}
