@@ -2,10 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -95,38 +96,29 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   private mouseInsideAdd = false;
 
-  @Input() layer: SearchResult;
+  readonly layer = input<SearchResult>(undefined);
 
-  @Input() store: EntityStore<SearchResult>;
+  readonly store = input<EntityStore<SearchResult>>(undefined);
 
   /**
    * Whether the layer is already added to the map
    */
-  @Input() added: boolean;
+  readonly added = model<boolean>(undefined);
 
   /**
    * The map to add the search result layer to
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * show hide save search result in layer button
    */
-  @Input() saveSearchResultInLayer = false;
+  readonly saveSearchResultInLayer = input(false);
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
-
-  @Input() stores: FeatureStore<Feature>[] = [];
+  readonly stores = input<FeatureStore<Feature>[]>([]);
 
   get allLayers() {
-    return this.map.layerController.all.filter((layer) =>
+    return this.map().layerController.all.filter((layer) =>
       String(layer.id).includes('igo-search-layer')
     );
   }
@@ -143,15 +135,16 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         this.isMobile = true;
       }
     });
-    if (this.layer.meta.dataType === 'Layer') {
-      this.added = !!this.map.layerController.getBySourceId(
-        this.layer.data.sourceOptions.id
+    const layer = this.layer();
+    if (layer.meta.dataType === 'Layer') {
+      this.added.set(
+        !!this.map().layerController.getBySourceId(layer.data.sourceOptions.id)
       );
     }
-    this.layers$$ = this.map.layerController.all$.subscribe(() => {
+    this.layers$$ = this.map().layerController.all$.subscribe(() => {
       this.isVisible();
     });
-    this.resolution$$ = this.map.viewController.resolution$.subscribe(
+    this.resolution$$ = this.map().viewController.resolution$.subscribe(
       (value) => {
         this.isInResolutionsRange(value);
         this.isVisible();
@@ -191,7 +184,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
-          if (this.added) {
+          if (this.added()) {
             this.remove();
           } else {
             this.add(event);
@@ -200,7 +193,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         this.isPreview$.next(false);
         break;
       case 'mouseenter':
-        if (!this.isPreview$.value && !this.added) {
+        if (!this.isPreview$.value && !this.added()) {
           this.lastTimeoutRequest = setTimeout(() => {
             this.add(event);
             this.isPreview$.next(true);
@@ -222,15 +215,15 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   private add(event: Event) {
-    if (!this.added) {
-      this.added = true;
+    if (!this.added()) {
+      this.added.set(true);
       this.addLayerToMap(event);
     }
   }
 
   private remove() {
-    if (this.added) {
-      this.added = false;
+    if (this.added()) {
+      this.added.set(false);
       this.removeLayerFromMap();
       this.layersSubcriptions.map((s) => s.unsubscribe());
       this.layersSubcriptions = [];
@@ -241,15 +234,16 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    * Emit added change event with added = true
    */
   private addLayerToMap(event?: Event) {
-    if (this.map === undefined) {
+    if (this.map() === undefined) {
       return;
     }
 
-    if (this.layer.meta.dataType !== LAYER) {
+    const layerValue = this.layer();
+    if (layerValue.meta.dataType !== LAYER) {
       return undefined;
     }
 
-    const layerOptions = (this.layer as SearchResult<LayerOptions>).data;
+    const layerOptions = (layerValue as SearchResult<LayerOptions>).data;
     if (layerOptions.sourceOptions.optionsFromApi === undefined) {
       layerOptions.sourceOptions.optionsFromApi = true;
     }
@@ -259,9 +253,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           return;
         }
         if (event.type === 'click') {
-          this.map.layersAddedByClick$.next([layer]);
+          this.map().layersAddedByClick$.next([layer]);
         }
-        this.map.layerController.add(layer);
+        this.map().layerController.add(layer);
       })
     );
   }
@@ -270,35 +264,38 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    * Emit added change event with added = false
    */
   private removeLayerFromMap() {
-    if (this.map === undefined) {
+    const map = this.map();
+    if (map === undefined) {
       return;
     }
 
-    if (this.layer.meta.dataType !== LAYER) {
+    const layerValue = this.layer();
+    if (layerValue.meta.dataType !== LAYER) {
       return undefined;
     }
 
-    const layer = this.map.layerController.getBySourceId(
-      this.layer.data.sourceOptions.id
+    const layer = map.layerController.getBySourceId(
+      layerValue.data.sourceOptions.id
     );
     if (!layer) {
       return;
     }
-    this.map.layerController.remove(layer);
+    map.layerController.remove(layer);
   }
 
   isInResolutionsRange(resolution: number) {
-    const minResolution = this.layer.data.minResolution || 0;
-    const maxResolution = this.layer.data.maxResolution || Infinity;
+    const minResolution = this.layer().data.minResolution || 0;
+    const maxResolution = this.layer().data.maxResolution || Infinity;
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );
   }
 
   isVisible() {
-    if (this.layer?.data?.sourceOptions?.id) {
-      const oLayer = this.map.layerController.getBySourceId(
-        this.layer.data.sourceOptions.id
+    const layer = this.layer();
+    if (layer?.data?.sourceOptions?.id) {
+      const oLayer = this.map().layerController.getBySourceId(
+        layer.data.sourceOptions.id
       );
 
       this.isVisible$.next(oLayer?.visible ?? false);
@@ -314,7 +311,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   computeTooltip(): string {
-    if (this.added) {
+    if (this.added()) {
       if (this.isPreview$.value) {
         return 'igo.geo.catalog.layer.addToMap';
       } else if (this.inRange$.value) {
@@ -332,11 +329,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   addFeatureToLayer() {
-    if (this.layer.meta.dataType !== 'Feature') {
+    const layer = this.layer();
+    if (layer.meta.dataType !== 'Feature') {
       return;
     }
 
-    const selectedFeature = this.layer;
+    const selectedFeature = layer;
     const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
       width: '700px',
       data: {
@@ -349,8 +347,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe((data: { layer: string | any; feature: SearchResult }) => {
         if (data) {
-          if (this.stores.length > 0) {
-            this.stores.map((store) => {
+          if (this.stores().length > 0) {
+            this.stores().map((store) => {
               store.state.updateAll({ selected: false });
               if (store?.layer) {
                 store.layer.visible = false;
@@ -362,7 +360,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           if (typeof data.layer === 'string') {
             this.createLayer(data.layer, data.feature);
           } else {
-            const activeStore = this.stores.find(
+            const activeStore = this.stores().find(
               (store) => store.layer.id === data.layer.id
             );
             activeStore.layer.visible = true;
@@ -375,7 +373,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   createLayer(layerTitle: string, selectedFeature: SearchResult) {
     const activeStore: FeatureStore<Feature> = new FeatureStore<Feature>([], {
-      map: this.map
+      map: this.map()
     });
 
     const styles = [
@@ -452,7 +450,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         tryAddSelectionStrategy(
           activeStore,
           new FeatureStoreSelectionStrategy({
-            map: this.map,
+            map: this.map(),
             motion: FeatureMotion.None,
             many: true
           })
@@ -468,7 +466,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         );
 
         this.addFeature(selectedFeature, activeStore);
-        this.stores.push(activeStore);
+        this.stores().push(activeStore);
       });
   }
 
@@ -495,7 +493,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     getTooltipsOfOlGeometry(olGeometry).forEach(
       (olTooltip: OlOverlay | undefined) => {
         if (olTooltip && olTooltip.getMap()) {
-          this.map.ol.removeOverlay(olTooltip);
+          this.map().ol.removeOverlay(olTooltip);
         }
       }
     );

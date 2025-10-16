@@ -3,13 +3,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ContentChild,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  contentChild,
+  inject,
+  input,
+  output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -84,32 +84,32 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   public collapsed: { sourceId: string }[] = [];
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Search results store
    */
-  @Input() store: EntityStore<SearchResult>;
+  readonly store = input<EntityStore<SearchResult>>(undefined);
 
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean;
+  readonly showIcons = input<boolean>(undefined);
 
   /**
    * Search results display mode
    */
-  @Input() mode: SearchResultMode = SearchResultMode.Grouped;
+  readonly mode = input<SearchResultMode>(SearchResultMode.Grouped);
 
   /**
    * Whether there should be a zoom button
    */
-  @Input() withZoomButton = false;
+  readonly withZoomButton = input(false);
 
   /**
    * To check if the view for tabsMode for search-result-tools
    */
-  @Input() tabsMode = false;
+  readonly tabsMode = input(false);
 
   /**
    * Search term
@@ -124,29 +124,29 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
   public _term: string;
 
-  @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
+  readonly settingsChange$ = input(new BehaviorSubject<boolean>(undefined));
 
-  @Input() termSplitter = '|';
+  readonly termSplitter = input('|');
 
   /**
    * Event emitted when a result is focused
    */
-  @Output() resultFocus = new EventEmitter<SearchResult>();
+  readonly resultFocus = output<SearchResult>();
 
   /**
    * Event emitted when a result is unfocused
    */
-  @Output() resultUnfocus = new EventEmitter<SearchResult>();
+  readonly resultUnfocus = output<SearchResult>();
 
   /**
    * Event emitted when a result is selected
    */
-  @Output() resultSelect = new EventEmitter<SearchResult>();
+  readonly resultSelect = output<SearchResult>();
 
   /**
    * Event emitted when a research is completed after displaying more results is clicked
    */
-  @Output() moreResults = new EventEmitter<{
+  readonly moreResults = output<{
     research: Research;
     results: SearchResult[];
   }>();
@@ -154,11 +154,12 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * Events emitted when a result is focus or unfocus by mouse event
    */
-  @Output() resultMouseenter = new EventEmitter<SearchResult>();
-  @Output() resultMouseleave = new EventEmitter<SearchResult>();
+  readonly resultMouseenter = output<SearchResult>();
+  readonly resultMouseleave = output<SearchResult>();
 
-  @ContentChild('igoSearchItemToolbar', /* TODO: add static flag */ {})
-  templateSearchToolbar: TemplateRef<any>;
+  readonly templateSearchToolbar = contentChild<TemplateRef<any>>(
+    'igoSearchItemToolbar'
+  );
 
   get results$(): Observable<
     { source: SearchSource; results: SearchResult[] }[]
@@ -177,9 +178,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
 
-    this.settingsChange$$ = this.settingsChange$.subscribe(() => {
+    this.settingsChange$$ = this.settingsChange$().subscribe(() => {
       this.pageIterator = [];
     });
 
@@ -224,12 +225,13 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultSelect(result: SearchResult) {
-    if (this.store.state.get(result)) {
-      if (this.store.state.get(result).selected === true) {
+    const store = this.store();
+    if (store.state.get(result)) {
+      if (store.state.get(result).selected === true) {
         return;
       }
     }
-    this.store.state.update(result, { focused: true, selected: true }, true);
+    store.state.update(result, { focused: true, selected: true }, true);
     this.resultSelect.emit(result);
   }
 
@@ -241,16 +243,18 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   private liftResults(): Observable<
     { source: SearchSource; results: SearchResult[] }[]
   > {
-    return this.store.stateView.all$().pipe(
-      debounce((results: { entity: SearchResult; state: EntityState }[]) => {
-        return results.length === 0 ? EMPTY : timer(200);
-      }),
-      map((results: { entity: SearchResult; state: EntityState }[]) => {
-        return this.groupResults(
-          results.map((r) => r.entity).sort(this.sortByOrder)
-        );
-      })
-    );
+    return this.store()
+      .stateView.all$()
+      .pipe(
+        debounce((results: { entity: SearchResult; state: EntityState }[]) => {
+          return results.length === 0 ? EMPTY : timer(200);
+        }),
+        map((results: { entity: SearchResult; state: EntityState }[]) => {
+          return this.groupResults(
+            results.map((r) => r.entity).sort(this.sortByOrder)
+          );
+        })
+      );
   }
 
   /**
@@ -290,7 +294,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   isMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
-    const stategy = this.store.getStrategyOfType(
+    const stategy = this.store().getStrategyOfType(
       EntityStoreFilterCustomFuncStrategy
     );
     const active = stategy?.active || false;
@@ -314,11 +318,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     };
 
     let terms;
-    if (
-      this.termSplitter &&
-      this.term.match(new RegExp(this.termSplitter, 'g'))
-    ) {
-      terms = this.term.split(this.termSplitter);
+    const termSplitter = this.termSplitter();
+    if (termSplitter && this.term.match(new RegExp(termSplitter, 'g'))) {
+      terms = this.term.split(termSplitter);
     } else {
       terms = [this.term];
     }

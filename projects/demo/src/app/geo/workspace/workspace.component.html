@@ -2,7 +2,7 @@
   <app-example-viewer codeFolder="geo/workspace">
     <igo-map-browser [map]="map" [view]="view" class="m-b-16">
       <div class="map-actions --vertical --bottom --right">
-        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        <igo-zoom-button [map]="map" color="primary" />
       </div>
     </igo-map-browser>
 
@@ -10,8 +10,7 @@
       igoWorkspaceSelector
       [store]="workspaceStore"
       [map]="map"
-    >
-    </igo-workspace-selector>
+    />
 
     @if (selectedWorkspace$ | async; as workspace) {
       @if ($any(workspace).inResolutionRange$ | async) {
@@ -20,8 +19,7 @@
           [paginatorOptions]="paginatorOptions"
           [entitySortChange$]="entitySortChange$"
           (paginatorChange)="paginatorChange($event)"
-        >
-        </igo-entity-table-paginator>
+        />
       }
     }
 
@@ -33,8 +31,7 @@
           [withToggleButton]="true"
           [withTitle]="true"
           [mode]="actionbarMode"
-        >
-        </igo-actionbar>
+        />
       }
       @if (
         workspace.entityStore &&
@@ -48,17 +45,14 @@
           [scrollBehavior]="scrollBehavior"
           [store]="workspace.entityStore"
           [template]="workspace.meta.tableTemplate"
-        >
-        </igo-entity-table>
+        />
       }
       @if (($any(workspace).inResolutionRange$ | async) === false) {
         <mat-card-content>
           No data available at this scale. Please zoom in.
         </mat-card-content>
       }
-      <igo-workspace-widget-outlet
-        [workspace]="workspace"
-      ></igo-workspace-widget-outlet>
+      <igo-workspace-widget-outlet [workspace]="workspace" />
     }
   </app-example-viewer>
 </app-doc-viewer>

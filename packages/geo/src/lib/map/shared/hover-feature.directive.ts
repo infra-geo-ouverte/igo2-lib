@@ -1,10 +1,10 @@
 import {
   Directive,
   HostListener,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
@@ -72,12 +72,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoHoverFeatureDelay = 1000;
+  readonly igoHoverFeatureDelay = input(1000);
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoHoverFeatureEnabled = false;
+  readonly igoHoverFeatureEnabled = input(false);
 
   @HostListener('mouseout')
   mouseout() {
@@ -90,11 +90,11 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   get mapProjection(): string {
-    return (this.component.map as IgoMap).projection;
+    return (this.component.map() as IgoMap).projection;
   }
 
   /**
@@ -286,7 +286,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   private onMapEvent(event: OlMapBrowserEvent<any>) {
     if (
       event.dragging ||
-      !this.igoHoverFeatureEnabled ||
+      !this.igoHoverFeatureEnabled() ||
       this.mediaService.isTouchScreen()
     ) {
       this.clearLayer();
@@ -429,7 +429,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           layerFilter: (olLayer) => olLayer === topMostOlLayer
         }
       );
-    }, this.igoHoverFeatureDelay);
+    }, this.igoHoverFeatureDelay());
   }
 
   canProcessHover(igoLayer: VectorLayer | VectorTileLayer): boolean {

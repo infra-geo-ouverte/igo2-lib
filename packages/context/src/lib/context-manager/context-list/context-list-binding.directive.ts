@@ -171,7 +171,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   onCreate(opts: { title: string; empty: boolean }) {
     const { title, empty } = opts;
     const context = this.contextService.getContextFromMap(
-      this.component.map,
+      this.component.map(),
       empty
     );
     context.title = title;
@@ -248,7 +248,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     this.selectedContext$$ = this.contextService.context$
       .pipe(debounceTime(100))
       .subscribe((context) => {
-        this.component.selectedContext = context;
+        this.component.setSelected(context);
         this.cdRef.markForCheck();
       });
 

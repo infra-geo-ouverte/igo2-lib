@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -30,13 +30,13 @@ export interface DialogData {
 export class DrawLayerPopupComponent {
   dialogRef = inject<MatDialogRef<DrawLayerPopupComponent>>(MatDialogRef);
 
-  @Input() confirmFlag = false;
+  readonly confirmFlag = model(false);
 
   cancelDrawing() {
     this.dialogRef.close();
   }
   confirm(labelString: string) {
-    this.confirmFlag = true;
+    this.confirmFlag.set(true);
     this.dialogRef.close(labelString);
   }
 }

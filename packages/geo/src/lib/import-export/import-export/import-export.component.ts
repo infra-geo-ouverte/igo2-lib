@@ -1,12 +1,12 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import {
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import {
   FormControl,
@@ -157,34 +157,27 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }[]
   >(undefined);
 
-  @Input() selectFirstProj = false;
+  readonly selectFirstProj = input(false);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Input() contextUri: string;
-
-  private _projectionsLimitations: ProjectionsLimitationsOptions = {};
-  @Input()
-  set projectionsLimitations(value: ProjectionsLimitationsOptions) {
-    this._projectionsLimitations = value;
-    this.computeProjections();
-  }
-  get projectionsLimitations(): ProjectionsLimitationsOptions {
-    return this._projectionsLimitations || {};
-  }
+  readonly contextUri = input<string>(undefined);
+  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>({});
 
   /**
    * Store that holds the available workspaces.
    */
-  @Input() store: WorkspaceStore;
+  readonly store = input<WorkspaceStore>(undefined);
 
-  @Input() selectedMode: SelectMode = 'import';
+  readonly selectedMode = model<SelectMode>('import');
 
-  @Output() selectMode = new EventEmitter<SelectMode>();
+  readonly selectMode = output<SelectMode>();
 
-  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
+  readonly exportOptions$ = input(
+    new BehaviorSubject<ExportOptions>(undefined)
+  );
 
-  @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
+  readonly exportOptionsChange = output<ExportOptions>();
 
   get layers() {
     return this.form.get('layers').value;
@@ -213,7 +206,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   constructor() {
     this.loadConfig();
     this.buildForm();
-    this.computeProjections();
     this.importHtmlClarifications = this.languageService.translate.instant(
       'igo.geo.importExportForm.importHtmlClarifications'
     );
@@ -223,7 +215,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.layers$$ = this.map.layerController.all$.subscribe((layers) => {
+    this.computeProjections();
+
+    this.layers$$ = this.map().layerController.all$.subscribe((layers) => {
       const exportableLayers = layers.filter((layer) => {
         if (isLayerGroup(layer)) {
           return false;
@@ -243,13 +237,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
-    this.exportOptions$$ = this.exportOptions$
+    this.exportOptions$$ = this.exportOptions$()
       .pipe(skipWhile((exportOptions) => !exportOptions))
       .subscribe((exportOptions) => {
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layers) {
           this.computeFormats(
-            exportOptions.layers.map((l) => this.map.layerController.getById(l))
+            exportOptions.layers.map((l) =>
+              this.map().layerController.getById(l)
+            )
           );
         }
       });
@@ -275,7 +271,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           layersId instanceof Array ? layersId : [layersId];
         this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
         const layers = selectedLayers.map((l) =>
-          this.map.layerController.getById(l)
+          this.map().layerController.getById(l)
         );
         this.computeFormats(layers);
 
@@ -328,7 +324,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       });
 
-    if (this.selectFirstProj) {
+    if (this.selectFirstProj()) {
       if (this.projections$.value.length === 0) {
         this.importForm.patchValue({
           inputProj: {
@@ -348,7 +344,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private computeProjections() {
     this.projectionsConstraints = computeProjectionsConstraints(
-      this.projectionsLimitations
+      this.projectionsLimitations()
     );
     const projections: InputProjections[] = [];
 
@@ -431,13 +427,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public getLayerTitleById(id): string {
-    return this.map.layerController.getById(id)?.title;
+    return this.map().layerController.getById(id)?.title;
   }
 
   layerHasSelectedFeatures(layer: Layer): boolean {
     const wksFromLayer = this.exportService.getWorkspaceByLayerId(
       layer.id,
-      this.store
+      this.store()
     );
     if (wksFromLayer) {
       const recs = wksFromLayer.entityStore.stateView.firstBy(
@@ -491,7 +487,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const previousSpecs = this.previousLayerSpecs$.value;
     if (previousSpecs && previousSpecs.length) {
       previousSpecs.forEach((specs) => {
-        const previousLayer = this.map.layerController.getById(specs.id);
+        const previousLayer = this.map().layerController.getById(specs.id);
         previousLayer.visible = specs.visible;
         previousLayer.opacity = specs.opacity;
         (previousLayer as any).queryable = specs.queryable;
@@ -554,7 +550,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     if (data.format === 'Excel') {
       try {
-        await this.exportService.exportExcel(this.map, this.store, data);
+        await this.exportService.exportExcel(this.map(), this.store(), data);
         this.loading$.next(false);
         return this.onFileExportSuccess();
       } catch (error) {
@@ -567,12 +563,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const layerId of data.layers) {
       this.loading$.next(true);
-      const layer = this.map.layerController.getById(layerId);
+      const layer = this.map().layerController.getById(layerId);
       if (isLayerGroup(layer)) {
         continue;
       }
       const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map, layer, data, this.store)
+        this.exportService.getFeatures(this.map(), layer, data, this.store())
       ).catch((error) => {
         this.onFileExportError(error);
         throw error;
@@ -696,7 +692,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     fileName: string
   ) {
     this.exportService
-      .export(features, options, fileName, this.map.projectionCode)
+      .export(features, options, fileName, this.map().projectionCode)
       .subscribe({
         error: (error: Error) => this.onFileExportError(error),
         complete: () => {
@@ -716,12 +712,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ): Promise<GeometryCollection[]> {
     return data.layers.reduce(async (typesPromise, layerId) => {
       const types = await typesPromise;
-      const layer = this.map.layerController.getById(layerId);
+      const layer = this.map().layerController.getById(layerId);
       if (isLayerGroup(layer)) {
         return typesPromise;
       }
       const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map, layer, data, this.store)
+        this.exportService.getFeatures(this.map(), layer, data, this.store())
       ).catch((error) => {
         this.onFileExportError(error);
         throw error;
@@ -875,8 +871,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       handleFileImportSuccess(
         file,
         features,
-        this.map,
-        this.contextUri,
+        this.map(),
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService
@@ -885,8 +881,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       handleFileImportSuccess(
         file,
         features,
-        this.map,
-        this.contextUri,
+        this.map(),
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService,
@@ -1094,6 +1090,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   onImportExportChange(event) {
-    this.selectedMode = event.value;
+    this.selectedMode.set(event.value);
   }
 }

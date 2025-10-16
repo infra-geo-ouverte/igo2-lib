@@ -10,7 +10,8 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -113,67 +114,67 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Action store
    */
-  @Input() store: ActionStore;
+  readonly store = input<ActionStore>(undefined);
 
   /**
    * Actionbar mode
    */
-  @Input() mode: ActionbarMode = ActionbarMode.Dock;
+  readonly mode = input<ActionbarMode>(ActionbarMode.Dock);
 
   /**
    * Whether a toggle button should be displayed (Dock mode)
    */
-  @Input() withToggleButton = false;
+  readonly withToggleButton = input(false);
 
   /**
    * Whether a the actionbar should display buttons horizontally
    */
-  @Input() horizontal = false;
+  readonly horizontal = input(false);
 
   /**
    * Color
    */
-  @Input() color = 'default';
+  readonly color = input('default');
 
   /**
    * Color of the button if action mode === overlay
    */
-  @Input() iconColor = 'default';
+  readonly iconColor = input('default');
 
   /**
    * Whether action titles are displayed
    */
-  @Input() withTitle = true;
+  readonly withTitle = input(true);
 
   /**
    * Whether action tooltips are displayed
    */
-  @Input() withTooltip = true;
+  readonly withTooltip = input(true);
 
   /**
    * Whether action titles are displayed (condition for scroll button)
    */
-  @Input() scrollActive = true;
+  readonly scrollActive = input(true);
 
   /**
    * Whether action icons are displayed
    */
-  @Input() withIcon = true;
+  readonly withIcon = input(true);
 
   /**
    * Which icon want to be shown
    */
-  @Input() icon = 'more_horiz';
+  readonly icon = input('more_horiz');
 
   /**
    * Overlay X position
    */
-  @Input() xPosition: MenuPositionX = 'before';
+  readonly xPosition = input<MenuPositionX>('before');
 
   /**
    * Overlay Y position
    */
-  @Input() yPosition: MenuPositionY = 'above';
+  readonly yPosition = input<MenuPositionY>('above');
 
   /**
    * Class to add to the actionbar overlay
@@ -194,7 +195,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.with-title')
   get withTitleClass() {
-    return this.withTitle;
+    return this.withTitle();
   }
 
   /**
@@ -202,7 +203,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.with-icon')
   get withIconClass() {
-    return this.withIcon;
+    return this.withIcon();
   }
 
   /**
@@ -210,12 +211,12 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.horizontal')
   get horizontalClass() {
-    return this.horizontal;
+    return this.horizontal();
   }
 
   get heightCondition(): boolean {
     const el = this.elRef.nativeElement;
-    if (this.scrollActive === false) {
+    if (this.scrollActive() === false) {
       if (el.clientHeight < el.scrollHeight) {
         return true;
       }
@@ -251,7 +252,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
       if (this.watcher !== undefined) {
         this.watcher.destroy();
       }
-      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+      this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
     }
   }
 

@@ -2,10 +2,10 @@ import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -83,17 +83,17 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed = false;
+  readonly addCatalogAllowed = input(false);
 
   /**
    * Determine if the export button is shown
    */
-  @Input() exportButton = false;
+  readonly exportButton = input(false);
 
   /**
    * List of predefined catalogs
    */
-  @Input() predefinedCatalogs: Catalog[] = [];
+  readonly predefinedCatalogs = input<Catalog[]>([]);
 
   set selectedCatalogId(id) {
     this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);

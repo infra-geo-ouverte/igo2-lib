@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -24,11 +24,11 @@ Button to center the map to the home extent
 export class HomeExtentButtonComponent {
   configService = inject(ConfigService);
 
-  @Input() map: IgoMap;
-  @Input() color: string;
-  @Input() extentOverride?: MapExtent;
-  @Input() centerOverride?: [number, number];
-  @Input() zoomOverride?: number;
+  readonly map = input<IgoMap>(undefined);
+  readonly color = input<string>(undefined);
+  readonly extentOverride = input<MapExtent>(undefined);
+  readonly centerOverride = input<[number, number]>(undefined);
+  readonly zoomOverride = input<number>(undefined);
 
   private homeExtentButtonExtent;
   private homeExtentButtonCenter;
@@ -43,14 +43,14 @@ export class HomeExtentButtonComponent {
       this.configService.getConfig('homeExtentButton');
 
     this.homeExtentButtonExtent =
-      this.extentOverride || homeExtentButtonOptions?.homeExtButtonExtent;
+      this.extentOverride() || homeExtentButtonOptions?.homeExtButtonExtent;
     this.homeExtentButtonCenter =
-      this.centerOverride || homeExtentButtonOptions?.homeExtButtonCenter;
+      this.centerOverride() || homeExtentButtonOptions?.homeExtButtonCenter;
     this.homeExtentButtonZoom =
-      this.zoomOverride || homeExtentButtonOptions?.homeExtButtonZoom;
+      this.zoomOverride() || homeExtentButtonOptions?.homeExtButtonZoom;
 
     // priority over extent if these 2 properties are defined;
-    if (this.centerOverride && this.zoomOverride) {
+    if (this.centerOverride() && this.zoomOverride()) {
       this.homeExtentButtonExtent = undefined;
     }
   }
@@ -58,14 +58,14 @@ export class HomeExtentButtonComponent {
   onToggleClick() {
     this.computeHomeExtent();
     if (this.homeExtentButtonExtent) {
-      this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
+      this.map().viewController.zoomToExtent(this.homeExtentButtonExtent);
     } else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {
       const center = olproj.fromLonLat(
         this.homeExtentButtonCenter,
-        this.map.viewController.olView.getProjection().getCode()
+        this.map().viewController.olView.getProjection().getCode()
       );
-      this.map.viewController.olView.setCenter(center);
-      this.map.viewController.zoomTo(this.homeExtentButtonZoom);
+      this.map().viewController.olView.setCenter(center);
+      this.map().viewController.zoomTo(this.homeExtentButtonZoom);
     }
   }
 }

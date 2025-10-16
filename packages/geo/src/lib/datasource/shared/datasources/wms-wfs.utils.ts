@@ -1,3 +1,5 @@
+import { TimeFrame } from '@igo2/utils';
+
 import { Extent } from 'ol/extent';
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
@@ -7,7 +9,6 @@ import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
 
 import {
-  TimeFrame,
   parseDateOperation,
   searchFilter
 } from '../../../filter/shared/filter.utils';

@@ -1,18 +1,14 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 
 import { getEntityRevision } from '@igo2/common/entity';
 import { Form, FormComponent } from '@igo2/common/form';
 import { uuid } from '@igo2/utils';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
@@ -29,32 +25,21 @@ import { Feature, FeatureMeta } from '../shared/feature.interfaces';
   templateUrl: './feature-form.component.html',
   styleUrls: ['./feature-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormComponent, AsyncPipe]
+  imports: [FormComponent]
 })
 export class FeatureFormComponent {
   /**
    * Form
    */
-  @Input() form: Form;
-
-  /**
-   * Feature to update
-   */
-  @Input()
-  set feature(value: Feature | undefined) {
-    this.feature$.next(value);
-  }
-  get feature(): Feature | undefined {
-    return this.feature$.value;
-  }
-  readonly feature$ = new BehaviorSubject<Feature>(undefined);
+  readonly form = input<Form>(undefined);
+  readonly feature = input<Feature | undefined>(undefined);
 
   /**
    * Event emitted when the form is submitted
    */
-  @Output() submitForm = new EventEmitter<Feature>();
+  readonly submitForm = output<Feature>();
 
-  @ViewChild('igoForm', { static: true }) igoForm: FormComponent;
+  readonly igoForm = viewChild<FormComponent>('igoForm');
 
   /**
    * Transform the form data to a feature and emit an event
@@ -67,7 +52,7 @@ export class FeatureFormComponent {
   }
 
   getData(): Feature {
-    return this.formDataToFeature(this.igoForm.getData());
+    return this.formDataToFeature(this.igoForm().getData());
   }
 
   /**
@@ -78,12 +63,13 @@ export class FeatureFormComponent {
   private formDataToFeature(data: Record<string, any>): Feature {
     const properties = {};
     const meta = {};
-    if (this.feature === undefined) {
+    const feature = this.feature();
+    if (feature === undefined) {
       (meta as any).id = uuid();
     } else {
-      Object.assign(properties, this.feature.properties);
-      Object.assign(meta, this.feature.meta, {
-        revision: getEntityRevision(this.feature) + 1
+      Object.assign(properties, feature.properties);
+      Object.assign(meta, feature.meta, {
+        revision: getEntityRevision(feature) + 1
       });
     }
 
@@ -97,8 +83,8 @@ export class FeatureFormComponent {
     });
 
     let geometry = data.geometry;
-    if (geometry === undefined && this.feature !== undefined) {
-      geometry = this.feature.geometry;
+    if (geometry === undefined && feature !== undefined) {
+      geometry = feature.geometry;
     }
 
     return {

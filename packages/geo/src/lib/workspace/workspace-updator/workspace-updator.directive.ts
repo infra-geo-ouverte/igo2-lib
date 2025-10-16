@@ -1,4 +1,4 @@
-import { Directive, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject, input } from '@angular/core';
 
 import { Workspace } from '@igo2/common/workspace';
 import type { WorkspaceStore } from '@igo2/common/workspace';
@@ -35,13 +35,13 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Input() workspaceStore: WorkspaceStore;
+  readonly workspaceStore = input<WorkspaceStore>(undefined);
 
   ngOnInit() {
-    this.layers$$ = this.map.layerController.all$
-      .pipe(debounceTime(50))
+    this.layers$$ = this.map()
+      .layerController.all$.pipe(debounceTime(50))
       .subscribe((layers) => this.onLayersChange(layers));
   }
 
@@ -60,7 +60,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))
       .filter((workspace: Workspace | undefined) => workspace !== undefined);
 
-    const workspacesToRemove = this.workspaceStore
+    const workspacesToRemove = this.workspaceStore()
       .all()
       .filter((workspace: Workspace) => {
         return editableLayersIds.indexOf(workspace.id) < 0;
@@ -73,22 +73,22 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
         );
         workspace.deactivate();
       });
-      this.workspaceStore.state.updateMany(workspacesToRemove, {
+      this.workspaceStore().state.updateMany(workspacesToRemove, {
         active: false,
         selected: false
       });
-      this.workspaceStore.deleteMany(workspacesToRemove);
+      this.workspaceStore().deleteMany(workspacesToRemove);
     }
 
     if (workspacesToAdd.length > 0) {
-      this.workspaceStore.insertMany(workspacesToAdd);
+      this.workspaceStore().insertMany(workspacesToAdd);
     }
   }
 
   private getOrCreateWorkspace(
     layer: VectorLayer | ImageLayer
   ): Workspace | undefined {
-    const workspace = this.workspaceStore.get(layer.id);
+    const workspace = this.workspaceStore().get(layer.id);
     if (workspace !== undefined) {
       return;
     }
@@ -98,7 +98,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map
+        this.map()
       );
       return wfsWks;
     } else if (
@@ -110,7 +110,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map
+        this.map()
       );
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
         if (
@@ -136,7 +136,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const featureWks = this.featureWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map
+        this.map()
       );
       return featureWks;
     } else if (
@@ -145,7 +145,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const editionWks = this.editionWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map
+        this.map()
       );
       return editionWks;
     }

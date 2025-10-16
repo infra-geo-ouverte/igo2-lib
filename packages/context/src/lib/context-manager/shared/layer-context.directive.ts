@@ -1,11 +1,10 @@
 import {
   Directive,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -55,12 +54,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: AnyLayer[] = [];
 
-  @Input() removeLayersOnContextChange: boolean = true;
+  readonly removeLayersOnContextChange = input<boolean>(true);
 
-  @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
+  readonly contextLayersLoaded = output<boolean>();
 
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   ngOnInit() {
@@ -97,7 +96,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       ObjectUtils.copyDeep(context)
     );
 
-    if (this.removeLayersOnContextChange === true) {
+    if (this.removeLayersOnContextChange() === true) {
       this.map.layerController.reset();
     } else {
       this.map.layerController.remove(...this.contextLayers);

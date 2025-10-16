@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ConfigService } from '@igo2/core/config';
@@ -22,7 +22,7 @@ import { ShareMapUrlComponent } from './share-map-url.component';
 export class ShareMapComponent {
   private config = inject(ConfigService);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   public hasApi = false;
 

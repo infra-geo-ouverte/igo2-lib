@@ -2,13 +2,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild,
   ViewContainerRef,
-  inject
+  inject,
+  input,
+  viewChild
 } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
@@ -30,17 +30,17 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**
    * The dynamic component base class or the dynamic component itself
    */
-  @Input() component: DynamicComponent<any> | any;
+  readonly component = input<DynamicComponent<any> | any>(undefined);
 
   /**
    * The dynamic component inputs
    */
-  @Input() inputs: Record<string, any> = {};
+  readonly inputs = input<Record<string, any>>({});
 
   /**
    * The subscribers to the dynamic component outputs
    */
-  @Input() subscribers: Record<string, (event: any) => void> = {};
+  readonly subscribers = input<Record<string, (event: any) => void>>({});
 
   /**
    * The dynamic component
@@ -51,8 +51,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * The view element to render the component to
    * @ignore
    */
-  @ViewChild('target', { read: ViewContainerRef, static: true })
-  private target: ViewContainerRef;
+  private readonly target = viewChild('target', { read: ViewContainerRef });
 
   /**
    * If the dynamic component changes, create it.
@@ -122,7 +121,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   private renderComponent() {
     this.updateInputs();
     this.updateSubscribers();
-    this.dynamicComponent.setTarget(this.target);
+    this.dynamicComponent.setTarget(this.target());
   }
 
   /**
@@ -131,7 +130,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * @internal
    */
   private updateInputs() {
-    this.dynamicComponent.updateInputs(this.inputs);
+    this.dynamicComponent.updateInputs(this.inputs());
   }
 
   /**
@@ -140,6 +139,6 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * @internal
    */
   private updateSubscribers() {
-    this.dynamicComponent.updateSubscribers(this.subscribers);
+    this.dynamicComponent.updateSubscribers(this.subscribers());
   }
 }

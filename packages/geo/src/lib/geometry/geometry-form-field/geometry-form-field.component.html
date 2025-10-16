@@ -9,8 +9,7 @@
   [controlOptions]="controlOptions"
   [drawStyle]="drawStyle"
   [overlayStyle]="overlayStyle"
->
-</igo-geometry-form-field-input>
+/>
 
 @if (geometryTypeField) {
   <div class="geometry-type-toggle">
@@ -48,7 +47,7 @@
       [placeholder]="drawGuidePlaceholder"
       [(ngModel)]="drawGuide"
     />
-    <mat-icon matPrefix [color]="'primary'">adjust </mat-icon>
+    <mat-icon matPrefix [color]="'primary'">adjust</mat-icon>
     <span matSuffix class="draw-guide-units">{{
       'igo.geo.measure.meters' | translate
     }}</span>

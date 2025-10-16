@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit
+  computed,
+  input
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,10 +13,9 @@ import { ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { Layer } from '../../layer';
 import { IgoMap } from '../../map/shared/map';
-import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
+import { TimeFilterItemComponent } from '../time-filter-item';
 
 @Component({
   selector: 'igo-time-filter-button',
@@ -33,39 +32,25 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
     IgoLanguageModule
   ]
 })
-export class TimeFilterButtonComponent implements OnInit {
-  public options: TimeFilterableDataSourceOptions;
+export class TimeFilterButtonComponent {
+  readonly layer = input<Layer>(undefined);
+  readonly options = computed<TimeFilterableDataSourceOptions>(
+    () => this.layer()?.dataSource.options as TimeFilterableDataSourceOptions
+  );
+  readonly map = input<IgoMap>(undefined);
+
+  readonly color = input('primary');
+
+  readonly header = input(true);
+
+  public timeFilterCollapse = false;
 
   get badge() {
-    const filter = this.options.timeFilter as any;
-    if (filter && filter.enabled) {
+    const filter = this.options().timeFilter;
+    if (filter && filter.enabled && filter.value) {
       return 1;
     } else {
       return;
     }
-  }
-
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-    if (value) {
-      this.options = this.layer.dataSource.options as WMSDataSourceOptions;
-    }
-  }
-  private _layer: Layer;
-
-  @Input() map: IgoMap;
-
-  @Input() color = 'primary';
-
-  @Input() header = true;
-
-  public timeFilterCollapse = false;
-
-  ngOnInit() {
-    this.options = this.layer.dataSource.options as WMSDataSourceOptions;
   }
 }

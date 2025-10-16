@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, OutputEmitterRef } from '@angular/core';
 
 /**
  * This is the interface a widget component needs to implement. A widget
@@ -8,6 +8,6 @@ import { EventEmitter } from '@angular/core';
  * method. This method could, for example, trigger the change detection.
  */
 export interface WidgetComponent {
-  complete: EventEmitter<any>;
-  cancel: EventEmitter<any>;
+  complete: EventEmitter<any> | OutputEmitterRef<any>;
+  cancel: EventEmitter<any> | OutputEmitterRef<any>;
 }

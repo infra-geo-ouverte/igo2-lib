@@ -1,6 +1,6 @@
 <div cdkDropList class="stops-list" (cdkDropListDropped)="dropStop($event)">
   @for (
-    stop of stopsStore.view.all$() | async;
+    stop of stopsStore().view.all$() | async;
     track stop;
     let stopIndex = $index
   ) {
@@ -85,7 +85,7 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        @if ((stopsStore.count$ | async) > 2) {
+        @if ((stopsStore().count$ | async) > 2) {
           <button
             class="delete-button"
             mat-icon-button
@@ -103,8 +103,8 @@
     <button
       mat-icon-button
       [disabled]="
-        (stopsStore.count$ | async) !== (stopsFeatureStore.count$ | async) ||
-        stopIsDragged
+        (stopsStore().count$ | async) !==
+          (stopsFeatureStore().count$ | async) || stopIsDragged
       "
       [matTooltip]="'igo.geo.directions.input.addStop' | translate"
       color="primary"

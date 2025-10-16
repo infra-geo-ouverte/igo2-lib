@@ -5,28 +5,27 @@
     [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
     (click)="$event.stopPropagation()"
     (change)="toggleFilterState($event)"
-    [checked]="currentFilter.active"
-  >
-  </mat-checkbox>
+    [checked]="currentFilter().active"
+  />
 
   <mat-form-field
     [ngClass]="{
       logical:
-        activeFilters.indexOf(currentFilter) !== 0 &&
-        currentFilter.active === true,
+        activeFilters.indexOf(currentFilter()) !== 0 &&
+        currentFilter().active === true,
       logicalHidden:
-        activeFilters.indexOf(currentFilter) === 0 ||
-        currentFilter.active !== true
+        activeFilters.indexOf(currentFilter()) === 0 ||
+        currentFilter().active !== true
     }"
   >
     <mat-select
-      [disabled]="!currentFilter.active"
-      [value]="currentFilter.parentLogical"
+      [disabled]="!currentFilter().active"
+      [value]="currentFilter().parentLogical"
       tooltip-position="above"
       matTooltipShowDelay="500"
       [matTooltip]="
-        currentFilter.parentLogical
-          ? ('igo.geo.operators.tooltip.' + currentFilter.parentLogical
+        currentFilter().parentLogical
+          ? ('igo.geo.operators.tooltip.' + currentFilter().parentLogical
             | translate)
           : ''
       "
@@ -61,12 +60,12 @@
       class="field"
       (mouseenter)="inputClearable = 'selectField'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel"
+      [floatLabel]="floatLabel()"
     >
       <input
         matInput
         [placeholder]="'igo.geo.sourceFields.selectField' | translate"
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         [matAutocomplete]="autoCompleteField"
         [value]="(selectedField$ | async) ? (selectedField$ | async).alias : ''"
         tooltip-position="above"
@@ -94,15 +93,15 @@
         }
       </mat-autocomplete>
       @if (
-        currentFilter.propertyName &&
+        currentFilter().propertyName &&
         inputClearable === 'selectField' &&
-        currentFilter.active
+        currentFilter().active
       ) {
         <button
           matSuffix
           mat-icon-button
           aria-label="Clear"
-          [disabled]="!currentFilter.active"
+          [disabled]="!currentFilter().active"
           (click)="clearSelectedField()"
         >
           <mat-icon>close</mat-icon>
@@ -116,18 +115,19 @@
       operator: (currentFilterIsSpatial$ | async) === false,
       dualInput: (currentFilterIsSpatial$ | async)
     }"
-    [floatLabel]="floatLabel"
+    [floatLabel]="floatLabel()"
   >
     <mat-select
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="
-        currentFilter.operator
-          ? ('igo.geo.operators.tooltip.' + currentFilter.operator | translate)
+        currentFilter().operator
+          ? ('igo.geo.operators.tooltip.' + currentFilter().operator
+            | translate)
           : ('igo.geo.filter.selectOperator' | translate)
       "
-      [disabled]="!currentFilter.active"
-      [value]="currentFilter.operator"
+      [disabled]="!currentFilter().active"
+      [value]="currentFilter().operator"
       (selectionChange)="changeOperator($event.value)"
     >
       @for (
@@ -149,8 +149,8 @@
   @if (currentFilterIsSpatial$ | async) {
     <mat-form-field class="spatialSelector">
       <mat-select
-        [disabled]="!currentFilter.active"
-        [value]="currentFilter.igoSpatialSelector"
+        [disabled]="!currentFilter().active"
+        [value]="currentFilter().igoSpatialSelector"
         (selectionChange)="changeSpatialSelector($event.value)"
       >
         @for (
@@ -172,24 +172,24 @@
       class="singleInput"
       (mouseenter)="inputClearable = 'selectProperty'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel"
+      [floatLabel]="floatLabel()"
     >
       <input
         matInput
         [placeholder]="'igo.geo.filter.placeholder' | translate"
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         [matAutocomplete]="autoCompleteValues"
         [value]="
           detectProperty() === 'expression'
-            ? currentFilter.expression
-            : currentFilter.pattern
+            ? currentFilter().expression
+            : currentFilter().pattern
         "
         tooltip-position="above"
         matTooltipShowDelay="500"
         [matTooltip]="
           detectProperty() === 'expression'
-            ? currentFilter.expression || ''
-            : currentFilter.pattern || ''
+            ? currentFilter().expression || ''
+            : currentFilter().pattern || ''
         "
         (input)="updateValuesList($any($event.target).value)"
       />
@@ -210,13 +210,13 @@
       @if (
         isClearable() &&
         inputClearable === 'selectProperty' &&
-        currentFilter.active
+        currentFilter().active
       ) {
         <button
           matSuffix
           mat-icon-button
           aria-label="Clear"
-          [disabled]="!currentFilter.active"
+          [disabled]="!currentFilter().active"
           (click)="clearProperty()"
         >
           <mat-icon>close</mat-icon>
@@ -241,34 +241,34 @@
 
   @if (
     (currentFilterIsSpatial$ | async) &&
-    currentFilter.igoSpatialSelector === 'snrc'
+    currentFilter().igoSpatialSelector === 'snrc'
   ) {
     <mat-form-field
       class="snrc"
       (mouseenter)="inputClearable = 'selectSNRC'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel"
+      [floatLabel]="floatLabel()"
     >
       <input
         matInput
         [placeholder]="'igo.geo.filter.placeholderSnrc' | translate"
-        [value]="currentFilter.igoSNRC"
+        [value]="currentFilter().igoSNRC"
         tooltip-position="above"
         matTooltipShowDelay="500"
-        [matTooltip]="currentFilter.igoSNRC ? currentFilter.igoSNRC : ''"
+        [matTooltip]="currentFilter().igoSNRC ? currentFilter().igoSNRC : ''"
         (input)="changeSNRC($any($event.target).value)"
       />
-      @if (currentFilter.igoSNRC) {
+      @if (currentFilter().igoSNRC) {
         <button
           matSuffix
           mat-icon-button
           aria-label="Clear"
           [disabled]="
-            !currentFilter.active &&
+            !currentFilter().active &&
             inputClearable === 'selectSNRC' &&
-            currentFilter.active
+            currentFilter().active
           "
-          (click)="currentFilter.igoSNRC = ''"
+          (click)="clearSNRC()"
         >
           <mat-icon>close</mat-icon>
         </button>
@@ -278,14 +278,14 @@
 
   @if (
     (currentFilterIsSpatial$ | async) &&
-    currentFilter.igoSpatialSelector === 'fixedExtent'
+    currentFilter().igoSpatialSelector === 'fixedExtent'
   ) {
-    @if (currentFilter.igoSpatialSelector === 'fixedExtent') {
+    @if (currentFilter().igoSpatialSelector === 'fixedExtent') {
       <button
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         matSuffix
         mat-icon-button
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         (click)="changeMapExtentGeometry()"
         tooltip-position="below"
         matTooltipShowDelay="500"
@@ -306,18 +306,18 @@
       class="dualInput"
       (mouseenter)="inputClearable = 'selectProperty1'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel"
+      [floatLabel]="floatLabel()"
     >
       <input
         matInput
         [placeholder]="'igo.geo.filter.placeholder' | translate"
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         [matAutocomplete]="autoDualValueOperator1"
         type="number"
         [value]="
           detectProperty(1) === 'lowerBoundary'
-            ? currentFilter.lowerBoundary
-            : currentFilter.begin
+            ? currentFilter().lowerBoundary
+            : currentFilter().begin
         "
         (input)="updateValuesList($any($event.target).value, 1)"
       />
@@ -338,13 +338,13 @@
       @if (
         isClearable(1) &&
         inputClearable === 'selectProperty1' &&
-        currentFilter.active
+        currentFilter().active
       ) {
         <button
           matSuffix
           mat-icon-button
           aria-label="Clear"
-          [disabled]="!currentFilter.active"
+          [disabled]="!currentFilter().active"
           (click)="clearProperty(1)"
         >
           <mat-icon>close</mat-icon>
@@ -361,18 +361,18 @@
       class="dualInput"
       (mouseenter)="inputClearable = 'selectProperty2'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel"
+      [floatLabel]="floatLabel()"
     >
       <input
         matInput
         [placeholder]="'igo.geo.filter.placeholder' | translate"
-        [disabled]="!currentFilter.active"
+        [disabled]="!currentFilter().active"
         [matAutocomplete]="autoDualValueOperator2"
         type="number"
         [value]="
           detectProperty(2) === 'upperBoundary'
-            ? currentFilter.upperBoundary
-            : currentFilter.end
+            ? currentFilter().upperBoundary
+            : currentFilter().end
         "
         (input)="updateValuesList($any($event.target).value, 2)"
       />
@@ -393,13 +393,13 @@
       @if (
         isClearable(2) &&
         inputClearable === 'selectProperty2' &&
-        currentFilter.active
+        currentFilter().active
       ) {
         <button
           matSuffix
           mat-icon-button
           aria-label="Clear"
-          [disabled]="!currentFilter.active"
+          [disabled]="!currentFilter().active"
           (click)="clearProperty(2)"
         >
           <mat-icon>close</mat-icon>
@@ -411,9 +411,8 @@
 
 @if (isTemporalOperator()) {
   <igo-ogc-filter-time
-    [datasource]="datasource"
-    [currentFilter]="currentFilter"
+    [datasource]="datasource()"
+    [currentFilter]="currentFilter()"
     (changeProperty)="changeProperty($event.value, $event.pos)"
-  >
-  </igo-ogc-filter-time>
+  />
 }

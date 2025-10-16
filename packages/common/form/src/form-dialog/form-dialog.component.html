@@ -9,10 +9,10 @@
     @if (form.fields.length) {
       <div class="form-dialog-container">
         @for (field of form.fields; track field) {
-          <igo-form-field [field]="field"></igo-form-field>
+          <igo-form-field [field]="field" />
         }
         @for (group of form.groups; track group) {
-          <igo-form-group [group]="group"></igo-form-group>
+          <igo-form-group [group]="group" />
         }
       </div>
     }
@@ -33,6 +33,6 @@
 }
 <div>
   @if (data.notice && data.notice !== '') {
-    <igo-custom-html [html]="data.notice"> </igo-custom-html>
+    <igo-custom-html [html]="data.notice" />
   }
 </div>

@@ -1,8 +1,8 @@
 <mat-tree
-  [class.--not-desktop]="!isDesktop"
+  [class.--not-desktop]="!isDesktop()"
   igoTreeDragDrop
-  [treeDragDropIsDisabled]="isDragDropDisabled"
-  [maxLevel]="viewerOptions?.group?.maxHierarchyLevel"
+  [treeDragDropIsDisabled]="isDragDropDisabled()"
+  [maxLevel]="viewerOptions()?.group?.maxHierarchyLevel"
   [dataSource]="dataSource"
   [treeControl]="treeControl"
   (dragStart)="dragStart()"
@@ -21,13 +21,12 @@
       class="tree-node-item"
       [layer]="node.data"
       [visible]="node.data.visible"
-      [viewerOptions]="viewerOptions"
+      [viewerOptions]="viewerOptions()"
       [selected]="isSelected(node.data) || isDescendantSelection(node.data)"
       [selectionDisabled]="isDescendantSelection(node.data)"
       (action)="toggleActive($event)"
       (selectChange)="handleSelect($event, node.data)"
-    >
-    </igo-layer-item>
+    />
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
   <mat-tree-node
@@ -40,7 +39,7 @@
       [matTreeNodePaddingIndent]="24"
       class="tree-node-item"
       [layer]="node.data"
-      [viewerOptions]="viewerOptions"
+      [viewerOptions]="viewerOptions()"
       [selected]="isSelected(node.data) || isDescendantSelection(node.data)"
       [selectionDisabled]="isDescendantSelection(node.data)"
       (action)="toggleActive($event)"

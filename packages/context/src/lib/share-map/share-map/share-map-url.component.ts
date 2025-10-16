@@ -2,10 +2,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,7 +47,7 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
 
   private mapState$$: Subscription;
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   public url: string;
   private publicShareOption: ShareOption = {
@@ -67,8 +67,8 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.generateUrl();
     this.mapState$$ = combineLatest([
-      this.map.viewController.state$,
-      this.map.status$
+      this.map().viewController.state$,
+      this.map().status$
     ]).subscribe(() => {
       this.generateUrl();
       this.cdRef.detectChanges();
@@ -81,7 +81,7 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
 
   generateUrl(): void {
     this.url = this.shareMapService.encoder.generateUrl(
-      this.map,
+      this.map(),
       this.contextService.context$.value,
       this.publicShareOption,
       this.language

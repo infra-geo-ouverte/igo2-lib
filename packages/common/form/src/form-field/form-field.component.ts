@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  inject
+  inject,
+  input
 } from '@angular/core';
 
 import { DynamicOutletComponent } from '@igo2/common/dynamic-component';
@@ -33,7 +33,7 @@ export class FormFieldComponent {
   /**
    * Field configuration
    */
-  @Input() field: FormField;
+  readonly field = input<FormField>(undefined);
 
   /**
    * Field inputs cache
@@ -46,11 +46,11 @@ export class FormFieldComponent {
   private fieldSubscribers: FormFieldSubscribers = undefined;
 
   get fieldOptions(): FormFieldOptions {
-    return this.field.options || {};
+    return this.field().options || {};
   }
 
   getFieldComponent(): any {
-    return this.formFieldService.getFieldByType(this.field.type || 'text');
+    return this.formFieldService.getFieldByType(this.field().type || 'text');
   }
 
   getFieldInputs(): FormFieldInputs {
@@ -61,12 +61,12 @@ export class FormFieldComponent {
     const errors = this.fieldOptions.errors || {};
     this.fieldInputs = Object.assign(
       {
-        placeholder: this.field.title,
+        placeholder: this.field().title,
         disableSwitch: this.fieldOptions.disableSwitch || false
       },
-      Object.assign({}, this.field.inputs || {}),
+      Object.assign({}, this.field().inputs || {}),
       {
-        formControl: this.field.control,
+        formControl: this.field().control,
         errors: Object.assign({}, getDefaultErrorMessages(), errors)
       }
     );
@@ -78,7 +78,7 @@ export class FormFieldComponent {
       return this.fieldSubscribers;
     }
 
-    this.fieldSubscribers = Object.assign({}, this.field.subscribers || {});
+    this.fieldSubscribers = Object.assign({}, this.field().subscribers || {});
     return this.fieldSubscribers;
   }
 }

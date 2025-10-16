@@ -23,7 +23,7 @@ export class SpatialFilterService {
   private languageService = inject(LanguageService);
   private configService = inject(ConfigService);
 
-  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
+  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi';
 
   /*
    * Type association with URL
@@ -37,9 +37,17 @@ export class SpatialFilterService {
     MRC: 'mrc',
     Mun: 'municipalites',
     RegTour: 'tourisme',
+    RSS: 'rss',
+    RLS: 'rls',
+    CLSC: 'clsc',
+    tours: 'tours',
     bornes: 'bornes-sumi',
     hydro: 'hydro',
-    routes: 'routes'
+    routes: 'routes',
+    matricule: 'matricules-fonciers',
+    aggloMun: 'agglomeration',
+    adresses: 'adresses',
+    unites: 'unites'
   };
 
   constructor() {
@@ -60,7 +68,7 @@ export class SpatialFilterService {
       return this.http
         .get<{
           features: Feature[];
-        }>(this.baseUrl + this.urlFilterList[urlPath])
+        }>(`${this.baseUrl}/${this.urlFilterList[urlPath]}`)
         .pipe(
           map((featureCollection) =>
             featureCollection.features.map((f) => {
@@ -80,7 +88,7 @@ export class SpatialFilterService {
   loadThematicsList() {
     const url = 'types';
     const items: SpatialFilterThematic[] = [];
-    return this.http.get(this.baseUrl + url).pipe(
+    return this.http.get(`${this.baseUrl}/${url}`).pipe(
       map((types: string[]) => {
         types.forEach((type) => {
           if (type.startsWith('lieux')) {
@@ -134,6 +142,15 @@ export class SpatialFilterService {
               }
               item.source = type;
 
+              if (name === this.urlFilterList.adresses) {
+                item.group = this.languageService.translate.instant(
+                  'igo.geo.spatialFilter.group.addresses'
+                );
+                item.name = this.languageService.translate.instant(
+                  'igo.geo.terrapi.address'
+                );
+              }
+
               items.push(item);
             }
           }
@@ -146,125 +163,19 @@ export class SpatialFilterService {
   /*
    * Loading data for spatial filter item component (Address or Thematics) depends on predefined zone or draw zone (feature)
    */
-  loadFilterItem(
-    feature,
+  loadFilterItems(
+    features: Feature[],
     itemType: SpatialFilterItemType,
-    type?: SpatialFilterQueryType,
-    thematic?: SpatialFilterThematic,
-    buffer?: number
+    options: {
+      type: SpatialFilterQueryType;
+      thematics: SpatialFilterThematic[];
+      buffer?: number;
+    }
   ) {
-    if (type) {
-      // Predefined type
-      const urlType = type as string;
-      const url = this.baseUrl + this.urlFilterList[urlType];
-      let urlItem = '';
-      if (itemType === SpatialFilterItemType.Address) {
-        urlItem = 'adresses';
-        return this.http
-          .get<{ features: Feature[] }>(
-            url + '/' + feature.properties.code + '/' + urlItem,
-            {
-              params: {
-                geometry: 'true',
-                icon: 'true',
-                bufferInput: buffer.toString(),
-                simplified: '100'
-              }
-            }
-          )
-          .pipe(
-            map((featureCollection) =>
-              featureCollection.features.map((f) => {
-                f.meta = {
-                  id: f.properties.code,
-                  title: this.languageService.translate.instant(
-                    'igo.geo.spatialFilter.Address'
-                  ),
-                  icon: (f as any).icon
-                };
-                return f;
-              })
-            )
-          );
-      } else {
-        // If thematics search
-        urlItem = thematic.source;
-        return this.http
-          .get<{ features: Feature[] }>(
-            url + '/' + feature.properties.code + '/' + urlItem,
-            {
-              params: {
-                geometry: 'true',
-                icon: 'true',
-                bufferInput: buffer.toString(),
-                simplified: '100'
-              }
-            }
-          )
-          .pipe(
-            map((featureCollection) =>
-              featureCollection.features.map((f) => {
-                f.meta = {
-                  id: f.properties.code,
-                  title: thematic.name,
-                  icon: (f as any).icon
-                };
-                return f;
-              })
-            )
-          );
-      }
+    if (options.type) {
+      return this.loadPredefinedFilterItems(features, itemType, options);
     } else {
-      // Draw type
-      const url = this.baseUrl + 'locate';
-      if (itemType === SpatialFilterItemType.Address) {
-        const urlItem = '?type=adresses';
-        return this.http
-          .post<{ features: Feature[] }>(url + urlItem, {
-            geometry: 'true',
-            icon: 'true',
-            loc: JSON.stringify(feature),
-            bufferInput: buffer.toString(),
-            simplified: '100'
-          })
-          .pipe(
-            map((featureCollection) =>
-              featureCollection.features.map((f) => {
-                f.meta = {
-                  id: f.properties.code,
-                  title: this.languageService.translate.instant(
-                    'igo.geo.spatialFilter.Address'
-                  ),
-                  icon: (f as any).icon
-                };
-                return f;
-              })
-            )
-          );
-      } else {
-        // If thematics search
-        const urlItem = '?type=' + thematic.source;
-        return this.http
-          .post<{ features: Feature[] }>(url + urlItem, {
-            geometry: 'true',
-            icon: 'true',
-            loc: JSON.stringify(feature),
-            bufferInput: buffer.toString(),
-            simplified: '100'
-          })
-          .pipe(
-            map((featureCollection) =>
-              featureCollection.features.map((f) => {
-                f.meta = {
-                  id: f.properties.code,
-                  title: thematic.name,
-                  icon: (f as any).icon
-                };
-                return f;
-              })
-            )
-          );
-      }
+      return this.loadDrawFilterItems(features[0], itemType, options);
     }
   }
 
@@ -276,10 +187,10 @@ export class SpatialFilterService {
     type: SpatialFilterQueryType
   ): Observable<Feature> {
     const featureType = this.urlFilterList[type];
-    const featureCode = '/' + feature.properties.code;
+    const featureCode = feature.properties.code;
     if (featureType && featureCode) {
       return this.http
-        .get<Feature>(this.baseUrl + featureType + featureCode, {
+        .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
           params: {
             geometry: 'true'
           }
@@ -308,10 +219,10 @@ export class SpatialFilterService {
   ): Observable<Feature> {
     if (filterType === SpatialFilterType.Predefined) {
       const featureType = this.urlFilterList[type];
-      const featureCode = '/' + feature.properties.code;
+      const featureCode = feature.properties.code;
       if (featureType && featureCode) {
         return this.http
-          .get<Feature>(this.baseUrl + featureType + featureCode, {
+          .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
             params: {
               geometry: '100',
               bufferOutput: buffer.toString()
@@ -330,7 +241,7 @@ export class SpatialFilterService {
       }
     } else {
       return this.http
-        .post<Feature>(this.baseUrl + 'geospatial/buffer?', {
+        .post<Feature>(`${this.baseUrl}/geospatial/buffer?`, {
           buffer,
           loc: JSON.stringify(feature)
         })
@@ -339,6 +250,148 @@ export class SpatialFilterService {
             return f;
           })
         );
+    }
+  }
+
+  private getHttpParams(buffer: number) {
+    return {
+      geometry: 'true',
+      icon: 'true',
+      bufferInput: buffer.toString(),
+      simplified: '100'
+    };
+  }
+
+  private doGet(url: string, buffer: number, mapFn: (f: Feature) => Feature) {
+    return this.http
+      .get<{ features: Feature[] }>(url, { params: this.getHttpParams(buffer) })
+      .pipe(map((fc) => fc.features.map(mapFn)));
+  }
+
+  private doPost(url: string, body: any, mapFn: (f: Feature) => Feature) {
+    return this.http
+      .post<{ features: Feature[] }>(url, body)
+      .pipe(map((fc) => fc.features.map(mapFn)));
+  }
+
+  private buildMetaForAddress(f: Feature): Feature {
+    f.meta = {
+      id: f.properties.code,
+      title: this.languageService.translate.instant(
+        'igo.geo.spatialFilter.Address'
+      ),
+      icon: (f as any).icon
+    };
+    return f;
+  }
+
+  private buildMetaForThematic(
+    f: Feature,
+    thematics: SpatialFilterThematic[]
+  ): Feature {
+    const { type, code } = f.properties;
+    const thematic = thematics.find((th) => th.source === type);
+    f.meta = {
+      id: code,
+      title: thematic?.name ?? type,
+      icon: (f as any).icon
+    };
+    return f;
+  }
+
+  private loadPredefinedFilterItems(
+    features: Feature[],
+    itemType: SpatialFilterItemType,
+    options: {
+      type: SpatialFilterQueryType;
+      thematics: SpatialFilterThematic[];
+      buffer?: number;
+    }
+  ) {
+    const { type, thematics, buffer = 0 } = options;
+    const codes = features.map((f) => f.properties.code).join(',');
+    const urlBase = `${this.baseUrl}/${this.urlFilterList[type as string]}`;
+    if (itemType === SpatialFilterItemType.Address) {
+      return this.doGet(`${urlBase}/${codes}/adresses`, buffer, (f) =>
+        this.buildMetaForAddress(f)
+      );
+    } else {
+      const sources = thematics.map((t) => t.source).join(',');
+      return this.doGet(`${urlBase}/${codes}/${sources}`, buffer, (f) =>
+        this.buildMetaForThematic(f, thematics)
+      );
+    }
+  }
+
+  private loadDrawFilterItems(
+    feature: Feature,
+    itemType: SpatialFilterItemType,
+    options: {
+      thematics?: SpatialFilterThematic[];
+      buffer?: number;
+    }
+  ) {
+    const { thematics = [], buffer = 0 } = options;
+    const loc = JSON.stringify(feature);
+    const urlBase = `${this.baseUrl}/locate`;
+    if (itemType === SpatialFilterItemType.Address) {
+      return this.doPost(
+        `${urlBase}?type=adresses`,
+        { ...this.getHttpParams(buffer), loc: loc },
+        (f) => this.buildMetaForAddress(f)
+      );
+    } else {
+      const sources = thematics.map((t) => t.source).join(',');
+      return this.doPost(
+        `${urlBase}?type=${sources}`,
+        { ...this.getHttpParams(buffer), loc: loc },
+        (f) => this.buildMetaForThematic(f, thematics)
+      );
+    }
+  }
+
+  loadBuffersGeometry(
+    features: Feature[],
+    options: {
+      filterType: SpatialFilterType;
+      buffer?: number;
+      type?: SpatialFilterQueryType;
+    }
+  ): Observable<Feature[]> {
+    const { filterType, buffer, type } = options;
+    if (filterType === SpatialFilterType.Predefined) {
+      const featureType = this.urlFilterList[type];
+      const featureCode =
+        'code=' + features.map((f) => f.properties.code).join(',');
+      if (featureType && featureCode) {
+        return this.http
+          .get<{ type: string; features: Feature[] }>(
+            `${this.baseUrl}/${featureType}?${featureCode}`,
+            {
+              params: {
+                geometry: '100',
+                bufferOutput: buffer.toString()
+              }
+            }
+          )
+          .pipe(
+            map((featureCollection) => {
+              return featureCollection.features.map((f) => {
+                f.meta = {
+                  id: f.properties.code,
+                  alias: f.properties.nom,
+                  title: f.properties.nom
+                };
+                return f;
+              });
+            })
+          );
+      }
+    } else {
+      return this.http.post<Feature[]>(`${this.baseUrl}/geospatial/buffer?`, {
+        buffer,
+        loc: JSON.stringify(features)
+      });
     }
   }
 }

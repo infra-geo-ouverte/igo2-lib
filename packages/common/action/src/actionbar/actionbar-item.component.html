@@ -1,44 +1,45 @@
-@if (!action.checkbox) {
+@if (!action().checkbox) {
   <mat-list-item
     class="actionbar-item"
     matTooltipClass="actionbarItemTooltip"
     matTooltipShowDelay="500"
-    [matTooltip]="withTooltip ? ((tooltip$ | async) || title | translate) : ''"
+    [matTooltip]="
+      withTooltip() ? ((tooltip$ | async) || title | translate) : ''
+    "
     [ngClass]="ngClass$ | async"
     (click)="onClick()"
   >
-    @if (withIcon) {
+    @if (withIcon()) {
       <button
         matListItemAvatar
         mat-icon-button
-        [color]="color"
+        [color]="color()"
         [disabled]="disabled$ | async"
         [disableRipple]="true"
       >
-        <igo-icon
-          [icon]="
-            isObservable(action.icon) ? (action.icon | async) : action.icon
-          "
-        ></igo-icon>
+        @let icon = action().icon;
+        <igo-icon [icon]="isObservable(icon) ? (icon | async) : icon" />
       </button>
     }
-    @if (withTitle) {
+    @if (withTitle()) {
       <span matLine>{{ title | translate }}</span>
     }
   </mat-list-item>
 }
 
-@if (action.checkbox) {
+@if (action().checkbox) {
   <mat-list-item
     class="item-checkbox"
     matTooltipClass="actionbarItemTooltip"
     matTooltipShowDelay="500"
-    [matTooltip]="withTooltip ? ((tooltip$ | async) || title | translate) : ''"
+    [matTooltip]="
+      withTooltip() ? ((tooltip$ | async) || title | translate) : ''
+    "
     [ngClass]="ngClass$ | async"
   >
-    @if (withTitle) {
+    @if (withTitle()) {
       <mat-checkbox
-        (change)="action.handler()"
+        (change)="action().handler()"
         [checked]="checkCondition$ | async"
       >
         {{ title | translate }}

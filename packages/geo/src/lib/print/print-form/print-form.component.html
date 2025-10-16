@@ -230,7 +230,7 @@
     <button
       matButton="elevated"
       type="button"
-      [disabled]="!form.valid || (disabled$ | async)"
+      [disabled]="!form.valid || (disabled$() | async)"
       (click)="handleFormSubmit(form.value, form.valid)"
     >
       {{ 'igo.geo.printForm.saveBtn' | translate }}

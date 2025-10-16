@@ -2,12 +2,13 @@ import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -97,9 +98,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  @Input() selectedContext: DetailedContext;
+  readonly selectedContext = model<DetailedContext>(undefined);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   @Input()
   get defaultContextId(): string {
@@ -115,22 +116,23 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   public collapsed: { contextScope }[] = [];
 
-  @Output() select = new EventEmitter<DetailedContext>();
-  @Output() unselect = new EventEmitter<DetailedContext>();
-  @Output() edit = new EventEmitter<DetailedContext>();
-  @Output() delete = new EventEmitter<DetailedContext>();
-  @Output() save = new EventEmitter<DetailedContext>();
-  @Output() clone = new EventEmitter<DetailedContext>();
-  @Output() create = new EventEmitter<{ title: string; empty: boolean }>();
-  @Output() hide = new EventEmitter<DetailedContext>();
-  @Output() show = new EventEmitter<DetailedContext>();
-  @Output() showHiddenContexts = new EventEmitter<boolean>();
-  @Output() favorite = new EventEmitter<DetailedContext>();
-  @Output() managePermissions = new EventEmitter<DetailedContext>();
-  @Output() manageTools = new EventEmitter<DetailedContext>();
-  @Output() filterPermissionsChanged = new EventEmitter<
-    ContextUserPermission[]
-  >();
+  readonly select = output<DetailedContext>();
+  readonly unselect = output<DetailedContext>();
+  readonly edit = output<DetailedContext>();
+  readonly delete = output<DetailedContext>();
+  readonly save = output<DetailedContext>();
+  readonly clone = output<DetailedContext>();
+  readonly create = output<{
+    title: string;
+    empty: boolean;
+  }>();
+  readonly hide = output<DetailedContext>();
+  readonly show = output<DetailedContext>();
+  readonly showHiddenContexts = output<boolean>();
+  readonly favorite = output<DetailedContext>();
+  readonly managePermissions = output<DetailedContext>();
+  readonly manageTools = output<DetailedContext>();
+  readonly filterPermissionsChanged = output<ContextUserPermission[]>();
 
   public titleMapping = {
     ours: 'igo.context.contextManager.ourContexts',
@@ -221,6 +223,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
         }
       }
     ]);
+  }
+
+  setSelected(context: DetailedContext) {
+    this.selectedContext.set(context);
   }
 
   private next() {

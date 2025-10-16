@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { Form, FormService } from '@igo2/common/form';
@@ -44,7 +44,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
   /**
    * Url to report the data issue. Use the Post protocol to send the form.
    */
-  @Input() url: string;
+  readonly url = input<string>(undefined);
 
   /**
    * Map to link to the form
@@ -183,21 +183,20 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
 
   onSubmit(data: DataIssueReporterData) {
     const submitTitle = 'igo.integration.dataIssueReporterTool.submit.title';
-    if (!this.url) {
+    const url = this.url();
+    if (!url) {
       this.messageService.alert(
         'igo.integration.dataIssueReporterTool.submit.setupMessage',
         submitTitle
       );
       alert(JSON.stringify(data));
     } else {
-      this.httpClient
-        .post<DataIssueReporterData>(this.url, data)
-        .subscribe(() => {
-          this.messageService.success(
-            'igo.integration.dataIssueReporterTool.submit.message',
-            submitTitle
-          );
-        });
+      this.httpClient.post<DataIssueReporterData>(url, data).subscribe(() => {
+        this.messageService.success(
+          'igo.integration.dataIssueReporterTool.submit.message',
+          submitTitle
+        );
+      });
       this.clearForm();
     }
   }

@@ -1,6 +1,6 @@
-<div [ngClass]="{ 'separate-item': header === true }">
+<div [ngClass]="{ 'separate-item': header() === true }">
   <mat-list-item>
-    @if (header) {
+    @if (header()) {
       <mat-icon
         class="igo-chevron"
         matListItemIcon
@@ -11,15 +11,15 @@
         >expand_less
       </mat-icon>
     }
-    @if (header) {
+    @if (header()) {
       <span
         matListItemTitle
         [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
-        [matTooltip]="layer.title"
+        [matTooltip]="layer().title"
         matTooltipShowDelay="500"
         (click)="toggleLegendOnClick()"
       >
-        {{ layer.title }}
+        {{ layer().title }}
       </span>
     }
     <div matListItemMeta>
@@ -36,23 +36,23 @@
           <mat-icon>add</mat-icon>
         </button>
       }
-      @if (header) {
+      @if (header()) {
         <button
           mat-icon-button
-          [color]="layer.visible ? 'primary' : 'default'"
+          [color]="layer().visible ? 'primary' : 'default'"
           collapsibleButton
           tooltip-position="below"
           matTooltipShowDelay="500"
           [matTooltip]="
-            layer.visible
+            layer().visible
               ? ('igo.geo.layer.hideLayer' | translate)
               : ('igo.geo.layer.showLayer' | translate)
           "
-          (click)="layer.visible = !layer.visible"
+          (click)="toggleLayerVisibility()"
         >
           <mat-icon
             [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-            >{{ layer.visible ? 'visibility' : 'visibility_off' }}
+            >{{ layer().visible ? 'visibility' : 'visibility_off' }}
           </mat-icon>
         </button>
       }
@@ -60,23 +60,22 @@
   </mat-list-item>
 
   <div #ogcFilters>
-    @if (header) {
+    @if (header()) {
       <div #legend class="igo-layer-legend-container">
         @if (showLegend$ | async) {
-          <igo-layer-legend [layer]="layer"> </igo-layer-legend>
+          <igo-layer-legend [layer]="layer()" />
         }
       </div>
     }
     <igo-ogc-filterable-form
       [datasource]="datasource"
-      [map]="map"
+      [map]="map()"
       [refreshFilters]="refreshFunc"
-    >
-    </igo-ogc-filterable-form>
+    />
 
     @if (hasSelector && filtersAreEditable) {
       <section class="advancedOgcFilters">
-        <mat-divider></mat-divider>
+        <mat-divider />
         <mat-checkbox
           (change)="changeOgcFilterType($event)"
           [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters"

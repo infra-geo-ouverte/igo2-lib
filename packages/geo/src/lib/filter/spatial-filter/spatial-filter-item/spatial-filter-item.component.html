@@ -10,8 +10,7 @@
   [overlayStyle]="overlayStyle$ | async"
   [radius]="radius"
   [predefinedRadius]="$any(predefinedRadius)"
->
-</igo-geometry-form-field-input>
+/>
 
 <div class="header">
   @if (!isPredefined()) {
@@ -91,17 +90,6 @@
   </div>
 }
 
-<mat-label class="title"
-  >{{ 'igo.geo.spatialFilter.search' | translate }} :
-</mat-label>
-<mat-radio-group [value]="selectedItemType" id="spatial-filter-field-item-type">
-  @for (item of itemType; track item) {
-    <mat-radio-button [value]="item" (change)="onItemTypeChange($event)">
-      {{ 'igo.geo.spatialFilter.' + item | translate }}
-    </mat-radio-button>
-  }
-</mat-radio-group>
-
 @if (
   (selectedItemType === 'Thematics' && !tableTemplate) ||
   (selectedItemType === 'Thematics' && tableTemplate && !listIsVisible)
@@ -121,12 +109,11 @@
             (change)="$event ? masterToggle() : null"
             [checked]="isAllSelected()"
             [indeterminate]="selectedThematics.hasValue() && !isAllSelected()"
-          >
-          </mat-checkbox>
+          />
         </mat-header-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedColumns" />
+      <mat-row *matRowDef="let row; columns: displayedColumns" />
     </mat-table>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
       <!-- This is the tree node template for leaf nodes -->
@@ -141,8 +128,7 @@
             (click)="$event.stopPropagation()"
             (change)="$event ? onToggleChange(node) : null"
             [checked]="selectedThematics.isSelected(node)"
-          >
-          </mat-checkbox>
+          />
         </li>
       </mat-tree-node>
       <!-- This is the tree node template for expandable nodes -->
@@ -159,14 +145,13 @@
             (change)="$event ? childrensToggle(node) : null"
             [checked]="isAllSelected(node)"
             [indeterminate]="hasChildrenSelected(node) && !isAllSelected(node)"
-          >
-          </mat-checkbox>
+          />
         </div>
         <ul
           class="tree-ul"
           [class.example-tree-invisible]="!treeControl.isExpanded(node)"
         >
-          <ng-container matTreeNodeOutlet></ng-container>
+          <ng-container matTreeNodeOutlet />
         </ul>
       </mat-nested-tree-node>
     </mat-tree>
@@ -254,7 +239,6 @@
       [template]="tableTemplate"
       [store]="store"
       (entitySelectChange)="entityChange.emit($event)"
-    >
-    </igo-entity-table>
+    />
   </div>
 }

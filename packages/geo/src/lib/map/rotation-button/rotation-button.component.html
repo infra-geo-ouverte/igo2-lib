@@ -1,4 +1,4 @@
-@if (((rotated$ | async) && !showIfNoRotation) || showIfNoRotation) {
+@if (((rotated$ | async) && !showIfNoRotation()) || showIfNoRotation()) {
   <div
     class="igo-rotation-button-container"
     [matTooltip]="
@@ -12,9 +12,9 @@
     <button
       mat-icon-button
       matTooltipPosition="left"
-      [color]="color"
+      [color]="color()"
       [disabled]="(rotated$ | async) === false"
-      (click)="map.viewController.resetRotation()"
+      (click)="map().viewController.resetRotation()"
     >
       <mat-icon [ngStyle]="currentStyle$ | async">navigation </mat-icon>
     </button>

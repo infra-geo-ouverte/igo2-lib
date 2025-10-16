@@ -1,9 +1,9 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit
+  OnInit,
+  input,
+  signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
@@ -13,8 +13,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { IgoLanguageModule } from '@igo2/core/language';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
 import { FormFieldSelectChoice } from '../shared/form.interfaces';
@@ -38,66 +36,58 @@ import {
     ReactiveFormsModule,
     MatOptionModule,
     MatIconModule,
-    AsyncPipe,
     IgoLanguageModule
   ]
 })
 export class FormFieldSelectComponent implements OnInit {
-  readonly disabled$ = new BehaviorSubject<boolean>(false);
+  readonly disabled = signal(false);
 
   /**
    * Select input choices
    */
-  @Input()
-  set choices(value: FormFieldSelectChoice[]) {
-    this.choices$.next(value);
-  }
-  get choices(): FormFieldSelectChoice[] {
-    return this.choices$.value;
-  }
-  readonly choices$ = new BehaviorSubject<FormFieldSelectChoice[]>([]);
+  readonly choices = input.required<FormFieldSelectChoice[]>();
 
   /**
    * If the select allow multiple selections
    */
-  @Input() multiple = false;
+  readonly multiple = input(false);
 
   /**
    * The field's form control
    */
-  @Input() formControl: UntypedFormControl;
+  readonly formControl = input<UntypedFormControl>(undefined);
 
   /**
    * Field placeholder
    */
-  @Input() placeholder: string;
+  readonly placeholder = input<string>(undefined);
 
   /**
    * Field placeholder
    */
-  @Input() errors: Record<string, string>;
+  readonly errors = input<Record<string, string>>(undefined);
 
   /**
    * Wheter a disable switch should be available
    */
-  @Input() disableSwitch = false;
+  readonly disableSwitch = input(false);
 
   /**
    * Whether the field is required
    */
   get required(): boolean {
-    return formControlIsRequired(this.formControl);
+    return formControlIsRequired(this.formControl());
   }
 
   ngOnInit() {
-    this.disabled$.next(this.formControl.disabled);
+    this.disabled.set(this.formControl().disabled);
   }
 
   /**
    * Get error message
    */
   getErrorMessage(): string {
-    return getControlErrorMessage(this.formControl, this.errors);
+    return getControlErrorMessage(this.formControl(), this.errors());
   }
 
   onDisableSwitchClick() {
@@ -105,12 +95,12 @@ export class FormFieldSelectComponent implements OnInit {
   }
 
   private toggleDisabled() {
-    const disabled = !this.disabled$.value;
+    const disabled = !this.disabled();
     if (disabled === true) {
-      this.formControl.disable();
+      this.formControl().disable();
     } else {
-      this.formControl.enable();
+      this.formControl().enable();
     }
-    this.disabled$.next(disabled);
+    this.disabled.set(disabled);
   }
 }

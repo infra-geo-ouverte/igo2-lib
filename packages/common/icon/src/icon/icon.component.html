@@ -1,5 +1,6 @@
-@if (isSvg(icon)) {
-  <mat-icon [svgIcon]="icon.name" [color]="color"></mat-icon>
+@let _icon = icon();
+@if (isSvg(_icon)) {
+  <mat-icon [svgIcon]="_icon.name" [color]="color()" />
 } @else {
-  <mat-icon [color]="color">{{ icon }}</mat-icon>
+  <mat-icon [color]="color()">{{ _icon }}</mat-icon>
 }

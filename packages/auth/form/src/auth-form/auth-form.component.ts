@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
   OnInit,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
@@ -105,7 +104,7 @@ export class AuthFormComponent implements OnInit {
     }
   }
 
-  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  readonly login = output<boolean>();
 
   public options?: AuthOptions & AuthFormOptions;
   public user;

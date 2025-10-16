@@ -2,9 +2,8 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -51,7 +50,7 @@ export class AuthMicrosoftComponent {
 
   private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
-  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  readonly login = output<boolean>();
   private broadcastService: MsalBroadcastService;
 
   svgIcon: IconSvg = MICROSOFT_ICON;

@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, model, output } from '@angular/core';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -18,21 +11,6 @@ import { Context } from '../shared/context.interface';
   imports: [ContextFormComponent, IgoLanguageModule]
 })
 export class ContextEditComponent {
-  private cd = inject(ChangeDetectorRef);
-
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.refresh();
-  }
-  private _context: Context;
-
-  @Output() submitForm = new EventEmitter<Context>();
-
-  refresh() {
-    this.cd.detectChanges();
-  }
+  readonly context = model<Context>(undefined);
+  readonly submitForm = output<Context>();
 }

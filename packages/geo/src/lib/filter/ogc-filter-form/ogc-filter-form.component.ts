@@ -1,5 +1,5 @@
 import { AsyncPipe, KeyValuePipe, NgClass } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -72,13 +72,13 @@ export class OgcFilterFormComponent implements OnInit {
   public defaultStepMillisecond = 6000;
   public inputClearable: string;
 
-  @Input() refreshFilters: () => void;
+  readonly refreshFilters = input<() => void>(undefined);
 
-  @Input() datasource: OgcFilterableDataSource;
+  readonly datasource = input<OgcFilterableDataSource>(undefined);
 
-  @Input() map: MapBase;
+  readonly map = input<MapBase>(undefined);
 
-  @Input() currentFilter: any;
+  readonly currentFilter = input<any>(undefined);
 
   set snrc(value: any) {
     const checkSNRC50k = /^\d{2}[a-l][0,1][0-9]$/gi;
@@ -90,7 +90,7 @@ export class OgcFilterFormComponent implements OnInit {
       checkSNRC50k.test(value)
     ) {
       this._snrc = value;
-      this.currentFilter.igoSNRC = value;
+      this.currentFilter().igoSNRC = value;
     }
   }
 
@@ -100,10 +100,10 @@ export class OgcFilterFormComponent implements OnInit {
 
   private _snrc = '';
 
-  @Input() floatLabel: FloatLabelType;
+  readonly floatLabel = input<FloatLabelType>(undefined);
 
   get activeFilters() {
-    return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
+    return this.datasource().options.ogcFilters.interfaceOgcFilters.filter(
       (f) => f.active === true
     );
   }
@@ -111,8 +111,8 @@ export class OgcFilterFormComponent implements OnInit {
   get allowedOperators() {
     return new OgcFilterWriter().computeAllowedOperators(
       this.fields$.value,
-      this.currentFilter.propertyName,
-      this.datasource.options.ogcFilters.allowedOperatorsType
+      this.currentFilter().propertyName,
+      this.datasource().options.ogcFilters.allowedOperatorsType
     );
   }
 
@@ -135,8 +135,9 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.datasource.options.sourceFields) {
-      const sFields = this.datasource.options.sourceFields.filter(
+    const datasource = this.datasource();
+    if (datasource.options.sourceFields) {
+      const sFields = datasource.options.sourceFields.filter(
         (sf) =>
           sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
       );
@@ -150,18 +151,19 @@ export class OgcFilterFormComponent implements OnInit {
 
     this.updateFieldsList();
     this.selectedField$.next(
-      this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
+      this.fields$.value.find(
+        (f) => f.name === this.currentFilter().propertyName
+      )
     );
     this.updateValuesList();
     this.selectedField$.subscribe(() => {
       this.ogcFilterOperators$.next(this.allowedOperators);
+      const cf = this.currentFilter();
       if (
-        Object.keys(this.allowedOperators).indexOf(
-          this.currentFilter.operator
-        ) === -1
+        cf &&
+        Object.keys(this.allowedOperators).indexOf(cf.operator) === -1
       ) {
-        this.currentFilter.operator = Object.keys(this.allowedOperators)[0];
-        this.currentFilter.operator = Object.keys(this.allowedOperators)[0];
+        cf.operator = Object.keys(this.allowedOperators)[0];
       }
       this.updateValuesList();
     });
@@ -223,7 +225,7 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   clearSelectedField() {
-    this.currentFilter.propertyName = '';
+    this.currentFilter().propertyName = '';
     this.selectedField$.next(undefined);
     this.clearProperty();
   }
@@ -231,75 +233,84 @@ export class OgcFilterFormComponent implements OnInit {
   isClearable(pos?: number) {
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
-      return this.currentFilter[detectedProperty];
+      return this.currentFilter()[detectedProperty];
     }
   }
   clearProperty(pos?: number) {
     // this.autoCompleteInputValues.closePanel();
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
-      return (this.currentFilter[detectedProperty] = '');
+      return (this.currentFilter()[detectedProperty] = '');
     }
   }
 
   toggleFilterState(event) {
-    this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-      (f) => f.filterid === this.currentFilter.filterid
+    this.datasource().options.ogcFilters.interfaceOgcFilters.find(
+      (f) => f.filterid === this.currentFilter().filterid
     ).active = event.checked;
-    this.refreshFilters();
+    this.refreshFilters()();
   }
 
   deleteFilter() {
-    const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
+    const ogcFilters: OgcFiltersOptions = this.datasource().options.ogcFilters;
     ogcFilters.interfaceOgcFilters = ogcFilters.interfaceOgcFilters.filter(
-      (f) => f.filterid !== this.currentFilter.filterid
+      (f) => f.filterid !== this.currentFilter().filterid
     );
-    this.refreshFilters();
+    this.refreshFilters()();
   }
 
   changeLogical(logical: string) {
-    this.currentFilter.parentLogical = logical;
-    this.refreshFilters();
+    this.currentFilter().parentLogical = logical;
+    this.refreshFilters()();
   }
 
   changeOperator(operator: string) {
-    this.currentFilter.operator = operator;
+    const cf = this.currentFilter();
+    cf.operator = operator;
     this.currentFilterIsSpatial();
 
     if (
       this.currentFilterIsSpatial$.value &&
-      this.currentFilter.wkt_geometry.length === 0
+      (!cf.wkt_geometry || cf.wkt_geometry.length === 0)
     ) {
-      this.changeSpatialSelector(this.currentFilter.igoSpatialSelector);
+      this.changeSpatialSelector(cf.igoSpatialSelector);
     } else {
-      this.refreshFilters();
+      this.refreshFilters()();
     }
   }
 
+  clearSNRC() {
+    const cf = this.currentFilter();
+    cf.igoSNRC = '';
+    this.refreshFilters()();
+  }
+
   changeField(field: string) {
-    this.currentFilter.propertyName = field;
+    this.currentFilter().propertyName = field;
     this.selectedField$.next(
-      this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
+      this.fields$.value.find(
+        (f) => f.name === this.currentFilter().propertyName
+      )
     );
-    this.refreshFilters();
+    this.refreshFilters()();
   }
 
   // Issue with mapserver 7.2 and Postgis layers. Fixed in 7.4
   // Due to this issue, the checkbox is hide.
   changeCaseSensitive(matchCase) {
-    this.currentFilter.matchCase = matchCase.checked;
-    this.refreshFilters();
+    this.currentFilter().matchCase = matchCase.checked;
+    this.refreshFilters()();
   }
 
   changeProperty(value: any, pos?: number, refreshFilter = true) {
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
-      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-        (f) => f.filterid === this.currentFilter.filterid
+      this.datasource().options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter().filterid
       )[detectedProperty] = value;
 
       if (refreshFilter) {
-        this.refreshFilters();
+        this.refreshFilters()();
       }
     }
   }
@@ -309,13 +320,13 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   changeSpatialSelector(value: any) {
-    this.currentFilter.igoSpatialSelector = value;
+    this.currentFilter().igoSpatialSelector = value;
 
     if (value === 'fixedExtent') {
       this.changeMapExtentGeometry(false);
     }
     this.currentFilterIsSpatial();
-    this.refreshFilters();
+    this.refreshFilters()();
   }
 
   changeSNRC(value: any) {
@@ -325,45 +336,47 @@ export class OgcFilterFormComponent implements OnInit {
 
   changeSNRCGeometry() {
     const interfaceOgcFilter =
-      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-        (f) => f.filterid === this.currentFilter.filterid
+      this.datasource().options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter().filterid
       );
     if (!interfaceOgcFilter) {
       return;
     }
 
-    if (this.snrc && this.currentFilter.igoSpatialSelector === 'snrc') {
-      this.currentFilter.wkt_geometry = this.wktService.snrcToWkt(
+    const currentFilter = this.currentFilter();
+    if (this.snrc && currentFilter.igoSpatialSelector === 'snrc') {
+      currentFilter.wkt_geometry = this.wktService.snrcToWkt(
         this.snrc,
-        this.map.projection
+        this.map().projection
       ).wktPoly;
     }
-    this.refreshFilters();
+    this.refreshFilters()();
   }
 
   changeMapExtentGeometry(refresh = true) {
     const interfaceOgcFilter =
-      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-        (f) => f.filterid === this.currentFilter.filterid
+      this.datasource().options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter().filterid
       );
     if (!interfaceOgcFilter) {
       return;
     }
 
-    if (this.currentFilter.igoSpatialSelector === 'fixedExtent') {
-      this.currentFilter.wkt_geometry = this.wktService.extentToWkt(
-        this.map.projection,
-        this.map.viewController.getExtent(),
-        this.map.projection
+    const currentFilter = this.currentFilter();
+    if (currentFilter.igoSpatialSelector === 'fixedExtent') {
+      currentFilter.wkt_geometry = this.wktService.extentToWkt(
+        this.map().projection,
+        this.map().viewController.getExtent(),
+        this.map().projection
       ).wktPoly;
     }
     if (refresh) {
-      this.refreshFilters();
+      this.refreshFilters()();
     }
   }
 
   detectProperty(pos?: number): string {
-    switch (this.currentFilter.operator) {
+    switch (this.currentFilter().operator) {
       case OgcFilterOperator.PropertyIsNotEqualTo:
       case OgcFilterOperator.PropertyIsEqualTo:
       case OgcFilterOperator.PropertyIsGreaterThan:
@@ -392,20 +405,21 @@ export class OgcFilterFormComponent implements OnInit {
 
   private currentFilterIsSpatial() {
     let isSpatial = false;
-    if (this.currentFilter) {
+    const currentFilter = this.currentFilter();
+    if (currentFilter) {
       isSpatial =
         [
           OgcFilterOperator.Contains,
           OgcFilterOperator.Intersects,
           OgcFilterOperator.Within
-        ].indexOf(this.currentFilter.operator) !== -1;
+        ].indexOf(currentFilter.operator) !== -1;
     }
     this.currentFilterIsSpatial$.next(isSpatial);
   }
 
   isTemporalOperator() {
     return (
-      this.currentFilter.operator.toLowerCase() ===
+      this.currentFilter().operator.toLowerCase() ===
       this.ogcFilterOperator.During.toLowerCase()
     );
   }

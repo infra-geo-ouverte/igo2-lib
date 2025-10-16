@@ -2,9 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnInit,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -52,9 +53,10 @@ export class ImportExportToolComponent implements OnInit {
   private workspaceState = inject(WorkspaceState);
   contextState = inject(ContextState);
 
-  @Input() projectionsLimitations: ProjectionsLimitationsOptions;
+  readonly projectionsLimitations =
+    input<ProjectionsLimitationsOptions>(undefined);
 
-  @Input() selectFirstProj = false;
+  readonly selectFirstProj = input(false);
 
   /**
    * Map to measure on
@@ -68,8 +70,8 @@ export class ImportExportToolComponent implements OnInit {
     return this.workspaceState.store;
   }
 
-  @Input() importExportType: ImportExportType = ImportExportType.layer;
-  @Input() importExportShowBothType = true;
+  readonly importExportType = model<ImportExportType>(ImportExportType.layer);
+  readonly importExportShowBothType = input(true);
 
   ngOnInit(): void {
     this.selectType();
@@ -77,8 +79,9 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   private selectType() {
-    if (this.importExportType) {
-      this.importExportState.importExportType$.next(this.importExportType);
+    const importExportType = this.importExportType();
+    if (importExportType) {
+      this.importExportState.importExportType$.next(importExportType);
     }
     const userSelectedType = this.importExportState.importExportType$.value;
     if (userSelectedType !== undefined) {
@@ -106,6 +109,6 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   importExportTypeChange(event) {
-    this.importExportType = event.value;
+    this.importExportType.set(event.value);
   }
 }

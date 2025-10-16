@@ -521,6 +521,7 @@
           "type": {
             "address": "Address",
             "oldAddress": "Old address",
+            "aggloMun": "Agglomerations",
             "district": "District",
             "postalCode": "Postal Code",
             "city": "City",
@@ -542,10 +543,17 @@
             "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
+            "dessertes": "Police service (CSAU)",
+            "matricule": "Property assessment role",
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites": "Units (apartments, offices, etc.)"
+            "unites": "Units (apartments, offices, etc.)",
+            "stations-partenaires": "Hydrometric station (partenaire)",
+            "stations-publique": "Hydrometric station",
+            "niveau-eau-partenaires": "Water levels during a flood (with photos)",
+            "niveau-eau-publique": "Water levels during a flood (with reports)",
+            "reperes-crue": "Flood markers"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -627,7 +635,10 @@
         "hour": "Hour",
         "minute": "Minute",
         "endYear": "End Year",
-        "startYear": "Start Year"
+        "startYear": "Start Year",
+        "today": "Today",
+        "now": "Now",
+        "clear": "Clear"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
@@ -662,6 +673,8 @@
         "warning": "Warning",
         "freehandControl": "Freehand",
         "group": {
+          "addresses": "Addresses",
+          "aleas": "Hazards",
           "toponyme": "Toponym",
           "culture": "Culture",
           "education": "Education",
@@ -674,17 +687,24 @@
       "terrapi": {
         "AdmRegion": "Administratives region",
         "Mun": "Municipalities",
+        "aggloMun": "Agglomerations",
         "Arrond": "Boroughs",
         "CircFed": "Federals districts",
         "CircProv": "Provincials districts",
         "DirReg": "Regionals directorates",
         "MRC": "RCM",
+        "RSS": "Social and health regions (RSS)",
+        "RLS": "Local health networks (RLS)",
+        "CLSC": "Local community service centers (CLSC)",
+        "tours": "Cooling towers",
         "RegTour": "Touristics regions",
         "limites": "Administrative boundaries",
         "bornes": "Landmarks",
+        "matricule": "Property assessment role",
         "hydro": "Hydrography",
         "routes": "Roads",
         "bati": "Buildings",
+        "localite": "Localities",
         "batiment": "Buildings",
         "camping": "Camping",
         "equipement": "Equipment",
@@ -720,7 +740,11 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites": "Unit number"
+        "unites": "Units (Building numbers, offices, etc.)",
+        "address": "Addresses without units",
+        "stations-hydro-partenaires": "Hydrometric station (partner)",
+        "stations-hydro-publique": "Hydrometric station",
+        "depanneurs-reservoirs": "Convenience stores and gas stations - Fuel tank"
       },
       "measure": {
         "dialog": {

@@ -1,4 +1,4 @@
-@if (context) {
+@if (context()) {
   <div>
     @if (!canWrite) {
       <div class="scopeForm">
@@ -9,8 +9,8 @@
     @if (canWrite) {
       <div class="scopeForm">
         <mat-radio-group
-          [(ngModel)]="context.scope"
-          (change)="scopeChanged.emit(context)"
+          [(ngModel)]="context().scope"
+          (change)="scopeChanged.emit(context())"
         >
           <mat-radio-button value="private">
             {{ 'igo.context.permission.scope.private' | translate }}
@@ -26,7 +26,7 @@
         </mat-radio-group>
       </div>
     }
-    @if (context.scope !== 'private' && canWrite) {
+    @if (context().scope !== 'private' && canWrite) {
       <form [formGroup]="form" (ngSubmit)="handleFormSubmit(form.value)">
         <mat-form-field class="full-width">
           <input
@@ -67,10 +67,10 @@
         </div>
       </form>
     }
-    @if (permissions && context.scope !== 'private') {
+    @if (permissions() && context().scope !== 'private') {
       <igo-list>
         @for (
-          groupPermissions of permissions | keyvalue;
+          groupPermissions of permissions() | keyvalue;
           track groupPermissions
         ) {
           @if (groupPermissions.value.length) {
@@ -99,7 +99,7 @@
                       <button
                         mat-icon-button
                         [matTooltip]="
-                          'igo.context.permission.delete' | translate
+                          'igo.context().permission.delete' | translate
                         "
                         matTooltipShowDelay="500"
                         color="warn"
