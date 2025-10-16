@@ -3,6 +3,8 @@ import type { Type } from 'ol/geom/Geometry';
 
 import { AnyExportFormat, CsvSeparator } from './export.type';
 
+export const RADIUS_NAME = 'rad';
+
 export interface ExportOptions {
   format?: AnyExportFormat;
   layers: string[];

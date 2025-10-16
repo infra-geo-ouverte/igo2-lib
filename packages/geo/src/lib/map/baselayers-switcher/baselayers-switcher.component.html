@@ -3,13 +3,13 @@
     class="igo-baselayers-switcher-container"
     [ngClass]="{ 'container-expand': expand }"
     [@baseLayerSwitcherState]="
-      expand ? 'expand' : useStaticIcon ? 'collapseIcon' : 'collapseMap'
+      expand ? 'expand' : useStaticIcon() ? 'collapseIcon' : 'collapseMap'
     "
     (@baseLayerSwitcherState.start)="showButton = false"
     (@baseLayerSwitcherState.done)="showButton = true"
     (click)="collapseOrExpand()"
   >
-    @if (useStaticIcon && !expand && showButton) {
+    @if (useStaticIcon() && !expand && showButton) {
       <div class="igo-baselayers-switcher-button-container">
         <button
           mat-icon-button
@@ -24,17 +24,16 @@
     <div class="basemap-list">
       @for (baseLayer of baseLayers; track baseLayer; let i = $index) {
         <igo-mini-basemap
-          [map]="map"
+          [map]="map()"
           [baseLayer]="baseLayer"
           [title]="
             baseLayers.length > 2 && !expand
               ? ('igo.geo.baselayersSwitcher.title' | translate)
               : baseLayer.title
           "
-          [display]="expand || (i === 0 && !useStaticIcon)"
+          [display]="expand || (i === 0 && !useStaticIcon())"
           [disabled]="!expand && baseLayers.length > 1"
-        >
-        </igo-mini-basemap>
+        />
       }
     </div>
     @if (hasMoreThanTwo) {

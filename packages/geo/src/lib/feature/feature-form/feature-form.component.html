@@ -1,10 +1,10 @@
 <igo-form
   #igoForm
-  [form]="form"
-  [formData]="feature$ | async"
+  [form]="form()"
+  [formData]="feature()"
   (submitForm)="onSubmit($event)"
 >
-  <ng-content></ng-content>
+  <ng-content />
 
-  <ng-content select="[formButtons]" formButtons></ng-content>
+  <ng-content select="[formButtons]" formButtons />
 </igo-form>

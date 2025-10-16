@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .hour-input,
+  .minute-input {
+    width: 84px;
+  }
+}

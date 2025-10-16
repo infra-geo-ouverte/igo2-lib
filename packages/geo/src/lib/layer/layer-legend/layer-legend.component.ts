@@ -5,13 +5,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
-  ViewChildren,
-  inject
+  inject,
+  input,
+  viewChildren
 } from '@angular/core';
-import type { QueryList } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -74,7 +73,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   private config = inject(ConfigService);
   private http = inject(HttpClient);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
   /**
    * Observable of the legend items
@@ -103,14 +102,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * Get list of images display
    */
-  @ViewChildren('renderedLegend') renderedLegends: QueryList<ElementRef>;
+  readonly renderedLegends = viewChildren<ElementRef>('renderedLegend');
 
   /**
    * List of size of images displayed
    */
   public imagesHeight: Record<string, number> = {};
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
   /**
    * if getLegendGraphic is authorized
@@ -121,9 +120,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * On init, subscribe to the map's resolution and update the legend accordingly
    */
   ngOnInit() {
-    let lastlLegend = this.layer.legend;
+    let lastlLegend = this.layer().legend;
     this.styles = this.listStyles();
-    const sourceOptions = this.layer.options.source.options as any;
+    const sourceOptions = this.layer().options.source.options as any;
     if (sourceOptions && sourceOptions.params && sourceOptions.params.STYLES) {
       // if a styles is provided into the layers wms params
       this.currentStyle = this.styles.find(
@@ -137,23 +136,21 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
+    const layer = this.layer();
     if (
-      typeof this.layer.options.legendOptions !== 'undefined' &&
-      this.layer.options.legendOptions.display === false
+      typeof layer.options.legendOptions !== 'undefined' &&
+      layer.options.legendOptions.display === false
     ) {
       lastlLegend = [];
     } else {
-      lastlLegend = this.layer.dataSource.getLegend(
-        this.currentStyle,
-        this.view
-      );
+      lastlLegend = layer.dataSource.getLegend(this.currentStyle, this.view);
     }
 
     if (
-      this.updateLegendOnResolutionChange ||
+      this.updateLegendOnResolutionChange() ||
       (sourceOptions as WMSDataSourceOptions).contentDependentLegend
     ) {
-      const state$ = this.layer.map.viewController.state$;
+      const state$ = layer.map.viewController.state$;
       this.state$$ = state$.subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
@@ -203,7 +200,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   private transfertToggleLegendItem(newLegends: Legend[]): Legend[] {
     const outLegends: Legend[] = newLegends;
-    const lastLegends = this.layer.legend;
+    const lastLegends = this.layer().legend;
     for (let i = 0; i < lastLegends.length; i++) {
       outLegends[i].collapsed = lastLegends[i].collapsed;
     }
@@ -211,7 +208,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   computeItemTitle(layerLegend): Observable<string> {
-    const layerOptions = this.layer.dataSource.options as any;
+    const layerOptions = this.layer().dataSource.options as any;
     if (layerOptions.type !== 'wms') {
       return of(layerLegend.title);
     }
@@ -235,11 +232,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   private onViewControllerStateChange() {
     this.view = {
-      resolution: this.layer.map.viewController.getResolution(),
-      extent: this.layer.map.viewController.getExtent(),
-      projection: this.layer.map.viewController.getOlProjection().getCode(),
-      scale: this.layer.map.viewController.getScale(),
-      size: this.layer.map.ol.getSize()
+      resolution: this.layer().map.viewController.getResolution(),
+      extent: this.layer().map.viewController.getExtent(),
+      projection: this.layer().map.viewController.getOlProjection().getCode(),
+      scale: this.layer().map.viewController.getScale(),
+      size: this.layer().map.ol.getSize()
     } as LegendMapViewOptions;
     this.updateLegend();
   }
@@ -248,14 +245,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer.dataSource.getLegend(
+    let legendItems = this.layer().dataSource.getLegend(
       this.currentStyle,
       this.view
     );
-    if (this.layer.legend && this.layer.legend.length > 1) {
+    const layer = this.layer();
+    if (layer.legend && layer.legend.length > 1) {
       legendItems = this.transfertToggleLegendItem(legendItems);
     }
-    this.layer.legend = legendItems;
+    layer.legend = legendItems;
 
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
@@ -267,7 +265,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   private listStyles() {
-    const layerOptions = this.layer.options;
+    const layerOptions = this.layer().options;
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
@@ -300,22 +298,24 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     let STYLES = '';
-    if (this.layer.dataSource instanceof WMSDataSource) {
-      this.layer.dataSource.ol
+    const layer = this.layer();
+    if (layer.dataSource instanceof WMSDataSource) {
+      layer.dataSource.ol
         .getParams()
         .LAYERS.split(',')
         .map(() => (STYLES += this.currentStyle + ','));
       STYLES = STYLES.slice(0, -1);
-      this.layer.dataSource.stylesParams = STYLES;
+      layer.dataSource.stylesParams = STYLES;
     }
   }
 
   onLoadImage(id: string) {
     let elemRef: HTMLImageElement;
-    if (this.renderedLegends.length === 1) {
-      elemRef = this.renderedLegends.first.nativeElement as HTMLImageElement;
+    const renderedLegends = this.renderedLegends();
+    if (renderedLegends.length === 1) {
+      elemRef = renderedLegends.at(0)!.nativeElement as HTMLImageElement;
     } else {
-      elemRef = this.renderedLegends.find(
+      elemRef = renderedLegends.find(
         (renderedLegend) => renderedLegend.nativeElement.id === id
       ).nativeElement as HTMLImageElement;
     }

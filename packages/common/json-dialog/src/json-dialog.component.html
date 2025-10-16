@@ -1,9 +1,7 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 
 <div mat-dialog-content>
-  <ng-container
-    *ngTemplateOutlet="loopObject; context: { obj: data }"
-  ></ng-container>
+  <ng-container *ngTemplateOutlet="loopObject; context: { obj: data }" />
 
   <ng-template #loopObject let-obj="obj" let-baseKey="baseKey">
     @for (property of obj | keyvalue; track property) {
@@ -17,7 +15,7 @@
                 baseKey: getKey(baseKey, property.key)
               }
             "
-          ></ng-container>
+          />
         } @else {
           <p>
             <span

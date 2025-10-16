@@ -2,13 +2,13 @@
   <button
     mat-icon-button
     [matTooltip]="
-      enabled
+      enabled()
         ? ('igo.geo.mapButtons.online' | translate)
         : ('igo.geo.mapButtons.offline' | translate)
     "
     matTooltipPosition="left"
     [ngClass]="[btnStyle]"
-    [color]="enabled ? color : null"
+    [color]="enabled() ? color() : null"
     (click)="onClick()"
   >
     <mat-icon>wifi_off</mat-icon>

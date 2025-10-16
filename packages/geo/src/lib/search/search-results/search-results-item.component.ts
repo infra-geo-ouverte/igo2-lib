@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,9 +42,9 @@ export class SearchResultsItemComponent {
   /**
    * Search result item
    */
-  @Input() result: SearchResult;
+  readonly result = input<SearchResult>(undefined);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Search result title
@@ -55,19 +54,19 @@ export class SearchResultsItemComponent {
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean;
+  readonly showIcons = input<boolean>(undefined);
 
   /**
    * Whether there should be a zoom button
    */
-  @Input() withZoomButton = false;
+  readonly withZoomButton = input(false);
 
-  @Output() zoomEvent = new EventEmitter<boolean>();
+  readonly zoomEvent = output<boolean>();
 
   private format = new olFormatGeoJSON();
 
   get title(): string {
-    return getEntityTitle(this.result);
+    return getEntityTitle(this.result());
   }
 
   /**
@@ -75,7 +74,7 @@ export class SearchResultsItemComponent {
    * @internal
    */
   get titleHtml(): string {
-    return getEntityTitleHtml(this.result);
+    return getEntityTitleHtml(this.result());
   }
 
   /**
@@ -93,15 +92,19 @@ export class SearchResultsItemComponent {
    * @internal
    */
   get icon(): string {
-    return getEntityIcon(this.result);
+    return getEntityIcon(this.result());
   }
 
   onZoomHandler() {
-    const olFeature = this.format.readFeature(this.result.data, {
-      dataProjection: this.result.data.projection,
-      featureProjection: this.map.projection
+    const olFeature = this.format.readFeature(this.result().data, {
+      dataProjection: this.result().data.projection,
+      featureProjection: this.map().projection
     });
-    moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Default);
+    moveToOlFeatures(
+      this.map().viewController,
+      olFeature,
+      FeatureMotion.Default
+    );
   }
 
   /**

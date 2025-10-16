@@ -3,10 +3,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common/entity';
@@ -57,37 +58,37 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   // private resolution$$: Subscription;
 
   get resolution$(): BehaviorSubject<number> {
-    return this.map.viewController.resolution$;
+    return this.map().viewController.resolution$;
   }
 
-  @Input() catalogAllowLegend = false;
+  readonly catalogAllowLegend = model(false);
 
   /**
    * Catalog
    */
-  @Input() catalog: Catalog;
+  readonly catalog = input<Catalog>(undefined);
 
   /**
    * Store holding the catalog's items
    */
-  @Input() store: EntityStore<CatalogItem, CatalogItemState>;
+  readonly store = input<EntityStore<CatalogItem, CatalogItemState>>(undefined);
 
   /**
    * Map to add the catalog items to
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup = true;
+  readonly toggleCollapsedGroup = input(true);
 
   /**
    * @internal
    */
   ngOnInit() {
-    const currentItems = this.map.layerController.all
-      .filter((layer) => isLayerItem(layer))
+    const currentItems = this.map()
+      .layerController.all.filter((layer) => isLayerItem(layer))
       .map((layer: Layer) => {
         return {
           id: layer.options.source.id,
@@ -95,20 +96,21 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
           type: CatalogItemType.Layer
         };
       });
-    this.store.state.updateMany(currentItems, { added: true }, true);
-    if (this.catalog && this.catalog.sortDirection !== undefined) {
-      this.store.view.sort({
-        direction: this.catalog.sortDirection,
+    this.store().state.updateMany(currentItems, { added: true }, true);
+    const catalog = this.catalog();
+    if (catalog && catalog.sortDirection !== undefined) {
+      this.store().view.sort({
+        direction: catalog.sortDirection,
         valueAccessor: (item: CatalogItem) => item.title
       });
     }
 
-    const catalogShowLegend = this.catalog ? this.catalog.showLegend : false;
-    this.catalogAllowLegend = catalogShowLegend
-      ? catalogShowLegend
-      : this.catalogAllowLegend;
+    const catalogShowLegend = catalog ? catalog.showLegend : false;
+    this.catalogAllowLegend.set(
+      catalogShowLegend ? catalogShowLegend : this.catalogAllowLegend()
+    );
 
-    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
   }
 
   ngOnDestroy() {
@@ -136,7 +138,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   onLayerAddedChange(event: AddedChangeEmitter) {
     const layer = event.layer;
-    this.store.state.update(layer, { added: event.added }, false);
+    this.store().state.update(layer, { added: event.added }, false);
     event.added
       ? this.addLayerToMap(layer, event)
       : this.removeLayerFromMap(layer);
@@ -149,7 +151,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   onGroupAddedChange(event: AddedChangeGroupEmitter) {
     const group = event.group;
-    this.store.state.update(group, { added: event.added }, false);
+    this.store().state.update(group, { added: event.added }, false);
     event.added
       ? this.addGroupToMap(group, event)
       : this.removeGroupFromMap(group);
@@ -183,17 +185,18 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
       }
-      if (this.catalog.profils?.length) {
-        layer.options.security = { profils: this.catalog.profils };
+      const catalog = this.catalog();
+      if (catalog.profils?.length) {
+        layer.options.security = { profils: catalog.profils };
       }
       return this.layerService.createAsyncLayer(layer.options);
     });
     zip(...layers$).subscribe((layers) => {
       if (event.event.type === 'click' && event.added) {
-        this.map.layersAddedByClick$.next(layers);
+        this.map().layersAddedByClick$.next(layers);
       }
-      this.store.state.updateMany(catalogLayers, { added: true });
-      this.map.layerController.add(...layers.filter(Boolean));
+      this.store().state.updateMany(catalogLayers, { added: true });
+      this.map().layerController.add(...layers.filter(Boolean));
     });
   }
 
@@ -203,18 +206,18 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private removeLayersFromMap(layers: CatalogItemLayer[]) {
     layers.forEach((layer: CatalogItemLayer) => {
-      this.store.state.update(layer, { added: false });
+      this.store().state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const currLayer = this.map.layerController.getById(
+        const currLayer = this.map().layerController.getById(
           String(layer.options.id)
         );
         if (currLayer !== undefined) {
-          this.map.layerController.remove(currLayer);
+          this.map().layerController.remove(currLayer);
         }
       } else {
-        const currLayer = this.map.layerController.getById(layer.id);
+        const currLayer = this.map().layerController.getById(layer.id);
         if (currLayer !== undefined) {
-          this.map.layerController.remove(currLayer);
+          this.map().layerController.remove(currLayer);
         }
       }
     });
@@ -256,7 +259,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     event: AddedChangeGroupEmitter
   ) {
     let layers = group.items.filter((item: CatalogItem) => {
-      const added = this.store.state.get(item).added || false;
+      const added = this.store().state.get(item).added || false;
       return this.isLayer(item) && added === false;
     });
     if (group.sortDirection !== undefined) {
@@ -271,7 +274,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private removeGroupFromMap(group: CatalogItemGroup) {
     const layers = group.items.filter((item: CatalogItem) => {
-      const added = this.store.state.get(item).added || false;
+      const added = this.store().state.get(item).added || false;
       return this.isLayer(item) && added === true;
     });
     this.removeLayersFromMap(layers as CatalogItemLayer[]);

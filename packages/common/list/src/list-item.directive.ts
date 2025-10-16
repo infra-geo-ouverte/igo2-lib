@@ -1,12 +1,11 @@
 import {
   Directive,
   ElementRef,
-  EventEmitter,
   HostListener,
   Input,
-  Output,
   Renderer2,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 @Directive({
@@ -97,18 +96,18 @@ export class ListItemDirective {
   }
   private _disabled = false;
 
-  @Output() beforeSelect = new EventEmitter<ListItemDirective>();
-  @Output() beforeFocus = new EventEmitter<ListItemDirective>();
-  @Output() beforeUnselect = new EventEmitter<ListItemDirective>();
-  @Output() beforeUnfocus = new EventEmitter<ListItemDirective>();
-  @Output() beforeDisable = new EventEmitter<ListItemDirective>();
-  @Output() beforeEnable = new EventEmitter<ListItemDirective>();
-  @Output() focus = new EventEmitter<ListItemDirective>();
-  @Output() unfocus = new EventEmitter<ListItemDirective>();
-  @Output() select = new EventEmitter<ListItemDirective>();
-  @Output() unselect = new EventEmitter<ListItemDirective>();
-  @Output() disable = new EventEmitter<ListItemDirective>();
-  @Output() enable = new EventEmitter<ListItemDirective>();
+  readonly beforeSelect = output<ListItemDirective>();
+  readonly beforeFocus = output<ListItemDirective>();
+  readonly beforeUnselect = output<ListItemDirective>();
+  readonly beforeUnfocus = output<ListItemDirective>();
+  readonly beforeDisable = output<ListItemDirective>();
+  readonly beforeEnable = output<ListItemDirective>();
+  readonly focus = output<ListItemDirective>();
+  readonly unfocus = output<ListItemDirective>();
+  readonly select = output<ListItemDirective>();
+  readonly unselect = output<ListItemDirective>();
+  readonly disable = output<ListItemDirective>();
+  readonly enable = output<ListItemDirective>();
 
   @HostListener('click')
   onClick() {

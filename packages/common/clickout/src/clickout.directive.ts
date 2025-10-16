@@ -1,10 +1,9 @@
 import {
   Directive,
   ElementRef,
-  EventEmitter,
   HostListener,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 @Directive({
@@ -14,7 +13,7 @@ import {
 export class ClickoutDirective {
   private el = inject(ElementRef);
 
-  @Output() clickout = new EventEmitter<MouseEvent>();
+  readonly clickout = output<MouseEvent>();
 
   @HostListener('document:click', ['$event', '$event.target'])
   handleMouseClick(event: MouseEvent, target: HTMLElement) {

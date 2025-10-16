@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,14 +27,14 @@ import { AnyLayerItemOptions, AnyLayerOptions } from '../shared';
   ]
 })
 export class LayerUnavailableComponent {
-  @Input() layerOptions: AnyLayerItemOptions;
+  readonly layerOptions = input<AnyLayerItemOptions>(undefined);
 
-  @Output() remove = new EventEmitter<AnyLayerOptions>();
+  readonly remove = output<AnyLayerOptions>();
 
   get title(): string | undefined {
-    const sourceOptions = this.layerOptions.sourceOptions;
+    const sourceOptions = this.layerOptions().sourceOptions;
     return (
-      this.layerOptions.title ??
+      this.layerOptions().title ??
       sourceOptions?.['params']?.LAYERS ??
       sourceOptions?.['params']?.layers ??
       sourceOptions?.['layer']

@@ -1,3 +1,4 @@
+import { inputBinding } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { mergeTestConfig } from 'packages/common/test-config';
@@ -15,9 +16,10 @@ describe('IconComponent', () => {
       })
     ).compileComponents();
 
-    fixture = TestBed.createComponent(IgoIconComponent);
+    fixture = TestBed.createComponent(IgoIconComponent, {
+      bindings: [inputBinding('icon', () => 'test')]
+    });
     component = fixture.componentInstance;
-    component.icon = 'test';
     fixture.detectChanges();
   });
 

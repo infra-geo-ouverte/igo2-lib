@@ -13,40 +13,32 @@
     >
       <ng-template #customBottomActions let-layer="layer">
         @if (isStyleEditButton(layer)) {
-          <igo-style-modal-layer-button
-            [layer]="layer"
-          ></igo-style-modal-layer-button>
+          <igo-style-modal-layer-button [layer]="layer" />
         }
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
-        <igo-track-feature-button
-          [trackFeature]="true"
-          [layer]="layer"
-        ></igo-track-feature-button>
+        <igo-metadata-button [layer]="layer" />
+        <igo-track-feature-button [trackFeature]="true" [layer]="layer" />
         @if (isTimeFilterButton(layer)) {
           <igo-time-filter-button
-            [header]="timeButton"
+            [header]="timeButton()"
             [layer]="layer"
             (click)="activateTimeFilter()"
-          ></igo-time-filter-button>
+          />
         }
         @if (isOGCFilterButton(layer)) {
           <igo-ogc-filter-button
-            [header]="ogcButton"
+            [header]="ogcButton()"
             [layer]="layer"
             (click)="activateOgcFilter()"
-          ></igo-ogc-filter-button>
+          />
         }
         @if (isExportButton(layer)) {
-          <igo-export-button
-            [layer]="layer"
-            (click)="activateExport(layer)"
-          ></igo-export-button>
+          <igo-export-button [layer]="layer" (click)="activateExport(layer)" />
         }
-        <igo-workspace-button [layer]="layer"></igo-workspace-button>
+        <igo-workspace-button [layer]="layer" />
       </ng-template>
 
       <ng-container ngProjectAs="[emptyList]">
-        <ng-template [ngTemplateOutlet]="emptyLayers"></ng-template>
+        <ng-template [ngTemplateOutlet]="emptyLayers" />
       </ng-container>
     </igo-layer-viewer>
   </mat-tab>
@@ -55,13 +47,12 @@
     @if (showAllLegend()) {
       <igo-layer-legend-list
         igoLayerLegendListBinding
-        [allowShowAllLegends]="allowShowAllLegends"
+        [allowShowAllLegends]="allowShowAllLegends()"
         [showAllLegendsValue]="showAllLegendsValue$ | async"
         (allLegendsShown)="onShowAllLegends($event)"
         [excludeBaseLayers]="excludeBaseLayers"
-        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-      >
-      </igo-layer-legend-list>
+        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
+      />
     }
     @if ((layers$ | async).length !== 0) {
     } @else {
@@ -71,7 +62,7 @@
             {{ 'igo.integration.mapTool.empty' | translate }}
           </p>
           @if (
-            layerAdditionAllowed &&
+            layerAdditionAllowed() &&
             (searchToolInToolbar ||
               catalogToolInToolbar ||
               contextToolInToolbar)
@@ -80,7 +71,7 @@
               {{ 'igo.integration.mapTool.customize' | translate }}
             </p>
           }
-          @if (layerAdditionAllowed && searchToolInToolbar) {
+          @if (layerAdditionAllowed() && searchToolInToolbar) {
             <mat-list-item>
               <mat-icon matListItemIcon>search</mat-icon>
               <span matListItemTitle class="search-tool" (click)="searchEmit()">
@@ -88,7 +79,7 @@
               </span>
             </mat-list-item>
           }
-          @if (layerAdditionAllowed && catalogToolInToolbar) {
+          @if (layerAdditionAllowed() && catalogToolInToolbar) {
             <mat-list-item>
               <mat-icon matListItemIcon>library_add</mat-icon>
               <span
@@ -100,7 +91,7 @@
               </span>
             </mat-list-item>
           }
-          @if (layerAdditionAllowed && contextToolInToolbar) {
+          @if (layerAdditionAllowed() && contextToolInToolbar) {
             <mat-list-item>
               <mat-icon matListItemIcon>star</mat-icon>
               <span
@@ -117,7 +108,7 @@
     }
 
     @if (
-      !allowShowAllLegends &&
+      !allowShowAllLegends() &&
       (layers$ | async).length !== 0 &&
       (visibleOrInRangeLayers$ | async).length === 0
     ) {
@@ -138,14 +129,14 @@
           {{ 'igo.integration.mapTool.empty' | translate }}
         </p>
         @if (
-          layerAdditionAllowed &&
+          layerAdditionAllowed() &&
           (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
         ) {
           <p class="map-empty">
             {{ 'igo.integration.mapTool.customize' | translate }}
           </p>
         }
-        @if (layerAdditionAllowed && searchToolInToolbar) {
+        @if (layerAdditionAllowed() && searchToolInToolbar) {
           <mat-list-item>
             <mat-icon matListItemIcon>search</mat-icon>
             <span matListItemTitle class="search-tool" (click)="searchEmit()">
@@ -153,7 +144,7 @@
             </span>
           </mat-list-item>
         }
-        @if (layerAdditionAllowed && catalogToolInToolbar) {
+        @if (layerAdditionAllowed() && catalogToolInToolbar) {
           <mat-list-item>
             <mat-icon matListItemIcon>library_add</mat-icon>
             <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
@@ -161,7 +152,7 @@
             </span>
           </mat-list-item>
         }
-        @if (layerAdditionAllowed && contextToolInToolbar) {
+        @if (layerAdditionAllowed() && contextToolInToolbar) {
           <mat-list-item>
             <mat-icon matListItemIcon>star</mat-icon>
             <span matListItemTitle class="context-tool" (click)="contextEmit()">

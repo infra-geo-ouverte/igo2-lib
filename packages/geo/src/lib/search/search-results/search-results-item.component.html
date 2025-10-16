@@ -3,7 +3,7 @@
   (mouseleave)="onMouseEvent($event)"
 >
   @if (icon) {
-    <mat-icon matListItemIcon>{{ showIcons ? icon : 'blank' }}</mat-icon>
+    <mat-icon matListItemIcon>{{ showIcons() ? icon : 'blank' }}</mat-icon>
   }
 
   @if (titleHtml) {
@@ -21,12 +21,12 @@
   }
 
   <div matListItemMeta>
-    @if (withZoomButton) {
+    @if (withZoomButton()) {
       <button igoStopPropagation mat-icon-button (click)="onZoomHandler()">
         <mat-icon>search</mat-icon>
       </button>
     }
 
-    <ng-content select="[igoSearchItemToolbar]"> </ng-content>
+    <ng-content select="[igoSearchItemToolbar]" />
   </div>
 </mat-list-item>

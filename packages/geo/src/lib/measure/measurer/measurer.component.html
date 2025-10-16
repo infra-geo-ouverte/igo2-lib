@@ -24,7 +24,7 @@
     </mat-slide-toggle>
 
     @if (hasLine$ | async) {
-      <mat-divider></mat-divider>
+      <mat-divider />
     }
 
     @if (hasLine$ | async) {
@@ -38,7 +38,7 @@
     }
 
     @if ((hasLine$ | async) || (hasArea$ | async)) {
-      <mat-divider></mat-divider>
+      <mat-divider />
     }
 
     @if (hasArea$ | async) {
@@ -62,7 +62,7 @@
     }
 
     @if (hasArea$ | async) {
-      <mat-divider></mat-divider>
+      <mat-divider />
     }
 
     <mat-slide-toggle
@@ -91,8 +91,7 @@
           ) | translate
         "
         (measureUnitChange)="onLengthUnitChange($any($event))"
-      >
-      </igo-measurer-item>
+      />
     }
     @if (activeMeasureType === measureType.Area) {
       <igo-measurer-item
@@ -102,13 +101,12 @@
         [auto]="measureUnitsAuto"
         [placeholder]="'igo.geo.measure.area' | translate"
         (measureUnitChange)="onAreaUnitChange($any($event))"
-      >
-      </igo-measurer-item>
+      />
     }
   }
 
   @if ((hasLine$ | async) || (hasArea$ | async)) {
-    <mat-divider></mat-divider>
+    <mat-divider />
   }
 
   <div class="measure-store-buttons">
@@ -140,8 +138,7 @@
   <igo-entity-table
     #table
     class="table-compact"
-    [store]="store"
+    [store]="store()"
     [template]="tableTemplate"
-  >
-  </igo-entity-table>
+  />
 </div>

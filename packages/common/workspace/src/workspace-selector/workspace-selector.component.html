@@ -1,8 +1,7 @@
 <igo-entity-selector
-  [store]="store"
+  [store]="store()"
   [multi]="false"
   [titleAccessor]="getWorkspaceTitle"
-  [disabled]="disabled"
+  [disabled]="disabled()"
   (selectedChange)="onSelectedChange($event)"
->
-</igo-entity-selector>
+/>

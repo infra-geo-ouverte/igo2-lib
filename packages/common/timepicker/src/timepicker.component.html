@@ -1,0 +1,20 @@
+<mat-form-field class="hour-input" subscriptSizing="dynamic">
+  <mat-label>{{ hourInputLabel() }}</mat-label>
+  <mat-select name="hour" [formControl]="hourFormControl">
+    @for (hour of hours; track hour) {
+      <mat-option [value]="hour">
+        {{ hour }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<mat-form-field class="minute-input" subscriptSizing="dynamic">
+  <mat-label>{{ minuteInputLabel() }}</mat-label>
+  <mat-select name="minute" [formControl]="minuteFormControl">
+    @for (minute of minutes; track minute) {
+      <mat-option [value]="minute">
+        {{ minute }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

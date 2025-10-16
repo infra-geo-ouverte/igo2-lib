@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit
+  computed,
+  input
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,8 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { Layer } from '../../layer';
-import { MapBase } from '../../map';
+import type { Layer } from '../../layer';
+import type { MapBase } from '../../map';
 import { OgcFilterableItemComponent } from '../ogc-filterable-item';
 import {
   IgoOgcSelector,
@@ -35,11 +35,26 @@ import {
     IgoLanguageModule
   ]
 })
-export class OgcFilterButtonComponent implements OnInit {
-  public options: OgcFilterableDataSourceOptions;
+export class OgcFilterButtonComponent {
+  readonly layer = input<Layer>(undefined);
 
-  get badge() {
-    const filter = this.options.ogcFilters as any;
+  readonly options = computed<OgcFilterableDataSourceOptions>(
+    () => this.layer()?.dataSource.options
+  );
+
+  readonly map = input<MapBase>(undefined);
+
+  readonly color = input('primary');
+
+  readonly header = input<boolean>(undefined);
+
+  public ogcFilterCollapse = false;
+
+  readonly badge = computed(() => this.getBadge());
+
+  getBadge(): string | number {
+    const options = this.options();
+    const filter = options.ogcFilters as any;
     let cnt = 0;
     if (filter && !filter.advancedOgcFilters) {
       if (filter.pushButtons) {
@@ -95,9 +110,9 @@ export class OgcFilterButtonComponent implements OnInit {
         if (currentSelectGroup) {
           currentSelectGroup.computedSelectors?.map(
             (cb) =>
-              (cntSelect += (cb.selectors as any)?.filter(
-                (multi) => multi.enabled
-              ).length)
+              (cntSelect +=
+                (cb.selectors as any)?.filter((multi) => multi.enabled)
+                  .length ?? 0)
           );
         }
         cnt += cntSelect;
@@ -111,9 +126,10 @@ export class OgcFilterButtonComponent implements OnInit {
         if (currentAutocompleteGroup) {
           currentAutocompleteGroup.computedSelectors?.map(
             (cb) =>
-              (cntAutocomplete += (cb.selectors as any)?.filter(
-                (autocomplete) => autocomplete.enabled
-              ).length)
+              (cntAutocomplete +=
+                (cb.selectors as any)?.filter(
+                  (autocomplete) => autocomplete.enabled
+                ).length ?? 0)
           );
         }
         cnt += cntAutocomplete;
@@ -126,54 +142,26 @@ export class OgcFilterButtonComponent implements OnInit {
     if (
       filter.filters &&
       filter.filters.operator === 'During' &&
-      filter.filters.active &&
-      filter.interfaceOgcFilters &&
-      filter.interfaceOgcFilters[0].active
+      (filter.interfaceOgcFilters?.[0]?.active ?? filter.filters?.active)
     ) {
       const filterActiveValue = filter.interfaceOgcFilters[0];
       if (filter.filters.calendarModeYear) {
         // year mode check just year
         if (
           filterActiveValue.begin.substring(0, 4) !==
-            this.options.minDate.substring(0, 4) ||
+            options.minDate.substring(0, 4) ||
           filterActiveValue.end.substring(0, 4) !==
-            this.options.maxDate.substring(0, 4)
+            options.maxDate.substring(0, 4)
         ) {
           cnt += 1;
         }
       } else if (
-        filterActiveValue.begin !== this.options.minDate ||
-        filterActiveValue.end !== this.options.maxDate
+        filterActiveValue.begin !== options.minDate ||
+        filterActiveValue.end !== options.maxDate
       ) {
         cnt += 1;
       }
     }
     return cnt > 0 ? cnt : undefined;
-  }
-
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-    if (value) {
-      this.options = this.layer.dataSource
-        .options as OgcFilterableDataSourceOptions;
-    }
-  }
-  private _layer: Layer;
-
-  @Input() map: MapBase;
-
-  @Input() color = 'primary';
-
-  @Input() header: boolean;
-
-  public ogcFilterCollapse = false;
-
-  ngOnInit() {
-    this.options = this.layer.dataSource
-      .options as OgcFilterableDataSourceOptions;
   }
 }

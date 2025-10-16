@@ -21,7 +21,7 @@ import {
   withOsrmSource
 } from '@igo2/geo';
 
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -71,7 +71,6 @@ export class AppDirectionsComponent {
   public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
     map: this.map
   });
-  public zoomOnActiveRoute$ = new Subject<void>();
 
   public authenticated$: BehaviorSubject<boolean>;
 

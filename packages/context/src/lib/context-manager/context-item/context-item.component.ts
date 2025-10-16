@@ -2,10 +2,9 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,23 +44,23 @@ export class ContextItemComponent {
   public color = 'primary';
   public collapsed = true;
 
-  @Input() showFavorite = true;
-  @Input() context: DetailedContext;
-  @Input() default: boolean;
-  @Input() selected: boolean;
+  readonly showFavorite = input(true);
+  readonly context = input<DetailedContext>(undefined);
+  readonly default = input<boolean>(undefined);
+  readonly selected = input<boolean>(undefined);
 
-  @Output() edit = new EventEmitter<DetailedContext>();
-  @Output() delete = new EventEmitter<DetailedContext>();
-  @Output() save = new EventEmitter<DetailedContext>();
-  @Output() clone = new EventEmitter<DetailedContext>();
-  @Output() hide = new EventEmitter<DetailedContext>();
-  @Output() show = new EventEmitter<DetailedContext>();
-  @Output() favorite = new EventEmitter<DetailedContext>();
-  @Output() managePermissions = new EventEmitter<DetailedContext>();
-  @Output() manageTools = new EventEmitter<DetailedContext>();
+  readonly edit = output<DetailedContext>();
+  readonly delete = output<DetailedContext>();
+  readonly save = output<DetailedContext>();
+  readonly clone = output<DetailedContext>();
+  readonly hide = output<DetailedContext>();
+  readonly show = output<DetailedContext>();
+  readonly favorite = output<DetailedContext>();
+  readonly managePermissions = output<DetailedContext>();
+  readonly manageTools = output<DetailedContext>();
 
   get hidden(): boolean {
-    return this.context.hidden;
+    return this.context().hidden;
   }
 
   get canShare(): boolean {

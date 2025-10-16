@@ -52,8 +52,7 @@
           [withTitle]="actionbarMode === 'overlay'"
           [horizontal]="false"
           [mode]="actionbarMode"
-        >
-        </igo-actionbar>
+        />
       }
 
       @if (auth.authenticated && contextConfigs) {
@@ -76,8 +75,7 @@
                 [indeterminate]="getPermission(user).indeterminate"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
-              >
-              </mat-checkbox>
+              />
               <span>{{ user.title }}</span>
             </button>
           } @else {
@@ -91,8 +89,7 @@
                 [indeterminate]="getPermission(user).indeterminate"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
-              >
-              </mat-checkbox>
+              />
               <span>{{ user.title }}</span>
             </button>
             <mat-menu #subAccountMenu="matMenu">
@@ -115,9 +112,8 @@
           <mat-checkbox
             [checked]="showHidden"
             (click)="$event.stopPropagation()"
-            (change)="showHiddenContexts.emit()"
-          >
-          </mat-checkbox>
+            (change)="showHiddenContexts.emit($event.checked)"
+          />
           <span>
             {{ 'igo.context.contextManager.showHidden' | translate }}
           </span>
@@ -142,7 +138,9 @@
           <igo-context-item
             igoListItem
             color="accent"
-            [selected]="selectedContext && selectedContext.uri === context.uri"
+            [selected]="
+              selectedContext() && selectedContext().uri === context.uri
+            "
             [context]="context"
             [default]="
               context.id &&
@@ -160,8 +158,7 @@
             (managePermissions)="managePermissions.emit(context)"
             (select)="onSelect(context)"
             (unselect)="unselect.emit(context)"
-          >
-          </igo-context-item>
+          />
         }
       </igo-collapsible>
     }
@@ -173,7 +170,9 @@
           [showFavorite]="
             configService.getConfig('favoriteContext4NonAuthenticated')
           "
-          [selected]="selectedContext && selectedContext.uri === context.uri"
+          [selected]="
+            selectedContext() && selectedContext().uri === context.uri
+          "
           [context]="context"
           [default]="
             contextConfigs
@@ -183,8 +182,7 @@
           (favorite)="favorite.emit(context)"
           (select)="select.emit(context)"
           (unselect)="unselect.emit(context)"
-        >
-        </igo-context-item>
+        />
       }
     }
   }

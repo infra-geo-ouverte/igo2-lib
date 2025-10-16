@@ -15,7 +15,7 @@
       <mat-icon>add-circle</mat-icon>
     </button>
   </mat-option>
-  <mat-divider></mat-divider>
+  <mat-divider />
   @for (poi of pois; track poi) {
     <mat-option class="poi-option" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
       <div class="titlePoi">{{ poi.title }}</div>

@@ -2,12 +2,11 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   HostBinding,
-  Input,
   OnInit,
-  Output,
-  numberAttribute
+  input,
+  numberAttribute,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,25 +30,28 @@ export class ResizableBarComponent implements OnInit {
   alignement: AlignmentType;
   iconRotation: string;
 
-  @Input() anchor: ResizeAnchorType = 'right';
+  readonly anchor = input<ResizeAnchorType>('right');
 
   /** En pixel */
-  @Input({ transform: numberAttribute }) min: number;
+  readonly min = input<number, unknown>(undefined, {
+    transform: numberAttribute
+  });
 
   /** En pixel */
-  @Input({ transform: numberAttribute }) max: number;
+  readonly max = input<number, unknown>(undefined, {
+    transform: numberAttribute
+  });
 
-  @Output() change = new EventEmitter<MouseEvent>();
+  readonly change = output<MouseEvent>();
 
   @HostBinding('class') get cssClass() {
-    return `${this.alignement} ${this.anchor}`;
+    return `${this.alignement} ${this.anchor()}`;
   }
 
   ngOnInit(): void {
+    const anchor = this.anchor();
     this.alignement =
-      this.anchor === 'top' || this.anchor === 'bottom'
-        ? 'horizontal'
-        : 'vertical';
+      anchor === 'top' || anchor === 'bottom' ? 'horizontal' : 'vertical';
 
     this.iconRotation = this.alignement === 'vertical' ? 'rotate(90deg)' : '';
   }
@@ -57,7 +59,9 @@ export class ResizableBarComponent implements OnInit {
   onChange(event: MouseEvent): void {
     const value =
       this.alignement === 'horizontal' ? event.clientX : event.clientX;
-    if ((this.min && value <= this.min) || (this.max && value >= this.max)) {
+    const min = this.min();
+    const max = this.max();
+    if ((min && value <= min) || (max && value >= max)) {
       return;
     }
     this.change.emit(event);

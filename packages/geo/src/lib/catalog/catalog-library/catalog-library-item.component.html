@@ -3,7 +3,7 @@
     {{ title }}
   </span>
   <div matListItemMeta>
-    @if (catalog.externalProvider) {
+    @if (catalog().externalProvider) {
       <mat-icon
         matListItemIcon
         class="igo-external-provider"
@@ -16,7 +16,7 @@
         public
       </mat-icon>
     }
-    @if (catalog.removable) {
+    @if (catalog().removable) {
       <button
         mat-icon-button
         tooltip-position="below"
@@ -29,9 +29,9 @@
       </button>
     }
 
-    @if (!catalog.removable) {
+    @if (!catalog().removable) {
       <button class="igo-blank" disabled="true" mat-icon-button>
-        <mat-icon></mat-icon>
+        <mat-icon />
       </button>
     }
   </div>

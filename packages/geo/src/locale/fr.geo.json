@@ -520,6 +520,7 @@
           "type": {
             "address": "Adresse",
             "oldAddress": "Ancienne adresse",
+            "aggloMun": "Agglomérations",
             "district": "Arrondissement",
             "postalCode": "Code Postal",
             "city": "Municipalité",
@@ -541,10 +542,14 @@
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
+            "dessertes": "Desserte de police (CSAU)",
+            "matricule": "Rôle d'évaluation foncière",
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
             "cultpatri": "Culture et patrimoine",
-            "unites": "Unités (appartements, bureaux, etc.)"
+            "unites": "Unités (appartements, bureaux, etc.)",
+            "stations-partenaires": "Station hydrométrique (partenaire)",
+            "stations-publique": "Station hydrométrique"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -626,7 +631,10 @@
         "hour": "Heure",
         "minute": "Minute",
         "endYear": "Année de fin",
-        "startYear": "Année de début"
+        "startYear": "Année de début",
+        "today": "Aujourd'hui",
+        "now": "Maintenant",
+        "clear": "Effacer"
       },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",
@@ -662,6 +670,8 @@
         "warning": "Avertissement",
         "freehandControl": "À main levée",
         "group": {
+          "addresses": "Adresses",
+          "aleas": "Aléas",
           "toponyme": "Toponyme",
           "culture": "Culture",
           "education": "Éducation",
@@ -679,12 +689,19 @@
         "CircProv": "Circonscriptions provinciales",
         "DirReg": "Directions régionales",
         "MRC": "MRC",
+        "RSS": "Régions sociosanitaires (RSS)",
+        "RLS": "Réseaux locaux de santé (RLS)",
+        "CLSC": "Centres locaux de services communautaires (CLSC)",
+        "tours": "Tours de refroidissement",
         "RegTour": "Régions touristiques",
         "limites": "Limites administratives",
+        "aggloMun": "Agglomérations",
         "bornes": "Bornes sumi",
+        "matricule": "Rôle d'évaluation foncière",
         "hydro": "Hydrographie",
         "routes": "Routes",
         "bati": "Bâtiments",
+        "localite": "Localités",
         "batiment": "Bâtiments",
         "camping": "Camping",
         "equipement": "Équipements",
@@ -720,7 +737,14 @@
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
         "polices": "Poste de police",
-        "unites": "Numéro d'unite"
+        "unites": "Unités (Numéros d'immeubles, bureaux, etc.)",
+        "address": "Adresses sans unités",
+        "stations-hydro-partenaires": "Station hydrométrique (partenaire)",
+        "stations-hydro-publique": "Station hydrométrique",
+        "niveau-eau-partenaires": "Niveaux d'eau lors d'une inondation (avec photos)",
+        "niveau-eau-publique": "Niveaux d'eau lors d'une inondation (avec rapports)",
+        "reperes-crue": "Repères de crue",
+        "depanneurs-reservoirs": "Dépanneurs et stations service - Réservoir de carburant"
       },
       "measure": {
         "dialog": {

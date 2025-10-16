@@ -2,12 +2,11 @@
   <igo-layer-legend-list
     igoLayerLegendListBinding
     [excludeBaseLayers]="excludeBaseLayers"
-    [allowShowAllLegends]="allowShowAllLegends"
-    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
+    [allowShowAllLegends]="allowShowAllLegends()"
+    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
     [showAllLegendsValue]="showAllLegendsValue$ | async"
     (allLegendsShown)="onShowAllLegends($event)"
-  >
-  </igo-layer-legend-list>
+  />
 }
 @if ((layers$ | async).length !== 0) {
 } @else {
@@ -17,14 +16,14 @@
         {{ 'igo.integration.mapTool.empty' | translate }}
       </p>
       @if (
-        layerAdditionAllowed &&
+        layerAdditionAllowed() &&
         (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
       ) {
         <p class="map-empty">
           {{ 'igo.integration.mapTool.customize' | translate }}
         </p>
       }
-      @if (layerAdditionAllowed && searchToolInToolbar) {
+      @if (layerAdditionAllowed() && searchToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>search</mat-icon>
           <span matListItemTitle class="search-tool" (click)="searchEmit()">
@@ -32,7 +31,7 @@
           </span>
         </mat-list-item>
       }
-      @if (layerAdditionAllowed && catalogToolInToolbar) {
+      @if (layerAdditionAllowed() && catalogToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>library_add</mat-icon>
           <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
@@ -40,7 +39,7 @@
           </span>
         </mat-list-item>
       }
-      @if (layerAdditionAllowed && contextToolInToolbar) {
+      @if (layerAdditionAllowed() && contextToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>star</mat-icon>
           <span matListItemTitle class="context-tool" (click)="contextEmit()">
@@ -53,7 +52,7 @@
 }
 
 @if (
-  !allowShowAllLegends &&
+  !allowShowAllLegends() &&
   (layers$ | async).length !== 0 &&
   (visibleOrInRangeLayers$ | async).length === 0
 ) {

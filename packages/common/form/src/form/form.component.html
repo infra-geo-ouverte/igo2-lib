@@ -1,6 +1,6 @@
 <form
-  [autocomplete]="autocomplete"
-  [formGroup]="form.control"
+  [autocomplete]="autocomplete()"
+  [formGroup]="form().control"
   (ngSubmit)="onSubmit()"
 >
   <div
@@ -8,10 +8,10 @@
     [ngClass]="{ 'igo-form-body-with-buttons': hasButtons }"
   >
     <div class="igo-form-content">
-      <ng-content></ng-content>
+      <ng-content />
     </div>
     <div #buttons class="igo-form-buttons">
-      <ng-content select="[formButtons]"></ng-content>
+      <ng-content select="[formButtons]" />
     </div>
   </div>
 </form>

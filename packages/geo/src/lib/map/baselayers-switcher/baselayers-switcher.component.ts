@@ -2,9 +2,10 @@ import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
-  Input,
   OnDestroy,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -37,8 +38,8 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   private mediaService = inject(MediaService);
 
-  @Input() map: IgoMap;
-  @Input() useStaticIcon: boolean;
+  readonly map = input<IgoMap>(undefined);
+  readonly useStaticIcon = model<boolean>(undefined);
 
   public _baseLayers: Layer[] = [];
   public expand = false;
@@ -52,15 +53,17 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     const media = this.mediaService.media$.value;
-    if (media === Media.Mobile && this.useStaticIcon === undefined) {
-      this.useStaticIcon = true;
+    if (media === Media.Mobile && this.useStaticIcon() === undefined) {
+      this.useStaticIcon.set(true);
     }
   }
 
   ngAfterViewInit() {
-    this.layers$$ = this.map.layerController.baseLayers$.subscribe((layers) => {
-      this._baseLayers = layers ?? [];
-    });
+    this.layers$$ = this.map().layerController.baseLayers$.subscribe(
+      (layers) => {
+        this._baseLayers = layers ?? [];
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -68,7 +71,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   collapseOrExpand() {
-    if (this.hasMoreThanTwo || this.useStaticIcon) {
+    if (this.hasMoreThanTwo || this.useStaticIcon()) {
       this.expand = !this.expand;
     } else {
       this.expand = false;
@@ -76,8 +79,8 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   get baseLayers(): Layer[] {
-    const mapResolution = this.map.viewController.getResolution();
-    const mapZoom = this.map.viewController.getZoom();
+    const mapResolution = this.map().viewController.getResolution();
+    const mapZoom = this.map().viewController.getZoom();
 
     const bl = this._baseLayers.filter((l) => {
       return (

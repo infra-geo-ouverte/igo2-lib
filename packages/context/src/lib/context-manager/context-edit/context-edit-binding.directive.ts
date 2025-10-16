@@ -1,11 +1,10 @@
 import {
   Directive,
-  EventEmitter,
   HostListener,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
@@ -27,18 +26,18 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   private component: ContextEditComponent;
   private editedContext$$: Subscription;
 
-  @Output() submitSuccessed = new EventEmitter<Context>();
+  readonly submitSuccessed = output<Context>();
 
   @HostListener('submitForm', ['$event'])
   onEdit(context: Context) {
-    const id = this.component.context.id;
+    const id = this.component.context().id;
     this.contextService.update(id, context).subscribe(() => {
       this.messageService.success(
         'igo.context.contextManager.dialog.saveMsg',
         'igo.context.contextManager.dialog.saveTitle',
         undefined,
         {
-          value: context.title || this.component.context.title
+          value: context.title || this.component.context().title
         }
       );
       this.contextService.setEditedContext(undefined);
@@ -47,9 +46,7 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   }
 
   constructor() {
-    const component = inject(ContextEditComponent, { self: true });
-
-    this.component = component;
+    this.component = inject(ContextEditComponent, { self: true });
   }
 
   ngOnInit() {
@@ -63,6 +60,6 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   }
 
   private handleEditedContextChange(context: DetailedContext) {
-    this.component.context = context;
+    this.component.context.set(context);
   }
 }

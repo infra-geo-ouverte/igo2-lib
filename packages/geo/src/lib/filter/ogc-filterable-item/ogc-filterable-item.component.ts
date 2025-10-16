@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -68,26 +68,32 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   private resolution$$: Subscription;
   private ogcFilterWriter;
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() map: MapBase;
+  readonly map = input<MapBase>(undefined);
 
-  @Input() header = true;
+  readonly header = input(true);
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);
   }
 
   get datasource(): OgcFilterableDataSource {
-    return this.layer.dataSource as OgcFilterableDataSource;
+    return this.layer().dataSource as OgcFilterableDataSource;
   }
 
   constructor() {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 
+  toggleLayerVisibility() {
+    const layer = this.layer();
+    layer.visible = !layer.visible;
+  }
+
   ngOnInit() {
-    if (this.layer.visible) {
+    const layer = this.layer();
+    if (layer.visible) {
       this.filtersCollapsed = false;
     }
 
@@ -136,14 +142,14 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         : false;
     }
 
-    const resolution$ = this.layer.map.viewController.resolution$;
+    const resolution$ = layer.map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
-      this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+      this.inResolutionRange$.next(this.layer().isInResolutionsRange);
     });
   }
 
   ngOnDestroy(): void {
-    this.resolution$$.unsubscribe();
+    this.resolution$$?.unsubscribe();
   }
 
   addFilterToSequence() {
@@ -186,7 +192,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
           operator: firstOperatorName,
           active: true,
           igoSpatialSelector: 'fixedExtent',
-          srsName: this.map.projection
+          srsName: this.map().projection
         } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,
@@ -221,24 +227,25 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       this.hasActiveSpatialFilter = true;
     }
 
+    const layer = this.layer();
     if (
       !(JSON.stringify(this.lastRunOgcFilter) === JSON.stringify(activeFilters))
     ) {
-      if (this.layer.dataSource.options.type === 'wfs') {
-        const ogcDataSource: any = this.layer.dataSource;
+      if (layer.dataSource.options.type === 'wfs') {
+        const ogcDataSource: any = layer.dataSource;
         const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
         ogcLayer.filters =
           this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
             activeFilters
           );
-        this.layer.dataSource.ol.refresh();
+        layer.dataSource.ol.refresh();
       } else if (
-        this.layer.dataSource.options.type === 'wms' &&
+        layer.dataSource.options.type === 'wms' &&
         ogcFilters.enabled
       ) {
         let rebuildFilter = '';
         if (activeFilters.length >= 1) {
-          const ogcDataSource: any = this.layer.dataSource;
+          const ogcDataSource: any = layer.dataSource;
           const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
           ogcLayer.filters =
             this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
@@ -248,7 +255,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
             ogcLayer.filters,
             undefined,
             undefined,
-            (this.layer.dataSource.options as any).fieldNameGeometry,
+            (layer.dataSource.options as any).fieldNameGeometry,
             ogcDataSource.options
           );
         }
@@ -264,14 +271,14 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     } else {
       // identical filter. Nothing triggered
     }
-    (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(
+    (layer.dataSource as OgcFilterableDataSource).setOgcFilters(
       ogcFilters,
       true
     );
   }
 
   public setVisible() {
-    this.layer.visible = true;
+    this.layer().visible = true;
   }
 
   public isAdvancedOgcFilters(): boolean {
@@ -297,7 +304,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   private toggleLegend(collapsed: boolean) {
-    this.layer.legendCollapsed = collapsed;
+    this.layer().legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 

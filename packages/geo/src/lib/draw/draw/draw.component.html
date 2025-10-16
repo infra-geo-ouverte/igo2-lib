@@ -78,7 +78,7 @@
     }
   </div>
 
-  <mat-divider></mat-divider>
+  <mat-divider />
 
   <div class="layer-select-container">
     <mat-form-field class="layer-select" subscriptSizing="dynamic">
@@ -98,27 +98,28 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    @if (activeDrawingLayer) {
+    @let drawingLayer = activeDrawingLayer();
+    @if (drawingLayer) {
       <button
         mat-icon-button
-        [color]="activeDrawingLayer.visible ? 'primary' : 'accent'"
+        [color]="drawingLayer.visible ? 'primary' : 'accent'"
         collapsibleButton
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="
-          activeDrawingLayer.visible
+          drawingLayer.visible
             ? ('igo.geo.layer.hideLayer' | translate)
             : ('igo.geo.layer.showLayer' | translate)
         "
-        (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible"
+        (click)="drawingLayer.visible = !drawingLayer.visible"
       >
         <mat-icon>
-          {{ activeDrawingLayer.visible ? 'visibility' : 'visibility_off' }}
+          {{ drawingLayer.visible ? 'visibility' : 'visibility_off' }}
         </mat-icon>
       </button>
     }
   </div>
-  <mat-divider></mat-divider>
+  <mat-divider />
   <div>
     @if (activeStore.count$.getValue() > 0) {
       <button
@@ -141,8 +142,7 @@
         class="table-compact"
         [store]="activeStore"
         [template]="tableTemplate"
-      >
-      </igo-entity-table>
+      />
     </div>
   </div>
 

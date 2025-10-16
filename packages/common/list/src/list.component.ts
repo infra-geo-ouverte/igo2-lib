@@ -2,20 +2,20 @@ import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
-  ContentChildren,
   ElementRef,
   HostListener,
   Input,
   OnDestroy,
   OnInit,
+  contentChildren,
+  effect,
   inject
 } from '@angular/core';
-import type { QueryList } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 
 import { ClickoutDirective } from '@igo2/common/clickout';
 
-import { Subscription } from 'rxjs';
+// subscriptions can be rxjs Subscription or OutputRefSubscription-like objects
 
 import { ListItemDirective } from './list-item.directive';
 
@@ -64,11 +64,16 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private _focusedItem: ListItemDirective;
 
   private navigationEnabled: boolean;
-  private listItems$$: Subscription;
-  private subscriptions: Subscription[] = [];
+  // Accept both rxjs Subscription and Angular signal OutputRefSubscription
+  private subscriptions: { unsubscribe: () => void }[] = [];
+  private listItemsEffect = effect(() => {
+    this.listItems();
+    this.init();
+  });
 
-  @ContentChildren(ListItemDirective, { descendants: true })
-  listItems: QueryList<ListItemDirective>;
+  readonly listItems = contentChildren(ListItemDirective, {
+    descendants: true
+  });
 
   @HostListener('document:keydown', ['$event'])
   @HostListener('document:enter', ['$event'])
@@ -91,15 +96,18 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    if (this.listItems.length) {
+    const listItems = this.listItems();
+    if (listItems.length) {
       this.init();
     }
-
-    this.listItems$$ = this.listItems.changes.subscribe(() => this.init());
   }
 
   ngOnDestroy() {
-    this.listItems$$.unsubscribe();
+    this.unsubscribe();
+    if (this.listItemsEffect) {
+      this.listItemsEffect.destroy();
+      this.listItemsEffect = undefined;
+    }
   }
 
   focus(item?: ListItemDirective) {
@@ -125,7 +133,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   focusNext() {
-    const items = this.listItems.toArray();
+    const items = this.listItems();
     let item;
     const igoList = this.el.nativeElement;
     let disabled = true;
@@ -158,7 +166,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   focusPrevious() {
-    const items = this.listItems.toArray();
+    const items = this.listItems();
     let item: ListItemDirective;
     const igoList = this.el.nativeElement;
     let disabled = true;
@@ -243,7 +251,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscribe() {
     this.unsubscribe();
 
-    this.listItems.toArray().forEach((item) => {
+    this.listItems().forEach((item) => {
       this.subscriptions.push(
         item.beforeSelect.subscribe((item2: ListItemDirective) =>
           this.handleItemBeforeSelect(item2)
@@ -271,7 +279,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private unsubscribe() {
-    this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
     this.subscriptions = [];
   }
 
@@ -296,17 +304,15 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private findSelectedItem() {
-    return this.listItems.toArray().find((item) => item.selected);
+    return this.listItems().find((item) => item.selected);
   }
 
   private findFocusedItem() {
-    return this.listItems.toArray().find((item) => item.focused);
+    return this.listItems().find((item) => item.focused);
   }
 
   private getFocusedIndex() {
-    return this.listItems
-      .toArray()
-      .findIndex((item) => item === this.focusedItem);
+    return this.listItems().findIndex((item) => item === this.focusedItem);
   }
 
   private navigate(key: string) {

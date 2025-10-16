@@ -6,7 +6,7 @@
   <app-example-viewer codeFolder="geo/legend">
     <igo-map-browser [map]="map" [view]="view">
       <div class="map-actions --vertical --bottom --right">
-        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        <igo-zoom-button [map]="map" color="primary" />
       </div>
     </igo-map-browser>
 
@@ -17,8 +17,7 @@
         [allowShowAllLegends]="true"
         [updateLegendOnResolutionChange]="false"
         [showAllLegendsValue]="false"
-      >
-      </igo-layer-legend-list>
+      />
     </igo-panel>
   </app-example-viewer>
 </app-doc-viewer>

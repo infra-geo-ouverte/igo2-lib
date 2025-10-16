@@ -2,12 +2,11 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -68,41 +67,41 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   private mouseInsideAdd = false;
 
-  @Input() resolution: number;
+  readonly resolution = input<number>(undefined);
 
-  @Input() catalogAllowLegend = false;
+  readonly catalogAllowLegend = input(false);
 
   /**
    * Catalog layer
    */
-  @Input() layer: CatalogItemLayer;
+  readonly layer = input<CatalogItemLayer>(undefined);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Whether the layer is already added to the map
    */
-  @Input() added = false;
+  readonly added = input(false);
 
   /**
    * Event emitted when the add/remove button is clicked
    */
-  @Output() addedChange = new EventEmitter<AddedChangeEmitter>();
+  readonly addedChange = output<AddedChangeEmitter>();
 
-  @Output() addedLayerIsPreview = new EventEmitter<boolean>();
+  readonly addedLayerIsPreview = output<boolean>();
 
   /**
    * @internal
    */
   get title(): string {
-    return getEntityTitle(this.layer);
+    return getEntityTitle(this.layer());
   }
 
   /**
    * @internal
    */
   get icon(): string {
-    return getEntityIcon(this.layer) || 'layers';
+    return getEntityIcon(this.layer()) || 'layers';
   }
 
   ngOnInit(): void {
@@ -110,11 +109,11 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
       this.addedLayerIsPreview.emit(value)
     );
 
-    this.layers$$ = this.map.layerController.all$.subscribe(() => {
+    this.layers$$ = this.map().layerController.all$.subscribe(() => {
       this.isVisible();
     });
 
-    this.resolution$$ = this.map.viewController.resolution$.subscribe(
+    this.resolution$$ = this.map().viewController.resolution$.subscribe(
       (resolution) => {
         this.isInResolutionsRange(resolution);
         this.isVisible();
@@ -129,29 +128,29 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   }
 
   computeTitleTooltip(): string {
-    const layerOptions = this.layer.options;
+    const layerOptions = this.layer().options;
     if (!layerOptions.tooltip) {
-      return getEntityTitle(this.layer);
+      return getEntityTitle(this.layer());
     }
     const layerTooltip = layerOptions.tooltip;
     const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
     switch (layerOptions.tooltip.type) {
       case TooltipType.TITLE:
-        return this.layer.title;
+        return this.layer().title;
       case TooltipType.ABSTRACT:
         if (layerMetadata && layerMetadata.abstract) {
           return layerMetadata.abstract;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       case TooltipType.CUSTOM:
         if (layerTooltip && layerTooltip.text) {
           return layerTooltip.text;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       default:
-        return this.layer.title;
+        return this.layer().title;
     }
   }
 
@@ -166,7 +165,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
     this.layerService
-      .createAsyncLayer(this.layer.options)
+      .createAsyncLayer(this.layer().options)
       .pipe(first())
       .subscribe((layer) => this.igoLayer$.next(layer));
   }
@@ -185,7 +184,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
-          if (this.added) {
+          if (this.added()) {
             this.remove(event);
           } else {
             this.add(event);
@@ -194,7 +193,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
         this.isPreview$.next(false);
         break;
       case 'mouseenter':
-        if (!this.isPreview$.value && !this.added) {
+        if (!this.isPreview$.value && !this.added()) {
           this.lastTimeoutRequest = setTimeout(() => {
             this.add(event);
             this.isPreview$.next(true);
@@ -218,9 +217,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
    * Emit added change event with added = true
    */
   private add(event: Event) {
-    if (!this.added) {
-      this.added = true;
-      this.addedChange.emit({ added: true, layer: this.layer, event });
+    if (!this.added()) {
+      this.addedChange.emit({ added: true, layer: this.layer(), event });
     }
   }
 
@@ -228,35 +226,37 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
    * Emit added change event with added = false
    */
   private remove(event: Event) {
-    if (this.added) {
-      this.added = false;
-      this.addedChange.emit({ added: false, layer: this.layer, event });
+    if (this.added()) {
+      this.addedChange.emit({ added: false, layer: this.layer(), event });
     }
   }
 
   haveGroup(): boolean {
-    return !(!this.layer.address || this.layer.address.split('.').length === 1);
+    const layer = this.layer();
+    return !(!layer.address || layer.address.split('.').length === 1);
   }
 
   isInResolutionsRange(resolution: number) {
+    const layer = this.layer();
     const minResolution =
-      !this.layer.options.minResolution ||
-      Number.isNaN(this.layer.options.minResolution)
+      !layer.options.minResolution || Number.isNaN(layer.options.minResolution)
         ? 0
-        : this.layer.options.minResolution;
+        : layer.options.minResolution;
+    const layerValue = this.layer();
     const maxResolution =
-      !this.layer.options.maxResolution ||
-      Number.isNaN(this.layer.options.maxResolution)
+      !layerValue.options.maxResolution ||
+      Number.isNaN(layerValue.options.maxResolution)
         ? Infinity
-        : this.layer.options.maxResolution;
+        : layerValue.options.maxResolution;
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );
   }
 
   isVisible() {
-    if (this.layer?.id) {
-      const layer = this.map.layerController.getById(this.layer?.id);
+    const layerValue = this.layer();
+    if (layerValue?.id) {
+      const layer = this.map().layerController.getById(layerValue?.id);
       this.isVisible$.next(layer?.displayed);
     }
   }
@@ -270,7 +270,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   }
 
   computeTooltip(): string {
-    if (this.added) {
+    if (this.added()) {
       if (this.isPreview$.value) {
         return 'igo.geo.catalog.layer.addToMap';
       } else if (this.inRange$.value) {

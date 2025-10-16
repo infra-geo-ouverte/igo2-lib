@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
+import { Component, ViewEncapsulation, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -41,14 +41,18 @@ export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
    */
-  @Input() tourToStart = '';
-  @Input() styleButton: 'icon' | 'raised';
-  @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
+  readonly tourToStart = input('');
+  readonly styleButton = input<'icon' | 'raised'>(undefined);
+  readonly discoverTitleInLocale$ = input<Observable<string>>(of('IGO'));
+
+  constructor() {
+    this.iconService.registerSvg(this.presentationIcon);
+  }
 
   getClass() {
     return {
-      'tour-button-tool-icon': this.styleButton === 'icon',
-      'tour-button-tool': this.styleButton === 'raised'
+      'tour-button-tool-icon': this.styleButton() === 'icon',
+      'tour-button-tool': this.styleButton() === 'raised'
     };
   }
 
@@ -57,8 +61,9 @@ export class InteractiveTourComponent {
   }
 
   getTourToStart() {
-    if (this.tourToStart) {
-      return this.tourToStart;
+    const tourToStart = this.tourToStart();
+    if (tourToStart) {
+      return tourToStart;
     } else {
       return this.activeToolName;
     }
@@ -85,7 +90,7 @@ export class InteractiveTourComponent {
   }
 
   get isToolHaveTour(): boolean {
-    if (this.activeToolName === 'about' && !this.tourToStart) {
+    if (this.activeToolName === 'about' && !this.tourToStart()) {
       return false;
     }
     return this.interactiveTourService.isToolHaveTourConfig(
@@ -115,10 +120,6 @@ export class InteractiveTourComponent {
 
   get disabledTourButton(): boolean {
     return this.interactiveTourService.disabledTourButton(this.activeToolName);
-  }
-
-  constructor() {
-    this.iconService.registerSvg(this.presentationIcon);
   }
 
   startInteractiveTour() {

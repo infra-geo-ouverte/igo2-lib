@@ -1,6 +1,6 @@
 <div class="import-export-toggle">
   <mat-button-toggle-group
-    [value]="selectedMode"
+    [value]="selectedMode()"
     (change)="onImportExportChange($event)"
   >
     <mat-button-toggle [value]="'import'">
@@ -12,7 +12,7 @@
   </mat-button-toggle-group>
 </div>
 
-@if (selectedMode === 'import') {
+@if (selectedMode() === 'import') {
   <form class="igo-form" [formGroup]="importForm">
     <div class="igo-input-container">
       <mat-form-field>
@@ -58,7 +58,7 @@
       >
         {{ 'igo.geo.importExportForm.importButton' | translate }}
       </button>
-      <igo-spinner [shown]="loading$ | async"></igo-spinner>
+      <igo-spinner [shown]="loading$ | async" />
       <input
         hidden
         #fileInput
@@ -70,7 +70,7 @@
     </div>
   </form>
 }
-@if (selectedMode === 'import') {
+@if (selectedMode() === 'import') {
   <section>
     @if (importHtmlClarifications === '') {
       <div>
@@ -92,12 +92,12 @@
       </div>
     }
     @if (importHtmlClarifications !== '') {
-      <igo-custom-html [html]="importHtmlClarifications"> </igo-custom-html>
+      <igo-custom-html [html]="importHtmlClarifications" />
     }
   </section>
 }
 
-@if ((exportableLayers$ | async).length === 0 && selectedMode === 'export') {
+@if ((exportableLayers$ | async).length === 0 && selectedMode() === 'export') {
   <section>
     <h4>
       {{ 'igo.geo.importExportForm.exportNoLayersExportable' | translate }}
@@ -105,7 +105,7 @@
   </section>
 }
 
-@if ((exportableLayers$ | async).length > 0 && selectedMode === 'export') {
+@if ((exportableLayers$ | async).length > 0 && selectedMode() === 'export') {
   <form class="igo-form" [formGroup]="form">
     <div class="igo-input-container">
       <mat-form-field>
@@ -248,10 +248,10 @@
               : ('igo.geo.importExportForm.exportButtonLink' | translate)
         }}
       </button>
-      <igo-spinner [shown]="loading$ | async"></igo-spinner>
+      <igo-spinner [shown]="loading$ | async" />
     </div>
     @if (exportHtmlClarifications !== '') {
-      <igo-custom-html [html]="exportHtmlClarifications"> </igo-custom-html>
+      <igo-custom-html [html]="exportHtmlClarifications" />
     }
   </form>
 }

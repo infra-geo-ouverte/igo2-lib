@@ -5,15 +5,15 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   SimpleChanges,
   TrackByFunction,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import {
   FormControlName,
@@ -181,7 +181,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Entity store
    */
-  @Input() store: EntityStore<object>;
+  readonly store = input<EntityStore<object>>(undefined);
 
   /**
    * Table paginator
@@ -199,59 +199,57 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Table template
    */
-  @Input() template: EntityTableTemplate;
+  readonly template = input<EntityTableTemplate>(undefined);
 
   /**
    * Scroll behavior on selection
    */
-  @Input()
-  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Auto;
+  readonly scrollBehavior = input<EntityTableScrollBehavior>(
+    EntityTableScrollBehavior.Auto
+  );
 
   /**
    * Whether nulls should be first when sorting
    */
-  @Input()
-  sortNullsFirst = false;
+  readonly sortNullsFirst = input(false);
 
   /**
    * Show the table paginator or not. False by default.
    */
-  @Input()
-  withPaginator = false;
+  readonly withPaginator = input(false);
 
   /**
    * Paginator options
    */
-  @Input()
-  paginatorOptions: EntityTablePaginatorOptions;
+  readonly paginatorOptions = input<EntityTablePaginatorOptions>(undefined);
 
   /**
    * Event emitted when an entity (row) is clicked
    */
-  @Output() entityClick = new EventEmitter<object>();
+  readonly entityClick = output<object>();
 
   /**
    * Event emitted when an entity (row) is selected
    */
-  @Output() entitySelectChange = new EventEmitter<{
+  readonly entitySelectChange = output<{
     added: object[];
   }>();
 
   /**
    * Event emitted when the table sort is changed.
    */
-  @Output() entitySortChange = new EventEmitter<{
+  readonly entitySortChange = output<{
     column: EntityTableColumn;
     direction: string;
-  }>(undefined);
+  }>();
 
   /**
    * Table headers
    * @internal
    */
   get headers(): string[] {
-    let columns = this.template.columns
-      .filter((column: EntityTableColumn) => column.visible !== false)
+    let columns = this.template()
+      .columns.filter((column: EntityTableColumn) => column.visible !== false)
       .map((column: EntityTableColumn) => column.name);
 
     if (this.selectionCheckbox === true) {
@@ -272,7 +270,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selection(): boolean {
-    return this.template.selection || false;
+    return this.template().selection || false;
   }
 
   /**
@@ -280,7 +278,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selectionCheckbox(): boolean {
-    return this.template.selectionCheckbox || false;
+    return this.template().selectionCheckbox || false;
   }
 
   /**
@@ -288,7 +286,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selectMany(): boolean {
-    return this.template.selectMany || false;
+    return this.template().selectMany || false;
   }
 
   /**
@@ -296,13 +294,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get fixedHeader(): boolean {
-    return this.template.fixedHeader === undefined
-      ? true
-      : this.template.fixedHeader;
+    const template = this.template();
+    return template.fixedHeader === undefined ? true : template.fixedHeader;
   }
 
   get tableHeight(): string {
-    return this.template.tableHeight ? this.template.tableHeight : 'auto';
+    const template = this.template();
+    return template.tableHeight ? template.tableHeight : 'auto';
   }
 
   constructor() {
@@ -316,10 +314,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
-    this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
-      this.handleDatasource();
-      this.refresh();
-    });
+    this.store()
+      .state.change$.pipe(debounceTime(100))
+      .subscribe(() => {
+        this.handleDatasource();
+        this.refresh();
+      });
   }
 
   /**
@@ -385,7 +385,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   private enableEdit(record: EntityRecord<any>) {
     const item = record.entity.properties || record.entity;
-    this.template.columns.forEach((column) => {
+    this.template().columns.forEach((column) => {
       column.title =
         column.validation?.mandatory && !column.title.includes('*')
           ? column.title + ' *'
@@ -509,12 +509,14 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   private handleDatasource() {
     this.unsubscribeStore();
-    this.selection$$ = this.store.stateView
-      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+    this.selection$$ = this.store()
+      .stateView.manyBy$(
+        (record: EntityRecord<object>) => record.state.selected === true
+      )
       .subscribe((records: EntityRecord<object>[]) => {
         const firstSelected = records[0];
-        const firstSelectedStateviewPosition = this.store.stateView
-          .all()
+        const firstSelectedStateviewPosition = this.store()
+          .stateView.all()
           .indexOf(firstSelected);
         const pageMax = this.paginator
           ? this.paginator.pageSize * (this.paginator.pageIndex + 1)
@@ -533,29 +535,31 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.selectionState$.next(this.computeSelectionState(records));
       });
-    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
-      if (all[0]) {
-        this.enableEdit(all[0]);
-      }
-      this.dataSource.data = all.map((record) => {
-        return {
-          record,
-          cellData: this.template.columns.reduce(
-            (cellData: CellData, column) => {
-              const value = this.getValue(record, column);
-              cellData[column.name] = {
-                class: this.getCellClass(record, column),
-                value,
-                isUrl: this.isUrl(value),
-                isImg: this.isImg(value)
-              };
-              return cellData;
-            },
-            {}
-          )
-        };
+    this.dataSource$$ = this.store()
+      .stateView.all$()
+      .subscribe((all) => {
+        if (all[0]) {
+          this.enableEdit(all[0]);
+        }
+        this.dataSource.data = all.map((record) => {
+          return {
+            record,
+            cellData: this.template().columns.reduce(
+              (cellData: CellData, column) => {
+                const value = this.getValue(record, column);
+                cellData[column.name] = {
+                  class: this.getCellClass(record, column),
+                  value,
+                  isUrl: this.isUrl(value),
+                  isImg: this.isImg(value)
+                };
+                return cellData;
+              },
+              {}
+            )
+          };
+        });
       });
-    });
   }
 
   /**
@@ -605,21 +609,21 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   onSort(event: { active: string; direction: string }) {
     const direction = event.direction;
-    const column = this.template.columns.find(
+    const column = this.template().columns.find(
       (c: EntityTableColumn) => c.name === event.active
     );
 
     if (direction === 'asc' || direction === 'desc') {
-      this.store.stateView.sort({
+      this.store().stateView.sort({
         valueAccessor: (record: EntityRecord<object>) =>
           this.getValue(record, column),
         direction,
-        nullsFirst: this.sortNullsFirst
+        nullsFirst: this.sortNullsFirst()
       });
       this.entitySortChange.emit({ column, direction });
       this.entitySortChange$.next(true);
     } else {
-      this.store.stateView.sort(undefined);
+      this.store().stateView.sort(undefined);
     }
   }
 
@@ -629,7 +633,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onRowClick(record: EntityRecord<object>) {
-    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
     this.entityClick.emit(record.entity);
   }
 
@@ -646,7 +650,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     const entity = record.entity;
-    this.store.state.update(entity, { selected: true }, true);
+    this.store().state.update(entity, { selected: true }, true);
     this.entitySelectChange.emit({ added: [entity] });
   }
 
@@ -660,9 +664,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    const entities = this.store.view.all();
+    const entities = this.store().view.all();
     this.entitySelectChange.emit({ added: [entities] });
-    this.store.state.updateMany(entities, { selected: toggle });
+    this.store().state.updateMany(entities, { selected: toggle });
   }
 
   /**
@@ -679,11 +683,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     const entity = record.entity;
     const exclusive = toggle === true && !this.selectMany;
-    this.store.state.update(entity, { selected: toggle }, exclusive);
+    this.store().state.update(entity, { selected: toggle }, exclusive);
     if (toggle === true) {
       this.entitySelectChange.emit({ added: [entity] });
     }
-    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
   }
 
   /**
@@ -716,9 +720,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     window.getSelection().addRange(range);
     event.stopImmediatePropagation();
 
-    const records = this.store.stateView.all();
+    const records = this.store().stateView.all();
     const recordIndex = records.indexOf(record);
-    const lastRecordChecked = this.store.stateView.get(
+    const lastRecordChecked = this.store().stateView.get(
       this.lastRecordCheckedKey
     );
     const lastRecordIndex = records.indexOf(lastRecordChecked);
@@ -731,11 +735,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const entities = selectRecords.map(
       (_record: EntityRecord<object>) => _record.entity
     );
-    this.store.state.updateMany(entities, { selected: toggle });
+    this.store().state.updateMany(entities, { selected: toggle });
     if (toggle === true) {
       this.entitySelectChange.emit({ added: entities });
     }
-    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
   }
 
   /**
@@ -750,7 +754,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const selectionCount = selectedRecords.length;
     return selectionCount === 0
       ? states.None
-      : selectionCount === this.store.stateView.count
+      : selectionCount === this.store().stateView.count
         ? states.All
         : states.Some;
   }
@@ -764,7 +768,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   columnIsSortable(column: EntityTableColumn): boolean {
     let sortable = column.sort;
     if (sortable === undefined) {
-      sortable = this.template.sort === undefined ? false : this.template.sort;
+      const template = this.template();
+      sortable = template.sort === undefined ? false : template.sort;
     }
     return sortable;
   }
@@ -814,10 +819,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (column.valueAccessor !== undefined) {
       return column.valueAccessor(entity, record);
     }
-    if (this.template.valueAccessor !== undefined) {
-      return this.template.valueAccessor(entity, column.name, record);
+    const template = this.template();
+    if (template.valueAccessor !== undefined) {
+      return template.valueAccessor(entity, column.name, record);
     }
-    value = this.store.getProperty(entity, column.name);
+    value = this.store().getProperty(entity, column.name);
 
     if (column.type === 'boolean') {
       if (value === undefined || value === null || value === '') {
@@ -970,7 +976,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   getHeaderClass(): Record<string, boolean> {
-    const func = this.template.headerClassFunc;
+    const func = this.template().headerClassFunc;
     if (func instanceof Function) {
       return func();
     }
@@ -985,7 +991,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getRowClass(record: EntityRecord<object>): Record<string, boolean> {
     const entity = record.entity;
-    const func = this.template.rowClassFunc;
+    const func = this.template().rowClassFunc;
     if (func instanceof Function) {
       return func(entity, record);
     }
@@ -1006,7 +1012,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const entity = record.entity;
     const cls = {};
 
-    const tableFunc = this.template.cellClassFunc;
+    const tableFunc = this.template().cellClassFunc;
     if (tableFunc instanceof Function) {
       Object.assign(cls, tableFunc(entity, column, record));
     }

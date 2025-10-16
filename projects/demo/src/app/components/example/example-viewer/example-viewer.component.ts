@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -21,15 +21,15 @@ const SRC_PATH =
   ]
 })
 export class ExampleViewerComponent {
-  @Input() title: string;
-  @Input() codeFolder: string;
-  @Input() configFolder: string;
+  readonly title = input<string>(undefined);
+  readonly codeFolder = input<string>(undefined);
+  readonly configFolder = input<string>(undefined);
 
   get codeUrl() {
-    return `${SRC_PATH}/app/${this.codeFolder}`;
+    return `${SRC_PATH}/app/${this.codeFolder()}`;
   }
 
   get configUrl() {
-    return `${SRC_PATH}/${this.configFolder}`;
+    return `${SRC_PATH}/${this.configFolder()}`;
   }
 }

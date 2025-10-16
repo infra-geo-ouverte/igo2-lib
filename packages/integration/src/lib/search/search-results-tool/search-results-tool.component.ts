@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -103,12 +104,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
-  @Input() showIcons = true;
+  readonly showIcons = input(true);
 
   /**
    * Determine the top panel default state
    */
-  @Input() topPanelStateDefault = 'expanded';
+  readonly topPanelStateDefault = input('expanded');
 
   private hasFeatureEmphasisOnSelection = false;
   public saveSearchResultInLayer = false;
@@ -543,7 +544,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.searchState.setSelectedResult(result);
 
     if (this.topPanelState === 'initial') {
-      if (this.topPanelStateDefault !== 'collapsed') {
+      if (this.topPanelStateDefault() !== 'collapsed') {
         this.topPanelState = 'expanded';
       } else {
         this.topPanelState = 'collapsed';

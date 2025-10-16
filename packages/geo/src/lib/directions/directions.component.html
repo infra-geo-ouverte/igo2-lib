@@ -19,25 +19,25 @@
 
 <igo-directions-inputs
   (stopInputHasFocus)="onStopInputHasFocusChange($event)"
-  [coordRoundedDecimals]="coordRoundedDecimals"
+  [coordRoundedDecimals]="coordRoundedDecimals()"
   [projection]="projection"
-  [stopsFeatureStore]="stopsFeatureStore"
-  [stopsStore]="stopsStore"
-  [debounce]="debounce"
-  [length]="length"
-></igo-directions-inputs>
+  [stopsFeatureStore]="stopsFeatureStore()"
+  [stopsStore]="stopsStore()"
+  [debounce]="debounce()"
+  [length]="length()"
+/>
 
-@if (routesFeatureStore.all().length > 0) {
+@if (routesFeatureStore().all().length > 0) {
   <igo-directions-buttons
-    [stepsFeatureStore]="stepsFeatureStore"
-    [contextUri]="contextUri"
-    [zoomOnActiveRoute$]="zoomOnActiveRoute$"
-    [routesFeatureStore]="routesFeatureStore"
-    [stopsStore]="stopsStore"
-  ></igo-directions-buttons>
+    [stepsFeatureStore]="stepsFeatureStore()"
+    [contextUri]="contextUri()"
+    [zoomOnActiveRoute]="zoomOnActiveRoute()"
+    [routesFeatureStore]="routesFeatureStore()"
+    [stopsStore]="stopsStore()"
+  />
 }
 
 <igo-directions-results
-  [stepsFeatureStore]="stepsFeatureStore"
-  [routesFeatureStore]="routesFeatureStore"
-></igo-directions-results>
+  [stepsFeatureStore]="stepsFeatureStore()"
+  [routesFeatureStore]="routesFeatureStore()"
+/>

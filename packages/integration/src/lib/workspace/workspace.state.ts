@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
+import { Injectable, OnDestroy, inject, signal } from '@angular/core';
 
 import {
   EntityRecord,
@@ -29,7 +29,7 @@ export class WorkspaceState implements OnDestroy {
   private editionActionsService = inject(EditionActionsService);
   private storageService = inject(StorageService);
 
-  public workspacePanelExpanded = false;
+  expanded = signal(false);
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);

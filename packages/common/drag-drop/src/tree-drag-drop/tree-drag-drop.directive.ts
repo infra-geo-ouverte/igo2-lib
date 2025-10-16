@@ -1,20 +1,18 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
-  AfterContentInit,
-  ContentChildren,
   Directive,
   ElementRef,
-  EventEmitter,
   HostBinding,
   HostListener,
-  Input,
   OnDestroy,
-  Output,
-  QueryList,
   Renderer2,
   booleanAttribute,
-  inject
+  contentChildren,
+  effect,
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatTreeNode } from '@angular/material/tree';
 
@@ -53,7 +51,7 @@ export interface DropPermission {
   selector: '[igoTreeDragDrop]',
   standalone: true
 })
-export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
+export class TreeDragDropDirective implements OnDestroy {
   private elementRef = inject(ElementRef);
   private renderer = inject(Renderer2);
 
@@ -61,28 +59,29 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
   dropNodeTarget: TreeFlatNode;
   expandTimeout: number;
   nodesListeners: DragNodeListeners[] | undefined;
+  private nodesEffect = effect(() => {
+    this.nodes();
+    this.addAllListener();
+  });
   dropLineTarget: HTMLElement;
   highlightedNode = new SelectionModel<TreeFlatNode>();
 
-  @Input({ required: true }) treeControl: FlatTreeControl<TreeFlatNode>;
+  readonly treeControl = input.required<FlatTreeControl<TreeFlatNode>>();
 
   /** The default is 5 */
-  @Input() maxLevel = 5;
+  readonly maxLevel = input(5);
 
-  @Input({ transform: booleanAttribute })
-  set treeDragDropIsDisabled(disabled: boolean) {
-    this.isDisabled = disabled;
-    disabled ? this.removeAllListener() : this.addAllListener();
-  }
-  private isDisabled = false;
+  readonly treeDragDropIsDisabled = input(false, {
+    transform: booleanAttribute
+  });
 
-  @Output() dragStart = new EventEmitter<TreeFlatNode>();
+  readonly dragStart = output<TreeFlatNode>();
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output() onDrop = new EventEmitter<TreeDropEvent>(null);
+  readonly onDrop = output<TreeDropEvent>();
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output() onDropError = new EventEmitter<DropPermission>();
+  readonly onDropError = output<DropPermission>();
 
   @HostListener('dragover', ['$event']) hostDragOver(event: Event): void {
     event.preventDefault();
@@ -94,8 +93,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
 
   @HostBinding('class.--dragging') dragging: boolean;
 
-  @ContentChildren(MatTreeNode, { descendants: true })
-  nodes: QueryList<MatTreeNode<TreeFlatNode>>;
+  readonly nodes = contentChildren(MatTreeNode, { descendants: true });
 
   constructor() {
     this.onDrop.subscribe(() => this.dragEnd());
@@ -109,16 +107,20 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
         this.addNodeClass(change.added[0].id, '--drag-hover');
       }
     });
-  }
 
-  ngAfterContentInit(): void {
-    this.nodes.changes.subscribe(() => {
-      this.addAllListener();
+    effect(() => {
+      const disabled = this.treeDragDropIsDisabled();
+      disabled ? this.removeAllListener() : this.addAllListener();
     });
   }
 
   ngOnDestroy(): void {
     this.removeAllListener();
+    if (this.nodesEffect) {
+      // EffectRef provides destroy() to stop the effect
+      this.nodesEffect.destroy();
+      this.nodesEffect = undefined;
+    }
   }
 
   onDragStart(node: TreeFlatNode): void {
@@ -162,7 +164,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
   }
 
   drop(event: DragEvent): void {
-    if (!this.dropNodeTarget || this.isDisabled) {
+    if (!this.dropNodeTarget || this.treeDragDropIsDisabled()) {
       return;
     }
 
@@ -190,7 +192,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
 
     if (this.dropNodeTarget.isGroup) {
       if (dropPosition.type === 'inside') {
-        const isExpanded = this.treeControl.isExpanded(this.dropNodeTarget);
+        const isExpanded = this.treeControl().isExpanded(this.dropNodeTarget);
         if (isExpanded) {
           const children = this.getDirectDescendants(this.dropNodeTarget);
           if (children[0]?.id === this.draggedNode.id) {
@@ -198,7 +200,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
           }
         }
 
-        this.treeControl.expand(this.dropNodeTarget);
+        this.treeControl().expand(this.dropNodeTarget);
         return this.onDrop.emit({
           node: this.draggedNode,
           ref: this.dropNodeTarget,
@@ -227,20 +229,20 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
   }
 
   private addNodeClass(id: string, className: string): void {
-    const node = this.nodes.find((node) => node.data.id === id);
+    const node = this.nodes().find((node) => node.data.id === id);
     this.renderer.addClass(node['_elementRef'].nativeElement, className);
   }
 
   private removeNodeClass(id: string, className: string): void {
-    const node = this.nodes.find((node) => node.data.id === id);
+    const node = this.nodes().find((node) => node.data.id === id);
     this.renderer.removeClass(node['_elementRef'].nativeElement, className);
   }
 
   private addAllListener(): void {
-    if (this.isDisabled) {
+    if (this.treeDragDropIsDisabled()) {
       return;
     }
-    const nodes = this.nodes?.toArray();
+    const nodes = this.nodes();
     if (this.nodesListeners) {
       this.removeAllListener();
     }
@@ -331,16 +333,16 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
     if (!isInside) {
       return this.dragLeave();
     }
-    const isOpen = this.treeControl.isExpanded(node);
+    const isOpen = this.treeControl().isExpanded(node);
     if (!isOpen && !this.expandTimeout) {
       this.expandTimeout = window.setTimeout(() => {
-        this.treeControl.expand(node);
+        this.treeControl().expand(node);
       }, 1200);
     }
   }
 
   private getNodeElement(node: TreeFlatNode): HTMLElement | undefined {
-    const treeNode = this.nodes.find((n) => n.data.id === node.id);
+    const treeNode = this.nodes().find((n) => n.data.id === node.id);
     return treeNode?.['_elementRef'].nativeElement;
   }
 
@@ -386,7 +388,8 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
   }
 
   private validateMaxHierarchyLevel(position: DropPosition): DropPermission {
-    if (!this.maxLevel) {
+    const maxLevel = this.maxLevel();
+    if (!maxLevel) {
       return;
     }
 
@@ -398,17 +401,17 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
       level = level + (this.draggedNode.descendantLevels ?? 0) + 1;
     }
 
-    if (level > this.maxLevel) {
+    if (level > maxLevel) {
       return {
         canDrop: false,
         message: 'igo.common.dragDrop.cannot.maxLevel',
-        params: { value: this.maxLevel }
+        params: { value: maxLevel }
       };
     }
   }
 
   private isHoverDescendant(id: string): boolean {
-    return this.treeControl
+    return this.treeControl()
       .getDescendants(this.draggedNode)
       .some((child) => child.id === id);
   }
@@ -428,7 +431,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
     const bellowOpenedGroup =
       hoveredNode.isGroup &&
       positionType === 'below' &&
-      this.treeControl.isExpanded(hoveredNode);
+      this.treeControl().isExpanded(hoveredNode);
     if (bellowOpenedGroup) {
       positionType = 'inside';
     }
@@ -509,7 +512,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
     id: string,
     level?: number
   ): TreeFlatNode | undefined {
-    const nodes = this.treeControl.dataNodes;
+    const nodes = this.treeControl().dataNodes;
     const index = nodes.findIndex((node) => node.id === id);
 
     const targetLevel = level ?? Math.max(0, nodes[index].level - 1);
@@ -521,7 +524,7 @@ export class TreeDragDropDirective implements AfterContentInit, OnDestroy {
 
   private getDirectDescendants(node: TreeFlatNode): TreeFlatNode[] {
     const level = node.level + 1;
-    return this.treeControl
+    return this.treeControl()
       .getDescendants(node)
       .filter((child) => child.level === level);
   }

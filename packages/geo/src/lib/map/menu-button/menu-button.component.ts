@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, Input, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,7 +32,7 @@ export class MenuButtonComponent {
   }
   private _sidenavOpenend: boolean;
 
-  @Output() openSidenav = new EventEmitter<any>();
+  readonly openSidenav = output();
 
   public useThemeColor: boolean;
 
@@ -52,6 +52,7 @@ export class MenuButtonComponent {
   }
 
   onToggleSidenavClick() {
+    // TODO: The 'emit' function requires a mandatory any argument
     this.openSidenav.emit();
   }
 }
