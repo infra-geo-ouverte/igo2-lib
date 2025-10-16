@@ -116,21 +116,17 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     });
     const layer = this.layer();
 
-    // this.showLegend$$ = this.showLegend$.pipe(skip(1)).subscribe(() => {
-    //   this.maintainLegendStateStorage();
-    // });
-
     if (
       layer.visible &&
       this.viewerOptions()?.legend?.showForVisibleLayers &&
       layer.firstLoadComponent === true
     ) {
       layer.firstLoadComponent = false;
-      this.showLegend = signal(true);
+      this.showLegend.set(true);
     }
     const legendState = this.getLegendState();
     if (legendState?.shown !== undefined) {
-      this.showLegend = signal(legendState?.shown);
+      this.showLegend.set(legendState?.shown);
     }
     this.updateQueryBadge();
 
@@ -177,8 +173,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.network$$?.unsubscribe();
   }
 
-  private toggleLegend(collapsed: boolean) {
-    this.showLegend = signal(!collapsed);
+  toggleLegend(collapsed: boolean) {
+    this.showLegend.set(!collapsed);
   }
 
   toggleLegendOnClick() {
