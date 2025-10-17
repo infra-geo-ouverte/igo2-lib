@@ -229,15 +229,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     const properties = {};
     let offlineButtonState;
 
-    const map = this.map();
-    if (map) {
-      map.forcedOffline$
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe((state) => {
-          offlineButtonState = state;
-        });
-    }
-
     const toolbox = this.toolbox();
     if (
       feature.properties &&
