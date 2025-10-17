@@ -1,10 +1,10 @@
 import {
   Component,
   OnInit,
-  ViewChild,
   inject,
   input,
-  output
+  output,
+  viewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +30,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
   readonly max = input<any>(undefined);
   readonly datasource = input<any>(undefined);
   readonly changeProperty = output<any>();
-  @ViewChild(MatSlider) slider: MatSlider;
+  readonly slider = viewChild(MatSlider);
 
   interval;
   sliderValue = 1;
@@ -123,11 +123,11 @@ export class OgcFilterTimeSliderComponent implements OnInit {
       this.playIcon = 'pause_circle';
       this.interval = setInterval(
         () => {
-          if (this.slider.step < this.calculatedStep) {
+          if (this.slider().step < this.calculatedStep) {
             const _increment = '_increment';
             const _emitInputEvent = '_emitInputEvent';
-            this.slider[_increment](1);
-            this.slider[_emitInputEvent]();
+            this.slider()[_increment](1);
+            this.slider()[_emitInputEvent]();
           } else {
             this.stopFilter();
           }
@@ -150,11 +150,12 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     if (this.interval) {
       clearInterval(this.interval);
     }
+    const slider = this.slider();
     this.interval = undefined;
     this.playIcon = 'play_circle';
-    this.slider.step = 1;
+    slider.step = 1;
     const _emitInputEvent = '_emitInputEvent';
-    this.slider[_emitInputEvent]();
+    slider[_emitInputEvent]();
   }
 
   handleSliderInput(matSliderChange) {

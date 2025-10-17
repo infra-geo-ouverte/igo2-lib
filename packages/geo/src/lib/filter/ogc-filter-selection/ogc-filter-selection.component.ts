@@ -4,10 +4,10 @@ import {
   Component,
   Input,
   OnInit,
-  ViewChild,
   inject,
   input,
-  model
+  model,
+  viewChild
 } from '@angular/core';
 import {
   FormsModule,
@@ -87,9 +87,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   private configService = inject(ConfigService);
   private cdRef = inject(ChangeDetectorRef);
 
-  @ViewChild('selection') sel: MatSelect;
-  @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger })
-  matAutocomplete: MatAutocompleteTrigger;
+  readonly sel = viewChild<MatSelect>('selection');
+  readonly matAutocomplete = viewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger });
 
   readonly refreshFilters = input<() => void>(undefined);
 
@@ -699,10 +698,10 @@ export class OgcFilterSelectionComponent implements OnInit {
           enableds.push(selector);
         });
       });
-      this.sel.options.forEach((item: MatOption) => item.select());
+      this.sel().options.forEach((item: MatOption) => item.select());
       this.selectEnableds = enableds;
     } else {
-      this.sel.options.forEach((item: MatOption) => item.deselect());
+      this.sel().options.forEach((item: MatOption) => item.deselect());
       this.selectEnableds = [];
     }
   }
@@ -711,7 +710,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     if (bundle.multiple) {
       const enableds = this.selectEnableds;
       let newStatus = true;
-      this.sel.options.forEach((item: MatOption) => {
+      this.sel().options.forEach((item: MatOption) => {
         if (!item.selected) {
           newStatus = false;
         }

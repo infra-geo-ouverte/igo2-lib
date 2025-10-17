@@ -11,11 +11,11 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  ViewChild,
   inject,
   input,
   model,
-  output
+  output,
+  viewChild
 } from '@angular/core';
 import {
   FormsModule,
@@ -37,7 +37,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import {
+  MatSelect,
+  MatSelectChange,
+  MatSelectModule
+} from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -227,7 +231,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public isCreatingNewLayer = false;
   private currGeometryType = this.geometryType.Point as any;
 
-  @ViewChild('selectedLayer') select;
+  readonly select = viewChild<MatSelect>('selectedLayer');
 
   constructor() {
     this.tableTemplate = {
@@ -812,8 +816,11 @@ export class DrawComponent implements OnInit, OnDestroy {
           }
           this.activeLayerChange.emit(this.activeDrawingLayer());
         } else {
-          this.select.value = this.activeDrawingLayer;
-          this.select.selectionChange.emit(this.activeDrawingLayer);
+          const select = this.select();
+          select.value = this.activeDrawingLayer;
+          select.selectionChange.emit(
+            new MatSelectChange(select, this.activeDrawingLayer())
+          );
         }
       });
     }, 250);
