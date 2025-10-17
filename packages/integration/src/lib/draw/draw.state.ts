@@ -30,8 +30,10 @@ export class DrawState {
           const deletedStore = this.stores.find(
             (store) => store.layer.id === layerId
           );
-          deletedStore.deleteMany(deletedStore.all());
-          this.stores.splice(this.stores.indexOf(deletedStore, 0), 1);
+          if (deletedStore) {
+            deletedStore.deleteMany(deletedStore.all());
+            this.stores.splice(this.stores.indexOf(deletedStore, 0), 1);
+          }
           this.layersID.splice(this.layersID.indexOf(layerId, 0), 1);
           const drawControlIndex = this.drawControls.findIndex(
             (dc) => dc[0] === layerId

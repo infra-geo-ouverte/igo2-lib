@@ -209,7 +209,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           }
 
           if (layerToOpenWks) {
-            this.workspaceState.workspacePanelExpanded = true;
+            this.workspaceState.expanded.set(true);
             this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
           }
         } else if (

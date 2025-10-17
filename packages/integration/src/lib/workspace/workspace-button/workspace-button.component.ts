@@ -71,11 +71,11 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
       this.workspaceState.workspace$.value &&
       (this.workspaceState.workspace$.value as any).layer.id ===
         this.layer.id &&
-      this.workspaceState.workspacePanelExpanded
+      this.workspaceState.expanded()
     ) {
-      this.workspaceState.workspacePanelExpanded = false;
+      this.workspaceState.expanded.set(false);
     } else {
-      this.workspaceState.workspacePanelExpanded = true;
+      this.workspaceState.expanded.set(true);
       this.workspaceState.setActiveWorkspaceById(this.layer.id);
     }
   }
