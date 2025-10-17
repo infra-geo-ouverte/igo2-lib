@@ -88,7 +88,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   private cdRef = inject(ChangeDetectorRef);
 
   readonly sel = viewChild<MatSelect>('selection');
-  readonly matAutocomplete = viewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger });
+  readonly matAutocomplete = viewChild(MatAutocompleteTrigger, {
+    read: MatAutocompleteTrigger
+  });
 
   readonly refreshFilters = input<() => void>(undefined);
 
