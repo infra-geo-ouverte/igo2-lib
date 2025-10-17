@@ -1,5 +1,5 @@
 <div class="layer-legend-list-container">
-  @if ((layersInUi$ | async).length && allowShowAllLegends()) {
+  @if (layersInUi().length && allowShowAllLegends()) {
     <mat-slide-toggle
       tooltip-position="above"
       matTooltipShowDelay="500"
@@ -11,11 +11,11 @@
       {{ 'igo.geo.layer.legend.showAll' | translate }}
     </mat-slide-toggle>
   }
-  @if ((layersInUi$ | async).length && allowShowAllLegends()) {
+  @if (layersInUi().length && allowShowAllLegends()) {
     <mat-divider />
   }
   <igo-list [navigation]="false" [selection]="false">
-    @for (layer of layers$ | async; track layer; let i = $index) {
+    @for (layer of layersLegend(); track layer; let i = $index) {
       @if (!(excludeBaseLayers() && isLayerItem(layer) && layer.baseLayer)) {
         <igo-layer-legend-item
           igoListItem
@@ -27,9 +27,9 @@
   </igo-list>
   @if (
     !showAllLegendsValue() &&
-    (layersInUi$ | async).length &&
-    (hasVisibleOrInRangeLayers$ | async) === false &&
-    (hasVisibleAndNotInRangeLayers$ | async) === false &&
+    layersInUi().length &&
+    hasVisibleOrInRangeLayers() === false &&
+    hasVisibleAndNotInRangeLayers() === false &&
     allowShowAllLegends()
   ) {
     <p class="layers-empty">
@@ -38,9 +38,9 @@
   }
   @if (
     !showAllLegendsValue() &&
-    (layersInUi$ | async).length &&
-    (hasVisibleOrInRangeLayers$ | async) === false &&
-    (hasVisibleAndNotInRangeLayers$ | async) &&
+    layersInUi().length &&
+    hasVisibleOrInRangeLayers() === false &&
+    hasVisibleAndNotInRangeLayers() &&
     allowShowAllLegends()
   ) {
     <p class="layers-empty">
@@ -51,9 +51,9 @@
     </p>
   }
   @if (
-    (layersInUi$ | async).length &&
-    (hasVisibleOrInRangeLayers$ | async) === false &&
-    (hasVisibleAndNotInRangeLayers$ | async) === false &&
+    layersInUi().length &&
+    hasVisibleOrInRangeLayers() === false &&
+    hasVisibleAndNotInRangeLayers() === false &&
     !allowShowAllLegends()
   ) {
     <p class="layers-empty">
@@ -61,9 +61,9 @@
     </p>
   }
   @if (
-    (layersInUi$ | async).length &&
-    (hasVisibleOrInRangeLayers$ | async) === false &&
-    (hasVisibleAndNotInRangeLayers$ | async) &&
+    layersInUi().length &&
+    hasVisibleOrInRangeLayers() === false &&
+    hasVisibleAndNotInRangeLayers() &&
     !allowShowAllLegends()
   ) {
     <p class="layers-empty">

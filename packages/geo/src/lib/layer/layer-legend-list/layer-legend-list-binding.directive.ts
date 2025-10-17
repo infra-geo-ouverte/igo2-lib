@@ -21,17 +21,16 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
   layersVisibility$$: Subscription;
 
   constructor() {
-    const component = inject(LayerLegendListComponent, { self: true });
-
-    this.component = component;
+    this.component = inject(LayerLegendListComponent, { self: true });
   }
 
   ngOnInit() {
+    const map = this.mapService.getMap();
     // Override input layers
     this.component.setLayers([]);
     this.layersOrResolutionChange$$ = combineLatest([
-      this.mapService.getMap().layerController.all$,
-      this.mapService.getMap().viewController.resolution$
+      map.layerController.all$,
+      map.viewController.resolution$
     ])
       .pipe(debounceTime(10))
       .subscribe((bunch: [AnyLayer[], number]) => {
@@ -39,10 +38,6 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
           return isLayerItem(layer) && layer.showInLayerList === true;
         }) as Layer[];
         this.component.setLayers(shownLayers);
-
-        this.layersVisibility$$ = combineLatest(
-          shownLayers.map((layer) => layer.visible$)
-        ).subscribe(() => this.component.change$.next());
       });
   }
 
