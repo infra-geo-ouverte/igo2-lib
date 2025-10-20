@@ -71,7 +71,7 @@
     "@cypress/schematic": "^4.0.0",
     "@semantic-release/exec": "^7.0.0",
     "@semantic-release/git": "^10.0.0",
-    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/github": "^12.0.0",
     "@stylistic/eslint-plugin": "^5.4.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "@types/flexsearch": "^0.7.6",
