@@ -3,6 +3,8 @@ import type { BrowserAuthOptions } from '@azure/msal-browser';
 
 export interface AuthMicrosoftOptions extends BrowserAuthOptions {
   enabled?: boolean;
+  applicationId?: string;
+  autoLogin?: boolean;
 }
 
 export interface AuthMicrosoftb2cOptions {
