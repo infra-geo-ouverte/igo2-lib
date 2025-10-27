@@ -26,7 +26,7 @@ import {
   PublicClientApplication,
   SilentRequest
 } from '@azure/msal-browser';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import {
@@ -55,6 +55,7 @@ export class AuthMicrosoftComponent {
   private broadcastService: MsalBroadcastService;
 
   svgIcon: IconSvg = MICROSOFT_ICON;
+  private _isInitialized$: Observable<void>;
 
   constructor() {
     this.options = this.config.getConfig('auth.microsoft');
@@ -65,7 +66,7 @@ export class AuthMicrosoftComponent {
         cacheLocation: 'sessionStorage'
       }
     });
-
+    this._isInitialized$ = this.msalService.initialize();
     this.broadcastService = new MsalBroadcastService(this.msalService.instance);
 
     if (this.options?.clientId) {
@@ -100,7 +101,12 @@ export class AuthMicrosoftComponent {
         const tokenAccess = response.accessToken;
         const tokenId = response.idToken;
         this.authService
-          .loginWithToken(tokenAccess, 'microsoft', { tokenId })
+          .loginWithToken(
+            tokenAccess,
+            'microsoft',
+            { tokenId },
+            this.options?.applicationId
+          )
           .subscribe(() => {
             this.appRef.tick();
             this.login.emit(true);
