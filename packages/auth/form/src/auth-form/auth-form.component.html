@@ -1,9 +1,9 @@
 @if (visible) {
   <div>
-    @if (!auth.logged && backgroundDisable) {
+    @if ((auth.logged$ | async) === false && backgroundDisable) {
       <div class="backgroundDisable"></div>
     }
-    @if (!auth.logged && showLoginDiv) {
+    @if ((auth.logged$ | async) === false && showLoginDiv) {
       <div class="login center-block">
         <h3>{{ 'igo.auth.connection' | translate }}</h3>
         @if (options.google && options.google.enabled !== false) {
@@ -27,7 +27,7 @@
         }
       </div>
     }
-    @if (auth.logged && showAlreadyConnectedDiv) {
+    @if ((auth.logged$ | async) && showAlreadyConnectedDiv) {
       <div class="login center-block">
         <p>{{ 'igo.auth.welcome' | translate: user }}</p>
         <button matButton="elevated" type="button" (click)="logout()">

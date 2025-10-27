@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +38,8 @@ import { AuthFormOptions } from '../shared';
     AuthFacebookComponent,
     AuthInternComponent,
     MatButtonModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    AsyncPipe
   ]
 })
 export class AuthFormComponent implements OnInit {
