@@ -18,7 +18,7 @@ import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { LayerMarkerOlStyle } from '../../style/shared/layer/layer-style.utils';
+import { MarkerOlStyle } from '../../style/shared/style.utils';
 import {
   DirectionRelativePositionType,
   DirectionsType,
@@ -154,7 +154,7 @@ export function directionsStyle(
     })
   ];
 
-  const stopStyle: olStyle.Style = LayerMarkerOlStyle({
+  const stopStyle: olStyle.Style = MarkerOlStyle({
     text: feature.get('stopText'),
     markerColor: feature.get('stopColor')
   });

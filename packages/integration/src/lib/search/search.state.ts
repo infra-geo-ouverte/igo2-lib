@@ -6,8 +6,10 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions
 } from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import {
+  ConfigurableStylesOptions,
   Feature,
   FeatureMotion,
   FeatureStore,
@@ -35,6 +37,7 @@ export interface SearchFeatureMotion {
  */
 @Injectable()
 export class SearchState {
+  private configService = inject(ConfigService);
   private searchSourceService = inject(SearchSourceService);
   private storageService = inject(StorageService);
   private workspaceState = inject(WorkspaceState);
@@ -73,6 +76,7 @@ export class SearchState {
    * Store that holds the search results
    */
   readonly store = new EntityStore<SearchResult>([]);
+  public searchOverlayStyle: ConfigurableStylesOptions = {};
 
   /**
    * Search types currently enabled in the search source service
@@ -84,6 +88,11 @@ export class SearchState {
   }
 
   constructor() {
+    this.searchOverlayStyle = this.configService.getConfig(
+      'searchOverlayStyle',
+      {}
+    );
+
     const searchResultsGeometryEnabled = this.storageService.get(
       'searchResultsGeometryEnabled'
     ) as boolean;

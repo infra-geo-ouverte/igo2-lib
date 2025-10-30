@@ -19,6 +19,7 @@ import {
   MapViewOptions,
   ProjectionService,
   VectorLayerOptions,
+  VectorTileLayerOptions,
   WFSDataSourceOptions
 } from '@igo2/geo';
 
@@ -468,7 +469,7 @@ export class AppLayerComponent {
             ]
           }
         }
-      }
+      } satisfies VectorTileLayerOptions
     ];
 
     this.layerService

@@ -8,135 +8,68 @@ import {
   WriteStyleResult
 } from 'geostyler-style';
 
-import { AnyOlStyle, AnyStyle } from '../shared/layer/layer-style.interface';
-import { isGeostylerLayerStyle } from '../shared/layer/layer-style.utils';
-import { StyleService } from '../style-service/style.service';
-import { GeostylerLegendType } from './geostyler.interface';
+import { StyleEngine } from '../shared/style-engine.interface';
+import { AnyOlStyle, LayerStyle } from '../shared/style.types';
+import { GeostylerLayerStyle } from './geostyler.interface';
 
 @Injectable()
-export class GeostylerService extends StyleService {
-  constructor() {
-    super();
-  }
-  /**
-   * Create a style based on a object as follow.
-   * Due to the legend renderer limitation, the symbolizers have a size limit in the legend.
-   * The legend will not affect the symbolizer size data, only on the display will it hava a limit.
-   *
-   * ## Feature styles
-   *
-   *       {
-   *         "name": "GeoStyler Test",
-   *         "symbolizers":[
-   *           {
-   *           "kind": "Fill",
-   *           "color": "#ff0000",
-   *           "width": 5
-   *           }
-   *         ],
-   *         "scaleDenominator": {
-   *           "min": 50,
-   *           "max": 200
-   *         }
-   *       }
-   *
-   * @param Observable geostyler WriteStyleResult
-   * @returns
-   */
-  async getStyle(options: AnyStyle): Promise<AnyOlStyle> {
-    if (!isGeostylerLayerStyle(options)) {
-      return super.getStyle(options);
-    }
+export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
+  readonly type = 'Geostyler' as const;
 
-    const olParser = new OpenLayersParser();
-    return olParser.writeStyle(options.style).then((writeStyleResult) => {
-      this.handleWarningsAndError(writeStyleResult);
-      return writeStyleResult.output;
-    });
+  // Reuse the parser instance instead of creating one on every call
+  private readonly olParser = new OpenLayersParser();
+
+  supports(options: LayerStyle): options is GeostylerLayerStyle {
+    return options?.type === 'Geostyler';
   }
 
-  async getLegend(options: AnyStyle): Promise<string | undefined> {
-    return isGeostylerLayerStyle(options)
-      ? this.geostylerStylesToLegend([options.style])
-      : super.getLegend(options);
+  async getStyle(options: GeostylerLayerStyle): Promise<AnyOlStyle> {
+    const writeStyleResult = await this.olParser.writeStyle(options.style);
+    this.handleWarningsAndError(writeStyleResult);
+    return writeStyleResult.output;
+  }
+
+  async getLegend(options: GeostylerLayerStyle): Promise<string | undefined> {
+    return this.geostylerStylesToLegend([options.style]);
   }
 
   private async geostylerStylesToLegend(
     styles: GsStyle[],
-    type: GeostylerLegendType = 'svg',
     width?: number,
     height?: number
   ): Promise<string> {
-    const layerDescriptors = this.transferLayersToLegend(styles);
+    const layerDescriptors = this.toLegendDescriptors(styles);
 
-    const nbOfRules = styles.reduce(
-      (partialSum, style) => partialSum + style.rules.length,
-      0
-    );
-    const nbOfNames = styles.reduce(
-      (partialSum, style) => (partialSum + style.name?.length ? 1 : 0),
-      0
-    );
-    const heightByName = 30;
-    const heightByRule = 30;
-
-    const computedHeightByStyles =
-      nbOfNames * heightByName + nbOfRules * heightByRule;
+    const computedHeight = height ?? this.computeLegendHeight(styles);
 
     const renderer = new LegendRenderer({
       maxColumnWidth: 300,
       overflow: 'auto',
       styles: layerDescriptors,
-      size: [width ?? 300, height ?? computedHeightByStyles],
+      size: [width ?? 300, height ?? computedHeight],
       hideRect: true
     });
-    return renderer.renderAsImage('svg').then((r) => {
-      const serializer = new XMLSerializer();
-      const svgXmlString = serializer.serializeToString(r);
-      if (type === 'svg') {
-        return svgXmlString;
-      } else {
-        const blob = new Blob([svgXmlString], {
-          type: 'image/svg+xml'
-        });
-        const urlCreator = window.URL;
-        return urlCreator.createObjectURL(blob);
-      }
-    });
+    const rendered = await renderer.renderAsImage('svg');
+    const serializer = new XMLSerializer();
+    const svgXmlString = serializer.serializeToString(rendered);
+    return svgXmlString;
   }
 
-  private transferLayersToLegend(styles: GsStyle[]): GsStyle[] {
-    const _styles = [...styles];
-    const layerDescriptorsList: GsStyle[] = [];
-    _styles.forEach((_stylesItem) => {
-      const descriptorLayerRulesAdapted = [];
-      const descriptorLayerName = _stylesItem.name;
-      _stylesItem.rules.map((styleRule) => {
-        const styleRuleSymbolizersAdapted = [];
-        styleRule.symbolizers.map((styleRuleSymbolizer) => {
-          switch (styleRuleSymbolizer.kind) {
-            case 'Icon':
-              (styleRuleSymbolizer as IconSymbolizer).size = 15;
-              break;
-            default:
-              break;
-          }
-          styleRuleSymbolizersAdapted.push(styleRuleSymbolizer);
-        });
-        descriptorLayerRulesAdapted.push({
-          name: styleRule.name,
-          symbolizers: styleRuleSymbolizersAdapted.filter(
-            (s) => s.kind !== 'Text'
-          )
-        });
-      });
-      const styleNoRadius: GsStyle = {
-        name: descriptorLayerName,
-        rules: descriptorLayerRulesAdapted
-      };
-      layerDescriptorsList.push(styleNoRadius);
-    });
-    return layerDescriptorsList;
+  private toLegendDescriptors(styles: GsStyle[]): GsStyle[] {
+    return styles.map((s) => ({
+      name: s.name,
+      rules: s.rules.map((rule) => ({
+        name: rule.name,
+        symbolizers: rule.symbolizers
+          .filter((symb) => symb.kind !== 'Text')
+          .map((symb) => {
+            if (symb.kind !== 'Icon') return symb;
+
+            const icon = symb as IconSymbolizer;
+            return { ...icon, size: 15 } as IconSymbolizer;
+          })
+      }))
+    }));
   }
 
   private handleWarningsAndError(writeStyleResult: WriteStyleResult) {
@@ -149,5 +82,21 @@ export class GeostylerService extends StyleService {
     if (writeStyleResult?.unsupportedProperties) {
       console.warn(writeStyleResult.unsupportedProperties);
     }
+  }
+
+  private computeLegendHeight(styles: GsStyle[]): number {
+    const rowHeight = 26;
+    const headerHeight = 22;
+    const padding = 16;
+
+    const nbRules = styles.reduce((sum, s) => sum + s.rules.length, 0);
+    const nbNames = styles.reduce(
+      (sum, s) => sum + (s.name?.length ? 1 : 0),
+      0
+    );
+
+    const raw = padding + nbNames * headerHeight + nbRules * rowHeight;
+
+    return Math.max(100, Math.min(900, raw));
   }
 }

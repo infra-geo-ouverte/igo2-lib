@@ -3,16 +3,17 @@ import { inject, provideAppInitializer } from '@angular/core';
 import { StyleEngineKind } from '../shared/style.enum';
 import { StyleEngineFeature } from '../shared/style.interface';
 import { STYLE_ENGINES } from '../style.provider';
-import { GeostylerService } from './geostyler.service';
+import { MapboxService } from './mapbox.service';
 
-export function withGeostyler(): StyleEngineFeature<StyleEngineKind.Geostyler> {
+export function withMapbox(): StyleEngineFeature<StyleEngineKind.Mapbox> {
   return {
-    kind: StyleEngineKind.Geostyler,
+    kind: StyleEngineKind.Mapbox,
     providers: [
-      GeostylerService,
-      { provide: STYLE_ENGINES, useExisting: GeostylerService, multi: true },
+      MapboxService,
+      { provide: STYLE_ENGINES, useExisting: MapboxService, multi: true },
+
       provideAppInitializer(() => {
-        inject(GeostylerService);
+        inject(MapboxService);
       })
     ]
   };

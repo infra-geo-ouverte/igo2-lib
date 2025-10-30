@@ -9,12 +9,9 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import {
-  AnyOlStyle,
-  AnyStyle
-} from '../../../style/shared/layer/layer-style.interface';
-import { isAnyOlStyle } from '../../../style/shared/layer/layer-style.utils';
-import { StyleService } from '../../../style/style-service/style.service';
+import { AnyStyle } from '../../../style/shared/style.types';
+import { isAnyOlStyle } from '../../../style/shared/style.utils';
+import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -34,19 +31,33 @@ export class VectorTileLayer extends Layer {
   }
 
   set style(value: AnyStyle) {
-    Promise.all([
-      this.styleService?.getStyle(value),
-      this.styleService?.getLegend(value)
-    ])
-      .then(([style, legend]) => {
-        this.ol.setStyle(style);
-        this.legends$.next([
-          legend ? { title: this.title, html: legend } : undefined
-        ]);
-        this._style = value;
+    this._style = value;
+    if (!this.styleService && isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+      return;
+    }
+    this.styleService
+      ?.getStyle(value, this.ol)
+      .then((returnStyle) => {
+        this.ol.setStyle(returnStyle);
       })
       .catch((error) => {
-        console.error('style or legend promises rejected:', error);
+        console.error('style promise rejected:', error);
+        throw error;
+      });
+
+    this.styleService
+      ?.getLegend(value)
+      .then((legend) => {
+        if (legend) {
+          this.dataSource.setLegend(
+            Object.assign({}, this.options.legendOptions, { html: legend })
+          );
+        }
+      })
+      .catch((error) => {
+        console.error('legend promise rejected:', error);
+        throw error;
       });
   }
 
@@ -65,15 +76,15 @@ export class VectorTileLayer extends Layer {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVectorTile
     });
-    this.style = this.options.style;
     const vectorTile = new olLayerVectorTile({
       ...olOptions,
-      style: isAnyOlStyle(olOptions.style)
-        ? (this.options.style as AnyOlStyle)
-        : undefined
+      style: undefined
     });
-    const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
+    vectorTile.once('sourceready', () => {
+      this.style = this.options.style;
+    });
 
+    const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
     vectorTileSource.setTileLoadFunction(
       (tile: VectorTile<Feature>, url: string) => {
         const loader = this.customLoader(

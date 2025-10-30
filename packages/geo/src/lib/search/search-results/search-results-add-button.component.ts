@@ -45,6 +45,7 @@ import { LAYER } from '../../layer/shared/layer.enums';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { IgoMap } from '../../map/shared/map';
 import { getTooltipsOfOlGeometry } from '../../measure';
 import { QueryableDataSourceOptions } from '../../query/shared';
@@ -423,7 +424,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       workspace: {
         enabled: true
       }
-    }) as VectorLayer;
+    } satisfies VectorLayerOptions) as VectorLayer;
 
     tryBindStoreLayer(activeStore, searchLayer);
     tryAddLoadingStrategy(

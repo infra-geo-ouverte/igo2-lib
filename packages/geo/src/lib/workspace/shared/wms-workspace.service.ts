@@ -27,14 +27,16 @@ import {
   LayerService,
   LayersLinkProperties,
   LinkedProperties,
-  VectorLayer
+  VectorLayer,
+  VectorLayerOptions
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
 import {
-  LayerNearTransparentOlStyle,
-  LayerSelectionOlStyle
-} from '../../style/shared/layer/layer-style.utils';
+  NearTransparentOlStyle,
+  SelectionOlStyle
+} from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -151,7 +153,7 @@ export class WmsWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: LayerNearTransparentOlStyle(),
+        style: NearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -234,6 +236,9 @@ export class WmsWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle: ConfigurableStylesOptions =
+      this.configService.getConfig('queryOverlayStyle');
+
     const id = layer.id + '.FeatureStore';
 
     if (!layer.link) {
@@ -254,11 +259,12 @@ export class WmsWorkspaceService {
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: LayerSelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }) as VectorLayer,
+      } satisfies VectorLayerOptions) as VectorLayer,
+
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

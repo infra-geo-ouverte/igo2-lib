@@ -12,7 +12,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { WebSocketDataSourceOptions } from '../../../datasource/shared/datasources/websocket-datasource.interface';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
-import { AnyStyle } from '../../../style/shared/layer/layer-style.interface';
+import { AnyStyle } from '../../../style/shared/style.types';
 import { ClusterParam } from '../clusterParam';
 import { LayerOptions } from './layer.interface';
 

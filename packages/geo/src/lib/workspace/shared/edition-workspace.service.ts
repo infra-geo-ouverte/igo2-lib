@@ -54,11 +54,12 @@ import {
   LayerService,
   LayersLinkProperties,
   LinkedProperties,
-  VectorLayer
+  VectorLayer,
+  VectorLayerOptions
 } from '../../layer/shared';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { LayerNearTransparentOlStyle } from '../../style/shared/layer/layer-style.utils';
+import { NearTransparentOlStyle } from '../../style/shared/style.utils';
 import { EditionWorkspace } from './edition-workspace';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
@@ -183,7 +184,7 @@ export class EditionWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: LayerNearTransparentOlStyle(),
+        style: NearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -259,7 +260,7 @@ export class EditionWorkspaceService {
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }) as VectorLayer,
+      } satisfies VectorLayerOptions) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

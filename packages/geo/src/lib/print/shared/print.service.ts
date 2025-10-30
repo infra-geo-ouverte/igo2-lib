@@ -303,7 +303,7 @@ export class PrintService {
           )
         );
       forkJoin(images$).subscribe((dataImages) => {
-        html = dataImages.reduce((acc, current) => (acc += current), html);
+        html = dataImages.reduce((acc, current) => acc + current, html);
         html += '</table>';
         html += '</div>';
         observer.next(html);

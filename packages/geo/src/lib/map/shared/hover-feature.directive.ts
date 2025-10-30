@@ -44,7 +44,6 @@ import { IgoMap } from '../../map/shared/map';
  * By default, no search sources. Config in config file must be defined.
  * the layer level.
  *
- * This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
  */
 @Directive({
   selector: '[igoHoverFeature]'
@@ -393,7 +392,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     }
     // handle ${...}
     if (template.includes('${')) {
-      return template.replace(/\${(.*?)}/g, (_, key) => properties[key] ?? '');
+      return this.interpolateTemplate(template, properties);
     }
 
     // handle direct property
@@ -401,6 +400,36 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       return properties[template] ?? '';
     }
     return template;
+  }
+
+  private interpolateTemplate(
+    template: string,
+    properties: Record<string, string>
+  ): string {
+    let result = '';
+    let cursor = 0;
+
+    while (cursor < template.length) {
+      const start = template.indexOf('${', cursor);
+      if (start === -1) {
+        result += template.slice(cursor);
+        break;
+      }
+
+      result += template.slice(cursor, start);
+
+      const end = template.indexOf('}', start + 2);
+      if (end === -1) {
+        result += template.slice(start);
+        break;
+      }
+
+      const key = template.slice(start + 2, end).trim();
+      result += properties[key] ?? '';
+      cursor = end + 1;
+    }
+
+    return result;
   }
 
   /**

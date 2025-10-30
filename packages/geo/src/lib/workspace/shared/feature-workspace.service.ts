@@ -19,10 +19,15 @@ import {
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
 } from '../../feature/shared';
-import { LayerService, VectorLayer } from '../../layer/shared';
+import {
+  LayerService,
+  VectorLayer,
+  VectorLayerOptions
+} from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared/map';
-import { LayerSelectionOlStyle } from '../../style/shared/layer/layer-style.utils';
+import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
+import { SelectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
 import {
@@ -96,15 +101,18 @@ export class FeatureWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle: ConfigurableStylesOptions =
+      this.configService.getConfig('queryOverlayStyle');
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: LayerSelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }) as VectorLayer,
+      } satisfies VectorLayerOptions) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

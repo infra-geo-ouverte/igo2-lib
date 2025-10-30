@@ -1,6 +1,5 @@
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { StyleLike } from 'ol/style/Style';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
@@ -11,7 +10,8 @@ import {
 } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { MapBase } from '../../map/shared/map.abstract';
-import { LayerBaseOlStyle } from '../../style/shared/layer/layer-style.utils';
+import { AnyOlStyle } from '../../style/shared/style.types';
+import { BaseOlStyle } from '../../style/shared/style.utils';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -28,7 +28,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * Overlay layer
    */
-  private layer: VectorLayer;
+  public layer: VectorLayer;
 
   /**
    * Overlay layer's data source
@@ -37,19 +37,14 @@ export class Overlay<T extends MapBase = MapBase> {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map?: T) {
-    const overlayDataSource = new FeatureDataSource();
+  constructor(map?: T, style?: AnyOlStyle) {
     this.layer = new VectorLayer({
       title: 'Overlay',
       zIndex: 300,
-      source: overlayDataSource,
-      style: LayerBaseOlStyle()
+      source: new FeatureDataSource(),
+      style: style ?? BaseOlStyle()
     });
     this.setMap(map);
-  }
-
-  setLayerOlStyle(styleLike: StyleLike) {
-    this.layer.ol.setStyle(styleLike);
   }
 
   /**

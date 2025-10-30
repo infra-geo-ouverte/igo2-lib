@@ -22,10 +22,12 @@ import {
   GeoWorkspaceOptions,
   LayerService,
   LinkedProperties,
-  VectorLayer
+  VectorLayer,
+  VectorLayerOptions
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
-import { LayerSelectionOlStyle } from '../../style/shared/layer/layer-style.utils';
+import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
+import { SelectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -95,6 +97,9 @@ export class WfsWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle: ConfigurableStylesOptions =
+      this.configService.getConfig('queryOverlayStyle');
+
     const id = layer.id + '.FeatureStore';
 
     if (!layer.link) {
@@ -115,11 +120,11 @@ export class WfsWorkspaceService {
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: LayerSelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }) as VectorLayer,
+      } satisfies VectorLayerOptions) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

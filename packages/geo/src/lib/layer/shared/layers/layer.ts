@@ -11,7 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource, Legend } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { StyleService } from '../../../style/style-service/style.service';
+import { StyleService } from '../../../style/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -170,9 +170,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
         this.map.layerController.remove(masterLayer);
       }
     }
-    if (this.subcriptions$$) {
-      this.subcriptions$$.forEach((sub) => sub.unsubscribe());
-    }
+    this.subcriptions$$.forEach((sub) => sub.unsubscribe());
   }
 
   add(parent?: LayerGroup): void {

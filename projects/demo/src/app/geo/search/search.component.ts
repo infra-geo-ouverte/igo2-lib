@@ -26,7 +26,6 @@ import {
   IgoMap,
   IgoSearchModule,
   LayerOptions,
-  LayerSearchResultsOlStyleFunction,
   LayerService,
   MapBrowserComponent,
   MapService,
@@ -35,6 +34,7 @@ import {
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
+  SearchResultsOlStyleFunction,
   ZoomButtonComponent,
   provideSearch,
   withIChercheSource,
@@ -127,18 +127,21 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.mapService.setMap(this.map);
-    this.searchResultsOverlayFocused = new Overlay(this.map);
-    this.searchResultsOverlayFocused.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(this.map.viewController, 'focus')
+    this.searchResultsOverlayFocused = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController, 'focus')
     );
-    this.searchResultsOverlaySelected = new Overlay(this.map);
-    this.searchResultsOverlaySelected.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(this.map.viewController, 'selection')
+
+    this.searchResultsOverlaySelected = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController, 'selection')
     );
-    this.searchResultsOverlayAll = new Overlay(this.map);
-    this.searchResultsOverlayAll.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(this.map.viewController)
+
+    this.searchResultsOverlayAll = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController)
     );
+
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
@@ -164,12 +167,15 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     ]).subscribe((bunch) => {
       const searchResults = bunch[0];
       const enabled = bunch[1];
-      const rec = searchResults
+      const features = searchResults
         .filter((sr) => sr.meta.dataType === FEATURE)
         .map((sr) => sr.data as Feature);
-      if (rec.length) {
+      if (features.length) {
         if (enabled) {
-          this.searchResultsOverlayAll.setFeatures(rec, FeatureMotion.None);
+          this.searchResultsOverlayAll.setFeatures(
+            features,
+            FeatureMotion.None
+          );
         }
       } else {
         this.searchResultsOverlayFocused.clear();

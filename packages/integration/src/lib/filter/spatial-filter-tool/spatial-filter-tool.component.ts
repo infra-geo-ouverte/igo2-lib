@@ -21,8 +21,8 @@ import {
   FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
-  LayerMarkerOlStyle,
   LayerService,
+  MarkerOlStyle,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
   RADIUS_NAME,
@@ -419,7 +419,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = LayerMarkerOlStyle({ text: undefined });
+    const style = MarkerOlStyle({});
 
     // 🔑 Use zoneIndex to sync layer naming
     const filterLabel = this.languageService.translate.instant(

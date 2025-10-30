@@ -14,7 +14,6 @@ import {
   WMTSDataSource,
   WMTSDataSourceOptions
 } from '@igo2/geo';
-import { LayerService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -105,21 +104,8 @@ describe('LayerContextDirective', () => {
       ]
     });
 
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        providers: [
-          LayerContextDirective,
-          { provide: MapBrowserComponent, useValue: {} },
-          { provide: ContextService, useValue: mockContextService },
-          { provide: LayerService, useValue: {} },
-          { provide: ConfigService, useValue: {} },
-          { provide: ShareMapService, useValue: mockShareMapService }
-        ]
-      })
-    );
-
-    mockWmsLayer = createWmsLayer(imageLayerOptions);
-    mockWmtsLayer = createWmtsLayer(tileLayerOptions);
+    mockWmsLayer = createWmsLayer({ ...imageLayerOptions });
+    mockWmtsLayer = createWmtsLayer({ ...tileLayerOptions });
     directive = TestBed.inject(LayerContextDirective);
   });
 

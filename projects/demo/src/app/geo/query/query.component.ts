@@ -191,6 +191,13 @@ export class AppQueryComponent implements OnInit {
             }
           ],
           queryLayerFeatures: false
+        },
+        style: {
+          type: 'Mapbox',
+          style: {
+            url: 'mapboxStyleExample-vectortile.json',
+            source: 'ahocevar'
+          }
         }
       } as VectorTileLayerOptions)
       .subscribe((layer: VectorTileLayer) =>

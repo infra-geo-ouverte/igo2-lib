@@ -31,12 +31,12 @@ import {
   FeatureMotion,
   FeatureStore,
   IgoMap,
-  LayerSearchResultsOlStyleFunction,
   Overlay,
   Research,
   SearchResult,
   SearchResultAddButtonComponent,
   SearchResultsComponent,
+  SearchResultsOlStyleFunction,
   computeOlFeaturesExtent,
   featureToOl,
   featuresAreOutOfView,
@@ -187,23 +187,25 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchResultsOverlayFocused = new Overlay(this.mapState.map);
-    this.searchResultsOverlayFocused.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(
-        this.mapState.map.viewController,
-        'focus'
-      )
+    this.searchResultsOverlayFocused = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.focus ??
+        SearchResultsOlStyleFunction(this.mapState.map.viewController, 'focus')
     );
-    this.searchResultsOverlaySelected = new Overlay(this.mapState.map);
-    this.searchResultsOverlaySelected.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(
-        this.mapState.map.viewController,
-        'selection'
-      )
+
+    this.searchResultsOverlaySelected = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.selection ??
+        SearchResultsOlStyleFunction(
+          this.mapState.map.viewController,
+          'selection'
+        )
     );
-    this.searchResultsOverlayAll = new Overlay(this.mapState.map);
-    this.searchResultsOverlayAll.setLayerOlStyle(
-      LayerSearchResultsOlStyleFunction(this.mapState.map.viewController)
+
+    this.searchResultsOverlayAll = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.base ??
+        SearchResultsOlStyleFunction(this.mapState.map.viewController)
     );
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
       (searchTerm: string) => {
@@ -265,15 +267,14 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     ]).subscribe((bunch) => {
       const searchResults = bunch[0];
       const enabled = bunch[1];
-      const rec = searchResults
+      const features = searchResults
         .filter((sr) => sr.meta.dataType === FEATURE)
         .map((sr) => sr.data as Feature);
-      if (enabled && rec.length) {
-        this.searchResultsOverlayAll.setFeatures(rec, FeatureMotion.None);
+      if (enabled && features.length) {
+        this.searchResultsOverlayAll.setFeatures(features, FeatureMotion.None);
       } else {
-        this.searchResultsOverlayFocused.clear();
-        this.searchResultsOverlaySelected.clear();
-        this.searchResultsOverlayAll.clear();
+        this.searchResultsOverlayFocused?.clear();
+        this.searchResultsOverlayAll?.clear();
       }
     });
   }
@@ -335,7 +336,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       this.addResultToOverlay(
         result,
         this.searchResultsOverlayFocused,
-        this.searchState.featureMotion.selected
+        this.searchState.featureMotion.focus
       );
     }
   }

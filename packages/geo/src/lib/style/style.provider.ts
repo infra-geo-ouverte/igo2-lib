@@ -1,21 +1,20 @@
 import {
   EnvironmentProviders,
+  InjectionToken,
   Provider,
   makeEnvironmentProviders
 } from '@angular/core';
 
-import { StyleFeature, StyleFeatureKind } from './shared/style.interface';
-import { StyleService } from './style-service/style.service';
+import { StyleEngine } from './shared/style-engine.interface';
+import { StyleEngineKind } from './shared/style.enum';
+import { StyleEngineFeature } from './shared/style.interface';
+
+export const STYLE_ENGINES = new InjectionToken<StyleEngine[]>('STYLE_ENGINES');
 
 export function provideStyle(
-  ...features: StyleFeature<StyleFeatureKind>[]
+  ...features: StyleEngineFeature<StyleEngineKind>[]
 ): EnvironmentProviders {
-  const providers: (Provider | EnvironmentProviders)[] = [
-    {
-      provide: StyleService,
-      useClass: StyleService
-    }
-  ];
+  const providers: (Provider | EnvironmentProviders)[] = [];
 
   for (const feature of features) {
     providers.push(...feature.providers);

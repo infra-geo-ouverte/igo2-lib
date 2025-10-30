@@ -30,6 +30,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
 import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
@@ -44,7 +45,6 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
  * By default, no search sources. Config in config file must be defined.
  * the layer level.
  *
- * This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
  */
 @Directive({
   selector: '[igoSearchPointerSummary]'
@@ -134,7 +134,7 @@ export class SearchPointerSummaryDirective
       exportable: false,
       browsable: false,
       style: this.pointerPositionSummaryMarkerStyle
-    }) as VectorLayer;
+    } satisfies VectorLayerOptions) as VectorLayer;
     tryBindStoreLayer(store, layer);
   }
 
@@ -395,9 +395,20 @@ export class SearchPointerSummaryDirective
   private pointerPositionSummaryMarkerStyle(
     feature: olFeature<OlGeometry>
   ): olStyle.Style {
+    const svgCross =
+      'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 9.525 9.525">
+          <g transform="translate(0,-287.475)">
+            <rect width="0.334" height="7.149" x="4.595" y="288.663" ry="0.067"/>
+            <rect width="0.334" height="7.149" x="292.07" y="-8.337" ry="0.067" transform="rotate(90)"/>
+          </g>
+        </svg>`
+      );
+
     return new olStyle.Style({
       image: new olStyle.Icon({
-        src: './assets/igo2/geo/icons/cross_black_18px.svg'
+        src: svgCross
       }),
 
       text: new olStyle.Text({

@@ -3,8 +3,8 @@ import {
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
-  LayerRandomOlStyleFunction,
   QueryableDataSourceOptions,
+  RandomOlFlatStyle,
   VectorLayer
 } from '@igo2/geo';
 
@@ -156,7 +156,7 @@ export function addImportedFeaturesToMap(
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    style: LayerRandomOlStyleFunction(),
+    style: RandomOlFlatStyle(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
   });

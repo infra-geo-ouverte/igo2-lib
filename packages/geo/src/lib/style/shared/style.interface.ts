@@ -1,10 +1,18 @@
 import { EnvironmentProviders, Provider } from '@angular/core';
 
-export interface StyleFeature<KindT extends StyleFeatureKind> {
+import { StyleEngineKind } from './style.enum';
+import { AnyOlStyle } from './style.types';
+
+export type { BaseLayerStyle } from './style.base.interface';
+
+export interface StyleEngineFeature<KindT extends StyleEngineKind> {
   kind: KindT;
   providers: (Provider | EnvironmentProviders)[];
 }
 
-export enum StyleFeatureKind {
-  Geostyler = 0
+export interface ConfigurableStylesOptions {
+  // Restricted to OL due to new Overlay(...) is out of injection context and not use LayerService
+  base?: AnyOlStyle;
+  selection?: AnyOlStyle;
+  focus?: AnyOlStyle;
 }

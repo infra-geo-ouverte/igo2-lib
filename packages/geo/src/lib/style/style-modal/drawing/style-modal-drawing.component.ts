@@ -22,8 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
+import { DrawStyleService } from '../../draw-style-service/draw-style.service';
 import { FontType } from '../../shared/font.enum';
-import { DrawStyleService } from '../../style-service/draw-style.service';
 import {
   DrawingMatDialogData,
   StyleModalData

@@ -23,11 +23,11 @@ import {
   IgoMap,
   IgoQueryModule,
   Layer,
-  LayerMarkerOlStyle,
   LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
+  MarkerOlStyle,
   MeasureLengthUnit,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -356,7 +356,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = LayerMarkerOlStyle({ text: undefined });
+    const style = MarkerOlStyle({});
 
     const filterLabel = this.languageService.translate.instant(
       'igo.geo.spatialFilter.spatialFilter'

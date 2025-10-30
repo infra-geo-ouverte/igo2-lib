@@ -15,7 +15,6 @@ export const environment: EnvironmentOptions = {
         ]
       }
     },
-    importWithStyle: true,
     projections: [
       {
         code: 'EPSG:32198',

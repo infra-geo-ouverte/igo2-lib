@@ -30,8 +30,8 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { LayerClusterOlStyleFunction } from '../../style/shared/layer/layer-style.utils';
-import { StyleService } from '../../style/style-service/style.service';
+import { ClusterOlStyleFunction } from '../../style/shared/style.utils';
+import { StyleService } from '../../style/style.service';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
   AnyLayer,
@@ -188,6 +188,11 @@ export class LayerService {
       const source = layerOptions.source as ArcGISRestDataSource;
       layerOptions.style = source.options.params.style;
     }
+
+    if (layerOptions.source instanceof ClusterDataSource) {
+      layerOptions.style = layerOptions.style ?? ClusterOlStyleFunction();
+    }
+
     const vectorLayer = new VectorLayer(
       layerOptions,
       this.messageService,
@@ -196,11 +201,6 @@ export class LayerService {
       this.styleService
     );
 
-    if (layerOptions.source instanceof ClusterDataSource) {
-      vectorLayer.style = (feature) => {
-        return LayerClusterOlStyleFunction(feature, layerOptions.clusterParam);
-      };
-    }
     return vectorLayer;
   }
 
