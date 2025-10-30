@@ -372,7 +372,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   isStyleEditButton(layer: Layer): boolean {
     if (layer instanceof VectorLayer) {
-      if ((layer as VectorLayer).options?.igoStyle?.editable) {
+      if (layer.options?.igoStyle?.editable) {
         return true;
       }
     }

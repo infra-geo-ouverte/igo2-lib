@@ -37,6 +37,7 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { GeostylerService } from '../../style/geostyler/geostyler.service';
 import { StyleService } from '../../style/style-service/style.service';
 import {
   computeMVTOptionsOnHover,
@@ -70,6 +71,7 @@ export class LayerService {
   private messageService = inject(MessageService);
   private geoNetworkService = inject(GeoNetworkService, { optional: true });
   private authInterceptor = inject(AuthInterceptor, { optional: true });
+  private geostylerService = inject(GeostylerService, { optional: true });
 
   public unavailableLayers: AnyLayerItemOptions[] = [];
 
@@ -196,7 +198,7 @@ export class LayerService {
     );
   }
 
-  private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
+  createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
     let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorLayer;
 
@@ -249,7 +251,8 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geostylerService
       );
     }
 
@@ -269,7 +272,8 @@ export class LayerService {
         layerOptions,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geostylerService
       );
     }
 
@@ -282,7 +286,8 @@ export class LayerService {
         layerOptionsOl,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.geostylerService
       );
     }
 
@@ -356,7 +361,8 @@ export class LayerService {
       igoLayer = new VectorTileLayer(
         layerOptions,
         this.messageService,
-        this.authInterceptor
+        this.authInterceptor,
+        this.geostylerService
       );
     }
 
@@ -368,7 +374,8 @@ export class LayerService {
       igoLayer = new VectorTileLayer(
         layerOptionsOl,
         this.messageService,
-        this.authInterceptor
+        this.authInterceptor,
+        this.geostylerService
       );
     }
 

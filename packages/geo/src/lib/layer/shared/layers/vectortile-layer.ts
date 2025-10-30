@@ -9,6 +9,7 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { GeostylerService } from '../../../style/geostyler/geostyler.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -25,9 +26,10 @@ export class VectorTileLayer extends Layer {
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    public geostylerService?: GeostylerService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, geostylerService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -53,8 +55,19 @@ export class VectorTileLayer extends Layer {
         }
       }
     );
+    this.handleStyles();
 
     return vectorTile;
+  }
+  private handleStyles() {
+    if (!this.geostylerService && this.options.igoStyle?.geostylerStyle) {
+      console.error(
+        'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
+      );
+    }
+    if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
+      this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);
+    }
   }
 
   /**

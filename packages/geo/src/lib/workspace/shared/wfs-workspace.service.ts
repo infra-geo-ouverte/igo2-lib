@@ -116,7 +116,7 @@ export class WfsWorkspaceService {
     }
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createVectorLayer({
         id,
         linkedLayers: {
           linkId: id

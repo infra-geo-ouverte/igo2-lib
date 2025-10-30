@@ -4,12 +4,22 @@ import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 
 import OlLayer from 'ol/layer/Layer';
+import VectorLayer from 'ol/layer/Vector';
+import VectorTileLayer from 'ol/layer/VectorTile';
 import { Source } from 'ol/source';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subscription,
+  combineLatest,
+  mergeMap,
+  of
+} from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { GeostylerService } from '../../../style/geostyler/geostyler.service';
+import { GeostylerStyleInterfaceOptions } from '../../../style/shared/vector/vector-style.interface';
 import {
   isLayerLinked,
   isLinkMaster
@@ -32,10 +42,12 @@ export abstract class Layer extends LayerBase {
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
+  geostylerStyle$ = new BehaviorSubject<GeostylerStyleInterfaceOptions>(null);
   legends$ = new BehaviorSubject<Legend[]>([]);
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
+  private geostylerStyle$$: Subscription;
 
   get id(): string {
     return String(this.options.id || this.dataSource.id);
@@ -117,7 +129,8 @@ export abstract class Layer extends LayerBase {
   constructor(
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
-    @Optional() protected authInterceptor?: AuthInterceptor
+    @Optional() protected authInterceptor?: AuthInterceptor,
+    @Optional() protected geostylerService?: GeostylerService
   ) {
     super(options);
     this.legends$.next([]);
@@ -150,6 +163,44 @@ export abstract class Layer extends LayerBase {
       }
     });
     this.createLink();
+    this.handleGeostylerStyleAndLegend();
+  }
+
+  handleGeostylerStyleAndLegend() {
+    this.geostylerStyle$$ = this.geostylerStyle$
+      .pipe(
+        mergeMap((geostylerStyle) => {
+          if (geostylerStyle && this.geostylerService) {
+            return combineLatest([
+              this.geostylerService.geostylerToOl(geostylerStyle.global),
+              this.geostylerService.geostylerStyleToLegend(
+                geostylerStyle.global
+              )
+            ]);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe((gsReturns) => {
+        if (gsReturns) {
+          const writeStyleResult = gsReturns[0];
+          const legend = gsReturns[1];
+          switch (true) {
+            case this.ol instanceof VectorLayer:
+            case this.ol instanceof VectorTileLayer:
+              if (writeStyleResult?.output) {
+                this.ol.setStyle(writeStyleResult.output);
+              }
+              if (legend) {
+                this.legends$.next([{ title: this.title, html: legend }]);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
   }
 
   createLink(): void {
@@ -183,6 +234,9 @@ export abstract class Layer extends LayerBase {
       if (hasSync && masterLayer) {
         this.map.layerController.remove(masterLayer);
       }
+    }
+    if (this.geostylerStyle$$) {
+      this.geostylerStyle$$.unsubscribe();
     }
   }
 

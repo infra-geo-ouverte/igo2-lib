@@ -270,7 +270,7 @@ export class EditionWorkspaceService {
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createVectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: undefined,

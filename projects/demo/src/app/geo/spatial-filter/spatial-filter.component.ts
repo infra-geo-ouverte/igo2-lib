@@ -21,6 +21,7 @@ import {
   FEATURE_DETAILS_DIRECTIVES,
   FILTER_DIRECTIVES,
   Feature,
+  FeatureDataSource,
   FeatureMotion,
   IgoMap,
   IgoQueryModule,
@@ -400,48 +401,45 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           })
         });
       };
-      this.dataSourceService
-        .createAsyncDataSource({
+
+      const igoLayer = this.layerService.createVectorLayer({
+        isIgoInternalLayer: true,
+        title: ('Zone ' +
+          i +
+          ' - ' +
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.spatialFilter'
+          )) satisfies string,
+        workspace: { enabled: true },
+        _internal: {
+          code:
+            this.type === SpatialFilterType.Predefined
+              ? feature.properties.code
+              : undefined
+        },
+        source: new FeatureDataSource({
           type: 'vector',
           queryable: true
-        } as QueryableDataSourceOptions)
-        .pipe(take(1))
-        .subscribe((dataSource: QueryableDataSource) => {
-          const olLayer: VectorLayer = this.layerService.createLayer({
-            isIgoInternalLayer: true,
-            title: ('Zone ' +
-              i +
-              ' - ' +
-              this.languageService.translate.instant(
-                'igo.geo.spatialFilter.spatialFilter'
-              )) satisfies string,
-            workspace: { enabled: true },
-            _internal: {
-              code:
-                this.type === SpatialFilterType.Predefined
-                  ? feature.properties.code
-                  : undefined
-            },
-            source: dataSource,
-            visible: true
-          }) as VectorLayer;
-          const featuresOl = features.map((feature: Feature) => {
-            return featureToOl(feature, this.map.projectionCode);
-          });
-          if (this.type !== SpatialFilterType.Predefined) {
-            const type =
-              this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
-            featuresOl[0].set('nom', 'Zone', true);
-            featuresOl[0].set('type', type, true);
-          }
-          const ol = dataSource.ol as olSourceVector | olSourceCluster;
-          ol.addFeatures(featuresOl);
-          olLayer.ol.setStyle(this.defaultStyle);
-          this.map.layerController.add(olLayer);
-          this.layers.push(olLayer);
-          this.activeLayers.push(olLayer);
-          this.cdRef.detectChanges();
-        });
+        } as QueryableDataSourceOptions),
+        visible: true
+      });
+
+      const featuresOl = features.map((feature: Feature) => {
+        return featureToOl(feature, this.map.projectionCode);
+      });
+      if (this.type !== SpatialFilterType.Predefined) {
+        const type =
+          this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
+        featuresOl[0].set('nom', 'Zone', true);
+        featuresOl[0].set('type', type, true);
+      }
+      const ol = igoLayer.dataSource.ol as olSourceVector | olSourceCluster;
+      ol.addFeatures(featuresOl);
+      igoLayer.ol.setStyle(this.defaultStyle);
+      this.map.layerController.add(igoLayer);
+      this.layers.push(igoLayer);
+      this.activeLayers.push(igoLayer);
+      this.cdRef.detectChanges();
     }
   }
 

@@ -12,14 +12,17 @@ import { MediaService } from '@igo2/core/media';
 import { SubjectStatus } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
+import olFeature from 'ol/Feature';
 import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import * as OlGeom from 'ol/geom';
+import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 import RenderFeature from 'ol/render/Feature';
 import olVectorTileSource from 'ol/source/VectorTile';
+import * as olStyle from 'ol/style';
 
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -32,7 +35,6 @@ import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
-import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
 import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
 import { StyleService } from '../../style/style-service/style.service';
 
@@ -41,6 +43,8 @@ import { StyleService } from '../../style/style-service/style.service';
  * The search results are placed into a label, on a cross icon, representing the mouse coordinate.
  * By default, no search sources. Config in config file must be defined.
  * the layer level.
+ *
+ * This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
  */
 @Directive({
   selector: '[igoHoverFeature]',
@@ -129,7 +133,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: hoverFeatureMarkerStyle
+      style: this.hoverFeatureMarkerStyle
     });
     tryBindStoreLayer(store, layer);
 
@@ -575,5 +579,64 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     if (this.store) {
       this.store.clearLayer();
     }
+  }
+
+  private hoverFeatureMarkerStyle(
+    feature: olFeature<olGeom.Geometry>
+  ): olStyle.Style[] {
+    const olStyleText = new olStyle.Style({
+      text: new olStyle.Text({
+        text: feature.get('hoverSummary'),
+        textAlign: 'left',
+        textBaseline: 'top',
+        font: '12px Calibri,sans-serif',
+        fill: new olStyle.Fill({ color: '#000' }),
+        backgroundFill: new olStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+        backgroundStroke: new olStyle.Stroke({
+          color: 'rgba(200, 200, 200, 0.75)',
+          width: 2
+        }),
+        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
+        overflow: true,
+        offsetX: 10,
+        offsetY: 20,
+        padding: [2.5, 2.5, 2.5, 2.5]
+      })
+    });
+    const olStyles = [olStyleText];
+    switch (feature.getGeometry().getType()) {
+      case 'Point':
+        olStyles.push(
+          new olStyle.Style({
+            image: new olStyle.Circle({
+              radius: 10,
+              stroke: new olStyle.Stroke({
+                color: 'blue',
+                width: 3
+              })
+            })
+          })
+        );
+        break;
+      default:
+        olStyles.push(
+          new olStyle.Style({
+            stroke: new olStyle.Stroke({
+              color: 'white',
+              width: 5
+            })
+          })
+        );
+        olStyles.push(
+          new olStyle.Style({
+            stroke: new olStyle.Stroke({
+              color: 'blue',
+              width: 3
+            })
+          })
+        );
+    }
+
+    return olStyles;
   }
 }

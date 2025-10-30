@@ -104,7 +104,7 @@ export class FeatureWorkspaceService {
       this.configService.getConfig('queryOverlayStyle');
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createVectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {

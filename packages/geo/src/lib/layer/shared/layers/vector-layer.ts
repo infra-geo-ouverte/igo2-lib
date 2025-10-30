@@ -53,6 +53,7 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
+import { GeostylerService } from '../../../style/geostyler/geostyler.service';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
@@ -93,9 +94,10 @@ export class VectorLayer extends Layer {
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService
+    private geoNetworkService?: GeoNetworkService,
+    public geostylerService?: GeostylerService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, geostylerService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -167,12 +169,24 @@ export class VectorLayer extends Layer {
         vectorSource.setLoader(loader);
       }
     }
+    this.handleStyles();
 
     if (this.options.idbInfo?.storeToIdb) {
       this.handleIdbStorage(vector);
     }
 
     return vector;
+  }
+
+  private handleStyles() {
+    if (!this.geostylerService && this.options.igoStyle?.geostylerStyle) {
+      console.error(
+        'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
+      );
+    }
+    if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
+      this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);
+    }
   }
 
   private handleIdbStorage(

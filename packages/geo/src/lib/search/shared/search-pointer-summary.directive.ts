@@ -16,8 +16,11 @@ import olFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olGeom from 'ol/geom';
 import * as olgeom from 'ol/geom';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { transform } from 'ol/proj';
+import * as olStyle from 'ol/style';
 
 import { Subscription, first } from 'rxjs';
 
@@ -26,10 +29,9 @@ import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { LayerService } from '../../layer/shared/layer.service';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
-import { pointerPositionSummaryMarkerStyle } from '../../style/shared/feature/feature-style';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research, SearchResult } from './search.interfaces';
@@ -41,6 +43,8 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
  * The search results are placed into a label, on a cross icon, representing the mouse coordinate.
  * By default, no search sources. Config in config file must be defined.
  * the layer level.
+ *
+ * This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
  */
 @Directive({
   selector: '[igoSearchPointerSummary]',
@@ -53,6 +57,7 @@ export class SearchPointerSummaryDirective
   private searchService = inject(SearchService);
   private searchSourceService = inject(SearchSourceService);
   private mediaService = inject(MediaService);
+  private layerService = inject(LayerService);
 
   public store: FeatureStore<Feature>;
   private lonLat: [number, number];
@@ -120,7 +125,7 @@ export class SearchPointerSummaryDirective
   private initStore() {
     const store = this.store;
 
-    const layer = new VectorLayer({
+    const layer = this.layerService.createVectorLayer({
       isIgoInternalLayer: true,
       id: 'searchPointerSummaryId',
       title: 'searchPointerSummary',
@@ -129,7 +134,7 @@ export class SearchPointerSummaryDirective
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: pointerPositionSummaryMarkerStyle
+      style: this.pointerPositionSummaryMarkerStyle
     });
     tryBindStoreLayer(store, layer);
   }
@@ -381,5 +386,102 @@ export class SearchPointerSummaryDirective
     if (this.store) {
       this.store.clearLayer();
     }
+  }
+
+  /**
+   *
+   * @param feature This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
+   * @returns
+   */
+  hoverFeatureMarkerStyle(
+    feature: olFeature<olGeom.Geometry>
+  ): olStyle.Style[] {
+    const olStyleText = new olStyle.Style({
+      text: new olStyle.Text({
+        text: feature.get('hoverSummary'),
+        textAlign: 'left',
+        textBaseline: 'top',
+        font: '12px Calibri,sans-serif',
+        fill: new olStyle.Fill({ color: '#000' }),
+        backgroundFill: new olStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+        backgroundStroke: new olStyle.Stroke({
+          color: 'rgba(200, 200, 200, 0.75)',
+          width: 2
+        }),
+        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
+        overflow: true,
+        offsetX: 10,
+        offsetY: 20,
+        padding: [2.5, 2.5, 2.5, 2.5]
+      })
+    });
+    const olStyles = [olStyleText];
+    switch (feature.getGeometry().getType()) {
+      case 'Point':
+        olStyles.push(
+          new olStyle.Style({
+            image: new olStyle.Circle({
+              radius: 10,
+              stroke: new olStyle.Stroke({
+                color: 'blue',
+                width: 3
+              })
+            })
+          })
+        );
+        break;
+      default:
+        olStyles.push(
+          new olStyle.Style({
+            stroke: new olStyle.Stroke({
+              color: 'white',
+              width: 5
+            })
+          })
+        );
+        olStyles.push(
+          new olStyle.Style({
+            stroke: new olStyle.Stroke({
+              color: 'blue',
+              width: 3
+            })
+          })
+        );
+    }
+
+    return olStyles;
+  }
+
+  /**
+   * Create a default style for the pointer position and it's label summary.
+   * @param feature olFeature
+   * @returns OL style function
+   */
+  private pointerPositionSummaryMarkerStyle(
+    feature: olFeature<OlGeometry>
+  ): olStyle.Style {
+    return new olStyle.Style({
+      image: new olStyle.Icon({
+        src: './assets/igo2/geo/icons/cross_black_18px.svg'
+      }),
+
+      text: new olStyle.Text({
+        text: feature.get('pointerSummary'),
+        textAlign: 'left',
+        textBaseline: 'bottom',
+        font: '12px Calibri,sans-serif',
+        fill: new olStyle.Fill({ color: '#000' }),
+        backgroundFill: new olStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+        backgroundStroke: new olStyle.Stroke({
+          color: 'rgba(200, 200, 200, 0.75)',
+          width: 2
+        }),
+        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
+        overflow: true,
+        offsetX: 10,
+        offsetY: -10,
+        padding: [2.5, 2.5, 2.5, 2.5]
+      })
+    });
   }
 }
