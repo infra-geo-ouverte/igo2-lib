@@ -30,9 +30,11 @@ import {
   MapBrowserComponent,
   MapService,
   MapViewOptions,
+  Overlay,
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
+  SearchResultsOlStyleFunction,
   ZoomButtonComponent,
   provideSearch,
   withIChercheSource,
@@ -44,7 +46,7 @@ import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import * as proj from 'ol/proj';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -78,6 +80,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   private searchState = inject(SearchState);
   private mediaService = inject(MediaService);
   private storageService = inject(StorageService);
+  public searchResultsOverlayFocused: Overlay;
+  public searchResultsOverlaySelected: Overlay;
+  public searchResultsOverlayAll: Overlay;
+  private searchResultsOverlayAll$$: Subscription;
 
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
@@ -121,6 +127,20 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.mapService.setMap(this.map);
+    this.searchResultsOverlayFocused = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController, 'focus')
+    );
+
+    this.searchResultsOverlaySelected = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController, 'selection')
+    );
+
+    this.searchResultsOverlayAll = new Overlay(
+      this.map,
+      SearchResultsOlStyleFunction(this.map.viewController)
+    );
 
     this.layerService
       .createAsyncLayer({
@@ -136,6 +156,35 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||
       false;
+
+    this.handleShowAllResults();
+  }
+
+  handleShowAllResults() {
+    this.searchResultsOverlayAll$$ = combineLatest([
+      this.searchStore.entities$,
+      this.searchState.searchResultsGeometryEnabled$
+    ]).subscribe((bunch) => {
+      const searchResults = bunch[0];
+      const enabled = bunch[1];
+      const rec = searchResults
+        .filter((sr) => sr.meta.dataType === FEATURE)
+        .map((sr) => sr.data as Feature);
+      if (rec.length) {
+        if (enabled) {
+          this.searchResultsOverlayAll.setFeatures(rec, FeatureMotion.None);
+        }
+      } else {
+        this.searchResultsOverlayFocused.clear();
+        this.searchResultsOverlaySelected.clear();
+        this.searchResultsOverlayAll.clear();
+      }
+    });
+  }
+
+  onSearchResultsGeometryStatusChange(value: boolean): void {
+    this.storageService.set('searchResultsGeometryEnabled', value);
+    this.searchState.searchResultsGeometryEnabled$.next(value);
   }
 
   onPointerSummaryStatusChange(value: boolean): void {
@@ -176,7 +225,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion.focus);
+    this.addResultToOverlay(
+      result,
+      this.searchResultsOverlayFocused,
+      this.searchState.featureMotion.focus
+    );
     this.selectedFeature = result.data;
   }
   /**
@@ -185,7 +238,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultSelect(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
+    this.searchResultsOverlayFocused.clear();
+    this.searchResultsOverlaySelected.clear();
+    this.addResultToOverlay(
+      result,
+      this.searchResultsOverlaySelected,
+      this.searchState.featureMotion.selected
+    );
     this.selectedFeature = result.data;
   }
 
@@ -193,20 +252,20 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(
+  private addResultToOverlay(
     layer: SearchResult<Feature>,
+    overlay: Overlay,
     motion: FeatureMotion = FeatureMotion.Default
   ): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
 
-    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    // Sometimes features have no geometry. It happens with some GetFeatureInfo
     if (layer.data.geometry === undefined) {
       return;
     }
-
-    this.map.searchResultsOverlay.setFeatures([layer.data], motion);
+    overlay.setFeatures([layer.data], motion);
   }
 
   ngOnInit(): void {
@@ -231,13 +290,16 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.destroy();
+    if (this.searchResultsOverlayAll$$) {
+      this.searchResultsOverlayAll$$.unsubscribe();
+    }
   }
 
   /*
    * Remove a feature to the map overlay
    */
   removeFeatureFromMap(): void {
-    this.map.searchResultsOverlay.clear();
+    this.searchStore.clear();
   }
 
   onContextMenuOpen(event: { x: number; y: number }): void {

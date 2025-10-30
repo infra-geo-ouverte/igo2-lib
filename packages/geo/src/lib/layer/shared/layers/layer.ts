@@ -11,6 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource, Legend } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { StyleService } from '../../../style/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -83,7 +84,8 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   constructor(
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
-    @Optional() protected authInterceptor?: AuthInterceptor
+    @Optional() protected authInterceptor?: AuthInterceptor,
+    @Optional() protected styleService?: StyleService
   ) {
     super(options);
 

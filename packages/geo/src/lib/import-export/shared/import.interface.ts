@@ -8,5 +8,4 @@ export interface ImportExportServiceOptions {
   gpxAggregateInComment?: boolean;
   configFileToGeoDBService?: string;
   allowToStoreLayer?: boolean;
-  importWithStyle?: boolean;
 }

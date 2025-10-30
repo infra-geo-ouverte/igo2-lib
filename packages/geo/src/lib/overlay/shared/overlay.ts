@@ -10,7 +10,8 @@ import {
 } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { MapBase } from '../../map/shared/map.abstract';
-import { createOverlayLayer } from './overlay.utils';
+import { AnyOlStyle } from '../../style/shared/style.types';
+import { BaseOlStyle } from '../../style/shared/style.utils';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -27,7 +28,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * Overlay layer
    */
-  private layer: VectorLayer;
+  public layer: VectorLayer;
 
   /**
    * Overlay layer's data source
@@ -36,8 +37,14 @@ export class Overlay<T extends MapBase = MapBase> {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map?: T) {
-    this.layer = createOverlayLayer();
+  // Restricted to OL due to new Overlay(...) is out of injection context and not use LayerService
+  constructor(map?: T, style?: AnyOlStyle) {
+    this.layer = new VectorLayer({
+      title: 'Overlay',
+      zIndex: 300,
+      source: new FeatureDataSource(),
+      style: style ?? BaseOlStyle()
+    });
     this.setMap(map);
   }
 
@@ -99,7 +106,7 @@ export class Overlay<T extends MapBase = MapBase> {
   ) {
     const olFeatures = [];
     features.forEach((feature: Feature) => {
-      const olFeature = featureToOl(feature, this.map.projection);
+      const olFeature = featureToOl(feature, this.map.projectionCode);
       const olGeometry = olFeature.getGeometry();
       if (olGeometry === null) {
         return;
