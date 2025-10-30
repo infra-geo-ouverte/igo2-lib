@@ -58,7 +58,7 @@ import {
 } from '../../layer/shared';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { StyleService } from '../../style/style-service/style.service';
+import { LayerNearTransparentOlStyle } from '../../style/shared/layer/layer-style.utils';
 import { EditionWorkspace } from './edition-workspace';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
@@ -72,7 +72,6 @@ export class EditionWorkspaceService {
   private messageService = inject(MessageService);
   private http = inject(HttpClient);
   private dialog = inject(MatDialog);
-  private styleService = inject(StyleService);
   authInterceptor? = inject(AuthInterceptor);
 
   public ws$ = new BehaviorSubject<string>(undefined);
@@ -184,23 +183,7 @@ export class EditionWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: this.styleService.createStyle({
-          fill: {
-            color: 'rgba(255, 255, 255, 0.01)'
-          },
-          stroke: {
-            color: 'rgba(255, 255, 255, 0.01)'
-          },
-          circle: {
-            fill: {
-              color: 'rgba(255, 255, 255, 0.01)'
-            },
-            stroke: {
-              color: 'rgba(255, 255, 255, 0.01)'
-            },
-            radius: 5
-          }
-        }),
+        style: LayerNearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -269,14 +252,14 @@ export class EditionWorkspaceService {
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: undefined,
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
+      }) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

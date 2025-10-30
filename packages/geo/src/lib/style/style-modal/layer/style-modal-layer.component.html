@@ -5,25 +5,83 @@
   <div class="edit-colorpicker">
     <form class="igo-form" [formGroup]="form">
       <div class="color-picker">
-        @if (linestringOnly !== true) {
+        @if (showForm.fill) {
           <span>
             <mat-icon class="stroke-palette-icon">format_color_fill</mat-icon>
             {{ 'igo.geo.style.fill' | translate }}
           </span>
           <igo-color-picker-form-field
+            outputFormat="hex"
             formControlName="fill"
             (colorChange)="setLayerFillColor($event)"
           />
         }
-
-        <span>
-          <mat-icon class="stroke-palette-icon">border_color</mat-icon>
-          {{ 'igo.geo.style.stroke' | translate }}
-        </span>
-        <igo-color-picker-form-field
-          formControlName="stroke"
-          (colorChange)="setLayerStrokeColor($event)"
-        />
+        @if (showForm.stroke) {
+          <span>
+            <mat-icon class="stroke-palette-icon">border_color</mat-icon>
+            {{ 'igo.geo.style.stroke' | translate }}
+          </span>
+          <igo-color-picker-form-field
+            outputFormat="hex"
+            formControlName="stroke"
+            (colorChange)="setLayerStrokeColor($event)"
+          ></igo-color-picker-form-field>
+        }
+        @if (showForm.width) {
+          <span>
+            <mat-icon class="stroke-palette-icon">line_weight</mat-icon>
+            {{ 'igo.geo.style.strokeWidth' | translate }}
+          </span>
+          <mat-form-field>
+            <input
+              matInput
+              formControlName="strokeWidth"
+              type="number"
+              min="1"
+              max="5"
+              (input)="setLayerStrokeWidth($any($event.target).value)"
+            />
+          </mat-form-field>
+        }
+        @if (showForm.radius) {
+          <span>
+            <mat-icon class="stroke-palette-icon">linear_scale</mat-icon>
+            {{ 'igo.geo.style.radius' | translate }}
+          </span>
+          <mat-form-field>
+            <input
+              matInput
+              formControlName="radius"
+              type="number"
+              min="1"
+              max="50"
+              (input)="setLayerRadius($any($event.target).value)"
+            />
+          </mat-form-field>
+        }
+        @if (showForm.fields) {
+          <span>
+            <mat-icon class="stroke-palette-icon">match_word</mat-icon>
+            {{ 'igo.geo.style.labelField' | translate }}
+          </span>
+          <mat-form-field>
+            <mat-select
+              #testFontStyle
+              formControlName="field"
+              (selectionChange)="setLayerFieldLabel($event)"
+            >
+              <mat-option [value]="null"></mat-option>
+              @for (
+                featuresProperty of featuresProperties | keyvalue;
+                track featuresProperty
+              ) {
+                <mat-option [value]="featuresProperty.key">
+                  {{ featuresProperty.key }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
       </div>
     </form>
   </div>

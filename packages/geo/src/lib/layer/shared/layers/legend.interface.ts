@@ -1,5 +1,3 @@
-import { LayerId } from './layer.interface';
-
 export interface Legend {
   title?: string;
   url?: string;
@@ -12,6 +10,7 @@ export interface LegendsSpecifications {
 }
 
 export interface LegendState {
-  id: LayerId;
+  // refer to import { LayerId } from './layer.interface'; prevent circular dependency!
+  id: string | number;
   shown?: boolean;
 }

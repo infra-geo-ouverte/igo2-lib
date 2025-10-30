@@ -11,6 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { StyleService } from '../../../style/style-service/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -36,6 +37,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
+  private subcriptions$$: Subscription[] = [];
 
   get visible() {
     return super.visible;
@@ -116,7 +118,8 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   constructor(
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
-    @Optional() protected authInterceptor?: AuthInterceptor
+    @Optional() protected authInterceptor?: AuthInterceptor,
+    @Optional() protected styleService?: StyleService
   ) {
     super(options);
 
@@ -146,13 +149,16 @@ export abstract class Layer extends LayerBase<LayerGroup> {
     map.layerWatcher.watchLayer(this);
 
     this.observeResolution();
-    this.hasBeenVisible$.subscribe(() => {
-      if (this.options.messages && this.visible) {
-        this.options.messages.map((message) => {
-          this.showMessage(message);
-        });
-      }
-    });
+
+    this.subcriptions$$.push(
+      this.hasBeenVisible$.subscribe(() => {
+        if (this.options.messages && this.visible) {
+          this.options.messages.map((message) => {
+            this.showMessage(message);
+          });
+        }
+      })
+    );
     this.createLink();
   }
 
@@ -187,6 +193,9 @@ export abstract class Layer extends LayerBase<LayerGroup> {
       if (hasSync && masterLayer) {
         this.map.layerController.remove(masterLayer);
       }
+    }
+    if (this.subcriptions$$) {
+      this.subcriptions$$.forEach((sub) => sub.unsubscribe());
     }
   }
 

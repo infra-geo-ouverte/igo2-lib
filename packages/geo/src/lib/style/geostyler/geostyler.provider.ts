@@ -1,0 +1,22 @@
+import { inject, provideAppInitializer } from '@angular/core';
+
+import { StyleFeature, StyleFeatureKind } from '../shared/style.interface';
+import { StyleService } from '../style-service';
+import { GeostylerService } from './geostyler.service';
+
+export function withGeostyler(): StyleFeature<StyleFeatureKind.Geostyler> {
+  return {
+    kind: StyleFeatureKind.Geostyler,
+    providers: [
+      {
+        provide: StyleService,
+        useClass: GeostylerService
+      },
+      // Force instantiate GeostylerService service to avoid require it in any constructor.
+      provideAppInitializer(() => {
+        inject(StyleService);
+        return;
+      })
+    ]
+  };
+}

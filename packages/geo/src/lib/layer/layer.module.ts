@@ -2,7 +2,6 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { FormDialogService } from '@igo2/common/form';
 
-import { StyleService } from '../style/style-service/style.service';
 import { LayerGroupComponent } from './layer-group/layer-group.component';
 import { LayerItemComponent } from './layer-item/layer-item.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
@@ -51,12 +50,7 @@ export class IgoLayerModule {
   static forRoot(): ModuleWithProviders<IgoLayerModule> {
     return {
       ngModule: IgoLayerModule,
-      providers: [
-        LayerService,
-        StyleService,
-        FormDialogService,
-        LayerListToolService
-      ]
+      providers: [LayerService, FormDialogService, LayerListToolService]
     };
   }
 }

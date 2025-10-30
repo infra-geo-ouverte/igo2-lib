@@ -185,12 +185,6 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         } satisfies FeatureDataSourceOptions,
         animation: {
           duration: 2000
-        },
-        igoStyle: {
-          mapboxStyle: {
-            url: 'mapboxStyleExample-feature.json',
-            source: 'source_nameX'
-          }
         }
       })
       .subscribe((layer: VectorLayer) => {

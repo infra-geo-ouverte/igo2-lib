@@ -53,7 +53,15 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
+import {
+  AnyOlStyle,
+  AnyStyle
+} from '../../../style/shared/layer/layer-style.interface';
+import {
+  isAnyOlStyle,
+  isEditableLayerStyle
+} from '../../../style/shared/layer/layer-style.utils';
+import { StyleService } from '../../../style/style-service/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -89,13 +97,36 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
+  private _style: AnyStyle;
+  get style(): AnyStyle {
+    return this._style;
+  }
+
+  set style(value: AnyStyle) {
+    Promise.all([
+      this.styleService?.getStyle(value),
+      this.styleService?.getLegend(value)
+    ])
+      .then(([style, legend]) => {
+        this.ol.setStyle(style);
+        this.legends$.next([
+          legend ? { title: this.title, html: legend } : undefined
+        ]);
+        this._style = value;
+      })
+      .catch((error) => {
+        console.error('style or legend promises rejected:', error);
+      });
+  }
+
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService
+    private geoNetworkService?: GeoNetworkService,
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -125,8 +156,13 @@ export class VectorLayer extends Layer {
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
-
-    const vector = new olLayerVector(olOptions);
+    this.style = this.options.style;
+    const vector = new olLayerVector({
+      ...olOptions,
+      style: isAnyOlStyle(olOptions.style)
+        ? (this.options.style as AnyOlStyle)
+        : undefined
+    });
     const vectorSource = vector.getSource() as olSourceVector;
     let url = vectorSource.getUrl();
     if (typeof url === 'function') {
@@ -174,7 +210,6 @@ export class VectorLayer extends Layer {
     if (loader) {
       vectorSource.setLoader(loader);
     }
-
     if (this.options.idbInfo?.storeToIdb) {
       this.handleIdbStorage(vector);
     }
@@ -291,7 +326,6 @@ export class VectorLayer extends Layer {
   }
 
   private maintainOptionsInIdb() {
-    this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
     const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo?.contextUri,
@@ -309,7 +343,7 @@ export class VectorLayer extends Layer {
         title: this.title,
         visible: this.visible,
         opacity: this.opacity,
-        igoStyle: this.options.igoStyle,
+        style: isEditableLayerStyle(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           _firstLoad: false
         })

@@ -22,11 +22,7 @@ import {
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared/map';
-import {
-  FeatureCommonVectorStyleOptions,
-  OverlayStyleOptions,
-  getCommonVectorSelectedStyle
-} from '../../style/shared';
+import { LayerSelectionOlStyle } from '../../style/shared/layer/layer-style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
 import {
@@ -100,26 +96,15 @@ export class FeatureWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle: OverlayStyleOptions =
-      this.configService.getConfig('queryOverlayStyle');
-
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: (feature) => {
-          return getCommonVectorSelectedStyle(
-            Object.assign(
-              {},
-              { feature },
-              confQueryOverlayStyle?.selection || {}
-            ) as FeatureCommonVectorStyleOptions
-          );
-        },
+        style: LayerSelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
+      }) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

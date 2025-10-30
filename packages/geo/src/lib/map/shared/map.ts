@@ -39,8 +39,6 @@ export class IgoMap implements MapBase {
   public status$: Subject<SubjectStatus>;
   public propertyChange$: Subject<LayerWatcherChange>;
   public overlay: Overlay;
-  public queryResultsOverlay: Overlay;
-  public searchResultsOverlay: Overlay;
   public viewController: MapViewController;
   public layerController: LayerController;
   public geolocationController: MapGeolocationController;
@@ -129,8 +127,6 @@ export class IgoMap implements MapBase {
     });
     this.viewController.setOlMap(this.ol);
     this.overlay = new Overlay(this);
-    this.queryResultsOverlay = new Overlay(this);
-    this.searchResultsOverlay = new Overlay(this);
     this.ol.once('rendercomplete', () => {
       this.geolocationController = new MapGeolocationController(
         this,

@@ -23,6 +23,7 @@ import {
   IgoMap,
   IgoQueryModule,
   Layer,
+  LayerMarkerOlStyle,
   LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
@@ -38,7 +39,6 @@ import {
   SpatialFilterType,
   VectorLayer,
   VectorLayerOptions,
-  createOverlayMarkerStyle,
   featureToOl,
   isLayerGroup,
   isLayerItem,
@@ -356,7 +356,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = createOverlayMarkerStyle();
+    const style = LayerMarkerOlStyle({ text: undefined });
 
     const filterLabel = this.languageService.translate.instant(
       'igo.geo.spatialFilter.spatialFilter'
