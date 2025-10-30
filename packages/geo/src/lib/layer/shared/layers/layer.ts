@@ -4,12 +4,16 @@ import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 
 import OlLayer from 'ol/layer/Layer';
+import VectorLayer from 'ol/layer/Vector';
+import VectorTileLayer from 'ol/layer/VectorTile';
 import { Source } from 'ol/source';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, of } from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { HandledLayerStyle } from '../../../style/shared/layer/layer-style.interface';
+import { StyleService } from '../../../style/style-service/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -36,6 +40,17 @@ export abstract class Layer extends LayerBase {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
+  private _style: HandledLayerStyle;
+  private subcriptions$$: Subscription[] = [];
+
+  get style(): HandledLayerStyle {
+    return this._style;
+  }
+
+  set style(value: HandledLayerStyle) {
+    this._style = value;
+    this.handleLayerStyle();
+  }
 
   get visible() {
     return super.visible;
@@ -91,7 +106,7 @@ export abstract class Layer extends LayerBase {
     }
     let currentLegends: Legend[] = this.legends ?? [];
     const ls = this.options?.legendsSpecifications;
-    if (ls?.legends) {
+    if (ls?.legends?.length) {
       const lsLegends = ls?.legends;
       if (ls?.handleLegendMethod === 'merge') {
         currentLegends = currentLegends.concat(lsLegends);
@@ -113,7 +128,8 @@ export abstract class Layer extends LayerBase {
   constructor(
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
-    @Optional() protected authInterceptor?: AuthInterceptor
+    @Optional() protected authInterceptor?: AuthInterceptor,
+    @Optional() protected styleService?: StyleService
   ) {
     super(options);
     this.legends$.next([]);
@@ -138,14 +154,44 @@ export abstract class Layer extends LayerBase {
     map.layerWatcher.watchLayer(this);
 
     this.observeResolution();
-    this.hasBeenVisible$.subscribe(() => {
-      if (this.options.messages && this.visible) {
-        this.options.messages.map((message) => {
-          this.showMessage(message);
-        });
+
+    this.subcriptions$$.push(
+      this.hasBeenVisible$.subscribe(() => {
+        if (this.options.messages && this.visible) {
+          this.options.messages.map((message) => {
+            this.showMessage(message);
+          });
+        }
+      })
+    );
+    this.createLink();
+  }
+
+  private handleLayerStyle(): void {
+    const olStyles$$ = (
+      this.styleService?.getLayerOlStyle(this.style) ?? of(undefined)
+    ).subscribe((olStyle) => {
+      switch (true) {
+        case this.ol instanceof VectorLayer:
+        case this.ol instanceof VectorTileLayer:
+          this.ol.setStyle(olStyle);
+          break;
+        default:
+          break;
       }
     });
-    this.createLink();
+    this.subcriptions$$.push(olStyles$$);
+    this.handleLayerLegendFromLayerStyle();
+  }
+  private handleLayerLegendFromLayerStyle(): void {
+    const legends$$ = (
+      this.styleService?.getLegendFromLayerStyle(this.style) ?? of(undefined)
+    ).subscribe((legend) => {
+      if (legend) {
+        this.legends$.next([{ title: this.title, html: legend }]);
+      }
+    });
+    this.subcriptions$$.push(legends$$);
   }
 
   createLink(): void {
@@ -179,6 +225,9 @@ export abstract class Layer extends LayerBase {
       if (hasSync && masterLayer) {
         this.map.layerController.remove(masterLayer);
       }
+    }
+    if (this.subcriptions$$) {
+      this.subcriptions$$.forEach((sub) => sub.unsubscribe());
     }
   }
 

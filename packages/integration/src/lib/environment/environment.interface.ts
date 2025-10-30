@@ -23,7 +23,6 @@ export interface EnvironmentOptions extends BaseEnvironmentOptions {
 
 interface IntegrationEnvironmentOptions {
   app?: AppOptions;
-  hasFeatureEmphasisOnSelection?: boolean;
   saveSearchResultInLayer?: boolean;
 }
 

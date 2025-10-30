@@ -1,3 +1,4 @@
+import { KeyValuePipe } from '@angular/common';
 import { Component, OnInit, inject, model } from '@angular/core';
 import {
   FormsModule,
@@ -14,16 +15,29 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { asArray as ColorAsArray } from 'ol/color';
-import olStyle from 'ol/style/Style';
+import Feature from 'ol/Feature';
+import Geometry, { Type } from 'ol/geom/Geometry';
 
+import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
+import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
+import {
+  HandledLayerStyle,
+  LayerStyle
+} from '../../shared/layer/layer-style.interface';
+import {
+  LayerRandomGsStyle,
+  isEditableLayerStyle,
+  isGeostylerLayerStyle
+} from '../../shared/layer/layer-style.utils';
 import {
   LayerMatDialogData,
-  StyleModalData
+  StyleModalLayerData
 } from '../shared/style-modal.interface';
 
 @Component({
@@ -39,7 +53,10 @@ import {
     ColorPickerFormFieldComponent,
     MatDialogActions,
     MatButtonModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    MatInputModule,
+    MatSelectModule,
+    KeyValuePipe
   ]
 })
 export class StyleModalLayerComponent implements OnInit {
@@ -51,108 +68,264 @@ export class StyleModalLayerComponent implements OnInit {
 
   public form: UntypedFormGroup;
 
-  public styleModalData: StyleModalData;
-  public linestringOnly: boolean;
+  public geometryTypes = new Map<Type, number>();
+  public featuresProperties = new Map<string, number>();
+  public mostFrequentGeometryType: Type;
 
-  private initialValues: StyleModalData;
-
-  private defaultValues: StyleModalData = {
-    fillColor: 'rgba(255,255,255,0.4)',
-    strokeColor: 'rgba(143,7,7,1)'
+  public showForm = {
+    fill: true,
+    stroke: true,
+    width: true,
+    fields: true,
+    radius: false
   };
 
-  get layerOlStyle(): olStyle {
-    const style = this.data.layer.ol.getStyle();
-    return style instanceof Function ? undefined : (style as olStyle).clone();
+  private initialHandledLayerStyle: HandledLayerStyle;
+
+  private defaultValues: StyleModalLayerData = {
+    fillColor: 'rgba(255,255,255,0.4)',
+    strokeColor: 'rgba(143,7,7,1)',
+    strokeWidth: 3,
+    field: '_mapTitle',
+    radius: 3
+  };
+
+  get style(): LayerStyle {
+    const ls = this.data.layer.style;
+    return isEditableLayerStyle(ls)
+      ? ls
+      : {
+          editable: true,
+          type: 'Geostyler',
+          style: LayerRandomGsStyle(
+            this.defaultValues.field,
+            Array.from(this.geometryTypes.keys())
+          )
+        };
+  }
+
+  set style(value: LayerStyle) {
+    this.data.layer.style = value;
   }
 
   ngOnInit() {
-    this.linestringOnly = true;
-    for (const feature of this.data.layer.ol.getSource().getFeatures()) {
-      if (feature.getGeometry()?.getType() !== 'LineString') {
-        this.linestringOnly = false;
-      }
+    let features: Feature<Geometry>[] = [];
+    if (this.data.layer instanceof VectorLayer) {
+      features = this.data.layer.ol.getSource().getFeatures();
+    } else if (this.data.layer instanceof VectorTileLayer) {
+      features = this.data.layer.ol.getFeaturesInExtent(
+        this.data.layer.map.viewController.getExtent()
+      );
     }
-    this.buildStyleData();
+    this.computeInfoFromFeatures(features);
+
     this.buildForm();
+  }
+
+  private computeInfoFromFeatures(olFeatures: Feature<Geometry>[]): void {
+    olFeatures.forEach((olFeature) => {
+      const type = olFeature.getGeometry()?.getType();
+      if (type) {
+        const current = this.geometryTypes.get(type) ?? 0;
+        this.geometryTypes.set(type, current + 1);
+      }
+
+      const properties = olFeature.getProperties();
+
+      Object.keys(properties).forEach((propName) => {
+        if (propName === 'geometry' || propName.startsWith('_')) return;
+        const currentPropCount = this.featuresProperties.get(propName) ?? 0;
+        this.featuresProperties.set(propName, currentPropCount + 1);
+      });
+    });
+    let maxCount = 0;
+    this.geometryTypes.forEach((count, type) => {
+      if (count > maxCount) {
+        maxCount = count;
+        this.mostFrequentGeometryType = type;
+      }
+    });
+
+    switch (this.mostFrequentGeometryType) {
+      case 'Point':
+      case 'MultiPoint':
+      case 'Circle':
+        this.showForm = {
+          fill: true,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: true
+        };
+        break;
+
+      case 'Polygon':
+      case 'MultiPolygon':
+        this.showForm = {
+          fill: true,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: false
+        };
+        break;
+      case 'LineString':
+      case 'MultiLineString':
+        this.showForm = {
+          fill: false,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: false
+        };
+        break;
+      default:
+        break;
+    }
   }
 
   private buildForm() {
     this.form = this.formBuilder.group({
       fill: [this.getLayerFillColor()],
-      stroke: [this.getLayerStrokeColor()]
+      stroke: [this.getLayerStrokeColor()],
+      strokeWidth: [this.getLayerStrokeWidth()],
+      field: [this.getLayerLabelField()],
+      radius: [this.getLayerRadius()]
+    });
+    const layerStyle = this.data.layer.style;
+    this.initialHandledLayerStyle = isGeostylerLayerStyle(layerStyle)
+      ? JSON.parse(JSON.stringify(layerStyle))
+      : layerStyle;
+  }
+
+  private getLayerStyleValue<T>(
+    extractor: (s: any) => T | undefined,
+    defaultValue: T
+  ): T {
+    if (!this.style) return defaultValue;
+    for (const rule of this.style.style?.rules ?? []) {
+      for (const s of rule.symbolizers ?? []) {
+        const v = extractor(s);
+        if (v !== undefined && v !== null) return v;
+      }
+    }
+    return defaultValue;
+  }
+
+  private getLayerFillColor(): string {
+    return this.getLayerStyleValue<string>(
+      (s) => (s.kind === 'Fill' || s.kind === 'Mark' ? s.color : undefined),
+      this.defaultValues.fillColor
+    );
+  }
+
+  private getLayerStrokeColor(): string {
+    return this.getLayerStyleValue<string>(
+      (s) =>
+        s.kind === 'Line'
+          ? s.color
+          : s.kind === 'Mark'
+            ? s.strokeColor
+            : s.kind === 'Fill'
+              ? s.outlineColor
+              : undefined,
+      this.defaultValues.strokeColor
+    );
+  }
+
+  private getLayerStrokeWidth(): number {
+    return this.getLayerStyleValue<number>(
+      (s) =>
+        s.kind === 'Line'
+          ? s.width
+          : s.kind === 'Mark'
+            ? s.strokeWidth
+            : s.kind === 'Fill'
+              ? s.outlineWidth
+              : undefined,
+      this.defaultValues.strokeWidth
+    );
+  }
+  private getLayerLabelField(): string {
+    return this.getLayerStyleValue<string>(
+      (s) =>
+        s.kind === 'Text' && s.label != null
+          ? s.label.toString().replace('{{', '').replace('}}', '')
+          : undefined,
+      this.defaultValues.field
+    );
+  }
+  private getLayerRadius(): number {
+    return this.getLayerStyleValue<number>(
+      (s) => (s.kind === 'Mark' ? s.radius : undefined),
+      this.defaultValues.radius
+    );
+  }
+
+  private updateLayerSymbolizers(updater: (symbolizer: any) => any): void {
+    if (!this.style) return;
+    const updated = {
+      ...this.style,
+      style: {
+        ...this.style.style,
+        rules: (this.style.style.rules ?? []).map((rule) => ({
+          ...rule,
+          symbolizers: (rule.symbolizers ?? []).map((sym) => {
+            const newSym = updater(sym);
+            return newSym === undefined ? sym : newSym;
+          })
+        }))
+      }
+    };
+    this.style = updated;
+  }
+
+  setLayerFillColor(event: string) {
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Fill' || sym.kind === 'Mark'
+        ? { ...sym, color: event }
+        : undefined
+    );
+  }
+  setLayerStrokeColor(event: string) {
+    this.updateLayerSymbolizers((sym) => {
+      if (sym.kind === 'Line') return { ...sym, color: event };
+      if (sym.kind === 'Mark') return { ...sym, strokeColor: event };
+      if (sym.kind === 'Fill') return { ...sym, outlineColor: event };
+      return undefined;
+    });
+  }
+  setLayerStrokeWidth(value: number | string) {
+    const width = Number(value);
+    this.updateLayerSymbolizers((sym) => {
+      if (sym.kind === 'Line') return { ...sym, width };
+      if (sym.kind === 'Mark') return { ...sym, strokeWidth: width };
+      if (sym.kind === 'Fill') return { ...sym, outlineWidth: width };
+      return undefined;
     });
   }
 
-  private buildStyleData() {
-    this.styleModalData = {
-      fillColor: this.getLayerFillColor(),
-      strokeColor: this.getLayerStrokeColor()
-    };
-    this.initialValues = {
-      fillColor: this.getLayerFillColor(),
-      strokeColor: this.getLayerStrokeColor()
-    };
+  setLayerFieldLabel(event: MatSelectChange) {
+    const label = event.value;
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Text' ? { ...sym, label: `{{${label}}}` } : undefined
+    );
   }
-
-  private getLayerFillColor() {
-    let fillColor = this.defaultValues.fillColor;
-    const style = this.layerOlStyle;
-    if (style?.getFill()?.getColor()) {
-      const arrayColor = style.getFill().getColor();
-      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 0.4
-      })`;
-    }
-    return fillColor;
-  }
-
-  private getLayerStrokeColor() {
-    let strokeColor = this.defaultValues.strokeColor;
-    const style = this.layerOlStyle;
-    if (style?.getStroke()?.getColor()) {
-      const arrayColor = style.getStroke().getColor();
-      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 1
-      })`;
-    }
-    return strokeColor;
-  }
-
-  setLayerFillColor(event) {
-    const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
-    (s.getImage() as any).getFill().setColor(cAA);
-    s.getFill().setColor(cAA);
-    this.data.layer.ol.setStyle(s);
-    this.styleModalData.fillColor = event;
-  }
-
-  setLayerStrokeColor(event) {
-    const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
-    (s.getImage() as any).getStroke().setColor(cAA);
-    s.getStroke().setColor(cAA);
-    this.data.layer.ol.setStyle(s);
-    this.styleModalData.strokeColor = event;
+  setLayerRadius(value: number | string) {
+    const radius = Number(value);
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Mark' ? { ...sym, radius } : undefined
+    );
   }
 
   cancel() {
     this.dialogRef.close();
-    this.setLayerFillColor(this.initialValues.fillColor);
-    this.setLayerStrokeColor(this.initialValues.strokeColor);
+    this.data.layer.style = this.initialHandledLayerStyle;
   }
 
   confirm() {
     this.confirmFlag.set(true);
-    if (this.form.get('fill').value) {
-      this.styleModalData.fillColor = this.form.get('fill').value;
-    }
-
-    if (this.form.get('stroke').value) {
-      this.styleModalData.strokeColor = this.form.get('stroke').value;
-    }
-    this.dialogRef.close(this.styleModalData);
+    this.dialogRef.close();
   }
 
   openPicker() {

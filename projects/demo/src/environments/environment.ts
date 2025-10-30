@@ -48,8 +48,7 @@ export const environment: EnvironmentOptions = {
     },
     importExport: {
       url: '/apis/ogre',
-      gpxAggregateInComment: true,
-      importWithStyle: true
+      gpxAggregateInComment: true
     },
     catalog: {
       sources: [

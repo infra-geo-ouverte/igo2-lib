@@ -9,6 +9,7 @@ import {
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlRenderFeature from 'ol/render/Feature';
+import { StyleLike } from 'ol/style/Style';
 
 import { Geometry } from 'geojson';
 
@@ -35,7 +36,7 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
-  style?: Record<string, any>;
+  style?: StyleLike;
   alias?: Record<string, string>;
   revision?: number;
   excludeAttribute?: string[];

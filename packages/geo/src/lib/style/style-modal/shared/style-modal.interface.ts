@@ -1,6 +1,15 @@
 import { Feature } from '../../../feature/shared/feature.interfaces';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
+import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
 import { FontType } from '../../shared/font.enum';
+import { LayerStyle } from '../../shared/layer/layer-style.interface';
+
+export interface StyleModalLayerData extends StyleModalData {
+  layerStyle?: LayerStyle;
+  strokeWidth?: number;
+  field?: string;
+  radius?: number;
+}
 
 export interface StyleModalData {
   fillColor?: string;
@@ -12,7 +21,7 @@ export interface StyleModalData {
 }
 
 export interface LayerMatDialogData {
-  layer: VectorLayer;
+  layer: VectorLayer | VectorTileLayer;
 }
 
 export interface DrawingMatDialogData {

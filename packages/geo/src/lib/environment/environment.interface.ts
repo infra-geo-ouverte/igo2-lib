@@ -16,7 +16,6 @@ import {
   StoredQueriesReverseSearchSourceOptions,
   StoredQueriesSearchSourceOptions
 } from '../search';
-import { OverlayStyleOptions } from '../style';
 
 export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
@@ -47,8 +46,6 @@ export interface EnvironmentOptions {
   };
   optionsApi?: OptionsApiOptions;
   projections?: Projection[];
-  queryOverlayStyle?: OverlayStyleOptions;
-  searchOverlayStyle?: OverlayStyleOptions;
   searchSources?: {
     showResultsCount?: boolean;
     [key: string]:

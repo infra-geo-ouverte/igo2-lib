@@ -27,7 +27,7 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
-import { BehaviorSubject, Subscription, take } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import { FeatureDataSource } from '../../datasource/shared/datasources';
@@ -409,67 +409,47 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       layerCounterID = Math.max(numberId, layerCounterID);
     }
 
-    this.dataSourceService
-      .createAsyncDataSource({
+    const searchLayer = this.layerService.createLayer({
+      isIgoInternalLayer: true,
+      id: 'igo-search-layer' + ++layerCounterID,
+      title: layerTitle,
+      source: new FeatureDataSource({
         type: 'vector',
         queryable: true
-      } as QueryableDataSourceOptions)
-      .pipe(take(1))
-      .subscribe((dataSource: FeatureDataSource) => {
-        const searchLayer: VectorLayer = new VectorLayer({
-          isIgoInternalLayer: true,
-          id: 'igo-search-layer' + ++layerCounterID,
-          title: layerTitle,
-          source: dataSource,
-          igoStyle: {
-            editable: false,
-            igoStyleObject: {
-              fill: { color: 'rgba(255,255,255,0.4)' },
-              stroke: { color: 'rgba(143,7,7,1)', width: 1 },
-              circle: {
-                fill: { color: 'rgba(255,255,255,0.4)' },
-                stroke: { color: 'rgba(143,7,7,1)', width: 1 },
-                radius: 5
-              }
-            }
-          },
-          style: styles,
-          showInLayerList: true,
-          exportable: true,
-          workspace: {
-            enabled: true
-          }
-        });
+      } as QueryableDataSourceOptions),
+      style: styles,
+      showInLayerList: true,
+      exportable: true,
+      workspace: {
+        enabled: true
+      }
+    }) as VectorLayer;
 
-        tryBindStoreLayer(activeStore, searchLayer);
-        tryAddLoadingStrategy(
-          activeStore,
-          new FeatureStoreLoadingStrategy({
-            motion: FeatureMotion.None
-          })
-        );
+    tryBindStoreLayer(activeStore, searchLayer);
+    tryAddLoadingStrategy(
+      activeStore,
+      new FeatureStoreLoadingStrategy({
+        motion: FeatureMotion.None
+      })
+    );
 
-        tryAddSelectionStrategy(
-          activeStore,
-          new FeatureStoreSelectionStrategy({
-            map: this.map(),
-            motion: FeatureMotion.None,
-            many: true
-          })
-        );
+    tryAddSelectionStrategy(
+      activeStore,
+      new FeatureStoreSelectionStrategy({
+        map: this.map(),
+        motion: FeatureMotion.None,
+        many: true
+      })
+    );
 
-        activeStore.layer.visible = true;
-        activeStore.source.ol.on(
-          'removefeature',
-          (event: OlVectorSourceEvent) => {
-            const olGeometry = event.feature.getGeometry();
-            this.clearLabelsOfOlGeometry(olGeometry);
-          }
-        );
+    activeStore.layer.visible = true;
+    activeStore.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
+      const olGeometry = event.feature.getGeometry();
+      this.clearLabelsOfOlGeometry(olGeometry);
+    });
 
-        this.addFeature(selectedFeature, activeStore);
-        this.stores().push(activeStore);
-      });
+    this.addFeature(selectedFeature, activeStore);
+    this.stores().push(activeStore);
   }
 
   addFeature(feature: SearchResult, activeStore: FeatureStore<Feature>) {

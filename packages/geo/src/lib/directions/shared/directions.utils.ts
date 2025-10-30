@@ -18,7 +18,7 @@ import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
+import { LayerMarkerOlStyle } from '../../style/shared/layer/layer-style.utils';
 import {
   DirectionRelativePositionType,
   DirectionsType,
@@ -154,11 +154,9 @@ export function directionsStyle(
     })
   ];
 
-  const stopStyle: olStyle.Style = createOverlayMarkerStyle({
+  const stopStyle: olStyle.Style = LayerMarkerOlStyle({
     text: feature.get('stopText'),
-    opacity: feature.get('stopOpacity'),
-    markerColor: feature.get('stopColor'),
-    markerOutlineColor: [255, 255, 255]
+    markerColor: feature.get('stopColor')
   });
 
   const routeStyle: olStyle.Style[] = [
@@ -372,7 +370,6 @@ export function addStopToStopsFeatureStore(
       type: DirectionsType.Stop,
       stopText,
       stopColor,
-      stopOpacity: 1,
       stop
     },
     meta: {

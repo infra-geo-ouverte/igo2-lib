@@ -4,8 +4,7 @@ import type {
   AnyLayerOptions,
   Layer,
   LayerGroup,
-  LayerGroupOptions,
-  VectorTileLayerOptions
+  LayerGroupOptions
 } from '../shared/layers';
 
 type SortDirection = 'asc' | 'desc';
@@ -36,19 +35,6 @@ export function isBaseLayer(layer: AnyLayer): layer is Layer {
 
 function isInternalLayer(layer: AnyLayer): boolean {
   return layer.isIgoInternalLayer;
-}
-
-export function computeMVTOptionsOnHover(layerOptions: AnyLayerItemOptions) {
-  const vectorTileLayerOptions = layerOptions as VectorTileLayerOptions;
-  if (
-    vectorTileLayerOptions.sourceOptions?.type === 'mvt' &&
-    (vectorTileLayerOptions.igoStyle?.styleByAttribute?.hoverStyle ||
-      vectorTileLayerOptions.igoStyle?.hoverStyle)
-  ) {
-    const fc = vectorTileLayerOptions.sourceOptions.featureClass;
-    vectorTileLayerOptions.sourceOptions.featureClass = fc ? fc : 'feature';
-  }
-  return layerOptions;
 }
 
 export function isSaveableLayer(layer: Layer): boolean {

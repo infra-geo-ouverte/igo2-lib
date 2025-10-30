@@ -16,7 +16,6 @@ import {
   WMTSDataSourceOptions
 } from '@igo2/geo';
 import { LayerService } from '@igo2/geo';
-import { StyleListService, StyleService } from '@igo2/geo';
 
 import { mergeTestConfig } from 'packages/context/test-config';
 import { BehaviorSubject } from 'rxjs';
@@ -113,8 +112,6 @@ describe('LayerContextDirective', () => {
           { provide: ContextService, useValue: mockContextService },
           { provide: LayerService, useValue: {} },
           { provide: ConfigService, useValue: {} },
-          { provide: StyleListService, useValue: {} },
-          { provide: StyleService, useValue: {} },
           { provide: ShareMapService, useValue: mockShareMapService }
         ]
       })
