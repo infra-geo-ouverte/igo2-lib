@@ -1,0 +1,22 @@
+<mat-form-field [floatLabel]="floatLabel" subscriptSizing="dynamic">
+  <input
+    matInput
+    [placeholder]="placeholder | translate"
+    [matTooltip]="tooltip | translate"
+    [matTooltipDisabled]="!tooltip"
+    matTooltipShowDelay="500"
+    type="text"
+    [formControl]="control"
+  />
+  @if (control.value) {
+    <button
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      color="warn"
+      (click)="clearTerm()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>

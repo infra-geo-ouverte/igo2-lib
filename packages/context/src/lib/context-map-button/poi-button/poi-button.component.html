@@ -12,24 +12,21 @@
       color="primary"
       (click)="createPoi()"
     >
-      <mat-icon svgIcon="plus-circle"></mat-icon>
+      <mat-icon>add-circle</mat-icon>
     </button>
   </mat-option>
   <mat-divider></mat-divider>
-  <mat-option
-    *ngFor="let poi of pois"
-    class="poi-option"
-    [value]="poi.id"
-    (click)="zoomOnPoi(poi.id)"
-  >
-    <div class="titlePoi">{{ poi.title }}</div>
-    <button
-      mat-icon-button
-      igoStopPropagation
-      color="warn"
-      (click)="deletePoi(poi)"
-    >
-      <mat-icon svgIcon="delete"></mat-icon>
-    </button>
-  </mat-option>
+  @for (poi of pois; track poi) {
+    <mat-option class="poi-option" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
+      <div class="titlePoi">{{ poi.title }}</div>
+      <button
+        mat-icon-button
+        igoStopPropagation
+        color="warn"
+        (click)="deletePoi(poi)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-option>
+  }
 </mat-select>

@@ -2,11 +2,12 @@ import {
   EntityTableColumn,
   EntityTableColumnRenderer,
   getEntityProperty
-} from '@igo2/common';
-import { MessageService } from '@igo2/core';
+} from '@igo2/common/entity';
+import { MessageService } from '@igo2/core/message';
 import { downloadContent } from '@igo2/utils';
 
 import { ExportNothingToExportError } from './export.errors';
+import { AnyExportFormat, ExportFormatLegacy } from './export.type';
 
 export function handleFileExportError(
   error: Error,
@@ -42,12 +43,8 @@ export function handleNothingToExportError(messageService: MessageService) {
  * @param rows Array of arrays to export as CSV
  * @param separator Cell separator
  */
-export function exportToCSV(
-  rows: any[][],
-  fileName: string,
-  separator: string = ';'
-) {
-  const lines = rows.map((row: any[][], index: number) => row.join(separator));
+export function exportToCSV(rows: any[][], fileName: string, separator = ';') {
+  const lines = rows.map((row: any[][]) => row.join(separator));
   const csvContent = lines.join('\n');
   downloadContent(csvContent, 'text/csv;charset=utf-8', fileName);
 }
@@ -75,4 +72,9 @@ export function entitiesToRowData(
       return valueAccessor(entity, column.name);
     });
   });
+}
+
+export function isCsvExport(format: AnyExportFormat): boolean {
+  const legacyCsv: Partial<ExportFormatLegacy>[] = ['CSVsemicolon', 'CSVcomma'];
+  return format === 'CSV' || legacyCsv.includes(format as ExportFormatLegacy);
 }

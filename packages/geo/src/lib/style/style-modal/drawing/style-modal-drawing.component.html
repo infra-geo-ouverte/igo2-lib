@@ -8,20 +8,18 @@
 >
   <form class="igo-form" [formGroup]="form">
     <div class="color-picker">
-      <ng-container *ngIf="linestringOnly !== true">
+      @if (linestringOnly !== true) {
         <span>
-          <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
+          <mat-icon class="stroke-palette-icon">format_color_fill</mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
-
         <igo-color-picker-form-field
           formControlName="fill"
         ></igo-color-picker-form-field>
-      </ng-container>
+      }
 
       <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
-        </mat-icon>
+        <mat-icon class="stroke-palette-icon">border_color </mat-icon>
         {{ 'igo.geo.style.stroke' | translate }}
       </span>
 
@@ -41,7 +39,7 @@
           min="10"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureFontSize()"
-          (input)="styleModalData.fontSize = $event.target.value"
+          (input)="styleModalData.fontSize = $any($event.target).value"
         />
         <span matTextSuffix>px</span>
       </mat-form-field>
@@ -52,12 +50,11 @@
           [value]="getFeatureFontStyle()"
           (selectionChange)="styleModalData.fontStyle = $event.value"
         >
-          <mat-option
-            *ngFor="let fontSelect of allFontStyles"
-            [value]="fontSelect"
-          >
-            {{ fontSelect }}
-          </mat-option>
+          @for (fontSelect of allFontStyles; track fontSelect) {
+            <mat-option [value]="fontSelect">
+              {{ fontSelect }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
@@ -68,7 +65,7 @@
           type="number"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureOffsetX()"
-          (input)="styleModalData.offsetX = $event.target.value"
+          (input)="styleModalData.offsetX = $any($event.target).value"
         />
       </mat-form-field>
       <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
@@ -79,15 +76,15 @@
           type="number"
           onkeydown="return event.keyCode !== 69"
           [value]="getFeatureOffsetY()"
-          (input)="styleModalData.offsetY = $event.target.value"
+          (input)="styleModalData.offsetY = $any($event.target).value"
         />
       </mat-form-field>
     </div>
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button (click)="cancelDrawing()">
+  <button matButton="elevated" (click)="cancelDrawing()">
     {{ 'igo.geo.style.cancel' | translate }}
   </button>
-  <button mat-raised-button color="primary" (click)="confirm()">OK</button>
+  <button matButton="elevated" color="primary" (click)="confirm()">OK</button>
 </div>

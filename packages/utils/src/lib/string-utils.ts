@@ -41,13 +41,15 @@ export class StringUtils {
     const o = { fis: slen, mtc: m, sbs: '' }; // temporary object used to construct the cd (change data) object
 
     while (i < slen) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       l[i] === s[i]
         ? match
           ? (o.sbs += s[i]) // o.sbs holds the matching substring itsef
           : ((match = true), (o.fis = i), (o.sbs = s[i]))
         : match
-        ? (i = slen) // stop after the first found substring
-        : (i = i);
+          ? (i = slen) // stop after the first found substring
+          : // eslint-disable-next-line no-self-assign
+            (i = i);
       ++i;
     }
     return o;

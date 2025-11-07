@@ -4,9 +4,13 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
-import { MatSlider } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
 
 import { default as moment } from 'moment';
 
@@ -15,9 +19,13 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 @Component({
   selector: 'igo-ogc-filter-time-slider',
   templateUrl: './ogc-filter-time-slider.component.html',
-  styleUrls: ['./ogc-filter-time-slider.component.scss']
+  styleUrls: ['./ogc-filter-time-slider.component.scss'],
+  imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule],
+  providers: [OGCFilterTimeService]
 })
 export class OgcFilterTimeSliderComponent implements OnInit {
+  ogcFilterTimeService = inject(OGCFilterTimeService);
+
   @Input() currentFilter: any;
   @Input() begin: any;
   @Input() max: any;
@@ -30,11 +38,11 @@ export class OgcFilterTimeSliderComponent implements OnInit {
   @ViewChild(MatSlider) slider: MatSlider;
 
   interval;
-  sliderValue: number = 1;
-  calculatedStep: number = 0;
+  sliderValue = 1;
+  calculatedStep = 0;
   readonly _defaultDisplayFormat: string = 'DD/MM/YYYY HH:mm A';
   readonly _defaultSliderInterval: number = 2000;
-  public playIcon = 'play-circle';
+  public playIcon = 'play_circle';
   public resetIcon = 'replay';
 
   get sliderInterval(): number {
@@ -68,7 +76,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     );
   }
 
-  constructor(public ogcFilterTimeService: OGCFilterTimeService) {
+  constructor() {
     this.sliderDisplayWith = this.sliderDisplayWith.bind(this);
   }
 
@@ -113,13 +121,13 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     return moment(dateTmp).format(this.displayFormat);
   }
 
-  playFilter(event: any) {
+  playFilter() {
     if (this.interval) {
       this.stopFilter();
     } else {
-      this.playIcon = 'pause-circle';
+      this.playIcon = 'pause_circle';
       this.interval = setInterval(
-        (that) => {
+        () => {
           if (this.slider.step < this.calculatedStep) {
             const _increment = '_increment';
             const _emitInputEvent = '_emitInputEvent';
@@ -140,17 +148,16 @@ export class OgcFilterTimeSliderComponent implements OnInit {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playIcon = 'play-circle';
+    this.playIcon = 'play_circle';
   }
 
-  resetFilter(event: any) {
+  resetFilter() {
     if (this.interval) {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playIcon = 'play-circle';
+    this.playIcon = 'play_circle';
     this.slider.step = 1;
-    const _increment = '_increment';
     const _emitInputEvent = '_emitInputEvent';
     this.slider[_emitInputEvent]();
   }

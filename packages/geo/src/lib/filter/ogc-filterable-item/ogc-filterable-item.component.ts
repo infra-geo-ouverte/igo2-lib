@@ -1,12 +1,28 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import {
+  WFSDataSourceOptions,
+  WFSDataSourceOptionsParams
+} from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
-import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { Layer } from '../../layer';
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
+import { MapBase } from '../../map';
+import { OgcFilterableFormComponent } from '../ogc-filterable-form/ogc-filterable-form.component';
 import { OgcFilterWriter } from '../shared/ogc-filter';
 import {
   OgcFilterableDataSource,
@@ -18,26 +34,45 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
 @Component({
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
-  styleUrls: ['./ogc-filterable-item.component.scss']
+  styleUrls: ['./ogc-filterable-item.component.scss'],
+  imports: [
+    NgClass,
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    NgStyle,
+    MatTooltipModule,
+    MatButtonModule,
+    LayerLegendComponent,
+    OgcFilterableFormComponent,
+    MatDividerModule,
+    MatCheckboxModule,
+    FormsModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ],
+  providers: [OGCFilterService]
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
+  private ogcFilterService = inject(OGCFilterService);
+
   public color = 'primary';
   private lastRunOgcFilter;
   private defaultLogicalParent = OgcFilterOperator.And;
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
-  public hasSelector: boolean = false;
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public hasSelector = false;
+  showLegend$ = new BehaviorSubject<boolean>(false);
+  inResolutionRange$ = new BehaviorSubject<boolean>(true);
   private resolution$$: Subscription;
   private ogcFilterWriter;
 
   @Input() layer: Layer;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);
@@ -47,7 +82,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  constructor(private ogcFilterService: OGCFilterService) {
+  constructor() {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 
@@ -75,7 +110,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         this.ogcFilterService.setOgcWMSFiltersOptions(this.datasource);
         break;
       case 'wfs':
-        this.ogcFilterService.setOgcWFSFiltersOptions(this.datasource);
+        this.ogcFilterService.setOgcWFSFiltersOptions(
+          this.datasource.options as WFSDataSourceOptions
+        );
         break;
       default:
         break;

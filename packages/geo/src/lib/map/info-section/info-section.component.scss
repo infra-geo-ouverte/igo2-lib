@@ -1,20 +1,20 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/media';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 .infoSection {
   border-radius: 10px;
   background-color: rgba(110, 110, 110, 0.4);
-  padding: calc(#{$igo-margin} / 2);
+  padding: calc(#{core.$igo-margin} / 2);
   position: absolute;
   text-align: center;
-  top: $igo-margin;
+  top: core.$igo-margin;
   left: 50%;
   text-shadow:
     0 0 5px white,
     0 0 10px white,
     0 0 15px white;
-  @include mobile {
-    top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  @include media.mobile {
+    top: calc(#{core.$igo-icon-size} + 5px + #{core.$igo-margin});
     left: 10%;
   }
 }

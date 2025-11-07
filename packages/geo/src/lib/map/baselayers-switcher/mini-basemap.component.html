@@ -1,6 +1,10 @@
 <div class="igo-mini-basemap-container">
-  <div *ngIf="display" (click)="changeBaseLayer(baseLayer)">
-    <igo-map-browser [map]="basemap"></igo-map-browser>
-    <div *ngIf="title" class="igo-mini-basemap-title">{{ title }}</div>
-  </div>
+  @if (display) {
+    <div (click)="changeBaseLayer(baseLayer)">
+      <igo-map-browser [map]="basemap"></igo-map-browser>
+      @if (title) {
+        <div class="igo-mini-basemap-title">{{ title }}</div>
+      }
+    </div>
+  }
 </div>

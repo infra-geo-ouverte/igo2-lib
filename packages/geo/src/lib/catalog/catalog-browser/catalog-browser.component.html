@@ -1,6 +1,6 @@
 <igo-list [navigation]="false" [selection]="false">
-  <ng-template ngFor let-item [ngForOf]="store.view.all$() | async">
-    <ng-container *ngIf="isGroup(item)">
+  @for (item of store.view.all$() | async; track item) {
+    @if (isGroup(item)) {
       <igo-catalog-browser-group
         [catalog]="catalog"
         [group]="item"
@@ -14,12 +14,11 @@
         (layerAddedChange)="onLayerAddedChange($event)"
       >
       </igo-catalog-browser-group>
-    </ng-container>
-
-    <ng-container *ngIf="isLayer(item)">
+    }
+    @if (isLayer(item)) {
       <igo-catalog-browser-layer
         igoListItem
-        [layer]="item"
+        [layer]="$any(item)"
         [map]="map"
         [resolution]="resolution$ | async"
         [catalogAllowLegend]="catalogAllowLegend"
@@ -27,6 +26,6 @@
         (addedChange)="onLayerAddedChange($event)"
       >
       </igo-catalog-browser-layer>
-    </ng-container>
-  </ng-template>
+    }
+  }
 </igo-list>

@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import * as olformat from 'ol/format';
@@ -10,7 +12,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import { Feature } from '../../../feature/shared/feature.interfaces';
 import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
@@ -37,6 +40,9 @@ export class StoredQueriesSearchSource
   extends SearchSource
   implements TextSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'storedqueries';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [
@@ -49,12 +55,13 @@ export class StoredQueriesSearchSource
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${StoredQueriesSearchSource.id}`
+    );
+
     super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions;
     if (this.storedQueriesOptions && !this.storedQueriesOptions.available) {
@@ -147,7 +154,7 @@ export class StoredQueriesSearchSource
     return StoredQueriesSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
       searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
@@ -156,10 +163,10 @@ export class StoredQueriesSearchSource
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
-  /* eslint-disable max-len */
+
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
-  /* eslint-disable max-len */
+
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
@@ -206,10 +213,10 @@ export class StoredQueriesSearchSource
               a.meta.score > b.meta.score
                 ? 1
                 : a.meta.score === b.meta.score
-                ? a.meta.titleHtml < b.meta.titleHtml
-                  ? 1
+                  ? a.meta.titleHtml < b.meta.titleHtml
+                    ? 1
+                    : -1
                   : -1
-                : -1
             );
             resultArray.reverse();
             if (resultArray.length > Number(this.options.params.limit)) {
@@ -259,7 +266,7 @@ export class StoredQueriesSearchSource
     return features;
   }
 
-  private termSplitter(term: string, fields: StoredQueriesFields[]): {} {
+  private termSplitter(term: string, fields: StoredQueriesFields[]) {
     const splittedTerm = {};
     let remainingTerm = term;
     let cnt = 0;
@@ -354,7 +361,7 @@ export class StoredQueriesSearchSource
         id,
         title: data.properties.title,
         titleHtml: data.properties[title],
-        icon: 'map-marker',
+        icon: 'location_on',
         score: data.properties.title
           ? computeTermSimilarity(term.trim(), data.properties.title)
           : computeTermSimilarity(term.trim(), data.properties[title])
@@ -362,7 +369,7 @@ export class StoredQueriesSearchSource
     };
   }
 
-  private computeProperties(data: StoredQueriesData): { [key: string]: any } {
+  private computeProperties(data: StoredQueriesData): Record<string, any> {
     const properties = Object.assign(
       {},
       ObjectUtils.removeKeys(
@@ -385,7 +392,7 @@ export class StoredQueriesSearchSource
  */
 
 // EXAMPLE CALLS
-/* eslint-disable max-len */
+
 // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
 //
 
@@ -394,6 +401,9 @@ export class StoredQueriesReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'storedqueriesreverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -401,12 +411,13 @@ export class StoredQueriesReverseSearchSource
   public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${StoredQueriesReverseSearchSource.id}`
+    );
+
     super(options, storageService);
     this.storedQueriesOptions =
       options as StoredQueriesReverseSearchSourceOptions;
@@ -450,7 +461,7 @@ export class StoredQueriesReverseSearchSource
     return StoredQueriesReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries (reverse)',
       searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
@@ -572,14 +583,14 @@ export class StoredQueriesReverseSearchSource
         dataType: FEATURE,
         id,
         title: data.properties[title],
-        icon: 'map-marker'
+        icon: 'location_on'
       }
     };
   }
 
-  private computeProperties(data: StoredQueriesReverseData): {
-    [key: string]: any;
-  } {
+  private computeProperties(
+    data: StoredQueriesReverseData
+  ): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist

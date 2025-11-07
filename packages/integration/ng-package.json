@@ -1,11 +1,13 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/integration",
-  "deleteDestPath": false,
   "lib": {
     "entryFile": "src/public_api.ts"
   },
   "assets": [
+    { "input": "", "glob": "**/*.them*.scss", "output": "" },
+    { "input": "src/style", "glob": "**/*.scss", "output": "src/style" },
+    { "input": "src/assets", "glob": "**/*", "output": "assets" },
     { "input": "src/locale", "glob": "*", "output": "locale" }
   ]
 }

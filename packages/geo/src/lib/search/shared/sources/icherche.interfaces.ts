@@ -1,10 +1,10 @@
-import { FeatureGeometry } from '../../../feature';
+import { FeatureGeometry } from '../../../feature/shared/feature.interfaces';
 
 export interface IChercheData {
   index: string;
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
-  properties: { [key: string]: any };
+  properties: Record<string, any>;
   icon?: string;
   highlight: {
     title: string;
@@ -22,7 +22,7 @@ export interface IChercheReverseData {
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
   icon?: string;
-  properties: { [key: string]: any };
+  properties: Record<string, any>;
 }
 
 export interface IChercheReverseResponse {

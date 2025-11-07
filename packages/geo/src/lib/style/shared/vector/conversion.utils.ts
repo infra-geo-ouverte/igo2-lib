@@ -1,33 +1,34 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import olSourceVector from 'ol/source/Vector';
+import { Style } from 'ol/style';
 
-export function olStyleToBasicIgoStyle(
-  layer: olLayerVector<olSourceVector<OlGeometry>>
-) {
+export function olStyleToBasicIgoStyle(layer: olLayerVector<olSourceVector>) {
   const layerOlStyle = layer.getStyle();
   if (typeof layerOlStyle === 'function' || layerOlStyle instanceof Array) {
     return;
   }
 
-  const rStyle = {
-    fill: {
-      color: layerOlStyle.getFill().getColor()
-    },
-    stroke: {
-      color: layerOlStyle.getStroke().getColor(),
-      width: 2
-    },
-    circle: {
+  if (layerOlStyle instanceof Style) {
+    return {
       fill: {
-        color: (layerOlStyle.getImage() as any).getFill().getColor()
+        color: layerOlStyle.getFill().getColor()
       },
       stroke: {
-        color: (layerOlStyle.getImage() as any).getStroke().getColor(),
+        color: layerOlStyle.getStroke().getColor(),
         width: 2
       },
-      radius: 5
-    }
-  };
-  return rStyle;
+      circle: {
+        fill: {
+          color: (layerOlStyle.getImage() as any).getFill().getColor()
+        },
+        stroke: {
+          color: (layerOlStyle.getImage() as any).getStroke().getColor(),
+          width: 2
+        },
+        radius: 5
+      }
+    };
+  }
+
+  return;
 }

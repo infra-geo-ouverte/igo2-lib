@@ -1,5 +1,5 @@
 <div class="form-list">
-  <mat-form-field class="zone-list">
+  <mat-form-field id="spatial-filter-field-zone" class="zone-list">
     <mat-label>{{ 'igo.geo.spatialFilter.listLabel' | translate }}</mat-label>
     <input
       #input
@@ -14,12 +14,11 @@
       (optionSelected)="onZoneChange($event.option.value)"
       [displayWith]="displayFn"
     >
-      <mat-option
-        *ngFor="let entities of this.store.view.all$() | async"
-        [value]="entities"
-      >
-        {{ entities.properties.nom }}
-      </mat-option>
+      @for (entities of this.store.view.all$() | async; track entities) {
+        <mat-option [value]="entities">
+          {{ entities.properties.nom }}
+        </mat-option>
+      }
     </mat-autocomplete>
   </mat-form-field>
   <div>
@@ -41,12 +40,11 @@
           [value]="measureUnit"
           (selectionChange)="onMeasureUnitChange($event.value)"
         >
-          <mat-option
-            *ngFor="let measureUnit of measureUnits"
-            [value]="measureUnit"
-          >
-            {{ 'igo.geo.measure.' + measureUnit | translate }}
-          </mat-option>
+          @for (measureUnit of measureUnits; track measureUnit) {
+            <mat-option [value]="measureUnit">
+              {{ 'igo.geo.measure.' + measureUnit | translate }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>

@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  padding: 16px 48px;
+
+  @media (max-width: 599px) {
+    padding: 16px;
+  }
+
+  ::ng-deep {
+    pre {
+      background: rgba(0, 0, 0, 0.01);
+      border: 0.5px solid rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      display: block;
+      margin: 16px auto;
+      overflow-x: auto;
+      padding: 20px;
+      white-space: pre-wrap;
+
+      code {
+        background: transparent;
+      }
+    }
+
+    code {
+      background: rgba(0, 0, 0, 0.03);
+      padding: 3px;
+      font-size: 90%;
+    }
+
+    section {
+      margin-bottom: 42px;
+    }
+  }
+}
+
+h6 {
+  color: var(--mat-sys-on-secondary-fixed-variant);
+  margin-bottom: -8px;
+}

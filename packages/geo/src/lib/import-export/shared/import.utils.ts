@@ -1,5 +1,5 @@
-import { ConfirmDialogService } from '@igo2/common';
-import { MessageService } from '@igo2/core';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 
 import { first, of } from 'rxjs';
@@ -33,7 +33,7 @@ export function addLayerAndFeaturesToMap(
   contextUri: string,
   layerTitle: string,
   layerService: LayerService,
-  storeToIdb: boolean = false
+  storeToIdb = false
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -48,7 +48,7 @@ export function addLayerAndFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
   let randomStyle;
-  let editable: boolean = false;
+  let editable = false;
   if (
     olFeatures[0].getKeys().includes('_style') ||
     olFeatures[0].getKeys().includes('_mapTitle')
@@ -65,11 +65,11 @@ export function addLayerAndFeaturesToMap(
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
-    idbInfo: { firstLoad: true, storeToIdb, contextUri: contextUri || '*' },
+    idbInfo: { storeToIdb, contextUri: contextUri },
     style: randomStyle
   }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
-  map.addLayer(layer);
+  map.layerController.add(layer);
   moveToOlFeatures(map.viewController, olFeatures);
 
   return layer;
@@ -84,7 +84,7 @@ export function addLayerAndFeaturesStyledToMap(
   layerId?: string,
   imposedSourceOptions?,
   imposedLayerOptions?,
-  zoomTo: boolean = true
+  zoomTo = true
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -227,7 +227,7 @@ export function addLayerAndFeaturesStyledToMap(
       imposedLayerOptions
     )
   );
-  map.addLayer(layer);
+  map.layerController.add(layer);
   if (zoomTo) {
     moveToOlFeatures(map.viewController, olFeatures);
   }

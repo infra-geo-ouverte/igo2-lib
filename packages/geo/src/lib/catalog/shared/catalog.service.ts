@@ -1,23 +1,30 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService, LanguageService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { EMPTY, Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import {
+  ArcGISRestCapabilitiesLayer,
+  ArcGISRestCapabilitiesLayerTypes
+} from '../../datasource/shared/capabilities.interface';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import {
   ArcGISRestDataSourceOptions,
-  CapabilitiesService,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { ImageLayerOptions, LayerOptions } from '../../layer/shared';
-import { getResolutionFromScale } from '../../map/shared';
-import { QueryFormat } from '../../query/shared';
-import { generateIdFromSourceOptions } from '../../utils';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { QueryFormat } from '../../query/shared/query.enums';
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import {
@@ -40,13 +47,11 @@ import {
   providedIn: 'root'
 })
 export class CatalogService {
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private capabilitiesService: CapabilitiesService
-  ) {}
+  private http = inject(HttpClient);
+  private config = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private capabilitiesService = inject(CapabilitiesService);
 
   loadCatalogs(): Observable<Catalog[]> {
     const contextConfig = this.config.getConfig('context') || {};
@@ -80,7 +85,7 @@ export class CatalogService {
           map((catalogs) =>
             catalogs.map((c: any) => Object.assign(c, c.options))
           ),
-          catchError((_response: HttpErrorResponse) => EMPTY)
+          catchError(() => EMPTY)
         );
       observables$.push(catalogsFromApi$);
     }
@@ -102,13 +107,13 @@ export class CatalogService {
     }
 
     return zip(...observables$).pipe(
+      // eslint-disable-next-line prefer-spread
       map((catalogs: Catalog[][]) => [].concat.apply([], catalogs))
     ) as Observable<Catalog[]>;
   }
 
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
-    let newCatalog: Catalog;
-    newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
+    const newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
     return newCatalog.collectCatalogItems();
   }
 
@@ -146,7 +151,7 @@ export class CatalogService {
   loadCatalogWMSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
-        const items = [];
+        const items: CatalogItem[] = [];
         if (!capabilities) {
           return items;
         }
@@ -173,6 +178,15 @@ export class CatalogService {
         );
         this.includeRecursiveItems(catalog, capabilitiesCapabilityLayer, items);
         return items;
+      }),
+      catchError(() => {
+        this.messageService.error(
+          'igo.geo.catalog.unavailable',
+          'igo.geo.catalog.unavailableTitle',
+          undefined,
+          { value: catalog.title }
+        );
+        return EMPTY;
       })
     );
   }
@@ -489,11 +503,11 @@ export class CatalogService {
         ? layer?.DataURL[0].OnlineResource
         : undefined;
 
-    let metadataUrl =
+    const metadataUrl =
       propertiesToForce?.metadataUrl ||
       propertiesToForce?.metadataUrlAll ||
       layerOnlineResource;
-    let metadataAbstract =
+    const metadataAbstract =
       propertiesToForce?.metadataAbstract ||
       propertiesToForce?.metadataAbstractAll ||
       baseAbstract;
@@ -590,7 +604,7 @@ export class CatalogService {
     catalog: Catalog,
     itemListIn: any,
     itemsPrepare: CatalogItem[],
-    loopLevel: number = 0
+    loopLevel = 0
   ) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map(
@@ -647,7 +661,7 @@ export class CatalogService {
 
   private getWMTSItems(
     catalog,
-    capabilities: { [key: string]: any }
+    capabilities: Record<string, any>
   ): CatalogItemLayer[] {
     if (!capabilities) {
       return [];
@@ -673,9 +687,9 @@ export class CatalogService {
         );
         let extern = true;
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           catalog.abstract;
@@ -742,54 +756,45 @@ export class CatalogService {
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }
 
-  /// ERSI
-
-  private getArcGISRESTItems(catalog, capabilities): CatalogItemLayer[] {
-    if (!capabilities) {
-      return [];
-    }
-    const layers = !capabilities.layers
-      ? []
-      : capabilities.layers.filter(
-          (layer) => !layer.type || layer.type === 'Feature Layer'
-        );
-    if (!capabilities.layers) {
+  private getArcGISRESTItems(
+    catalog: Catalog,
+    capabilities
+  ): CatalogItemLayer[] {
+    if (!capabilities || !capabilities.layers) {
       this.messageService.error(
         'igo.geo.catalog.someUnavailable',
         'igo.geo.catalog.unavailableTitle'
       );
+      return [];
     }
+    const groups: ArcGISRestCapabilitiesLayer[] = !capabilities.layers
+      ? []
+      : capabilities.layers.filter((layer) => layer.subLayerIds);
+    const layers: ArcGISRestCapabilitiesLayer[] = !capabilities.layers
+      ? []
+      : capabilities.layers.filter(
+          (layer) =>
+            !layer.type ||
+            layer.type === ArcGISRestCapabilitiesLayerTypes.FeatureLayer ||
+            layer.type === ArcGISRestCapabilitiesLayerTypes.RasterLayer
+        );
 
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
 
-    let abstract;
-    if (
-      capabilities.serviceDescription &&
-      capabilities.serviceDescription.length
-    ) {
-      const regex = /(<([^>]+)>)/gi;
-      abstract = capabilities.serviceDescription.replace(regex, '');
-    }
-
-    return layers
-      .map((layer: any) => {
+    const items: CatalogItemLayer[] = layers
+      .map((layer: ArcGISRestCapabilitiesLayer) => {
         const propertiesToForce = this.computeForcedProperties(
           layer.name,
           catalog.forcedProperties
         );
-        let baseAbstract;
+        const baseAbstract = catalog.abstract;
         let extern = true;
-        if (layer.Abstract) {
-          baseAbstract = layer.Abstract;
-        } else if (!layer.Abstract && catalog.abstract) {
-          baseAbstract = catalog.abstract;
-        }
 
-        let metadataUrl =
+        const metadataUrl =
           propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract =
+        const metadataAbstract =
           propertiesToForce?.metadataAbstract ||
           propertiesToForce?.metadataAbstractAll ||
           baseAbstract;
@@ -809,27 +814,23 @@ export class CatalogService {
           extern = false;
         }
 
-        if (this.testLayerRegexes(layer.id, regexes) === false) {
+        if (this.testLayerRegexes(layer.id.toString(), regexes) === false) {
           return undefined;
         }
-        const baseSourceOptions = {
-          type: TypeCatalog[catalog.type],
+        const baseSourceOptions: ArcGISRestDataSourceOptions &
+          QueryableDataSourceOptions = {
+          type: TypeCatalog[catalog.type] as any,
           url: catalog.url,
-          crossOrigin: catalog.setCrossOriginAnonymous
-            ? 'anonymous'
-            : undefined,
-          layer: layer.id as string,
+          layer: layer.id.toString(),
           queryable: true,
-          queryFormat: 'esrijson',
-          matrixSet: catalog.matrixSet,
-          optionsFromCapabilities: true,
-          style: 'default'
-        } as ArcGISRestDataSourceOptions;
-        const sourceOptions = Object.assign(
+          queryFormat: QueryFormat.ESRIJSON,
+          optionsFromCapabilities: true
+        };
+        const sourceOptions: ArcGISRestDataSourceOptions = Object.assign(
           {},
           baseSourceOptions,
           catalog.sourceOptions
-        ) as ArcGISRestDataSourceOptions;
+        );
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
@@ -837,7 +838,6 @@ export class CatalogService {
             ? propertiesToForce.title
             : layer.name,
           externalProvider: catalog.externalProvider,
-          address: catalog.id,
           options: {
             sourceOptions,
             minResolution: getResolutionFromScale(layer.maxScale),
@@ -846,12 +846,65 @@ export class CatalogService {
               url: metadataUrl,
               extern,
               abstract: metadataAbstract,
-              type: baseSourceOptions.type
+              type: catalog.type
             }
           }
         } as CatalogItem);
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+    const groupHandledLayersIds: string[] = [];
+    const groupedItems: CatalogItemLayer[] = groups
+      .map((group) => {
+        return {
+          options: undefined,
+          address: `catalog.group.${group.name}`,
+          id: `catalog.group.${group.name}`,
+          type: CatalogItemType.Group,
+          externalProvider: catalog.externalProvider,
+          sortDirection: catalog.sortDirection,
+          title: group.name,
+          items: items
+            .filter((i) => {
+              const subLayerIdsStr = group.subLayerIds.map((r) => r.toString());
+              return subLayerIdsStr.includes(
+                (i.options.sourceOptions as ArcGISRestDataSourceOptions).layer
+              );
+            })
+            .map((i) => {
+              groupHandledLayersIds.push(i.id);
+              return Object.assign({}, i, {
+                address: `catalog.group.${group.name}`
+              });
+            })
+        };
+      })
+      .filter((g) => g.items.length);
+
+    if (groups) {
+      const TitleOrId = catalog.title || catalog.id;
+      const nonHandledLayers = items
+        .filter((i) => !groupHandledLayersIds.includes(i.id))
+        .map((i) =>
+          Object.assign({}, i, {
+            address: `catalog.group.${TitleOrId}`
+          })
+        );
+      if (nonHandledLayers.length) {
+        const nonHandledGroup = {
+          options: undefined,
+          address: `catalog.group.${TitleOrId}`,
+          id: `catalog.group.${TitleOrId}`,
+          type: CatalogItemType.Group,
+          externalProvider: catalog.externalProvider,
+          sortDirection: catalog.sortDirection,
+          title: TitleOrId,
+          items: nonHandledLayers
+        };
+        groupedItems.push(nonHandledGroup);
+      }
+    }
+
+    return groups ? groupedItems : items;
   }
 
   private testLayerRegexes(layerName: string, regexes: RegExp[]): boolean {
@@ -921,6 +974,7 @@ class CatalogFactory {
     catalogService: CatalogService
   ): Catalog {
     let catalog: Catalog;
+    // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty('composite')) {
       catalog = new CompositeCatalog(options, (catalog: Catalog) =>
         catalogService.loadCatalogCompositeLayerItems(catalog)

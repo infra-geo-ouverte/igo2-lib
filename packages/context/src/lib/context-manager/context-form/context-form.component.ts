@@ -1,17 +1,50 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { MessageService } from '@igo2/core';
-import { Clipboard, ObjectUtils } from '@igo2/utils';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { ObjectUtils } from '@igo2/utils';
 
 import { Context } from '../shared/context.interface';
 
 @Component({
   selector: 'igo-context-form',
   templateUrl: './context-form.component.html',
-  styleUrls: ['./context-form.component.scss']
+  styleUrls: ['./context-form.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class ContextFormComponent implements OnInit {
+  private clipboard = inject(Clipboard);
+  private formBuilder = inject(UntypedFormBuilder);
+  private messageService = inject(MessageService);
+
   public form: UntypedFormGroup;
   public prefix: string;
 
@@ -44,14 +77,9 @@ export class ContextFormComponent implements OnInit {
   private _disabled = false;
 
   // TODO: replace any by ContextOptions or Context
-  @Output() submitForm: EventEmitter<any> = new EventEmitter();
-  @Output() clone: EventEmitter<any> = new EventEmitter();
-  @Output() delete: EventEmitter<any> = new EventEmitter();
-
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private messageService: MessageService
-  ) {}
+  @Output() submitForm = new EventEmitter<any>();
+  @Output() clone = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
 
   ngOnInit(): void {
     this.buildForm();
@@ -71,7 +99,7 @@ export class ContextFormComponent implements OnInit {
 
   public copyTextToClipboard() {
     const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
-    const successful = Clipboard.copy(text);
+    const successful = this.clipboard.copy(text);
     if (successful) {
       this.messageService.success(
         'igo.context.contextManager.dialog.copyMsg',

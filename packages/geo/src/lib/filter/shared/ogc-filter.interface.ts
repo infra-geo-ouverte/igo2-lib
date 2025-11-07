@@ -1,8 +1,7 @@
-import { DOMValue } from '@igo2/common';
+import { DOMValue } from '@igo2/common/dom';
 
 import olFormatFilter from 'ol/format/filter/Filter';
 import olGeometry from 'ol/geom/Geometry';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 
@@ -10,7 +9,7 @@ import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperatorType } from './ogc-filter.enum';
 
-export interface OgcFilter extends olFormatFilter {}
+export type OgcFilter = olFormatFilter;
 
 export interface WFSWriteGetFeatureOptions {
   featureNS?: string;
@@ -30,7 +29,7 @@ export interface WFSWriteGetFeatureOptions {
 }
 
 export type AnyBaseOgcFilterOptions =
-  | OgcFilterCondionsArrayOptions
+  | OgcFilterConditionsArrayOptions
   | OgcFilterSpatialOptions
   | OgcFilterDuringOptions
   | OgcFilterIsBetweenOptions
@@ -46,7 +45,9 @@ export type IgoOgcFilterObject =
 export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
-  filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
+  filters?: (IgoLogicalArrayOptions | AnyBaseOgcFilterOptions) & {
+    filterid?: string;
+  };
   pushButtons?: IgoOgcSelector;
   checkboxes?: IgoOgcSelector;
   radioButtons?: IgoOgcSelector;
@@ -71,6 +72,14 @@ export interface IgoOgcSelector {
   order?: number;
 }
 
+export const OgcSelectorFields = [
+  'pushButtons',
+  'checkboxes',
+  'radioButtons',
+  'select',
+  'autocomplete'
+] as const;
+
 export interface SelectorGroup {
   enabled?: boolean;
   title?: string;
@@ -86,6 +95,7 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfiltered?: boolean;
+  showChips?: boolean; // true by default for autocomplete
   selectors?:
     | OgcPushButton[]
     | OgcCheckbox[]
@@ -133,7 +143,7 @@ export interface OgcAutocomplete {
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
   ogcFilters?: OgcFiltersOptions;
-  ol?: olSourceVector<OlGeometry> | olSource;
+  ol?: olSourceVector | olSource;
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
@@ -153,7 +163,7 @@ export interface IgoDomSelector {
   domValue: DOMValue[];
 }
 
-export interface OgcFilterCondionsArrayOptions {
+export interface OgcFilterConditionsArrayOptions {
   conditions: OgcFilter[];
 }
 
@@ -201,7 +211,7 @@ export interface OgcFilterIsLikeOptions extends OgcFilterAttributeOptions {
   escapeChar?: string;
   matchCase: boolean;
 }
-export interface OgcFilterIsNullOptions extends OgcFilterAttributeOptions {}
+export type OgcFilterIsNullOptions = OgcFilterAttributeOptions;
 
 export interface OgcInterfaceFilterOptions {
   active?: boolean;
@@ -209,7 +219,7 @@ export interface OgcInterfaceFilterOptions {
   end?: string;
   step?: string;
   restrictToStep?: boolean;
-  sliderOptions: SliderOptionsInterface;
+  sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
   escapeChar?: string;
   expression?: string | number;
@@ -240,3 +250,13 @@ export interface SliderOptionsInterface extends OgcFilterDuringOptions {
   displayFormat?: string;
   enabled?: boolean;
 }
+
+export interface IOgcFiltersOptionSaveable
+  extends Omit<OgcFiltersOptions, 'interfaceOgcFilters'> {
+  interfaceOgcFilters: IOgcInterfaceFilterOptions[];
+}
+
+export type IOgcInterfaceFilterOptions = Pick<
+  OgcInterfaceFilterOptions,
+  'propertyName' | 'begin' | 'end' | 'active' | 'operator' | 'expression'
+>;

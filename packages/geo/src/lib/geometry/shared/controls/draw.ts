@@ -20,8 +20,8 @@ import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
   geometryType: Type | string;
-  drawingLayerSource?: OlVectorSource<OlGeometry>;
-  drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  drawingLayerSource?: OlVectorSource;
+  drawingLayer?: OlVectorLayer<OlVectorSource>;
   drawingLayerStyle?: OlStyleLike;
   interactionStyle?: OlStyleLike;
   maxPoints?: number;
@@ -34,50 +34,50 @@ export class DrawControl {
   /**
    * Draw start observable
    */
-  public start$: Subject<OlGeometry> = new Subject();
+  public start$ = new Subject<OlGeometry>();
 
   /**
    * Draw end observable
    */
-  public end$: Subject<OlGeometry> = new Subject();
+  public end$ = new Subject<OlGeometry>();
 
   /**
    * Draw changes observable (while drawing)
    */
-  public changes$: Subject<any> = new Subject();
+  public changes$ = new Subject<any>();
 
   /**
    * Draw modify observable (modify drawn features)
    */
-  public modify$: Subject<OlGeometry> = new Subject();
+  public modify$ = new Subject<OlGeometry>();
 
   /**
    * Draw select observable (modify drawn features)
    */
-  public select$: Subject<any> = new Subject();
+  public select$ = new Subject<any>();
 
   /**
    * Draw abort observable (abort drawn features)
    */
-  public abort$: Subject<any> = new Subject();
+  public abort$ = new Subject<any>();
 
   /**
    * Freehand mode observable (defaults to false)
    */
-  freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  freehand$ = new BehaviorSubject<boolean>(false);
   /**
    * Observables from predefined radius (defaults to false and undefined)
    */
-  ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
-  radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  ispredefinedRadius$ = new BehaviorSubject<boolean>(false);
+  predefinedRadius$ = new BehaviorSubject<number>(undefined);
+  radiusDrawEnd$ = new BehaviorSubject<number>(undefined);
 
   private keyDown$$: Subscription;
 
   private olGeometryType: typeof OlGeometry | undefined | string;
   private olInteractionStyle: OlStyleLike;
   private olMap: OlMap;
-  private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olDrawingLayer: OlVectorLayer<OlVectorSource>;
   private olDrawInteraction: OlDraw;
   private olSelectInteraction: OlSelect;
   private olModifyInteraction: OlModify;
@@ -110,7 +110,7 @@ export class DrawControl {
    * OL overlay source
    * @internal
    */
-  get olDrawingLayerSource(): OlVectorSource<OlGeometry> {
+  get olDrawingLayerSource(): OlVectorSource {
     return this.olDrawingLayer.getSource();
   }
 
@@ -143,7 +143,7 @@ export class DrawControl {
   /**
    * Return the drawing layer source
    */
-  getSource(): OlVectorSource<OlGeometry> {
+  getSource(): OlVectorSource {
     return this.olDrawingLayerSource;
   }
 
@@ -169,9 +169,7 @@ export class DrawControl {
   /**
    * Create a drawing source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<
-    OlVectorSource<OlGeometry>
-  > {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource> {
     return new OlVectorLayer({
       source: this.options.drawingLayerSource
         ? this.options.drawingLayerSource

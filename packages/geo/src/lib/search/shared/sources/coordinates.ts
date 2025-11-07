@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import * as olformat from 'ol/format';
 import OlCircle from 'ol/geom/Circle';
@@ -10,23 +12,25 @@ import * as olproj from 'ol/proj';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../../feature/shared/feature.interfaces';
 import {
   convertDDToDMS,
   lonLatConversion,
   roundCoordTo
 } from '../../../map/shared/map.utils';
 import { Projection } from '../../../map/shared/projection.interfaces';
-import { OsmLinks } from '../../../utils';
 import { GoogleLinks } from '../../../utils/googleLinks';
+import { OsmLinks } from '../../../utils/osmLinks';
 import { ReverseSearch, SearchResult } from '../search.interfaces';
 import { SearchSource } from './source';
 import { ReverseSearchOptions, SearchSourceOptions } from './source.interfaces';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
-
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
   }
@@ -39,6 +43,8 @@ export class CoordinatesReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private languageService = inject(LanguageService);
+
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
@@ -50,12 +56,14 @@ export class CoordinatesReverseSearchSource
     return this.title$.getValue();
   }
 
-  constructor(
-    @Inject('options') options: SearchSourceOptions,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('projections') projections: Projection[]
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig(
+      `searchSources.${CoordinatesReverseSearchSource.id}`
+    );
+    const projections = config.getConfig<Projection[]>('projections') ?? [];
+
     super(options, storageService);
     this.projections = projections;
     this.languageService.language$.subscribe(() => {
@@ -73,7 +81,7 @@ export class CoordinatesReverseSearchSource
     return CoordinatesReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.coordinates.name',
       order: 1,
@@ -206,7 +214,7 @@ export class CoordinatesReverseSearchSource
         id: data[0].toString() + ',' + data[1].toString(),
         title: roundedCoordString,
         titleHtml: roundedCoordString + subtitleHtml,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: 100 // every coord exists
       }
     };

@@ -1,0 +1,31 @@
+<app-doc-viewer title="Query" subtitle="Geo" [dependencies]="[]">
+  <app-example-viewer codeFolder="geo/query">
+    <igo-map-browser
+      [map]="map"
+      [view]="view"
+      igoQuery
+      [queryFeatures]="true"
+      (query)="handleQueryResults($event)"
+    >
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-panel title="Details">
+      @if (features$ | async; as features) {
+        @for (feature of features; track feature) {
+          <div>
+            <h1>
+              Query Title :
+              <span style="background-color: #e0e0e0">{{
+                getTitle($any(feature))
+              }}</span>
+            </h1>
+            <igo-feature-details [feature]="feature"></igo-feature-details>
+          </div>
+        }
+      }
+    </igo-panel>
+  </app-example-viewer>
+</app-doc-viewer>

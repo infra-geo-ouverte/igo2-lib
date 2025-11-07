@@ -4,8 +4,8 @@
   "newProjectRoot": "packages",
   "projects": {
     "demo": {
-      "root": "",
-      "sourceRoot": "demo/src",
+      "root": "projects/demo",
+      "sourceRoot": "projects/demo/src",
       "projectType": "application",
       "prefix": "app",
       "schematics": {
@@ -17,24 +17,29 @@
       "architect": {
         "build": {
           "defaultConfiguration": "developpement",
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
             "aot": true,
-            "outputPath": "dist/demo",
-            "index": "demo/src/index.html",
-            "main": "demo/src/main.ts",
-            "polyfills": "demo/src/polyfills.ts",
-            "tsConfig": "demo/tsconfig.app.json",
+            "outputPath": {
+              "base": "dist/demo"
+            },
+            "index": "projects/demo/src/index.html",
+            "tsConfig": "projects/demo/tsconfig.app.json",
             "assets": [
-              "demo/src/favicon.ico",
-              "demo/src/assets",
-              "demo/src/config",
-              "demo/src/contexts",
-              "demo/src/locale",
+              "projects/demo/src/favicon.ico",
+              "projects/demo/src/assets",
+              "projects/demo/src/config",
+              "projects/demo/src/contexts",
+              "projects/demo/src/locale",
               {
                 "glob": "**/*",
-                "input": "./dist/common/assets/",
+                "input": "./packages/common/src/assets/",
                 "output": "./assets/igo2/common/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./packages/geo/src/assets/",
+                "output": "./assets/igo2/geo/"
               },
               {
                 "glob": "**/*",
@@ -43,49 +48,55 @@
               },
               {
                 "glob": "**/*",
-                "input": "./dist/geo/assets/",
-                "output": "./assets/igo2/geo/"
+                "input": "./dist/core/locale/",
+                "output": "./locale/libs_locale",
+                "ignore": ["**/*.core.json"]
               },
               {
                 "glob": "**/*",
-                "input": "./dist/core/locale/",
-                "output": "./locale/libs_locale",
-                "ignore": [
-                  "**/*.core.json"
-              ]
+                "input": "./dist/core/theming/prebuilt-themes",
+                "output": "./assets/igo2/core/theming/prebuilt-themes"
               }
             ],
-            "styles": ["demo/src/styles.scss"],
+            "styles": ["projects/demo/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": ["color-functions"]
+              },
+              "includePaths": ["node_modules"]
+            },
             "scripts": [],
             "allowedCommonJsDependencies": [
               "@turf",
-              "bowser",
               "canvg",
               "core-js",
+              "earcut",
               "file-saver",
               "flexsearch",
+              "geojson-rbush",
               "html-entities",
               "html2canvas",
               "jspdf",
               "jspdf-autotable",
               "jszip",
-              "jwt-decode",
               "moment",
               "nosleep.js",
+              "pbf",
               "raf",
               "rbush",
               "rgbcolor",
               "striptags",
               "ts-md5",
               "typy"
-            ]
+            ],
+            "browser": "projects/demo/src/main.ts"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "demo/src/environments/environment.ts",
-                  "with": "demo/src/environments/environment.prod.ts"
+                  "replace": "projects/demo/src/environments/environment.ts",
+                  "with": "projects/demo/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -94,8 +105,35 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "github": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/demo/src/environments/environment.ts",
+                  "with": "projects/demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "outputPath": {
+                "base": "dist/ghpages"
+              },
+              "baseHref": "/igo2-lib/",
               "budgets": [
                 {
                   "type": "initial",
@@ -113,67 +151,62 @@
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "7mb",
-                  "maximumError": "8mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ]
+              "extractLicenses": true
             }
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
-            "browserTarget": "demo:build",
-            "host": "127.0.0.1"
+            "host": "127.0.0.1",
+            "proxyConfig": "projects/demo/proxy.conf.json",
+            "hmr": true,
+            "buildTarget": "demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "buildTarget": "demo:build:production"
             }
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
-            "browserTarget": "demo:build"
+            "buildTarget": "demo:build"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["demo/src/**/*.ts", "demo/src/**/*.html"]
+            "lintFilePatterns": [
+              "projects/demo/src/**/*.ts",
+              "projects/demo/src/**/*.html"
+            ],
+            "eslintConfig": "projects/demo/eslint.config.mjs"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
-            "main": "demo/src/test.ts",
-            "polyfills": [
-              "demo/src/polyfills.ts",
-              "zone.js/testing"
-            ],
-            "tsConfig": "demo/tsconfig.spec.json",
-            "karmaConfig": "demo/karma.conf.js",
-            "styles": ["demo/src/styles.scss"],
+            "main": "projects/demo/src/test.ts",
+            "tsConfig": "projects/demo/tsconfig.spec.json",
+            "karmaConfig": "projects/demo/karma.conf.js",
+            "styles": ["projects/demo/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "scripts": [],
-            "assets": ["demo/src/favicon.ico", "demo/src/assets"],
+            "assets": [
+              "projects/demo/src/favicon.ico",
+              "projects/demo/src/assets"
+            ],
             "codeCoverage": true
           }
         },
         "e2e": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "configFile": "demo/e2e/cypress.config.ts",
+            "configFile": "projects/demo/e2e/cypress.config.ts",
             "devServerTarget": "demo:serve",
             "browser": "chrome"
           },
@@ -191,7 +224,7 @@
     },
     "auth": {
       "root": "packages/auth",
-      "sourceRoot": "packages/auth/src",
+      "sourceRoot": "packages/auth",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -202,26 +235,22 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/auth/tsconfig.lib.json",
             "project": "packages/auth/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/auth/ng-package.prod.json",
+              "project": "packages/auth/ng-package.json",
               "tsConfig": "packages/auth/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "main": "packages/auth/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "packages/auth/tsconfig.spec.json",
             "karmaConfig": "packages/auth/karma.conf.js",
             "codeCoverage": true
@@ -233,14 +262,15 @@
             "lintFilePatterns": [
               "packages/auth/**/*.ts",
               "packages/auth/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/auth/eslint.config.mjs"
           }
         }
       }
     },
     "common": {
       "root": "packages/common",
-      "sourceRoot": "packages/common/src",
+      "sourceRoot": "packages/common",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -251,26 +281,22 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/common/tsconfig.lib.json",
             "project": "packages/common/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/common/ng-package.prod.json",
+              "project": "packages/common/ng-package.json",
               "tsConfig": "packages/common/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "main": "packages/common/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "packages/common/tsconfig.spec.json",
             "karmaConfig": "packages/common/karma.conf.js",
             "codeCoverage": true
@@ -282,14 +308,15 @@
             "lintFilePatterns": [
               "packages/common/**/*.ts",
               "packages/common/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/common/eslint.config.mjs"
           }
         }
       }
     },
     "core": {
       "root": "packages/core",
-      "sourceRoot": "packages/core/src",
+      "sourceRoot": "packages/core",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -300,26 +327,22 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/core/tsconfig.lib.json",
             "project": "packages/core/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/core/ng-package.prod.json",
+              "project": "packages/core/ng-package.json",
               "tsConfig": "packages/core/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
-            "main": "packages/core/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "main": "packages/core/test.ts",
             "tsConfig": "packages/core/tsconfig.spec.json",
             "karmaConfig": "packages/core/karma.conf.js",
             "codeCoverage": true
@@ -331,7 +354,8 @@
             "lintFilePatterns": [
               "packages/core/**/*.ts",
               "packages/core/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/core/eslint.config.mjs"
           }
         }
       }
@@ -349,26 +373,22 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/geo/tsconfig.lib.json",
             "project": "packages/geo/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/geo/ng-package.prod.json",
+              "project": "packages/geo/ng-package.json",
               "tsConfig": "packages/geo/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "main": "packages/geo/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "packages/geo/tsconfig.spec.json",
             "karmaConfig": "packages/geo/karma.conf.js",
             "codeCoverage": true
@@ -380,7 +400,8 @@
             "lintFilePatterns": [
               "packages/geo/**/*.ts",
               "packages/geo/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/geo/eslint.config.mjs"
           }
         }
       }
@@ -392,14 +413,14 @@
       "prefix": "igo",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/utils/tsconfig.lib.json",
             "project": "packages/utils/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/utils/ng-package.prod.json",
+              "project": "packages/utils/ng-package.json",
               "tsConfig": "packages/utils/tsconfig.lib.prod.json"
             }
           }
@@ -410,17 +431,13 @@
             "lintFilePatterns": [
               "packages/utils/**/*.ts",
               "packages/utils/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/utils/eslint.config.mjs"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
-            "main": "packages/utils/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "packages/utils/tsconfig.spec.json",
             "karmaConfig": "packages/utils/karma.conf.js",
             "codeCoverage": true
@@ -441,26 +458,22 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/context/tsconfig.lib.json",
             "project": "packages/context/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/context/ng-package.prod.json",
+              "project": "packages/context/ng-package.json",
               "tsConfig": "packages/context/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "main": "packages/context/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "packages/context/tsconfig.spec.json",
             "karmaConfig": "packages/context/karma.conf.js",
             "codeCoverage": true
@@ -472,7 +485,8 @@
             "lintFilePatterns": [
               "packages/context/**/*.ts",
               "packages/context/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/context/eslint.config.mjs"
           }
         }
       }
@@ -490,14 +504,14 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "tsConfig": "packages/integration/tsconfig.lib.json",
             "project": "packages/integration/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/integration/ng-package.prod.json",
+              "project": "packages/integration/ng-package.json",
               "tsConfig": "packages/integration/tsconfig.lib.prod.json"
             }
           }
@@ -508,21 +522,41 @@
             "lintFilePatterns": [
               "packages/integration/**/*.ts",
               "packages/integration/**/*.html"
-            ]
+            ],
+            "eslintConfig": "packages/integration/eslint.config.mjs"
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics",
-      "@schematics/angular"
-    ],
-    "cache": {
-      "enabled": false,
-      "environment": "all"
-    },
+    "schematicCollections": ["@schematics/angular"],
     "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

@@ -1,6 +1,0 @@
-@use './confirmation-popup/confirmation-popup.theming.scss' as
-  confirmation-popup;
-
-@mixin igo-workspace-theming($theme) {
-  @include confirmation-popup.igo-confirmation-popup-theming($theme);
-}

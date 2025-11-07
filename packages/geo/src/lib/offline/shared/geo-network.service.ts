@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConnectionState, NetworkService } from '@igo2/core';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { Type } from 'ol/format/Feature';
 
 import { Observable } from 'rxjs';
 
-import { GeoDBService } from '../geoDB/geoDB.service';
+import { GeoDB } from '../geoDB';
 
 export enum ResponseType {
   Arraybuffer = 'arraybuffer',
@@ -19,16 +19,13 @@ export interface SimpleGetOptions {
   responseType: Type;
   withCredentials?: boolean;
 }
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GeoNetworkService {
-  private networkOnline: boolean = true;
-  constructor(
-    private http: HttpClient,
-    public geoDBService: GeoDBService,
-    private networkService: NetworkService
-  ) {
+  private http = inject(HttpClient);
+  private networkService = inject(NetworkService);
+
+  private networkOnline = true;
+  constructor() {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.networkOnline = state.connection;
     });
@@ -75,8 +72,9 @@ export class GeoNetworkService {
     return request;
   }
 
-  private getOffline(url: string): Observable<any> {
-    return this.geoDBService.get(url);
+  private getOffline(url: string): Observable<object | Blob> {
+    const geoDB = new GeoDB();
+    return geoDB?.get(url);
   }
 
   public isOnline() {

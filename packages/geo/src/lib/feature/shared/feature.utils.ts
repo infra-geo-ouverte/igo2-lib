@@ -5,7 +5,7 @@ import {
   getEntityProperty,
   getEntityRevision,
   getEntityTitle
-} from '@igo2/common';
+} from '@igo2/common/entity';
 import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -22,7 +22,8 @@ import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
 import * as olstyle from 'ol/style';
 
-import { MapExtent, MapViewController } from '../../map/shared';
+import { MapViewController } from '../../map/shared/controllers/view';
+import { MapExtent } from '../../map/shared/map.interface';
 import { FEATURE, FeatureMotion } from './feature.enums';
 import { Feature, FeatureGeometry } from './feature.interfaces';
 
@@ -44,7 +45,7 @@ export function featureToOl(
   const olFeature = olFormat.readFeature(feature, {
     dataProjection: feature.projection,
     featureProjection: projectionOut
-  });
+  }) as OlFeature<OlGeometry>;
 
   olFeature.setId(getId(feature));
 
@@ -210,9 +211,8 @@ export function featureFromOl(
   const id = olFeature.getId()
     ? olFeature.getId()
     : olFeature.get(idColumn)
-    ? olFeature.get(idColumn)
-    : uuid();
-  const newFeature = olFeature.get('_newFeature');
+      ? olFeature.get(idColumn)
+      : uuid();
 
   return {
     type: FEATURE,
@@ -370,14 +370,17 @@ export function featuresAreTooDeepInView(
  */
 export function moveToOlFeatures(
   viewController: MapViewController,
-  olFeatures: OlFeature<OlGeometry>[],
+  olFeatures: OlFeature | OlFeature[],
   motion: FeatureMotion = FeatureMotion.Default,
   scale?: [number, number, number, number],
   areaRatio?: number
 ) {
   const extent = viewController.getExtent();
   const projection = viewController.getOlProjection();
-  const featuresExtent = computeOlFeaturesExtent(olFeatures, projection);
+  const featuresExtent = computeOlFeaturesExtent(
+    Array.isArray(olFeatures) ? olFeatures : [olFeatures],
+    projection
+  );
   let viewExtent = featuresExtent;
   if (scale !== undefined) {
     viewExtent = scaleExtent(viewExtent, scale);

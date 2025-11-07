@@ -3,10 +3,13 @@ import {
   HttpParameterCodec,
   HttpParams
 } from '@angular/common/http';
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, StorageService } from '@igo2/core';
+import { IconSvg } from '@igo2/common/icon';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -14,10 +17,12 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import { Feature } from '../../../feature/shared/feature.interfaces';
 import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { GoogleLinks } from './../../../utils/googleLinks';
+import { ICHERCHE_ICONS } from './icherche-icons';
 import {
   IChercheData,
   IChercheResponse,
@@ -34,8 +39,6 @@ import {
 
 @Injectable()
 export class IChercheSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
-
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
   }
@@ -66,10 +69,27 @@ export class IgoHttpParameterCodec implements HttpParameterCodec {
  */
 @Injectable()
 export class IChercheSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private formatter = inject<IChercheSearchResultFormatter>(
+    IChercheSearchResultFormatter
+  );
+
   static id = 'icherche';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  static defaultIchercheTypes = [
+    'adresses',
+    'codes-postaux',
+    'routes',
+    'intersections',
+    'municipalites',
+    'mrc',
+    'regadmin',
+    'lieux'
+  ];
 
   private hashtagsLieuxToKeep = [];
 
@@ -77,18 +97,16 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions,
-    @Inject(IChercheSearchResultFormatter)
-    private formatter: IChercheSearchResultFormatter,
-    injector: Injector
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig(
+      `searchSources.${IChercheSearchSource.id}`
+    );
+
     super(options, storageService);
 
-    const authService = injector.get(AuthService);
+    const authService = inject(AuthService);
     if (this.settings.length) {
       if (!authService) {
         this.getAllowedTypes();
@@ -114,7 +132,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return IChercheSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     const limit =
       this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)
@@ -126,16 +144,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const types = this.options.params?.type
       ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-      : [
-          'adresses',
-          'codes-postaux',
-          'routes',
-          'intersections',
-          'municipalites',
-          'mrc',
-          'regadmin',
-          'lieux'
-        ];
+      : IChercheSearchSource.defaultIchercheTypes;
 
     const showAdvancedParams = this.options.showAdvancedSettings;
 
@@ -274,6 +283,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'culture',
               enabled: types.indexOf('culture') !== -1,
               hashtags: ['grille', 'culture']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.unites',
+              value: 'unites',
+              enabled: types.indexOf('unites') !== -1,
+              hashtags: ['unites', 'adresse']
             }
           ]
         } satisfies SearchSourceSettings,
@@ -394,7 +409,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       catchError((err) => {
         err.error.toDisplay = true;
         err.error.title = this.languageService.translate.instant(
-          this.getDefaultOptions().title
+          this.defaultOptions.title
         );
         throw err;
       })
@@ -487,6 +502,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       ? '<br><small> ' + data.highlight.title3 + '</small>'
       : '';
 
+    let icon: string | IconSvg = data.icon;
+    if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
+      icon = ICHERCHE_ICONS[icon];
+    }
+
     return {
       source: this,
       data: {
@@ -505,7 +525,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
-        icon: data.icon || 'map-marker',
+        icon: icon || 'location_on',
         score:
           data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
@@ -515,7 +535,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: IChercheData): { [key: string]: any } {
+  private computeProperties(data: IChercheData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -614,7 +634,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
     let keep = false;
     keep = hashtags.some((hashtag) => {
-      const hashtagKey = hashtag.substring(1);
+      const hashtagKey = String(hashtag).substring(1);
       return this.hashtagsLieuxToKeep.some(
         (h) =>
           h
@@ -663,9 +683,19 @@ export class IChercheReverseSearchSource
   extends SearchSource
   implements ReverseSearch
 {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'icherchereverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
+
+  static defaultIchercheTypes = [
+    'adresses',
+    'municipalites',
+    'mrc',
+    'regadmin'
+  ];
 
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -673,13 +703,14 @@ export class IChercheReverseSearchSource
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions,
-    injector: Injector
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig(
+      `searchSources.${IChercheReverseSearchSource.id}`
+    );
+    const injector = inject(Injector);
+
     super(options, storageService);
 
     this.languageService.language$.subscribe(() => {
@@ -708,11 +739,11 @@ export class IChercheReverseSearchSource
     return IChercheReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     const types =
       this.options.params && this.options.params.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-        : ['adresses', 'municipalites', 'mrc', 'regadmin'];
+        : IChercheReverseSearchSource.defaultIchercheTypes;
 
     return {
       title: 'igo.geo.search.ichercheReverse.name',
@@ -753,6 +784,31 @@ export class IChercheReverseSearchSource
               title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
               enabled: types.indexOf('regadmin') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.unites',
+              value: 'unites',
+              enabled: types.indexOf('unites') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.tours',
+              value: 'tours',
+              enabled: types.indexOf('tours') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.rss',
+              value: 'rss',
+              enabled: types.indexOf('rss') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.rls',
+              value: 'rls',
+              enabled: types.indexOf('rls') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.clsc',
+              value: 'clsc',
+              enabled: types.indexOf('clsc') !== -1
             }
           ]
         },
@@ -876,7 +932,7 @@ export class IChercheReverseSearchSource
       case 'arrondissements':
         subtitle = data.properties.municipalite + ' (Arrondissement)';
         break;
-      default:
+      default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         const type = typeSetting.values.find(
           (t) => t.value === data.properties.type
@@ -884,6 +940,7 @@ export class IChercheReverseSearchSource
         if (type) {
           subtitle = this.languageService.translate.instant(type.title);
         }
+      }
     }
     return subtitle;
   }
@@ -895,6 +952,11 @@ export class IChercheReverseSearchSource
 
     const titleHtml = data.properties.nom;
     const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
+
+    let icon: string | IconSvg = data.icon;
+    if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
+      icon = ICHERCHE_ICONS[icon];
+    }
 
     return {
       source: this,
@@ -914,13 +976,13 @@ export class IChercheReverseSearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'map-marker',
+        icon: icon || 'location_on',
         pointerSummaryTitle: this.getSubtitle(data) + ': ' + data.properties.nom
       }
     };
   }
 
-  private computeProperties(data: IChercheReverseData): { [key: string]: any } {
+  private computeProperties(data: IChercheReverseData): Record<string, any> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist

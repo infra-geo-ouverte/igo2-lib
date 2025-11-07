@@ -10,13 +10,17 @@ import { DataSource } from './datasource';
 import { MVTDataSourceOptions } from './mvt-datasource.interface';
 
 export class MVTDataSource extends DataSource {
-  public declare options: MVTDataSourceOptions;
-  public declare ol: olSourceVectorTile;
+  declare public options: MVTDataSourceOptions;
+  declare public ol: olSourceVectorTile;
+
+  get saveableOptions(): Partial<MVTDataSourceOptions> {
+    return super.saveableOptions;
+  }
 
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
     if (this.options.featureClass === 'feature') {
-      mvtFormat = new olFormatMVT({ featureClass: feature });
+      mvtFormat = new olFormatMVT({ featureClass: feature } as any);
     } else {
       mvtFormat = new olFormatMVT();
     }
@@ -32,5 +36,7 @@ export class MVTDataSource extends DataSource {
     return Md5.hashStr(chain) as string;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ConfigService, LanguageService, MessageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -10,12 +12,20 @@ import { catchError, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AuthOptions, IInfosUser, User } from './auth.interface';
+import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private config = inject(ConfigService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private router = inject(Router, { optional: true });
+
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
@@ -27,14 +37,12 @@ export class AuthService {
     return this.authOptions?.url !== undefined;
   }
 
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private config: ConfigService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    @Optional() private router: Router
-  ) {
+  get user(): User | null {
+    const decodedToken = this.decodeToken();
+    return decodedToken?.user ? decodedToken.user : null;
+  }
+
+  constructor() {
     this.authOptions = this.config.getConfig('auth');
     this.authenticate$.next(this.authenticated);
     this.authenticate$.subscribe((authenticated) => {
@@ -103,11 +111,11 @@ export class AuthService {
     return this.tokenService.get();
   }
 
-  decodeToken() {
+  decodeToken(): IgoJwtPayload | null {
     if (this.isAuthenticated()) {
       return this.tokenService.decode();
     }
-    return false;
+    return;
   }
 
   goToRedirectUrl() {
@@ -158,7 +166,7 @@ export class AuthService {
 
   get isAdmin(): boolean {
     const token = this.decodeToken();
-    if (token && token.user && token.user.isAdmin) {
+    if (token?.user?.isAdmin) {
       return true;
     }
     return false;
@@ -171,7 +179,7 @@ export class AuthService {
         tap((data: any) => {
           this.tokenService.set(data.token);
           const tokenDecoded = this.decodeToken();
-          if (tokenDecoded && tokenDecoded.user) {
+          if (tokenDecoded?.user) {
             if (tokenDecoded.user.locale && !this.languageForce) {
               this.languageService.setLanguage(tokenDecoded.user.locale);
             }

@@ -5,49 +5,45 @@
   [template]="tableTemplate"
 ></igo-entity-table>
 <br />
-<mat-form-field
-  *ngIf="mapProximityState.currentPositionCoordinate$ | async as coord"
-  class="coordinates"
->
-  <textarea
-    #textArea
-    matInput
-    readonly
-    rows="1"
-    [placeholder]="'igo.integration.map-proximity-tool.lon' | translate"
-    [value]="coord[0]"
-  ></textarea>
-</mat-form-field>
-<mat-form-field
-  *ngIf="mapProximityState.currentPositionCoordinate$ | async as coord2"
-  class="coordinates2"
->
-  <textarea
-    #textArea
-    matInput
-    readonly
-    rows="1"
-    [placeholder]="'igo.integration.map-proximity-tool.lat' | translate"
-    [value]="coord2[1]"
-  ></textarea>
-</mat-form-field>
+@if (mapProximityState.currentPositionCoordinate$ | async; as coord) {
+  <mat-form-field class="coordinates">
+    <textarea
+      #textArea
+      matInput
+      readonly
+      rows="1"
+      [placeholder]="'igo.integration.map-proximity-tool.lon' | translate"
+      [value]="coord[0]"
+    ></textarea>
+  </mat-form-field>
+}
+@if (mapProximityState.currentPositionCoordinate$ | async; as coord2) {
+  <mat-form-field class="coordinates2">
+    <textarea
+      #textArea
+      matInput
+      readonly
+      rows="1"
+      [placeholder]="'igo.integration.map-proximity-tool.lat' | translate"
+      [value]="coord2[1]"
+    ></textarea>
+  </mat-form-field>
+}
 
-<button
-  *ngIf="
-    (mapProximityState.currentPositionCoordinate$ | async) &&
-    (mapProximityState.currentPositionCoordinate$ | async).length
-  "
-  mat-icon-button
-  (click)="copyTextToClipboard()"
->
-  <mat-icon svgIcon="content-copy"></mat-icon>
-</button>
+@if (
+  (mapProximityState.currentPositionCoordinate$ | async) &&
+  (mapProximityState.currentPositionCoordinate$ | async).length
+) {
+  <button mat-icon-button (click)="copyTextToClipboard()">
+    <mat-icon>content_copy</mat-icon>
+  </button>
+}
 <div class="title-container">
-  <mat-label class="title mat-typography">{{
+  <mat-label class="title">{{
     'igo.integration.map-proximity-tool.method' | translate
   }}</mat-label>
 </div>
-<div class="igo-input-container mat-typography">
+<div class="igo-input-container">
   <mat-radio-group (change)="onLocationTypeChange($event)">
     <mat-radio-button
       [checked]="

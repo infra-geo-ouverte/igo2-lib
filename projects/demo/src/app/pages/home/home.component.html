@@ -1,0 +1,81 @@
+<app-doc-viewer>
+  <div class="home-container">
+    <h1 id="igo-title">Welcome to IGO</h1>
+    <img
+      class="igo-logo"
+      width="180"
+      src="assets/igo2/core/logo.png"
+      alt="IGO logo"
+    />
+  </div>
+
+  <p>
+    <igo-interactive-tour
+      tourToStart="global"
+      menuIsOpen="true"
+      styleButton="raised"
+    >
+    </igo-interactive-tour>
+  </p>
+
+  <p>
+    IGO2 library contains many components and services that may benefit any web
+    application. <br />
+    IGO2 library is open source project using Angular, Angular Material and
+    OpenLayers.
+  </p>
+
+  <h3>IGO2 library is divided into several elements:</h3>
+  <ul>
+    <li>
+      <b>&#64;igo2/utils</b> : Basic utilies without dependency (ex: base64,
+      clipboard, uuid)
+    </li>
+    <li>
+      <b>&#64;igo2/core</b> : Element affecting the core of the application (ex:
+      config, language, message, media, request)
+    </li>
+    <li>
+      <b>&#64;igo2/common</b> : Library containing reusable components (ex:
+      clickout, drag-drop, list, panel, spinner, table)
+    </li>
+    <li>
+      <b>&#64;igo2/auth</b> : Library grouping the authentication and security
+      module
+    </li>
+    <li>
+      <b>&#64;igo2/geo</b> : Library containing the geomatic components. Depends
+      on Openlayers.
+    </li>
+    <li>
+      <b>&#64;igo2/context</b> : Library of components uniting &#64;igo2/geo and
+      &#64;igo2/auth
+    </li>
+    <li><b>&#64;igo2/integration</b> : Library integrate basic components</li>
+  </ul>
+
+  <h2>Here are some links to help you start:</h2>
+  <ul>
+    <li>
+      <h2>
+        <a
+          target="_blank"
+          rel="noopener"
+          href="https://github.com/infra-geo-ouverte/igo2-lib/blob/master/README.md#user-installation"
+          >Installation</a
+        >
+      </h2>
+    </li>
+    <li>
+      <h2>
+        <a target="_blank" rel="noopener" href="https://angular.io/docs"
+          >Angular Documentation</a
+        >
+      </h2>
+    </li>
+  </ul>
+
+  <span
+    >*** Modules in <code>&#64;igo2/core</code> must be imported only once</span
+  >
+</app-doc-viewer>

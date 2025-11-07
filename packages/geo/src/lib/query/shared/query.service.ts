@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -22,13 +22,13 @@ import {
   TileArcGISRestDataSource,
   WMSDataSource,
   WMSDataSourceOptions
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { FEATURE } from '../../feature/shared/feature.enums';
 import {
   Feature,
   FeatureGeometry
 } from '../../feature/shared/feature.interfaces';
-import { Layer } from '../../layer/shared/layers/layer';
+import { Layer } from '../../layer';
 import { MapExtent } from '../../map/shared/map.interface';
 import {
   QueryFormat,
@@ -46,17 +46,14 @@ import {
   providedIn: 'root'
 })
 export class QueryService {
+  private http = inject(HttpClient);
+  private messageService = inject(MessageService);
+
   public queryEnabled = true;
-  public defaultFeatureCount = 20; // default feature count
-  public featureCount = 20; // feature count
+  public defaultFeatureCount = 20;
+  public featureCount = 20;
 
   private previousMessageIds = [];
-
-  constructor(
-    private http: HttpClient,
-    private messageService: MessageService,
-    private languageService: LanguageService
-  ) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     if (this.previousMessageIds.length) {
@@ -65,14 +62,15 @@ export class QueryService {
       });
     }
 
-    const newLayers = layers
-      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) => this.queryLayer(layer, options));
+    const queries$ = layers
+      .filter((layer) => layer.displayed === true)
+      .map((layer) => this.queryLayer(layer, options));
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
-    let flatArray = [].concat.apply([], newLayers);
-    return flatArray;
+    // eslint-disable-next-line prefer-spread
+    const flattenedQueries$ = [].concat.apply([], queries$);
+    return flattenedQueries$;
   }
 
   queryLayer(
@@ -80,7 +78,7 @@ export class QueryService {
     options: QueryOptions
   ): Observable<Feature[]> | Observable<Feature[]>[] {
     const url = this.getQueryUrl(
-      layer.dataSource,
+      layer.dataSource as QueryableDataSource,
       options,
       false,
       layer.map.viewController.getExtent()
@@ -98,7 +96,7 @@ export class QueryService {
     ) {
       if (typeof url === 'string') {
         const urlGml = this.getQueryUrl(
-          layer.dataSource,
+          layer.dataSource as QueryableDataSource,
           options,
           true
         ) as string;
@@ -124,8 +122,12 @@ export class QueryService {
           })
         );
       }
-      const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
-      let observables: any = [];
+      const urlGmls = this.getQueryUrl(
+        layer.dataSource as QueryableDataSource,
+        options,
+        true
+      );
+      const observables: Observable<Feature[]>[] = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
         if (this.checkScaleAndResolution(resolution, scale, element)) {
@@ -142,7 +144,8 @@ export class QueryService {
           map((res) => this.extractData(res, layer, options, url))
         );
       }
-      let observables: any = [];
+      const observables: any = [];
+
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         if (this.checkScaleAndResolution(resolution, scale, element)) {
@@ -256,7 +259,7 @@ export class QueryService {
     gmlRes,
     url,
     layer: Layer
-  ): [FeatureGeometry, { [key: string]: any }] {
+  ): [FeatureGeometry, Record<string, any>] {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
@@ -290,7 +293,7 @@ export class QueryService {
     }
     features.map((feature) => {
       if (queryTileField) {
-        let queryTitleContent = feature.getProperties()[queryTileField];
+        const queryTitleContent = feature.getProperties()[queryTileField];
         if (queryTitleContent) {
           titleContent = !titleContent
             ? queryTitleContent
@@ -434,7 +437,7 @@ export class QueryService {
     options: QueryOptions,
     url: string,
     imposedGeometry?,
-    imposedProperties?: { [key: string]: any }
+    imposedProperties?: Record<string, any>
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
@@ -465,7 +468,6 @@ export class QueryService {
         );
         break;
       case QueryFormat.TEXT:
-        features = this.extractTextData(res);
         break;
       case QueryFormat.HTML:
         features = this.extractHtmlData(
@@ -629,7 +631,7 @@ export class QueryService {
       const wmsParser = new olformat.WMSGetFeatureInfo();
       try {
         features = wmsParser.readFeatures(res);
-      } catch (e) {
+      } catch {
         console.warn(
           'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
         );
@@ -646,7 +648,7 @@ export class QueryService {
     let features = [];
     try {
       features = parser.readFeatures(res);
-    } catch (e) {
+    } catch {
       console.warn('query.service: GML3 is not well supported');
     }
     return features.map((feature) =>
@@ -658,7 +660,7 @@ export class QueryService {
     let features = [];
     try {
       features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
-    } catch (e) {
+    } catch {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
     features.map(
@@ -678,7 +680,9 @@ export class QueryService {
         if (JSON.parse(res).error) {
           return [];
         }
-      } catch (e) {}
+      } catch {
+        // empty catch
+      }
     }
     const parser = new olFormatEsriJSON();
     const features = parser.readFeatures(res);
@@ -688,17 +692,12 @@ export class QueryService {
     );
   }
 
-  private extractTextData(res) {
-    // TODO
-    return [];
-  }
-
   private extractHtmlData(
     res,
     htmlTarget: QueryHtmlTarget,
     url,
     imposedGeometry?,
-    imposedProperties?: { [key: string]: any }
+    imposedProperties?: Record<string, any>
   ) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
@@ -802,7 +801,7 @@ export class QueryService {
     }
 
     switch (datasource.constructor) {
-      case WMSDataSource:
+      case WMSDataSource: {
         const wmsDatasource = datasource as WMSDataSource;
 
         const WMSGetFeatureInfoOptions = {
@@ -839,7 +838,8 @@ export class QueryService {
         //   url = url.replace('&J=', '&Y=');
         // }
         break;
-      case CartoDataSource:
+      }
+      case CartoDataSource: {
         const cartoDatasource = datasource as CartoDataSource;
         const baseUrl =
           'https://' +
@@ -863,8 +863,9 @@ export class QueryService {
 
         url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
         break;
+      }
       case ImageArcGISRestDataSource:
-      case TileArcGISRestDataSource:
+      case TileArcGISRestDataSource: {
         const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
         const deltaX = Math.abs(mapExtent[0] - mapExtent[2]);
         const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
@@ -905,6 +906,7 @@ export class QueryService {
         ];
         url = `${serviceUrl}?${params.join('&')}`;
         break;
+      }
       default:
         break;
     }
@@ -988,7 +990,7 @@ export class QueryService {
     );
 
     return datasource.options.queryUrls.map((item) => {
-      let data: QueryUrlData = {
+      const data: QueryUrlData = {
         url: item.url
           .replace(/\{bbox\}/g, extent.join(','))
           .replace(/\{x\}/g, options.coordinates[0].toString())

@@ -1,24 +1,17 @@
-import {
-  ChangeDetectorRef,
-  Directive,
-  OnInit,
-  Optional,
-  Self
-} from '@angular/core';
+import { ChangeDetectorRef, Directive, OnInit, inject } from '@angular/core';
 
-import { RouteService } from '@igo2/core';
+import { RouteService } from '@igo2/core/route';
 
 import { SearchBarComponent } from './search-bar.component';
 
 @Directive({
-  selector: '[igoSearchUrlParam]'
+  selector: '[igoSearchUrlParam]',
+  standalone: true
 })
 export class SearchUrlParamDirective implements OnInit {
-  constructor(
-    @Self() private component: SearchBarComponent,
-    private ref: ChangeDetectorRef,
-    @Optional() private route: RouteService
-  ) {}
+  private component = inject(SearchBarComponent, { self: true });
+  private ref = inject(ChangeDetectorRef);
+  private route = inject(RouteService, { optional: true });
 
   ngOnInit() {
     if (this.route && this.route.options.searchKey) {

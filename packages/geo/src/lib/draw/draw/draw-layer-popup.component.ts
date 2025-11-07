@@ -1,5 +1,14 @@
-import { Component, Input } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Input, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 export interface DialogData {
   label: string;
@@ -8,12 +17,20 @@ export interface DialogData {
 @Component({
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-layer-popup.component.html',
-  styleUrls: ['./draw-layer-popup.component.scss']
+  styleUrls: ['./draw-layer-popup.component.scss'],
+  imports: [
+    MatDialogContent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class DrawLayerPopupComponent {
-  @Input() confirmFlag: boolean = false;
+  dialogRef = inject<MatDialogRef<DrawLayerPopupComponent>>(MatDialogRef);
 
-  constructor(public dialogRef: MatDialogRef<DrawLayerPopupComponent>) {}
+  @Input() confirmFlag = false;
 
   cancelDrawing() {
     this.dialogRef.close();

@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,18 +6,29 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
-import { EntityStore } from '@igo2/common';
-import { MessageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { Feature } from '../../../feature';
-import { Layer } from '../../../layer';
+import { AnyLayer } from '../../../layer';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import {
   SpatialFilterQueryType,
@@ -28,17 +40,24 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   selector: 'igo-spatial-filter-list',
   templateUrl: './spatial-filter-list.component.html',
   styleUrls: ['./spatial-filter-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatOptionModule,
+    MatSelectModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
-  @Input()
-  get store(): EntityStore<Feature> {
-    return this._store;
-  }
-  set store(store: EntityStore<Feature>) {
-    this._store = store;
-  }
-  private _store: EntityStore<Feature>;
+  private spatialFilterService = inject(SpatialFilterService);
+  private messageService = inject(MessageService);
+
+  @Input() store: EntityStore<Feature>;
 
   @Input()
   get queryType(): SpatialFilterQueryType {
@@ -63,7 +82,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
   private _zone;
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
   public zoneWithBuffer;
   public selectedZone: any;
@@ -89,11 +108,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
-
-  constructor(
-    private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService
-  ) {}
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(

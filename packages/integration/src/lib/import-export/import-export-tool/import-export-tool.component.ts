@@ -1,15 +1,21 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
-import { ToolComponent } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import type { WorkspaceStore } from '@igo2/common/workspace';
+import { ContextImportExportComponent } from '@igo2/context';
+import { IgoLanguageModule } from '@igo2/core/language';
 import {
   ExportOptions,
   IgoMap,
+  ImportExportComponent,
   ProjectionsLimitationsOptions
 } from '@igo2/geo';
 
@@ -25,18 +31,30 @@ import {
 @ToolComponent({
   name: 'importExport',
   title: 'igo.integration.tools.importExport',
-  icon: 'file-move'
+  icon: 'file_save'
 })
 @Component({
   selector: 'igo-import-export-tool',
   templateUrl: './import-export-tool.component.html',
   styleUrls: ['./import-export-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabsModule,
+    ImportExportComponent,
+    ContextImportExportComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class ImportExportToolComponent implements OnInit {
+  private mapState = inject(MapState);
+  importExportState = inject(ImportExportState);
+  private workspaceState = inject(WorkspaceState);
+  contextState = inject(ContextState);
+
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
-  @Input() selectFirstProj: boolean = false;
+  @Input() selectFirstProj = false;
 
   /**
    * Map to measure on
@@ -51,14 +69,7 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   @Input() importExportType: ImportExportType = ImportExportType.layer;
-  @Input() importExportShowBothType: boolean = true;
-
-  constructor(
-    private mapState: MapState,
-    public importExportState: ImportExportState,
-    private workspaceState: WorkspaceState,
-    public contextState: ContextState
-  ) {}
+  @Input() importExportShowBothType = true;
 
   ngOnInit(): void {
     this.selectType();

@@ -1,10 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+
+import { ConfigService } from '@igo2/core/config';
 
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  AnyDataSourceOptions,
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
   TileArcGISRestDataSourceOptions,
@@ -17,17 +20,19 @@ import { OptionsService } from './options.service';
   providedIn: 'root'
 })
 export class OptionsApiService extends OptionsService {
+  private http = inject(HttpClient);
+
   private urlApi: string;
   private provideContextUri: boolean;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: OptionsApiOptions = {}
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const options = config.getConfig<OptionsApiOptions>('optionsApi');
+
     super();
-    this.urlApi = options.url || this.urlApi;
+    this.urlApi = options?.url || this.urlApi;
     this.provideContextUri =
-      options.provideContextUri || this.provideContextUri;
+      options?.provideContextUri || this.provideContextUri;
   }
 
   getWMSOptions(
@@ -58,15 +63,7 @@ export class OptionsApiService extends OptionsService {
         (res: {
           sourceOptions: WMSDataSourceOptions;
           layerOptions: { [keys: string]: string };
-        }) => {
-          if (!res || !res.sourceOptions) {
-            return {} as WMSDataSourceOptions;
-          }
-          if (res.layerOptions) {
-            res.sourceOptions._layerOptionsFromSource = res.layerOptions;
-          }
-          return res.sourceOptions;
-        }
+        }) => this.handleSourceOptions(res)
       )
     );
   }
@@ -109,19 +106,24 @@ export class OptionsApiService extends OptionsService {
             | ArcGISRestImageDataSourceOptions
             | TileArcGISRestDataSourceOptions;
           layerOptions: { [keys: string]: string };
-        }) => {
-          if (!res || !res.sourceOptions) {
-            return {} as
-              | ArcGISRestDataSourceOptions
-              | ArcGISRestImageDataSourceOptions
-              | TileArcGISRestDataSourceOptions;
-          }
-          if (res.layerOptions) {
-            res.sourceOptions._layerOptionsFromSource = res.layerOptions;
-          }
-          return res.sourceOptions;
-        }
+        }) => this.handleSourceOptions(res)
       )
     );
+  }
+
+  private handleSourceOptions<T extends AnyDataSourceOptions>(res: {
+    sourceOptions: T;
+    layerOptions: { [keys: string]: string };
+  }): T {
+    if (!res || !res.sourceOptions) {
+      return {} as T;
+    }
+    if (res.layerOptions) {
+      res.sourceOptions._layerOptionsFromSource = res.layerOptions;
+    } else {
+      const { sourceOptions: _1, layerOptions: _2, ...restOptions } = res;
+      res.sourceOptions._layerOptionsFromSource = restOptions;
+    }
+    return res.sourceOptions;
   }
 }

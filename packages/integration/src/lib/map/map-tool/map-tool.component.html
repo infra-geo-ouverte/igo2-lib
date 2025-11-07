@@ -1,18 +1,12 @@
 <mat-tab-group>
   <mat-tab [label]="'igo.integration.tools.map' | translate">
-    <igo-layer-list
+    <igo-layer-viewer
       [map]="map"
-      igoLayerListBinding
+      [options]="layerViewerOptions"
       [excludeBaseLayers]="excludeBaseLayers"
-      [layerFilterAndSortOptions]="layerFilterAndSortOptions"
-      [expandLegendOfVisibleLayers]="expandLegendOfVisibleLayers"
-      [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
-      [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-      [floatLabel]="false"
-      [queryBadge]="queryBadge"
+      [isDesktop]="isDesktop"
     >
-      <ng-template #igoLayerItemToolbar let-layer="layer">
-        <!-- <igo-download-button [layer]="layer"></igo-download-button> -->
+      <ng-template #customBottomActions let-layer="layer">
         <igo-workspace-button [layer]="layer"></igo-workspace-button>
         <igo-export-button
           [layer]="layer"
@@ -32,7 +26,7 @@
         ></igo-track-feature-button>
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
       </ng-template>
-    </igo-layer-list>
+    </igo-layer-viewer>
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.contexts' | translate">

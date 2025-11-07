@@ -1,22 +1,34 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
-import { IgoFormFieldComponent } from '@igo2/common';
+import { IgoFormFieldComponent } from '@igo2/common/form';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
+import { GeometryFormFieldInputComponent } from './geometry-form-field-input.component';
 
 /**
  * This input allows a user to draw a new geometry or to edit
@@ -27,12 +39,23 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
   selector: 'igo-geometry-form-field',
   templateUrl: './geometry-form-field.component.html',
   styleUrls: ['./geometry-form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
-  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(
-    undefined
-  );
+  private cdRef = inject(ChangeDetectorRef);
+
+  readonly value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
 
   private value$$: Subscription;
 
@@ -73,14 +96,12 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get geometryType(): Type {
     return this.geometryType$.value;
   }
-  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(
-    undefined
-  );
+  readonly geometryType$ = new BehaviorSubject<Type>(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
    */
-  @Input() geometryTypeField: boolean = false;
+  @Input() geometryTypeField = false;
 
   /**
    * Available geometry types
@@ -90,7 +111,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Whether a draw guide field should be displayed
    */
-  @Input() drawGuideField: boolean = false;
+  @Input() drawGuideField = false;
 
   /**
    * The drawGuide around the mouse pointer to help drawing
@@ -102,22 +123,22 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get drawGuide(): number {
     return this.drawGuide$.value;
   }
-  readonly drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
+  readonly drawGuide$ = new BehaviorSubject<number>(0);
 
   /**
    * Draw guide placeholder
    */
-  @Input() drawGuidePlaceholder: string = '';
+  @Input() drawGuidePlaceholder = '';
 
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  @Input() measure = false;
 
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  @Input() controlOptions: Record<string, any> = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -129,8 +150,6 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * If not specified, drawStyle applies
    */
   @Input() overlayStyle: OlStyleLike;
-
-  constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
    * Set up a value stream

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -22,9 +22,7 @@ import {
   providedIn: 'root'
 })
 export class WFSService extends DataService {
-  constructor(private http: HttpClient) {
-    super();
-  }
+  private http = inject(HttpClient);
 
   getData() {
     console.log('This is defining a data service.');
@@ -70,8 +68,8 @@ export class WFSService extends DataService {
     nb: number = defaultMaxFeatures,
     epsgCode: string = defaultEpsg,
     propertyName?: string,
-    startIndex: number = 0,
-    forceDefaultOutputFormat: boolean = false
+    startIndex = 0,
+    forceDefaultOutputFormat = false
   ): Observable<any> {
     const queryStringValues = formatWFSQueryString(
       dataSourceOptions,
@@ -104,10 +102,9 @@ export class WFSService extends DataService {
       let fieldList;
       let fieldListWoGeom;
       let fieldListWoGeomStr;
-      let olFormats;
       let effectiveOlFormats;
 
-      olFormats = getFormatFromOptions(dataSourceOptions);
+      const olFormats = getFormatFromOptions(dataSourceOptions);
       const gmlDataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions =
         JSON.parse(JSON.stringify(dataSourceOptions));
       delete gmlDataSourceOptions.paramsWFS.outputFormat;
@@ -210,6 +207,7 @@ export class WFSService extends DataService {
     delete kv.boundedBy;
     const sourceFields = [];
     for (const property in kv) {
+      // eslint-disable-next-line no-prototype-builtins
       if (kv.hasOwnProperty(property)) {
         const fieldType =
           typeof features[0].get(property) === 'object'
@@ -226,6 +224,7 @@ export class WFSService extends DataService {
     features.every((element) => {
       const featureProperties = element.getProperties();
       for (const key in featureProperties) {
+        // eslint-disable-next-line no-prototype-builtins
         if (featureProperties.hasOwnProperty(key) && key in kv) {
           sourceFields
             .filter((f) => f.name === key)

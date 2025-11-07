@@ -1,5 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { AsyncPipe, KeyValuePipe, NgClass } from '@angular/common';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  FloatLabelType,
+  MatFormFieldModule
+} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
@@ -10,20 +24,39 @@ import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared';
+import { MapBase } from '../../map';
 import { WktService } from '../../wkt/shared/wkt.service';
+import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 
 @Component({
   selector: 'igo-ogc-filter-form',
   templateUrl: './ogc-filter-form.component.html',
-  styleUrls: ['./ogc-filter-form.component.scss']
+  styleUrls: ['./ogc-filter-form.component.scss'],
+  imports: [
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    NgClass,
+    MatSelectModule,
+    MatOptionModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatIconModule,
+    OgcFilterTimeComponent,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class OgcFilterFormComponent implements OnInit {
+  private wktService = inject(WktService);
+
   ogcFilterOperator = OgcFilterOperator;
   filteredValues$: Observable<string[]>;
   filteredFields$: Observable<SourceFieldsOptionsParams[]>;
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+  public ogcFilterOperators$ = new BehaviorSubject<Record<string, any>>(
     undefined
   );
   public igoSpatialSelectors;
@@ -43,7 +76,7 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() currentFilter: any;
 
@@ -83,7 +116,7 @@ export class OgcFilterFormComponent implements OnInit {
     );
   }
 
-  constructor(private wktService: WktService) {
+  constructor() {
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
@@ -120,7 +153,7 @@ export class OgcFilterFormComponent implements OnInit {
       this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
     );
     this.updateValuesList();
-    this.selectedField$.subscribe((f) => {
+    this.selectedField$.subscribe(() => {
       this.ogcFilterOperators$.next(this.allowedOperators);
       if (
         Object.keys(this.allowedOperators).indexOf(
@@ -148,8 +181,8 @@ export class OgcFilterFormComponent implements OnInit {
       value && value.length > 0
         ? of(this._filterValues(value))
         : this.selectedField$.value
-        ? of(this.selectedField$.value.values)
-        : of([]);
+          ? of(this.selectedField$.value.values)
+          : of([]);
     if (value && value.length >= 1) {
       this.changeProperty(value, pos);
     }
@@ -170,12 +203,14 @@ export class OgcFilterFormComponent implements OnInit {
   private _filterValues(value: string): string[] {
     const keywordRegex = new RegExp(
       value
+        .replace(/[.*+?^${}()|[\]\\]/g, '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''),
       'gi'
     );
-    return this.selectedField$.value.values.filter(
+
+    return this.selectedField$.value?.values?.filter(
       (val) =>
         val &&
         keywordRegex.test(
@@ -306,7 +341,7 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
-  changeMapExtentGeometry(refresh: boolean = true) {
+  changeMapExtentGeometry(refresh = true) {
     const interfaceOgcFilter =
       this.datasource.options.ogcFilters.interfaceOgcFilters.find(
         (f) => f.filterid === this.currentFilter.filterid
@@ -342,14 +377,14 @@ export class OgcFilterFormComponent implements OnInit {
         return pos && pos === 1
           ? 'lowerBoundary'
           : pos && pos === 2
-          ? 'upperBoundary'
-          : undefined;
+            ? 'upperBoundary'
+            : undefined;
       case OgcFilterOperator.During:
         return pos && pos === 1
           ? 'begin'
           : pos && pos === 2
-          ? 'end'
-          : undefined;
+            ? 'end'
+            : undefined;
       default:
         return;
     }

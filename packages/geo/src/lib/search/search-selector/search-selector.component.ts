@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,8 +6,16 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -26,12 +35,21 @@ import { SEARCH_TYPES } from '../shared/search.enums';
   selector: 'igo-search-selector',
   templateUrl: './search-selector.component.html',
   styleUrls: ['./search-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatIconModule,
+    MatRadioModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  private searchSourceService = inject(SearchSourceService);
+
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Subscription to the search type
@@ -58,8 +76,6 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    * Event emitted when the enabled search type changes
    */
   @Output() searchTypeChange = new EventEmitter<string>();
-
-  constructor(private searchSourceService: SearchSourceService) {}
 
   ngOnInit() {
     this.searchType$$ = this.searchType$

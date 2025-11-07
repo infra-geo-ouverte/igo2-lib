@@ -1,6 +1,8 @@
 @mixin square-button() {
   button {
     border-radius: 0 !important;
+    background-color: var(--mat-sys-surface-bright);
+
     .mat-ripple,
     .mdc-icon-button__ripple {
       border-radius: 0 !important;

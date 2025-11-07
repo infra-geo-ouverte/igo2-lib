@@ -1,0 +1,21 @@
+@if (withHeader) {
+  <div
+    class="igo-panel-header"
+    title=""
+    [ngClass]="{ 'igo-cursor-pointer': cursorPointer === true }"
+  >
+    <div class="panel-left">
+      <ng-content select="[panelLeftButton]"></ng-content>
+    </div>
+    <h4 class="igo-panel-title">
+      {{ title }}
+      <ng-content select="[panelHeader]"></ng-content>
+    </h4>
+    <div class="panel-right">
+      <ng-content select="[panelRightButton]"></ng-content>
+    </div>
+  </div>
+}
+<div class="igo-panel-content" title="">
+  <ng-content></ng-content>
+</div>

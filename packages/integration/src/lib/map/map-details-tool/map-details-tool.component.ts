@@ -1,23 +1,43 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-
-import { ToolComponent } from '@igo2/common';
+import { AsyncPipe } from '@angular/common';
 import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+
+import { ToolComponent } from '@igo2/common/tool';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
+import {
+  AnyLayer,
+  ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
   LayerListControlsEnum,
   LayerListControlsOptions,
+  LayerViewerComponent,
+  LayerViewerOptions,
+  MetadataButtonComponent,
+  OgcFilterButtonComponent,
   SearchSourceService,
+  TimeFilterButtonComponent,
+  TrackFeatureButtonComponent,
   sourceCanSearch
 } from '@igo2/geo';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
+import { WorkspaceButtonComponent } from '../../workspace';
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
 
@@ -29,41 +49,69 @@ import { MapState } from './../map.state';
 @Component({
   selector: 'igo-map-details-tool',
   templateUrl: './map-details-tool.component.html',
-  styleUrls: ['./map-details-tool.component.scss']
+  styleUrls: ['./map-details-tool.component.scss'],
+  imports: [
+    LayerViewerComponent,
+    WorkspaceButtonComponent,
+    ExportButtonComponent,
+    OgcFilterButtonComponent,
+    TimeFilterButtonComponent,
+    TrackFeatureButtonComponent,
+    MetadataButtonComponent,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class MapDetailsToolComponent implements OnInit {
-  public delayedShowEmptyMapContent: boolean = false;
+  private mapState = inject(MapState);
+  private toolState = inject(ToolState);
+  private searchSourceService = inject(SearchSourceService);
+  private importExportState = inject(ImportExportState);
+  private configService = inject(ConfigService);
+  mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
 
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+  isDesktop: boolean;
+  public delayedShowEmptyMapContent = false;
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() ogcButton: boolean = true;
+  @Input() updateLegendOnResolutionChange = false;
 
-  @Input() timeButton: boolean = true;
+  @Input() ogcButton = true;
+
+  @Input() timeButton = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
-  @Input() layerAdditionAllowed: boolean = true;
+  @Input() layerAdditionAllowed = true;
+
+  private _layerViewerOptions: Partial<LayerViewerOptions>;
+  get layerViewerOptions(): LayerViewerOptions {
+    return {
+      filterAndSortOptions: this.layerFilterAndSortOptions,
+      legend: {
+        showForVisibleLayers: this.expandLegendOfVisibleLayers,
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
+        updateOnResolutionChange: this.updateLegendOnResolutionChange
+      },
+      queryBadge: this.queryBadge,
+      ...this._layerViewerOptions
+    };
+  }
 
   get map(): IgoMap {
     return this.mapState.map;
   }
 
-  get layers$(): Observable<Layer[]> {
-    return this.map.layers$.pipe(
-      map((layers) =>
-        layers.filter(
-          (layer) =>
-            layer.showInLayerList !== false &&
-            (!this.excludeBaseLayers || !layer.baseLayer)
-        )
-      )
-    );
+  get layers$(): Observable<AnyLayer[]> {
+    return this.map.layerController.all$;
   }
 
   get excludeBaseLayers(): boolean {
@@ -109,19 +157,17 @@ export class MapDetailsToolComponent implements OnInit {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
-  constructor(
-    private mapState: MapState,
-    private toolState: ToolState,
-    private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef,
-    private importExportState: ImportExportState
-  ) {}
+  constructor() {
+    this._layerViewerOptions = this.configService.getConfig('layer');
+  }
 
   ngOnInit(): void {
+    this.handleMedia();
+
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
-      this.cdRef.detectChanges();
+      this.cdr.detectChanges();
     }, 250);
   }
 
@@ -148,5 +194,12 @@ export class MapDetailsToolComponent implements OnInit {
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  private handleMedia(): void {
+    this.mediaService.media$.subscribe((result) => {
+      this.isDesktop = result === Media.Desktop;
+      this.cdr.detectChanges();
+    });
   }
 }

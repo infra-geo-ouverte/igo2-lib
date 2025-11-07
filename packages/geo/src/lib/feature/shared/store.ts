@@ -1,4 +1,4 @@
-import { EntityKey, EntityStoreWithStrategy, getEntityId } from '@igo2/common';
+import { EntityKey, EntityStore, getEntityId } from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import * as olextent from 'ol/extent';
@@ -6,9 +6,9 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { Document } from 'flexsearch';
 
-import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer/shared';
-import { IgoMap, MapExtent } from '../../map/shared';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import type { IgoMap, MapExtent } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import {
@@ -24,9 +24,7 @@ import {
  * features and the map layer to display them on. Synchronization
  * between the store and the layer is handled by strategies.
  */
-export class FeatureStore<
-  T extends Feature = Feature
-> extends EntityStoreWithStrategy<T> {
+export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   /**
    * Vector layer to display the features on
    */
@@ -169,9 +167,9 @@ export class FeatureStore<
   }
 
   setLayerExtent(): void {
-    let features = this.entities$.getValue();
-    let extent = olextent.createEmpty() as MapExtent;
-    let olFeatures = [];
+    const features = this.entities$.getValue();
+    const extent = olextent.createEmpty() as MapExtent;
+    const olFeatures = [];
 
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));

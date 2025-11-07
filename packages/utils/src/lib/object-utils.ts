@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 export class ObjectUtils {
   static resolve(obj: object, key: string): any {
     const keysArray = key.replace(/\[/g, '.').replace(/\]/g, '').split('.');
@@ -193,16 +194,16 @@ export class ObjectUtils {
         a === b
           ? 0
           : a === undefined
-          ? 3
-          : b === undefined
-          ? -3
-          : a === null
-          ? 2
-          : b === null
-          ? -2
-          : a === ''
-          ? 1
-          : -1;
+            ? 3
+            : b === undefined
+              ? -3
+              : a === null
+                ? 2
+                : b === null
+                  ? -2
+                  : a === ''
+                    ? 1
+                    : -1;
       if (direction === 'desc') {
         return nullsFirst !== false ? nullScore : nullScore * -1;
       }

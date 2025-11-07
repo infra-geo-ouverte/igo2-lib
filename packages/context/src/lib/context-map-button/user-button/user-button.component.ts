@@ -1,10 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 import type { IgoMap } from '@igo2/geo';
 
+import { PoiButtonComponent } from '../poi-button/poi-button.component';
 import { userButtonSlideInOut } from './user-button.animation';
 import { UserDialogComponent } from './user-dialog.component';
 
@@ -12,9 +17,20 @@ import { UserDialogComponent } from './user-dialog.component';
   selector: 'igo-user-button',
   templateUrl: './user-button.component.html',
   styleUrls: ['./user-button.component.scss'],
-  animations: [userButtonSlideInOut()]
+  animations: [userButtonSlideInOut()],
+  imports: [
+    PoiButtonComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class UserButtonComponent {
+  private dialog = inject(MatDialog);
+  private config = inject(ConfigService);
+  auth = inject(AuthService);
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -37,11 +53,7 @@ export class UserButtonComponent {
   public visible = false;
   public hasApi = false;
 
-  constructor(
-    private dialog: MatDialog,
-    private config: ConfigService,
-    public auth: AuthService
-  ) {
+  constructor() {
     this.visible = this.config.getConfig('auth') ? true : false;
     this.hasApi = this.config.getConfig('context.url') !== undefined;
   }

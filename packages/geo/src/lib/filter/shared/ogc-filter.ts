@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Extent } from 'ol/extent';
@@ -10,6 +11,7 @@ import olProjection from 'ol/proj/Projection';
 import { default as moment } from 'moment';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { parseDateOperation } from './filter.utils';
 import { OgcFilterOperator, OgcFilterOperatorType } from './ogc-filter.enum';
 import {
   AnyBaseOgcFilterOptions,
@@ -145,7 +147,11 @@ export class OgcFilterWriter {
         filterAssembly = this.bundleFilter(filters, options);
       }
     } else {
-      return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      if (extent && proj) {
+        return 'bbox=' + extent.join(',') + ',' + proj.getCode();
+      } else {
+        return undefined;
+      }
     }
 
     const wfsOptions: WriteGetFeatureOptions = {
@@ -345,7 +351,7 @@ export class OgcFilterWriter {
     propertyName?: string,
     defaultOperatorsType?: OgcFilterOperatorType
   ) {
-    let effectiveOperators: {} = {};
+    let effectiveOperators = {};
     let allowedOperators;
     let fieldsHasSpatialOperator: boolean;
     let includeContains: boolean;
@@ -594,8 +600,8 @@ export class OgcFilterWriter {
     const srsName = igoOgcFilterObject.hasOwnProperty('srsName')
       ? igoOgcFilterObject.srsName
       : proj
-      ? proj.getCode()
-      : 'EPSG:3857';
+        ? proj.getCode()
+        : 'EPSG:3857';
 
     return Object.assign(
       {},
@@ -782,6 +788,17 @@ export class OgcFilterWriter {
         }
       }
 
+      if (
+        ogcFilters.filters &&
+        'operator' in ogcFilters.filters &&
+        ogcFilters.filters.operator.toLowerCase() ===
+          OgcFilterOperator.During.toLowerCase() &&
+        ogcFilters.filters.active &&
+        ogcFilters.interfaceOgcFilters?.length > 0
+      ) {
+        conditions.push(ogcFilters.interfaceOgcFilters[0]);
+      }
+
       if (conditions.length >= 1) {
         filterQueryStringSelector = this.buildFilter(
           conditions.length === 1
@@ -895,7 +912,7 @@ export class OgcFilterWriter {
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;
     } else {
-      layersOrTypenames.split(',').forEach((layerOrTypenames) => {
+      layersOrTypenames.split(',').forEach(() => {
         appliedFilter = `${appliedFilter}(${processedFilter.replace(
           'filter=',
           ''
@@ -913,8 +930,11 @@ export class OgcFilterWriter {
   public parseFilterOptionDate(value: string, defaultValue?: string): string {
     if (!value) {
       return defaultValue;
-    } else if (value === 'today') {
-      return undefined;
+    } else if (
+      value.toLowerCase().includes('now') ||
+      value.toLowerCase().includes('today')
+    ) {
+      return parseDateOperation(value);
     } else if (moment(value).isValid()) {
       return value;
     } else {

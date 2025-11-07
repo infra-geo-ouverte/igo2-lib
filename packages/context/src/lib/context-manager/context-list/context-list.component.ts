@@ -1,18 +1,36 @@
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ActionStore, ActionbarMode } from '@igo2/common';
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode
+} from '@igo2/common/action';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import type { IgoMap } from '@igo2/geo';
 
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
@@ -20,6 +38,7 @@ import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
+import { ContextItemComponent } from '../context-item/context-item.component';
 import {
   ContextProfils,
   ContextServiceOptions,
@@ -33,14 +52,36 @@ import { ContextListControlsEnum } from './context-list.enum';
   selector: 'igo-context-list',
   templateUrl: './context-list.component.html',
   styleUrls: ['./context-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ListComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    ActionbarComponent,
+    MatMenuModule,
+    MatCheckboxModule,
+    CollapsibleComponent,
+    ContextItemComponent,
+    ListItemDirective,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
+  configService = inject(ConfigService);
+  auth = inject(AuthService);
+  private dialog = inject(MatDialog);
+  private languageService = inject(LanguageService);
+  private storageService = inject(StorageService);
+
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
-    this.contextsInitial
-  );
+  contexts$ = new BehaviorSubject<ContextsList>(this.contextsInitial);
 
   change$ = new ReplaySubject<void>(1);
 
@@ -56,24 +97,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  @Input()
-  get selectedContext(): DetailedContext {
-    return this._selectedContext;
-  }
-  set selectedContext(value: DetailedContext) {
-    this._selectedContext = value;
-    this.cdRef.detectChanges();
-  }
-  private _selectedContext: DetailedContext;
+  @Input() selectedContext: DetailedContext;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Input()
   get defaultContextId(): string {
@@ -133,7 +159,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   get term(): string {
     return this._term;
   }
-  public _term: string = '';
+  public _term = '';
 
   get sortedAlpha(): boolean {
     return this._sortedAlpha;
@@ -156,14 +182,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     );
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    public configService: ConfigService,
-    public auth: AuthService,
-    private dialog: MatDialog,
-    private languageService: LanguageService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.contextConfigs = this.configService.getConfig('context');
   }
 
@@ -180,7 +199,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContext'
         ),
-        icon: 'map-outline',
+        icon: 'star',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.emptyContextTooltip'
         ),
@@ -193,7 +212,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         title: this.languageService.translate.instant(
           'igo.context.contextManager.contextMap'
         ),
-        icon: 'map-check',
+        icon: 'map',
         tooltip: this.languageService.translate.instant(
           'igo.context.contextManager.contextMapTooltip'
         ),
@@ -278,11 +297,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
         return true;
       case ContextListControlsEnum.never:
         return false;
-      default:
+      default: {
         let totalLength = this.contexts.ours.length;
+
         this.contexts.public
           ? (totalLength += this.contexts.public.length)
           : (totalLength += 0);
+
         this.contexts.shared
           ? (totalLength += this.contexts.shared.length)
           : (totalLength += 0);
@@ -290,6 +311,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           return true;
         }
         return false;
+      }
     }
   }
 
@@ -338,8 +360,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .toLowerCase();
   }
 
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
+  toggleSort() {
+    this.sortedAlpha = !this.sortedAlpha;
   }
 
   clearFilter() {
@@ -421,8 +443,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
     if (!this.showHidden) {
       const contexts: ContextsList = { ours: [], shared: [], public: [] };
       contexts.ours = this.contexts.ours.filter((c) => c.id !== context.id);
-      contexts.shared = this.contexts.shared.filter((c) => c.id !== context.id);
-      contexts.public = this.contexts.public.filter((c) => c.id !== context.id);
+      contexts.shared = this.contexts.shared?.filter(
+        (c) => c.id !== context.id
+      );
+      contexts.public = this.contexts.public?.filter(
+        (c) => c.id !== context.id
+      );
       this.contexts = contexts;
     }
     this.hide.emit(context);
@@ -431,5 +457,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   showContext(context: DetailedContext) {
     context.hidden = false;
     this.show.emit(context);
+  }
+
+  onSelect(context: DetailedContext) {
+    this.select.emit(context);
   }
 }

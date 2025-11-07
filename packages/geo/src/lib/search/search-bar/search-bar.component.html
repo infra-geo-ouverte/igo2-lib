@@ -1,6 +1,8 @@
 <div class="igo-search-bar-container" [ngClass]="{ empty: empty$ | async }">
   <mat-form-field [floatLabel]="floatLabel" [appearance]="appearance">
-    <mat-label *ngIf="label">{{ label }}</mat-label>
+    @if (label) {
+      <mat-label>{{ label }}</mat-label>
+    }
     <input
       #input
       matInput
@@ -11,52 +13,59 @@
         placeholder
           ? placeholder
           : (placeholder$ | async)
-          ? (placeholder$.value | translate)
-          : undefined
+            ? (placeholder$.value | translate)
+            : undefined
       "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
-      (touchend)="onKeyup($event)"
     />
-    <button
-      *ngIf="(empty$ | async) === false"
-      mat-icon-button
-      matSuffix
-      [color]="color"
-      (click)="onClearButtonClick()"
-      [matTooltip]="'igo.geo.search.clearSearch' | translate"
-    >
-      <mat-icon svgIcon="close"></mat-icon>
-    </button>
+    @if ((empty$ | async) === false) {
+      <button
+        mat-icon-button
+        matSuffix
+        [color]="color"
+        (click)="onClearButtonClick()"
+        [matTooltip]="'igo.geo.search.clearSearch' | translate"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
   </mat-form-field>
 
-  <mat-divider *ngIf="withDivider" [vertical]="true"></mat-divider>
+  @if (withDivider) {
+    <mat-divider [vertical]="true"></mat-divider>
+  }
 
   <div class="search-bar-buttons">
-    <button *ngIf="showSearchButton" mat-icon-button [color]="color">
-      <mat-icon svgIcon="magnify"></mat-icon>
-    </button>
+    @if (showSearchButton) {
+      <button mat-icon-button [color]="color" (click)="handleSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    }
 
-    <igo-search-selector
-      *ngIf="searchSelector"
-      [searchTypes]="searchTypes"
-      [searchType]="searchType$ | async"
-      (searchTypeChange)="onSearchTypeChange($event)"
-    >
-    </igo-search-selector>
+    @if (searchSelector) {
+      <igo-search-selector
+        [searchTypes]="searchTypes"
+        [searchType]="searchType$ | async"
+        (searchTypeChange)="onSearchTypeChange($event)"
+      >
+      </igo-search-selector>
+    }
 
-    <igo-search-settings
-      *ngIf="searchSettings"
-      [pointerSummaryEnabled]="pointerSummaryEnabled"
-      (pointerSummaryStatus)="pointerSummaryStatus.emit($event)"
-      [searchResultsGeometryEnabled]="searchResultsGeometryEnabled"
-      (searchResultsGeometryStatus)="searchResultsGeometryStatus.emit($event)"
-      [reverseSearchCoordsFormatEnabled]="reverseSearchCoordsFormatEnabled"
-      (reverseSearchCoordsFormatStatus)="
-        reverseSearchCoordsFormatStatus.emit($event)
-      "
-      (searchSourceChange)="onSearchSettingsChange()"
-    >
-    </igo-search-settings>
+    @if (searchSettings) {
+      <igo-search-settings
+        [pointerSummaryEnabled]="pointerSummaryEnabled"
+        [allowResetSearchSourcesOptions]="allowResetSearchSourcesOptions"
+        (pointerSummaryStatus)="pointerSummaryStatus.emit($event)"
+        [searchResultsGeometryEnabled]="searchResultsGeometryEnabled"
+        (searchResultsGeometryStatus)="searchResultsGeometryStatus.emit($event)"
+        [reverseSearchCoordsFormatEnabled]="reverseSearchCoordsFormatEnabled"
+        (reverseSearchCoordsFormatStatus)="
+          reverseSearchCoordsFormatStatus.emit($event)
+        "
+        (searchSourceChange)="onSearchSettingsChange()"
+      >
+      </igo-search-settings>
+    }
   </div>
 </div>

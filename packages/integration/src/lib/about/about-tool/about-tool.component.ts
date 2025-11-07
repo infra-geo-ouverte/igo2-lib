@@ -1,9 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ToolComponent } from '@igo2/common';
-import { ConfigService, LanguageService, version } from '@igo2/core';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { ToolComponent } from '@igo2/common/tool';
+import { ConfigService, version } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
@@ -13,14 +26,28 @@ import { AllEnvironmentOptions } from '../../environment';
 @ToolComponent({
   name: 'about',
   title: 'igo.integration.tools.about',
-  icon: 'help-circle'
+  icon: 'help'
 })
 @Component({
   selector: 'igo-about-tool',
   templateUrl: './about-tool.component.html',
-  styleUrls: ['./about-tool.component.scss']
+  styleUrls: ['./about-tool.component.scss'],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatMenuModule,
+    CustomHtmlComponent,
+    IgoLanguageModule
+  ]
 })
 export class AboutToolComponent implements OnInit {
+  configService = inject(ConfigService);
+  auth = inject(AuthService);
+  private http = inject(HttpClient);
+  private cdRef = inject(ChangeDetectorRef);
+  private languageService = inject(LanguageService);
+
   private configOptions: AllEnvironmentOptions;
   @Input()
   get headerHtml() {
@@ -37,7 +64,7 @@ export class AboutToolComponent implements OnInit {
   set html(value: string) {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
-  private _discoverTitleInLocale: string = 'IGO';
+  private _discoverTitleInLocale = 'IGO';
   public discoverTitleInLocale$: Observable<string> = of(
     this._discoverTitleInLocale
   );
@@ -54,7 +81,7 @@ export class AboutToolComponent implements OnInit {
   @Input() trainingGuideURLs;
 
   public effectiveVersion: string;
-  private _html: string = 'igo.integration.aboutTool.html';
+  private _html = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
   private baseUrlProfil;
@@ -62,13 +89,7 @@ export class AboutToolComponent implements OnInit {
 
   public loading = false;
 
-  constructor(
-    public configService: ConfigService,
-    public auth: AuthService,
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     this.headerHtml = this.languageService.translate.instant(
       'igo.integration.aboutTool.headerHtml'
     );

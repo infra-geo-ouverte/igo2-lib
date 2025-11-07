@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { Observable, Observer } from 'rxjs';
 
@@ -16,13 +16,15 @@ import { getFileExtension } from './context-import.utils';
   providedIn: 'root'
 })
 export class ContextImportService {
+  private config = inject(ConfigService);
+
   static allowedMimeTypes = ['application/json'];
 
   static allowedExtensions = 'json';
 
   private clientSideFileSizeMax: number;
 
-  constructor(private config: ConfigService) {
+  constructor() {
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
     );
@@ -86,14 +88,14 @@ export class ContextImportService {
       try {
         const context = this.parseContextFromFile(file, event.target.result);
         observer.next(context);
-      } catch (e) {
+      } catch {
         observer.error(new ImportUnreadableFileError());
       }
 
       observer.complete();
     };
 
-    reader.onerror = (evt) => {
+    reader.onerror = () => {
       observer.error(new ImportUnreadableFileError());
     };
 

@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>{{ title }}</h1>
+
+<div mat-dialog-content>
+  <ng-container
+    *ngTemplateOutlet="loopObject; context: { obj: data }"
+  ></ng-container>
+
+  <ng-template #loopObject let-obj="obj" let-baseKey="baseKey">
+    @for (property of obj | keyvalue; track property) {
+      @if (ignoreKeys.indexOf(getKey(baseKey, property.key)) === -1) {
+        @if (isObject(property.value)) {
+          <ng-container
+            *ngTemplateOutlet="
+              loopObject;
+              context: {
+                obj: property.value,
+                baseKey: getKey(baseKey, property.key)
+              }
+            "
+          ></ng-container>
+        } @else {
+          <p>
+            <span
+              ><b>{{ getKey(baseKey, property.key) }}</b> : </span
+            ><span class="propertyValue" [innerHtml]="property.value"></span>
+          </p>
+        }
+      }
+    }
+  </ng-template>
+</div>
+
+<div mat-dialog-actions>
+  <button matButton color="primary" (click)="dialogRef.close(false)">OK</button>
+</div>

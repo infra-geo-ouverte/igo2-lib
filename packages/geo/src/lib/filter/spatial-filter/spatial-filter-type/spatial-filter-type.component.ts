@@ -7,16 +7,25 @@ import {
   Output
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Feature } from '../../../feature';
-import { Layer } from '../../../layer';
+import { AnyLayer } from '../../../layer';
 import { MeasureLengthUnit } from '../../../measure';
 import {
   SpatialFilterQueryType,
   SpatialFilterType
 } from '../../shared/spatial-filter.enum';
+import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filter-list.component';
 
 /**
  * Spatial Filter Type
@@ -25,17 +34,21 @@ import {
   selector: 'igo-spatial-filter-type',
   templateUrl: './spatial-filter-type.component.html',
   styleUrls: ['./spatial-filter-type.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    SpatialFilterListComponent,
+    MatButtonToggleModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
-  @Input()
-  get store(): EntityStore<Feature> {
-    return this._store;
-  }
-  set store(store: EntityStore<Feature>) {
-    this._store = store;
-  }
-  private _store: EntityStore<Feature>;
+  @Input() store: EntityStore<Feature>;
 
   public queryType: string[] = [
     'Arrond',
@@ -61,7 +74,7 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   @Input() zone: Feature;
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
   public type: SpatialFilterType;
 
@@ -75,8 +88,6 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
-  constructor() {}
-
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = this.spatialType.Predefined;
@@ -87,7 +98,7 @@ export class SpatialFilterTypeComponent implements OnInit {
     this.eventType.emit(this.type);
   }
 
-  onTypeChange(event) {
+  onTypeChange() {
     if (this.selectedTypeIndex.value === 0) {
       this.type = SpatialFilterType.Predefined;
     }

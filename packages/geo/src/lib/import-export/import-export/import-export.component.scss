@@ -1,28 +1,23 @@
 $slide-toggle-width: 60px;
 
 :host {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
   mat-option.igo-export-layer-mat-option {
     height: 5em;
     line-height: 1em;
   }
 
   .import-export-toggle {
-    padding: 10px;
-    text-align: center;
     mat-button-toggle-group {
       width: 100%;
       mat-button-toggle {
         width: 50%;
       }
     }
-  }
-
-  h4 {
-    padding: 0 5px;
-  }
-
-  .igo-form {
-    padding: 15px 5px;
   }
 
   .igo-input-container {
@@ -33,12 +28,10 @@ $slide-toggle-width: 60px;
 
   .igo-form-button-group {
     text-align: center;
-    padding-top: 10px;
   }
 
   igo-spinner {
     position: absolute;
-    padding-left: 10px;
   }
 
   .export-options,

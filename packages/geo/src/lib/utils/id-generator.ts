@@ -2,12 +2,11 @@ import { uuid } from '@igo2/utils';
 
 import { Md5 } from 'ts-md5';
 
-import { WFSDataSourceOptions } from '../datasource';
-import { AnyDataSourceOptions } from '../datasource/shared/datasources/any-datasource.interface';
-import { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
-import { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
-import { WMTSDataSourceOptions } from '../datasource/shared/datasources/wmts-datasource.interface';
-import { ArcGISRestDataSourceOptions } from './../datasource/shared/datasources/arcgisrest-datasource.interface';
+import type { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
+import type { WFSDataSourceOptions } from '../datasource/shared/datasources/wfs-datasource.interface';
+import type { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
+import type { WMTSDataSourceOptions } from '../datasource/shared/datasources/wmts-datasource.interface';
+import type { ArcGISRestDataSourceOptions } from './../datasource/shared/datasources/arcgisrest-datasource.interface';
 
 /**
  * Generate a id from it's datasource options.
@@ -26,8 +25,10 @@ export function generateIdFromSourceOptions(
     arcgisrest: generateArcgisRestIdFromSourceOptions,
     imagearcgisrest: generateArcgisRestIdFromSourceOptions,
     tilearcgisrest: generateArcgisRestIdFromSourceOptions,
-    osm: (_options: AnyDataSourceOptions) => 'OSM',
-    tiledebug: (_options: AnyDataSourceOptions) => 'tiledebug'
+
+    osm: () => 'OSM',
+
+    tiledebug: () => 'tiledebug'
   };
   const generator = generators[options.type] || generateId;
   return generator(options);
@@ -79,7 +80,7 @@ export function generateFeatureIdFromSourceOptions(
   options: WMTSDataSourceOptions
 ) {
   if (!options.url) {
-    return generateId(options);
+    return generateId();
   }
   const url = standardizeUrl(options.url);
   const chain = 'feature' + url;
@@ -93,7 +94,7 @@ export function generateFeatureIdFromSourceOptions(
  */
 export function generateWfsIdFromSourceOptions(options: WFSDataSourceOptions) {
   if (!options.url || !options.params) {
-    return generateId(options);
+    return generateId();
   }
   const url = standardizeUrl(options.url);
   const chain = 'wfs' + url + options.params.featureTypes;
@@ -117,7 +118,7 @@ export function generateArcgisRestIdFromSourceOptions(
  * Generate a unique id
  * @returns A uuid
  */
-export function generateId(_options: AnyDataSourceOptions) {
+export function generateId() {
   return uuid();
 }
 

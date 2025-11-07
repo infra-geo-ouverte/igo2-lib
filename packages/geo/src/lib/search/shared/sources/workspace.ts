@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import pointOnFeature from '@turf/point-on-feature';
-import { SimpleDocumentSearchResultSetUnit } from 'flexsearch';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
-import { FEATURE, Feature } from '../../../feature';
-import { Layer } from '../../../layer/shared/layers/layer';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import { Feature } from '../../../feature/shared/feature.interfaces';
+import { Layer } from '../../../layer';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
@@ -20,6 +22,8 @@ import { WorkspaceData } from './workspace.interfaces';
  */
 @Injectable()
 export class WorkspaceSearchSource extends SearchSource implements TextSearch {
+  private languageService = inject(LanguageService);
+
   static id = 'workspace';
   static type = FEATURE;
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -28,11 +32,13 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${WorkspaceSearchSource.id}`
+    );
+
     super(options, storageService);
 
     this.languageService.translate
@@ -48,8 +54,8 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return WorkspaceSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
-    const limit: Number = 5;
+  protected getEffectiveOptions(): SearchSourceOptions {
+    const limit = 5;
 
     return {
       title: 'igo.geo.search.workspace.name',
@@ -66,11 +72,11 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
           title: 'results limit',
           name: 'limit',
           values: [
-            { title: '1', value: 1, enabled: limit === 1 },
+            { title: '1', value: 1, enabled: false },
             { title: '5', value: 5, enabled: limit === 5 || !limit },
-            { title: '10', value: 10, enabled: limit === 10 },
-            { title: '25', value: 25, enabled: limit === 25 },
-            { title: '50', value: 50, enabled: limit === 50 }
+            { title: '10', value: 10, enabled: false },
+            { title: '25', value: 25, enabled: false },
+            { title: '50', value: 50, enabled: false }
           ]
         }
       ]
@@ -102,8 +108,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         const termToUse = term;
         fswi.searchDocument
           .search(termToUse, { limit: page * limitValue })
-          .map((i) => {
-            const foundIn: SimpleDocumentSearchResultSetUnit = i;
+          .map((foundIn) => {
             const field = foundIn.field;
             foundIn.result.map((index) => {
               const feature = fswi.index.get(index);
@@ -167,7 +172,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.feature.meta.title,
         titleHtml: titleHtml + subtitleHtml2,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: data.score,
         nextPage:
           resultsCnt % +this.options.params.limit === 0 &&
@@ -191,7 +196,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return allowedFieldsAndAlias;
   }
 
-  private computeProperties(data: WorkspaceData): { [key: string]: any } {
+  private computeProperties(data: WorkspaceData): Record<string, any> {
     if (!data.feature.geometry) {
       return Object.assign(
         { type: data.layer.title + '.' + data.field },

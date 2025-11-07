@@ -13,8 +13,8 @@ import { sliceOlGeometry } from '../geometry.utils';
 import { DrawControl } from './draw';
 
 export interface SliceControlOptions {
-  source?: OlVectorSource<OlGeometry>;
-  layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  source?: OlVectorSource;
+  layer?: OlVectorLayer<OlVectorSource>;
   layerStyle?: OlStyleLike;
   drawStyle?: OlStyleLike;
 }
@@ -26,15 +26,15 @@ export class SliceControl {
   /**
    * Slice end observable
    */
-  public end$: Subject<OlGeometry[]> = new Subject();
+  public end$ = new Subject<OlGeometry[]>();
 
   /**
    * Slice error, if any
    */
-  public error$: Subject<GeometrySliceError> = new Subject();
+  public error$ = new Subject<GeometrySliceError>();
 
   private olMap: OlMap;
-  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olOverlayLayer: OlVectorLayer<OlVectorSource>;
 
   /**
    * Draw line control
@@ -62,7 +62,7 @@ export class SliceControl {
    * OL overlay source
    * @internal
    */
-  get olOverlaySource(): OlVectorSource<OlGeometry> {
+  get olOverlaySource(): OlVectorSource {
     return this.olOverlayLayer.getSource();
   }
 
@@ -95,7 +95,7 @@ export class SliceControl {
   /**
    * Return the overlay source
    */
-  getSource(): OlVectorSource<OlGeometry> {
+  getSource(): OlVectorSource {
     return this.olOverlaySource;
   }
 
@@ -112,9 +112,7 @@ export class SliceControl {
   /**
    * Create an overlay source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<
-    OlVectorSource<OlGeometry>
-  > {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource> {
     return new OlVectorLayer({
       source: this.options.source ? this.options.source : new OlVectorSource(),
       style: this.options.layerStyle,
@@ -158,8 +156,8 @@ export class SliceControl {
       interactionStyle: this.options.drawStyle,
       maxPoints: 2
     });
-    this.drawLineStart$$ = this.drawLineControl.start$.subscribe(
-      (olLine: OlLineString) => this.onDrawLineStart(olLine)
+    this.drawLineStart$$ = this.drawLineControl.start$.subscribe(() =>
+      this.onDrawLineStart()
     );
     this.drawLineEnd$$ = this.drawLineControl.end$.subscribe(
       (olLine: OlLineString) => this.onDrawLineEnd(olLine)
@@ -185,7 +183,7 @@ export class SliceControl {
    * Clear the draw source and track the geometry being draw
    * @param olLine Ol linestring or polygon
    */
-  private onDrawLineStart(olLine: OlLineString) {
+  private onDrawLineStart() {
     this.drawLineControl.getSource().clear(true);
   }
 

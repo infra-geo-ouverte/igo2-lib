@@ -3,33 +3,64 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
-    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "downlevelIteration": true,
+    "esModuleInterop": true,
     "importHelpers": true,
     "sourceMap": true,
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "ES2022",
     "target": "ES2022",
-    "lib": ["ES2022", "dom"],
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "paths": {
-      "@igo2/utils": ["packages/utils/src/public_api"],
-      "@igo2/core": ["packages/core/src/public_api"],
-      "@igo2/common": ["packages/common/src/public_api"],
-      "@igo2/auth": ["packages/auth/src/public_api"],
-      "@igo2/geo": ["packages/geo/src/public_api"],
-      "@igo2/context": ["packages/context/src/public_api"],
-      "@igo2/integration": ["packages/integration/src/public_api"]
+      "@igo2/core": [
+        "packages/core/src/public_api"
+      ],
+      "@igo2/core/*": [
+        "packages/core/*/src/public_api"
+      ],
+      "@igo2/auth": [
+        "packages/auth/src/public_api"
+      ],
+      "@igo2/auth/*": [
+        "packages/auth/*/src/public_api"
+      ],
+      "@igo2/common": [
+        "packages/common/src/public_api"
+      ],
+      "@igo2/common/*": [
+        "packages/common/*/src/public_api"
+      ],
+      "@igo2/context": [
+        "packages/context/src/public_api"
+      ],
+      "@igo2/geo": [
+        "packages/geo/src/public_api"
+      ],
+      "@igo2/integration": [
+        "packages/integration/src/public_api"
+      ],
+      "@igo2/utils": [
+        "packages/utils/src/public_api"
+      ]
     }
   },
-  "exclude": ["dist", "scripts", "demo/e2e/**/*"],
+  "exclude": [
+    "dist",
+    "scripts",
+    "projects/**/e2e/**/*"
+  ],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }

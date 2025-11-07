@@ -8,7 +8,7 @@
     [matTooltip]="'igo.geo.search.menu.tooltip' | translate"
     [matMenuTriggerFor]="searchSelectorMenu"
   >
-    <mat-icon svgIcon="menu-down"></mat-icon>
+    <mat-icon>arrow_drop_down</mat-icon>
   </button>
 
   <mat-menu
@@ -22,12 +22,11 @@
       [value]="searchType$ | async"
       (change)="onSearchTypeChange($event.value)"
     >
-      <mat-radio-button
-        *ngFor="let searchType of searchTypes"
-        [value]="searchType"
-      >
-        {{ getSearchTypeTitle(searchType) | translate }}
-      </mat-radio-button>
+      @for (searchType of searchTypes; track searchType) {
+        <mat-radio-button [value]="searchType">
+          {{ getSearchTypeTitle(searchType) | translate }}
+        </mat-radio-button>
+      }
     </mat-radio-group>
   </mat-menu>
 </div>

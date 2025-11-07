@@ -1,3 +1,5 @@
+import { isValidJSON } from '@igo2/utils';
+
 import olFeature from 'ol/Feature';
 import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -21,7 +23,7 @@ export function featureRandomStyleFunction(): (
   });
   return (olFeature: olFeature<OlGeometry>, resolution: number) => {
     const customStyle = olFeature.get('_style');
-    if (customStyle) {
+    if (customStyle && isValidJSON(customStyle)) {
       if (
         customStyle.circle &&
         olFeature.get('rad') &&
@@ -95,8 +97,7 @@ export function featureRandomStyle(): olStyle.Style {
  * @returns OL style function
  */
 export function hoverFeatureMarkerStyle(
-  feature: olFeature<olGeom.Geometry>,
-  resolution: number
+  feature: olFeature<olGeom.Geometry>
 ): olStyle.Style[] {
   const olStyleText = new olStyle.Style({
     text: new olStyle.Text({
@@ -160,8 +161,7 @@ export function hoverFeatureMarkerStyle(
  * @returns OL style function
  */
 export function pointerPositionSummaryMarkerStyle(
-  feature: olFeature<OlGeometry>,
-  resolution: number
+  feature: olFeature<OlGeometry>
 ): olStyle.Style {
   return new olStyle.Style({
     image: new olStyle.Icon({

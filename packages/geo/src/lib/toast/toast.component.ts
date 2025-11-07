@@ -1,9 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
-import { FlexibleState, getEntityTitle } from '@igo2/common';
+import { getEntityTitle } from '@igo2/common/entity';
+import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
+import { PanelComponent } from '@igo2/common/panel';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
+import { FeatureDetailsComponent } from '../feature/feature-details/feature-details.component';
 import { FeatureMotion } from '../feature/shared/feature.enums';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
@@ -12,7 +17,14 @@ import { IgoMap } from '../map/shared/map';
 @Component({
   selector: 'igo-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.scss']
+  styleUrls: ['./toast.component.scss'],
+  imports: [
+    FlexibleComponent,
+    PanelComponent,
+    MatButtonModule,
+    MatIconModule,
+    FeatureDetailsComponent
+  ]
 })
 export class ToastComponent {
   static SWIPE_ACTION = {
@@ -60,8 +72,6 @@ export class ToastComponent {
     return getEntityTitle(this.feature);
   }
 
-  constructor() {}
-
   toggle() {
     this.expanded = !this.expanded;
     this.opened.emit(this.expanded);
@@ -73,11 +83,7 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(
-        this.map.viewController,
-        [olFeature],
-        FeatureMotion.Zoom
-      );
+      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 

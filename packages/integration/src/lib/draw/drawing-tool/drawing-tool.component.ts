@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
 import {
+  DrawComponent,
   DrawControl,
   FeatureStore,
   FeatureWithDraw,
@@ -18,14 +19,18 @@ import { DrawState } from '../draw.state';
 @ToolComponent({
   name: 'draw',
   title: 'igo.integration.tools.draw',
-  icon: 'draw'
+  icon: 'stylus_note'
 })
 @Component({
   selector: 'igo-drawing-tool',
   templateUrl: './drawing-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DrawComponent]
 })
 export class DrawingToolComponent {
+  private drawState = inject(DrawState);
+  private mapState = inject(MapState);
+
   /**
    * Map to measure on
    * @internal
@@ -67,9 +72,4 @@ export class DrawingToolComponent {
   public addDrawControls(dc: [string, DrawControl][]) {
     this.drawControls = dc;
   }
-
-  constructor(
-    private drawState: DrawState,
-    private mapState: MapState
-  ) {}
 }

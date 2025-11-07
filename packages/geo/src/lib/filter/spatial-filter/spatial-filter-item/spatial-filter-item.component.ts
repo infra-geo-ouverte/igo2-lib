@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,21 +9,39 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 
 import {
+  EntityStore,
   EntityStoreFilterSelectionStrategy,
-  EntityStoreWithStrategy,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
-} from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+} from '@igo2/common/entity';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import OlFeature from 'ol/Feature';
-import type { Type } from 'ol/geom/Geometry';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
@@ -32,10 +51,12 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../../datasource/shared';
+import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { Layer, VectorLayer } from '../../../layer/shared';
-import { IgoMap } from '../../../map/shared';
+import { AnyLayer, VectorLayer } from '../../../layer/shared';
+import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
   SpatialFilterQueryType,
@@ -53,9 +74,34 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
   selector: 'igo-spatial-filter-item',
   templateUrl: './spatial-filter-item.component.html',
   styleUrls: ['./spatial-filter-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    EntityTableComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
+  private cdRef = inject(ChangeDetectorRef);
+  private spatialFilterService = inject(SpatialFilterService);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+
   @Input() map: IgoMap;
 
   @Input()
@@ -64,7 +110,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   set type(type: SpatialFilterType) {
     this._type = type;
-    const index = this.geometryTypes.findIndex((geom) => geom === this.type);
+    const index = this.geometryTypes.findIndex(
+      (geom) => geom === (this.type as any)
+    );
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
     this.radius = undefined;
@@ -162,16 +210,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() loading;
 
   @Input()
-  get store(): EntityStoreWithStrategy<Feature> {
+  get store(): EntityStore<Feature> {
     return this._store;
   }
-  set store(store: EntityStoreWithStrategy<Feature>) {
+  set store(store: EntityStore<Feature>) {
     this._store = store;
     this._store.entities$.subscribe(() => {
       this.cdRef.detectChanges();
     });
   }
-  private _store: EntityStoreWithStrategy<Feature>;
+  private _store: EntityStore<Feature>;
 
   /**
    * Available measure units for the measure type given
@@ -181,9 +229,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: AnyLayer[] = [];
 
-  @Input() allLayers: Layer[] = [];
+  @Input() allLayers: AnyLayer[] = [];
 
   @Input()
   get thematicLength(): number {
@@ -242,23 +290,26 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   );
 
   // For geometry form field input
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
-  drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<
+  value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
+  drawGuide$ = new BehaviorSubject<number>(null);
+  overlayStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<
+  >(undefined);
+  drawStyle$ = new BehaviorSubject<
     olStyle.Style | ((feature, resolution) => olStyle.Style)
-  > = new BehaviorSubject(undefined);
+  >(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
   private bufferChanges$$: Subscription;
 
   public formControl = new UntypedFormControl();
-  public geometryType: Type | string;
+  public geometryType: GeometryType;
   public geometryTypeField = false;
-  public geometryTypes: string[] = ['Point', 'Polygon'];
+  public geometryTypes: GeometryType[] = [
+    GeometryType.Point,
+    GeometryType.Polygon
+  ];
   public drawGuideField = false;
   public drawGuide: number = null;
   public drawGuidePlaceholder = '';
@@ -272,7 +323,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
-  public buffer: number = 0;
+  public buffer = 0;
   public radiusFormControl = new UntypedFormControl();
   public bufferFormControl = new UntypedFormControl();
 
@@ -281,13 +332,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public listIsVisible = true;
   public tableTemplate: EntityTableTemplate;
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService,
-    private languageService: LanguageService
-  ) {}
 
   ngOnInit() {
     this.spatialFilterService

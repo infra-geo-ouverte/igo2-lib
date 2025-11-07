@@ -1,5 +1,0 @@
-@use './actionbar/actionbar-item.theming.scss' as actionbar-item;
-
-@mixin igo-action-theming($theme) {
-  @include actionbar-item.density($theme);
-}

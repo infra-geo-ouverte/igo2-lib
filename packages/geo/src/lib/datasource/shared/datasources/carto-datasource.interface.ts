@@ -1,5 +1,3 @@
-import olSourceCarto from 'ol/source/CartoDB';
-
 import { DataSourceOptions } from './datasource.interface';
 
 export interface CartoDataSourceOptions extends DataSourceOptions {
@@ -13,6 +11,4 @@ export interface CartoDataSourceOptions extends DataSourceOptions {
   projection?: string;
   config?: any;
   map?: string;
-
-  ol?: olSourceCarto;
 }

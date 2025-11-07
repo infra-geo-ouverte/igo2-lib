@@ -3,37 +3,36 @@
     {{ title }}
   </span>
   <div matListItemMeta>
-    <mat-icon
-      *ngIf="catalog.externalProvider"
-      matListItemIcon
-      class="igo-external-provider"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
-      color="primary"
-      (click)="$event.stopPropagation()"
-      svgIcon="earth-arrow-right"
-    >
-    </mat-icon>
-    <button
-      *ngIf="catalog.removable"
-      mat-icon-button
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.catalog.library.remove' | translate"
-      color="warn"
-      (click)="removeCatalogFromLibrary($event)"
-    >
-      <mat-icon svgIcon="delete"></mat-icon>
-    </button>
+    @if (catalog.externalProvider) {
+      <mat-icon
+        matListItemIcon
+        class="igo-external-provider"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
+        color="primary"
+        (click)="$event.stopPropagation()"
+      >
+        public
+      </mat-icon>
+    }
+    @if (catalog.removable) {
+      <button
+        mat-icon-button
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.catalog.library.remove' | translate"
+        color="warn"
+        (click)="removeCatalogFromLibrary($event)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    }
 
-    <button
-      class="igo-blank"
-      *ngIf="!catalog.removable"
-      disabled="true"
-      mat-icon-button
-    >
-      <mat-icon svgIcon="blank"></mat-icon>
-    </button>
+    @if (!catalog.removable) {
+      <button class="igo-blank" disabled="true" mat-icon-button>
+        <mat-icon></mat-icon>
+      </button>
+    }
   </div>
 </mat-list-item>

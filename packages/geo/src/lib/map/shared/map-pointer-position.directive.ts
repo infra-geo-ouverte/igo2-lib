@@ -5,10 +5,10 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { MediaService } from '@igo2/core/media';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
@@ -23,9 +23,13 @@ import { IgoMap } from '../../map/shared/map';
  * to avoid too many emitted values.
  */
 @Directive({
-  selector: '[igoPointerPosition]'
+  selector: '[igoPointerPosition]',
+  standalone: true
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
+  private component = inject(MapBrowserComponent, { self: true });
+  private mediaService = inject(MediaService);
+
   private lastTimeoutRequest;
 
   /**
@@ -41,7 +45,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   /**
    * Delay before emitting an event
    */
-  @Input() pointerPositionDelay: number = 1000;
+  @Input() pointerPositionDelay = 1000;
 
   /**
    * Event emitted when the pointer move, delayed by pointerMoveDelay
@@ -59,11 +63,6 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   get mapProjection(): string {
     return (this.component.map as IgoMap).projection;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private mediaService: MediaService
-  ) {}
 
   /**
    * Start listening to pointermove

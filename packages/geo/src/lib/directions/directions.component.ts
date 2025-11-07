@@ -1,50 +1,60 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { EntityStoreWatcher } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import { EntityStoreWatcher } from '@igo2/common/entity';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
+import { Coordinate } from 'ol/coordinate';
 import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
-import { SelectEvent } from 'ol/interaction/Select';
-import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
-import { roundCoordTo, stringToLonLat } from '../map';
+import { roundCoordTo, roundCoordToString, stringToLonLat } from '../map';
 import { QueryService } from '../query/shared/query.service';
-import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { SearchResult } from '../search/shared/search.interfaces';
 import { SearchService } from '../search/shared/search.service';
-import { DirectionType, ProposalType } from './shared/directions.enum';
+import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
+import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
+import { DirectionsResultsComponent } from './directions-results/directions-results.component';
+import { BaseDirectionsSourceOptionsProfile } from './directions-sources';
+import { DirectionsSourceService } from './shared/directions-source.service';
+import { DirectionsType, ProposalType } from './shared/directions.enum';
 import {
   DirectionOptions,
+  FeatureWithDirections,
   FeatureWithStopProperties,
   Stop
 } from './shared/directions.interface';
 import { DirectionsService } from './shared/directions.service';
 import {
-  addDirectionToRoutesFeatureStore,
+  addRouteToRoutesFeatureStore,
   addStopToStopsFeatureStore,
   addStopToStore,
   initRoutesFeatureStore,
-  initStepFeatureStore,
+  initStepsFeatureStore,
   initStopsFeatureStore,
   updateStoreSorting
 } from './shared/directions.utils';
 import {
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
@@ -52,14 +62,32 @@ import {
 @Component({
   selector: 'igo-directions',
   templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss']
+  styleUrls: ['./directions.component.scss'],
+  imports: [
+    MatSlideToggleModule,
+    DirectionsButtonsComponent,
+    DirectionsInputsComponent,
+    DirectionsResultsComponent,
+    IgoLanguageModule
+  ]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
+  private cdRef = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private directionsService = inject(DirectionsService);
+  private directionsSourceService = inject(DirectionsSourceService);
+  private searchService = inject(SearchService);
+  private queryService = inject(QueryService);
+  private messageService = inject(MessageService);
+
   private watcher: EntityStoreWatcher<Stop>;
 
-  public projection: string = 'EPSG:4326';
+  public projection = 'EPSG:4326';
+  public hasOsrmPrivateAccess = false;
+  public twoSourcesAvailable = false;
 
-  private zoomRoute$$: Subscription;
+  private zoomOnActiveRoute$$: Subscription;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   private routesQueries$$: Subscription[] = [];
@@ -67,22 +95,24 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
   private selectedRoute: olInteraction.Select;
-  private focusOnStop: boolean = false;
-  private isTranslating: boolean = false;
+  private focusOnStop = false;
+  private isTranslating = false;
 
   public previousStops: Stop[] = [];
 
   private searchs$$: Subscription[] = [];
+  private authenticated$$: Subscription;
 
   @Input() contextUri: string;
-  @Input() stopsStore: StopsStore;
-  @Input() stopsFeatureStore: StopsFeatureStore;
-  @Input() routesFeatureStore: RoutesFeatureStore;
-  @Input() stepFeatureStore: StepFeatureStore;
-  @Input() debounce: number = 200;
-  @Input() length: number = 2;
-  @Input() coordRoundedDecimals: number = 6;
-  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+  @Input({ required: true }) stopsStore: StopsStore;
+  @Input({ required: true }) stopsFeatureStore: StopsFeatureStore;
+  @Input({ required: true }) routesFeatureStore: RoutesFeatureStore;
+  @Input({ required: true }) stepsFeatureStore: StepsFeatureStore;
+  @Input() debounce = 200;
+  @Input() length = 2;
+  @Input() coordRoundedDecimals = 6;
+  @Input({ required: true }) zoomOnActiveRoute$ = new Subject<void>();
+  @Input({ required: true }) authenticated$: BehaviorSubject<boolean>;
 
   /**
    * Wheter one of the direction control is active
@@ -96,21 +126,38 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService,
-    private directionsService: DirectionsService,
-    private searchService: SearchService,
-    private queryService: QueryService
-  ) {}
+  get enabledProfileHasAuthorization() {
+    return this.directionsSourceService.sources[0].getEnabledProfile()
+      .authorization;
+  }
 
   ngOnInit(): void {
+    this.authenticated$$ = this.authenticated$.subscribe(
+      (authenticated: boolean) => {
+        if (authenticated) {
+          const profileWithAuth: BaseDirectionsSourceOptionsProfile =
+            this.directionsSourceService.sources[0].getProfileWithAuthorization();
+          if (profileWithAuth) {
+            this.http
+              .get(profileWithAuth.authorization.url)
+              .subscribe((user) => {
+                this.hasOsrmPrivateAccess =
+                  user[profileWithAuth.authorization.property];
+              });
+          }
+        }
+      }
+    );
+    this.twoSourcesAvailable =
+      this.directionsSourceService.sources[0].profiles.length === 2
+        ? true
+        : false;
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
       initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
-      initStepFeatureStore(this.stepFeatureStore);
+      initStepsFeatureStore(this.stepsFeatureStore);
       this.initOlInteraction();
     }, 1);
   }
@@ -120,8 +167,20 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
-    this.zoomRoute$$.unsubscribe();
+    this.zoomOnActiveRoute$$.unsubscribe();
+    this.authenticated$$.unsubscribe();
     this.freezeStores();
+
+    if (this.stopsFeatureStore.empty) {
+      this.stopsFeatureStore.map.layerController.remove(
+        this.stopsFeatureStore.layer
+      );
+    }
+    if (this.routesFeatureStore.empty) {
+      this.routesFeatureStore.map.layerController.remove(
+        this.routesFeatureStore.layer
+      );
+    }
   }
 
   private freezeStores() {
@@ -134,7 +193,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.routesFeatureStore.deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
-    this.stepFeatureStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
+    this.stepsFeatureStore.deactivateStrategyOfType(
+      FeatureStoreLoadingStrategy
+    );
   }
 
   private initEntityStores() {
@@ -145,15 +206,33 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private monitorActiveRouteZoom() {
-    this.zoomRoute$$ = this.zoomToActiveRoute$.subscribe(() => {
+    this.zoomOnActiveRoute$$ = this.zoomOnActiveRoute$.subscribe(() => {
       if (this.routesFeatureStore.count >= 1) {
-        const activeRoute = this.routesFeatureStore
+        const activeRoute: FeatureWithDirections = this.routesFeatureStore
           .all()
           .find((route) => route.properties.active);
 
         if (activeRoute) {
-          activeRoute.ol.getGeometry();
-          const routeExtent = activeRoute.ol.getGeometry().getExtent();
+          const stopsCoordinates: Coordinate[] = this.stopsStore
+            .all()
+            .map((stop) =>
+              olProj.transform(stop.coordinates, 'EPSG:4326', 'EPSG:3857')
+            );
+          const routeCoordinates: Coordinate[] =
+            activeRoute.geometry.coordinates;
+          const coordinates: Coordinate[] = [
+            ...stopsCoordinates,
+            ...routeCoordinates
+          ];
+          const routeExtent = coordinates.reduce(
+            ([x_min, y_min, x_max, y_max], [x, y]) => [
+              Math.min(x_min, x),
+              Math.min(y_min, y),
+              Math.max(x_max, x),
+              Math.max(y_max, y)
+            ],
+            [Infinity, Infinity, -Infinity, -Infinity]
+          );
           this.routesFeatureStore.layer.map.viewController.zoomToExtent(
             routeExtent as [number, number, number, number]
           );
@@ -174,11 +253,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.translateStop = new olInteraction.Translate({
       features: this.selectStopInteraction.getFeatures()
     });
-    this.translateStop.on('translating', (evt: TranslateEvent) => {
+    this.translateStop.on('translating', (evt) => {
       this.isTranslating = true;
       this.executeStopTranslation(evt.features);
     });
-    this.translateStop.on('translateend', (evt: TranslateEvent) => {
+    this.translateStop.on('translateend', (evt) => {
       this.isTranslating = false;
       this.executeStopTranslation(evt.features);
     });
@@ -189,24 +268,24 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       hitTolerance: 7,
       filter: (feature) => {
         return (
-          feature.get('type') === DirectionType.Route &&
+          feature.get('type') === DirectionsType.Route &&
           feature.get('active') &&
           !this.isTranslating
         );
       }
     });
-    this.selectedRoute.on('select', (evt: SelectEvent) => {
+    this.selectedRoute.on('select', (evt) => {
       if (this.focusOnStop === false) {
-        const selectCoordinates = roundCoordTo(
-          olProj.transform(
-            (evt as any).mapBrowserEvent.coordinate,
-            this.routesFeatureStore.layer.map.projection,
-            this.projection
-          ) as [number, number],
-          this.coordRoundedDecimals
+        const selectCoordinates: Coordinate = olProj.transform(
+          (evt as any).mapBrowserEvent.coordinate,
+          this.routesFeatureStore.layer.map.projection,
+          this.projection
         );
-        const addedStop = addStopToStore(this.stopsStore);
-        addedStop.text = selectCoordinates.join(',');
+        const addedStop: Stop = addStopToStore(this.stopsStore);
+        addedStop.text = roundCoordToString(
+          selectCoordinates,
+          this.coordRoundedDecimals
+        ).join(', ');
         addedStop.coordinates = [selectCoordinates[0], selectCoordinates[1]];
       }
     });
@@ -238,11 +317,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     );
     const translatedStop = this.stopsStore.get(translatedStopId);
     const roundedCoord = roundCoordTo(
-      translationCoordinates as [number, number],
+      translationCoordinates,
       this.coordRoundedDecimals
     );
     translatedStop.coordinates = roundedCoord;
-    translatedStop.text = roundedCoord.join(',');
+    translatedStop.text = roundCoordToString(
+      translationCoordinates,
+      this.coordRoundedDecimals
+    ).join(', ');
     this.stopsStore.update(translatedStop);
   }
 
@@ -266,7 +348,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private monitorEntityStoreChange() {
     this.storeChange$$ = this.stopsStore.entities$
       .pipe(debounceTime(this.debounce))
-      .subscribe((stops: Stop[]) => {
+      .subscribe((stops) => {
         this.handleStopDiff(stops);
         updateStoreSorting(this.stopsStore);
         this.handleStopsFeature();
@@ -279,7 +361,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private handleStopDiff(stops: Stop[]) {
-    const simplifiedStops = stops.map((stop: Stop) => {
+    const simplifiedStops = stops.map((stop) => {
       return ObjectUtils.removeUndefined({
         ...{ id: stop.id, text: stop.text, coordinates: stop.coordinates }
       });
@@ -301,12 +383,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
             term,
             this.stopsFeatureStore.layer.map.projection
           );
-          let researches: Research[];
           let isCoord = false;
           if (response.lonLat) {
             isCoord = true;
           }
-          researches = this.searchService.search(term, {
+          const researches = this.searchService.search(term, {
             searchType: 'Feature'
           });
           this.cancelSearch();
@@ -324,7 +405,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           this.searchs$$ = requests$.map((request) => {
             return request
               .pipe(
-                map((results: SearchResult[]) =>
+                map((results) =>
                   results.filter((r) =>
                     isCoord
                       ? r.data.geometry.type === 'Point' && r.data.geometry
@@ -332,7 +413,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                   )
                 )
               )
-              .subscribe((res: SearchResult[]) => {
+              .subscribe((res) => {
                 if (res.length > 0) {
                   const source = res[0].source;
                   const meta = res[0].meta;
@@ -345,7 +426,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                       sp.type ===
                       (isCoord ? ProposalType.Coord : ProposalType.Text)
                   );
-                  let storedSource = stop.searchProposals.find(
+                  const storedSource = stop.searchProposals.find(
                     (sp) => sp.source === source
                   );
                   if (storedSource) {
@@ -388,7 +469,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRoutes(isOverview: boolean = false) {
+  private getRoutes(isOverview = false) {
     const stopsWithCoordinates = this.stopsStore.view
       .all()
       .filter((stop) => stop.coordinates);
@@ -416,20 +497,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       isOverview ? overviewDirectionsOptions : undefined
     );
     if (routeResponse) {
-      routeResponse.map((res) =>
-        this.routesQueries$$.push(
-          res.subscribe((directions) => {
-            this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
-            directions.map((direction) =>
-              addDirectionToRoutesFeatureStore(
-                this.routesFeatureStore,
-                direction,
-                this.projection,
-                direction === directions[0] ? true : false
-              )
-            );
-          })
-        )
+      this.routesQueries$$.push(
+        routeResponse.subscribe((directions) => {
+          this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+          directions.map((direction) =>
+            addRouteToRoutesFeatureStore(
+              this.routesFeatureStore,
+              direction,
+              this.projection,
+              direction === directions[0] ? true : false
+            )
+          );
+        })
       );
     }
   }
@@ -437,7 +516,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public addStopOverlay(stop: Stop) {
     addStopToStopsFeatureStore(
       stop,
-      this.stopsStore,
       this.stopsFeatureStore,
       this.projection,
       this.languageService
@@ -452,5 +530,29 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
+  }
+
+  onTogglePrivateModeControl(isActive: boolean) {
+    this.directionsSourceService.sources[0].profiles.forEach(
+      (profile) => (profile.enabled = false)
+    );
+    if (isActive) {
+      this.directionsSourceService.sources[0].profiles.find(
+        (profile) => profile.authorization
+      ).enabled = true;
+      this.messageService.alert(
+        this.languageService.translate.instant(
+          'igo.geo.directions.forestRoadsWarning.text'
+        ),
+        this.languageService.translate.instant(
+          'igo.geo.directions.forestRoadsWarning.title'
+        )
+      );
+    } else {
+      this.directionsSourceService.sources[0].profiles.find(
+        (profile) => !profile.authorization
+      ).enabled = true;
+    }
+    this.getRoutes();
   }
 }

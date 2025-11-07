@@ -4,12 +4,14 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  Self
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
-import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageService } from '@igo2/core/storage';
 import { MapService } from '@igo2/geo';
 
 import { Subscription } from 'rxjs';
@@ -25,9 +27,20 @@ import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';
 
 @Directive({
-  selector: '[igoContextListBinding]'
+  selector: '[igoContextListBinding]',
+  standalone: true,
+  providers: [ConfirmDialogService]
 })
 export class ContextListBindingDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private mapService = inject(MapService);
+  private languageService = inject(LanguageService);
+  private confirmDialogService = inject(ConfirmDialogService);
+  private messageService = inject(MessageService);
+  private auth = inject(AuthService);
+  private storageService = inject(StorageService);
+  private cdRef = inject(ChangeDetectorRef);
+
   private component: ContextListComponent;
   private contexts$$: Subscription;
   private selectedContext$$: Subscription;
@@ -70,7 +83,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       return;
     }
 
-    const changes: any = {
+    const changes: DetailedContext = {
       layers: contextFromMap.layers,
       map: {
         view: contextFromMap.map.view
@@ -181,9 +194,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         permissions.push(p.name);
       }
     }
-    this.component.showHidden
-      ? this.contextService.loadContexts(permissions, true)
-      : this.contextService.loadContexts(permissions, false);
+
+    this.contextService.loadContexts(permissions, this.component.showHidden);
   }
 
   @HostListener('showHiddenContexts')
@@ -203,17 +215,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     this.contextService.hideContext(context.id).subscribe();
   }
 
-  constructor(
-    @Self() component: ContextListComponent,
-    private contextService: ContextService,
-    private mapService: MapService,
-    private languageService: LanguageService,
-    private confirmDialogService: ConfirmDialogService,
-    private messageService: MessageService,
-    private auth: AuthService,
-    private storageService: StorageService,
-    private cdRef: ChangeDetectorRef
-  ) {
+  constructor() {
+    const component = inject(ContextListComponent, { self: true });
+
     this.component = component;
   }
 
@@ -243,7 +247,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     // See feature-list.component for an explanation about the debounce time
     this.selectedContext$$ = this.contextService.context$
       .pipe(debounceTime(100))
-      .subscribe((context) => (this.component.selectedContext = context));
+      .subscribe((context) => {
+        this.component.selectedContext = context;
+        this.cdRef.markForCheck();
+      });
 
     this.auth.authenticate$.subscribe((authenticate) => {
       if (authenticate) {
@@ -276,9 +283,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
             }
           }
 
-          this.component.showHidden
-            ? this.contextService.loadContexts(permissions, true)
-            : this.contextService.loadContexts(permissions, false);
+          this.contextService.loadContexts(
+            permissions,
+            this.component.showHidden
+          );
         });
       }
     });

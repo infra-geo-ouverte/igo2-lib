@@ -1,0 +1,13 @@
+:host {
+  ::ng-deep {
+    .mat-mdc-list .mat-mdc-list-item.mat-mdc-list-item-avatar {
+      height: auto;
+      width: auto;
+      padding: 0;
+    }
+  }
+}
+
+mat-list-item {
+  overflow: hidden;
+}

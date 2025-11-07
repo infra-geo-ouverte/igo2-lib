@@ -1,19 +1,51 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
-import { Clipboard, uuid } from '@igo2/utils';
+import { uuid } from '@igo2/utils';
 
+import { ContextService, DetailedContext } from '../../context-manager';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
   selector: 'igo-share-map-api',
   templateUrl: './share-map-api.component.html',
-  styleUrls: ['./share-map-api.component.scss']
+  styleUrls: ['./share-map-api.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class ShareMapApiComponent implements OnInit {
+  private clipboard = inject(Clipboard);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private auth = inject(AuthService);
+  private shareMapService = inject(ShareMapService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private contextService = inject(ContextService);
+
   public form: UntypedFormGroup;
 
   @Input() map: IgoMap;
@@ -22,18 +54,10 @@ export class ShareMapApiComponent implements OnInit {
   public userId: string;
   public idContextShared: string;
 
-  constructor(
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private auth: AuthService,
-    private shareMapService: ShareMapService,
-    private formBuilder: UntypedFormBuilder
-  ) {}
-
   ngOnInit(): void {
-    this.auth.authenticate$.subscribe((auth) => {
+    this.auth.authenticate$.subscribe(() => {
       const decodeToken = this.auth.decodeToken();
-      this.userId = decodeToken.user ? decodeToken.user.id : undefined;
+      this.userId = decodeToken?.user?.id.toString();
       this.buildForm();
     });
   }
@@ -42,7 +66,7 @@ export class ShareMapApiComponent implements OnInit {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrlWithApi(inputs);
-    this.shareMapService.createContextShared(this.map, inputs).subscribe(
+    this.createContextShared(this.map, inputs).subscribe(
       (rep) => {
         this.idContextShared = rep.id;
         this.messageService.success(
@@ -64,28 +88,26 @@ export class ShareMapApiComponent implements OnInit {
   updateContextShared(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
-    this.shareMapService
-      .updateContextShared(this.map, inputs, this.idContextShared)
-      .subscribe(
-        (rep) => {
-          this.messageService.success(
-            'igo.context.contextManager.dialog.saveMsg',
-            'igo.context.contextManager.dialog.saveTitle',
-            undefined,
-            { value: inputs.title }
-          );
-        },
-        (err) => {
-          err.error.title = this.languageService.translate.instant(
-            'igo.context.shareMap.errorTitle'
-          );
-          this.messageService.showError(err);
-        }
-      );
+    this._updateContextShared(this.map, inputs, this.idContextShared).subscribe(
+      () => {
+        this.messageService.success(
+          'igo.context.contextManager.dialog.saveMsg',
+          'igo.context.contextManager.dialog.saveTitle',
+          undefined,
+          { value: inputs.title }
+        );
+      },
+      (err) => {
+        err.error.title = this.languageService.translate.instant(
+          'igo.context.shareMap.errorTitle'
+        );
+        this.messageService.showError(err);
+      }
+    );
   }
 
-  copyTextToClipboard(textArea) {
-    const successful = Clipboard.copy(textArea);
+  copyTextToClipboard(textArea: HTMLTextAreaElement) {
+    const successful = this.clipboard.copy(textArea.value);
     if (successful) {
       this.messageService.success(
         'igo.context.shareMap.dialog.copyMsg',
@@ -103,5 +125,21 @@ export class ShareMapApiComponent implements OnInit {
       title: [title],
       uri: [id]
     });
+  }
+
+  private createContextShared(map: IgoMap, formValues) {
+    const context = this.contextService.getContextFromMap(map);
+    context.scope = 'public';
+    context.title = formValues.title;
+    context.uri = formValues.uri;
+    return this.contextService.create(context);
+  }
+
+  private _updateContextShared(map: IgoMap, formValues, id: string) {
+    const context = this.contextService.getContextFromMap(map);
+    return this.contextService.update(id, {
+      title: formValues.title,
+      map: context.map
+    } as DetailedContext);
   }
 }

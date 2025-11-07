@@ -1,34 +1,33 @@
 <mat-list-item>
-  <mat-icon
-    *ngIf="haveGroup()"
-    class="catalog-browser-layer-carret"
-    matListItemIcon
-    svgIcon="blank"
-  ></mat-icon>
+  @if (haveGroup()) {
+    <mat-icon class="catalog-browser-layer-carret" matListItemIcon></mat-icon>
+  }
   <span
     matListItemTitle
     matTooltipShowDelay="500"
     [ngClass]="catalogAllowLegend ? 'igo-cataloglayer-title' : ''"
-    (click)="askForLegend($event)"
+    (click)="askForLegend()"
     [matTooltip]="computeTitleTooltip()"
   >
     {{ title }}
   </span>
 
   <div matListItemMeta>
-    <button *ngIf="layer.externalProvider" disabled="true" mat-icon-button>
-      <mat-icon
-        class="igo-cataloglayer-external-icon"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
-        color="primary"
-        (click)="$event.stopPropagation()"
-        svgIcon="earth-arrow-right"
-      >
-      </mat-icon>
-    </button>
-    <igo-metadata-button [layer]="layer"></igo-metadata-button>
+    @if (layer.externalProvider) {
+      <button disabled="true" mat-icon-button>
+        <mat-icon
+          class="igo-cataloglayer-external-icon"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
+          color="primary"
+          (click)="$event.stopPropagation()"
+        >
+          public
+        </mat-icon>
+      </button>
+    }
+    <igo-metadata-button [layer]="$any(layer)"></igo-metadata-button>
 
     <button
       (mouseenter)="onMouseEvent($event)"
@@ -46,7 +45,7 @@
         [igoMatBadgeIcon]="getBadgeIcon()"
         igoMatBadgeColor="rgba(0,0,0,0.87)"
         igoMatBadgeBackgroundColor="none"
-        igoMatBadgeInverseColor="true"
+        [igoMatBadgeInverseColor]="true"
         [matBadgeHidden]="
           ((inRange$ | async) && (isVisible$ | async) === true) ||
           ((inRange$ | async) && !added) ||
@@ -55,19 +54,17 @@
         [matBadgeDisabled]="(inRange$ | async) === false"
         matBadgeSize="small"
         matBadgePosition="after"
-        [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'"
       >
+        {{ (isPreview$ | async) ? 'preview' : added ? 'delete' : 'add' }}
       </mat-icon>
     </button>
   </div>
 </mat-list-item>
 
 <div #legend class="igo-cataloglayer-legend-container">
-  <igo-layer-legend
-    *ngIf="
-      (layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend
-    "
-    [layer]="igoLayer$ | async"
-  >
-  </igo-layer-legend>
+  @if (
+    (layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend
+  ) {
+    <igo-layer-legend [layer]="igoLayer$ | async"> </igo-layer-legend>
+  }
 </div>

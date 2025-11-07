@@ -1,6 +1,26 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+import { ColorPickerFormFieldComponent } from '@igo2/common/color';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { FontType } from '../../shared/font.enum';
 import { DrawStyleService } from '../../style-service/draw-style.service';
@@ -12,22 +32,35 @@ import {
 @Component({
   selector: 'igo-style-modal-drawing',
   templateUrl: './style-modal-drawing.component.html',
-  styleUrls: ['./style-modal-drawing.component.scss']
+  styleUrls: ['./style-modal-drawing.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    ColorPickerFormFieldComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class StyleModalDrawingComponent implements OnInit {
-  @Input() confirmFlag: boolean = false;
+  dialogRef = inject<MatDialogRef<StyleModalDrawingComponent>>(MatDialogRef);
+  private formBuilder = inject(UntypedFormBuilder);
+  private drawStyleService = inject(DrawStyleService);
+  data = inject<DrawingMatDialogData>(MAT_DIALOG_DATA);
+
+  @Input() confirmFlag = false;
 
   public form: UntypedFormGroup;
 
   public styleModalData: StyleModalData;
   public linestringOnly: boolean;
-
-  constructor(
-    public dialogRef: MatDialogRef<StyleModalDrawingComponent>,
-    private formBuilder: UntypedFormBuilder,
-    private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData
-  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;

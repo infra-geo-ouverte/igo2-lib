@@ -1,22 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent } from '@igo2/common/tool';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
-  LanguageService,
-  MessageService,
-  StorageScope,
-  StorageService
-} from '@igo2/core';
-import {
+  IgoDirectionsModule,
   IgoMap,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from '@igo2/geo';
 
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
@@ -29,9 +27,18 @@ import { DirectionState } from '../directions.state';
 })
 @Component({
   selector: 'igo-directions-tool',
-  templateUrl: './directions-tool.component.html'
+  templateUrl: './directions-tool.component.html',
+  imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {
+  private directionState = inject(DirectionState);
+  private mapState = inject(MapState);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  contextState = inject(ContextState);
+  private authService = inject(AuthService);
+
   public currentContextUri: string;
   /**
    * stops
@@ -65,7 +72,7 @@ export class DirectionsToolComponent implements OnInit {
    * step store
    * @internal
    */
-  get stepFeatureStore(): StepFeatureStore {
+  get stepFeatureStore(): StepsFeatureStore {
     return this.directionState.stepFeatureStore;
   }
 
@@ -73,8 +80,12 @@ export class DirectionsToolComponent implements OnInit {
    * step store
    * @internal
    */
-  get zoomToActiveRoute$(): Subject<void> {
+  get zoomOnActiveRoute$(): Subject<void> {
     return this.directionState.zoomToActiveRoute$;
+  }
+
+  get authenticated$(): BehaviorSubject<boolean> {
+    return this.authService.authenticate$;
   }
 
   /**
@@ -84,16 +95,6 @@ export class DirectionsToolComponent implements OnInit {
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private directionState: DirectionState,
-    private mapState: MapState,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private storageService: StorageService,
-    public contextState: ContextState,
-    private authService: AuthService
-  ) {}
 
   ngOnInit(): void {
     const warningShown = this.storageService.get(

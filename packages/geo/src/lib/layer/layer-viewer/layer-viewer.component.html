@@ -1,0 +1,93 @@
+<igo-layer-list-tool
+  floatLabel="auto"
+  [viewerOptions]="layerViewerOptions"
+  [term]="options?.filterAndSortOptions?.keyword"
+  [mode]="mode"
+  (addedLayer)="createGroup($event)"
+  (modeChange)="toggleSelectionMode($event)"
+  (searchChange)="onSearchChange($event)"
+  (visibilityOnlyChange)="onVisibilityOnlyChange()"
+>
+</igo-layer-list-tool>
+
+@if (mode === 'selection') {
+  <mat-divider></mat-divider>
+  <div class="header-item active-background">
+    <mat-checkbox
+      class="select-all-checkbox"
+      [color]="isAllSelected() ? 'primary' : 'accent'"
+      (change)="toggleAllRows()"
+      [checked]="isAllSelected()"
+      [indeterminate]="!isAllSelected() && layerController.selected.length > 0"
+    >
+      {{
+        isAllSelected()
+          ? ('igo.geo.layer.deselectAll' | translate)
+          : ('igo.geo.layer.selectAll' | translate)
+      }}
+    </mat-checkbox>
+    <button mat-icon-button color="warn" (click)="toggleSelectionMode(false)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}
+<mat-divider></mat-divider>
+
+<div class="layer-view">
+  @if (
+    layers?.length > 0 ||
+    unavailableLayers?.length > 0 ||
+    baselayers?.length > 0
+  ) {
+    <div class="layer-list-container">
+      @if (unavailableLayers?.length) {
+        <igo-layer-unavailable-list
+          [layersOptions]="unavailableLayers"
+        ></igo-layer-unavailable-list>
+      }
+      <igo-layer-list
+        [controller]="map.layerController"
+        [layers]="layers"
+        [viewerOptions]="layerViewerOptions"
+        [isDragDropDisabled]="isDragDropDisabled"
+        [isDesktop]="isDesktop"
+      ></igo-layer-list>
+      @if (!excludeBaseLayers && baselayers?.length) {
+        <div>
+          <mat-divider></mat-divider>
+          <igo-layer-list
+            [controller]="map.layerController"
+            [layers]="baselayers"
+            [viewerOptions]="layerViewerOptions"
+            [isDragDropDisabled]="true"
+            [isDesktop]="isDesktop"
+          ></igo-layer-list>
+        </div>
+      }
+    </div>
+  } @else {
+    <ng-content select="[emptyList]"></ng-content>
+  }
+</div>
+
+@if (layerController.hasSelection) {
+  <igo-layer-viewer-bottom-actions
+    [map]="map"
+    [viewerOptions]="layerViewerOptions"
+    [controller]="layerController"
+    [searchTerm]="keyword$.value"
+    (layerChange)="onLayerChange()"
+  >
+    @if (
+      layerController.selected.length === 1 &&
+      isLayerItem(layerController.selected[0])
+    ) {
+      <ng-container
+        [ngTemplateOutlet]="customBottomActions"
+        [ngTemplateOutletContext]="{ layer: layerController.selected[0] }"
+      ></ng-container>
+    }
+  </igo-layer-viewer-bottom-actions>
+}
+
+<ng-content></ng-content>

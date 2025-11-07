@@ -1,0 +1,57 @@
+@use '@angular/material' as mat;
+@use '../../src/style/partial/common.variables' as common;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  > .igo-panel-header {
+    color: var(--mat-sys-on-primary) !important;
+    background-color: var(--mat-sys-on-primary-container);
+
+    ::ng-deep mat-icon {
+      fill: var(--mat-sys-on-primary);
+      color: var(--mat-sys-on-primary);
+    }
+  }
+
+  .igo-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: common.$igo-panel-header-height;
+    text-align: center;
+  }
+
+  .igo-panel-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    font-weight: 600;
+    flex: 1;
+    color: var(--mat-sys-on-primary) !important;
+  }
+
+  .igo-panel-content {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .igo-cursor-pointer {
+    cursor: pointer;
+  }
+
+  .panel-left,
+  .panel-right {
+    display: flex;
+    min-width: 40px; // button widht at denstiy -2
+  }
+
+  .panel-right {
+    &:not(:empty) {
+      padding-right: 4px;
+    }
+  }
+}

@@ -19,14 +19,16 @@
           "layer": "This layer comes from an external organization.",
           "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
         },
+        "library.predefined.select": "Select a catalog",
+        "library.custom.title": "Title",
         "library.add": "Add this catalog to the list",
-        "library.cancel": "Cancel",
+        "library.predefined": "Predefined list",
+        "library.custom": "Advanced configuration",
         "library.remove": "Remove this catalog from the list",
         "library.inlist": {
           "title": "Catalog already contained",
           "message": "The catalog is already contained in the list."
         },
-        "library.addTitle": "Adding a catalog",
         "library.addBtn": "Add a catalog"
       },
       "clickOnMap": {
@@ -103,16 +105,21 @@
           "GPX": "GPX",
           "KML": "KML",
           "Shapefile": "Shapefile",
-          "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (Excel compatible)",
+          "CSV": "CSV",
+          "Excel": "Excel",
           "URL": "External link"
+        },
+        "separator": "Separator",
+        "csv.separator": {
+          "auto": "Auto detection",
+          "comma": "Comma",
+          "semicolon": "Semicolon"
         },
         "gpx.error.poly": {
           "title": "GPX error",
           "text": "GPX format do now allow polygon features"
         },
         "encoding": {
-          "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
         },
         "combinedLayers": "combinedLayers"
@@ -219,10 +226,28 @@
         "drawFeature": ""
       },
       "layer": {
+        "layer": "Layer",
+        "name": "Layer name",
+        "group": {
+          "name": "Group name",
+          "create": "Create group",
+          "rename": "Rename group",
+          "hide": "Hide group",
+          "hideChildren": "Hided by a group",
+          "show": "Show group"
+        },
+        "type": {
+          "raster": "Raster",
+          "vector": "Vector",
+          "measure": "Measure",
+          "draw": "Drawing"
+        },
+        "rename": "Rename layer",
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "hideSelectedLayers": "Hide selected layers",
         "notInResolution": "Layer isn't visible at the active scale. Zoom in or out to display.",
+        "unavailableLayer": "Unavailable layer",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -239,6 +264,7 @@
         "removeLayer": "Remove this layer from the map",
         "removeSelectedLayers": "Remove selected layers from the map",
         "removeSelectedLayersRestriction": "Some selected layers cannot be removed",
+        "deleteLayer": "Delete layer",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
         "showSelectedLayers": "Show selected layers",
@@ -346,98 +372,102 @@
           "bottomright": "Bottom right corner of the map",
           "newpage": "On a new page",
           "newimage": "On a new image"
-        }
-      },
-      "directionsForm": {
-        "stopLayer": "Directions - stops",
-        "routeLayer": "Directions - route",
-        "start": "Start",
-        "intermediate": "Intermediate",
-        "end": "End",
-        "directionsBtn": "Get route",
-        "resetDirectionsBtn": "Reset",
-        "zoomRoute": "Zoom on route",
-        "null": "",
-        "directions": "Directions",
-        "raiseStop": "Raise stop's priority",
-        "lowerStop": "Lower stop's priority",
-        "addStop": "Add a stop",
-        "clearStop": "Clear this stop",
-        "moveStop": "Move this stop",
-        "removeStop": "Remove this stop",
-        "drivingOptions": "Options",
-        "summary": "Direction's summary",
-        "stopsList": "Stops's list",
-        "instructions": "Instructions",
-        "copy": "Copy directions",
-        "geolocate": "Use current localisation as stop",
-        "link": "Link",
-        "print": "Print",
-        "dialog": {
-          "copyMsg": "Directions copied to clipboard",
-          "copyMsgLink": "Link for directions copied to clipboard",
-          "copyTitle": "Directions"
         },
-        "toggleActive": "Activate direction control"
+        "showNorthArrow": "Show north arrow"
       },
       "directions": {
-        "uturn": "u-turn",
-        "sharp right": "sharp right",
-        "right": "right",
-        "slight right": "slightly on right",
-        "sharp left": "sharp left",
-        "left": "left",
-        "slight left": "slightly on left",
-        "straight": "forward",
-        "turn": {
-          "straight": "Continue on {{route}}",
-          "uturn": "Make u-turn on {{route}}",
-          "else": "Turn {{translatedModifier}} onto {{route}}"
+        "buttons": {
+          "copyDirections": "Copy directions to clipboard",
+          "copyLink": "Copy link to clipboard",
+          "downloadDirections": "Download directions",
+          "message": {
+            "copyDirections": "Directions copied to clipboard",
+            "copyLink": "Link copied to clipboard"
+          },
+          "resetStops": "Reset stops",
+          "zoomOnRoute": "Zoom on route"
         },
-        "new name": "Head {{translatedDirection}} on {{route}}",
-        "depart": "Head {{translatedDirection}} on {{route}}",
-        "arrive": {
-          "lastStep": "You have reached your destination {{coma}} {{aggregatedDirection}}",
-          "intermediate": "You have reached the intermediate stop onto {{route}}"
+        "directions": "Directions",
+        "directionsText": {
+          "link": "Link",
+          "stopList": "Stops",
+          "summary": "Summary"
         },
-        "merge": "Continue on {{route}}",
-        "on ramp": "Take the ramp {{aggregatedDirection}}",
-        "off ramp": "Take exit {{aggregatedDirection}}",
-        "fork": {
-          "left": "Merge left onto {{route}}",
-          "right": "Merge right onto {{route}}",
-          "else": "Continue on {{route}}"
+        "forestRoadsWarning": {
+          "title": "Warning",
+          "text": "Some forest roads may be impassable or not suitable for vehicles."
         },
-        "end of road": "At the end of the road, turn {{translatedModifier}} onto {{route}}",
-        "use lane": "Take the lane ...",
-        "continue": {
-          "notUturn": "Continue on {{route}}"
+        "input": {
+          "addStop": "Add a destination",
+          "clearStop": "Clear stop",
+          "currentPosition": "Use current position",
+          "end": "Destination",
+          "intermediate": "Intermediate stop",
+          "moveStop": "Move stop",
+          "placeholder": "Click on the map or type to search",
+          "removeStop": "Remove stop",
+          "start": "Starting point"
         },
-        "roundabout": "At the roundabout, take the {{exit}}{{cntSuffix}} exit towards {{route}}",
-        "rotary": "Roundabout rotary ...",
-        "roundabout turn": "Roundabout, take the ...",
-        "exit roundabout": "Continue to {{route}}",
-        "notification": "notification ...",
-        "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
-        "unknown": "???",
-
-        "cntSuffix": {
-          "first": "st",
-          "secondAndMore": "rd"
+        "layer": {
+          "stops": "Directions - Stops",
+          "route": "Directions - Route"
         },
-        "modifier": {
-          "prefix": "on the "
+        "results": {
+          "direction": {
+            "n": "north",
+            "ne": "northeast",
+            "e": "east",
+            "se": "southeast",
+            "s": "south",
+            "sw": "southwest",
+            "w": "west",
+            "nw": "northwest"
+          },
+          "maneuverModifier": {
+            "uturn": "u-turn",
+            "sharp right": "sharp right",
+            "right": "right",
+            "slight right": "slight right",
+            "sharp left": "sharp left",
+            "left": "left",
+            "slight left": "slight left",
+            "straight": "straight"
+          },
+          "maneuverType": {
+            "arrive": {
+              "lastStep": "You have reached your destination, {{name}}",
+              "intermediate": "You have reached an intermediate stop, {{name}}"
+            },
+            "continue": "Continue on {{name}}",
+            "depart": "Head {{maneuverBearing}} on {{name}}",
+            "end of road": "At the end of the road, turn {{maneuverModifier}} onto {{name}}",
+            "exit roundabout": "Continue to {{name}}",
+            "fork": {
+              "left": "Keep left onto {{name}}",
+              "right": "Keep right onto {{name}}",
+              "else": "Continue on {{name}}"
+            },
+            "merge": "Continue on {{name}}",
+            "new name": "Head {{maneuverBearing}} on {{name}}",
+            "notification": "",
+            "off ramp": "Take the exit on the {{maneuverModifier}}",
+            "on ramp": "Take the ramp on the {{maneuverModifier}}",
+            "rotary": "",
+            "roundabout": "At the roundabout, take the exit towards {{name}}",
+            "roundabout turn": "",
+            "turn": {
+              "straight": "Continue {{maneuverModifier}} on {{name}}",
+              "uturn": "Make a {{maneuverModifier}}}} onto {{name}}",
+              "else": "Make a {{maneuverModifier}} turn onto {{name}}"
+            }
+          },
+          "routeOptions": "Route options",
+          "stepTitleTooltip": "Zoom on location"
+        },
+        "toggle": {
+          "activateControl": "Activate controls",
+          "type": "Include forest roads"
         }
-      },
-      "cardinalPoints": {
-        "n": "north",
-        "ne": "northeast",
-        "e": "east",
-        "se": "southeast",
-        "s": "south",
-        "sw": "southwest",
-        "w": "west",
-        "nw": "northwest"
       },
       "search": {
         "placeholder": "Search for a localisation or a layer",
@@ -497,6 +527,10 @@
             "oldCity": "Old city",
             "mrc": "MRC",
             "regadmin": "Administrative Region",
+            "rss": "Social and health regions (RSS)",
+            "rls": "Local health networks (RLS)",
+            "clsc": "Local community service centers (CLSC)",
+            "tours": "Cooling towers",
             "road": "Road",
             "intersection": "Intersection",
             "place": "Place",
@@ -510,7 +544,8 @@
             "cadastre": "Cadastre",
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
-            "cultpatri": "Culture and heritage"
+            "cultpatri": "Culture and heritage",
+            "unites": "Units (apartments, offices, etc.)"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -547,6 +582,17 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "reset": {
+              "button": "Reset search options",
+              "dialog": {
+                "title": "Choose search services to reset",
+                "form.field.title": "Choose search service(s)"
+              },
+              "notice": {
+                "multiple": "The options for the selected search services have been reset.",
+                "single": "The options for the selected search service have been reset."
+              }
+            },
             "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",
@@ -673,7 +719,8 @@
         "palais-justice": "Courthouses",
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
-        "polices": "Police station"
+        "polices": "Police station",
+        "unites": "Unit number"
       },
       "measure": {
         "dialog": {
@@ -790,8 +837,20 @@
         "addError": "An error has occured. Entity could not be added.",
         "modifyError": "An error has occured. Entity could not be modified.",
         "cancel": "Cancel",
-        "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+        "inMapExtent.active.tooltip": "Show only features contained in the map",
+        "inMapExtent.inactive.tooltip": "Show all features",
+        "widget": {
+          "interactiveSelection": {
+            "selection.add": "Add to the current selection",
+            "selection.new": "Select",
+            "selection.remove": "Remove from the current selection",
+            "reset": {
+              "button": "Reset"
+            },
+            "action.title": "How to handle results",
+            "buffer.title": "Buffer size (meters)"
+          }
+        }
       },
       "formValidation": {
         "mandatory": "{{column}} is mandatory",

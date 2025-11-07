@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -16,7 +16,8 @@ import {
   TimeFilterStyle,
   TimeFilterType
 } from '../../filter/shared/time-filter.enum';
-import {
+import { TimeFilterOptions } from '../../filter/shared/time-filter.interface';
+import type {
   ItemStyleOptions,
   LegendOptions
 } from '../../layer/shared/layers/legend.interface';
@@ -28,38 +29,28 @@ import {
 } from '../../query/shared/query.enums';
 import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
-  ArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions,
-  CartoDataSourceOptions,
-  TileArcGISRestDataSourceOptions,
-  WMSDataSourceOptions,
-  WMTSDataSourceOptions
-} from './datasources';
-
-export enum TypeCapabilities {
-  wms = 'wms',
-  wmts = 'wmts',
-  arcgisrest = 'esriJSON',
-  imagearcgisrest = 'esriJSON',
-  tilearcgisrest = 'esriJSON'
-}
-
-export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
+  TypeCapabilities,
+  TypeCapabilitiesStrings
+} from './capabilities.interface';
+import { ArcGISRestDataSourceOptions } from './datasources/arcgisrest-datasource.interface';
+import { CartoDataSourceOptions } from './datasources/carto-datasource.interface';
+import { ArcGISRestImageDataSourceOptions } from './datasources/imagearcgisrest-datasource.interface';
+import { TileArcGISRestDataSourceOptions } from './datasources/tilearcgisrest-datasource.interface';
+import { WMSDataSourceOptions } from './datasources/wms-datasource.interface';
+import { WMTSDataSourceOptions } from './datasources/wmts-datasource.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CapabilitiesService {
+  private http = inject(HttpClient);
+  private mapService = inject(MapService);
+
   private parsers = {
     wms: new WMSCapabilities(),
     wmts: new WMTSCapabilities(),
     esriJSON: new EsriJSON()
   };
-
-  constructor(
-    private http: HttpClient,
-    private mapService: MapService
-  ) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -322,6 +313,15 @@ export class CapabilitiesService {
       queryable = false;
     }
 
+    if (baseOptions.params.STYLES) {
+      const style = legendOptions?.stylesAvailable?.find(
+        (style) => style.name === baseOptions.params.STYLES
+      );
+      if (!style) {
+        delete baseOptions.params.STYLES;
+      }
+    }
+
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
@@ -539,11 +539,11 @@ export class CapabilitiesService {
     }
   }
 
-  getTimeFilter(layer) {
+  getTimeFilter(layer): TimeFilterOptions {
     let dimension;
 
     if (layer.Dimension) {
-      const timeFilter: any = {};
+      const timeFilter: TimeFilterOptions = {};
       dimension = layer.Dimension[0];
 
       if (dimension.values) {
@@ -554,7 +554,7 @@ export class CapabilitiesService {
       }
 
       if (dimension.default) {
-        timeFilter.value = dimension.default;
+        timeFilter.value = timeFilter.default = dimension.default;
       }
       return timeFilter;
     }

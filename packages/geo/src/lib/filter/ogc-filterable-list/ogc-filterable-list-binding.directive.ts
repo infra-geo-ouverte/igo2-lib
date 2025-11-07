@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -6,16 +6,18 @@ import { MapService } from '../../map/shared/map.service';
 import { OgcFilterableListComponent } from './ogc-filterable-list.component';
 
 @Directive({
-  selector: '[igoOgcFilterableListBinding]'
+  selector: '[igoOgcFilterableListBinding]',
+  standalone: true
 })
 export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
+  private mapService = inject(MapService);
+
   private component: OgcFilterableListComponent;
   private layers$$: Subscription;
 
-  constructor(
-    @Self() component: OgcFilterableListComponent,
-    private mapService: MapService
-  ) {
+  constructor() {
+    const component = inject(OgcFilterableListComponent, { self: true });
+
     this.component = component;
   }
 
@@ -23,9 +25,11 @@ export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
     // Override input layers
     this.component.layers = [];
 
-    this.layers$$ = this.mapService.getMap().layers$.subscribe((layers) => {
-      this.component.layers = layers.filter((layer) => layer.showInLayerList);
-    });
+    this.layers$$ = this.mapService
+      .getMap()
+      .layerController.layersFlattened$.subscribe((layers) => {
+        this.component.layers = layers;
+      });
   }
 
   ngOnDestroy() {

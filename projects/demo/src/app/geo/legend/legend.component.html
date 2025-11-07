@@ -1,0 +1,24 @@
+<app-doc-viewer
+  title="Simple Map with a legend list"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/legend">
+    <igo-map-browser [map]="map" [view]="view">
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-panel title="Legends">
+      <igo-layer-legend-list
+        igoLayerLegendListBinding
+        [excludeBaseLayers]="true"
+        [allowShowAllLegends]="true"
+        [updateLegendOnResolutionChange]="false"
+        [showAllLegendsValue]="false"
+      >
+      </igo-layer-legend-list>
+    </igo-panel>
+  </app-example-viewer>
+</app-doc-viewer>

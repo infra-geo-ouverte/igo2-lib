@@ -1,3 +1,4 @@
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,26 +8,32 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
+import { CollapsibleComponent } from '@igo2/common/collapsible';
 import {
   EntityState,
+  EntityStore,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreWatcher,
-  EntityStoreWithStrategy
-} from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+  EntityStoreWatcher
+} from '@igo2/common/entity';
+import { ListComponent, ListItemDirective } from '@igo2/common/list';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchSource } from '../shared/sources/source';
 import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { SearchResultsItemComponent } from './search-results-item.component';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -41,10 +48,24 @@ export enum SearchResultMode {
   selector: 'igo-search-results',
   templateUrl: './search-results.component.html',
   styleUrls: ['./search-results.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ListComponent,
+    CollapsibleComponent,
+    NgTemplateOutlet,
+    SearchResultsItemComponent,
+    ListItemDirective,
+    MatTabsModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
-  private showResultsCount: boolean = true;
+  private cdRef = inject(ChangeDetectorRef);
+  private searchService = inject(SearchService);
+  private configService = inject(ConfigService);
+
+  private showResultsCount = true;
 
   /**
    * Reference to the SearchResultMode enum
@@ -68,7 +89,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * Search results store
    */
-  @Input() store: EntityStoreWithStrategy<SearchResult>;
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * to show hide results icons
@@ -88,7 +109,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * To check if the view for tabsMode for search-result-tools
    */
-  @Input() tabsMode: boolean = false;
+  @Input() tabsMode = false;
 
   /**
    * Search term
@@ -105,7 +126,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
-  @Input() termSplitter: string = '|';
+  @Input() termSplitter = '|';
 
   /**
    * Event emitted when a result is focused
@@ -150,12 +171,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   private _results$: Observable<
     { source: SearchSource; results: SearchResult[] }[]
   >;
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private searchService: SearchService,
-    private configService: ConfigService
-  ) {}
 
   /**
    * Bind the search results store to the watcher

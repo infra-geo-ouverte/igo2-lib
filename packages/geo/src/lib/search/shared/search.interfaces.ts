@@ -1,8 +1,13 @@
+import { IconSvg } from '@igo2/common/icon';
+
 import { Observable } from 'rxjs';
 
 import { CommonVectorStyleOptions } from '../../style/shared/vector/vector-style.interface';
-import { ReverseSearchOptions, TextSearchOptions } from './sources';
 import { SearchSource } from './sources/source';
+import {
+  ReverseSearchOptions,
+  TextSearchOptions
+} from './sources/source.interfaces';
 
 export interface Research {
   request: Observable<SearchResult[]>;
@@ -10,24 +15,26 @@ export interface Research {
   source: SearchSource;
 }
 
-export interface SearchResult<T = { [key: string]: any }> {
+export interface SearchResult<T = Record<string, any>> {
   data: T;
   source: SearchSource;
-  meta: {
-    dataType: string;
-    id: string;
-    title: string;
-    titleHtml?: string;
-    pointerSummaryTitle?: string;
-    icon: string;
-    score?: number;
-    nextPage?: boolean;
-  };
+  meta: SearchMeta;
   style?: {
     base?: CommonVectorStyleOptions;
     selection?: CommonVectorStyleOptions;
     focus?: CommonVectorStyleOptions;
   };
+}
+
+export interface SearchMeta {
+  id: string;
+  dataType: string;
+  title: string;
+  titleHtml?: string;
+  icon: string | IconSvg;
+  score?: number;
+  nextPage?: boolean;
+  pointerSummaryTitle?: string;
 }
 
 /**

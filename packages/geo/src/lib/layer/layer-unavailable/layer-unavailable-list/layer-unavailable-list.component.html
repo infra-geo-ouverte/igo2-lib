@@ -1,0 +1,10 @@
+<igo-list [navigation]="false" [selection]="false">
+  @for (layer of layersOptions; track layer) {
+    <igo-layer-unavailable
+      igoListItem
+      [layerOptions]="layer"
+      (remove)="deleteUnavailableLayer($event)"
+    >
+    </igo-layer-unavailable>
+  }
+</igo-list>

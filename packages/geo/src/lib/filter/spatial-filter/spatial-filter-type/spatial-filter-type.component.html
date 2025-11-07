@@ -1,10 +1,13 @@
 <mat-tab-group
   [selectedIndex]="selectedTypeIndex.value"
   (selectedIndexChange)="selectedTypeIndex.setValue($event)"
-  (selectedTabChange)="onTypeChange($event)"
+  (selectedTabChange)="onTypeChange()"
 >
-  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
-    <mat-form-field>
+  <mat-tab
+    [label]="'igo.geo.spatialFilter.predefined' | translate"
+    id="spatial-filter-predefined-tab"
+  >
+    <mat-form-field id="spatial-filter-field-type">
       <mat-label>{{
         'igo.geo.spatialFilter.searchLabel' | translate
       }}</mat-label>
@@ -12,9 +15,11 @@
         (selectionChange)="onSelectionChange()"
         [(value)]="selectedQueryType"
       >
-        <mat-option *ngFor="let queryType of queryType" [value]="queryType">
-          {{ 'igo.geo.terrapi.' + queryType | translate }}
-        </mat-option>
+        @for (queryType of queryType; track queryType) {
+          <mat-option [value]="queryType">
+            {{ 'igo.geo.terrapi.' + queryType | translate }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <igo-spatial-filter-list
@@ -30,7 +35,10 @@
     </igo-spatial-filter-list>
   </mat-tab>
 
-  <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
+  <mat-tab
+    [label]="'igo.geo.spatialFilter.draw' | translate"
+    id="spatial-filter-draw-tab"
+  >
     <div class="spatial-type-toggle">
       <mat-button-toggle-group
         [value]="activeDrawType"
@@ -40,13 +48,13 @@
           [value]="spatialType.Polygon"
           [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate"
         >
-          <mat-icon svgIcon="pentagon-outline"></mat-icon>
+          <mat-icon>pentagon</mat-icon>
         </mat-button-toggle>
         <mat-button-toggle
           [value]="spatialType.Point"
           [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate"
         >
-          <mat-icon svgIcon="record-circle-outline"></mat-icon>
+          <mat-icon>circle</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>

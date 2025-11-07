@@ -1,3 +1,5 @@
+import { Clipboard } from '@angular/cdk/clipboard';
+import { AsyncPipe, JsonPipe, KeyValuePipe, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -7,15 +9,19 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { getEntityIcon, getEntityTitle } from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
-import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
-import { ConfigService } from '@igo2/core';
-import { Clipboard } from '@igo2/utils';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { ImageErrorDirective, SecureImagePipe } from '@igo2/common/image';
+import type { Toolbox } from '@igo2/common/tool';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { ConnectionState, NetworkService } from '@igo2/core/network';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -28,9 +34,27 @@ import { Feature } from '../shared';
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
   styleUrls: ['./feature-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatIconModule,
+    NgStyle,
+    ImageErrorDirective,
+    AsyncPipe,
+    JsonPipe,
+    KeyValuePipe,
+    IgoLanguageModule,
+    SecureImagePipe
+  ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  private http = inject(HttpClient);
+  private cdRef = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
+  private networkService = inject(NetworkService);
+  private messageService = inject(MessageService);
+  private configService = inject(ConfigService);
+
   private state: ConnectionState;
   private unsubscribe$ = new Subject<void>();
   ready = false;
@@ -79,14 +103,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return getEntityIcon(this.feature) || 'link';
   }
 
-  constructor(
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer,
-    private networkService: NetworkService,
-    private messageService: MessageService,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this.networkService
       .currentState()
       .pipe(takeUntil(this.unsubscribe$))
@@ -161,7 +178,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
             window.open(fileUrl, '_blank');
             this.cdRef.detectChanges();
           },
-          (error: Error) => {
+          () => {
             this.messageService.error(
               'igo.geo.targetHtmlUrlUnauthorized',
               'igo.geo.targetHtmlUrlUnauthorizedTitle'
@@ -171,7 +188,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     } else {
       let url = value;
       if (this.isEmbeddedLink(value)) {
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.innerHTML = value;
         url = div.children[0].getAttribute('href');
       }
@@ -229,7 +246,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return text;
   }
 
-  filterFeatureProperties(feature) {
+  filterFeatureProperties(feature): Record<string, any> {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
     let offlineButtonState;
@@ -313,7 +330,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
    * Copy the url to a clipboard
    */
   copyTextToClipboard(value: string): void {
-    const successful = Clipboard.copy(value);
+    const successful = this.clipboard.copy(value);
     if (successful) {
       this.messageService.success('igo.geo.query.link.message');
     }

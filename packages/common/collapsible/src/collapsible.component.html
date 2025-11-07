@@ -1,0 +1,17 @@
+<mat-list-item>
+  <mat-icon
+    class="igo-chevron"
+    matListItemIcon
+    igoCollapse
+    [target]="content"
+    [collapsed]="collapsed"
+    (toggle)="collapsed = $event"
+  >
+    expand_less
+  </mat-icon>
+  <span matListItemTitle>{{ title }}</span>
+</mat-list-item>
+
+<div #content>
+  <ng-content></ng-content>
+</div>

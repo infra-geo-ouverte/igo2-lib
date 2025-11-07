@@ -1,7 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Injector } from '@angular/core';
-
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { Provider } from '@angular/core';
 
 import {
   IChercheReverseSearchSource,
@@ -9,25 +6,23 @@ import {
   IChercheSearchSource
 } from './icherche';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * ICherche search result formatter factory
  * @ignore
  */
-export function defaultIChercheSearchResultFormatterFactory(
-  languageService: LanguageService
-) {
-  return new IChercheSearchResultFormatter(languageService);
+export function defaultIChercheSearchResultFormatterFactory() {
+  return new IChercheSearchResultFormatter();
 }
 
 /**
  * Function that returns a provider for the ICherche search result formatter
  */
-export function provideDefaultIChercheSearchResultFormatter() {
+export function provideDefaultIChercheSearchResultFormatter(): Provider {
   return {
     provide: IChercheSearchResultFormatter,
-    useFactory: defaultIChercheSearchResultFormatterFactory,
-    deps: [LanguageService]
+    useFactory: defaultIChercheSearchResultFormatterFactory
   };
 }
 
@@ -35,39 +30,27 @@ export function provideDefaultIChercheSearchResultFormatter() {
  * ICherche search source factory
  * @ignore
  */
-export function ichercheSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService,
-  formatter: IChercheSearchResultFormatter,
-  injector: Injector
-) {
-  return new IChercheSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${IChercheSearchSource.id}`),
-    formatter,
-    injector
-  );
+export function ichercheSearchSourceFactory() {
+  return new IChercheSearchSource();
 }
 
 /**
  * Function that returns a provider for the ICherche search source
  */
-export function provideIChercheSearchSource() {
+export function provideIChercheSearchSource(): Provider {
   return {
     provide: SearchSource,
     useFactory: ichercheSearchSourceFactory,
-    multi: true,
-    deps: [
-      HttpClient,
-      LanguageService,
-      StorageService,
-      ConfigService,
-      IChercheSearchResultFormatter,
-      Injector
+    multi: true
+  };
+}
+
+export function withIChercheSource(): SearchSourceFeature<SearchSourceKind.ICherche> {
+  return {
+    kind: SearchSourceKind.ICherche,
+    providers: [
+      provideIChercheSearchSource(),
+      provideDefaultIChercheSearchResultFormatter()
     ]
   };
 }
@@ -76,20 +59,8 @@ export function provideIChercheSearchSource() {
  * IChercheReverse search source factory
  * @ignore
  */
-export function ichercheReverseSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService,
-  injector: Injector
-) {
-  return new IChercheReverseSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${IChercheReverseSearchSource.id}`),
-    injector
-  );
+export function ichercheReverseSearchSourceFactory() {
+  return new IChercheReverseSearchSource();
 }
 
 /**
@@ -99,7 +70,16 @@ export function provideIChercheReverseSearchSource() {
   return {
     provide: SearchSource,
     useFactory: ichercheReverseSearchSourceFactory,
-    multi: true,
-    deps: [HttpClient, LanguageService, StorageService, ConfigService, Injector]
+    multi: true
+  };
+}
+
+export function withIChercheReverseSource(): SearchSourceFeature<SearchSourceKind.IChercheReverse> {
+  return {
+    kind: SearchSourceKind.IChercheReverse,
+    providers: [
+      provideIChercheReverseSearchSource(),
+      provideDefaultIChercheSearchResultFormatter()
+    ]
   };
 }

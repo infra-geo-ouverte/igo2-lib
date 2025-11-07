@@ -1,5 +1,5 @@
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -15,7 +15,9 @@ export class StyleListService {
   private styleList: object = {};
   private httpClient: HttpClient;
 
-  constructor(handler: HttpBackend) {
+  constructor() {
+    const handler = inject(HttpBackend);
+
     this.httpClient = new HttpClient(handler);
   }
 
@@ -29,14 +31,14 @@ export class StyleListService {
   /**
    * This method loads "[path]" to get all styleList's variables
    */
-  public load(options: StyleListOptions) {
+  public load(options: StyleListOptions): void | Promise<unknown> {
     const baseStyleList = options.default || {};
     if (!options.path) {
       this.styleList = baseStyleList;
-      return true;
+      return;
     }
 
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve) => {
       this.httpClient
         .get(options.path)
         .pipe(

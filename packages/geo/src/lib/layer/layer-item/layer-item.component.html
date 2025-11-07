@@ -1,94 +1,60 @@
-<mat-list-item class="igo-layer-list-item">
-  <mat-checkbox
-    *ngIf="selectionMode"
-    class="layerCheck"
-    matListItemIcon
-    (change)="check()"
-    [checked]="layerCheck"
-  >
-  </mat-checkbox>
-  <span
-    matListItemTitle
-    class="igo-layer-title"
-    [matTooltip]="tooltipText"
-    matTooltipShowDelay="500"
-    (click)="toggleLegendOnClick()"
-  >
-    {{ layer.title }}
-  </span>
-
-  <div matListItemMeta>
-    <button
-      *ngIf="!selectionMode"
-      mat-icon-button
-      [color]="layer.visible ? 'primary' : 'default'"
-      collapsibleButton
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="eyeTooltip | translate"
-      (click)="toggleVisibility($event)"
-    >
-      <mat-icon
-        aria-hidden="false"
-        matBadge="?"
-        matBadgeColor="accent"
-        matBadgeSize="small"
-        matBadgePosition="after"
-        [matBadgeHidden]="queryBadgeHidden$ | async"
-        [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-        [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'"
+<div class="igo-layer-list-item">
+  <div class="layer-content">
+    @if (viewerOptions.mode === 'selection') {
+      <mat-checkbox
+        [checked]="selected"
+        [disabled]="selectionDisabled"
+        (change)="handleSelect($event)"
       >
-      </mat-icon>
-    </button>
-
-    <button
-      *ngIf="selectionMode"
-      class="selection-eye"
-      mat-icon-button
-      [color]="layer.visible ? 'primary' : 'default'"
-      collapsibleButton
-      tooltip-position="below"
+      </mat-checkbox>
+    }
+    <ng-content></ng-content>
+    <span
+      class="igo-layer-title"
+      [matTooltip]="tooltipText"
       matTooltipShowDelay="500"
-      [matTooltip]="
-        layer.visible
-          ? ('igo.geo.layer.hideLayer' | translate)
-          : ('igo.geo.layer.showLayer' | translate)
-      "
-      (click)="toggleVisibility($event)"
+      (click)="toggleLegendOnClick()"
     >
-      <mat-icon
-        aria-hidden="false"
-        matBadge="?"
-        matBadgeColor="accent"
-        matBadgeSize="small"
-        matBadgePosition="after"
-        [matBadgeHidden]="queryBadgeHidden$ | async"
-        [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
-        [svgIcon]="layer.visible ? 'eye' : 'eye-off'"
-      >
-      </mat-icon>
-    </button>
-
-    <button
-      *ngIf="!selectionMode"
-      class="actions-button"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.moreOptions' | translate"
-      mat-icon-button
-      color="primary"
-      (click)="toggleLayerTool()"
-    >
-      <mat-icon svgIcon="dots-horizontal"></mat-icon>
-    </button>
+      {{ layer.title }}
+    </span>
   </div>
-</mat-list-item>
 
-<div #legend class="igo-layer-legend-container">
-  <igo-layer-legend
-    *ngIf="showLegend$ | async"
-    [layer]="layer"
-    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
-  >
-  </igo-layer-legend>
+  <div class="list-actions">
+    <div class="list-secondary-actions">
+      @if (viewerOptions.mode !== 'selection') {
+        <button
+          class="actions-button"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.layer.moreOptions' | translate"
+          mat-icon-button
+          color="primary"
+          (click)="toggleLayerTool()"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+      }
+    </div>
+
+    <igo-layer-visibility-button
+      [layer]="layer"
+      [tooltip]="visibilityTooltip"
+      [disabled]="isDisabled"
+      [inResolutionsRange]="layer.isInResolutionsRange$ | async"
+      [showQueryBadge]="(queryBadgeHidden$ | async) === false"
+      (visibilityChange)="handleVisibilityChange($event)"
+    ></igo-layer-visibility-button>
+  </div>
 </div>
+
+@if (showLegend$ | async) {
+  <div class="igo-layer-legend-container">
+    <igo-layer-legend
+      [layer]="layer"
+      [updateLegendOnResolutionChange]="
+        viewerOptions.legend.updateOnResolutionChange
+      "
+    >
+    </igo-layer-legend>
+  </div>
+}

@@ -1,7 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { StorageService } from '@igo2/core';
-import { userAgent } from '@igo2/utils';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
@@ -9,7 +13,14 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'igo-wake-lock-button',
   templateUrl: './wake-lock-button.component.html',
-  styleUrls: ['./wake-lock-button.component.scss']
+  styleUrls: ['./wake-lock-button.component.scss'],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 
 /**
@@ -22,7 +33,9 @@ import { BehaviorSubject } from 'rxjs';
  * and replace it by a WakeLock API implementation.
  */
 export class WakeLockButtonComponent {
-  @Input() color: string = 'primary';
+  private storageService = inject(StorageService);
+
+  @Input() color = 'primary';
   @Input()
   get enabled(): boolean {
     return this.storageService.get('wakeLockEnabled') as boolean;
@@ -32,27 +45,11 @@ export class WakeLockButtonComponent {
   }
 
   private noSleep: NoSleep;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('sleep');
+  readonly icon$ = new BehaviorSubject<string>('bedtime');
   public visible = false;
 
-  constructor(private storageService: StorageService) {
+  constructor() {
     this.noSleep = new NoSleep();
-    const nonWakeLockApiBrowser = userAgent.satisfies({
-      ie: '>0',
-      edge: '<84',
-      chrome: '<84',
-      firefox: '>0',
-      opera: '<70',
-      safari: '>0'
-    });
-    if (nonWakeLockApiBrowser) {
-      this.disableWakeLock();
-      this.enabled = false;
-      window.addEventListener('blur', () => {
-        this.disableWakeLock();
-        this.enabled = false;
-      });
-    }
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }
 
@@ -65,7 +62,7 @@ export class WakeLockButtonComponent {
   private enableWakeLock() {
     this.noSleep.enable();
     this.enabled = true;
-    this.icon$.next('sleep-off');
+    this.icon$.next('bedtime_off');
   }
   /**
    * Let display sleep
@@ -73,7 +70,7 @@ export class WakeLockButtonComponent {
   private disableWakeLock() {
     this.noSleep.disable();
     this.enabled = false;
-    this.icon$.next('sleep');
+    this.icon$.next('bedtime');
   }
 
   toggleWakeLock() {

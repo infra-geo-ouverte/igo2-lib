@@ -1,26 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
-
 import { CadastreSearchSource } from './cadastre';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * Cadastre search source factory
  * @ignore
  */
-export function cadastreSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService
-) {
-  return new CadastreSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${CadastreSearchSource.id}`)
-  );
+export function cadastreSearchSourceFactory() {
+  return new CadastreSearchSource();
 }
 
 /**
@@ -30,7 +17,13 @@ export function provideCadastreSearchSource() {
   return {
     provide: SearchSource,
     useFactory: cadastreSearchSourceFactory,
-    multi: true,
-    deps: [HttpClient, LanguageService, StorageService, ConfigService]
+    multi: true
+  };
+}
+
+export function withCadastreSource(): SearchSourceFeature<SearchSourceKind.Cadastre> {
+  return {
+    kind: SearchSourceKind.Cadastre,
+    providers: [provideCadastreSearchSource()]
   };
 }

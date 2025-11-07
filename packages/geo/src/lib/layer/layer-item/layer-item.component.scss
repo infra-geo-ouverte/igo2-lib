@@ -1,29 +1,64 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../common/src/style/partial/common.variables';
+@use '../layer-base/layer-base';
 
 :host {
   overflow: hidden;
+  background-color: var(--mat-sys-surface);
 
-  ::ng-deep .igo-layer-title {
-    display: block;
-    width: 100%;
-    cursor: pointer;
-  }
+  ::ng-deep {
+    button {
+      &.mat-default {
+        mat-icon {
+          color: var(--mat-sys-on-surface);
+          fill: var(--mat-sys-on-surface);
+        }
+      }
 
-  .igo-layer-legend-container {
-    padding-left: 18px;
-    width: calc(100% - 18px);
-  }
-
-  mat-icon {
-    &[matBadge] ::ng-deep .mat-badge-content {
-      font-size: 12px;
+      &.disabled {
+        $color-disabled: var(--mat-sys-on-secondary-fixed);
+        mat-icon {
+          color: $color-disabled;
+          fill: $color-disabled;
+          opacity: 0.64;
+        }
+      }
     }
   }
+}
 
-  .layerCheck {
-    align-self: baseline;
-    width: 16px;
-    padding-right: 0px;
-  }
+.list-actions {
+  display: flex;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.layer-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.igo-layer-title {
+  display: block;
+  cursor: pointer;
+
+  max-height: 48px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+
+.igo-layer-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.igo-layer-legend-container {
+  padding-top: 4px;
+  width: calc(100% - 12px);
 }

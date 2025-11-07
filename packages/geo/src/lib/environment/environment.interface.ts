@@ -1,16 +1,16 @@
-import { DOMOptions, DepotOptions } from '@igo2/common';
+import { DOMOptions } from '@igo2/common/dom';
+import { DepotOptions } from '@igo2/common/environment';
 
-import { CatalogServiceOptions } from '../catalog';
-import { OptionsApiOptions } from '../datasource';
-import { DirectionsSourceOptions } from '../directions';
+import { CatalogServiceOptions } from '../catalog/shared/catalog.interface';
+import { OptionsApiOptions } from '../datasource/shared/options/options-api.interface';
+import { DirectionsSourceOptions } from '../directions/directions-sources/directions-source.interface';
 import { DrawOptions } from '../draw/shared/draw.interface';
-import { SpatialFilterOptions } from '../filter';
-import { ImportExportServiceOptions } from '../import-export';
-import {
-  GeolocationOptions,
-  HomeExtentButtonOptions,
-  Projection
-} from '../map';
+import { SpatialFilterOptions } from '../filter/shared/spatial-filter.interface';
+import { ImportExportServiceOptions } from '../import-export/shared/import.interface';
+import { LayerConfig } from '../layer';
+import { HomeExtentButtonOptions } from '../map/home-extent-button/home-extent-button.interface';
+import { GeolocationOptions } from '../map/shared/controllers/geolocation.interface';
+import { Projection } from '../map/shared/projection.interfaces';
 import {
   SearchSourceOptions,
   StoredQueriesReverseSearchSourceOptions,
@@ -27,6 +27,7 @@ export interface EnvironmentOptions {
     contextListFile?: string;
     defaultContextUri?: string;
   };
+  layer?: LayerConfig;
   depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
   dom?: DOMOptions[];

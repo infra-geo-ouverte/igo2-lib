@@ -1,15 +1,27 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
-import { ConfigService, MessageService } from '@igo2/core';
-import { Layer, VectorLayer } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
+import { SpinnerComponent } from '@igo2/common/spinner';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { type AnyLayer, type IgoMap, VectorLayer } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { DetailedContext } from '../../context-manager/shared/context.interface';
@@ -26,33 +38,45 @@ import {
 @Component({
   selector: 'igo-context-import-export',
   templateUrl: './context-import-export.component.html',
-  styleUrls: ['./context-import-export.component.scss']
+  styleUrls: ['./context-import-export.component.scss'],
+  imports: [
+    MatButtonToggleModule,
+    FormsModule,
+    MatButtonModule,
+    SpinnerComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
-export class ContextImportExportComponent implements OnInit, OnDestroy {
+export class ContextImportExportComponent implements OnInit {
+  private contextImportService = inject(ContextImportService);
+  private contextExportService = inject(ContextExportService);
+  private messageService = inject(MessageService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private config = inject(ConfigService);
+  private contextService = inject(ContextService);
+
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
-  public inputProj: string = 'EPSG:4326';
+  public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
-  public layerList: Layer[];
-  public userControlledLayerList: Layer[];
+  public layerList: AnyLayer[];
+  public userControlledLayerList: readonly AnyLayer[];
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
-  public activeImportExport: string = 'import';
-
-  private layers$$: Subscription;
+  public activeImportExport = 'import';
 
   @Input() map: IgoMap;
 
-  constructor(
-    private contextImportService: ContextImportService,
-    private contextExportService: ContextExportService,
-    private messageService: MessageService,
-    private formBuilder: UntypedFormBuilder,
-    private config: ConfigService,
-    private contextService: ContextService
-  ) {
+  constructor() {
     this.buildForm();
   }
 
@@ -63,12 +87,9 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
-    this.layers$$ = this.map.layers$.subscribe(() => {
-      this.layerList = this.contextService.getContextLayers(this.map);
-      this.userControlledLayerList = this.layerList.filter(
-        (layer) => layer.showInLayerList
-      );
-    });
+
+    this.layerList = this.map.layerController.all;
+    this.userControlledLayerList = this.map.layerController.treeLayers;
   }
 
   importFiles(files: File[]) {
@@ -99,14 +120,13 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.contextExportService
       .export(this.res)
       .pipe(take(1))
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
+      .subscribe({
+        error: (error: Error) => this.onFileExportError(error),
+        complete: () => {
           this.onFileExportSuccess();
           this.loading$.next(false);
         }
-      );
+      });
   }
 
   private buildForm() {
@@ -151,9 +171,5 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
 
   onImportExportChange(event) {
     this.activeImportExport = event.value;
-  }
-
-  ngOnDestroy(): void {
-    this.layers$$.unsubscribe();
   }
 }

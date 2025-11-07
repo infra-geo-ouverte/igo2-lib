@@ -1,12 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { ContextService, DetailedContext } from '@igo2/context';
-import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
+import { DetailedContext } from '@igo2/context';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { AnyLayer, IgoMap, Layer, VectorLayer, isLayerItem } from '@igo2/geo';
 
 import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
@@ -14,12 +24,28 @@ import { MapState } from '../../map.state';
 @Component({
   selector: 'igo-advanced-swipe',
   templateUrl: './advanced-swipe.component.html',
-  styleUrls: ['./advanced-swipe.component.scss']
+  styleUrls: ['./advanced-swipe.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    MatSlideToggleModule,
+    MatListModule,
+    MatIconModule,
+    IgoLanguageModule
+  ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
-  public swipe: boolean = false;
-  public layerList: Layer[];
-  public userControlledLayerList: Layer[];
+  mapState = inject(MapState);
+  private formBuilder = inject(UntypedFormBuilder);
+  private toolState = inject(ToolState);
+
+  public swipe = false;
+  public layerList: AnyLayer[];
+  public userControlledLayerList: AnyLayer[];
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public res: DetailedContext;
@@ -32,12 +58,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  constructor(
-    public mapState: MapState,
-    private contextService: ContextService,
-    private formBuilder: UntypedFormBuilder,
-    private toolState: ToolState
-  ) {
+  constructor() {
     this.buildForm();
   }
 
@@ -46,11 +67,14 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.map.layers$.subscribe(
-      (ll) =>
-        (this.userControlledLayerList = ll.filter(
+    this.map.layerController.all$.subscribe(
+      (layers) =>
+        (this.userControlledLayerList = layers.filter(
           (layer) =>
-            !layer.baseLayer && layer.showInLayerList && layer.displayed
+            isLayerItem(layer) &&
+            !layer.baseLayer &&
+            layer.showInLayerList &&
+            layer.displayed
         ))
     );
   }
@@ -95,7 +119,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     if (e._selected) {
       e._selected = false;
     }
-    const allLayers = this.userControlledLayerList.length;
+    const allLayers = this.userControlledLayerList?.length;
     const selectedLayers = this.form.controls.layers.value.length;
     if (selectedLayers === allLayers) {
       e._selected = true;

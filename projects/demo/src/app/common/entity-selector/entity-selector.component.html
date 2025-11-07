@@ -1,0 +1,23 @@
+<app-doc-viewer title="Entity Selector" subtitle="Common">
+  <app-example-viewer codeFolder="common/entity-selector">
+    <igo-entity-selector
+      [store]="store"
+      [titleAccessor]="getTitle"
+      [emptyText]="''"
+      [placeholder]="'Select an entity'"
+      (selectedChange)="onSelectedChange($event)"
+    >
+    </igo-entity-selector>
+
+    @if (entityIsSelected) {
+      <div>
+        <p>ID: {{ (selectedEntity$ | async).id }}</p>
+        <p>Name: {{ (selectedEntity$ | async).name }}</p>
+        <p>
+          Description:
+          <span [innerHtml]="(selectedEntity$ | async).description"></span>
+        </p>
+      </div>
+    }
+  </app-example-viewer>
+</app-doc-viewer>

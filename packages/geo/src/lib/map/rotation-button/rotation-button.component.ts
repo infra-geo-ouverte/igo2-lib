@@ -1,4 +1,10 @@
+import { AsyncPipe, NgStyle } from '@angular/common';
 import { AfterContentInit, Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { bearingToAzimuth } from '@turf/helpers';
 import { BehaviorSubject } from 'rxjs';
@@ -8,21 +14,27 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-rotation-button',
   templateUrl: './rotation-button.component.html',
-  styleUrls: ['./rotation-button.component.scss']
+  styleUrls: ['./rotation-button.component.scss'],
+  imports: [
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    NgStyle,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);
-  public azimuthRounded: number = 0;
-  public rotationRounded: number = 0;
-  readonly currentStyle$ = new BehaviorSubject<{}>({
+  public azimuthRounded = 0;
+  public rotationRounded = 0;
+  readonly currentStyle$ = new BehaviorSubject({
     transform: 'rotate(0rad)'
   });
 
   @Input() map: IgoMap;
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
-
-  constructor() {}
 
   ngAfterContentInit() {
     this.map.viewController.rotation$.subscribe((r) => {

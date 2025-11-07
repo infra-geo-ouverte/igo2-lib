@@ -1,12 +1,34 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
-import { ToolComponent } from '@igo2/common';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
+
+import { ToolComponent } from '@igo2/common/tool';
+import {
+  ContextListBindingDirective,
+  ContextListComponent
+} from '@igo2/context';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
+import {
+  ExportButtonComponent,
   ExportOptions,
   IgoMap,
   Layer,
   LayerListControlsEnum,
-  LayerListControlsOptions
+  LayerListControlsOptions,
+  LayerViewerComponent,
+  LayerViewerOptions,
+  MetadataButtonComponent,
+  OgcFilterButtonComponent,
+  TimeFilterButtonComponent,
+  TrackFeatureButtonComponent
 } from '@igo2/geo';
 
 import {
@@ -14,6 +36,7 @@ import {
   ImportExportState
 } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
+import { WorkspaceButtonComponent } from '../../workspace/workspace-button/workspace-button.component';
 import { MapState } from './../map.state';
 
 /**
@@ -28,22 +51,44 @@ import { MapState } from './../map.state';
   selector: 'igo-map-tool',
   templateUrl: './map-tool.component.html',
   styleUrls: ['./map-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatTabsModule,
+    WorkspaceButtonComponent,
+    ExportButtonComponent,
+    OgcFilterButtonComponent,
+    TimeFilterButtonComponent,
+    TrackFeatureButtonComponent,
+    MetadataButtonComponent,
+    LayerViewerComponent,
+    ContextListComponent,
+    ContextListBindingDirective,
+    IgoLanguageModule
+  ]
 })
-export class MapToolComponent {
-  @Input() toggleLegendOnVisibilityChange: boolean = false;
+export class MapToolComponent implements OnInit {
+  private mapState = inject(MapState);
+  private toolState = inject(ToolState);
+  private importExportState = inject(ImportExportState);
+  private configService = inject(ConfigService);
+  mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
 
-  @Input() expandLegendOfVisibleLayers: boolean = false;
+  isDesktop: boolean;
 
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  @Input() toggleLegendOnVisibilityChange = false;
 
-  @Input() ogcButton: boolean = true;
+  @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() timeButton: boolean = true;
+  @Input() updateLegendOnResolutionChange = false;
+
+  @Input() ogcButton = true;
+
+  @Input() timeButton = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
-  @Input() queryBadge: boolean = false;
+  @Input() queryBadge = false;
 
   get map(): IgoMap {
     return this.mapState.map;
@@ -74,11 +119,27 @@ export class MapToolComponent {
     return filterSortOptions;
   }
 
-  constructor(
-    private mapState: MapState,
-    private toolState: ToolState,
-    private importExportState: ImportExportState
-  ) {}
+  private _layerViewerOptions: Partial<LayerViewerOptions>;
+  get layerViewerOptions(): LayerViewerOptions {
+    return {
+      filterAndSortOptions: this.layerFilterAndSortOptions,
+      legend: {
+        showForVisibleLayers: this.expandLegendOfVisibleLayers,
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
+        updateOnResolutionChange: this.updateLegendOnResolutionChange
+      },
+      queryBadge: this.queryBadge,
+      ...this._layerViewerOptions
+    };
+  }
+
+  constructor() {
+    this._layerViewerOptions = this.configService.getConfig('layer');
+  }
+
+  ngOnInit(): void {
+    this.handleMedia();
+  }
 
   activateExport(layer: Layer) {
     let id = layer.id;
@@ -91,5 +152,12 @@ export class MapToolComponent {
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  private handleMedia(): void {
+    this.mediaService.media$.subscribe((result) => {
+      this.isDesktop = result === Media.Desktop;
+      this.cdr.detectChanges();
+    });
   }
 }

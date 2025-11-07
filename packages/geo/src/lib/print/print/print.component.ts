@@ -1,9 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+
+import { SecureImagePipe } from '@igo2/common/image';
 
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
+import { PrintFormComponent } from '../print-form/print-form.component';
 import { PrintOptions } from '../shared/print.interface';
 import { PrintService } from '../shared/print.service';
 import {
@@ -17,9 +20,13 @@ import {
 
 @Component({
   selector: 'igo-print',
-  templateUrl: './print.component.html'
+  templateUrl: './print.component.html',
+  imports: [PrintFormComponent],
+  providers: [SecureImagePipe]
 })
 export class PrintComponent {
+  private printService = inject(PrintService);
+
   public disabled$ = new BehaviorSubject(false);
 
   @Input()
@@ -85,8 +92,6 @@ export class PrintComponent {
   }
   private _resolution: PrintResolution;
 
-  constructor(private printService: PrintService) {}
-
   handleFormSubmit(data: PrintOptions) {
     this.disabled$.next(true);
 
@@ -124,7 +129,8 @@ export class PrintComponent {
           data.subtitle,
           data.comment,
           data.doZipFile,
-          data.legendPosition
+          data.legendPosition,
+          data.showNorthArrow
         )
         .pipe(take(1))
         .subscribe(() => {

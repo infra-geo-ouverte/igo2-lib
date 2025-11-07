@@ -1,8 +1,8 @@
-import { Workspace } from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { Workspace } from '@igo2/common/workspace';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
-import { FeatureStore } from '../../../feature';
+import { FeatureStore } from '../../../feature/shared/store';
 import {
   ISearchSourceParams,
   SearchSourceOptions,
@@ -30,28 +30,35 @@ export class SearchSource {
    * @internal
    */
   protected options: SearchSourceOptions;
+  protected defaultOptions: SearchSourceOptions = {};
 
-  /**
-   * Get search source's id
-   * @returns Search source's id
-   */
-  getId(): string {
-    throw new Error('You have to implement the method "getId".');
-  }
-  /**
-   * Get search source's type
-   * @returns Search source's type
-   */
-  getType(): string {
-    throw new Error('You have to implement the method "getType".');
-  }
+  constructor(
+    options: SearchSourceOptions,
+    private storageService?: StorageService
+  ) {
+    this.options = options;
+    this.defaultOptions = ObjectUtils.mergeDeep(
+      this.getEffectiveOptions(),
+      this.options
+    );
+    if (this.storageService) {
+      const storageOptions = this.storageService.get(
+        this.getId() + '.options'
+      ) as object;
+      if (storageOptions) {
+        this.options = ObjectUtils.mergeDeep(this.options, storageOptions);
+      }
+    }
 
-  /**
-   * Get search source's default options
-   * @returns Search source default options
-   */
-  protected getDefaultOptions(): SearchSourceOptions {
-    throw new Error('You have to implement the method "getDefaultOptions".');
+    this.options = ObjectUtils.mergeDeep(
+      this.getEffectiveOptions(),
+      this.options
+    );
+
+    // Set Default Params from Settings
+    this.settings.forEach((setting) => {
+      this.setParamFromSetting(setting, false);
+    });
   }
 
   /**
@@ -117,6 +124,40 @@ export class SearchSource {
   }
   private _featureStoresWithIndex: FeatureStore[];
 
+  /**
+   * Search results display order
+   */
+  get displayOrder(): number {
+    return this.options.order === undefined ? 99 : this.options.order;
+  }
+
+  /**
+   * Get search source's id
+   * @returns Search source's id
+   */
+  getId(): string {
+    throw new Error('You have to implement the method "getId".');
+  }
+  /**
+   * Get search source's type
+   * @returns Search source's type
+   */
+  getType(): string {
+    throw new Error('You have to implement the method "getType".');
+  }
+
+  /**
+   * Get search source's default options
+   * @returns Search source default options
+   */
+  protected getEffectiveOptions(): SearchSourceOptions {
+    throw new Error('You have to implement the method "getEffectiveOptions".');
+  }
+
+  resetSourceOptions() {
+    this.options = ObjectUtils.copyDeep(this.defaultOptions);
+  }
+
   setWorkspaces(workspaces: Workspace[]) {
     if (
       workspaces.filter((fw) => (fw.entityStore as FeatureStore).searchDocument)
@@ -158,7 +199,7 @@ export class SearchSource {
           }
         });
         break;
-      case 'checkbox':
+      case 'checkbox': {
         let confValue = '';
         setting.values
           .filter((s) => s.available !== false)
@@ -172,6 +213,7 @@ export class SearchSource {
           [setting.name]: confValue
         });
         break;
+      }
     }
 
     if (saveInStorage && this.storageService) {
@@ -179,38 +221,6 @@ export class SearchSource {
         params: this.options.params
       });
     }
-  }
-
-  /**
-   * Search results display order
-   */
-  get displayOrder(): number {
-    return this.options.order === undefined ? 99 : this.options.order;
-  }
-
-  constructor(
-    options: SearchSourceOptions,
-    private storageService?: StorageService
-  ) {
-    this.options = options;
-    if (this.storageService) {
-      const storageOptions = this.storageService.get(
-        this.getId() + '.options'
-      ) as object;
-      if (storageOptions) {
-        this.options = ObjectUtils.mergeDeep(this.options, storageOptions);
-      }
-    }
-
-    this.options = ObjectUtils.mergeDeep(
-      this.getDefaultOptions(),
-      this.options
-    );
-
-    // Set Default Params from Settings
-    this.settings.forEach((setting) => {
-      this.setParamFromSetting(setting, false);
-    });
   }
 
   /**
@@ -257,7 +267,7 @@ export class SearchSource {
   }
 
   getSettingsValues(search: string): SearchSourceSettings {
-    return this.getDefaultOptions().settings.find(
+    return this.getEffectiveOptions().settings.find(
       (value: SearchSourceSettings) => {
         return value.name === search;
       }

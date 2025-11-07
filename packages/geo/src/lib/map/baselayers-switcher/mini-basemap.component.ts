@@ -4,23 +4,32 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnDestroy
+  inject
 } from '@angular/core';
 
-import OlMap from 'ol/Map';
-import OlView from 'ol/View';
-
-import { Layer, LayerOptions } from '../../layer/shared';
+import {
+  AnyLayerOptions,
+  Layer,
+  LayerOptions,
+  LayersLink,
+  LayersLinkProperties
+} from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../shared';
+import { isLayerItem } from '../../layer/utils';
+import { MapBrowserComponent } from '../map-browser/map-browser.component';
+import { IgoMap } from '../shared/map';
 
 @Component({
   selector: 'igo-mini-basemap',
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MapBrowserComponent]
 })
-export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
+export class MiniBaseMapComponent implements AfterViewInit {
+  private layerService = inject(LayerService);
+  private appRef = inject(ApplicationRef);
+
   @Input() map: IgoMap;
   @Input() disabled: boolean;
   @Input() title: string;
@@ -50,55 +59,22 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     interactions: false
   });
 
-  constructor(
-    private layerService: LayerService,
-    private appRef: ApplicationRef
-  ) {}
-
   ngAfterViewInit() {
-    this.handleMainMapViewChange(this.map.ol.getView());
-    this.map.viewController.olView.on('change', (change) => {
-      this.handleMainMapViewChange(change.target as OlView);
-    });
-    this.map.ol.on('pointerdrag', (change) => {
-      this.handleMainMapViewChange((change.target as OlMap).getView());
-    });
-  }
-
-  ngOnDestroy() {
-    this.map.viewController.olView.un('change', (change) => {
-      this.handleMainMapViewChange(change.target as OlView);
-    });
-    this.map.ol.un('pointerdrag', (change) => {
-      this.handleMainMapViewChange((change.target as OlMap).getView());
-    });
+    this.basemap.ol.setView(this.map.ol.getView());
   }
 
   changeBaseLayer(baseLayer: Layer) {
     if (this.disabled) {
       return;
     }
-    this.map.changeBaseLayer(baseLayer);
+    this.map.layerController.selectBaseLayer(baseLayer);
     this.appRef.tick();
   }
 
-  private handleMainMapViewChange(mainMapView) {
-    const mainMapViewProperties = mainMapView.getProperties();
-    this.basemap.viewController.olView.setResolution(
-      mainMapViewProperties.resolution
-    );
-    this.basemap.viewController.olView.setRotation(
-      mainMapViewProperties.rotation
-    );
-    this.basemap.viewController.olView.setCenter(
-      this.map.viewController.getCenter()
-    );
-  }
-
   private handleBaseLayerChanged(baselayer: Layer) {
-    this.basemap.removeAllLayers();
+    this.basemap.layerController.reset();
 
-    const options: any = Object.assign(
+    const options: AnyLayerOptions = Object.assign(
       Object.create(baselayer.options),
       baselayer.options,
       {
@@ -108,39 +84,38 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     );
 
     const layer = this.layerService.createLayer(options);
-    this.basemap.addLayer(layer);
+    this.basemap.layerController.add(layer);
     this.handleLinkedBaseLayer(layer);
   }
 
-  private handleLinkedBaseLayer(baselayer: Layer) {
-    const linkedLayers = baselayer.options.linkedLayers;
+  private handleLinkedBaseLayer(baselayer: Layer): void {
+    const linkedLayers: LayersLink = baselayer.options.linkedLayers;
     if (!linkedLayers) {
       return;
     }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-    if (
-      isParentLayer &&
-      currentLinkedId === baselayer.options.linkedLayers.linkId
-    ) {
+    const links: LayersLinkProperties[] = linkedLayers.links;
+    const isParentLayer: boolean = links ? true : false;
+    if (isParentLayer) {
       // search for child layers
-      currentLinks.map((link) => {
-        link.linkedIds.map((linkedId) => {
-          const layerToApply = this.map.layers.find(
-            (l) => l.options.linkedLayers?.linkId === linkedId
-          );
+      links.map((link: LayersLinkProperties) => {
+        link.linkedIds.map((linkedId: string) => {
+          const layerToApply = this.map.layerController.all.find(
+            (layer) =>
+              isLayerItem(layer) &&
+              layer.options.linkedLayers?.linkId === linkedId
+          ) as Layer;
           if (layerToApply) {
-            const linkedLayerOptions: any = Object.assign(
+            const linkedLayerOptions: LayerOptions = Object.assign(
               Object.create(layerToApply.options),
               layerToApply.options,
               {
                 zIndex: 9000,
-                visible: true,
+                visible:
+                  layerToApply.options.linkedLayers?.showInMiniBaseMap ?? true,
                 baseLayer: false
               } as LayerOptions
             );
-            this.basemap.addLayer(
+            this.basemap.layerController.add(
               this.layerService.createLayer(linkedLayerOptions)
             );
           }

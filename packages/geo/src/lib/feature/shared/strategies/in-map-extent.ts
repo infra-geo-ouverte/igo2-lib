@@ -1,11 +1,11 @@
-import { EntityStoreStrategy } from '@igo2/common';
+import { EntityStoreStrategy } from '@igo2/common/entity';
 
 import * as olextent from 'ol/extent';
 
 import { Subscription } from 'rxjs';
 import { debounceTime, skipWhile } from 'rxjs/operators';
 
-import { MapExtent } from '../../../map';
+import { MapExtent } from '../../../map/shared/map.interface';
 import {
   Feature,
   FeatureStoreInMapExtentStrategyOptions
@@ -79,11 +79,14 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     }
 
     this.updateEntitiesInExtent(store);
-    this.states$$.push(
-      store.layer.map.viewController.state$
-        .pipe(debounceTime(250))
-        .subscribe(() => this.updateEntitiesInExtent(store))
-    );
+    const map = store.map ?? store.layer.map;
+    if (map) {
+      this.states$$.push(
+        map.viewController.state$
+          .pipe(debounceTime(250))
+          .subscribe(() => this.updateEntitiesInExtent(store))
+      );
+    }
   }
 
   private updateEntitiesInExtent(store: FeatureStore) {

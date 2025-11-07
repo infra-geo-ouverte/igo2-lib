@@ -1,9 +1,17 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import type { IgoMap } from '@igo2/geo';
 
 import * as oleasing from 'ol/easing';
@@ -20,9 +28,26 @@ import { PoiService } from './shared/poi.service';
 @Component({
   selector: 'igo-poi-button',
   templateUrl: './poi-button.component.html',
-  styleUrls: ['./poi-button.component.scss']
+  styleUrls: ['./poi-button.component.scss'],
+  imports: [
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    StopPropagationDirective,
+    MatIconModule,
+    MatDividerModule,
+    IgoLanguageModule
+  ],
+  providers: [PoiService]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
+  private dialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private poiService = inject(PoiService);
+  private messageService = inject(MessageService);
+  private languageService = inject(LanguageService);
+  private confirmDialogService = inject(ConfirmDialogService);
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -43,15 +68,6 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
 
   public pois: Poi[];
   private authenticate$$: Subscription;
-
-  constructor(
-    private dialog: MatDialog,
-    private authService: AuthService,
-    private poiService: PoiService,
-    private messageService: MessageService,
-    private languageService: LanguageService,
-    private confirmDialogService: ConfirmDialogService
-  ) {}
 
   ngOnInit() {
     this.authenticate$$ = this.authService.authenticate$.subscribe((auth) => {

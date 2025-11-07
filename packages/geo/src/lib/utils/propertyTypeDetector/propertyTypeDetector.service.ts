@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { RegexService } from '@igo2/core';
+import { RegexService } from '@igo2/core/regex';
 
 import { GeoServiceDefinition } from './propertyTypeDetector.interface';
 
@@ -8,9 +8,11 @@ import { GeoServiceDefinition } from './propertyTypeDetector.interface';
   providedIn: 'root'
 })
 export class PropertyTypeDetectorService {
+  private regexService = inject(RegexService);
+
   public geoServiceRegexes: GeoServiceDefinition[] = [];
 
-  constructor(private regexService: RegexService) {
+  constructor() {
     this.geoServiceRegexes = this.getGeoServiceRegexes();
   }
 

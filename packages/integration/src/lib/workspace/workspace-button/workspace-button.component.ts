@@ -1,12 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import type { Layer } from '@igo2/geo';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { type AnyLayer, isLayerItem } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
@@ -16,34 +22,42 @@ import { WorkspaceState } from '../workspace.state';
   selector: 'igo-workspace-button',
   templateUrl: './workspace-button.component.html',
   styleUrls: ['./workspace-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
-  public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private workspaceState = inject(WorkspaceState);
+
+  public hasWorkspace$ = new BehaviorSubject<boolean>(false);
   private hasWorkspace$$: Subscription;
 
-  private _layer: Layer;
-  private layer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+  private layer$ = new BehaviorSubject<AnyLayer>(undefined);
   @Input()
-  set layer(value: Layer) {
+  set layer(value: AnyLayer) {
     this._layer = value;
     this.layer$.next(this._layer);
   }
-
-  get layer(): Layer {
+  get layer(): AnyLayer {
     return this._layer;
   }
+  private _layer: AnyLayer;
 
-  @Input() color: string = 'primary';
-
-  constructor(private workspaceState: WorkspaceState) {}
+  @Input() color = 'primary';
 
   ngOnInit(): void {
     this.hasWorkspace$$ = combineLatest([
       this.workspaceState.workspaceEnabled$,
       this.layer$
-    ]).subscribe((bunch) =>
-      this.hasWorkspace$.next(bunch[0] && bunch[1]?.options.workspace?.enabled)
+    ]).subscribe(([enabled, layer]) =>
+      this.hasWorkspace$.next(
+        enabled && isLayerItem(layer) && layer.options.workspace?.enabled
+      )
     );
   }
 

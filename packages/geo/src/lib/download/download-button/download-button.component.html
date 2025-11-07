@@ -1,15 +1,16 @@
-<button
-  *ngIf="
-    options &&
-    options.download &&
-    (options.download['dynamicUrl'] || options.download['url'])
-  "
-  mat-icon-button
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.download.action' | translate"
-  [color]="color"
-  (click)="openDownload(layer)"
->
-  <mat-icon svgIcon="download"></mat-icon>
-</button>
+@if (
+  options &&
+  options.download &&
+  (options.download['dynamicUrl'] || options.download['url'])
+) {
+  <button
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.download.action' | translate"
+    [color]="color"
+    (click)="openDownload()"
+  >
+    <mat-icon>download</mat-icon>
+  </button>
+}

@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
@@ -18,7 +18,9 @@ import { Projection } from './projection.interfaces';
   providedIn: 'root'
 })
 export class ProjectionService {
-  constructor(private config: ConfigService) {
+  private config = inject(ConfigService);
+
+  constructor() {
     const projections: Projection[] =
       this.config.getConfig('projections') || [];
     projections.forEach((projection) => {

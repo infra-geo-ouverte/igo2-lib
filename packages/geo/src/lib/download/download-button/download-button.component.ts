@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { IgoLanguageModule } from '@igo2/core/language';
+
+import { Layer } from '../../layer';
 import { DownloadDataSourceOptions } from '../shared/download.interface';
 import { DownloadService } from '../shared/download.service';
 
@@ -8,31 +18,18 @@ import { DownloadService } from '../shared/download.service';
   selector: 'igo-download-button',
   templateUrl: './download-button.component.html',
   styleUrls: ['./download-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class DownloadButtonComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  private _layer: Layer;
+  private downloadService = inject(DownloadService);
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
+  @Input() layer: Layer;
 
-  constructor(private downloadService: DownloadService) {}
+  @Input() color = 'primary';
 
-  openDownload(layer: Layer) {
-    this.downloadService.open(layer);
+  openDownload() {
+    this.downloadService.open(this.layer);
   }
 
   get options(): DownloadDataSourceOptions {

@@ -4,17 +4,34 @@ import {
   Input,
   OnInit
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TimeFilterableDataSourceOptions } from '../../datasource';
+import { ListItemDirective } from '@igo2/common/list';
+import { IgoLanguageModule } from '@igo2/core/language';
+
+import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { Layer } from '../../layer';
+import { IgoMap } from '../../map/shared/map';
+import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
 
 @Component({
   selector: 'igo-time-filter-button',
   templateUrl: './time-filter-button.component.html',
   styleUrls: ['./time-filter-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    TimeFilterItemComponent,
+    ListItemDirective,
+    IgoLanguageModule
+  ]
 })
 export class TimeFilterButtonComponent implements OnInit {
   public options: TimeFilterableDataSourceOptions;
@@ -38,17 +55,15 @@ export class TimeFilterButtonComponent implements OnInit {
       this.options = this.layer.dataSource.options as WMSDataSourceOptions;
     }
   }
-  private _layer;
+  private _layer: Layer;
 
   @Input() map: IgoMap;
 
-  @Input() color: string = 'primary';
+  @Input() color = 'primary';
 
-  @Input() header: boolean = true;
+  @Input() header = true;
 
   public timeFilterCollapse = false;
-
-  constructor() {}
 
   ngOnInit() {
     this.options = this.layer.dataSource.options as WMSDataSourceOptions;

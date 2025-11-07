@@ -1,15 +1,14 @@
-import { DatePipe } from '@angular/common';
-
+import { Action } from '@igo2/common/action';
 import {
-  Action,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy,
-  Widget
-} from '@igo2/common';
-import { LanguageService, MediaService, StorageService } from '@igo2/core';
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
+import { Widget } from '@igo2/common/widget';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
+import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
-  ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
   FeatureWorkspace,
@@ -19,8 +18,9 @@ import {
   noElementSelected
 } from '@igo2/geo';
 
-import * as jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import { autoTable } from 'jspdf-autotable';
+import moment from 'moment';
 import { BehaviorSubject, map } from 'rxjs';
 
 import { ToolState } from '../../tool';
@@ -50,7 +50,7 @@ export function getWorkspaceActions(
   languageService: LanguageService,
   mediaService: MediaService,
   toolState: ToolState,
-  datePipe: DatePipe
+  interactiveSelectionFormWidget?: Widget
 ): Action[] {
   const actions = [
     {
@@ -89,7 +89,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'clearselection',
-      icon: 'select-off',
+      icon: 'deselect',
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
@@ -103,7 +103,7 @@ export function getWorkspaceActions(
     },
     {
       id: 'featureDownload',
-      icon: 'file-export',
+      icon: 'file_save',
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
@@ -122,14 +122,14 @@ export function getWorkspaceActions(
             layers: [ws.layer.id],
             featureInMapExtent: filterStrategy.active,
             layersWithSelection
-          } as ExportOptions
+          }
         });
       },
       args: [workspace]
     },
     {
       id: 'ogcFilter',
-      icon: 'filter',
+      icon: 'filter_alt',
       title: 'igo.integration.workspace.ogcFilter.title',
       tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
       handler: (
@@ -142,6 +142,19 @@ export function getWorkspaceActions(
         });
       },
       args: [ogcFilterWidget, workspace]
+    },
+    {
+      id: 'interactiveSelect',
+      icon: 'select-marker',
+      title: 'igo.integration.workspace.interactiveSelection.title',
+      tooltip: 'igo.integration.workspace.interactiveSelection.tooltip',
+      handler: (widget: Widget, ws: FeatureWorkspace | WfsWorkspace) => {
+        ws.activateWidget(widget, {
+          map: ws.map,
+          workspace: ws
+        });
+      },
+      args: [interactiveSelectionFormWidget, workspace]
     },
     {
       id: 'maximize',
@@ -179,25 +192,27 @@ export function getWorkspaceActions(
     },
     {
       id: 'print',
-      icon: 'printer',
+      icon: 'print',
       title: 'igo.integration.workspace.print.title',
       tooltip: 'igo.integration.workspace.print.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
-        const title = `${ws.layer.title} (${datePipe.transform(
-          Date.now(),
-          'YYYY-MM-dd-H_mm'
+        const title = `${ws.layer.title} (${dateTransform(
+          new Date(),
+          'YYYY-MM-DD-HH_mm'
         )})`;
-        const doc: any = new jsPDF.default('landscape');
+        const doc = new jsPDF({
+          orientation: 'landscape'
+        });
         const totalPagesExp = '{total_pages_count_string}';
         doc.text(title, 14, 20);
-        doc.autoTable({
+        autoTable(doc, {
           startY: 25,
           tableWidth: 'wrap',
           html: '#currentWorkspaceTable',
           horizontalPageBreak: true,
           styles: { cellPadding: 0.5, minCellWidth: 20, fontSize: 6 },
           didDrawPage: (data) => {
-            let str = 'Page ' + doc.internal.getNumberOfPages();
+            let str = 'Page ' + doc.getNumberOfPages();
             if (typeof doc.putTotalPages === 'function') {
               str = str + ' / ' + totalPagesExp;
             }
@@ -226,4 +241,8 @@ export function getWorkspaceActions(
       ? actions
       : actions.filter((action) => action.id !== 'print');
   return returnActions;
+}
+
+function dateTransform(date: Date, format: string): string {
+  return moment(date).format(format);
 }

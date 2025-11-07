@@ -1,3 +1,7 @@
-:host ::ng-deep .mat-mdc-tab-body-content {
-  overflow: hidden;
+:host {
+  ::ng-deep {
+    .mat-mdc-tab-body-content {
+      overflow: hidden;
+    }
+  }
 }

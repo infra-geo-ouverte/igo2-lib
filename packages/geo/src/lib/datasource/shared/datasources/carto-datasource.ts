@@ -6,8 +6,8 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class CartoDataSource extends DataSource {
-  public declare ol: olSourceCarto;
-  public declare options: CartoDataSourceOptions;
+  declare public ol: olSourceCarto;
+  declare public options: CartoDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -27,6 +27,14 @@ export class CartoDataSource extends DataSource {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
       : QueryHtmlTarget.BLANK;
+  }
+
+  get saveableOptions(): Partial<CartoDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
   }
 
   protected createOlSource(): olSourceCarto {
@@ -49,7 +57,7 @@ export class CartoDataSource extends DataSource {
     }
 
     let htmlString = '<table>';
-    if (this.options.config.layers[0].legend !== null) {
+    if (this.options.config.layers[0].legend) {
       this.options.config.layers[0].legend.items.forEach((f) => {
         if (f.visible === true) {
           htmlString +=
@@ -119,5 +127,7 @@ export class CartoDataSource extends DataSource {
     }
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

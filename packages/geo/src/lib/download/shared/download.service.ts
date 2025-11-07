@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import * as olproj from 'ol/proj';
 import olProjection from 'ol/proj/Projection';
@@ -10,13 +10,13 @@ import {
   OgcFilterWriter,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared';
-import { Layer } from '../../layer/shared';
+import { Layer } from '../../layer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DownloadService {
-  constructor(private messageService: MessageService) {}
+  private messageService = inject(MessageService);
 
   open(layer: Layer) {
     this.messageService.success(

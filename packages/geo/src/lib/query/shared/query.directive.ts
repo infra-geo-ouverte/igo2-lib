@@ -5,14 +5,13 @@ import {
   Input,
   OnDestroy,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import { EventsKey } from 'ol/events';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLayer from 'ol/layer/Layer';
 import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
@@ -24,6 +23,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
+import { Layer, isLayerGroup, isLayerItem } from '../../layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
@@ -38,9 +38,13 @@ import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
  * the layer level.
  */
 @Directive({
-  selector: '[igoQuery]'
+  selector: '[igoQuery]',
+  standalone: true
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
+  private component = inject(MapBrowserComponent, { self: true });
+  private queryService = inject(QueryService);
+
   /**
    * Subscriptions to ongoing queries
    */
@@ -64,12 +68,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whter to query features or not
    */
-  @Input() queryFeatures: boolean = false;
+  @Input() queryFeatures = false;
 
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesHitTolerance: number = 0;
+  @Input() queryFeaturesHitTolerance = 0;
 
   /**
    * Feature query hit tolerance
@@ -79,7 +83,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whether all query should complete before emitting an event
    */
-  @Input() waitForAllQueries: boolean = true;
+  @Input() waitForAllQueries = true;
 
   /**
    * Event emitted when a query (or all queries) complete
@@ -96,11 +100,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   get map(): IgoMap {
     return this.component.map as any as IgoMap;
   }
-
-  constructor(
-    @Self() private component: MapBrowserComponent,
-    private queryService: QueryService
-  ) {}
 
   /**
    * Start listening to click and drag box events
@@ -155,7 +154,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
 
     const resolution = this.map.ol.getView().getResolution();
-    const queryLayers = this.map.layers.filter(layerIsQueryable);
+    const queryLayers = this.map.layerController.all.filter(
+      layerIsQueryable
+    ) as Layer[];
     queries$.push(
       ...this.queryService.query(queryLayers, {
         coordinates: event.coordinate as [number, number],
@@ -196,8 +197,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
-          const layer = this.map.getLayerById(layerOL.values_._layer.id);
+        (featureOL: OlFeature, layerOL: any) => {
+          const layer = this.map.layerController.getById(
+            layerOL.values_._layer.id
+          );
+          if (isLayerGroup(layer) || !layer.displayed) {
+            return;
+          }
           if (
             (layer.dataSource.options as QueryableDataSourceOptions)
               .queryFormatAsWms
@@ -261,11 +267,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     } else if (event.type === 'boxend') {
       const target = event.target as any;
       const dragExtent = target.getGeometry().getExtent();
-      this.map.layers
+      this.map.layerController.all
         .filter(layerIsQueryable)
-        .filter((layer) => layer instanceof VectorLayer && layer.visible)
-        .map((layer) => {
-          const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
+        .filter(
+          (layer) =>
+            isLayerItem(layer) && layer instanceof VectorLayer && layer.visible
+        )
+        .map((layer: Layer) => {
+          const featuresOL = layer.dataSource.ol as olVectorSource;
           featuresOL.forEachFeatureIntersectingExtent(
             dragExtent,
             (olFeature: any) => {

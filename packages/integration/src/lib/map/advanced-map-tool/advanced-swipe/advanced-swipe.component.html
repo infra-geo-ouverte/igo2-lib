@@ -1,58 +1,51 @@
-<div
-  *ngIf="userControlledLayerList.length; else noLayersBlock"
-  class="igo-swipe-select-container"
->
-  <form class="igo-form" [formGroup]="form">
-    <mat-form-field>
-      <mat-label>{{
-        'igo.integration.advanced-map-tool.advanced-swipe.swipe-select'
-          | translate
-      }}</mat-label>
-      <mat-select formControlName="layers" multiple>
-        <mat-option [value]="1" (click)="selectAll(e)" #e>
-          {{
-            'igo.integration.advanced-map-tool.advanced-swipe.selectAll'
-              | translate
-          }}
-        </mat-option>
-        <mat-divider></mat-divider>
-        <mat-option
-          *ngFor="let layer of userControlledLayerList"
-          [value]="layer"
-          (click)="applyNewLayers(e)"
-          >{{ layer.title }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-  </form>
-
-  <mat-slide-toggle
-    class="swipe-toggle mat-typography"
-    [checked]="swipe"
-    [labelPosition]="'before'"
-    (change)="startSwipe($event.checked)"
-  >
-    {{ 'igo.integration.advanced-map-tool.advanced-swipe.swipe' | translate }}
-  </mat-slide-toggle>
-</div>
-
-<ng-template #noLayersBlock>
+@if (userControlledLayerList?.length) {
+  <div class="igo-swipe-select-container">
+    <form class="igo-form" [formGroup]="form">
+      <mat-form-field>
+        <mat-label>{{
+          'igo.integration.advanced-map-tool.advanced-swipe.swipe-select'
+            | translate
+        }}</mat-label>
+        <mat-select formControlName="layers" multiple>
+          <mat-option [value]="1" (click)="selectAll(e)" #e>
+            {{
+              'igo.integration.advanced-map-tool.advanced-swipe.selectAll'
+                | translate
+            }}
+          </mat-option>
+          <mat-divider></mat-divider>
+          @for (layer of userControlledLayerList; track layer) {
+            <mat-option [value]="layer" (click)="applyNewLayers(e)">{{
+              layer.title
+            }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-slide-toggle
+        class="swipe-toggle"
+        [checked]="swipe"
+        [labelPosition]="'before'"
+        (change)="startSwipe($event.checked)"
+      >
+        {{
+          'igo.integration.advanced-map-tool.advanced-swipe.swipe' | translate
+        }}
+      </mat-slide-toggle>
+    </form>
+  </div>
+} @else {
   <mat-list>
-    <p class="map-empty mat-typography">
+    <p class="map-empty">
       {{ 'igo.integration.advanced-map-tool.advanced-swipe.empty' | translate }}
     </p>
-    <p class="map-empty mat-typography">
+    <p class="map-empty">
       {{
         'igo.integration.advanced-map-tool.advanced-swipe.customize' | translate
       }}
     </p>
     <mat-list-item>
-      <mat-icon matListItemIcon svgIcon="magnify"></mat-icon>
-      <span
-        matListItemTitle
-        class="search-tool mat-typography"
-        (click)="searchEmit()"
-      >
+      <mat-icon matListItemIcon>search</mat-icon>
+      <span matListItemTitle class="search-tool" (click)="searchEmit()">
         {{
           'igo.integration.advanced-map-tool.advanced-swipe.search-tool'
             | translate
@@ -60,12 +53,8 @@
       </span>
     </mat-list-item>
     <mat-list-item>
-      <mat-icon matListItemIcon svgIcon="layers-plus"></mat-icon>
-      <span
-        matListItemTitle
-        class="catalog-tool mat-typography"
-        (click)="catalogEmit()"
-      >
+      <mat-icon matListItemIcon>library_add</mat-icon>
+      <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
         {{
           'igo.integration.advanced-map-tool.advanced-swipe.catalog-tool'
             | translate
@@ -73,12 +62,8 @@
       </span>
     </mat-list-item>
     <mat-list-item>
-      <mat-icon matListItemIcon svgIcon="star"></mat-icon>
-      <span
-        matListItemTitle
-        class="context-tool mat-typography"
-        (click)="contextEmit()"
-      >
+      <mat-icon matListItemIcon>star</mat-icon>
+      <span matListItemTitle class="context-tool" (click)="contextEmit()">
         {{
           'igo.integration.advanced-map-tool.advanced-swipe.context-tool'
             | translate
@@ -86,4 +71,4 @@
       </span>
     </mat-list-item>
   </mat-list>
-</ng-template>
+}

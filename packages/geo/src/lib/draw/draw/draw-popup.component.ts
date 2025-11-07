@@ -1,9 +1,25 @@
-import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Input, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import OlFeature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
@@ -28,10 +44,31 @@ import { DDtoDMS } from '../shared/draw.utils';
 @Component({
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-popup.component.html',
-  styleUrls: ['./draw-popup.component.scss']
+  styleUrls: ['./draw-popup.component.scss'],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonToggleModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDialogActions,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
 export class DrawPopupComponent {
-  @Input() confirmFlag: boolean = false;
+  private languageService = inject(LanguageService);
+  dialogRef = inject<MatDialogRef<DrawPopupComponent>>(MatDialogRef);
+  data = inject<{
+    olGeometry: any;
+    map: IgoMap;
+  }>(MAT_DIALOG_DATA);
+
+  @Input() confirmFlag = false;
   @Input() labelFlag: LabelType | [LabelType, LabelType] = LabelType.Custom;
   @Input() coordinatesMeasureUnit: CoordinatesUnit;
   @Input() lengthMeasureUnit: MeasureLengthUnit;
@@ -52,16 +89,14 @@ export class DrawPopupComponent {
   public coordinatesInDD: string;
   public currentCoordinatesUnit: string;
 
-  private longlatDD: [number, number];
+  private longlatDD: Coordinate;
   private labelLength: number;
 
   public polygonCheck = 0; // Count for polygon label types checkboxes
 
-  constructor(
-    private languageService: LanguageService,
-    public dialogRef: MatDialogRef<DrawPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any; map: IgoMap }
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.currentLabel = this.data.olGeometry.get('draw');
     this.labelLength = this.currentLabel ? this.currentLabel.length : 0;
     let olGeometry;
@@ -93,12 +128,12 @@ export class DrawPopupComponent {
       this.olGeometryType === GeometryType.Circle
     ) {
       if (this.data.olGeometry instanceof OlFeature) {
-        let longitude = this.data.olGeometry.get('longitude');
-        let latitude = this.data.olGeometry.get('latitude');
+        const longitude = this.data.olGeometry.get('longitude');
+        const latitude = this.data.olGeometry.get('latitude');
         this.longlatDD = roundCoordTo([longitude, latitude], 5);
         this.coordinatesInDD = '(' + latitude + ', ' + longitude + ')';
       } else {
-        let point4326 = transform(
+        const point4326 = transform(
           this.data.olGeometry.getFlatCoordinates(),
           projection,
           'EPSG:4326'
@@ -127,7 +162,7 @@ export class DrawPopupComponent {
       ).toFixed(2);
       this.currentArea = this.areaInMetersSquare;
     } else if (this.olGeometryType === GeometryType.Circle) {
-      let circularPolygon = fromCircle(olGeometry, 10000);
+      const circularPolygon = fromCircle(olGeometry, 10000);
       const radius = this.getRadius(circularPolygon);
       this.lengthInMeters = radius.toFixed(2);
       this.currentLength = this.lengthInMeters;
@@ -258,8 +293,9 @@ export class DrawPopupComponent {
         : (this.labelFlag = undefined);
       checked
         ? (this.labelFlag = labelType)
-        : (this.labelFlag = this.arrayBuiltInType.find((type) => type.checked)
-            ?.value);
+        : (this.labelFlag = this.arrayBuiltInType.find(
+            (type) => type.checked
+          )?.value);
     } else {
       this.labelFlag = labelType;
     }
@@ -314,7 +350,7 @@ export class DrawPopupComponent {
 
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit) {
     this.coordinatesMeasureUnit = coordinatesUnit;
-    let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
+    const coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
     this.currentCoordinates =
       '(' + coordinates[1] + ', ' + coordinates[0] + ')';
   }
@@ -376,7 +412,7 @@ export class DrawPopupComponent {
     }
   }
 
-  get allLengthUnits(): string[] {
+  get allLengthUnits(): MeasureLengthUnit[] {
     return Object.values(MeasureLengthUnit);
   }
 
@@ -384,11 +420,11 @@ export class DrawPopupComponent {
     return MeasureLengthUnitAbbreviation[lengthUnit];
   }
 
-  get allAreaUnits(): string[] {
+  get allAreaUnits(): MeasureAreaUnit[] {
     return Object.values(MeasureAreaUnit);
   }
 
-  get allCoordinatesUnits(): string[] {
+  get allCoordinatesUnits(): CoordinatesUnit[] {
     return Object.values(CoordinatesUnit);
   }
 

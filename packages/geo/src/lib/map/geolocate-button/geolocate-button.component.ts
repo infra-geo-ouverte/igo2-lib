@@ -1,6 +1,17 @@
-import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  AfterContentInit,
+  Component,
+  Input,
+  OnDestroy,
+  inject
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -9,13 +20,20 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-geolocate-button',
   templateUrl: './geolocate-button.component.html',
-  styleUrls: ['./geolocate-button.component.scss']
+  styleUrls: ['./geolocate-button.component.scss'],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
+  private configService = inject(ConfigService);
+
   private tracking$$: Subscription;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject(
-    'crosshairs-gps'
-  );
+  readonly icon$ = new BehaviorSubject<string>('my_location');
 
   @Input()
   get map(): IgoMap {
@@ -34,18 +52,18 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
     this._color = value;
   }
   private _color: string;
-
-  constructor(private configService: ConfigService) {}
   ngAfterContentInit(): void {
     this.map.ol.once('rendercomplete', () => {
       this.tracking$$ = this.map.geolocationController.tracking$.subscribe(
         (tracking) => {
           if (tracking) {
-            this.icon$.next('crosshairs-gps');
+            this.icon$.next('my_location');
           } else {
-            this.configService.getConfig('geolocate.basic')
-              ? this.icon$.next('crosshairs-gps')
-              : this.icon$.next('crosshairs');
+            this.icon$.next(
+              this.configService.getConfig('geolocate.basic')
+                ? 'my_location'
+                : 'location_searching'
+            );
           }
         }
       );

@@ -1,21 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { AnalyticsService } from '@igo2/core';
+import { AnalyticsService } from '@igo2/core/analytics';
 import {
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
-  Layer,
   TileArcGISRestDataSourceOptions,
   WMSDataSourceOptions,
-  WMTSDataSourceOptions
+  WMTSDataSourceOptions,
+  isLayerGroup
 } from '@igo2/geo';
 
 import { skip } from 'rxjs/operators';
 
 import { ContextState } from '../context/context.state';
 import { MapState } from '../map/map.state';
-import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
 
 /**
@@ -25,38 +24,30 @@ import { ToolState } from '../tool/tool.state';
   providedIn: 'root'
 })
 export class AnalyticsListenerService {
-  /**
-   * Toolbox that holds main tools
-   */
-
-  constructor(
-    private analyticsService: AnalyticsService,
-    private authService: AuthService,
-    private contextState: ContextState,
-    private searchState: SearchState,
-    private toolState: ToolState,
-    private mapState: MapState
-  ) {}
+  private analyticsService = inject(AnalyticsService);
+  private authService = inject(AuthService);
+  private contextState = inject(ContextState);
+  private toolState = inject(ToolState);
+  private mapState = inject(MapState);
 
   listen() {
     this.listenUser();
     this.listenContext();
     this.listenTool();
-    this.listenSearch();
     this.listenLayer();
   }
 
   listenUser() {
     this.authService.authenticate$.subscribe(() => {
-      const tokenDecoded = this.authService.decodeToken() || {};
-      if (tokenDecoded.user) {
+      const tokenDecoded = this.authService.decodeToken();
+      if (tokenDecoded?.user) {
         this.authService
           .getProfils()
           .subscribe((profils) =>
             this.analyticsService.setUser(tokenDecoded.user, profils.profils)
           );
       } else {
-        this.analyticsService.setUser();
+        this.analyticsService.setUser(null);
       }
     });
   }
@@ -81,36 +72,27 @@ export class AnalyticsListenerService {
     });
   }
 
-  listenSearch() {
-    this.searchState.searchTerm$
-      .pipe(skip(1))
-      .subscribe((searchTerm: string) => {
-        if (searchTerm !== undefined && searchTerm !== null) {
-          this.analyticsService.trackSearch(
-            searchTerm,
-            this.searchState.store.count
-          );
-        }
-      });
-  }
-
   /**
    * Listener for adding layers to the map
    */
   listenLayer() {
-    this.mapState.map.layersAddedByClick$.subscribe((layers: Layer[]) => {
+    this.mapState.map.layersAddedByClick$.subscribe((layers) => {
       if (!layers) {
         return;
       }
 
-      layers.map((layer) => {
+      layers.forEach((layer) => {
         let wmsParams: string;
         let wmtsParams: string;
         let xyzParams: string;
         let restParams: string;
 
+        if (isLayerGroup(layer)) {
+          return;
+        }
+
         switch (layer.dataSource.options.type) {
-          case 'wms':
+          case 'wms': {
             const wmsDataSource = layer.dataSource
               .options as WMSDataSourceOptions;
             const wmsLayerName: string = wmsDataSource.params.LAYERS;
@@ -122,7 +104,8 @@ export class AnalyticsListenerService {
               url: wmsUrl
             });
             break;
-          case 'wmts':
+          }
+          case 'wmts': {
             const wmtsDataSource = layer.dataSource
               .options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
@@ -136,9 +119,10 @@ export class AnalyticsListenerService {
               matrixSet
             });
             break;
+          }
           case 'arcgisrest':
           case 'tilearcgisrest':
-          case 'imagearcgisrest':
+          case 'imagearcgisrest': {
             const restDataSource = layer.options.sourceOptions as
               | ArcGISRestDataSourceOptions
               | TileArcGISRestDataSourceOptions
@@ -152,6 +136,7 @@ export class AnalyticsListenerService {
               url: restUrl
             });
             break;
+          }
           case 'xyz':
             /* const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
             const xyzName: string = layer.title;

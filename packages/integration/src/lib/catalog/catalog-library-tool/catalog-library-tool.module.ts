@@ -1,17 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-
-import { IgoCatalogLibraryModule } from '@igo2/geo';
+import { NgModule } from '@angular/core';
 
 import { CatalogLibraryToolComponent } from './catalog-library-tool.component';
 
 /**
- * @ignore
+ * @deprecated import the CatalogLibraryToolComponent directly
  */
 @NgModule({
-  imports: [CommonModule, IgoCatalogLibraryModule],
-  declarations: [CatalogLibraryToolComponent],
-  exports: [CatalogLibraryToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [CatalogLibraryToolComponent],
+  exports: [CatalogLibraryToolComponent]
 })
 export class IgoAppCatalogLibraryToolModule {}

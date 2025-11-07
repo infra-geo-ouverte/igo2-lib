@@ -1,5 +1,4 @@
 import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceVector from 'ol/source/Vector';
 
 import { FeatureDataSource } from './feature-datasource';
@@ -7,9 +6,9 @@ import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
 
 export class WebSocketDataSource extends FeatureDataSource {
   public ws: WebSocket;
-  public declare options: WebSocketDataSourceOptions;
+  declare public options: WebSocketDataSourceOptions;
 
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  protected createOlSource(): olSourceVector {
     this.createWebSocket();
     this.options.format = this.getSourceFormatFromOptions(this.options);
     return super.createOlSource();
@@ -35,10 +34,10 @@ export class WebSocketDataSource extends FeatureDataSource {
   onMessage(event) {
     const featureAdded = this.options.format.readFeature(
       event.data
-    ) as olFeature<OlGeometry>;
+    ) as olFeature;
 
     switch (this.options.onmessage) {
-      case 'update':
+      case 'update': {
         // ol don't add if same ID
         const featureToRemove = this.ol.getFeatureById(featureAdded.getId());
         if (featureToRemove) {
@@ -46,6 +45,7 @@ export class WebSocketDataSource extends FeatureDataSource {
         }
         this.ol.addFeature(featureAdded);
         break;
+      }
       case 'delete':
         this.ol.clear(true);
         this.ol.addFeature(featureAdded);
@@ -56,15 +56,15 @@ export class WebSocketDataSource extends FeatureDataSource {
     }
   }
 
-  onClose(event) {
+  onClose() {
     // thrown message to user
   }
 
-  onError(event) {
+  onError() {
     // thrown message to user
   }
 
-  onOpen(event) {
+  onOpen() {
     // thrown message to user ?
   }
 

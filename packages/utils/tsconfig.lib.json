@@ -10,5 +10,8 @@
       "@igo2/*": ["dist/*"]
     }
   },
-  "exclude": ["src/test.ts", "**/*.spec.ts"]
+  "exclude": ["**/*.spec.ts"],
+  "angularCompilerOptions": {
+    "compilationMode": "partial"
+  }
 }

@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { ConfigService, StorageService } from '@igo2/core';
+import { ActionStore } from '@igo2/common/action';
+import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   FeatureMotion,
   FeatureStore,
@@ -14,15 +17,19 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
-} from '../../feature';
-import { LayerService, VectorLayer } from '../../layer/shared';
-import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map/shared';
+} from '../../feature/shared';
+import {
+  GeoWorkspaceOptions,
+  LayerService,
+  LinkedProperties,
+  VectorLayer
+} from '../../layer/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   FeatureCommonVectorStyleOptions,
-  OverlayStyleOptions
-} from '../../style';
-import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
+  OverlayStyleOptions,
+  getCommonVectorSelectedStyle
+} from '../../style/shared';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -34,19 +41,17 @@ import {
   providedIn: 'root'
 })
 export class WfsWorkspaceService {
+  private storageService = inject(StorageService);
+  private configService = inject(ConfigService);
+  private layerService = inject(LayerService);
+  private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
+  private capabilitiesService = inject(CapabilitiesService);
+
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
   public ws$ = new BehaviorSubject<string>(undefined);
-
-  constructor(
-    private storageService: StorageService,
-    private configService: ConfigService,
-    private layerService: LayerService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService,
-    private capabilitiesService: CapabilitiesService
-  ) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
     if (
@@ -61,6 +66,10 @@ export class WfsWorkspaceService {
       workspaceId: layer.id,
       enabled: true
     } as GeoWorkspaceOptions);
+
+    if (!layer.options.linkedLayers) {
+      layer.options.linkedLayers = { linkId: layer.id, links: [] };
+    }
 
     const wks = new WfsWorkspace({
       id: layer.id,
@@ -93,8 +102,25 @@ export class WfsWorkspaceService {
     const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
+    const id = layer.id + '.FeatureStore';
+
+    if (!layer.link) {
+      layer.options.linkedLayers.links = [
+        {
+          syncedDelete: true,
+          linkedIds: [id],
+          properties: [LinkedProperties.VISIBLE]
+        }
+      ];
+      layer.createLink();
+    }
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
+        id,
+        linkedLayers: {
+          linkId: id
+        },
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {

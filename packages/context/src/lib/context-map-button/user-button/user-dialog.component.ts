@@ -1,24 +1,38 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 
 import { AuthService } from '@igo2/auth';
-import { StorageService } from '@igo2/core';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 
 @Component({
   selector: 'igo-user-dialog',
-  templateUrl: './user-dialog.component.html'
+  templateUrl: './user-dialog.component.html',
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    MatDialogActions,
+    IgoLanguageModule
+  ]
 })
 export class UserDialogComponent {
+  dialogRef = inject<MatDialogRef<UserDialogComponent>>(MatDialogRef);
+  private auth = inject(AuthService);
+  private storageService = inject(StorageService);
+
   public user;
   public exp;
 
-  constructor(
-    public dialogRef: MatDialogRef<UserDialogComponent>,
-    private auth: AuthService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     const decodeToken = this.auth.decodeToken();
-    this.user = decodeToken.user;
+    this.user = decodeToken?.user;
     this.exp = new Date(decodeToken.exp * 1000).toLocaleString();
   }
 

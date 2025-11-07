@@ -2,7 +2,11 @@ import { Component, Input } from '@angular/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
-import { IgoMap } from '../../map/shared';
+import { ListItemDirective } from '@igo2/common/list';
+
+import { MapBase } from '../../map';
+import { OgcFilterFormComponent } from '../ogc-filter-form/ogc-filter-form.component';
+import { OgcFilterSelectionComponent } from '../ogc-filter-selection/ogc-filter-selection.component';
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 
 @Component({
@@ -18,12 +22,17 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { overlayPanelClass: 'igo-overlay-panel-width' }
     }
+  ],
+  imports: [
+    OgcFilterSelectionComponent,
+    ListItemDirective,
+    OgcFilterFormComponent
   ]
 })
 export class OgcFilterableFormComponent {
   @Input() datasource: OgcFilterableDataSource;
 
-  @Input() map: IgoMap;
+  @Input() map: MapBase;
 
   @Input() refreshFilters: () => void;
 
@@ -45,6 +54,4 @@ export class OgcFilterableFormComponent {
   }
 
   public color = 'primary';
-
-  constructor() {}
 }

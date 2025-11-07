@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Router,
   RouterStateSnapshot
 } from '@angular/router';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { map } from 'rxjs/operators';
 
@@ -16,11 +16,9 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ProfilsGuard {
-  constructor(
-    private authService: AuthService,
-    private config: ConfigService,
-    private router: Router
-  ) {}
+  private authService = inject(AuthService);
+  private config = inject(ConfigService);
+  private router = inject(Router);
 
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.authService.getProfils().pipe(

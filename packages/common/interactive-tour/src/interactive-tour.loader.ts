@@ -1,0 +1,60 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+
+import { ConfigService } from '@igo2/core/config';
+
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+import { InteractiveTourOptions } from './interactive-tour.interface';
+
+@Injectable()
+export class InteractiveTourLoader {
+  private http = inject(HttpClient);
+  private configService = inject(ConfigService);
+
+  private jsonURL: string;
+  private allToursOptions;
+
+  constructor() {
+    this.jsonURL = this.getPathToConfigFile();
+  }
+
+  public loadConfigTour() {
+    this.getJSON().subscribe(
+      (data) => {
+        this.allToursOptions = data;
+      },
+      () => {
+        throw new Error(
+          `Problem with Interactive tour configuration file: interactiveTour.json not find. Check if the file and is path is set correctly.`
+        );
+      }
+    );
+  }
+
+  public getPathToConfigFile(): string {
+    return (
+      this.configService.getConfig('interactiveTour.pathToConfigFile') ||
+      './config/interactiveTour.json'
+    );
+  }
+
+  public getJSON(): Observable<any> {
+    return this.http.get(this.jsonURL).pipe(
+      catchError((e) => {
+        e.error.caught = true;
+        throw e;
+      })
+    );
+  }
+
+  public getTourOptionData(toolName): InteractiveTourOptions {
+    if (this.allToursOptions === undefined) {
+      return undefined;
+    }
+    let nameInConfigFile = toolName;
+    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
+    return this.allToursOptions[nameInConfigFile];
+  }
+}

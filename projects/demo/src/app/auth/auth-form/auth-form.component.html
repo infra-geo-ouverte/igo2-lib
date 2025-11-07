@@ -1,0 +1,19 @@
+<app-doc-viewer
+  title="Authentification"
+  subtitle="Auth"
+  [dependencies]="['ConfigService', 'LanguageService']"
+>
+  <app-example-viewer codeFolder="auth/auth-form" configFolder="environments">
+    The dialog opens automatically if you are not logged in
+    <br />
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!logged"
+      (click)="logout()"
+    >
+      Log out
+    </button>
+  </app-example-viewer>
+</app-doc-viewer>
+<igo-auth-form></igo-auth-form>

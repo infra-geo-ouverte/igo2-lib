@@ -1,9 +1,16 @@
-import { Injectable } from '@angular/core';
+import {
+  Injectable,
+  WritableSignal,
+  effect,
+  inject,
+  signal
+} from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { AnalyticsService } from '@igo2/core/analytics';
+import { StorageService } from '@igo2/core/storage';
 
-import { stringToLonLat } from '../../map/shared';
 import { MapService } from '../../map/shared/map.service';
+import { stringToLonLat } from '../../map/shared/map.utils';
 import { SearchSourceService } from './search-source.service';
 import { Research, ReverseSearch, TextSearch } from './search.interfaces';
 import {
@@ -24,15 +31,33 @@ import {
  * keeps internal state of the researches it performed
  * and the results they yielded.
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SearchService {
-  constructor(
-    private searchSourceService: SearchSourceService,
-    private mapService: MapService,
-    private storageService: StorageService
-  ) {}
+  private searchSourceService = inject(SearchSourceService);
+  private mapService = inject(MapService);
+  private storageService = inject(StorageService);
+  private analyticsService = inject(AnalyticsService);
+
+  searchTerm: WritableSignal<string> = signal(null);
+
+  constructor() {
+    const analytics = inject<boolean>('searchAnalytics' as any, {
+      optional: true
+    });
+
+    if (analytics) {
+      this.handleAnalytics();
+    }
+  }
+
+  private handleAnalytics(): void {
+    effect(() => {
+      const term = this.searchTerm();
+      if (term != null) {
+        this.analyticsService.trackSearch(term, null);
+      }
+    });
+  }
 
   /**
    * Perform a research by text
@@ -43,6 +68,8 @@ export class SearchService {
     if (!this.termIsValid(term)) {
       return [];
     }
+
+    this.searchTerm.set(term);
 
     const proj = this.mapService.getMap()?.projection || 'EPSG:3857';
     const response = stringToLonLat(term, proj, {
@@ -89,7 +116,7 @@ export class SearchService {
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions,
-    asPointerSummary: boolean = false
+    asPointerSummary = false
   ) {
     const reverseSourceFonction = asPointerSummary
       ? sourceCanReverseSearchAsSummary

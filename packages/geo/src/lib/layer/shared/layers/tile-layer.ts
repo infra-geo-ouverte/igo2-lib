@@ -1,5 +1,5 @@
 import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import Tile from 'ol/Tile';
 import olLayerTile from 'ol/layer/Tile';
@@ -11,21 +11,23 @@ import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources
 import { TileDebugDataSource } from '../../../datasource/shared/datasources/tiledebug-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
-import { IgoMap } from '../../../map/shared';
-import { TileWatcher } from '../../utils';
+import type { MapBase } from '../../../map/shared/map.abstract';
+import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
+import { LayerType } from './layer.interface';
 import { TileLayerOptions } from './tile-layer.interface';
 
 export class TileLayer extends Layer {
-  public declare dataSource:
+  type: LayerType = 'raster';
+  declare public dataSource:
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
     | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
-  public declare options: TileLayerOptions;
-  public declare ol: olLayerTile<olSourceTile>;
+  declare public options: TileLayerOptions;
+  declare public ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 
@@ -46,9 +48,11 @@ export class TileLayer extends Layer {
     });
     const tileLayer = new olLayerTile(olOptions);
     const tileSource = tileLayer.getSource();
-    tileSource.setTileLoadFunction((tile: Tile, url: string) => {
-      this.customLoader(tile, url, this.authInterceptor);
-    });
+    if ('setTileLoadFunction' in tileSource) {
+      tileSource.setTileLoadFunction((tile: Tile, url: string) => {
+        this.customLoader(tile, url, this.authInterceptor);
+      });
+    }
 
     return tileLayer;
   }
@@ -68,12 +72,17 @@ export class TileLayer extends Layer {
     tile.getImage().src = modifiedUrl;
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
+  }
+
+  remove(): void {
+    this.watcher.unsubscribe();
+    super.remove();
   }
 }

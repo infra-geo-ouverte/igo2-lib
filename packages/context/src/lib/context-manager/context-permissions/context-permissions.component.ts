@@ -1,3 +1,4 @@
+import { KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
@@ -5,16 +6,32 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup
 } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core';
+import { CollapsibleComponent } from '@igo2/common/collapsible';
+import { ListComponent } from '@igo2/common/list';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { Subscription } from 'rxjs';
 
@@ -29,9 +46,33 @@ import {
 @Component({
   selector: 'igo-context-permissions',
   templateUrl: './context-permissions.component.html',
-  styleUrls: ['./context-permissions.component.scss']
+  styleUrls: ['./context-permissions.component.scss'],
+  imports: [
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatOptionModule,
+    MatButtonModule,
+    ListComponent,
+    CollapsibleComponent,
+    MatListModule,
+    MatIconModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    KeyValuePipe,
+    IgoLanguageModule
+  ]
 })
 export class ContextPermissionsComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private cd = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
+  authService = inject(AuthService);
+  private config = inject(ConfigService);
+
   public form: UntypedFormGroup;
 
   @Input()
@@ -72,18 +113,9 @@ export class ContextPermissionsComponent implements OnInit {
   public formControl = new UntypedFormControl();
   formValueChanges$$: Subscription;
 
-  @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
-  @Output() removePermission: EventEmitter<ContextPermission> =
-    new EventEmitter();
-  @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
-
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private cd: ChangeDetectorRef,
-    private http: HttpClient,
-    public authService: AuthService,
-    private config: ConfigService
-  ) {}
+  @Output() addPermission = new EventEmitter<ContextPermission>();
+  @Output() removePermission = new EventEmitter<ContextPermission>();
+  @Output() scopeChanged = new EventEmitter<Context>();
 
   ngOnInit(): void {
     this.buildForm();

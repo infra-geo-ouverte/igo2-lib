@@ -1,31 +1,37 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { TimeFilterableDataSource } from '../../datasource';
-import { Layer } from '../../layer/shared/layers/layer';
+import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { AnyLayer, Layer, isLayerGroup } from '../../layer';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
 @Pipe({
-  name: 'filterableDataSource'
+  name: 'filterableDataSource',
+  standalone: true
 })
 export class FilterableDataSourcePipe implements PipeTransform {
-  transform(value: Layer[], arg: string): Layer[] {
-    let layers;
-
+  transform(value: AnyLayer[], arg: string): Layer[] {
+    let layers: Layer[];
     if (arg === 'time') {
-      layers = value.filter((layer: Layer) => {
+      layers = value.filter((layer) => {
+        if (isLayerGroup(layer)) {
+          return false;
+        }
         const datasource = layer.dataSource as TimeFilterableDataSource;
         return (
           this.isTimeFilterable(datasource) &&
           datasource.options.timeFilter !== undefined &&
           Object.keys(datasource.options.timeFilter).length
         );
-      });
+      }) as Layer[];
     }
     if (arg === 'ogc') {
-      layers = value.filter((layer: Layer) => {
+      layers = value.filter((layer) => {
+        if (isLayerGroup(layer)) {
+          return false;
+        }
         const datasource = layer.dataSource as OgcFilterableDataSource;
         return this.isOgcFilterable(datasource);
-      });
+      }) as Layer[];
     }
     return layers;
   }

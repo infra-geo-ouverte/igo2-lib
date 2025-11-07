@@ -1,15 +1,19 @@
-import { DatePipe } from '@angular/common';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
-import { Action, Widget } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
-import { OgcFilterWidget, WfsWorkspace } from '@igo2/geo';
+} from '@igo2/core/storage';
+import {
+  InteractiveSelectionFormWidget,
+  OgcFilterWidget,
+  WfsWorkspace
+} from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -22,13 +26,21 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class WfsActionsService implements OnDestroy {
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private mediaService = inject(MediaService);
+  private toolState = inject(ToolState);
+  private interactiveSelectionFormWidget = inject<Widget>(
+    InteractiveSelectionFormWidget,
+    { optional: true }
+  );
+  private ogcFilterWidget = inject<Widget>(OgcFilterWidget, { optional: true });
+
   public maximize$: BehaviorSubject<boolean>;
 
-  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  selectOnlyCheckCondition$ = new BehaviorSubject<boolean>(false);
   // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;
 
   get storageService(): StorageService {
@@ -39,14 +51,7 @@ export class WfsActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private mediaService: MediaService,
-    private toolState: ToolState,
-    private datePipe: DatePipe
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );
@@ -100,7 +105,7 @@ export class WfsActionsService implements OnDestroy {
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.datePipe
+      this.interactiveSelectionFormWidget
     );
   }
 }

@@ -1,14 +1,22 @@
 import * as olformat from 'ol/format';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceVector from 'ol/source/Vector';
 
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export class FeatureDataSource extends DataSource {
-  public declare options: FeatureDataSourceOptions;
-  public declare ol: olSourceVector<OlGeometry>;
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  declare public options: FeatureDataSourceOptions;
+  declare public ol: olSourceVector;
+
+  get saveableOptions(): Partial<FeatureDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params
+    };
+  }
+
+  protected createOlSource(): olSourceVector {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)
     };
@@ -42,7 +50,9 @@ export class FeatureDataSource extends DataSource {
     return format;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 
   get queryTitle(): string {
     return (this.options as any).queryTitle

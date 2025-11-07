@@ -1,9 +1,17 @@
-$slide-toggle-width: 60px;
+:host {
+  display: block;
+  padding: 16px;
+}
 
 .directions-options {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  row-gap: 8px;
+  margin-bottom: 16px;
+
   mat-slide-toggle {
     width: 100%;
-    padding: 10px;
 
     ::ng-deep .mdc-form-field {
       width: 100%;
@@ -11,7 +19,14 @@ $slide-toggle-width: 60px;
 
     ::ng-deep .mdc-label {
       margin-left: 0;
-      width: calc(100% - #{$slide-toggle-width});
+      margin-right: auto;
+      width: auto;
+      padding-right: 0;
+    }
+
+    ::ng-deep .mdc-slide-toggle {
+      margin-left: auto;
+      margin-right: 0;
     }
   }
 }

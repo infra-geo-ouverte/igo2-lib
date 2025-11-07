@@ -1,14 +1,14 @@
-import { DatePipe } from '@angular/common';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
-import { Action, Widget } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
+} from '@igo2/core/storage';
 import { EditionWorkspace, OgcFilterWidget } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -22,9 +22,15 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class EditionActionsService implements OnDestroy {
+  private ogcFilterWidget = inject<Widget>(OgcFilterWidget, { optional: true });
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private mediaService = inject(MediaService);
+  private toolState = inject(ToolState);
+
   public maximize$: BehaviorSubject<boolean>;
 
-  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;
 
   get storageService(): StorageService {
@@ -35,14 +41,7 @@ export class EditionActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private mediaService: MediaService,
-    private toolState: ToolState,
-    private datePipe: DatePipe
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );
@@ -95,8 +94,7 @@ export class EditionActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState,
-      this.datePipe
+      this.toolState
     );
   }
 }

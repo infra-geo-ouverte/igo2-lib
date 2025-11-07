@@ -65,7 +65,7 @@ export function featureToSearchResult(
       dataType: FEATURE,
       id: feature.meta.id as string,
       title: feature.meta.title,
-      icon: feature.meta.icon || 'map-marker'
+      icon: feature.meta.icon || 'location_on'
     }
   };
 }
@@ -88,11 +88,7 @@ export function findDiff(str1: string, str2: string) {
  * @param caseSensitive boolean
  * @returns number
  */
-export function computeTermSimilarity(
-  from,
-  to,
-  caseSensitive: boolean = false
-): number {
+export function computeTermSimilarity(from, to, caseSensitive = false): number {
   if (!from || !to) {
     return 0;
   }

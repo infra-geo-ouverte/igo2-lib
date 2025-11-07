@@ -1,5 +1,4 @@
 import olFormatEsriJSON from 'ol/format/EsriJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import olSourceVector from 'ol/source/Vector';
 
@@ -8,16 +7,25 @@ import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
-  public declare ol: olSourceVector<OlGeometry>;
-  public declare options: ArcGISRestDataSourceOptions;
+  declare public ol: olSourceVector;
+  declare public options: ArcGISRestDataSourceOptions;
 
-  protected createOlSource(): olSourceVector<OlGeometry> {
+  get saveableOptions(): Partial<ArcGISRestDataSourceOptions> {
+    const baseOptions = super.saveableOptions;
+    return {
+      ...baseOptions,
+      params: this.options.params,
+      url: this.options.url
+    };
+  }
+
+  protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();
     return new olSourceVector({
       attributions: this.options.params.attributions,
       overlaps: false,
       format: esrijsonFormat,
-      url: function (extent, resolution, proj) {
+      url: function (extent) {
         const baseUrl = this.options.url + '/' + this.options.layer + '/query/';
         const geometry = encodeURIComponent(
           '{"xmin":' +
@@ -81,7 +89,7 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td class="mat-typography">` +
+          `" alt ='' /></td><td >` +
           label +
           '</td></tr>';
       }
@@ -96,17 +104,13 @@ export class ArcGISRestDataSource extends DataSource {
           htmlString +=
             `<tr><td align='left'><img src="` +
             src +
-            `" alt ='' /></td><td class="mat-typography">` +
+            `" alt ='' /></td><td >` +
             label +
             '</td></tr>';
         } else if (legendElement.symbol.type !== 'esriPMS') {
           svg = this.createSVG(legendElement.symbol);
           htmlString +=
-            `<tr><td align='left'>` +
-            svg +
-            `</td><td class="mat-typography">` +
-            label +
-            '</td></tr>';
+            `<tr><td align='left'>` + svg + `</td><td >` + label + '</td></tr>';
         }
       }
     } else if (legendInfo.type === 'simple') {
@@ -121,17 +125,13 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td class="mat-typography">` +
+          `" alt ='' /></td><td >` +
           label +
           '</td></tr>';
       } else if (legendInfo.symbol.type !== 'esriPMS') {
         svg = this.createSVG(legendInfo.symbol);
         htmlString +=
-          `<tr><td align='left'>` +
-          svg +
-          `</td><td class="mat-typography">` +
-          label +
-          '</td></tr>';
+          `<tr><td align='left'>` + svg + `</td><td >` + label + '</td></tr>';
       }
     }
     htmlString += '</table>';
@@ -143,9 +143,9 @@ export class ArcGISRestDataSource extends DataSource {
   }
 
   createSVG(symbol): string {
-    let svg: string = '';
+    let svg = '';
 
-    const color: Array<number> = symbol.color ? symbol.color : [0, 0, 0, 0];
+    const color: number[] = symbol.color ? symbol.color : [0, 0, 0, 0];
 
     if (symbol.type === 'esriSLS') {
       const width: number = symbol.width ? symbol.width : 0;
@@ -170,7 +170,7 @@ export class ArcGISRestDataSource extends DataSource {
           strokeWidth +
           `"/></svg>`;
       } else if (symbol.style === 'esriSLSDash') {
-        const strokeDashArray: string = `stroke-dasharray="5,5"`;
+        const strokeDashArray = `stroke-dasharray="5,5"`;
         svg =
           `<svg height="30" width="30"><line x1="0" y1="15" x2="30" y2="15" style="` +
           stroke +
@@ -235,5 +235,7 @@ export class ArcGISRestDataSource extends DataSource {
     return svg;
   }
 
-  public onUnwatch() {}
+  public onUnwatch() {
+    // empty
+  }
 }

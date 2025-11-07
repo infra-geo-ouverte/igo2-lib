@@ -1,15 +1,15 @@
-import { DatePipe } from '@angular/common';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 
-import { Action } from '@igo2/common';
+import { Action } from '@igo2/common/action';
+import { Widget } from '@igo2/common/widget';
+import { LanguageService } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 import {
-  LanguageService,
-  MediaService,
   StorageService,
   StorageServiceEvent,
   StorageServiceEventEnum
-} from '@igo2/core';
-import { FeatureWorkspace } from '@igo2/geo';
+} from '@igo2/core/storage';
+import { FeatureWorkspace, InteractiveSelectionFormWidget } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -22,9 +22,18 @@ import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
   providedIn: 'root'
 })
 export class FeatureActionsService implements OnDestroy {
+  private storageState = inject(StorageState);
+  languageService = inject(LanguageService);
+  private toolState = inject(ToolState);
+  private mediaService = inject(MediaService);
+  private interactiveSelectionFormWidget = inject<Widget>(
+    InteractiveSelectionFormWidget,
+    { optional: true }
+  );
+
   public maximize$: BehaviorSubject<boolean>;
 
-  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  zoomAuto$ = new BehaviorSubject<boolean>(false);
   private storageChange$$: Subscription;
 
   get storageService(): StorageService {
@@ -35,13 +44,7 @@ export class FeatureActionsService implements OnDestroy {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private storageState: StorageState,
-    public languageService: LanguageService,
-    private toolState: ToolState,
-    private mediaService: MediaService,
-    private datePipe: DatePipe
-  ) {
+  constructor() {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
     );
@@ -95,7 +98,7 @@ export class FeatureActionsService implements OnDestroy {
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.datePipe
+      this.interactiveSelectionFormWidget
     );
   }
 }

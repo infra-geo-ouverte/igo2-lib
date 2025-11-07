@@ -1,10 +1,30 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject
+} from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+import { SecureImagePipe } from '@igo2/common/image';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -21,14 +41,31 @@ import {
 @Component({
   selector: 'igo-print-form',
   templateUrl: './print-form.component.html',
-  styleUrls: ['./print-form.component.scss']
+  styleUrls: ['./print-form.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    AsyncPipe,
+    KeyValuePipe,
+    IgoLanguageModule
+  ],
+  providers: [SecureImagePipe]
 })
 export class PrintFormComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private mediaService = inject(MediaService);
+
   public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
-  public resolutions = PrintResolution;
+  public resolutions = [...PrintResolution];
   public imageFormats = PrintSaveImageFormat;
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
@@ -80,7 +117,7 @@ export class PrintFormComponent implements OnInit {
     return this.resolutionField.value;
   }
   set resolution(value: PrintResolution) {
-    this.resolutionField.setValue(value || PrintResolution['96'], {
+    this.resolutionField.setValue(value || ('96' satisfies PrintResolution), {
       onlySelf: true
     });
   }
@@ -146,6 +183,14 @@ export class PrintFormComponent implements OnInit {
     this.doZipFileField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get showNorth(): boolean {
+    return this.showNorthArrowField.value;
+  }
+  set showNorth(value: boolean) {
+    this.showNorthArrowField.setValue(value, { onlySelf: true });
+  }
+
   get outputFormatField() {
     return (this.form.controls as any).outputFormat as UntypedFormControl;
   }
@@ -186,6 +231,10 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).doZipFile as UntypedFormControl;
   }
 
+  get showNorthArrowField() {
+    return (this.form.controls as any).showNorth as UntypedFormControl;
+  }
+
   get titleField() {
     return (this.form.controls as any).title as UntypedFormControl;
   }
@@ -198,11 +247,11 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).legendPosition as UntypedFormControl;
   }
 
-  @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
+  @Output() submit = new EventEmitter<PrintOptions>();
 
-  maxLength: number = 180;
+  maxLength = 180;
 
-  constructor(private formBuilder: UntypedFormBuilder) {
+  constructor() {
     this.form = this.formBuilder.group({
       title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
       subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],
@@ -219,12 +268,18 @@ export class PrintFormComponent implements OnInit {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [{ hidden: this.isPrintService }]
+      doZipFile: [{ hidden: this.isPrintService }],
+      showNorthArrow: false
     });
   }
 
   ngOnInit() {
     this.doZipFileField.setValue(false);
+    if (this.mediaService.isMobile()) {
+      this.resolutions = this.resolutions.filter(
+        (resolution) => resolution !== '300'
+      );
+    }
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {

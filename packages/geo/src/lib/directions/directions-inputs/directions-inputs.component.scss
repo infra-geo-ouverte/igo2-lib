@@ -1,65 +1,60 @@
-:host {
-  .igo-input-container {
-    display: flex;
-    width: 100%;
+@use '@angular/material' as mat;
 
-    mat-form-field {
-      flex: 1;
-    }
+.prefix-actions {
+  @include mat.icon-button-overrides(
+    (
+      state-layer-size: 28px
+    )
+  );
+}
+
+.igo-input-container {
+  display: flex;
+  width: 100%;
+
+  mat-form-field {
+    flex: 1;
   }
+}
 
-  .igo-form-button-group {
-    display: flex;
-    align-items: center;
-    padding-left: 12px;
-  }
+.stops-list,
+.stop {
+  display: flex;
+  flex-flow: column;
+  row-gap: 12px;
+}
 
-  .stops-list {
-    max-width: 100%;
-    min-height: 60px;
+.stop:hover {
+  .swipe-vertical,
+  .delete-button {
+    visibility: visible;
     display: block;
-    background: white;
-    border-radius: 4px;
-    overflow: hidden;
-    padding: 20px 10px;
   }
+}
 
-  .swipe-vertical {
-    cursor: move;
-  }
+.swipe-vertical {
+  visibility: hidden;
+  cursor: move;
+}
 
-  .stop-box {
-    color: rgba(0, 0, 0, 0.87);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    background: white;
+.delete-button {
+  display: none;
+}
 
-    &:not(:last-child) {
-      margin-bottom: 16px;
-    }
-  }
+.stop-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .cdk-drag-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow:
-      0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  }
+.cdk-drag-placeholder {
+  opacity: 0;
+}
 
-  .cdk-drag-placeholder {
-    opacity: 0;
-  }
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
 
-  .cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
-
-  .stops-list.cdk-drop-list-dragging .stop-box:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
+.stops-list.cdk-drop-list-dragging .stop-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

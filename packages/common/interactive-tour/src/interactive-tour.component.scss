@@ -1,0 +1,45 @@
+:host {
+  ::ng-deep {
+    button {
+      &.tour-button-tool-icon {
+        color: var(--mat-sys-primary-container);
+
+        &:hover {
+          background-color: var(--mat-sys-secondary-container);
+          color: var(--mat-sys-on-secondary-container);
+        }
+      }
+    }
+
+    .mat-primary .mat-mdc-icon-button {
+      color: white;
+    }
+  }
+
+  > button.mat-mdc-raised-button.tour-button-tool-icon {
+    box-shadow: none;
+  }
+}
+
+.shepherd-has-title .shepherd-content .shepherd-header {
+  padding: 0.5em 0.75em;
+  h3 {
+    font-size: 14px;
+  }
+}
+
+.shepherd-title {
+  margin: 0px !important;
+  font-weight: revert !important;
+}
+
+.shepherd-progress {
+  margin-right: 15px;
+  color: hsla(0, 0%, 45%, 1);
+}
+
+.shepherd-element {
+  border: 1px solid;
+  border-color: #474747;
+  box-shadow: 4px 5px rgb(101, 101, 101, 0.6);
+}

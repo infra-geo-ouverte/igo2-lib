@@ -8,24 +8,23 @@
 >
   <igo-panel [title]="title">
     <button mat-icon-button panelLeftButton (click)="toggle()">
-      <mat-icon
-        [svgIcon]="
-          ['collapsed', 'initial'].indexOf(flex.state) >= 0
-            ? 'arrow_upward'
-            : 'arrow_downward'
-        "
-      ></mat-icon>
+      <mat-icon>{{
+        ['collapsed', 'initial'].indexOf(flex.state) >= 0
+          ? 'arrow_upward'
+          : 'arrow_downward'
+      }}</mat-icon>
     </button>
 
-    <button
-      mat-icon-button
-      panelRightButton
-      class="igo-icon-button"
-      (click)="zoomToFeatureExtent()"
-      *ngIf="feature.geometry"
-    >
-      <mat-icon svgIcon="zoom-in"></mat-icon>
-    </button>
+    @if (feature.geometry) {
+      <button
+        mat-icon-button
+        panelRightButton
+        class="igo-icon-button"
+        (click)="zoomToFeatureExtent()"
+      >
+        <mat-icon>zoom_in</mat-icon>
+      </button>
+    }
 
     <igo-feature-details [feature]="feature"></igo-feature-details>
   </igo-panel>

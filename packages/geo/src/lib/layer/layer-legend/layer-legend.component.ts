@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -7,38 +8,78 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChildren
+  ViewChildren,
+  inject
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { SecureImagePipe } from '@igo2/common';
-import { ConfigService, LanguageService } from '@igo2/core';
+import { CollapseDirective } from '@igo2/common/collapsible';
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
+import {
+  ImageErrorDirective,
+  fetchImageFromDepotUrl
+} from '@igo2/common/image';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { Legend } from '../../datasource/shared/datasources/datasource.interface';
-import { Layer } from '../shared/layers';
+import {
+  Legend,
+  WMSDataSource,
+  WMSDataSourceOptions
+} from '../../datasource/shared/datasources';
 import {
   ItemStyleOptions,
+  Layer,
   LegendMapViewOptions
-} from '../shared/layers/legend.interface';
+} from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-legend',
   templateUrl: './layer-legend.component.html',
   styleUrls: ['./layer-legend.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    NgClass,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    FormsModule,
+    MatOptionModule,
+    ImageErrorDirective,
+    NgStyle,
+    AsyncPipe,
+    IgoLanguageModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
-  @Input() updateLegendOnResolutionChange: boolean = false;
+  private capabilitiesService = inject(CapabilitiesService);
+  private languageService = inject(LanguageService);
+  private cdRef = inject(ChangeDetectorRef);
+  private config = inject(ConfigService);
+  private http = inject(HttpClient);
+
+  @Input() updateLegendOnResolutionChange = false;
 
   /**
    * Observable of the legend items
    */
-  legendItems$: BehaviorSubject<Legend[]> = new BehaviorSubject([]);
+  legendItems$ = new BehaviorSubject<Legend[]>([]);
 
   /**
    * Subscription to the map's resolution
@@ -56,11 +97,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   public currentStyle;
 
   /**
-   * The scale used to make the legend
-   */
-  private scale: number = undefined;
-
-  /**
    * The extent used to make the legend
    */
   private view: LegendMapViewOptions = undefined;
@@ -72,29 +108,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * List of size of images displayed
    */
-  public imagesHeight: { [srcKey: string]: number } = {};
+  public imagesHeight: Record<string, number> = {};
 
-  /**
-   * Layer
-   */
   @Input() layer: Layer;
 
   /**
    * if getLegendGraphic is authorized
    */
   public getLegend = true;
-
-  /**
-   * activeLegend
-   */
-
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService,
-    private configService: ConfigService,
-    private http: HttpClient,
-    private cdRef: ChangeDetectorRef
-  ) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -153,9 +174,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   getLegendGraphic(item: Legend) {
     if (item.url) {
-      const secureIMG = new SecureImagePipe(this.http, this.configService);
-      secureIMG
-        .transform(item.url)
+      const depotUrl = this.config?.getConfig('depot.url');
+      fetchImageFromDepotUrl(item.url, depotUrl, this.http)
         .pipe(
           catchError((err) => {
             if (err.error) {
@@ -284,9 +304,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       this.layer.dataSource.ol
         .getParams()
         .LAYERS.split(',')
-        .map((layer) => (STYLES += this.currentStyle + ','));
+        .map(() => (STYLES += this.currentStyle + ','));
       STYLES = STYLES.slice(0, -1);
-      this.layer.dataSource.ol.updateParams({ STYLES });
+      this.layer.dataSource.stylesParams = STYLES;
     }
   }
 

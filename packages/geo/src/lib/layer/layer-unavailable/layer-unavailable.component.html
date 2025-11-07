@@ -1,0 +1,35 @@
+<mat-list-item>
+  <mat-icon
+    matListItemIcon
+    class="layer-indicator mat-warn"
+    aria-hidden="false"
+    color="warn"
+    >warning
+  </mat-icon>
+  <span
+    matListItemTitle
+    [matTooltip]="title"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+  >
+    {{ title }}
+  </span>
+  <div matListItemMeta>
+    <div
+      class="align-disabled-button-with-tooltip"
+      [matTooltip]="'igo.geo.layer.unavailableLayer' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+    ></div>
+    <button
+      mat-icon-button
+      color="warn"
+      [matTooltip]="'igo.geo.layer.deleteLayer' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="handleRemove(layerOptions)"
+    >
+      <mat-icon aria-hidden="false">delete</mat-icon>
+    </button>
+  </div>
+</mat-list-item>

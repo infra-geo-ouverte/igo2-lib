@@ -1,23 +1,26 @@
+import { Clipboard } from '@angular/cdk/clipboard';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
-import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import {
-  ConfigService,
-  LanguageService,
-  MessageService,
-  StorageScope,
-  StorageService
-} from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
   IgoMap,
   InputProjections,
@@ -25,11 +28,10 @@ import {
   formatScale
 } from '@igo2/geo';
 import { computeProjectionsConstraints, zoneMtm, zoneUtm } from '@igo2/geo';
-import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
-import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../../map.state';
@@ -40,24 +42,46 @@ import { MapState } from '../../map.state';
 @Component({
   selector: 'igo-advanced-coordinates',
   templateUrl: './advanced-coordinates.component.html',
-  styleUrls: ['./advanced-coordinates.component.scss']
+  styleUrls: ['./advanced-coordinates.component.scss'],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatSlideToggleModule,
+    AsyncPipe,
+    DecimalPipe,
+    IgoLanguageModule
+  ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
-  public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
-  public projections$: BehaviorSubject<InputProjections[]> =
-    new BehaviorSubject([]);
+  private clipboard = inject(Clipboard);
+  mapState = inject(MapState);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private storageService = inject(StorageService);
+  private config = inject(ConfigService);
+  private formBuilder = inject(UntypedFormBuilder);
+
+  public formattedScale$ = new BehaviorSubject<string>('');
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
   public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
   public center: boolean;
-  private inMtmZone: boolean = true;
+  private inMtmZone = true;
   private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
+  private formStatus$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private defaultProj: InputProjections;
   private currentZones = { utm: undefined, mtm: undefined };
-  public units: boolean = true;
+  public units = true;
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -77,15 +101,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this._projectionsLimitations = value;
   }
 
-  constructor(
-    public mapState: MapState,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private cdRef: ChangeDetectorRef,
-    private storageService: StorageService,
-    private config: ConfigService,
-    private formBuilder: UntypedFormBuilder
-  ) {
+  constructor() {
     this.defaultProj = {
       translatedValue: this.languageService.translate.instant(
         'igo.geo.importExportForm.projections.wgs84',
@@ -107,45 +123,26 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Listen a state of the map, a state of a form, update the coordinates
    */
   ngOnInit(): void {
-    this.mapState$$ = combineLatest([
-      this.map.viewController.state$.pipe(debounceTime(50)),
-      this.form.valueChanges
-    ]).subscribe(() => {
-      this.setScaleValue(this.map);
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(
-        this.defaultProj.code
-      );
-      const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
-      const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-      if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
-        this.back2quebec();
-      }
-      let zoneChange = false;
-      if (currentMtmZone !== this.currentZones.mtm) {
-        this.currentZones.mtm = currentMtmZone;
-        zoneChange = true;
-      }
-      if (currentUtmZone !== this.currentZones.utm) {
-        this.currentZones.utm = currentUtmZone;
-        zoneChange = true;
-      }
-      if (zoneChange) {
-        this.updateProjectionsZoneChange();
-      }
-      this.checkLambert(this.currentCenterDefaultProj);
-      this.coordinates = this.getCoordinates();
-      this.cdRef.detectChanges();
-      this.storageService.set(
-        'currentProjection',
-        this.inputProj,
-        StorageScope.SESSION
-      );
+    this.mapState$$ = this.map.viewController.state$
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.setScaleValue(this.map);
+        this.updateCoordinates();
+      });
+
+    this.formStatus$$ = this.form.valueChanges.subscribe(() => {
+      this.updateCoordinates();
     });
 
     const tempInputProj = this.storageService.get(
       'currentProjection'
     ) as InputProjections;
-    this.inputProj = this.projections$.value[0];
+
+    this.inputProj =
+      this.projections$.value.find(
+        (val) => val.code === this.defaultProj.code
+      ) ?? this.projections$.value[0];
+
     if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
@@ -161,6 +158,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.map.mapCenter$.next(false);
     this.mapState$$.unsubscribe();
+    this.formStatus$$.unsubscribe();
   }
 
   setScaleValue(map: IgoMap) {
@@ -175,24 +173,54 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   getCoordinates(): string[] {
     this.currentZones.mtm = zoneMtm(this.currentCenterDefaultProj[0]);
     this.currentZones.utm = zoneUtm(this.currentCenterDefaultProj[0]);
-    let coord;
     const code = this.inputProj.code;
     let decimal = 2;
     if (code.includes('EPSG:4326') || code.includes('EPSG:4269')) {
       decimal = 5;
     }
     this.units = code === 'EPSG:4326' || code === 'EPSG:4269';
-    coord = this.map.viewController
+    const coord = this.map.viewController
       .getCenter(code)
       .map((c) => c.toFixed(decimal));
     return coord;
+  }
+
+  updateCoordinates() {
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(
+      this.defaultProj.code
+    );
+    const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
+    const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
+    if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
+      this.back2quebec();
+    }
+    let zoneChange = false;
+    if (currentMtmZone !== this.currentZones.mtm) {
+      this.currentZones.mtm = currentMtmZone;
+      zoneChange = true;
+    }
+    if (currentUtmZone !== this.currentZones.utm) {
+      this.currentZones.utm = currentUtmZone;
+      zoneChange = true;
+    }
+    if (zoneChange) {
+      this.updateProjectionsZoneChange();
+    }
+    this.checkLambert(this.currentCenterDefaultProj);
+    this.coordinates = this.getCoordinates();
+
+    this.storageService.set(
+      'currentProjection',
+      this.inputProj,
+      StorageScope.SESSION
+    );
   }
 
   /**
    * Copy the coordinates to a clipboard
    */
   copyTextToClipboard(): void {
-    const successful = Clipboard.copy(this.coordinates.toString());
+    const successful = this.clipboard.copy(this.coordinates.toString());
     if (successful) {
       this.messageService.success(
         'igo.integration.advanced-map-tool.advanced-coordinates.copyMsg',
@@ -373,7 +401,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Push the MTM in the array of systeme of coordinates
    * @param projections Array of the InputProjections
    */
-  private pushMtm(projections: Array<InputProjections>): void {
+  private pushMtm(projections: InputProjections[]): void {
     if (this.projectionsConstraints.mtm) {
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;

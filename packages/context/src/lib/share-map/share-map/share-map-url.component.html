@@ -1,4 +1,4 @@
-<div class="igo-input-container linkToShare">
+<div class="igo-input-container">
   <mat-form-field>
     <textarea
       #textArea
@@ -10,66 +10,90 @@
     ></textarea>
   </mat-form-field>
 
-  <div class="igo-form-button-group">
-    <button mat-raised-button (click)="copyTextToClipboard(textArea)">
-      <mat-icon svgIcon="content-copy"></mat-icon>
-      {{ 'igo.context.shareMap.copy' | translate }}
-    </button>
-  </div>
-  <div>
-    <br />
-    <section class="mat-typography">
-      <div
-        *ngIf="('igo.context.shareMap.htmlClarifications' | translate) === ''"
-      >
-        <h4 *ngIf="('igo.context.shareMap.included' | translate) !== ''">
-          {{ 'igo.context.shareMap.included' | translate }}
-        </h4>
-        <ul>
-          <li *ngIf="('igo.context.shareMap.context' | translate) !== ''">
-            {{ 'igo.context.shareMap.context' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.center' | translate) !== ''">
-            {{ 'igo.context.shareMap.center' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.zoom' | translate) !== ''">
-            {{ 'igo.context.shareMap.zoom' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.addedLayers' | translate) !== ''">
-            {{ 'igo.context.shareMap.addedLayers' | translate }}
-          </li>
-          <li
-            *ngIf="('igo.context.shareMap.visibleInvisible' | translate) !== ''"
-          >
-            {{ 'igo.context.shareMap.visibleInvisible' | translate }}
-          </li>
-        </ul>
+  <div class="igo-share-map-url-content">
+    <div class="igo-form-button-group">
+      <button matButton="elevated" (click)="copyTextToClipboard(textArea)">
+        <mat-icon>content_copy</mat-icon>
+        {{ 'igo.context.shareMap.copy' | translate }}
+      </button>
+    </div>
 
-        <h4 *ngIf="('igo.context.shareMap.excluded' | translate) !== ''">
-          {{ 'igo.context.shareMap.excluded' | translate }}
-        </h4>
-        <ul>
-          <li *ngIf="('igo.context.shareMap.order' | translate) !== ''">
-            {{ 'igo.context.shareMap.order' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.opacity' | translate) !== ''">
-            {{ 'igo.context.shareMap.opacity' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.filterOgc' | translate) !== ''">
-            {{ 'igo.context.shareMap.filterOgc' | translate }}
-          </li>
-          <li *ngIf="('igo.context.shareMap.filterTime' | translate) !== ''">
-            {{ 'igo.context.shareMap.filterTime' | translate }}
-          </li>
-        </ul>
-      </div>
-      <igo-custom-html
-        class="shareCustomPadding"
-        *ngIf="('igo.context.shareMap.htmlClarifications' | translate) !== ''"
-        class="mat-typography"
-        [html]="'igo.context.shareMap.htmlClarifications' | translate"
-      >
-      </igo-custom-html>
-    </section>
+    <div>
+      <br />
+      <section>
+        @if (('igo.context.shareMap.htmlClarifications' | translate) === '') {
+          <div>
+            @if (('igo.context.shareMap.included' | translate) !== '') {
+              <h4>
+                {{ 'igo.context.shareMap.included' | translate }}
+              </h4>
+            }
+            <ul>
+              @if (('igo.context.shareMap.context' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.context' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.center' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.center' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.zoom' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.zoom' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.addedLayers' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.addedLayers' | translate }}
+                </li>
+              }
+              @if (
+                ('igo.context.shareMap.visibleInvisible' | translate) !== ''
+              ) {
+                <li>
+                  {{ 'igo.context.shareMap.visibleInvisible' | translate }}
+                </li>
+              }
+            </ul>
+            @if (('igo.context.shareMap.excluded' | translate) !== '') {
+              <h4>
+                {{ 'igo.context.shareMap.excluded' | translate }}
+              </h4>
+            }
+            <ul>
+              @if (('igo.context.shareMap.order' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.order' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.opacity' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.opacity' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.filterOgc' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.filterOgc' | translate }}
+                </li>
+              }
+              @if (('igo.context.shareMap.filterTime' | translate) !== '') {
+                <li>
+                  {{ 'igo.context.shareMap.filterTime' | translate }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        @if (('igo.context.shareMap.htmlClarifications' | translate) !== '') {
+          <igo-custom-html
+            class="shareCustomPadding"
+            [html]="'igo.context.shareMap.htmlClarifications' | translate"
+          >
+          </igo-custom-html>
+        }
+      </section>
+    </div>
   </div>
 </div>

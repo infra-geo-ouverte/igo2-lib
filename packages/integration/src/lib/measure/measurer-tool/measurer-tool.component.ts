@@ -1,7 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
-import { FeatureStore, FeatureWithMeasure, IgoMap } from '@igo2/geo';
+import { ToolComponent } from '@igo2/common/tool';
+import {
+  FeatureStore,
+  FeatureWithMeasure,
+  IgoMap,
+  MeasurerComponent
+} from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { MeasureState } from '../measure.state';
@@ -12,14 +17,18 @@ import { MeasureState } from '../measure.state';
 @ToolComponent({
   name: 'measurer',
   title: 'igo.integration.tools.measurer',
-  icon: 'ruler'
+  icon: 'square_foot'
 })
 @Component({
   selector: 'igo-measurer-tool',
   templateUrl: './measurer-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {
+  private measureState = inject(MeasureState);
+  private mapState = inject(MapState);
+
   /**
    * Map to measure on
    * @internal
@@ -35,9 +44,4 @@ export class MeasurerToolComponent {
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  constructor(
-    private measureState: MeasureState,
-    private mapState: MapState
-  ) {}
 }

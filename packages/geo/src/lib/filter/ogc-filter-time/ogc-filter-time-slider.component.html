@@ -20,10 +20,10 @@
       #ngSliderThumb="matSliderThumb"
     />
   </mat-slider>
-  <button mat-icon-button color="primary" (click)="playFilter($event)">
-    <mat-icon [svgIcon]="playIcon"></mat-icon>
+  <button mat-icon-button color="primary" (click)="playFilter()">
+    <mat-icon>{{ playIcon }}</mat-icon>
   </button>
-  <button mat-icon-button color="primary" (click)="resetFilter($event)">
-    <mat-icon svgIcon="{{ resetIcon }}"></mat-icon>
+  <button mat-icon-button color="primary" (click)="resetFilter()">
+    <mat-icon>{{ resetIcon }}</mat-icon>
   </button>
 </div>

@@ -8,7 +8,7 @@
 /documentation
 
 # dependencies
-/node_modules
+node_modules
 
 # IDEs and editors
 /.idea
@@ -41,3 +41,6 @@ sendTo*.sh
 # System Files
 .DS_Store
 Thumbs.db
+
+projects/*
+!projects/demo

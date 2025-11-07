@@ -17,7 +17,9 @@
   </mat-form-field>
 
   <mat-form-field id="uriInput" class="full-width">
-    <span *ngIf="prefix" class="prefix">{{ prefix }}-</span>
+    @if (prefix) {
+      <span class="prefix">{{ prefix }}-</span>
+    }
     <span class="fieldWrapper">
       <input
         matInput
@@ -39,12 +41,12 @@
     color="primary"
     (click)="copyTextToClipboard()"
   >
-    <mat-icon svgIcon="content-copy"></mat-icon>
+    <mat-icon>content_copy</mat-icon>
   </button>
 
   <div class="igo-form-button-group">
     <button
-      mat-raised-button
+      matButton="elevated"
       type="submit"
       [disabled]="!form.valid || disabled"
     >

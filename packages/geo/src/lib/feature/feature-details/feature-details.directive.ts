@@ -5,7 +5,7 @@ import {
   HostListener,
   OnInit,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
@@ -14,9 +14,12 @@ import { FeatureDetailsComponent } from './feature-details.component';
 
 @Directive({
   // This directive allow to view the route between the user coordinates and the feature
-  selector: '[igoFeatureDetailsDirective]'
+  selector: '[igoFeatureDetailsDirective]',
+  standalone: true
 })
 export class FeatureDetailsDirective implements OnInit {
+  private el = inject(ElementRef);
+
   private component: FeatureDetailsComponent;
 
   get feature() {
@@ -31,10 +34,9 @@ export class FeatureDetailsDirective implements OnInit {
     this.feature$.next(this.feature);
   }
 
-  constructor(
-    @Self() component: FeatureDetailsComponent,
-    private el: ElementRef
-  ) {
+  constructor() {
+    const component = inject(FeatureDetailsComponent, { self: true });
+
     this.component = component;
   }
 

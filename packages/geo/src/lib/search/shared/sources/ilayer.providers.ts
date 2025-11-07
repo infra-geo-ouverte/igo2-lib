@@ -1,18 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
-
 import { ILayerSearchResultFormatter, ILayerSearchSource } from './ilayer';
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 
 /**
  * ILayer search result formatter factory
  * @ignore
  */
-export function ilayerSearchResultFormatterFactory(
-  languageService: LanguageService
-) {
-  return new ILayerSearchResultFormatter(languageService);
+export function ilayerSearchResultFormatterFactory() {
+  return new ILayerSearchResultFormatter();
 }
 
 /**
@@ -21,8 +16,7 @@ export function ilayerSearchResultFormatterFactory(
 export function provideILayerSearchResultFormatter() {
   return {
     provide: ILayerSearchResultFormatter,
-    useFactory: ilayerSearchResultFormatterFactory,
-    deps: [LanguageService]
+    useFactory: ilayerSearchResultFormatterFactory
   };
 }
 
@@ -30,20 +24,8 @@ export function provideILayerSearchResultFormatter() {
  * ILayer search source factory
  * @ignore
  */
-export function ilayerSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService,
-  formatter: ILayerSearchResultFormatter
-) {
-  return new ILayerSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${ILayerSearchSource.id}`),
-    formatter
-  );
+export function ilayerSearchSourceFactory() {
+  return new ILayerSearchSource();
 }
 
 /**
@@ -53,13 +35,16 @@ export function provideILayerSearchSource() {
   return {
     provide: SearchSource,
     useFactory: ilayerSearchSourceFactory,
-    multi: true,
-    deps: [
-      HttpClient,
-      LanguageService,
-      StorageService,
-      ConfigService,
-      ILayerSearchResultFormatter
+    multi: true
+  };
+}
+
+export function withILayerSource(): SearchSourceFeature<SearchSourceKind.ILayer> {
+  return {
+    kind: SearchSourceKind.ILayer,
+    providers: [
+      provideILayerSearchSource(),
+      provideILayerSearchResultFormatter()
     ]
   };
 }

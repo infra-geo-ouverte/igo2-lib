@@ -1,69 +1,95 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import {
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
-import { MessageService } from '@igo2/core';
+import { CustomHtmlComponent } from '@igo2/common/custom-html';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
 import type { IgoMap } from '@igo2/geo';
-import { Clipboard } from '@igo2/utils';
 
 import { Subscription, combineLatest } from 'rxjs';
 
+import { ContextService } from '../../context-manager/shared/context.service';
+import { ShareOption } from '../shared/share-map.interface';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
   selector: 'igo-share-map-url',
   templateUrl: './share-map-url.component.html',
-  styleUrls: ['./share-map-url.component.scss']
+  styleUrls: ['./share-map-url.component.scss'],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    CustomHtmlComponent,
+    IgoLanguageModule
+  ]
 })
-export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ShareMapUrlComponent implements OnInit, OnDestroy {
+  private clipboard = inject(Clipboard);
+  private messageService = inject(MessageService);
+  private shareMapService = inject(ShareMapService);
+  private contextService = inject(ContextService);
+  private cdRef = inject(ChangeDetectorRef);
+  private route = inject(RouteService);
+
   private mapState$$: Subscription;
 
   @Input() map: IgoMap;
 
   public url: string;
-  public publicShareOption = {
+  private publicShareOption: ShareOption = {
     layerlistControls: { querystring: '' }
   };
+  private language: string;
 
-  constructor(
-    private messageService: MessageService,
-    private shareMapService: ShareMapService,
-    private cdRef: ChangeDetectorRef
-  ) {}
+  constructor() {
+    this.route.queryParams.subscribe((params) => {
+      const lang = params[this.route.options.languageKey];
+      if (lang) {
+        this.language = lang;
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.resetUrl();
+    this.generateUrl();
     this.mapState$$ = combineLatest([
       this.map.viewController.state$,
       this.map.status$
-    ]).subscribe((c) => {
-      this.resetUrl();
+    ]).subscribe(() => {
+      this.generateUrl();
       this.cdRef.detectChanges();
     });
   }
 
-  ngAfterViewInit(): void {
-    this.resetUrl();
-  }
-
   ngOnDestroy(): void {
-    this.mapState$$.unsubscribe();
+    this.mapState$$?.unsubscribe();
   }
 
-  resetUrl(values: any = {}) {
-    this.url = this.shareMapService.getUrlWithoutApi(
+  generateUrl(): void {
+    this.url = this.shareMapService.encoder.generateUrl(
       this.map,
-      this.publicShareOption
+      this.contextService.context$.value,
+      this.publicShareOption,
+      this.language
     );
   }
 
-  copyTextToClipboard(textArea) {
-    const successful = Clipboard.copy(textArea);
+  copyTextToClipboard(textArea: HTMLTextAreaElement) {
+    const successful = this.clipboard.copy(textArea.value);
     if (successful) {
       this.messageService.success(
         'igo.context.shareMap.dialog.copyMsg',

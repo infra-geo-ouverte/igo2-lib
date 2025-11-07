@@ -1,9 +1,11 @@
 {
   "name": "@igo2/common",
-  "version": "16.0.2",
+  "version": "20.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,35 +15,146 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build common --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/common/postbuild-common.mts",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint common",
+    "lint.fix": "ng lint common --fix",
+    "test": "ng test common --watch=false",
+    "test.watch": "ng test common",
+    "watch": "ng build common --watch"
+  },
   "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    },
     "./style": {
       "style": "./style/style.css"
     },
-    "./theming": {
-      "sass": "./common-theme.scss"
+    "./partial/*": {
+      "sass": "./src/style/partial/*.scss"
+    },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./action": {
+      "import": "./action/src/public_api.ts"
+    },
+    "./backdrop": {
+      "import": "./backdrop/src/public_api.ts"
+    },
+    "./badge": {
+      "import": "./badge/src/public_api.ts"
+    },
+    "./clickout": {
+      "import": "./clickout/src/public_api.ts"
+    },
+    "./clone": {
+      "import": "./clone/src/public_api.ts"
+    },
+    "./collapsible": {
+      "import": "./collapsible/src/public_api.ts"
+    },
+    "./color": {
+      "import": "./color/src/public_api.ts"
+    },
+    "./confirm-dialog": {
+      "import": "./confirm-dialog/src/public_api.ts"
+    },
+    "./context-menu": {
+      "import": "./context-menu/src/public_api.ts"
+    },
+    "./custom-html": {
+      "import": "./custom-html/src/public_api.ts"
+    },
+    "./dom": {
+      "import": "./dom/src/public_api.ts"
+    },
+    "./drag-drop": {
+      "import": "./drag-drop/src/public_api.ts"
+    },
+    "./dynamic-component": {
+      "import": "./dynamic-component/src/public_api.ts"
+    },
+    "./entity": {
+      "import": "./entity/src/public_api.ts"
+    },
+    "./flexible": {
+      "import": "./flexible/src/public_api.ts"
+    },
+    "./form": {
+      "import": "./form/src/public_api.ts"
+    },
+    "./home-button": {
+      "import": "./home-button/src/public_api.ts"
+    },
+    "./icon": {
+      "import": "./icon/src/public_api.ts"
+    },
+    "./image": {
+      "import": "./image/src/public_api.ts"
+    },
+    "./interactive-tour": {
+      "import": "./interactive-tour/src/public_api.ts"
+    },
+    "./json-dialog": {
+      "import": "./json-dialog/src/public_api.ts"
+    },
+    "./keyvalue": {
+      "import": "./keyvalue/src/public_api.ts"
+    },
+    "./list": {
+      "import": "./list/src/public_api.ts"
+    },
+    "./panel": {
+      "import": "./panel/src/public_api.ts"
+    },
+    "./select-value-dialog": {
+      "import": "./select-value-dialog/src/public_api.ts"
+    },
+    "./sidenav": {
+      "import": "./sidenav/src/public_api.ts"
+    },
+    "./spinner": {
+      "import": "./spinner/src/public_api.ts"
+    },
+    "./stop-propagation": {
+      "import": "./stop-propagation/src/public_api.ts"
+    },
+    "./table": {
+      "import": "./table/src/public_api.ts"
+    },
+    "./tool": {
+      "import": "./tool/src/public_api.ts"
+    },
+    "./widget": {
+      "import": "./widget/src/public_api.ts"
+    },
+    "./workspace": {
+      "import": "./workspace/src/public_api.ts"
     }
-  },
-  "peerDependencies": {
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/material": "^16.2.4",
-    "@angular/platform-browser": "^16.2.5",
-    "@floating-ui/utils": "^0.1.4",
-    "@igo2/core": "^16.0.2",
-    "@igo2/utils": "^16.0.2",
-    "angular-shepherd": "16.0.0",
-    "scroll-into-view-if-needed": "^3.0.0",
-    "typy": "^3.3.0",
-    "ngx-color": "^9.0.0",
-    "tinycolor2": "^1.6.0"
   },
   "dependencies": {
     "tslib": "^2.6.0"
   },
-  "devDependencies": {
-    "@types/tinycolor2": "^1.4.4"
+  "peerDependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/material-moment-adapter": "^20.0.0",
+    "@angular/material": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@floating-ui/utils": "^0.2.0",
+    "@igo2/core": "*",
+    "@igo2/utils": "*",
+    "angular-shepherd": "^20.0.0",
+    "ngx-color": "^10.0.0",
+    "scroll-into-view-if-needed": "^3.1.0",
+    "tinycolor2": "^1.6.0",
+    "typy": "^3.3.0"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }

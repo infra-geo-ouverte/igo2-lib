@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { ConfigService, StorageService } from '@igo2/core';
+import { ActionStore } from '@igo2/common/action';
+import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
-import { CapabilitiesService, WMSDataSource } from '../../datasource';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import { WMSDataSource } from '../../datasource/shared/datasources';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -16,17 +19,17 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
-} from '../../feature';
+} from '../../feature/shared';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import {
+  GeoWorkspaceOptions,
   ImageLayer,
   LayerService,
   LayersLinkProperties,
   LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
-import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 import {
@@ -45,25 +48,23 @@ import {
   providedIn: 'root'
 })
 export class WmsWorkspaceService {
+  private layerService = inject(LayerService);
+  private storageService = inject(StorageService);
+  private capabilitiesService = inject(CapabilitiesService);
+  private styleService = inject(StyleService);
+  private configService = inject(ConfigService);
+  private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
+
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(
-    private layerService: LayerService,
-    private storageService: StorageService,
-    private capabilitiesService: CapabilitiesService,
-    private styleService: StyleService,
-    private configService: ConfigService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService
-  ) {}
-
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
       !layer.options.workspace ||
-      map.layers.find(
+      map.layerController.all.find(
         (lay) => lay.id === layer.id + '.WfsWorkspaceTableDest'
       ) ||
       layer.dataSource.options.edition
@@ -95,6 +96,9 @@ export class WmsWorkspaceService {
     if (!layer.options.workspace?.maxResolution) {
       linkProperties.properties.push(LinkedProperties.MAXRESOLUTION);
     }
+    if (dataSource.options.refreshIntervalSec) {
+      linkProperties.properties.push(LinkedProperties.REFRESH);
+    }
 
     let clonedLinks: LayersLinkProperties[] = [];
     if (layer.options.linkedLayers.links) {
@@ -104,16 +108,21 @@ export class WmsWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
-    (layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
+    // TODO: Démystifier ce bout de code
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    ((layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
       : wmsLinkId),
-      (layer.options.linkedLayers.links = clonedLinks);
+      (layer.options.linkedLayers.links = clonedLinks));
+
+    layer.createLink();
+
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
     let wks;
-    let wksLayerOption: GeoWorkspaceOptions = {
+    const wksLayerOption: GeoWorkspaceOptions = {
       printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,
@@ -129,7 +138,10 @@ export class WmsWorkspaceService {
 
     this.layerService
       .createAsyncLayer({
+        title: layer.title,
+        parentId: layer.options.parentId,
         isIgoInternalLayer: true,
+        visible: layer.visible,
         id: wfsLinkId,
         linkedLayers: {
           linkId: wfsLinkId
@@ -137,7 +149,6 @@ export class WmsWorkspaceService {
         workspace: wksLayerOption,
         showInLayerList: false,
         opacity: 0,
-        title: layer.title,
         minResolution:
           layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution:
@@ -181,7 +192,7 @@ export class WmsWorkspaceService {
         } as WFSoptions
       })
       .subscribe((workspaceLayer: VectorLayer) => {
-        map.addLayer(workspaceLayer);
+        map.layerController.add(workspaceLayer);
         layer.ol.setProperties(
           {
             linkedLayers: {
@@ -246,8 +257,25 @@ export class WmsWorkspaceService {
     const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
+    const id = layer.id + '.FeatureStore';
+
+    if (!layer.link) {
+      layer.options.linkedLayers.links = [
+        {
+          syncedDelete: true,
+          linkedIds: [id],
+          properties: [LinkedProperties.VISIBLE]
+        }
+      ];
+      layer.createLink();
+    }
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
+        id,
+        linkedLayers: {
+          linkId: id
+        },
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Feature } from '../../feature/shared';
+import { Feature } from '../../feature/shared/feature.interfaces';
 import {
   SpatialFilterItemType,
   SpatialFilterQueryType,
@@ -18,7 +19,11 @@ import { SpatialFilterThematic } from './spatial-filter.interface';
   providedIn: 'root'
 })
 export class SpatialFilterService {
-  public baseUrl: string = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private configService = inject(ConfigService);
+
+  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
 
   /*
    * Type association with URL
@@ -37,11 +42,7 @@ export class SpatialFilterService {
     routes: 'routes'
   };
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    private configService: ConfigService
-  ) {
+  constructor() {
     this.baseUrl =
       this.configService.getConfig('spatialFilter.url') || this.baseUrl;
   }
@@ -57,9 +58,9 @@ export class SpatialFilterService {
     const urlPath = type as string;
     if (urlPath) {
       return this.http
-        .get<{ features: Feature[] }>(
-          this.baseUrl + this.urlFilterList[urlPath]
-        )
+        .get<{
+          features: Feature[];
+        }>(this.baseUrl + this.urlFilterList[urlPath])
         .pipe(
           map((featureCollection) =>
             featureCollection.features.map((f) => {
@@ -98,7 +99,7 @@ export class SpatialFilterService {
               item.name = this.languageService.translate.instant(
                 'igo.geo.terrapi.' + name
               );
-            } catch (e) {
+            } catch {
               item.name =
                 name.substring(0, 1).toUpperCase() +
                 name.substring(1, name.length - 1);
@@ -108,7 +109,7 @@ export class SpatialFilterService {
               item.group = this.languageService.translate.instant(
                 'igo.geo.spatialFilter.group.' + substr
               );
-            } catch (e) {
+            } catch {
               item.group =
                 substr.substring(0, 1).toUpperCase() +
                 substr.substring(1, name.length - 1);
@@ -126,7 +127,7 @@ export class SpatialFilterService {
                 item.name = this.languageService.translate.instant(
                   'igo.geo.terrapi.' + name
                 );
-              } catch (e) {
+              } catch {
                 item.name =
                   name.substring(0, 1).toUpperCase() +
                   name.substring(1, name.length - 1);

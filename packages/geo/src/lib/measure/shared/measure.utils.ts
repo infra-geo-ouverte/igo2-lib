@@ -1,4 +1,4 @@
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';
@@ -148,13 +148,13 @@ export function formatMeasure(
     locale?: string;
   },
   languageService?: LanguageService
-) {
+): string {
   let decimal = options.decimal;
   if (decimal === undefined || decimal < 0) {
     decimal = 1;
   }
 
-  const parts = [];
+  const parts: string[] = [];
   if (options.locale !== undefined) {
     parts.push(
       measure.toLocaleString(options.locale, {
@@ -576,8 +576,8 @@ export function getTooltipsOfOlGeometry(
  */
 export function createOlTooltipAtPoint(
   olPoint: OlPoint,
-  center: boolean = false,
-  srcGeomType: string = ''
+  center = false,
+  srcGeomType = ''
 ): OlOverlay {
   const olTooltip = new OlOverlay({
     element: document.createElement('div'),

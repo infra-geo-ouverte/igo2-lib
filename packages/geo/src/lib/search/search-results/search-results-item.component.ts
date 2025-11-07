@@ -5,17 +5,22 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   getEntityIcon,
   getEntityTitle,
   getEntityTitleHtml
-} from '@igo2/common';
+} from '@igo2/common/entity';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { SearchResult } from '../shared/search.interfaces';
 
 /**
@@ -25,7 +30,14 @@ import { SearchResult } from '../shared/search.interfaces';
   selector: 'igo-search-results-item',
   templateUrl: './search-results-item.component.html',
   styleUrls: ['./search-results-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    StopPropagationDirective
+  ]
 })
 export class SearchResultsItemComponent {
   /**
@@ -89,11 +101,7 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
-    moveToOlFeatures(
-      this.map.viewController,
-      [olFeature],
-      FeatureMotion.Default
-    );
+    moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Default);
   }
 
   /**
@@ -104,18 +112,16 @@ export class SearchResultsItemComponent {
     const element = event.target;
     const type = event.type;
     switch (type) {
-      case 'mouseenter':
+      case 'mouseenter': {
         const hideBtn = element.querySelector('#hide-save-search-result-btn');
-        hideBtn
-          ? hideBtn.setAttribute('id', 'show-save-search-result-btn')
-          : null;
+        hideBtn?.setAttribute('id', 'show-save-search-result-btn');
         break;
-      case 'mouseleave':
+      }
+      case 'mouseleave': {
         const showBtn = element.querySelector('#show-save-search-result-btn');
-        showBtn
-          ? showBtn.setAttribute('id', 'hide-save-search-result-btn')
-          : null;
+        showBtn?.setAttribute('id', 'hide-save-search-result-btn');
         break;
+      }
       default:
         break;
     }

@@ -1,0 +1,12 @@
+<app-doc-viewer title="Feature" subtitle="Geo">
+  <app-example-viewer codeFolder="geo/feature">
+    <igo-map-browser [map]="map" [view]="view">
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-entity-table [store]="store" [template]="tableTemplate">
+    </igo-entity-table>
+  </app-example-viewer>
+</app-doc-viewer>

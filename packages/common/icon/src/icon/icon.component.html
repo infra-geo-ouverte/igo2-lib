@@ -1,0 +1,5 @@
+@if (isSvg(icon)) {
+  <mat-icon [svgIcon]="icon.name" [color]="color"></mat-icon>
+} @else {
+  <mat-icon [color]="color">{{ icon }}</mat-icon>
+}

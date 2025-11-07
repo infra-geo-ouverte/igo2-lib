@@ -1,5 +1,3 @@
-import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
-
 import { DataSourceOptions } from './datasource.interface';
 
 export interface TileArcGISRestDataSourceOptions extends DataSourceOptions {
@@ -14,6 +12,5 @@ export interface TileArcGISRestDataSourceOptions extends DataSourceOptions {
   url?: string;
   urls?: string[];
 
-  ol?: olSourceTileArcGISRest;
   idColumn?: string;
 }

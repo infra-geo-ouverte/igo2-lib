@@ -1,52 +1,18 @@
-import { MsalGuardConfiguration } from '@azure/msal-angular';
-import { BrowserAuthOptions } from '@azure/msal-browser';
+import { Provider } from '@angular/core';
 
-export interface AuthInternOptions {
-  enabled?: boolean;
+import { BaseUser } from '@igo2/core/user';
+
+export interface User extends BaseUser {
+  source?: string;
+  sourceId?: string;
+  locale?: string;
+  isExpired?: boolean;
+  isAdmin?: boolean;
+  defaultContextId?: string;
 }
 
-export interface AuthFacebookOptions {
-  enabled?: boolean;
-  appId: string;
-}
-
-export interface AuthGoogleOptions {
-  enabled?: boolean;
-  apiKey: string;
-  clientId: string;
-}
-
-export interface AuthMicrosoftOptions extends BrowserAuthOptions {
-  enabled?: boolean;
-}
-
-export interface AuthMicrosoftb2cOptions {
-  enabled?: boolean;
-  browserAuthOptions?: BrowserAuthOptions;
-  options?: AuthMicrosoftb2cOptionsOptions;
-  scopes?: string[];
-}
-
-export interface AuthMicrosoftb2cOptionsOptions {
-  names: AuthMicrosoftb2cOptionsNames;
-  authorities: AuthMicrosoftb2cOptionsAuthorities;
-  authorityDomain: string[];
-}
-
-export interface AuthMicrosoftb2cOptionsNames {
-  signUpSignIn: string;
-  forgotPassword: string;
-  editProfile: string;
-}
-
-export interface AuthMicrosoftb2cOptionsAuthorities {
-  signUpSignIn: AuthMicrosoftb2cOptionsAuthority;
-  forgotPassword: AuthMicrosoftb2cOptionsAuthority;
-  editProfile: AuthMicrosoftb2cOptionsAuthority;
-}
-
-export interface AuthMicrosoftb2cOptionsAuthority {
-  authority: string;
+export interface IInfosUser {
+  tokenId: string;
 }
 
 export interface AuthOptions {
@@ -56,16 +22,13 @@ export interface AuthOptions {
   loginRoute?: string;
   logoutRoute?: string;
   homeRoute?: string;
-  intern?: AuthInternOptions;
-  facebook?: AuthFacebookOptions;
-  google?: AuthGoogleOptions;
-  microsoft?: AuthMicrosoftOptions;
-  microsoftb2c?: AuthMicrosoftb2cOptions;
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
   hostsByKey?: AuthByKeyOptions[];
+  intern?: AuthInternOptions;
 }
+
 export interface AuthByKeyOptions {
   domainRegFilters?: string;
   keyProperty?: string;
@@ -76,38 +39,15 @@ export interface WithCredentialsOptions {
   domainRegFilters?: string;
 }
 
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
-  type: string;
+export interface AuthInternOptions {
+  enabled?: boolean;
 }
 
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
-  type: string;
+export interface AuthFeature<KindT extends AuthFeatureKind> {
+  kind: KindT;
+  providers: Provider[];
 }
 
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
-  type: string;
-}
-
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
-  type: string;
-}
-
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
-  type: string;
-}
-
-export interface User {
-  source?: string;
-  sourceId?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  locale?: string;
-  isExpired?: boolean;
-  admin?: boolean;
-  defaultContextId?: string;
-}
-
-export interface IInfosUser {
-  tokenId: string;
+export enum AuthFeatureKind {
+  Microsoft = 0
 }

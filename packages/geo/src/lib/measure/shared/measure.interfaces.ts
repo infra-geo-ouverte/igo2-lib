@@ -1,5 +1,5 @@
-import { Feature } from '../../feature';
-import { IgoMap } from '../../map/shared';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { IgoMap } from '../../map/shared/map';
 
 export interface Measure {
   area?: number;
@@ -13,8 +13,7 @@ export interface MeasurerDialogData {
   perimeter: number;
 }
 
-export interface FeatureWithMeasure
-  extends Feature<FeatureWithMeasureProperties> {}
+export type FeatureWithMeasure = Feature<FeatureWithMeasureProperties>;
 
 export interface FeatureWithMeasureProperties {
   id: string;

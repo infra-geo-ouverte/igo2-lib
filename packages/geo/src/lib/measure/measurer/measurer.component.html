@@ -1,5 +1,5 @@
 <div>
-  <div class="measure-type-toggle mat-typography">
+  <div class="measure-type-toggle">
     <mat-button-toggle-group
       [value]="activeMeasureType"
       (change)="onMeasureTypeChange($event.value)"
@@ -13,7 +13,7 @@
     </mat-button-toggle-group>
   </div>
 
-  <div class="measure-options mat-typography">
+  <div class="measure-options">
     <mat-slide-toggle
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"
@@ -23,38 +23,47 @@
       {{ 'igo.geo.measure.toggleActive' | translate }}
     </mat-slide-toggle>
 
-    <mat-divider *ngIf="hasLine$ | async"></mat-divider>
+    @if (hasLine$ | async) {
+      <mat-divider></mat-divider>
+    }
 
-    <mat-slide-toggle
-      *ngIf="hasLine$ | async"
-      [checked]="displayLines"
-      [labelPosition]="'before'"
-      (change)="onToggleDisplayLines($event.checked)"
-    >
-      {{ 'igo.geo.measure.toggleDisplayLines' | translate }}
-    </mat-slide-toggle>
+    @if (hasLine$ | async) {
+      <mat-slide-toggle
+        [checked]="displayLines"
+        [labelPosition]="'before'"
+        (change)="onToggleDisplayLines($event.checked)"
+      >
+        {{ 'igo.geo.measure.toggleDisplayLines' | translate }}
+      </mat-slide-toggle>
+    }
 
-    <mat-divider *ngIf="(hasLine$ | async) || (hasArea$ | async)"></mat-divider>
+    @if ((hasLine$ | async) || (hasArea$ | async)) {
+      <mat-divider></mat-divider>
+    }
 
-    <mat-slide-toggle
-      *ngIf="hasArea$ | async"
-      [checked]="displayDistance"
-      [labelPosition]="'before'"
-      (change)="onToggleDisplayDistance($event.checked)"
-    >
-      {{ 'igo.geo.measure.toggleDisplayDistance' | translate }}
-    </mat-slide-toggle>
+    @if (hasArea$ | async) {
+      <mat-slide-toggle
+        [checked]="displayDistance"
+        [labelPosition]="'before'"
+        (change)="onToggleDisplayDistance($event.checked)"
+      >
+        {{ 'igo.geo.measure.toggleDisplayDistance' | translate }}
+      </mat-slide-toggle>
+    }
 
-    <mat-slide-toggle
-      *ngIf="hasArea$ | async"
-      [checked]="displayAreas"
-      [labelPosition]="'before'"
-      (change)="onToggleDisplayAreas($event.checked)"
-    >
-      {{ 'igo.geo.measure.toggleDisplayAreas' | translate }}
-    </mat-slide-toggle>
+    @if (hasArea$ | async) {
+      <mat-slide-toggle
+        [checked]="displayAreas"
+        [labelPosition]="'before'"
+        (change)="onToggleDisplayAreas($event.checked)"
+      >
+        {{ 'igo.geo.measure.toggleDisplayAreas' | translate }}
+      </mat-slide-toggle>
+    }
 
-    <mat-divider *ngIf="hasArea$ | async"></mat-divider>
+    @if (hasArea$ | async) {
+      <mat-divider></mat-divider>
+    }
 
     <mat-slide-toggle
       [checked]="measureUnitsAuto"
@@ -65,70 +74,67 @@
     </mat-slide-toggle>
   </div>
 
-  <ng-container *ngIf="measure$ | async as measure">
-    <igo-measurer-item
-      *ngIf="
-        activeMeasureType === measureType.Length ||
-        activeMeasureType === measureType.Area
-      "
-      [measureType]="measureType.Length"
-      [measureUnit]="measureLengthUnit.Meters"
-      [measure]="measure.length"
-      [auto]="measureUnitsAuto"
-      [placeholder]="
-        (activeMeasureType === measureType.Area
-          ? 'igo.geo.measure.perimeter'
-          : 'igo.geo.measure.length'
-        ) | translate
-      "
-      (measureUnitChange)="onLengthUnitChange($event)"
-    >
-    </igo-measurer-item>
+  @if (measure$ | async; as measure) {
+    @if (
+      activeMeasureType === measureType.Length ||
+      activeMeasureType === measureType.Area
+    ) {
+      <igo-measurer-item
+        [measureType]="measureType.Length"
+        [measureUnit]="activeLengthUnit"
+        [measure]="measure.length"
+        [auto]="measureUnitsAuto"
+        [placeholder]="
+          (activeMeasureType === measureType.Area
+            ? 'igo.geo.measure.perimeter'
+            : 'igo.geo.measure.length'
+          ) | translate
+        "
+        (measureUnitChange)="onLengthUnitChange($any($event))"
+      >
+      </igo-measurer-item>
+    }
+    @if (activeMeasureType === measureType.Area) {
+      <igo-measurer-item
+        [measureType]="measureType.Area"
+        [measureUnit]="activeAreaUnit"
+        [measure]="measure.area"
+        [auto]="measureUnitsAuto"
+        [placeholder]="'igo.geo.measure.area' | translate"
+        (measureUnitChange)="onAreaUnitChange($any($event))"
+      >
+      </igo-measurer-item>
+    }
+  }
 
-    <igo-measurer-item
-      *ngIf="activeMeasureType === measureType.Area"
-      [measureType]="measureType.Area"
-      [measureUnit]="measureAreaUnit.SquareMeters"
-      [measure]="measure.area"
-      [auto]="measureUnitsAuto"
-      [placeholder]="'igo.geo.measure.area' | translate"
-      (measureUnitChange)="onAreaUnitChange($event)"
-    >
-    </igo-measurer-item>
-  </ng-container>
-
-  <mat-divider *ngIf="(hasLine$ | async) || (hasArea$ | async)"></mat-divider>
+  @if ((hasLine$ | async) || (hasArea$ | async)) {
+    <mat-divider></mat-divider>
+  }
 
   <div class="measure-store-buttons">
-    <button
-      *ngIf="(hasLine$ | async) || (hasArea$ | async)"
-      mat-icon-button
-      [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
-      [disabled]="(selectedFeatures$ | async).length === 0"
-      color="accent"
-      (click)="onCalculateClick()"
-    >
-      <mat-icon svgIcon="calculator"></mat-icon>
-    </button>
+    @if ((hasLine$ | async) || (hasArea$ | async)) {
+      <button
+        mat-icon-button
+        [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
+        [disabled]="(selectedFeatures$ | async).length === 0"
+        color="accent"
+        (click)="onCalculateClick()"
+      >
+        <mat-icon>calculate</mat-icon>
+      </button>
+    }
 
-    <button
-      *ngIf="(hasLine$ | async) || (hasArea$ | async)"
-      mat-icon-button
-      [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
-      [disabled]="(selectedFeatures$ | async).length === 0"
-      color="warn"
-      (click)="onDeleteClick()"
-    >
-      <mat-icon svgIcon="delete"></mat-icon>
-    </button>
-
-    <!--button
-      mat-icon-button
-      [matTooltip]="'igo.geo.measure.actionbar.modify.tooltip' | translate"
-      [disabled]="(selectedFeatures$ | async).length !== 1"
-      (click)="onModifyClick()">
-      <mat-icon svgIcon="edit"></mat-icon>
-    </button-->
+    @if ((hasLine$ | async) || (hasArea$ | async)) {
+      <button
+        mat-icon-button
+        [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
+        [disabled]="(selectedFeatures$ | async).length === 0"
+        color="warn"
+        (click)="onDeleteClick()"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    }
   </div>
 
   <igo-entity-table

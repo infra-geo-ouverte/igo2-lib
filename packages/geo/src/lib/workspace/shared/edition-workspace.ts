@@ -1,7 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
 
-import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { EntityRecord } from '@igo2/common/entity';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
+import { ConfigService } from '@igo2/core/config';
 
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
@@ -15,11 +16,11 @@ import * as OlStyle from 'ol/style';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
-import { GeometryType, createInteractionStyle } from '../../draw';
-import { featureToOl } from '../../feature';
-import { DrawControl } from '../../geometry';
+import { GeometryType, createInteractionStyle } from '../../draw/shared';
+import { featureToOl } from '../../feature/shared';
+import { DrawControl } from '../../geometry/shared';
 import { ImageLayer, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
@@ -28,9 +29,7 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): ImageLayer | VectorLayer {
     return this.options.layer;
@@ -101,7 +100,9 @@ export class EditionWorkspace extends Workspace {
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point as any);
 
-    this.map.removeLayer(this.olDrawingLayer);
+    if (this.olDrawingLayer) {
+      this.map.layerController.remove(this.olDrawingLayer);
+    }
 
     this.olDrawingLayer = new VectorLayer({
       id: 'igo-draw-layer',
@@ -328,7 +329,7 @@ export class EditionWorkspace extends Workspace {
 
     this.olDrawingLayer.dataSource.ol.clear();
     this.olDrawingLayer.dataSource.ol.addFeature(featureOl);
-    this.map.addLayer(this.olDrawingLayer);
+    this.map.layerController.add(this.olDrawingLayer);
 
     this.deactivateDrawControl();
     this.createModifyInteraction(featureOl, feature, workspace);
@@ -339,7 +340,7 @@ export class EditionWorkspace extends Workspace {
    * Layer refresh will automatically add the new feature into the store.
    */
   deleteDrawings() {
-    this.map.removeLayer(this.olDrawingLayer);
+    this.map.layerController.remove(this.olDrawingLayer);
     this.olDrawingLayerSource.clear();
     this.map.ol.removeInteraction(this.modify);
   }

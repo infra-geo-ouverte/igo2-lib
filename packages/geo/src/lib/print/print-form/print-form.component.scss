@@ -1,5 +1,3 @@
-@import '../../../../../core/src/style/partial/media';
-
 $slide-toggle-width: 60px;
 
 :host {
@@ -33,7 +31,7 @@ $slide-toggle-width: 60px;
   }
 
   .igo-form {
-    padding: 10px 5px 5px;
+    padding: 16px;
   }
 
   .igo-form-button-group {

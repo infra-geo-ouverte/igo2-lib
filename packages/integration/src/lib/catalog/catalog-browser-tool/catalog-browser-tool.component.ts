@@ -1,22 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
+import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { ToolComponent } from '@igo2/common/tool';
 import {
   Catalog,
+  CatalogBrowserComponent,
   CatalogItem,
   CatalogItemState,
   CatalogService,
   IgoMap
 } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
@@ -28,15 +32,20 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalogBrowser',
   title: 'igo.integration.tools.catalog',
-  icon: 'photo-browser',
   parent: 'catalog'
 })
 @Component({
   selector: 'igo-catalog-browser-tool',
   templateUrl: './catalog-browser-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
+  private catalogService = inject(CatalogService);
+  private catalogState = inject(CatalogState);
+  private mapState = inject(MapState);
+  private authService = inject(AuthService);
+
   catalog: Catalog;
 
   /**
@@ -53,14 +62,9 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private catalog$$: Subscription;
 
   /**
-   * Subscription for authentication
-   */
-  private authenticate$$: Subscription;
-
-  /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup: boolean = true;
+  @Input() toggleCollapsedGroup = true;
 
   /**
    * Map to add layers to
@@ -70,32 +74,27 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  constructor(
-    private catalogService: CatalogService,
-    private catalogState: CatalogState,
-    private mapState: MapState,
-    private authService: AuthService
-  ) {}
-
   /**
    * @internal
    */
   ngOnInit() {
     const catalogStore = this.catalogState.catalogStore;
-    this.catalog$$ = catalogStore.stateView
-      .firstBy$(
-        (record: EntityRecord<Catalog>) => record.state.selected === true
-      )
-      .subscribe((record: EntityRecord<Catalog>) => {
-        if (record && record.entity) {
-          const catalog = record.entity;
-          this.catalog = catalog;
-        }
-      });
 
-    this.authenticate$$ = this.authService.authenticate$.subscribe(() => {
-      this.loadCatalogItems(this.catalog);
-    });
+    const catalog$ = catalogStore.stateView.firstBy$(
+      (record: EntityRecord<Catalog>) => record.state.selected === true
+    );
+    const authenticate$ = this.authService.authenticate$;
+    this.catalog$$ = combineLatest([catalog$, authenticate$]).subscribe(
+      ([record]) => {
+        // Mute an error, that we are not able to replicate where the record is undefined
+        if (record === undefined) {
+          return;
+        }
+        const catalog = record.entity;
+        this.catalog = catalog;
+        this.loadCatalogItems(this.catalog);
+      }
+    );
   }
 
   /**
@@ -103,7 +102,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
-    this.authenticate$$.unsubscribe();
   }
 
   /**

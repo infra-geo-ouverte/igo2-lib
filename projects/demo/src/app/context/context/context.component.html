@@ -1,0 +1,69 @@
+<app-doc-viewer
+  title="Context"
+  subtitle="Context"
+  [dependencies]="['HttpClientModule']"
+>
+  <app-example-viewer codeFolder="context/context" configFolder="contexts">
+    <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
+      <mat-grid-tile>
+        <igo-map-browser
+          igoMapContext
+          igoLayerContext
+          [map]="map"
+          [view]="view"
+        >
+          <div class="map-actions --vertical --top --right">
+            <div class="spinner-spacer"></div>
+            <igo-rotation-button
+              class="mat-elevation-z2"
+              [showIfNoRotation]="true"
+              [map]="map"
+              color="primary"
+            ></igo-rotation-button>
+          </div>
+          <div class="map-actions --vertical --bottom --right">
+            <igo-home-extent-button
+              class="mat-elevation-z2"
+              [map]="map"
+              color="primary"
+            >
+            </igo-home-extent-button>
+            <igo-geolocate-button
+              class="mat-elevation-z2"
+              [map]="map"
+              color="primary"
+            >
+            </igo-geolocate-button>
+            <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+          </div>
+        </igo-map-browser>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="flex flex-col align-start h-100 w-100">
+          <igo-panel title="Contexts list" class="h-100 w-100">
+            <igo-context-list
+              igoContextListBinding
+              [map]="map"
+            ></igo-context-list>
+          </igo-panel>
+
+          <igo-panel title="Layers" class="h-100 w-100">
+            <igo-layer-viewer [map]="map">
+              <ng-template #customBottomActions let-layer="layer">
+                <igo-metadata-button [layer]="layer"></igo-metadata-button>
+              </ng-template>
+            </igo-layer-viewer>
+          </igo-panel>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+
+  <app-example-viewer
+    title="Import/Export context"
+    codeFolder="context/context"
+    configFolder="contexts"
+  >
+    <igo-context-import-export [map]="map"></igo-context-import-export>
+  </app-example-viewer>
+</app-doc-viewer>

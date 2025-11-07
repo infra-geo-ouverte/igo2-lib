@@ -2,8 +2,8 @@ import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
 import olSourceTile from 'ol/source/Tile';
 
-import { TileLayer } from '../shared/layers/tile-layer';
-import { VectorTileLayer } from '../shared/layers/vectortile-layer';
+import type { TileLayer } from '../shared/layers/tile-layer';
+import type { VectorTileLayer } from '../shared/layers/vectortile-layer';
 
 export class TileWatcher extends Watcher {
   private id: string;

@@ -13,6 +13,7 @@ export class QuerySearchSource extends SearchSource {
   static id = 'map';
   static type = FEATURE;
 
+  // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(@Inject('options') options: SearchSourceOptions) {
     super(options);
   }
@@ -25,7 +26,7 @@ export class QuerySearchSource extends SearchSource {
     return QuerySearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Carte'
     };

@@ -1,7 +1,7 @@
-import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, inject } from '@angular/core';
 
-import { Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
+import { Workspace } from '@igo2/common/workspace';
+import type { WorkspaceStore } from '@igo2/common/workspace';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -10,11 +10,12 @@ import {
   FeatureDataSource,
   WFSDataSource,
   WMSDataSource
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared';
-import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { isLayerItem } from '../../layer';
+import { AnyLayer, ImageLayer, Layer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
@@ -22,9 +23,15 @@ import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 
 @Directive({
-  selector: '[igoWorkspaceUpdator]'
+  selector: '[igoWorkspaceUpdator]',
+  standalone: true
 })
 export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
+  private wfsWorkspaceService = inject(WfsWorkspaceService);
+  private wmsWorkspaceService = inject(WmsWorkspaceService);
+  private editionWorkspaceService = inject(EditionWorkspaceService);
+  private featureWorkspaceService = inject(FeatureWorkspaceService);
+
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
@@ -32,17 +39,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
 
   @Input() workspaceStore: WorkspaceStore;
 
-  constructor(
-    private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService,
-    private editionWorkspaceService: EditionWorkspaceService,
-    private featureWorkspaceService: FeatureWorkspaceService
-  ) {}
-
   ngOnInit() {
-    this.layers$$ = this.map.layers$
+    this.layers$$ = this.map.layerController.all$
       .pipe(debounceTime(50))
-      .subscribe((layers: Layer[]) => this.onLayersChange(layers));
+      .subscribe((layers) => this.onLayersChange(layers));
   }
 
   ngOnDestroy() {
@@ -50,11 +50,11 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     this.entities$$.map((entities) => entities.unsubscribe());
   }
 
-  private onLayersChange(layers: Layer[]) {
-    const editableLayers = layers.filter((layer: Layer) =>
-      this.layerIsEditable(layer)
-    );
-    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
+  private onLayersChange(layers: AnyLayer[]) {
+    const editableLayers = layers.filter(
+      (layer) => isLayerItem(layer) && this.layerIsEditable(layer)
+    ) as Layer[];
+    const editableLayersIds = editableLayers.map((layer) => layer.id);
 
     const workspacesToAdd = editableLayers
       .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))

@@ -5,9 +5,9 @@ import {
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 
 import { Observable } from 'rxjs';
 import { Md5 } from 'ts-md5';
@@ -23,17 +23,17 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
+  private config = inject(ConfigService);
+  private tokenService = inject(TokenService);
+  private http = inject(HttpClient);
+
   private authOptions: AuthOptions;
   private refreshInProgress = false;
   private trustHosts: string[];
   private hostsWithCredentials: WithCredentialsOptions[];
   private hostsWithAuthByKey: AuthByKeyOptions[];
 
-  constructor(
-    private config: ConfigService,
-    private tokenService: TokenService,
-    private http: HttpClient
-  ) {
+  constructor() {
     this.authOptions = this.config.getConfig('auth') as AuthOptions;
 
     this.trustHosts = this.authOptions?.trustHosts || [];
@@ -65,9 +65,6 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
-    if (element.host === '') {
-      element.href = element.href; // FIX IE11, DO NOT REMOVE
-    }
 
     if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
       return next.handle(req);
@@ -78,13 +75,8 @@ export class AuthInterceptor implements HttpInterceptor {
       headers: req.headers.set('Authorization', authHeader)
     });
 
-    const tokenDecoded: any = this.tokenService.decode();
-    if (
-      authReq.params.get('_i') === 'true' &&
-      tokenDecoded &&
-      tokenDecoded.user &&
-      tokenDecoded.user.sourceId
-    ) {
+    const tokenDecoded = this.tokenService.decode();
+    if (authReq.params.get('_i') === 'true' && tokenDecoded?.user?.sourceId) {
       const hashUser = Md5.hashStr(tokenDecoded.user.sourceId) as string;
       authReq = authReq.clone({
         params: authReq.params.set('_i', hashUser)
@@ -119,7 +111,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   alterUrlWithKeyAuth(url: string): string {
     const hostWithKey = this.handleHostsAuthByKey(url);
-    let interceptedUrl = url;
+    const interceptedUrl = url;
     if (hostWithKey) {
       const urlDecomposed = interceptedUrl.split(/[?&]/);
       let urlWithKeyAdded = urlDecomposed.shift();
@@ -153,8 +145,8 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
-        var keyAdded = new RegExp(replace, 'gm');
+        const replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
+        const keyAdded = new RegExp(replace, 'gm');
         if (!keyAdded.test(reqUrl)) {
           hostWithKey = {
             key: hostWithAuthByKey.keyProperty,

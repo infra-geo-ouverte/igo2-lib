@@ -1,19 +1,24 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { LAYER } from '../../../layer';
+import { LAYER } from '../../../layer/shared/layer.enums';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import { QueryFormat, QueryableDataSourceOptions } from '../../../query';
+import { QueryableDataSourceOptions } from '../../../query/shared/query.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
+import {
+  QueryFormat,
+  QueryHtmlTarget
+} from './../../../query/shared/query.enums';
 import {
   ILayerData,
   ILayerDataSource,
@@ -22,11 +27,15 @@ import {
   ILayerServiceResponse
 } from './ilayer.interfaces';
 import { SearchSource } from './source';
-import { SearchSourceSettings, TextSearchOptions } from './source.interfaces';
+import {
+  SearchSourceOptions,
+  SearchSourceSettings,
+  TextSearchOptions
+} from './source.interfaces';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
-  constructor(private languageService: LanguageService) {}
+  private languageService = inject(LanguageService);
 
   formatResult(data: ILayerData): ILayerData {
     const allowedKey = [
@@ -41,14 +50,14 @@ export class ILayerSearchResultFormatter {
 
     const property = Object.entries(data.properties)
       .filter(([key]) => allowedKey.indexOf(key) !== -1)
-      .reduce((out: { [key: string]: any }, entries: [string, any]) => {
+      .reduce((out: Record<string, any>, entries: [string, any]) => {
         const [key, value] = entries;
         let newKey;
         try {
           newKey = this.languageService.translate.instant(
             'igo.geo.search.ilayer.properties.' + key
           );
-        } catch (e) {
+        } catch {
           newKey = key;
         }
         out[newKey] = value ? value : '';
@@ -67,6 +76,12 @@ export class ILayerSearchResultFormatter {
  */
 @Injectable()
 export class ILayerSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+  private formatter = inject<ILayerSearchResultFormatter>(
+    ILayerSearchResultFormatter
+  );
+
   static id = 'ilayer';
   static type = LAYER;
 
@@ -76,14 +91,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return this.title$.getValue();
   }
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: ILayerSearchSourceOptions,
-    @Inject(ILayerSearchResultFormatter)
-    private formatter: ILayerSearchResultFormatter
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${ILayerSearchSource.id}`
+    );
+
     super(options, storageService);
     this.languageService.language$.subscribe(() => {
       this.title$.next(
@@ -100,7 +114,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return ILayerSearchSource.type;
   }
 
-  protected getDefaultOptions(): ILayerSearchSourceOptions {
+  protected getEffectiveOptions(): ILayerSearchSourceOptions {
     const limit =
       this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)

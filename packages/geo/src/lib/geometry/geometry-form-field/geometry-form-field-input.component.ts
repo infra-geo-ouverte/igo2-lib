@@ -5,8 +5,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
-  Self
+  inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
@@ -28,7 +27,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { Subscription } from 'rxjs';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   MeasureLengthUnit,
   formatMeasure,
@@ -58,12 +57,16 @@ interface HasRadius {
 @Component({
   selector: 'igo-geometry-form-field-input',
   templateUrl: './geometry-form-field-input.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
-  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private cdRef = inject(ChangeDetectorRef);
+  ngControl = inject(NgControl, { optional: true, self: true });
+
+  private olOverlayLayer: OlVectorLayer<OlVectorSource>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
 
@@ -113,7 +116,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  @Input() measure = false;
 
   /**
    * Whether draw control should be active or not
@@ -134,7 +137,7 @@ export class GeometryFormFieldInputComponent
       this.toggleControl();
     }
   }
-  private _drawControlIsActive: boolean = true;
+  private _drawControlIsActive = true;
 
   /**
    * Whether freehand draw control should be active or not
@@ -179,7 +182,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  @Input() controlOptions: Record<string, any> = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -256,7 +259,7 @@ export class GeometryFormFieldInputComponent
    * The vector source to add the geometry to
    * @internal
    */
-  get olOverlaySource(): OlVectorSource<OlGeometry> {
+  get olOverlaySource(): OlVectorSource {
     return this.olOverlayLayer.getSource();
   }
 
@@ -282,10 +285,7 @@ export class GeometryFormFieldInputComponent
     }
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    @Optional() @Self() public ngControl: NgControl
-  ) {
+  constructor() {
     if (this.ngControl !== undefined) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
@@ -338,18 +338,18 @@ export class GeometryFormFieldInputComponent
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  registerOnChange(fn: Function) {
+  registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
-  private onChange: any = () => {};
+  private onChange: any = () => void 1;
 
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  registerOnTouched(fn: Function) {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  private onTouched: any = () => {};
+  private onTouched: any = () => void 1;
 
   /**
    * Implemented as part of ControlValueAccessor.
@@ -490,7 +490,6 @@ export class GeometryFormFieldInputComponent
    * @param olGeometry OL geometry
    */
   private setOlGeometry(olGeometry: OlGeometry | undefined) {
-    let value;
     if (olGeometry === undefined) {
       return;
     }
@@ -500,10 +499,10 @@ export class GeometryFormFieldInputComponent
       olGeometry = this.circleToPoint(olGeometry);
     }
 
-    value = this.olGeoJSON.writeGeometryObject(olGeometry, {
+    const value = this.olGeoJSON.writeGeometryObject(olGeometry, {
       featureProjection: this.map.projection,
       dataProjection: 'EPSG:4326'
-    });
+    }) as any;
     if (olGeometry.get('radius')) {
       value.radius = olGeometry.get('radius');
       olGeometry.set('radius', value.radius);

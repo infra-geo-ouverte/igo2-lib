@@ -1,27 +1,31 @@
+import { Optional } from '@angular/core';
+
 import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
 
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
-import { IgoMap } from '../../../map/shared';
-import { ImageWatcher } from '../../utils';
+import { type MapBase } from '../../../map/shared/map.abstract';
+import { ImageWatcher } from '../../utils/image-watcher';
 import { ImageLayerOptions } from './image-layer.interface';
 import { Layer } from './layer';
+import { LayerType } from './layer.interface';
 
 export class ImageLayer extends Layer {
-  public declare dataSource: WMSDataSource | ImageArcGISRestDataSource;
-  public declare options: ImageLayerOptions;
-  public declare ol: olLayerImage<olSourceImage>;
+  type: LayerType = 'raster';
+  declare public dataSource: WMSDataSource | ImageArcGISRestDataSource;
+  declare public options: ImageLayerOptions;
+  declare public ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 
   constructor(
     options: ImageLayerOptions,
-    public messageService: MessageService,
-    public authInterceptor?: AuthInterceptor
+    @Optional() public messageService?: MessageService,
+    @Optional() public authInterceptor?: AuthInterceptor
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this, this.messageService);
@@ -48,30 +52,35 @@ export class ImageLayer extends Layer {
     return image;
   }
 
-  public setMap(map: IgoMap | undefined) {
+  public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => void 1);
     }
-    super.setMap(map);
+    super.init(map);
+  }
+
+  remove(): void {
+    this.watcher.unsubscribe();
+    super.remove();
   }
 
   private customLoader(
     tile,
     src: string,
-    interceptor: AuthInterceptor,
-    messageService: MessageService
+    interceptor?: AuthInterceptor,
+    messageService?: MessageService
   ) {
     const xhr = new XMLHttpRequest();
 
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(src);
+    const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(src);
     let url = src;
     if (alteredUrlWithKeyAuth) {
       url = alteredUrlWithKeyAuth;
     }
     xhr.open('GET', url);
-    const intercepted = interceptor.interceptXhr(xhr, url);
+    const intercepted = interceptor?.interceptXhr(xhr, url);
     if (!intercepted) {
       xhr.abort();
       tile.getImage().src = url;
@@ -84,7 +93,7 @@ export class ImageLayer extends Layer {
       const arrayBufferView = new Uint8Array((this as any).response);
       const responseString = new TextDecoder().decode(arrayBufferView);
       if (responseString.includes('ServiceExceptionReport')) {
-        messageService.error(
+        messageService?.error(
           'igo.geo.dataSource.optionsApiUnavailable',
           'igo.geo.dataSource.unavailableTitle'
         );

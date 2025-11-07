@@ -5,10 +5,15 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { getEntityTitle } from '@igo2/common';
+import { getEntityTitle } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
 
 /**
@@ -18,9 +23,16 @@ import { Catalog } from '../shared/catalog.abstract';
   selector: 'igo-catalog-library-item',
   templateUrl: './catalog-library-item.component.html',
   styleUrls: ['./catalog-library-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    IgoLanguageModule
+  ]
 })
-export class CatalogLibaryItemComponent {
+export class CatalogLibraryItemComponent {
   /**
    * Catalog
    */

@@ -1,0 +1,83 @@
+@use '../../src/style/partial/common.variables' as common;
+
+// This is to make the list scrollable
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+
+  mat-list {
+    padding-top: 0;
+  }
+
+  ::ng-deep {
+    [igolistitem] {
+      &[color='primary'] {
+        &.igo-list-item-selected > mat-list-item {
+          background-color: var(--mat-sys-primary-fixed);
+          color: var(--mat-sys-on-primary-fixed);
+        }
+
+        &:not(.igo-list-item-disabled):hover > mat-list-item,
+        &.igo-list-item-focused > mat-list-item {
+          background-color: var(--mat-sys-primary-fixed-dim);
+          color: var(--mat-sys-on-primary-fixed);
+        }
+      }
+
+      &[color='accent'] {
+        &.igo-list-item-selected > mat-list-item {
+          background-color: var(--mat-sys-secondary-fixed-dim);
+          color: var(--mat-sys-on-secondary-fixed);
+        }
+
+        &:not(.igo-list-item-disabled):hover > mat-list-item,
+        &.igo-list-item-focused > mat-list-item {
+          background-color: var(--mat-sys-secondary-fixed);
+          color: var(--mat-sys-on-secondary-fixed);
+        }
+      }
+
+      &.igo-list-item-disabled > mat-list-item {
+        color: rgba(0, 0, 0, 0.38);
+      }
+    }
+
+    [igolistitem]:focus {
+      outline: none;
+    }
+
+    .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text {
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      max-height: 36px;
+      line-height: 18px;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .mat-mdc-list .mat-mdc-list-item.mdc-list-item--with-leading-icon {
+      height: common.$igo-list-item-height;
+    }
+
+    .mat-mdc-list
+      ::ng-deep
+      igo-collapsible
+      > .mat-mdc-list-item
+      > .mdc-list-item__primary-text
+      > .mat-mdc-list-item {
+      font-weight: bold;
+      opacity: 0.9;
+    }
+
+    mat-list.selectable
+      ::ng-deep
+      [igolistitem]:not(.igo-list-item-disabled)
+      mat-list-item:hover {
+      cursor: pointer;
+    }
+  }
+}

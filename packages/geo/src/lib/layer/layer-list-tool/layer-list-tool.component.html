@@ -1,84 +1,39 @@
-<mat-form-field class="inputFilter" [floatLabel]="floatLabel">
-  <input
-    matInput
-    [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
-    [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
-    matTooltipShowDelay="500"
-    type="text"
-    [(ngModel)]="term"
-  />
-  <button
-    *ngIf="term"
-    matSuffix
-    mat-icon-button
-    aria-label="Clear"
-    color="warn"
-    (click)="clearTerm()"
-  >
-    <mat-icon svgIcon="close"></mat-icon>
-  </button>
-</mat-form-field>
+<igo-layer-search
+  [initialValue]="term"
+  [floatLabel]="floatLabel"
+  placeholder="igo.geo.layer.filterPlaceholder"
+  tooltip="igo.geo.layer.subsetLayersListKeyword"
+  (searchChange)="handleTermChange($event)"
+></igo-layer-search>
 
 <div class="actions-container">
   <button
-    class="sort-alpha"
-    [color]="sortAlpha ? 'warn' : 'primary'"
     mat-icon-button
+    [color]="selectionActive ? 'warn' : 'primary'"
     [matTooltip]="
-      sortAlpha
-        ? ('igo.geo.layer.sortMapOrder' | translate)
-        : ('igo.geo.layer.sortAlphabetically' | translate)
-    "
-    matTooltipShowDelay="500"
-    (click)="toggleSortAlpha()"
-  >
-    <mat-icon
-      [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"
-    ></mat-icon>
-  </button>
-
-  <button
-    class="only-visible"
-    mat-icon-button
-    [disabled]="layersAreAllVisible && !onlyVisible"
-    [color]="onlyVisible ? 'warn' : 'primary'"
-    [matTooltip]="
-      onlyVisible
-        ? ('igo.geo.layer.resetLayersList' | translate)
-        : ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)
-    "
-    matTooltipShowDelay="500"
-    (click)="toggleOnlyVisible()"
-  >
-    <mat-icon
-      aria-hidden="false"
-      matBadge="icon"
-      igoMatBadgeIcon="eye"
-      igoMatBadgeInverseColor="true"
-      igoMatBadgeInheritColor="true"
-      [svgIcon]="onlyVisible ? 'filter-remove' : 'filter'"
-    >
-    </mat-icon>
-  </button>
-
-  <button
-    class="selection-mode"
-    mat-icon-button
-    color="primary"
-    [matTooltip]="
-      selectionMode
+      selectionActive
         ? ('igo.geo.layer.deactivateSelectionMode' | translate)
         : ('igo.geo.layer.activateSelectionMode' | translate)
     "
     matTooltipShowDelay="500"
     (click)="toggleSelectionMode()"
   >
-    <mat-icon
-      [svgIcon]="
-        selectionMode
-          ? 'checkbox-multiple-marked-outline'
-          : 'checkbox-multiple-blank-outline'
-      "
-    ></mat-icon>
+    <mat-icon>{{
+      selectionActive ? 'remove_done' : 'library_add_check'
+    }}</mat-icon>
   </button>
+
+  @if (viewerOptions?.group?.canCreate) {
+    <button
+      mat-icon-button
+      [disabled]="!viewerOptions.group.enable"
+      [matTooltip]="'igo.geo.layer.group.create' | translate"
+      matTooltipShowDelay="500"
+      type="button"
+      color="primary"
+      (click)="createGroup()"
+    >
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+  }
 </div>

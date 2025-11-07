@@ -1,0 +1,93 @@
+@use '@angular/material' as mat;
+
+@include mat.toolbar-overrides(
+  (
+    container-background-color: var(--mat-sys-on-primary-container),
+    container-text-color: var(--mat-sys-on-primary),
+    // standard-height: 56px
+  )
+);
+
+.active-link span {
+  color: var(--mat-sys-on-primary-fixed-variant);
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.example-toolbar {
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+
+  h5 {
+    margin: 0;
+  }
+}
+
+mat-nav-list {
+  padding: 0;
+}
+
+mat-sidenav {
+  width: 240px;
+  border-right-color: rgba(0, 0, 0, 0.13);
+}
+
+mat-expansion-panel {
+  box-shadow: unset !important;
+
+  ::ng-deep {
+    .mat-expansion-panel-body {
+      padding: 0 8px 16px;
+    }
+  }
+}
+
+.active-link ::ng-deep span {
+  font-weight: bold;
+}
+
+.example-is-mobile .example-toolbar {
+  position: fixed;
+  z-index: 2;
+}
+
+.example-sidenav-container {
+  flex: 1;
+}
+
+.example-is-mobile .example-sidenav-container {
+  flex: 1 0 auto;
+}
+
+.example-is-mobile mat-sidenav {
+  background-color: white;
+}
+
+mat-sidenav-content {
+  box-sizing: border-box;
+}
+
+mat-toolbar {
+  color: var(--mat-sys-on-primary);
+  background-color: var(--mat-sys-on-primary-container);
+
+  h2,
+  h5 {
+    color: var(--mat-sys-on-primary);
+  }
+
+  @include mat.icon-overrides(
+    (
+      color: white
+    )
+  );
+}

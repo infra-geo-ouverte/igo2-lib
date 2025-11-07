@@ -1,13 +1,25 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Inject,
   Input,
-  ViewEncapsulation
+  ViewEncapsulation,
+  inject
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogModule,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Layer } from '../../layer/shared/layers/layer';
+import { IgoLanguageModule } from '@igo2/core/language';
+
+import { Layer } from '../../layer';
 import {
   MetadataLayerOptions,
   MetadataOptions
@@ -18,31 +30,22 @@ import { MetadataService } from '../shared/metadata.service';
   selector: 'igo-metadata-button',
   templateUrl: './metadata-button.component.html',
   styleUrls: ['./metadata-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoLanguageModule,
+    MatDialogModule
+  ]
 })
 export class MetadataButtonComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  private _layer: Layer;
+  private metadataService = inject(MetadataService);
+  private dialog = inject(MatDialog);
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
+  @Input() layer: Layer;
 
-  constructor(
-    private metadataService: MetadataService,
-    private dialog: MatDialog
-  ) {}
+  @Input() color = 'primary';
 
   openMetadata(metadata: MetadataOptions) {
     if (metadata.extern) {
@@ -80,8 +83,9 @@ export class MetadataButtonComponent {
   selector: 'igo-metadata-abstract',
   templateUrl: './metadata-abstract.component.html',
   styleUrls: ['./metadata-abstract.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  imports: [MatDialogTitle, MatButtonModule, MatDialogClose, MatDialogContent]
 })
 export class MetadataAbstractComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: MetadataOptions) {}
+  data = inject<MetadataOptions>(MAT_DIALOG_DATA);
 }

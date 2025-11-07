@@ -1,18 +1,20 @@
-import { HttpClientModule } from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { IgoMessageModule } from '@igo2/core';
+import { provideMockTranslation } from '@igo2/core/language';
+import { IgoMessageModule } from '@igo2/core/message';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { mergeTestConfig } from 'packages/geo/test-config';
 
 import { QueryService } from './query.service';
 
 describe('QueryService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientModule, TranslateModule.forRoot(), IgoMessageModule],
-      providers: [QueryService]
-    });
+    TestBed.configureTestingModule(
+      mergeTestConfig({
+        imports: [IgoMessageModule],
+        providers: [QueryService, provideMockTranslation()]
+      })
+    );
   });
 
   it('should ...', inject([QueryService], (service: QueryService) => {

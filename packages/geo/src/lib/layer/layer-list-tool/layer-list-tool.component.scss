@@ -1,4 +1,4 @@
-@import '../../../../../core/src/style/partial/media';
+@use '@angular/material' as mat;
 
 :host {
   display: flex;
@@ -6,16 +6,23 @@
   justify-content: space-between;
   padding: 8px 12px;
 
-  .inputFilter {
-    width: calc(100% - 100px);
-    max-width: 200px;
+  @include mat.form-field-overrides(
+    (
+      container-height: 48px,
+      container-vertical-padding: 12px
+    )
+  );
+}
 
-    @include mobile {
-      width: 50%;
-    }
+.sort-alpha {
+  &.--active mat-icon {
+    color: red;
   }
+}
 
-  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
-    display: none;
+mat-form-field {
+  .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field-focus-overlay {
+    background-color: white !important;
   }
 }

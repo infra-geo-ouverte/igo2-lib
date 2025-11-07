@@ -3,7 +3,7 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  Self
+  inject
 } from '@angular/core';
 
 import { SearchBarComponent } from '@igo2/geo';
@@ -13,9 +13,13 @@ import { Subscription } from 'rxjs';
 import { SearchState } from '../search.state';
 
 @Directive({
-  selector: '[igoSearchBarBinding]'
+  selector: '[igoSearchBarBinding]',
+  standalone: true
 })
 export class SearchBarBindingDirective implements OnInit, OnDestroy {
+  private component = inject(SearchBarComponent, { self: true });
+  private searchState = inject(SearchState);
+
   get searchTerm(): string {
     return this.searchState.searchTerm$.value;
   }
@@ -26,11 +30,6 @@ export class SearchBarBindingDirective implements OnInit, OnDestroy {
   private searchTerm$$: Subscription;
   private searchType$$: Subscription;
   private searchDisabled$$: Subscription;
-
-  constructor(
-    @Self() private component: SearchBarComponent,
-    private searchState: SearchState
-  ) {}
 
   ngOnInit() {
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe(

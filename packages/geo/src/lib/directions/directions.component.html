@@ -4,17 +4,18 @@
     [labelPosition]="'before'"
     (change)="onToggleDirectionsControl($event.checked)"
   >
-    {{ 'igo.geo.directionsForm.toggleActive' | translate }}
+    {{ 'igo.geo.directions.toggle.activateControl' | translate }}
   </mat-slide-toggle>
+  @if (hasOsrmPrivateAccess && twoSourcesAvailable) {
+    <mat-slide-toggle
+      [checked]="enabledProfileHasAuthorization"
+      [labelPosition]="'before'"
+      (change)="onTogglePrivateModeControl($event.checked)"
+    >
+      {{ 'igo.geo.directions.toggle.type' | translate }}
+    </mat-slide-toggle>
+  }
 </div>
-
-<igo-directions-buttons
-  [stepFeatureStore]="stepFeatureStore"
-  [contextUri]="contextUri"
-  [zoomToActiveRoute$]="zoomToActiveRoute$"
-  [routesFeatureStore]="routesFeatureStore"
-  [stopsStore]="stopsStore"
-></igo-directions-buttons>
 
 <igo-directions-inputs
   (stopInputHasFocus)="onStopInputHasFocusChange($event)"
@@ -26,7 +27,17 @@
   [length]="length"
 ></igo-directions-inputs>
 
+@if (routesFeatureStore.all().length > 0) {
+  <igo-directions-buttons
+    [stepsFeatureStore]="stepsFeatureStore"
+    [contextUri]="contextUri"
+    [zoomOnActiveRoute$]="zoomOnActiveRoute$"
+    [routesFeatureStore]="routesFeatureStore"
+    [stopsStore]="stopsStore"
+  ></igo-directions-buttons>
+}
+
 <igo-directions-results
-  [stepFeatureStore]="stepFeatureStore"
+  [stepsFeatureStore]="stepsFeatureStore"
   [routesFeatureStore]="routesFeatureStore"
 ></igo-directions-results>

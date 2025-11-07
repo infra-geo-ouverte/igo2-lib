@@ -1,17 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
-import { Media, MediaService } from '@igo2/core';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { EntityStore } from '@igo2/common/entity';
+import { StopPropagationDirective } from '@igo2/common/stop-propagation';
+import { IgoLanguageModule } from '@igo2/core/language';
+import { Media, MediaService } from '@igo2/core/media';
 
 import OlOverlay from 'ol/Overlay';
-import { default as OlGeometry } from 'ol/geom/Geometry';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
@@ -20,7 +28,8 @@ import Style from 'ol/style/Style';
 
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 
-import { DataSourceService, FeatureDataSource } from '../../datasource';
+import { DataSourceService } from '../../datasource/shared/datasource.service';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   Feature,
   FeatureMotion,
@@ -45,30 +54,46 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
   selector: 'igo-search-add-button',
   templateUrl: './search-results-add-button.component.html',
   styleUrls: ['./search-results-add-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    StopPropagationDirective,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
-  public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
+  private layerService = inject(LayerService);
+  private dialog = inject(MatDialog);
+  private dataSourceService = inject(DataSourceService);
+  private mediaService = inject(MediaService);
+
+  public tooltip$ = new BehaviorSubject<string>(
     'igo.geo.catalog.layer.addToMap'
   );
 
-  public addFeatureToLayerTooltip$: BehaviorSubject<string> =
-    new BehaviorSubject('igo.geo.search.addToLayer');
+  public addFeatureToLayerTooltip$ = new BehaviorSubject<string>(
+    'igo.geo.search.addToLayer'
+  );
 
   private resolution$$: Subscription;
   private layers$$: Subscription;
 
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public inRange$ = new BehaviorSubject<boolean>(true);
 
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
 
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
 
   private layersSubcriptions = [];
 
   private lastTimeoutRequest;
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() layer: SearchResult;
 
@@ -87,7 +112,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   /**
    * show hide save search result in layer button
    */
-  @Input() saveSearchResultInLayer: boolean = false;
+  @Input() saveSearchResultInLayer = false;
 
   @Input()
   get color() {
@@ -101,18 +126,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   @Input() stores: FeatureStore<Feature>[] = [];
 
   get allLayers() {
-    return this.map.layers.filter((layer) =>
+    return this.map.layerController.all.filter((layer) =>
       String(layer.id).includes('igo-search-layer')
     );
   }
   private mediaService$$: Subscription;
-  public isMobile: boolean = false;
-  constructor(
-    private layerService: LayerService,
-    private dialog: MatDialog,
-    private dataSourceService: DataSourceService,
-    private mediaService: MediaService
-  ) {}
+  public isMobile = false;
 
   /**
    * @internal
@@ -125,12 +144,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       }
     });
     if (this.layer.meta.dataType === 'Layer') {
-      this.added =
-        this.map.layers.findIndex(
-          (lay) => lay.id === this.layer.data.sourceOptions.id
-        ) !== -1;
+      this.added = !!this.map.layerController.getBySourceId(
+        this.layer.data.sourceOptions.id
+      );
     }
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(
@@ -191,6 +209,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
+        clearTimeout(this.lastTimeoutRequest);
         if (this.isPreview$.value) {
           this.remove();
           this.isPreview$.next(false);
@@ -236,10 +255,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
     this.layersSubcriptions.push(
       this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
+        if (!layer) {
+          return;
+        }
         if (event.type === 'click') {
           this.map.layersAddedByClick$.next([layer]);
         }
-        this.map.addLayer(layer);
+        this.map.layerController.add(layer);
       })
     );
   }
@@ -256,8 +278,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       return undefined;
     }
 
-    const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
-    this.map.removeLayer(oLayer);
+    const layer = this.map.layerController.getBySourceId(
+      this.layer.data.sourceOptions.id
+    );
+    if (!layer) {
+      return;
+    }
+    this.map.layerController.remove(layer);
   }
 
   isInResolutionsRange(resolution: number) {
@@ -270,18 +297,19 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   isVisible() {
     if (this.layer?.data?.sourceOptions?.id) {
-      const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+      const oLayer = this.map.layerController.getBySourceId(
+        this.layer.data.sourceOptions.id
+      );
+
+      this.isVisible$.next(oLayer?.visible ?? false);
     }
   }
 
   getBadgeIcon() {
     if (this.inRange$.value) {
-      return this.isVisible$.value ? '' : 'eye-off';
+      return this.isVisible$.value ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 
@@ -375,9 +403,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     ];
 
     // set layer id
-    let layerCounterID: number = 0;
+    let layerCounterID = 0;
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-search-layer', ''));
+      const numberId = Number(layer.id.replace('igo-search-layer', ''));
       layerCounterID = Math.max(numberId, layerCounterID);
     }
 
@@ -388,7 +416,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       } as QueryableDataSourceOptions)
       .pipe(take(1))
       .subscribe((dataSource: FeatureDataSource) => {
-        let searchLayer: VectorLayer = new VectorLayer({
+        const searchLayer: VectorLayer = new VectorLayer({
           isIgoInternalLayer: true,
           id: 'igo-search-layer' + ++layerCounterID,
           title: layerTitle,
@@ -433,7 +461,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         activeStore.layer.visible = true;
         activeStore.source.ol.on(
           'removefeature',
-          (event: OlVectorSourceEvent<OlGeometry>) => {
+          (event: OlVectorSourceEvent) => {
             const olGeometry = event.feature.getGeometry();
             this.clearLabelsOfOlGeometry(olGeometry);
           }

@@ -5,9 +5,26 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { default as moment } from 'moment';
 
@@ -18,13 +35,32 @@ import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
+import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component';
 
 @Component({
   selector: 'igo-ogc-filter-time',
   templateUrl: './ogc-filter-time.component.html',
-  styleUrls: ['./ogc-filter-time.component.scss']
+  styleUrls: ['./ogc-filter-time.component.scss'],
+  imports: [
+    MatSlideToggleModule,
+    FormsModule,
+    OgcFilterTimeSliderComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatOptionModule,
+    IgoLanguageModule
+  ],
+  providers: [OGCFilterTimeService, provideMomentDateAdapter()]
 })
 export class OgcFilterTimeComponent implements OnInit {
+  ogcFilterTimeService = inject(OGCFilterTimeService);
+
   @Input() datasource: OgcFilterableDataSource;
   @Input() currentFilter: any;
   @Output() changeProperty: EventEmitter<{
@@ -63,6 +99,8 @@ export class OgcFilterTimeComponent implements OnInit {
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
   @ViewChild('beginTime') beginTime: HTMLInputElement;
   @ViewChild('endTime') endTime: HTMLInputElement;
+
+  private filterOriginConfig: OgcFilterDuringOptions;
 
   get step(): string {
     return this.datasource.options.stepDate
@@ -112,9 +150,9 @@ export class OgcFilterTimeComponent implements OnInit {
   public filterBeginFunction;
   public filterEndFunction;
 
-  constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
-
   ngOnInit() {
+    this.filterOriginConfig = this.datasource.options.ogcFilters
+      .filters as OgcFilterDuringOptions;
     if (this.currentFilter.sliderOptions) {
       this.currentFilter.sliderOptions.enabled =
         this.currentFilter.sliderOptions.enabled !== undefined
@@ -143,14 +181,14 @@ export class OgcFilterTimeComponent implements OnInit {
         const interval = filter.match(/years|months|weeks|days|hours|seconds/);
         if (filter.match(/\+/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('+') + 1, interval.index),
+            filter.substring(filter.indexOf('+') + 1, interval.index),
             10
           );
           return moment().add(intervalInt, interval[0]).toDate();
         }
         if (filter.match(/\-/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('-') + 1, interval.index),
+            filter.substring(filter.indexOf('-') + 1, interval.index),
             10
           );
           return moment().subtract(intervalInt, interval[0]).toDate();
@@ -162,14 +200,14 @@ export class OgcFilterTimeComponent implements OnInit {
         const interval = filter.match(/years|months|weeks|days|hours|seconds/);
         if (filter.match(/\+/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('+') + 1, interval.index),
+            filter.substring(filter.indexOf('+') + 1, interval.index),
             10
           );
           return moment(_now).add(intervalInt, interval[0]).toDate();
         }
         if (filter.match(/\-/)) {
           const intervalInt = parseInt(
-            filter.substring(filter.search('-') + 1, interval.index),
+            filter.substring(filter.indexOf('-') + 1, interval.index),
             10
           );
           return moment(_now).subtract(intervalInt, interval[0]).toDate();
@@ -186,7 +224,17 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  changeTemporalProperty(value, position?, refreshFilter = true) {
+  changeTemporalProperty(
+    value: string | Date,
+    position?,
+    refreshFilter = true
+  ) {
+    if (typeof value === 'string') {
+      if (!this.isValidDate(value)) {
+        return;
+      }
+      value = new Date(value);
+    }
     let valueTmp = this.getDateTime(value, position);
     if (this.isCalendarYearMode()) {
       let dateStringFromYearNotime;
@@ -197,7 +245,7 @@ export class OgcFilterTimeComponent implements OnInit {
       } else {
         this.endValue = value;
         this.onlyYearEnd = this.endValue.getFullYear();
-        dateStringFromYearNotime = `${this.onlyYearEnd}-01-01`;
+        dateStringFromYearNotime = `${this.onlyYearEnd}-12-31`;
       }
       // call service with string date without time
       this.changeProperty.next({
@@ -317,7 +365,7 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  calendarView() {
+  calendarView(): 'month' | 'year' | 'multi-year' {
     const test = this.stepMilliseconds;
     const diff = Math.abs(
       this.parseFilter(this.currentFilter.end).getTime() -
@@ -328,7 +376,7 @@ export class OgcFilterTimeComponent implements OnInit {
     } else if (this.ogcFilterTimeService.stepIsMonthDuration(this.step)) {
       return 'year';
     } else if (test < 86400000 && diff < 86400000) {
-      return 'clock';
+      return 'clock' as any;
     } else {
       return 'month';
     }
@@ -628,16 +676,16 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.begin
       ? this.currentFilter.begin
       : this.datasource.options.minDate
-      ? this.datasource.options.minDate
-      : this._defaultMin;
+        ? this.datasource.options.minDate
+        : this._defaultMin;
   }
 
   public handleMax() {
     return this.currentFilter.end
       ? this.currentFilter.end
       : this.datasource.options.maxDate
-      ? this.datasource.options.maxDate
-      : this._defaultMax;
+        ? this.datasource.options.maxDate
+        : this._defaultMax;
   }
 
   changePropertyByPass(event) {
@@ -699,27 +747,24 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   resetFilter() {
-    let filterOriginConfig = this.datasource.options.ogcFilters
-      .filters as OgcFilterDuringOptions;
-
     let minDefaultDate;
     let maxDefaultDate;
     let minDefaultISOString;
     let maxDefaultISOString;
 
     if (this.calendarTypeYear) {
-      if (filterOriginConfig.end === 'today') {
-        let todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
+      if (this.filterOriginConfig.end === 'today') {
+        const todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
         maxDefaultISOString = `${todayDateStringNoTime.substring(0, 4)}-01-01`;
       } else {
-        maxDefaultISOString = `${filterOriginConfig.end.substring(0, 4)}-01-01`;
+        maxDefaultISOString = `${this.filterOriginConfig.end.substring(0, 4)}-01-01`;
       }
-      minDefaultISOString = `${filterOriginConfig.begin.substring(0, 4)}-01-01`;
+      minDefaultISOString = `${this.filterOriginConfig.begin.substring(0, 4)}-01-01`;
       minDefaultDate = this.getDateFromStringWithoutTime(minDefaultISOString);
       maxDefaultDate = this.getDateFromStringWithoutTime(maxDefaultISOString);
     } else {
-      minDefaultDate = this.parseFilter(filterOriginConfig.begin);
-      maxDefaultDate = this.parseFilter(filterOriginConfig.end);
+      minDefaultDate = this.parseFilter(this.filterOriginConfig.begin);
+      maxDefaultDate = this.parseFilter(this.filterOriginConfig.end);
       minDefaultISOString = minDefaultDate.toISOString();
       maxDefaultISOString = maxDefaultDate.toISOString();
     }
@@ -742,5 +787,13 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.setFilterStateDisable();
     this.updateValues();
+  }
+
+  private isValidDate(value: string): boolean {
+    if (/^\d+$/.test(value)) {
+      return false;
+    }
+    const date = new Date(value);
+    return date instanceof Date && !isNaN(date.getTime());
   }
 }

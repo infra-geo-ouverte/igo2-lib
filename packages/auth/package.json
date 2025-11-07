@@ -1,9 +1,11 @@
 {
   "name": "@igo2/auth",
-  "version": "16.0.2",
+  "version": "20.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,25 +15,60 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build auth --configuration production",
+    "postbuild": "node --import tsx ../../scripts/src/postbuild-library.mts auth",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint auth",
+    "lint.fix": "ng lint auth --fix",
+    "test": "ng test auth --watch=false",
+    "test.watch": "ng test auth",
+    "watch": "ng build auth --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    },
+    "./environment": {
+      "import": "./environment/src/public_api.ts"
+    },
+    "./facebook": {
+      "import": "./facebook/src/public_api.ts"
+    },
+    "./form": {
+      "import": "./form/src/public_api.ts"
+    },
+    "./google": {
+      "import": "./google/src/public_api.ts"
+    },
+    "./internal": {
+      "import": "./internal/src/public_api.ts"
+    },
+    "./microsoft": {
+      "import": "./microsoft/src/public_api.ts"
+    }
+  },
   "dependencies": {
-    "jwt-decode": "^2.2.0",
-    "ts-cacheable": "^1.0.6",
-    "ts-md5": "^1.3.0",
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^16.2.4",
-    "@angular/common": "^16.2.5",
-    "@angular/core": "^16.2.5",
-    "@angular/forms": "^16.2.5",
-    "@angular/material": "^16.2.4",
-    "@angular/router": "^16.2.5",
-    "@igo2/core": "^16.0.2",
-    "@igo2/utils": "^16.0.2",
-    "rxjs": "^7.5.6",
-    "@azure/msal-angular": "^3.0.4"
+    "@angular/cdk": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/material": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@azure/msal-angular": "^4.0.0",
+    "@azure/msal-browser": "^4.0.0",
+    "@igo2/common": "*",
+    "@igo2/core": "*",
+    "@igo2/utils": "*",
+    "jwt-decode": "^4.0.0",
+    "rxjs": "^7.8.0",
+    "ts-cacheable": "^1.0.6",
+    "ts-md5": "^1.3.0"
   },
   "engines": {
-    "node": ">=18.10.0"
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }

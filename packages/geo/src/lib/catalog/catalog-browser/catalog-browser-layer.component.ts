@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,17 +6,27 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { getEntityIcon, getEntityTitle } from '@igo2/common';
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
+import { getEntityIcon, getEntityTitle } from '@igo2/common/entity';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
 import { LayerService } from '../../layer/shared/layer.service';
 import { Layer, TooltipType } from '../../layer/shared/layers';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
+import { MetadataButtonComponent } from '../../metadata/metadata-button/metadata-button.component';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 
@@ -26,23 +37,36 @@ import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
   selector: 'igo-catalog-browser-layer',
   templateUrl: './catalog-browser-layer.component.html',
   styleUrls: ['./catalog-browser-layer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    NgClass,
+    MatTooltipModule,
+    MatButtonModule,
+    MetadataButtonComponent,
+    MatBadgeModule,
+    IgoBadgeIconDirective,
+    LayerLegendComponent,
+    AsyncPipe,
+    IgoLanguageModule
+  ]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
-  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private layerService = inject(LayerService);
+
+  public inRange$ = new BehaviorSubject<boolean>(true);
+  public isPreview$ = new BehaviorSubject<boolean>(false);
+  public isVisible$ = new BehaviorSubject<boolean>(false);
   private isPreview$$: Subscription;
   private resolution$$: Subscription;
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  public layerLegendShown$ = new BehaviorSubject(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
-  private mouseInsideAdd: boolean = false;
+  private mouseInsideAdd = false;
 
   @Input() resolution: number;
 
@@ -81,14 +105,12 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     return getEntityIcon(this.layer) || 'layers';
   }
 
-  constructor(private layerService: LayerService) {}
-
   ngOnInit(): void {
     this.isPreview$$ = this.isPreview$.subscribe((value) =>
       this.addedLayerIsPreview.emit(value)
     );
 
-    this.layers$$ = this.map.layers$.subscribe(() => {
+    this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
     });
 
@@ -141,7 +163,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     this.onToggleClick(event);
   }
 
-  askForLegend(event) {
+  askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
     this.layerService
       .createAsyncLayer(this.layer.options)
@@ -234,18 +256,16 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   isVisible() {
     if (this.layer?.id) {
-      const oLayer = this.map.getLayerById(this.layer?.id);
-      oLayer
-        ? this.isVisible$.next(oLayer.visible)
-        : this.isVisible$.next(false);
+      const layer = this.map.layerController.getById(this.layer?.id);
+      this.isVisible$.next(layer?.displayed);
     }
   }
 
   getBadgeIcon() {
     if (this.inRange$.getValue()) {
-      return this.isVisible$.getValue() ? '' : 'eye-off';
+      return this.isVisible$.getValue() ? '' : 'visibility_off';
     } else {
-      return 'eye-off';
+      return 'visibility_off';
     }
   }
 

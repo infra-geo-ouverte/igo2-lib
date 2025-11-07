@@ -4,7 +4,7 @@ import { getRenderPixel } from 'ol/render';
 
 import { Subscription } from 'rxjs';
 
-import { Layer } from '../../layer/shared';
+import { Layer } from '../../layer';
 import { IgoMap } from '../shared/map';
 
 /**
@@ -13,7 +13,8 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-swipe-control',
   templateUrl: './swipe-control.component.html',
-  styleUrls: ['./swipe-control.component.scss']
+  styleUrls: ['./swipe-control.component.scss'],
+  standalone: true
 })
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
@@ -39,7 +40,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * State of draggable action
    */
-  private inDragAction: boolean = false;
+  private inDragAction = false;
 
   /**
    * Listener of toggle from advanced-map-tool
@@ -50,8 +51,6 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Binder of prerender on the same element
    */
   private boundPrerender = this.prerender.bind(this);
-
-  constructor() {}
 
   /**
    * Get the list of layers for swipe and activate of deactivate the swipe

@@ -1,0 +1,20 @@
+<app-doc-viewer title="Request" subtitle="Core">
+  <p>Register http calls in console</p>
+
+  <li>
+    Import <code>IgoLoggingModule</code> only if you want register HTTP calls in
+    console
+  </li>
+  <li>
+    Import <code>IgoErrorModule</code> only if you want register errors from
+    HTTP calls in console
+  </li>
+  <li>Import modules only once</li>
+
+  <app-example-viewer codeFolder="core/core">
+    <div class="actions-container">
+      <button mat-raised-button (click)="callHttp()">Log</button>
+      <button mat-raised-button (click)="callHttpError()">Error</button>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

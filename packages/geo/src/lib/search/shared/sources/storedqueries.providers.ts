@@ -1,8 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
-
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import {
   StoredQueriesReverseSearchSource,
   StoredQueriesSearchSource
@@ -12,18 +9,8 @@ import {
  * StoredQueries search source factory
  * @ignore
  */
-export function storedqueriesSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService
-) {
-  return new StoredQueriesSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${StoredQueriesSearchSource.id}`)
-  );
+export function storedqueriesSearchSourceFactory() {
+  return new StoredQueriesSearchSource();
 }
 
 /**
@@ -33,8 +20,14 @@ export function provideStoredQueriesSearchSource() {
   return {
     provide: SearchSource,
     useFactory: storedqueriesSearchSourceFactory,
-    multi: true,
-    deps: [HttpClient, LanguageService, StorageService, ConfigService]
+    multi: true
+  };
+}
+
+export function withStoredQueriesSource(): SearchSourceFeature<SearchSourceKind.StoredQueries> {
+  return {
+    kind: SearchSourceKind.StoredQueries,
+    providers: [provideStoredQueriesSearchSource()]
   };
 }
 
@@ -43,18 +36,8 @@ export function provideStoredQueriesSearchSource() {
  * @ignore
  */
 
-export function storedqueriesReverseSearchSourceFactory(
-  http: HttpClient,
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService
-) {
-  return new StoredQueriesReverseSearchSource(
-    http,
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${StoredQueriesReverseSearchSource.id}`)
-  );
+export function storedqueriesReverseSearchSourceFactory() {
+  return new StoredQueriesReverseSearchSource();
 }
 
 /**
@@ -64,7 +47,13 @@ export function provideStoredQueriesReverseSearchSource() {
   return {
     provide: SearchSource,
     useFactory: storedqueriesReverseSearchSourceFactory,
-    multi: true,
-    deps: [HttpClient, LanguageService, StorageService, ConfigService]
+    multi: true
+  };
+}
+
+export function withStoredQueriesReverseSource(): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
+  return {
+    kind: SearchSourceKind.StoredQueriesReverse,
+    providers: [provideStoredQueriesReverseSearchSource()]
   };
 }

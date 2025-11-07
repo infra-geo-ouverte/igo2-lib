@@ -1,0 +1,193 @@
+<igo-panel
+  class="igo-layer-actions-container"
+  [title]="
+    hasMultipleSelection
+      ? ('igo.geo.layer.tools' | translate)
+      : selected[0].title
+  "
+>
+  <div class="igo-layer-button-group">
+    @if (isLayersRemovable(selected)) {
+      <button
+        class="delete-button"
+        mat-icon-button
+        color="warn"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="
+          (hasMultipleSelection
+            ? isLayersRemovable(selected)
+              ? ('igo.geo.layer.removeSelectedLayers' | translate)
+              : ('igo.geo.layer.removeSelectedLayersRestriction' | translate)
+            : 'igo.geo.layer.removeLayer'
+          ) | translate
+        "
+        (click)="removeLayers()"
+      >
+        <mat-icon
+          aria-hidden="false"
+          [matBadge]="'!'"
+          matBadgeColor="warn"
+          matBadgeSize="medium"
+          [matBadgeHidden]="
+            !hasMultipleSelection || isLayersRemovable(selected)
+          "
+          >delete</mat-icon
+        >
+      </button>
+    }
+
+    @if (hasMultipleSelection) {
+      <button
+        class="eye-button"
+        mat-icon-button
+        color="primary"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [disabled]="selected.length === 0"
+        [matTooltip]="
+          allSelectionVisibilityHidden
+            ? ('igo.geo.layer.showSelectedLayers' | translate)
+            : ('igo.geo.layer.hideSelectedLayers' | translate)
+        "
+        (click)="toggleSelectionVisibility()"
+      >
+        <mat-icon>{{
+          allSelectionVisibilityHidden ? 'visibility_off' : 'visibility'
+        }}</mat-icon>
+      </button>
+    }
+
+    <button
+      class="down-button"
+      mat-icon-button
+      color="primary"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="
+        searchTerm
+          ? ('igo.geo.layer.filterLowerLayer' | translate)
+          : ('igo.geo.layer.lowerLayer' | translate)
+      "
+      [disabled]="!isSelectionLowerable"
+      (click)="lowerSelection()"
+    >
+      <mat-icon
+        aria-hidden="false"
+        [matBadge]="searchTerm ? '!' : ''"
+        matBadgeColor="warn"
+        matBadgeSize="medium"
+        [matBadgeHidden]="!isSelectionLowerable"
+        >arrow_downward</mat-icon
+      >
+    </button>
+
+    <button
+      class="up-button"
+      color="primary"
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="
+        searchTerm
+          ? ('igo.geo.layer.filterRaiseLayer' | translate)
+          : ('igo.geo.layer.raiseLayer' | translate)
+      "
+      [disabled]="!isSelectionRaisable"
+      (click)="raiseSelection()"
+    >
+      <mat-icon
+        aria-hidden="false"
+        [matBadge]="searchTerm ? '!' : ''"
+        matBadgeColor="warn"
+        matBadgeSize="medium"
+        [matBadgeHidden]="!isSelectionRaisable"
+      >
+        arrow_upward
+      </mat-icon>
+    </button>
+
+    @if (controller.selected.length === 1) {
+      <button
+        class="opacity-button"
+        color="primary"
+        mat-icon-button
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matMenuTriggerFor]="opacityMenu"
+        [matTooltip]="'igo.geo.layer.opacity' | translate"
+      >
+        <mat-icon
+          aria-hidden="false"
+          [matBadge]="opacity === 100 ? null : opacity"
+          matBadgeColor="primary"
+          matBadgeSize="medium"
+          >opacity</mat-icon
+        >
+      </button>
+      <mat-menu #opacityMenu="matMenu" class="panel-opacity-menu">
+        <mat-slider
+          id="opacity-slider"
+          color="primary"
+          discrete
+          step="5"
+          [min]="0"
+          [max]="100"
+          [matTooltip]="'igo.geo.layer.opacity' | translate"
+          (click)="$event.stopPropagation()"
+          matTooltipShowDelay="500"
+          tooltip-position="below"
+          #ngSlider
+          ><input
+            matSliderThumb
+            [value]="opacity"
+            (input)="
+              changeOpacity({
+                source: ngSliderThumb,
+                parent: ngSlider,
+                value: ngSliderThumb.value
+              })
+            "
+            #ngSliderThumb="matSliderThumb"
+          />
+        </mat-slider>
+      </mat-menu>
+    }
+
+    @if (isExtentsValid()) {
+      <button
+        class="zoomLayer-button"
+        color="primary"
+        mat-icon-button
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="
+          (hasMultipleSelection
+            ? 'igo.geo.layer.zoomLayers'
+            : 'igo.geo.layer.zoomLayer'
+          ) | translate
+        "
+        (click)="zoomLayersExtents()"
+      >
+        <mat-icon matBadgeColor="primary" matBadgeSize="medium"
+          >frame_inspect</mat-icon
+        >
+      </button>
+    }
+
+    @if (canRename) {
+      <button
+        color="primary"
+        mat-icon-button
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.layer.group.rename' | translate"
+        (click)="handleRename()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
+
+    <ng-content></ng-content>
+  </div>
+</igo-panel>

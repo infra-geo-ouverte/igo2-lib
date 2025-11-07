@@ -1,9 +1,9 @@
-import { Workspace, WorkspaceOptions } from '@igo2/common';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 
 import { BehaviorSubject } from 'rxjs';
 
 import { VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 export interface WfsWorkspaceOptions extends WorkspaceOptions {
   layer: VectorLayer;
@@ -11,9 +11,7 @@ export interface WfsWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class WfsWorkspace extends Workspace {
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
-    true
-  );
+  readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): VectorLayer {
     return this.options.layer;

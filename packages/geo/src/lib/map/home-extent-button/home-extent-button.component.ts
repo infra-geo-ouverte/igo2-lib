@@ -1,6 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import * as olproj from 'ol/proj';
 
@@ -14,9 +18,12 @@ Button to center the map to the home extent
 @Component({
   selector: 'igo-home-extent-button',
   templateUrl: './home-extent-button.component.html',
-  styleUrls: ['./home-extent-button.component.scss']
+  styleUrls: ['./home-extent-button.component.scss'],
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class HomeExtentButtonComponent {
+  configService = inject(ConfigService);
+
   @Input() map: IgoMap;
   @Input() color: string;
   @Input() extentOverride?: MapExtent;
@@ -27,7 +34,7 @@ export class HomeExtentButtonComponent {
   private homeExtentButtonCenter;
   private homeExtentButtonZoom;
 
-  constructor(public configService: ConfigService) {
+  constructor() {
     this.computeHomeExtent();
   }
 

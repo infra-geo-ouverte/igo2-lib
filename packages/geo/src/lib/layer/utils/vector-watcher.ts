@@ -1,7 +1,7 @@
 import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { VectorLayer } from '../shared/layers/vector-layer';
+import type { VectorLayer } from '../shared/layers/vector-layer';
 
 export class VectorWatcher extends Watcher {
   private id: string;
@@ -23,9 +23,9 @@ export class VectorWatcher extends Watcher {
     }
 
     if (olSource.getUrl()) {
-      olSource.on(`featuresloadstart`, (e) => this.handleLoadStart(e));
-      olSource.on(`featuresloadend`, (e) => this.handleLoadEnd(e));
-      olSource.on(`featuresloaderror`, (e) => this.handleLoadEnd(e));
+      olSource.on(`featuresloadstart`, () => this.handleLoadStart());
+      olSource.on(`featuresloadend`, () => this.handleLoadEnd());
+      olSource.on(`featuresloaderror`, () => this.handleLoadEnd());
     }
   }
 
@@ -35,18 +35,18 @@ export class VectorWatcher extends Watcher {
       olSource = (this.layer.options.source.options as any).source;
     }
     if (olSource.getUrl()) {
-      olSource.un(`featuresloadstart`, (e) => this.handleLoadStart(e));
-      olSource.un(`featuresloadend`, (e) => this.handleLoadEnd(e));
-      olSource.un(`featuresloaderror`, (e) => this.handleLoadEnd(e));
+      olSource.un(`featuresloadstart`, () => this.handleLoadStart());
+      olSource.un(`featuresloadend`, () => this.handleLoadEnd());
+      olSource.un(`featuresloaderror`, () => this.handleLoadEnd());
     }
   }
 
-  private handleLoadStart(event: any) {
+  private handleLoadStart() {
     this.loading += 1;
     this.status = SubjectStatus.Working;
   }
 
-  private handleLoadEnd(event: any) {
+  private handleLoadEnd() {
     this.loaded += 1;
 
     const loading = this.loading;

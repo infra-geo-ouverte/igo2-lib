@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { LanguageService } from '@igo2/core/language';
+import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';
@@ -11,7 +13,11 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../../feature/shared/feature.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
@@ -22,15 +28,19 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
  */
 @Injectable()
 export class CadastreSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
+
   static id = 'cadastre';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    private languageService: LanguageService,
-    storageService: StorageService,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor() {
+    const storageService = inject(StorageService);
+    const config = inject(ConfigService);
+    const options = config.getConfig(
+      `searchSources.${CadastreSearchSource.id}`
+    );
+
     super(options, storageService);
   }
 
@@ -45,7 +55,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
    */
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Cadastre (Québec)',
       searchUrl: 'https://carto.cptaq.gouv.qc.ca/php/find_lot_v1.php?'
@@ -61,9 +71,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    term = term.replace(/ /g, '');
+    term = term.replace(/,+/g, ',');
     term = term.endsWith(',') ? term.slice(0, -1) : term;
     term = term.startsWith(',') ? term.substr(1) : term;
-    term = term.replace(/ /g, '');
 
     const params = this.computeSearchRequestParams(term, options || {});
     if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
@@ -133,7 +144,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
         id,
         title: numero,
         score: computeTermSimilarity(term.trim(), numero),
-        icon: 'map-marker'
+        icon: 'location_on'
       },
       data: {
         type: FEATURE,
@@ -154,7 +165,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       featureProjection: 'EPSG:4326'
     });
     return {
-      type: feature.getGeometry().getType() as GeoJsonGeometryTypes,
+      type: feature.getGeometry().getType() as Exclude<
+        GeoJsonGeometryTypes,
+        'GeometryCollection'
+      >,
       coordinates: (feature.getGeometry() as any).getCoordinates()
     };
   }

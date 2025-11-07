@@ -1,0 +1,14 @@
+<h6 class="m-b-0">{{ subtitle }}</h6>
+<h2>{{ title }}</h2>
+
+<div>
+  @if (dependencies?.length) {
+    <label for="">Dependencies:</label>
+    <ul>
+      @for (dep of dependencies; track dep) {
+        <li>{{ dep }}</li>
+      }
+    </ul>
+  }
+  <ng-content></ng-content>
+</div>

@@ -5,10 +5,10 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Self
+  inject
 } from '@angular/core';
 
-import { MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core/message';
 
 import { Subscription } from 'rxjs';
 
@@ -17,13 +17,17 @@ import { ContextService } from '../shared/context.service';
 import { ContextEditComponent } from './context-edit.component';
 
 @Directive({
-  selector: '[igoContextEditBinding]'
+  selector: '[igoContextEditBinding]',
+  standalone: true
 })
 export class ContextEditBindingDirective implements OnInit, OnDestroy {
+  private contextService = inject(ContextService);
+  private messageService = inject(MessageService);
+
   private component: ContextEditComponent;
   private editedContext$$: Subscription;
 
-  @Output() submitSuccessed: EventEmitter<Context> = new EventEmitter();
+  @Output() submitSuccessed = new EventEmitter<Context>();
 
   @HostListener('submitForm', ['$event'])
   onEdit(context: Context) {
@@ -42,11 +46,9 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
     });
   }
 
-  constructor(
-    @Self() component: ContextEditComponent,
-    private contextService: ContextService,
-    private messageService: MessageService
-  ) {
+  constructor() {
+    const component = inject(ContextEditComponent, { self: true });
+
     this.component = component;
   }
 

@@ -1,0 +1,15 @@
+<app-doc-viewer
+  title="Measure"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/measure">
+    <igo-map-browser [map]="map" [view]="view">
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-measurer [store]="$any(store)" [map]="map"></igo-measurer>
+  </app-example-viewer>
+</app-doc-viewer>

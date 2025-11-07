@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {
-  AnyLayerOptions,
   RoutesFeatureStore,
-  StepFeatureStore,
+  StepsFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from '@igo2/geo';
@@ -19,7 +18,9 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
-  public zoomToActiveRoute$: Subject<void> = new Subject();
+  private mapState = inject(MapState);
+
+  public zoomToActiveRoute$ = new Subject<void>();
 
   /**
    * Store that holds the stop
@@ -36,11 +37,11 @@ export class DirectionState {
    */
   public routesFeatureStore: RoutesFeatureStore;
 
-  public stepFeatureStore: StepFeatureStore;
+  public stepFeatureStore: StepsFeatureStore;
 
-  public debounceTime: number = 200;
+  public debounceTime = 200;
 
-  constructor(private mapState: MapState) {
+  constructor() {
     this.stopsFeatureStore = new StopsFeatureStore([], {
       map: this.mapState.map
     });
@@ -49,33 +50,20 @@ export class DirectionState {
       map: this.mapState.map
     });
 
-    this.stepFeatureStore = new StepFeatureStore([], {
+    this.stepFeatureStore = new StepsFeatureStore([], {
       map: this.mapState.map
     });
 
-    this.mapState.map.ol.once('rendercomplete', () => {
-      this.stopsFeatureStore.empty$.subscribe((empty) => {
-        if (this.stopsFeatureStore.layer?.options) {
-          (
-            this.stopsFeatureStore.layer.options as AnyLayerOptions
-          ).showInLayerList = !empty;
-        }
-      });
-      this.routesFeatureStore.empty$.subscribe((empty) => {
-        if (this.routesFeatureStore.layer?.options) {
-          (
-            this.routesFeatureStore.layer.options as AnyLayerOptions
-          ).showInLayerList = !empty;
-        }
-      });
-    });
-
-    this.mapState.map.layers$.subscribe(() => {
-      if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
+    this.mapState.map.layerController.all$.subscribe(() => {
+      if (
+        !this.mapState.map.layerController.getById('igo-direction-stops-layer')
+      ) {
         this.stopsStore.deleteMany(this.stopsStore.all());
         this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
       }
-      if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
+      if (
+        !this.mapState.map.layerController.getById('igo-direction-route-layer')
+      ) {
         this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       }
     });

@@ -1,13 +1,14 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { ProjectionService } from '../../map/shared/projection.service';
+import { OGCFilterService } from '../../filter/shared/ogc-filter.service';
 import { CapabilitiesService } from './capabilities.service';
 import {
   AnyDataSourceOptions,
@@ -34,6 +35,7 @@ import {
   WFSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
+  WMSDataSourceOptionsParams,
   WMTSDataSource,
   WMTSDataSourceOptions,
   WebSocketDataSource,
@@ -47,17 +49,15 @@ import { OptionsService } from './options/options.service';
   providedIn: 'root'
 })
 export class DataSourceService {
-  public datasources$ = new BehaviorSubject<DataSource[]>([]);
+  private capabilitiesService = inject(CapabilitiesService);
+  private optionsService = inject(OptionsService, { optional: true });
+  private wfsDataSourceService = inject(WFSService);
+  private ogcFilterService = inject(OGCFilterService);
+  private languageService = inject(LanguageService);
+  private messageService = inject(MessageService);
+  private authInterceptor = inject(AuthInterceptor);
 
-  constructor(
-    private capabilitiesService: CapabilitiesService,
-    @Optional() private optionsService: OptionsService,
-    private wfsDataSourceService: WFSService,
-    private languageService: LanguageService,
-    private messageService: MessageService,
-    private projectionService: ProjectionService,
-    private authInterceptor?: AuthInterceptor
-  ) {}
+  public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
   createAsyncDataSource(
     context: AnyDataSourceOptions,
@@ -80,11 +80,12 @@ export class DataSourceService {
       case 'wfs':
         dataSource = this.createWFSDataSource(context as WFSDataSourceOptions);
         break;
-      case 'wms':
+      case 'wms': {
         const wmsContext = context as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
         dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
+      }
       case 'wmts':
         dataSource = this.createWMTSDataSource(
           context as WMTSDataSourceOptions
@@ -170,6 +171,7 @@ export class DataSourceService {
         new WFSDataSource(
           context,
           this.wfsDataSourceService,
+          this.ogcFilterService,
           this.authInterceptor
         )
       )
@@ -225,12 +227,34 @@ export class DataSourceService {
         const optionsMerged = options.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
-        return new WMSDataSource(optionsMerged, this.wfsDataSourceService);
+
+        if (optionsMerged?.params) {
+          optionsMerged.params = this.normalizeParams(optionsMerged.params);
+        }
+
+        return new WMSDataSource(
+          optionsMerged,
+          this.wfsDataSourceService,
+          this.ogcFilterService
+        );
       }),
       catchError(() => {
         return of(undefined);
       })
     );
+  }
+
+  private normalizeParams(
+    params: WMSDataSourceOptionsParams
+  ): WMSDataSourceOptionsParams {
+    const uppercasedParams: Partial<WMSDataSourceOptionsParams> = {};
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        uppercasedParams[key.toUpperCase()] = params[key];
+      }
+    }
+
+    return uppercasedParams as WMSDataSourceOptionsParams;
   }
 
   private createWMTSDataSource(

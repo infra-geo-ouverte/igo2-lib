@@ -1,22 +1,13 @@
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
-
 import { SearchSource } from './source';
+import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import { WorkspaceSearchSource } from './workspace';
 
 /**
  * Workspace search source factory
  * @ignore
  */
-export function workspaceSearchSourceFactory(
-  languageService: LanguageService,
-  storageService: StorageService,
-  config: ConfigService
-) {
-  return new WorkspaceSearchSource(
-    languageService,
-    storageService,
-    config.getConfig(`searchSources.${WorkspaceSearchSource.id}`)
-  );
+export function workspaceSearchSourceFactory() {
+  return new WorkspaceSearchSource();
 }
 
 /**
@@ -26,7 +17,13 @@ export function provideWorkspaceSearchSource() {
   return {
     provide: SearchSource,
     useFactory: workspaceSearchSourceFactory,
-    multi: true,
-    deps: [LanguageService, StorageService, ConfigService]
+    multi: true
+  };
+}
+
+export function withWorkspaceSource(): SearchSourceFeature<SearchSourceKind.Workspace> {
+  return {
+    kind: SearchSourceKind.Workspace,
+    providers: [provideWorkspaceSearchSource()]
   };
 }

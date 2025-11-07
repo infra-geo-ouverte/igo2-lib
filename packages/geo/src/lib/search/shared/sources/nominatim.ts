@@ -1,14 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 import { customCacheHasher } from '@igo2/utils';
 
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../../feature/shared/feature.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { NominatimData } from './nominatim.interfaces';
@@ -20,14 +25,18 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
  */
 @Injectable()
 export class NominatimSearchSource extends SearchSource implements TextSearch {
+  private http = inject(HttpClient);
+
   static id = 'nominatim';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: SearchSourceOptions,
-    storageService: StorageService
-  ) {
+  constructor() {
+    const config = inject(ConfigService);
+    const storageService = inject(StorageService);
+    const options = config.getConfig<SearchSourceOptions>(
+      `searchSources.${NominatimSearchSource.id}`
+    );
+
     super(options, storageService);
   }
 
@@ -42,7 +51,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
    */
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getEffectiveOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
       searchUrl: 'https://nominatim.openstreetmap.org/search',
@@ -207,7 +216,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.display_name,
-        icon: 'map-marker',
+        icon: 'location_on',
         score: computeTermSimilarity(term.trim(), data.display_name)
       },
       data: {
@@ -224,7 +233,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeProperties(data: NominatimData): { [key: string]: any } {
+  private computeProperties(data: NominatimData): Record<string, any> {
     return {
       display_name: data.display_name,
       place_id: data.place_id,

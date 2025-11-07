@@ -1,4 +1,8 @@
-import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+import {
+  EntityKey,
+  EntityRecord,
+  EntityStoreStrategy
+} from '@igo2/common/entity';
 
 import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
@@ -11,7 +15,7 @@ import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
 import { Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { FeatureDataSource } from '../../../datasource';
+import { FeatureDataSource } from '../../../datasource/shared/datasources';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../../map/shared/map';
 import { ctrlKeyDown } from '../../../map/shared/map.utils';
@@ -187,9 +191,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection
-        map((features: Array<Feature[]>) =>
-          features.reduce((a, b) => a.concat(b))
-        )
+        map((features: Feature[][]) => features.reduce((a, b) => a.concat(b)))
       )
       .subscribe((features: Feature[]) => this.onSelectFromStore(features));
   }
@@ -458,8 +460,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * features.
    */
   private addOverlayLayer() {
-    if (this.overlayStore.layer.map === undefined) {
-      this.map.addLayer(this.overlayStore.layer);
+    const layer = this.overlayStore.layer;
+    if (!this.map.layerController.getById(layer.id)) {
+      this.map.layerController.add(layer);
     }
   }
 
@@ -468,6 +471,6 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private removeOverlayLayer() {
     this.overlayStore.source.ol.clear();
-    this.map.removeLayer(this.overlayStore.layer);
+    this.map.layerController.remove(this.overlayStore.layer);
   }
 }

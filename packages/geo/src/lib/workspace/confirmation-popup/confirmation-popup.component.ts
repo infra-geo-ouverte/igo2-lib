@@ -1,7 +1,13 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef
+} from '@angular/material/dialog';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core/language';
 
 export interface DialogData {
   type: string;
@@ -11,14 +17,16 @@ export interface DialogData {
 @Component({
   selector: 'igo-confirmation-popup-component',
   templateUrl: './confirmation-popup.component.html',
-  styleUrls: ['./confirmation-popup.component.scss']
+  styleUrls: ['./confirmation-popup.component.scss'],
+  imports: [MatDialogContent, MatDialogActions, MatButtonModule]
 })
 export class ConfirmationPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationPopupComponent>,
-    public languageService: LanguageService,
-    @Inject(MAT_DIALOG_DATA) public data: { type: string; cancel: boolean }
-  ) {}
+  dialogRef = inject<MatDialogRef<ConfirmationPopupComponent>>(MatDialogRef);
+  languageService = inject(LanguageService);
+  data = inject<{
+    type: string;
+    cancel: boolean;
+  }>(MAT_DIALOG_DATA);
 
   cancelAction() {
     this.data.cancel = true;

@@ -1,7 +1,7 @@
-import { Workspace, WorkspaceOptions } from '@igo2/common';
+import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 
 import { ImageLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 export interface WmsWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer;

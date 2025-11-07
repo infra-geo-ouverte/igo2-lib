@@ -10,7 +10,8 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-map-center',
   templateUrl: './map-center.component.html',
-  styleUrls: ['./map-center.component.scss']
+  styleUrls: ['./map-center.component.scss'],
+  standalone: true
 })
 export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
@@ -22,7 +23,6 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Listener of toggle from advanced-map-tool
    */
   private displayCenter$$: Subscription;
-  constructor() {}
 
   /**
    * Set a visibility for cursor of the center of the map
@@ -30,9 +30,9 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.map) {
       this.displayCenter$$ = this.map.mapCenter$.subscribe((value) => {
-        value
-          ? (document.getElementById('mapCenter').style.visibility = 'visible')
-          : (document.getElementById('mapCenter').style.visibility = 'hidden');
+        document.getElementById('mapCenter').style.visibility = value
+          ? 'visible'
+          : 'hidden';
       });
     }
     this.letZoom();

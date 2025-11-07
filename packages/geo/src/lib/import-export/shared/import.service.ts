@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService } from '@igo2/core/config';
 import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -25,6 +25,9 @@ import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
   providedIn: 'root'
 })
 export class ImportService {
+  private http = inject(HttpClient);
+  private config = inject(ConfigService);
+
   static formatExtensionAssociation = {
     GeoJSON: 'geojson',
     GML: 'gml',
@@ -51,10 +54,7 @@ export class ImportService {
   private ogreUrl: string;
   private clientSideFileSizeMax: number;
 
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService
-  ) {
+  constructor() {
     const importConfig = this.config.getConfig(
       'importExport'
     ) as ImportExportServiceOptions;
@@ -156,14 +156,14 @@ export class ImportService {
           projectionOut
         );
         observer.next(features);
-      } catch (e) {
+      } catch {
         observer.error(new ImportUnreadableFileError());
       }
 
       observer.complete();
     };
 
-    reader.onerror = (evt) => {
+    reader.onerror = () => {
       observer.error(new ImportUnreadableFileError());
     };
 

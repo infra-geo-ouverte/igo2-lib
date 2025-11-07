@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,6 +7,12 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -18,6 +25,7 @@ import {
   computeBestAreaUnit,
   computeBestLengthUnit
 } from '../shared/measure.utils';
+import { MeasureFormatPipe } from './measure-format.pipe';
 
 /**
  * Measurer item
@@ -26,14 +34,23 @@ import {
   selector: 'igo-measurer-item',
   templateUrl: './measurer-item.component.html',
   styleUrls: ['./measurer-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    AsyncPipe,
+    IgoLanguageModule,
+    MeasureFormatPipe
+  ]
 })
 export class MeasurerItemComponent implements OnDestroy {
   /**
    * Measure observable
    * @internal
    */
-  public measure$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  public measure$ = new BehaviorSubject<number>(undefined);
 
   /**
    * Subscription to the measure observable when the auto mode is on
@@ -72,7 +89,7 @@ export class MeasurerItemComponent implements OnDestroy {
   get auto(): boolean {
     return this._auto;
   }
-  private _auto: boolean = false;
+  private _auto = false;
 
   /**
    * Placeholder
@@ -96,8 +113,6 @@ export class MeasurerItemComponent implements OnDestroy {
     }
     return Object.values(MeasureLengthUnit);
   }
-
-  constructor() {}
 
   /**
    * Toggle the auto unit off

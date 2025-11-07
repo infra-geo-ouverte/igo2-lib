@@ -1,149 +1,85 @@
-@import '../../../../../core/src/style/partial/media';
-@import '../../../../../core/src/style/partial/core.variables';
+@use '../../../../../core/src/style/partial/core.variables' as core;
 
 :host {
   position: relative;
   display: block;
+
+  ::ng-deep {
+    ul {
+      margin-bottom: 0 !important;
+    }
+
+    .ol-scale-line {
+      background-color: rgba(255, 255, 255, 0);
+      bottom: 4px;
+      transform: translate(-50%);
+      left: 50%;
+    }
+
+    .ol-scale-line-inner {
+      color: rgba(black, 1);
+      border-color: black;
+      text-shadow:
+        rgb(255, 255, 255) -1px -1px 3px,
+        rgb(255, 255, 255) 1px -1px 3px,
+        rgb(255, 255, 255) -1px 1px 3px,
+        rgb(255, 255, 255) 1px 1px 4px;
+      box-shadow: 0px 1px 0px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .ol-attribution {
+      flex-flow: row;
+      left: calc(#{core.$igo-icon-size} + 5px + #{core.$igo-margin});
+      bottom: core.$igo-margin;
+      text-align: left;
+      padding: 0;
+      margin-right: 90px;
+      background-color: rgba(255, 255, 255, 0);
+      width: calc(100% - 100px);
+
+      &.ol-logo-only {
+        height: inherit;
+      }
+
+      &.ol-collapsed {
+        background: none;
+        button {
+          transform: none;
+        }
+      }
+
+      button {
+        transform: rotate(180deg);
+        background-color: white;
+        cursor: pointer;
+        outline: none;
+      }
+    }
+
+    .ol-scale-bar {
+      background-color: rgba(255, 255, 255, 0);
+      bottom: 4px;
+      transform: translate(-50%);
+      left: 50%;
+    }
+
+    .ol-scale-text,
+    .ol-scale-step-text {
+      text-shadow:
+        rgb(255, 255, 255) -1px -1px 3px,
+        rgb(255, 255, 255) 1px -1px 3px,
+        rgb(255, 255, 255) -1px 1px 3px,
+        rgb(255, 255, 255) 1px 1px 4px;
+    }
+
+    canvas {
+      display: block;
+    }
+  }
 }
 
 :host,
 .igo-map-browser-target {
   width: 100%;
   height: 100%;
-}
-
-:host ::ng-deep igo-zoom-button {
-  position: absolute;
-  bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
-  right: $igo-margin;
-  @include mobile {
-    display: none;
-  }
-}
-
-:host ::ng-deep igo-offline-button {
-  position: absolute;
-  bottom: 15px;
-  right: $igo-margin;
-  @include mobile {
-    bottom: $igo-margin;
-  }
-}
-
-:host ::ng-deep igo-geolocate-button {
-  position: absolute;
-  bottom: 5px;
-  right: $igo-margin;
-  @include mobile {
-    bottom: $igo-margin;
-  }
-}
-
-:host ::ng-deep igo-rotation-button {
-  position: absolute;
-  top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
-  right: $igo-margin;
-}
-
-:host ::ng-deep igo-wake-lock-button {
-  position: absolute;
-  top: calc(2 * #{$igo-icon-size} + 2 * 5px + #{$igo-margin});
-  right: $igo-margin;
-}
-
-:host ::ng-deep igo-home-extent-button {
-  position: absolute;
-  bottom: calc((3 * #{$igo-icon-size}) + 5px + (2 * #{$igo-margin}));
-  right: $igo-margin;
-  @include mobile {
-    bottom: $igo-margin;
-    right: calc((2 * #{$igo-icon-size}) + (3 * #{$igo-margin}));
-  }
-}
-
-:host ::ng-deep igo-user-button {
-  position: absolute;
-  bottom: $igo-margin;
-  right: calc(#{$igo-margin} + 50px);
-  @include mobile {
-    right: calc((2 * #{$igo-icon-size}) + (2 * #{$igo-margin}));
-  }
-}
-
-:host ::ng-deep igo-baselayers-switcher {
-  position: absolute;
-  bottom: $igo-margin;
-  left: $igo-margin;
-}
-
-:host ::ng-deep .ol-attribution {
-  flex-flow: row;
-  left: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
-  bottom: $igo-margin;
-  text-align: left;
-  padding: 0;
-  margin-right: 90px;
-  background-color: rgba(255, 255, 255, 0);
-  width: calc(100% - 100px);
-
-  &.ol-logo-only {
-    height: inherit;
-  }
-  &.ol-collapsed {
-    background: none;
-    button {
-      transform: none;
-    }
-  }
-  button {
-    transform: rotate(180deg);
-    background-color: white;
-    cursor: pointer;
-    outline: none;
-  }
-}
-
-:host ::ng-deep .ol-scale-line-inner {
-  color: rgba(black, 1);
-  border-color: black;
-  text-shadow:
-    rgb(255, 255, 255) -1px -1px 3px,
-    rgb(255, 255, 255) 1px -1px 3px,
-    rgb(255, 255, 255) -1px 1px 3px,
-    rgb(255, 255, 255) 1px 1px 4px;
-  box-shadow: 0px 1px 0px 1px rgba(255, 255, 255, 0.6);
-}
-
-:host ::ng-deep .ol-scale-line {
-  background-color: rgba(255, 255, 255, 0);
-  bottom: 4px;
-  transform: translate(-50%);
-  left: 50%;
-}
-
-:host ::ng-deep .ol-scale-bar {
-  background-color: rgba(255, 255, 255, 0);
-  bottom: 4px;
-  transform: translate(-50%);
-  left: 50%;
-}
-
-:host ::ng-deep .ol-scale-text {
-  text-shadow:
-    rgb(255, 255, 255) -1px -1px 3px,
-    rgb(255, 255, 255) 1px -1px 3px,
-    rgb(255, 255, 255) -1px 1px 3px,
-    rgb(255, 255, 255) 1px 1px 4px;
-}
-
-:host ::ng-deep .ol-scale-step-text {
-  text-shadow:
-    rgb(255, 255, 255) -1px -1px 3px,
-    rgb(255, 255, 255) 1px -1px 3px,
-    rgb(255, 255, 255) -1px 1px 3px,
-    rgb(255, 255, 255) 1px 1px 4px;
-}
-
-:host ::ng-deep canvas {
-  display: block;
 }

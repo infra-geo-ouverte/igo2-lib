@@ -1,15 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {
   EntityRecord,
+  EntityStore,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreStrategyFuncOptions,
-  EntityStoreWithStrategy
-} from '@igo2/common';
-import { ConfigService, StorageService } from '@igo2/core';
+  EntityStoreStrategyFuncOptions
+} from '@igo2/common/entity';
+import { ConfigService } from '@igo2/core/config';
+import { StorageService } from '@igo2/core/storage';
 import {
   CommonVectorStyleOptions,
   Feature,
+  FeatureMotion,
   FeatureStore,
   FeatureWorkspace,
   OverlayStyleOptions,
@@ -24,12 +26,24 @@ import { MapState } from '../map';
 import { WorkspaceState } from '../workspace/workspace.state';
 
 /**
+ * Define the FeatureMotion to apply when adding the SearchResult to the map as an overlay.
+ */
+export interface SearchFeatureMotion {
+  selected?: FeatureMotion;
+  focus?: FeatureMotion;
+}
+
+/**
  * Service that holds the state of the search module
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SearchState {
+  private searchSourceService = inject(SearchSourceService);
+  private storageService = inject(StorageService);
+  private workspaceState = inject(WorkspaceState);
+  private configService = inject(ConfigService);
+  private mapState = inject(MapState);
+
   public searchLayerStores: FeatureStore<Feature>[] = [];
   public searchOverlayStyle: CommonVectorStyleOptions = {};
   public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
@@ -38,36 +52,34 @@ export class SearchState {
   public focusedOrResolution$$: Subscription;
   public selectedOrResolution$$: Subscription;
 
-  readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(
-    '|'
-  );
+  /**
+   * Default feature motion are:
+   * on selection = FeatureMotion.Default and
+   * on focus = FeatureMotion.None
+   */
+  public featureMotion: SearchFeatureMotion = {
+    selected: FeatureMotion.Default,
+    focus: FeatureMotion.None
+  };
 
-  readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchTermSplitter$ = new BehaviorSubject<string>('|');
 
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchTerm$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(
-    false
-  );
+  readonly searchType$ = new BehaviorSubject<string>(undefined);
 
-  readonly searchResultsGeometryEnabled$: BehaviorSubject<boolean> =
-    new BehaviorSubject(false);
+  readonly searchDisabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchSettingsChange$: BehaviorSubject<boolean> =
-    new BehaviorSubject(undefined);
+  readonly searchResultsGeometryEnabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly selectedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
-    undefined
-  );
+  readonly searchSettingsChange$ = new BehaviorSubject<boolean>(undefined);
+
+  readonly selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
 
   /**
    * Store that holds the search results
    */
-  readonly store = new EntityStoreWithStrategy<SearchResult>([]);
+  readonly store = new EntityStore<SearchResult>([]);
 
   /**
    * Search types currently enabled in the search source service
@@ -78,13 +90,7 @@ export class SearchState {
       .map((source: SearchSource) => (source.constructor as any).type);
   }
 
-  constructor(
-    private searchSourceService: SearchSourceService,
-    private storageService: StorageService,
-    private workspaceState: WorkspaceState,
-    private configService: ConfigService,
-    private mapState: MapState
-  ) {
+  constructor() {
     const searchOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('searchOverlayStyle');
     if (searchOverlayStyle) {
@@ -104,21 +110,23 @@ export class SearchState {
     const wksSource = this.searchSourceService
       .getSources()
       .find((source) => source.getId() === 'workspace');
-    this.workspaceState.store.entities$.subscribe((e) => {
-      const searchableWks = e.filter(
-        (fw) =>
-          fw instanceof FeatureWorkspace &&
-          fw.layer.options.workspace.searchIndexEnabled
-      );
-      this.searchSourceService.setWorkspaces(wksSource, searchableWks);
-    });
+    if (wksSource) {
+      this.workspaceState.store.entities$.subscribe((e) => {
+        const searchableWks = e.filter(
+          (fw) =>
+            fw instanceof FeatureWorkspace &&
+            fw.layer.options.workspace.searchIndexEnabled
+        );
+        this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+      });
+    }
     this.monitorLayerDeletion();
   }
 
   private monitorLayerDeletion() {
-    this.mapState.map.layers$.subscribe((layers) => {
+    this.mapState.map.layerController.all$.subscribe((layers) => {
       this.searchLayerStores.forEach((store) => {
-        let layer = layers.find((l) => l.id === store.layer.id);
+        const layer = layers.find((l) => l.id === store.layer.id);
         if (!layer) {
           const index = this.searchLayerStores.indexOf(store);
           this.searchLayerStores.splice(index, 1);

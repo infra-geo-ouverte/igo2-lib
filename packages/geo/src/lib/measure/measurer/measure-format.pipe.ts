@@ -12,7 +12,8 @@ import {
  * to the specified unit. It also keeps a certain number of decimals.
  */
 @Pipe({
-  name: 'measureFormat'
+  name: 'measureFormat',
+  standalone: true
 })
 export class MeasureFormatPipe implements PipeTransform {
   /**
@@ -21,9 +22,8 @@ export class MeasureFormatPipe implements PipeTransform {
   transform(
     value: number,
     unit: MeasureAreaUnit | MeasureLengthUnit,
-    unitAbbr: boolean = false,
-    decimal: number = 1
-  ): number {
+    unitAbbr = false
+  ): number | string {
     let out;
     if (Object.values(MeasureAreaUnit).indexOf(unit as MeasureAreaUnit) >= 0) {
       out = squareMetersToUnit(value, unit as MeasureAreaUnit);

@@ -4,14 +4,15 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import {
   Workspace,
   WorkspaceSelectorComponent,
   WorkspaceStore
-} from '@igo2/common';
+} from '@igo2/common/workspace';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -20,21 +21,30 @@ import {
   FeatureDataSource,
   WFSDataSource,
   WMSDataSource
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared';
-import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { isLayerGroup } from '../../layer';
+import { AnyLayer, ImageLayer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { AnyWorkspace } from '../shared/workspace.interface';
 
 @Directive({
-  selector: '[igoWorkspaceSelector]'
+  selector: '[igoWorkspaceSelector]',
+  standalone: true
 })
 export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
+  private component = inject(WorkspaceSelectorComponent);
+  private wfsWorkspaceService = inject(WfsWorkspaceService);
+  private wmsWorkspaceService = inject(WmsWorkspaceService);
+  private editionWorkspaceService = inject(EditionWorkspaceService);
+  private featureWorkspaceService = inject(FeatureWorkspaceService);
+
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
 
@@ -49,19 +59,14 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     return this.component.store;
   }
 
-  constructor(
-    private component: WorkspaceSelectorComponent,
-    private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService,
-    private editionWorkspaceService: EditionWorkspaceService,
-    private featureWorkspaceService: FeatureWorkspaceService
-  ) {}
-
   ngOnInit() {
-    this.layers$$ = this.map.layers$
+    this.layers$$ = this.map.layerController.all$
       .pipe(debounceTime(50))
-      .subscribe((layers: Layer[]) => this.onLayersChange(layers));
+      .subscribe((layers) => this.onLayersChange(layers));
 
+    this.workspaceStore?.activeWorkspace$.subscribe((ws: AnyWorkspace) => {
+      this.updateActiveWorkspaceRefreshState(ws);
+    });
     this.featureWorkspaceService.ws$.subscribe((ws) => {
       this.changeWorkspace.emit(ws);
     });
@@ -90,13 +95,14 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.entities$$.map((entities) => entities.unsubscribe());
+    this.disableAllLayerRefresh();
   }
 
-  private onLayersChange(layers: Layer[]) {
-    const editableLayers = layers.filter((layer: Layer) =>
+  private onLayersChange(layers: AnyLayer[]) {
+    const editableLayers = layers.filter((layer) =>
       this.layerIsEditable(layer)
     );
-    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
+    const editableLayersIds = editableLayers.map((layer) => layer.id);
 
     const workspacesToAdd = editableLayers
       .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))
@@ -186,7 +192,10 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     return;
   }
 
-  private layerIsEditable(layer: Layer): boolean {
+  private layerIsEditable(layer: AnyLayer): boolean {
+    if (isLayerGroup(layer)) {
+      return false;
+    }
     const dataSource = layer.dataSource;
     if (dataSource instanceof WFSDataSource) {
       return true;
@@ -204,5 +213,40 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     }
 
     return false;
+  }
+
+  private updateActiveWorkspaceRefreshState(
+    workspace: AnyWorkspace | undefined
+  ) {
+    if (!workspace) return;
+
+    this.disableAllLayerRefresh();
+    this.enableLayerRefreshForWorkspace(workspace);
+  }
+
+  private enableLayerRefreshForWorkspace(workspace: AnyWorkspace) {
+    const dataSource = workspace.layer.linkMaster?.layer?.dataSource;
+    if (!dataSource || !(dataSource instanceof WMSDataSource)) {
+      return;
+    }
+    if (dataSource.options?.refreshIntervalSec && !dataSource.enableRefresh) {
+      dataSource.enableRefresh = true;
+    }
+  }
+
+  private disableAllLayerRefresh() {
+    this.workspaceStore.all().forEach((wks: AnyWorkspace) => {
+      const datasourceMaster = wks.layer.linkMaster?.layer?.dataSource;
+      if (!datasourceMaster || !(datasourceMaster instanceof WMSDataSource)) {
+        return;
+      }
+
+      if (
+        datasourceMaster.options.refreshIntervalSec &&
+        datasourceMaster.enableRefresh
+      ) {
+        datasourceMaster.enableRefresh = false;
+      }
+    });
   }
 }

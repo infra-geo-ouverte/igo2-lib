@@ -1,78 +1,77 @@
-@import '../../../../../core/src/style/partial/media';
+@use '../../../../../core/src/style/partial/media';
 
 :host {
-  .mat-button-toggle-group {
-    margin: 5px 5px 5px 5px;
-    flex-wrap: wrap;
-    box-shadow: none !important;
-    width: 95%;
-  }
-
-  .checkboxes {
-    flex-wrap: wrap;
-    box-shadow: none;
-  }
-
-  .groupsSelector {
-    text-align: center;
-  }
-
-  mat-button-toggle {
-    display: inline-flex;
-    border: 1.5px solid black;
-    border-radius: 5px;
-    margin: 5px;
-    white-space: normal;
-    min-height: 40px;
-    height: auto;
-    width: 142px;
-    ::ng-deep .mat-button-toggle-label-content {
-      line-height: unset;
-      font-size: small;
-      display: block;
-    }
-    @include mobile {
-      width: 45%;
-    }
-  }
-
   ::ng-deep .material-tooltip {
     white-space: pre-wrap;
   }
+}
+.mat-button-toggle-group {
+  margin: 5px 5px 5px 5px;
+  flex-wrap: wrap;
+  box-shadow: none !important;
+  width: 95%;
+}
 
-  mat-checkbox,
-  mat-radio-button {
-    margin: 7px;
-    width: 95%;
-    display: inline-flex;
-    font-size: larger;
+.checkboxes {
+  flex-wrap: wrap;
+  box-shadow: none;
+}
 
-    ::ng-deep label {
-      white-space: normal;
-    }
+.groupsSelector {
+  text-align: center;
+}
+
+mat-button-toggle {
+  display: inline-flex;
+  border: 1.5px solid black;
+  border-radius: 5px;
+  margin: 5px;
+  white-space: normal;
+  min-height: 40px;
+  height: auto;
+  width: 142px;
+  ::ng-deep .mat-button-toggle-label-content {
+    line-height: unset;
+    font-size: small;
+    display: block;
   }
-
-  mat-checkbox {
-    vertical-align: middle;
+  @include media.mobile {
+    width: 45%;
   }
+}
 
-  mat-button {
-    padding-right: 10px;
-    cursor: pointer;
-  }
+mat-checkbox,
+mat-radio-button {
+  margin: 7px;
+  width: 95%;
+  display: inline-flex;
+  font-size: larger;
 
-  h3 {
-    margin: 7px;
-    text-align: left;
+  ::ng-deep label {
+    white-space: normal;
   }
+}
 
-  u {
-    cursor: pointer;
-    color: blue;
-    margin: 5px;
-  }
+mat-checkbox {
+  vertical-align: middle;
+}
 
-  p {
-    margin: unset;
-  }
+mat-button {
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+h3 {
+  margin: 7px;
+  text-align: left;
+}
+
+u {
+  cursor: pointer;
+  color: blue;
+  margin: 5px;
+}
+
+p {
+  margin: unset;
 }
