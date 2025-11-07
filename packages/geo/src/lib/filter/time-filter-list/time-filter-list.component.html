@@ -1,9 +1,0 @@
-<igo-list [navigation]="false" [selection]="false">
-  @for (layer of layers | filterableDataSource: 'time'; track layer) {
-    <igo-time-filter-item
-      [header]="true"
-      igoListItem
-      [layer]="layer"
-    ></igo-time-filter-item>
-  }
-</igo-list>

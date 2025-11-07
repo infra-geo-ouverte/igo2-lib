@@ -1,6 +1,0 @@
-// Theme bundles
-@forward './theming/typography';
-
-// Workaround to allow styles sharing in production where the folder structure is different. We replace the file in a postbuild operation
-@forward './packages.import';
-@forward './theming/utils/foreground';

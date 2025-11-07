@@ -1,9 +1,0 @@
-<h2 mat-dialog-title>{{ data.layerTitle }}</h2>
-<button class="close-button" matButton mat-dialog-close>X</button>
-<mat-dialog-content>
-  @if (data.type === 'arcgisrest') {
-    <div [innerHTML]="data.abstract"></div>
-  } @else {
-    {{ data.abstract }}
-  }
-</mat-dialog-content>

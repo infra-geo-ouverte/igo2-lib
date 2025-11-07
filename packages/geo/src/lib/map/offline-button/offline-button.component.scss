@@ -1,9 +1,0 @@
-@use '../../../../../common/src/style/partial/common-utils';
-
-:host {
-  @include common-utils.square-button();
-
-  .offlineStyle {
-    background-color: #b9b9b9;
-  }
-}

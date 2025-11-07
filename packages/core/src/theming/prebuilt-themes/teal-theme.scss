@@ -1,6 +1,0 @@
-@use '../themes/teal-theme';
-@use '../themes/theme';
-
-html .teal-theme {
-  @include theme.theme(teal-theme.$theme, teal-theme.$defined-theme, 'teal');
-}

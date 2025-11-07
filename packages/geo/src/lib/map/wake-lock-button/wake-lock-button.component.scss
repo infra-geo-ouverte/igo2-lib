@@ -1,6 +1,0 @@
-@use '../../../../../common/src/style/partial/common-utils';
-@use '../../../../../core/src/style/partial/core.variables' as core;
-
-:host {
-  @include common-utils.square-button();
-}

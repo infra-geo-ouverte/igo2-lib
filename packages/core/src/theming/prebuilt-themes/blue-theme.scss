@@ -1,6 +1,0 @@
-@use '../themes/blue-theme';
-@use '../themes/theme';
-
-html .blue-theme {
-  @include theme.theme(blue-theme.$theme, blue-theme.$defined-theme, 'blue');
-}

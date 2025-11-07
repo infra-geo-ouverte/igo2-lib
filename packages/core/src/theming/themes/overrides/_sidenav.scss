@@ -1,9 +1,0 @@
-@use '@angular/material' as mat;
-
-@mixin overrides() {
-  @include mat.sidenav-overrides(
-    (
-      container-shape: 0
-    )
-  );
-}
