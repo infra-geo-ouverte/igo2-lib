@@ -8,8 +8,8 @@ import {
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { AnyLayer } from '../../layer';
-import { MapBase } from '../../map/shared/map.abstract';
+import type { AnyLayer } from '../../layer';
+import type { MapBase } from '../../map/shared/map.abstract';
 import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 

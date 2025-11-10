@@ -176,33 +176,7 @@
     @if (enabled()) {
       <p class="date-below">{{ year }}</p>
     }
-    <div #actions class="igo-layer-actions-container">
-      <mat-slide-toggle
-        (change)="toggleFilterState()"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
-        [color]="color"
-        [checked]="enabled()"
-        [disabled]="!layer().visible"
-      />
-      <button
-        [disabled]="!enabled() || !layer().visible"
-        mat-icon-button
-        color="primary"
-        (click)="playYear()"
-      >
-        <mat-icon>{{ playIcon }}</mat-icon>
-      </button>
-      <button
-        [disabled]="!enabled() || !layer().visible"
-        mat-icon-button
-        color="primary"
-        (click)="resetFilter()"
-      >
-        <mat-icon>{{ resetIcon }}</mat-icon>
-      </button>
-    </div>
+    <ng-container *ngTemplateOutlet="layerActions" />
   </div>
 }
 
@@ -211,10 +185,11 @@
     <!-- TODO: The 'tickInterval' property no longer exists -->
     <mat-slider
       id="time-slider"
-      step="{{ step }}"
+      [step]="step"
       [min]="dateToNumber(min)"
       [max]="dateToNumber(max)"
       thumbLabel
+      [disabled]="!options().enabled || !layer().visible"
       (selectionChange)="handleSliderDateChange($event)"
       #ngSlider
       ><input
@@ -231,8 +206,39 @@
       />
     </mat-slider>
     <p class="date-below">{{ handleSliderTooltip() }}</p>
-    <button mat-icon-button color="primary" (click)="playFilter()">
-      <mat-icon>{{ playIcon }}</mat-icon>
-    </button>
+    <ng-container *ngTemplateOutlet="layerActions" />
   </div>
 }
+
+<!-- Reusable Actions Template -->
+<ng-template #layerActions>
+  <div class="igo-layer-actions-container">
+    <mat-slide-toggle
+      (change)="toggleFilterState()"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
+      [color]="color"
+      [checked]="enabled()"
+      [disabled]="!layer().visible"
+    />
+    <button
+      [disabled]="!enabled() || !layer().visible"
+      mat-icon-button
+      color="primary"
+      (click)="play()"
+    >
+      <mat-icon>{{ playIcon }}</mat-icon>
+    </button>
+    <button
+      [disabled]="!enabled() || !layer().visible"
+      mat-icon-button
+      color="primary"
+      (click)="resetFilter()"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.filter.resetFilters' | translate"
+    >
+      <mat-icon>{{ resetIcon }}</mat-icon>
+    </button>
+  </div>
+</ng-template>

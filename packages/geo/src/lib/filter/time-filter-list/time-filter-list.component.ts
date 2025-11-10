@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
-import { AnyLayer } from '../../layer';
+import type { AnyLayer } from '../../layer';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
 import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
 

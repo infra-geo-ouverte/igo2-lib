@@ -149,7 +149,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.resolution$$.unsubscribe();
+    this.resolution$$?.unsubscribe();
   }
 
   addFilterToSequence() {

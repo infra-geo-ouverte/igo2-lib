@@ -12,8 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { Layer } from '../../layer';
-import { MapBase } from '../../map';
+import type { Layer } from '../../layer';
+import type { MapBase } from '../../map';
 import { OgcFilterableItemComponent } from '../ogc-filterable-item';
 import {
   IgoOgcSelector,
@@ -110,9 +110,9 @@ export class OgcFilterButtonComponent {
         if (currentSelectGroup) {
           currentSelectGroup.computedSelectors?.map(
             (cb) =>
-              (cntSelect += (cb.selectors as any)?.filter(
-                (multi) => multi.enabled
-              ).length)
+              (cntSelect +=
+                (cb.selectors as any)?.filter((multi) => multi.enabled)
+                  .length ?? 0)
           );
         }
         cnt += cntSelect;
@@ -126,9 +126,10 @@ export class OgcFilterButtonComponent {
         if (currentAutocompleteGroup) {
           currentAutocompleteGroup.computedSelectors?.map(
             (cb) =>
-              (cntAutocomplete += (cb.selectors as any)?.filter(
-                (autocomplete) => autocomplete.enabled
-              ).length)
+              (cntAutocomplete +=
+                (cb.selectors as any)?.filter(
+                  (autocomplete) => autocomplete.enabled
+                ).length ?? 0)
           );
         }
         cnt += cntAutocomplete;
@@ -141,9 +142,7 @@ export class OgcFilterButtonComponent {
     if (
       filter.filters &&
       filter.filters.operator === 'During' &&
-      filter.filters.active &&
-      filter.interfaceOgcFilters &&
-      filter.interfaceOgcFilters[0].active
+      (filter.interfaceOgcFilters?.[0]?.active ?? filter.filters?.active)
     ) {
       const filterActiveValue = filter.interfaceOgcFilters[0];
       if (filter.filters.calendarModeYear) {

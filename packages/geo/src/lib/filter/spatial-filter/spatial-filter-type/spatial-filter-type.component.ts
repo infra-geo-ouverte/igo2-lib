@@ -56,7 +56,10 @@ export class SpatialFilterTypeComponent implements OnInit {
     'Mun',
     'MRC',
     'AdmRegion',
-    'RegTour'
+    'RegTour',
+    'RSS',
+    'RLS',
+    'CLSC'
   ];
   public selectedTypeIndex = new UntypedFormControl(0);
 
@@ -71,7 +74,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   readonly store = input<EntityStore<Feature>>(undefined);
   selectedQueryType = model<SpatialFilterQueryType>(undefined);
 
-  readonly zone = input<Feature>(undefined);
+  readonly zones = input<Feature[]>(undefined);
 
   readonly layers = input<AnyLayer[]>([]);
 
@@ -81,11 +84,12 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   readonly eventQueryType = output<SpatialFilterQueryType>();
 
-  readonly zoneChange = output<Feature>();
-  readonly zoneWithBufferChange = output<Feature>();
-
   readonly bufferChange = output<number>();
   readonly measureUnitChange = output<MeasureLengthUnit>();
+
+  readonly addZone = output<Feature>();
+  readonly removeZone = output<Feature>();
+  readonly zonesWithBufferChange = output<Feature[]>();
 
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
@@ -105,6 +109,7 @@ export class SpatialFilterTypeComponent implements OnInit {
       this.type = this.activeDrawType;
     }
     this.eventType.emit(this.type);
+    this.bufferChange.emit(0);
   }
 
   onDrawTypeChange(spatialType: SpatialFilterType) {
@@ -114,6 +119,6 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   onSelectionChange() {
     this.eventQueryType.emit(this.selectedQueryType());
-    this.zoneChange.emit(undefined);
+    this.addZone.emit(undefined);
   }
 }

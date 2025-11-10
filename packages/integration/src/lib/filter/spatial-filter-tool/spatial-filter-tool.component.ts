@@ -8,7 +8,6 @@ import {
   inject,
   model
 } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
 
 import { EntityStore } from '@igo2/common/entity';
 import { SELECTION_MARKER_ICON } from '@igo2/common/icon';
@@ -25,6 +24,7 @@ import {
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
+  RADIUS_NAME,
   SpatialFilterItemComponent,
   SpatialFilterItemType,
   SpatialFilterQueryType,
@@ -40,12 +40,15 @@ import {
   moveToOlFeatures
 } from '@igo2/geo';
 
-import olFormatGeoJSON from 'ol/format/GeoJSON';
+import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlPoint from 'ol/geom/Point';
+import { transform } from 'ol/proj';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
 
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 
@@ -81,7 +84,6 @@ import {
   ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
-  private matIconRegistry = inject(MatIconRegistry);
   private spatialFilterService = inject(SpatialFilterService);
   private layerService = inject(LayerService);
   private mapState = inject(MapState);
@@ -98,7 +100,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   readonly type = model<SpatialFilterType>(undefined);
   readonly itemType = model<SpatialFilterItemType>(
-    SpatialFilterItemType.Address
+    SpatialFilterItemType.Thematics
   );
   readonly freehandDrawIsActive = model<boolean>(undefined);
 
@@ -107,15 +109,12 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
-  public zone: Feature;
-  public zoneWithBuffer: Feature;
+
   public buffer = 0;
 
   public iterator = 1;
 
   public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
-
-  private format = new olFormatGeoJSON();
 
   public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
 
@@ -126,9 +125,13 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public thematicLength = 0;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-  private unsubscribe$ = new Subject<void>();
 
   public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
+  public zones: Feature[] = [];
+
+  private unsubscribe$ = new Subject<void>();
+  private activePredefinedLayerZones: VectorLayer;
+  private activeDrawLayerZones: VectorLayer;
 
   ngOnInit() {
     for (const layer of this.map.layerController.all) {
@@ -138,7 +141,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.languageService.translate.instant(
             'igo.geo.spatialFilter.spatialFilter'
           )
-        )
+        ) &&
+        isLayerItem(layer)
       ) {
         this.layers.push(layer);
       }
@@ -156,6 +160,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   }
 
   getOutputQueryType(event: SpatialFilterQueryType) {
+    if (event !== this.queryType) {
+      this.zones = [];
+      this.activePredefinedLayerZones = undefined;
+    }
+
     this.queryType = event;
     if (this.queryType) {
       this.loadFilterList();
@@ -261,7 +270,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   }
 
   getOutputClearSearch() {
-    this.zone = undefined;
+    this.zones = [];
     this.queryType = undefined;
   }
 
@@ -272,7 +281,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.thematicLength = 0;
     this.iterator = 1;
     if (this.type() === SpatialFilterType.Predefined) {
-      this.zone = undefined;
+      this.zones = [];
       this.queryType = undefined;
     }
   }
@@ -280,10 +289,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   private loadThematics() {
     this.loading = true;
     let zeroResults = true;
-    let thematics;
+    let thematics!: SpatialFilterThematic[];
     const type = this.type();
     if (this.buffer === 0 || type === SpatialFilterType.Point) {
-      this.tryAddFeaturesToMap([this.zone]);
+      this.addFeaturesToMap(this.zones);
     }
     if (this.itemType() !== SpatialFilterItemType.Thematics) {
       const theme: SpatialFilterThematic = {
@@ -303,63 +312,55 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       this.buffer = 0; // to avoid buffer enter a second time in terrAPI
     }
 
-    const observables$: Observable<Feature[]>[] = [];
-    thematics.forEach((thematic) => {
-      observables$.push(
-        this.spatialFilterService
-          .loadFilterItem(
-            this.zone,
-            this.itemType(),
-            this.queryType,
-            thematic,
-            this.buffer
-          )
-          .pipe(
-            tap((features: Feature[]) => {
-              this.store.insertMany(features);
-              const featuresPoint: Feature[] = [];
-              const featuresLinePoly: Feature[] = [];
-              let idPoint;
-              let idLinePoly;
-              features.forEach((feature) => {
-                if (feature.geometry.type === 'Point') {
-                  feature.properties.longitude =
-                    feature.geometry.coordinates[0];
-                  feature.properties.latitude = feature.geometry.coordinates[1];
-                  featuresPoint.push(feature);
-                  idPoint = feature.meta.id;
-                } else {
-                  featuresLinePoly.push(feature);
-                  idLinePoly = feature.meta.id;
-                }
-              });
+    this.spatialFilterService
+      .loadFilterItems(this.zones, this.itemType(), {
+        type: this.queryType,
+        thematics,
+        buffer: this.buffer
+      })
+      .pipe(
+        tap((features: Feature[]) => {
+          this.store.clear();
+          this.workspaceState.store.clear();
+          this.store.insertMany(features);
+          const grouped = this.getFeatureByType(features);
 
-              this.tryAddPointToMap(featuresPoint, idPoint);
-              this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-              if (features.length) {
-                zeroResults = false;
-                this.thematicLength += 1;
-                thematic.zeroResults = false;
-                this.cdRef.detectChanges();
-              } else {
-                thematic.zeroResults = true;
-              }
+          grouped.forEach(({ points, lines }) => {
+            if (points.length > 0) {
+              this.tryAddPointToMap(points, points[0].meta.id);
+            }
+            if (lines.length > 0) {
+              this.tryAddLayerToMap(lines, lines[0].meta.id);
+            }
+          });
 
-              if (features.length >= 10000) {
-                this.messageService.alert(
-                  'igo.geo.spatialFilter.maxSizeAlert',
-                  'igo.geo.spatialFilter.warning',
-                  { timeOut: 10000 }
-                );
-              }
-            })
-          )
-      );
-    });
+          thematics.forEach((thematic) => {
+            const hasFeatures = features.some(
+              (f) => f.properties.type === thematic.source
+            );
+            if (hasFeatures) {
+              zeroResults = false;
+              this.thematicLength += 1;
+              thematic.zeroResults = zeroResults;
+            } else {
+              thematic.zeroResults = true;
+            }
+          });
+          this.cdRef.detectChanges();
 
-    forkJoin(observables$)
-      .pipe(takeUntil(this.unsubscribe$))
+          if (features.length >= 10000) {
+            this.messageService.alert(
+              'igo.geo.spatialFilter.maxSizeAlert',
+              'igo.geo.spatialFilter.warning',
+              { timeOut: 10000 }
+            );
+          }
+        })
+      )
       .subscribe(() => {
+        if (this.type() !== SpatialFilterType.Predefined) {
+          this.zones = [];
+        }
         this.loading = false;
         if (zeroResults) {
           this.messageService.alert(
@@ -371,137 +372,24 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       });
   }
 
-  onZoneChange(feature: Feature, buffer?: boolean) {
-    this.zone = feature;
-    if (feature) {
-      this.tryAddFeaturesToMap([feature], buffer);
-      this.zoomToFeatureExtent(feature);
-    }
-  }
+  private getFeatureByType(features: Feature[]) {
+    return features.reduce((grouped, feature) => {
+      const typeKey = feature.properties.type;
+      let group = grouped.get(typeKey);
+      if (!group) {
+        group = { points: [], lines: [] };
+        grouped.set(typeKey, group);
+      }
 
-  /**
-   * Try to add zone feature to the map overlay
-   */
-  public tryAddFeaturesToMap(features: Feature[], buffer?: boolean) {
-    let i = 1;
-    for (const feature of features) {
-      const typeValue = this.type();
-      if (typeValue === SpatialFilterType.Predefined) {
-        for (const layer of this.layers) {
-          if (
-            isLayerItem(layer) &&
-            layer.options._internal &&
-            layer.options._internal.code === feature.properties.code &&
-            !buffer
-          ) {
-            if (!layer.title?.startsWith('Zone')) {
-              const index = this.layers.indexOf(layer);
-              this.layers.splice(index, 1);
-            }
-            return;
-          }
-          if (layer.title?.startsWith('Zone')) {
-            this.activeLayers = [];
-            const index = this.layers.indexOf(layer);
-            this.layers.splice(index, 1);
-            this.map.layerController.remove(layer);
-          }
-        }
+      if (feature.geometry.type === 'Point') {
+        feature.properties.longitude = feature.geometry.coordinates[0];
+        feature.properties.latitude = feature.geometry.coordinates[1];
+        group.points.push(feature);
       } else {
-        if (buffer) {
-          for (const layer of this.activeLayers) {
-            if (
-              this.activeLayers.length === 1 &&
-              layer.title?.startsWith('Zone')
-            ) {
-              const index = this.layers.indexOf(layer);
-              this.layers.splice(index, 1);
-              this.map.layerController.remove(layer);
-            }
-          }
-        }
-        this.activeLayers = [];
+        group.lines.push(feature);
       }
-      for (const layer of this.layers) {
-        if (layer.title?.startsWith('Zone')) {
-          i++;
-        }
-      }
-      this.defaultStyle = (_feature, resolution) => {
-        const coordinates = (features[0] as any).coordinates;
-        return new olstyle.Style({
-          image: new olstyle.Circle({
-            radius: coordinates
-              ? this.buffer /
-                Math.cos((Math.PI / 180) * coordinates[1]) /
-                resolution
-              : undefined,
-            fill: new olstyle.Fill({
-              color: 'rgba(200, 200, 20, 0.2)'
-            }),
-            stroke: new olstyle.Stroke({
-              width: 1,
-              color: 'orange'
-            })
-          }),
-          stroke: new olstyle.Stroke({
-            width: 1,
-            color: 'orange'
-          }),
-          fill: new olstyle.Fill({
-            color: 'rgba(200, 200, 20, 0.2)'
-          })
-        });
-      };
-
-      const options: VectorLayerOptions = {
-        isIgoInternalLayer: true,
-        title: ('Zone ' +
-          i +
-          ' - ' +
-          this.languageService.translate.instant(
-            'igo.geo.spatialFilter.spatialFilter'
-          )) as string,
-        workspace: { enabled: true },
-        _internal: {
-          code:
-            typeValue === SpatialFilterType.Predefined
-              ? feature.properties.code
-              : undefined
-        },
-        sourceOptions: {
-          type: 'vector',
-          queryable: true
-        } as QueryableDataSourceOptions,
-        visible: true
-      };
-
-      this.layerService
-        .createAsyncLayer(options)
-        .pipe(take(1))
-        .subscribe((layer: VectorLayer) => {
-          const featuresOl = features.map((f) => {
-            return featureToOl(f, this.map.projection);
-          });
-
-          const typeVal = this.type();
-          if (typeVal !== SpatialFilterType.Predefined) {
-            const type =
-              typeVal === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
-            featuresOl[0].set('nom', 'Zone', true);
-            featuresOl[0].set('type', type, true);
-          }
-          const ol = layer.dataSource.ol as olSourceVector | olSourceCluster;
-          ol.addFeatures(featuresOl);
-          layer.ol.setStyle(this.defaultStyle);
-
-          this.map.layerController.add(layer);
-
-          this.layers.push(layer);
-          this.activeLayers.push(layer);
-          this.cdRef.detectChanges();
-        });
-    }
+      return grouped;
+    }, new Map<string, { points: Feature[]; lines: Feature[] }>());
   }
 
   /**
@@ -509,97 +397,78 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id) {
-    let i = 1;
-    if (features.length) {
-      if (this.map === undefined) {
-        return;
+    // 🔑 Get active zone index from its title
+    const activeZone =
+      this.type() === SpatialFilterType.Predefined
+        ? this.activePredefinedLayerZones
+        : this.activeDrawLayerZones;
+    let zoneIndex = 1;
+    if (activeZone?.title) {
+      const match = activeZone.title.match(/^Zone (\d+) -/);
+      if (match) {
+        zoneIndex = parseInt(match[1], 10);
       }
-      for (const layer of this.layers) {
-        if (layer.title?.startsWith(features[0].meta.title)) {
-          i++;
-        }
-      }
-
-      const icon = features[0].meta.icon;
-      let style: olstyle.Style;
-      if (!icon) {
-        style = createOverlayMarkerStyle();
-      } else {
-        style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
-      }
-
-      const options: VectorLayerOptions = {
-        isIgoInternalLayer: true,
-        title: (features[0].meta.title +
-          ' ' +
-          i +
-          ' - ' +
-          this.languageService.translate.instant(
-            'igo.geo.spatialFilter.spatialFilter'
-          )) as string,
-        visible: true,
-        style,
-
-        sourceOptions: {
-          type: 'cluster',
-          id,
-          queryable: true,
-          distance: 120,
-          meta: {
-            title: 'Cluster'
-          }
-        } as QueryableDataSourceOptions
-      };
-      this.layerService
-        .createAsyncLayer(options)
-        .pipe(take(1))
-        .subscribe((layer: VectorLayer) => {
-          const featuresOl = features.map((feature) => {
-            return featureToOl(feature, this.map.projection);
-          });
-          const ol = layer.dataSource.ol as olSourceCluster;
-          ol.getSource().addFeatures(featuresOl);
-          const previousLayer = this.layers.find(
-            (prevLayer) => prevLayer.id === layer.id
-          );
-          if (previousLayer) {
-            this.map.layerController.remove(previousLayer);
-            i = i - 1;
-            layer.title = (features[0].meta.title +
-              ' ' +
-              i +
-              ' - ' +
-              this.languageService.translate.instant(
-                'igo.geo.spatialFilter.spatialFilter'
-              )) as string;
-            layer.options.title = layer.title;
-          }
-          this.iterator = i;
-          this.map.layerController.add(layer);
-          this.layers.push(layer);
-          this.pushLayer(layer);
-          this.cdRef.detectChanges();
-        });
     }
+    const titleFeature = features[0].meta.title;
+
+    // Count how many layers with the same meta.title already exist
+    let i = 1;
+    for (const layer of this.layers) {
+      if (layer.title?.startsWith(titleFeature)) {
+        i++;
+      }
+    }
+
+    const style = createOverlayMarkerStyle();
+
+    // 🔑 Use zoneIndex to sync layer naming
+    const filterLabel = this.languageService.translate.instant(
+      'igo.geo.spatialFilter.spatialFilter'
+    );
+
+    const options: VectorLayerOptions = {
+      isIgoInternalLayer: true,
+      title: `${titleFeature} ${zoneIndex} - ${filterLabel}`,
+      visible: true,
+      style,
+
+      sourceOptions: {
+        type: 'cluster',
+        id,
+        queryable: true,
+        distance: 120,
+        meta: {
+          title: 'Cluster'
+        }
+      } as QueryableDataSourceOptions
+    };
+
+    this.layerService
+      .createAsyncLayer(options)
+      .pipe(take(1))
+      .subscribe((layer: VectorLayer) => {
+        const featuresOl = features.map((feature) => {
+          return featureToOl(feature, this.map.projection);
+        });
+        const ol = layer.dataSource.ol as olSourceCluster;
+        ol.getSource().addFeatures(featuresOl);
+        const previousLayer = this.layers.find(
+          (prevLayer) => prevLayer.id === layer.id
+        );
+        if (previousLayer) {
+          this.map.layerController.remove(previousLayer);
+          this.layers = this.layers.filter((l) => l.id !== layer.id);
+          i = i - 1;
+          layer.title = `${titleFeature} ${zoneIndex} - ${filterLabel}`;
+          layer.options.title = layer.title;
+        }
+        this.iterator = i;
+        this.map.layerController.add(layer);
+        this.layers.push(layer);
+        this.pushLayer(layer);
+      });
   }
 
-  private createSvgIcon(icon): olstyle.Style {
-    let style: olstyle.Style;
-    this.matIconRegistry.getNamedSvgIcon(icon).subscribe((svgObj) => {
-      const xmlSerializer = new XMLSerializer();
-      svgObj.setAttribute('width', '30');
-      svgObj.setAttribute('height', '30');
-      svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
-      svgObj.setAttribute('stroke', 'white');
-      const svg = xmlSerializer.serializeToString(svgObj);
-      style = new olstyle.Style({
-        image: new olstyle.Icon({
-          src: 'data:image/svg+xml;utf8,' + svg
-        })
-      });
-    });
-    return style;
-  }
   /**
    * Try to add line or polygon features to the map
    */
@@ -658,22 +527,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.map.layerController.add(layer);
           this.layers.push(layer);
           this.pushLayer(layer);
-          this.cdRef.detectChanges();
         });
     }
   }
 
-  zoomToFeatureExtent(feature) {
-    if (feature) {
-      const olFeature = this.format.readFeature(feature, {
-        dataProjection: feature.projection,
-        featureProjection: this.map.projection
-      });
-      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
-    }
-  }
-
-  pushLayer(layer) {
+  private pushLayer(layer) {
     for (const lay of this.activeLayers) {
       if (lay.id === layer.id) {
         return;
@@ -681,5 +539,216 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
 
     this.activeLayers.push(layer);
+  }
+
+  onAddZone(feature: Feature | undefined) {
+    const featureList = feature ? [feature] : [];
+    this.zones = [...this.zones, ...featureList];
+    if (!this.zones.length) return;
+    this.addFeaturesToMap(this.zones, false);
+  }
+
+  onAddZoneWithBuffer(features: Feature[] | Feature) {
+    this.zones = Array.isArray(features) ? features : [features];
+    this.addFeaturesToMap(this.zones, true);
+  }
+
+  onRemovedZone(feature: Feature) {
+    const zoneLayer = this.activePredefinedLayerZones;
+    if (!zoneLayer) return;
+    const olSource = zoneLayer.dataSource.ol;
+
+    // Convert to OL feature (same way as when adding)
+    const featureOl = featureToOl(feature, this.map.projection);
+
+    // Find matching OL feature(s) by id or geometry
+    const toRemove = olSource.getFeatures().filter((f) => {
+      return f.getId() === featureOl.getId();
+    });
+
+    if (toRemove.length) {
+      toRemove.forEach((f) => olSource.removeFeature(f));
+      this.zones = this.zones.filter((z) => z.meta.id !== feature.meta.id);
+    }
+
+    if (olSource.getFeatures().length === 0) {
+      this.map.layerController.remove(zoneLayer);
+      this.layers = this.layers.filter((l) => l !== zoneLayer);
+      this.activeLayers = [];
+      this.activePredefinedLayerZones = undefined;
+    }
+    this.zoomToOlFeatures(olSource.getFeatures());
+  }
+
+  private addFeaturesToMap(features: Feature[], buffer?: boolean) {
+    const type = this.type();
+    if (
+      type === SpatialFilterType.Predefined &&
+      this.zonesExistsInLayers() &&
+      !buffer
+    )
+      return;
+
+    const lastZoneIndex = this.findLastZoneIndex();
+    const zoneLayer =
+      type === SpatialFilterType.Predefined
+        ? this.activePredefinedLayerZones
+        : undefined;
+    if (!zoneLayer) {
+      this.defaultStyle = this.createZoneStyle(features[0]);
+      this.createZoneLayer(lastZoneIndex + 1, features).subscribe(
+        (layer: VectorLayer) => {
+          this.setActiveZoneLayer(layer);
+          this.addFeaturesToLayer(layer, features);
+          this.cdRef.detectChanges();
+        }
+      );
+    } else {
+      this.addFeaturesToLayer(zoneLayer, features, buffer);
+    }
+  }
+
+  private zonesExistsInLayers(): boolean {
+    if (this.type() !== SpatialFilterType.Predefined) return false;
+    return this.layers
+      .filter((l) => l.title.includes('Zone'))
+      .some((layer) => {
+        const olSource = layer.dataSource.ol as olSourceVector;
+        const layerFeatures = olSource.getFeatures();
+        return this.zones.every((zone) =>
+          layerFeatures.some((feature) => feature.getId() === zone.meta.id)
+        );
+      });
+  }
+
+  private findLastZoneIndex(): number {
+    let max = 0;
+    for (const layer of this.layers) {
+      if (layer.title?.startsWith('Zone')) {
+        const match = layer.title.match(/^Zone (\d+) -/);
+        if (match) {
+          const index = parseInt(match[1], 10);
+          if (index > max) max = index;
+        }
+      }
+    }
+    return max;
+  }
+
+  private createZoneStyle(feature: Feature): (f, r) => olstyle.Style {
+    return (_feature, resolution) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const coordinates = (feature as any).coordinates;
+      return new olstyle.Style({
+        image: new olstyle.Circle({
+          radius: coordinates
+            ? this.buffer /
+              Math.cos((Math.PI / 180) * coordinates[1]) /
+              resolution
+            : undefined,
+          fill: new olstyle.Fill({ color: 'rgba(200, 200, 20, 0.2)' }),
+          stroke: new olstyle.Stroke({ width: 1, color: 'orange' })
+        }),
+        stroke: new olstyle.Stroke({ width: 1, color: 'orange' }),
+        fill: new olstyle.Fill({ color: 'rgba(200, 200, 20, 0.2)' })
+      });
+    };
+  }
+
+  private createZoneLayer(zoneIndex: number, features: Feature[]) {
+    const filterLabel = this.languageService.translate.instant(
+      'igo.geo.spatialFilter.spatialFilter'
+    );
+    const options: VectorLayerOptions = {
+      isIgoInternalLayer: true,
+      title: `Zone ${zoneIndex} - ${filterLabel}`,
+      workspace: { enabled: true },
+      _internal: {
+        code:
+          this.type() === SpatialFilterType.Predefined
+            ? features[0].properties.code
+            : undefined
+      },
+      sourceOptions: {
+        type: 'vector',
+        queryable: true
+      } as QueryableDataSourceOptions,
+      visible: true
+    };
+    return this.layerService.createAsyncLayer(options).pipe(take(1));
+  }
+
+  private setActiveZoneLayer(layer: VectorLayer) {
+    this.map.layerController.add(layer);
+    this.layers.push(layer);
+    if (this.type() === SpatialFilterType.Predefined) {
+      this.activePredefinedLayerZones = layer;
+    } else {
+      this.activeDrawLayerZones = layer;
+    }
+    this.pushLayer(layer);
+  }
+
+  private addFeaturesToLayer(
+    layer: VectorLayer,
+    features: Feature[],
+    buffer?: boolean
+  ) {
+    const olSource = layer.dataSource.ol;
+
+    if (buffer) olSource.clear();
+
+    const featuresOl = features.map((f) => featureToOl(f, this.map.projection));
+
+    const type = this.type();
+    if (type !== SpatialFilterType.Predefined) {
+      const customType =
+        type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
+      for (const f of featuresOl) {
+        f.set('nom', 'Zone', true);
+        f.set('type', customType, true);
+        if (type === SpatialFilterType.Point) {
+          this.setPointProps(
+            featuresOl[0] as OlFeature<OlPoint>,
+            this.map.projectionCode,
+            this.buffer
+          );
+        }
+      }
+    }
+
+    olSource.addFeatures(featuresOl);
+    layer.ol.setStyle(this.defaultStyle);
+    if (type === SpatialFilterType.Predefined) {
+      this.zoomToOlFeatures(olSource.getFeatures());
+    }
+  }
+
+  private zoomToOlFeatures(featuresOl: OlFeature<OlGeometry>[]) {
+    if (!featuresOl.length) return;
+    moveToOlFeatures(this.map.viewController, featuresOl, FeatureMotion.Zoom);
+  }
+
+  private setPointProps(
+    featureOl: OlFeature<OlPoint>,
+    projectionCode: string,
+    radius: number
+  ): void {
+    const olGeometry = featureOl.getGeometry();
+    const [longitude, latitude] = transform(
+      olGeometry.getFlatCoordinates(),
+      projectionCode,
+      'EPSG:4326'
+    );
+
+    const props = {
+      [RADIUS_NAME]: radius,
+      _projection: projectionCode,
+      latitude,
+      longitude
+    };
+    Object.entries(props).forEach(([key, value]) =>
+      featureOl.set(key, value, true)
+    );
   }
 }

@@ -25,10 +25,9 @@
     <igo-spatial-filter-list
       [store]="store()"
       [queryType]="selectedQueryType()"
-      [zone]="zone()"
-      [layers]="layers()"
-      (zoneChange)="zoneChange.emit($event)"
-      (zoneWithBufferChange)="zoneWithBufferChange.emit($event)"
+      (addZone)="addZone.emit($event)"
+      (removeZone)="removeZone.emit($event)"
+      (zonesWithBufferChange)="zonesWithBufferChange.emit($event)"
       (bufferChange)="bufferChange.emit($event)"
       (measureUnitChange)="measureUnitChange.emit($event)"
     />

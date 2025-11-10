@@ -5,8 +5,9 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  inject,
-  input
+  Optional,
+  Self,
+  inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
@@ -65,8 +66,6 @@ export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
   private cdRef = inject(ChangeDetectorRef);
-  ngControl = inject(NgControl, { optional: true, self: true });
-
   private olOverlayLayer: OlVectorLayer<OlVectorSource>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
@@ -87,7 +86,7 @@ export class GeometryFormFieldInputComponent
   /**
    * The map to draw the geometry on
    */
-  readonly map = input<IgoMap>(undefined);
+  @Input() map: IgoMap;
 
   /**
    * The geometry type
@@ -112,12 +111,12 @@ export class GeometryFormFieldInputComponent
   /**
    * The drawGuide around the mouse pointer to help drawing
    */
-  readonly drawGuide = input<number>(null);
+  @Input() drawGuide: number = null;
 
   /**
    * Whether a measure tooltip should be displayed
    */
-  readonly measure = input(false);
+  @Input() measure: boolean = false;
 
   /**
    * Whether draw control should be active or not
@@ -138,7 +137,7 @@ export class GeometryFormFieldInputComponent
       this.toggleControl();
     }
   }
-  private _drawControlIsActive = true;
+  private _drawControlIsActive: boolean = true;
 
   /**
    * Whether freehand draw control should be active or not
@@ -183,7 +182,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Control options
    */
-  readonly controlOptions = input<Record<string, any>>({});
+  @Input() controlOptions: { [key: string]: any } = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -222,7 +221,14 @@ export class GeometryFormFieldInputComponent
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyleLike;
+  @Input()
+  set overlayStyle(value: OlStyleLike | OlStyle.RegularShape) {
+    this._overlayStyle = value;
+  }
+  get overlayStyle(): OlStyleLike | OlStyle.RegularShape {
+    return this._overlayStyle;
+  }
+  private _overlayStyle: OlStyleLike | OlStyle.RegularShape;
 
   /**
    * The geometry value (GeoJSON)
@@ -279,7 +285,10 @@ export class GeometryFormFieldInputComponent
     }
   }
 
-  constructor() {
+  constructor(
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    @Optional() @Self() public ngControl: NgControl
+  ) {
     if (this.ngControl !== undefined) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
@@ -295,6 +304,10 @@ export class GeometryFormFieldInputComponent
   ngOnInit() {
     if (this.drawStyle === undefined) {
       this.drawStyle = createDrawInteractionStyle();
+    }
+
+    if (this.overlayStyle === undefined) {
+      this.overlayStyle = this.drawStyle;
     }
 
     this.addOlOverlayLayer();
@@ -322,7 +335,7 @@ export class GeometryFormFieldInputComponent
 
     this.deactivateControl();
     this.olOverlaySource.clear();
-    this.map().ol.removeLayer(this.olOverlayLayer);
+    this.map.ol.removeLayer(this.olOverlayLayer);
   }
 
   /**
@@ -331,7 +344,7 @@ export class GeometryFormFieldInputComponent
   registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
-  private onChange: any = () => void 1;
+  private onChange: any = () => {};
 
   /**
    * Implemented as part of ControlValueAccessor.
@@ -339,7 +352,7 @@ export class GeometryFormFieldInputComponent
   registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  private onTouched: any = () => void 1;
+  private onTouched: any = () => {};
 
   /**
    * Implemented as part of ControlValueAccessor.
@@ -357,14 +370,14 @@ export class GeometryFormFieldInputComponent
       zIndex: 500,
       style: null
     });
-    this.map().ol.addLayer(this.olOverlayLayer);
+    this.map.ol.addLayer(this.olOverlayLayer);
   }
 
   /**
    * Create a draw control and subscribe to it's geometry
    */
   private createDrawControl() {
-    const controlOptions = Object.assign({}, this.controlOptions(), {
+    const controlOptions = Object.assign({}, this.controlOptions, {
       geometryType: this.geometryType || 'Point',
       drawingLayer: this.olOverlayLayer,
       interactionStyle:
@@ -383,7 +396,7 @@ export class GeometryFormFieldInputComponent
    * Create a modify control and subscribe to it's geometry
    */
   private createModifyControl() {
-    const controlOptions = Object.assign({}, this.controlOptions(), {
+    const controlOptions = Object.assign({}, this.controlOptions, {
       layer: this.olOverlayLayer,
       drawStyle:
         typeof this.drawStyle === 'function'
@@ -427,13 +440,13 @@ export class GeometryFormFieldInputComponent
     this.olGeometryEnds$$ = control.end$.subscribe((olGeometry: OlGeometry) =>
       this.onOlGeometryEnds(olGeometry)
     );
-    if (this.measure() === true && control === this.drawControl) {
+    if (this.measure === true && control === this.drawControl) {
       this.olGeometryChanges$$ = control.changes$.subscribe(
         (olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle) =>
           this.onOlGeometryChanges(olGeometry)
       );
     }
-    control.setOlMap(this.map().ol, false);
+    control.setOlMap(this.map.ol, false);
   }
 
   /**
@@ -490,7 +503,7 @@ export class GeometryFormFieldInputComponent
     }
 
     const value = this.olGeoJSON.writeGeometryObject(olGeometry, {
-      featureProjection: this.map().projection,
+      featureProjection: this.map.projection,
       dataProjection: 'EPSG:4326'
     }) as any;
     if (olGeometry.get('radius')) {
@@ -504,7 +517,7 @@ export class GeometryFormFieldInputComponent
     const center = olGeometry.getCenter();
     const coordinates = olproj.transform(
       center,
-      this.map().projection,
+      this.map.projection,
       'EPSG:4326'
     );
     const radius = Math.round(
@@ -524,12 +537,12 @@ export class GeometryFormFieldInputComponent
   private addGeoJSONToOverlay(geometry: GeoJSONGeometry) {
     const olGeometry = this.olGeoJSON.readGeometry(geometry, {
       dataProjection: 'EPSG:4326',
-      featureProjection: this.map().projection
+      featureProjection: this.map.projection
     });
     const olFeature = new OlFeature({
       geometry: olGeometry
     });
-    olFeature.setStyle(this.overlayStyle);
+    olFeature.setStyle(this.overlayStyle as OlStyle.Style);
     this.olOverlaySource.clear();
     this.olOverlaySource.addFeature(olFeature);
   }
@@ -553,7 +566,7 @@ export class GeometryFormFieldInputComponent
   private updateMeasureTooltip(
     olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle
   ) {
-    const measure = measureOlGeometry(olGeometry, this.map().projection);
+    const measure = measureOlGeometry(olGeometry, this.map.projection);
     const lengths = measure.lengths;
     const lastIndex =
       olGeometry.getType() === 'Polygon'
@@ -578,7 +591,7 @@ export class GeometryFormFieldInputComponent
     });
     this.olTooltip.getElement().innerHTML = innerHtml;
     if (this.olTooltip.getMap() === undefined) {
-      this.map().ol.addOverlay(this.olTooltip);
+      this.map.ol.addOverlay(this.olTooltip);
     }
   }
 
@@ -587,7 +600,7 @@ export class GeometryFormFieldInputComponent
    */
   private removeMeasureTooltip() {
     if (this.olTooltip.getMap && this.olTooltip.getMap() !== undefined) {
-      this.map().ol.removeOverlay(this.olTooltip);
+      this.map.ol.removeOverlay(this.olTooltip);
       this.olTooltip.setMap(undefined);
     }
   }
@@ -605,7 +618,7 @@ export class GeometryFormFieldInputComponent
     if (olGuideStyle === undefined) {
       return;
     }
-    const drawGuide = this.drawGuide();
+    const drawGuide = this.drawGuide;
     let radius;
     if (!drawGuide || drawGuide < 0) {
       radius = this.defaultDrawStyleRadius;

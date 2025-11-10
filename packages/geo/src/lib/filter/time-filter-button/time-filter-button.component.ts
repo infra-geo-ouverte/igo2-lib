@@ -15,7 +15,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { Layer } from '../../layer';
 import { IgoMap } from '../../map/shared/map';
-import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
+import { TimeFilterItemComponent } from '../time-filter-item';
 
 @Component({
   selector: 'igo-time-filter-button',
@@ -33,15 +33,6 @@ import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.co
   ]
 })
 export class TimeFilterButtonComponent {
-  get badge() {
-    const filter = this.options().timeFilter;
-    if (filter && filter.enabled) {
-      return 1;
-    } else {
-      return;
-    }
-  }
-
   readonly layer = input<Layer>(undefined);
   readonly options = computed<TimeFilterableDataSourceOptions>(
     () => this.layer()?.dataSource.options as TimeFilterableDataSourceOptions
@@ -53,4 +44,13 @@ export class TimeFilterButtonComponent {
   readonly header = input(true);
 
   public timeFilterCollapse = false;
+
+  get badge() {
+    const filter = this.options().timeFilter;
+    if (filter && filter.enabled && filter.value) {
+      return 1;
+    } else {
+      return;
+    }
+  }
 }

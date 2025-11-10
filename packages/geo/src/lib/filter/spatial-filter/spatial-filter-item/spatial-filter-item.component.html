@@ -1,6 +1,6 @@
 <igo-geometry-form-field-input
   [formControl]="formControl"
-  [map]="map()"
+  [map]="map"
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
@@ -89,17 +89,6 @@
     </mat-form-field>
   </div>
 }
-
-<mat-label class="title"
-  >{{ 'igo.geo.spatialFilter.search' | translate }} :
-</mat-label>
-<mat-radio-group [value]="selectedItemType" id="spatial-filter-field-item-type">
-  @for (item of itemType; track item) {
-    <mat-radio-button [value]="item" (change)="onItemTypeChange($event)">
-      {{ 'igo.geo.spatialFilter.' + item | translate }}
-    </mat-radio-button>
-  }
-</mat-radio-group>
 
 @if (
   (selectedItemType === 'Thematics' && !tableTemplate) ||
@@ -205,7 +194,7 @@
   <button
     matButton="elevated"
     class="remove-button"
-    [disabled]="allLayers().length === 0"
+    [disabled]="allLayers.length === 0"
     (click)="clearButton()"
   >
     {{ 'igo.geo.spatialFilter.removeLayer' | translate }}
@@ -214,14 +203,14 @@
   <button
     matButton="elevated"
     class="export-button"
-    [disabled]="!store().entities$.getValue().length"
+    [disabled]="!store.entities$.getValue().length"
     (click)="export.emit()"
   >
     {{ 'igo.geo.spatialFilter.exportLayer' | translate }}
   </button>
 </div>
 
-@if (store().all().length && tableTemplate && !listIsVisible) {
+@if (store.all().length && tableTemplate && !listIsVisible) {
   <button
     class="expand-more"
     mat-icon-button
@@ -233,7 +222,7 @@
   </button>
 }
 
-@if (store().all().length && tableTemplate && listIsVisible) {
+@if (store.all().length && tableTemplate && listIsVisible) {
   <div class="results">
     @if (listIsVisible) {
       <button
@@ -248,7 +237,7 @@
     <igo-entity-table
       class="results-list"
       [template]="tableTemplate"
-      [store]="store()"
+      [store]="store"
       (entitySelectChange)="entityChange.emit($event)"
     />
   </div>

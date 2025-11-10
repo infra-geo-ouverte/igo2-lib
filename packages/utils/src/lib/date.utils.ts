@@ -12,3 +12,22 @@ export function isIsoDate(value: string): boolean {
   const d = new Date(value);
   return d instanceof Date && !isNaN(d.getTime());
 }
+
+export const TimeFrame = ['now', 'today'] as const;
+export type TimeFrame = (typeof TimeFrame)[number];
+
+export function isTimeFrame(
+  value: Date | TimeFrame | string | number
+): value is TimeFrame {
+  return (
+    typeof value === 'string' &&
+    TimeFrame.includes(value.toLowerCase() as TimeFrame)
+  );
+}
+
+export function resolveDate(input?: Date | TimeFrame): Date | undefined {
+  if (isTimeFrame(input)) {
+    return new Date();
+  }
+  return input instanceof Date ? input : undefined;
+}

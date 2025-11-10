@@ -1,9 +1,11 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   inject,
   input,
   output,
+  signal,
   viewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +22,8 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
   templateUrl: './ogc-filter-time-slider.component.html',
   styleUrls: ['./ogc-filter-time-slider.component.scss'],
   imports: [MatSliderModule, FormsModule, MatButtonModule, MatIconModule],
-  providers: [OGCFilterTimeService]
+  providers: [OGCFilterTimeService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterTimeSliderComponent implements OnInit {
   ogcFilterTimeService = inject(OGCFilterTimeService);
@@ -33,7 +36,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
   readonly slider = viewChild(MatSlider);
 
   interval;
-  sliderValue = 1;
+  sliderValue = signal(1);
   calculatedStep = 0;
   readonly _defaultDisplayFormat: string = 'DD/MM/YYYY HH:mm A';
   readonly _defaultSliderInterval: number = 2000;
@@ -73,16 +76,14 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     );
   }
 
-  constructor() {
-    this.sliderDisplayWith = this.sliderDisplayWith.bind(this);
-  }
+  constructor() {}
 
   ngOnInit() {
     this.calculateStep();
     this.handleSliderInput({ value: 1 });
   }
 
-  sliderDisplayWith(value) {
+  sliderDisplayWith = (value) => {
     let dateTmp = new Date(
       this.beginMillisecond + (value - 1) * this.stepMillisecond
     );
@@ -114,7 +115,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     }
 
     return moment(dateTmp).format(this.displayFormat);
-  }
+  };
 
   playFilter() {
     if (this.interval) {
@@ -123,11 +124,11 @@ export class OgcFilterTimeSliderComponent implements OnInit {
       this.playIcon = 'pause_circle';
       this.interval = setInterval(
         () => {
-          if (this.slider().step < this.calculatedStep) {
-            const _increment = '_increment';
-            const _emitInputEvent = '_emitInputEvent';
-            this.slider()[_increment](1);
-            this.slider()[_emitInputEvent]();
+          if (this.sliderValue() < this.calculatedStep) {
+            this.handleSliderInput({
+              value: this.sliderValue()
+            });
+            this.sliderValue.update((value) => value + this.sliderInterval);
           } else {
             this.stopFilter();
           }
@@ -150,12 +151,9 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    const slider = this.slider();
     this.interval = undefined;
     this.playIcon = 'play_circle';
-    slider.step = 1;
-    const _emitInputEvent = '_emitInputEvent';
-    slider[_emitInputEvent]();
+    this.sliderValue.set(1);
   }
 
   handleSliderInput(matSliderChange) {
@@ -241,14 +239,9 @@ export class OgcFilterTimeSliderComponent implements OnInit {
   }
 
   calculateStep() {
-    for (
-      let i = 1;
-      this.maxMillisecond -
-        (this.beginMillisecond + i * this.stepMillisecond) >=
-      -1;
-      i++
-    ) {
-      this.calculatedStep = i;
-    }
+    const totalMilliseconds = this.maxMillisecond - this.beginMillisecond;
+    const rawSteps = Math.floor(totalMilliseconds / this.stepMillisecond);
+    this.calculatedStep =
+      Math.max(1, Math.ceil(rawSteps / this.sliderInterval)) + 1;
   }
 }

@@ -61,20 +61,21 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.resolution$$.unsubscribe();
+    this.resolution$$?.unsubscribe();
   }
 
-  handleYearChange(year: string | [string, string]) {
+  handleYearChange(year: string | [string, string] | undefined) {
     this.timeFilterService.filterByYear(this.datasource, year);
-    this.datasource.options.timeFilter.value = year.toString();
+    this.datasource.options.timeFilter.value = year?.toString();
   }
 
   handleDateChange(date: Date | [Date, Date]) {
     this.timeFilterService.filterByDate(this.datasource, date);
-    this.datasource.options.timeFilter.value =
-      date instanceof Date
+    this.datasource.options.timeFilter.value = date
+      ? date instanceof Date
         ? this.reformDate(date)
-        : [this.reformDate(date[0]), this.reformDate(date[1])];
+        : [this.reformDate(date[0]), this.reformDate(date[1])]
+      : undefined;
   }
 
   private reformDate(date: Date): string {

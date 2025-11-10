@@ -37,6 +37,7 @@ export interface DataSourceOptions {
   download?: DownloadOptions;
   edition?: EditionOptions;
   relations?: RelationOptions[];
+  fieldNameGeometry?: string;
 }
 
 export interface SourceFieldsOptionsParams {

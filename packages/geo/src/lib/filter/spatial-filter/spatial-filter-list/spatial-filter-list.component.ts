@@ -1,22 +1,31 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  Input,
   OnDestroy,
   OnInit,
-  effect,
   inject,
   input,
-  output
+  output,
+  viewChild
 } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
   UntypedFormControl
 } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+  MatAutocompleteTrigger
+} from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -24,11 +33,16 @@ import { EntityStore } from '@igo2/common/entity';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
-import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  map,
+  take
+} from 'rxjs/operators';
 
 import { Feature } from '../../../feature';
-import { AnyLayer } from '../../../layer';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import {
   SpatialFilterQueryType,
@@ -42,34 +56,59 @@ import { SpatialFilterService } from './../../shared/spatial-filter.service';
   styleUrls: ['./spatial-filter-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatFormFieldModule,
-    MatInputModule,
+    AsyncPipe,
     FormsModule,
+    IgoLanguageModule,
     MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
     ReactiveFormsModule,
     MatOptionModule,
     MatSelectModule,
-    AsyncPipe,
-    IgoLanguageModule
+    ReactiveFormsModule
   ]
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
   private spatialFilterService = inject(SpatialFilterService);
   private messageService = inject(MessageService);
+  private cdRef = inject(ChangeDetectorRef);
 
-  readonly store = input<EntityStore<Feature>>(undefined);
-  readonly queryType = input<SpatialFilterQueryType>();
-  readonly zone = input();
-  readonly layers = input<AnyLayer[]>([]);
+  readonly store = input.required<EntityStore<Feature>>();
 
-  public zoneWithBuffer;
-  public selectedZone: any;
+  @Input({ required: true })
+  get queryType(): SpatialFilterQueryType {
+    return this._queryType;
+  }
+  set queryType(queryType: SpatialFilterQueryType) {
+    if (this._queryType !== queryType) {
+      this.selectedZones = [];
+      this.zonesWithBuffer = [];
+    }
+    this.formControl.setValue('');
+    this._queryType = queryType;
+  }
+  private _queryType: SpatialFilterQueryType;
+
+  readonly bufferChange = output<number>();
+  readonly measureUnitChange = output<MeasureLengthUnit>();
+  readonly addZone = output<Feature>();
+  readonly removeZone = output<Feature>();
+  readonly zonesWithBufferChange = output<Feature[]>();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-
   public formControl = new UntypedFormControl();
-
   public bufferFormControl = new UntypedFormControl();
+  public selectedZones: Feature[] = [];
+
+  private zonesWithBuffer: Feature[] = [];
+  private formValueChanges$$: Subscription;
+  private bufferValueChanges$$: Subscription;
+  inFlightIds = new Set<string | number>();
+
+  autocomplete = viewChild.required(MatAutocomplete);
+  autocompleteTrigger = viewChild.required(MatAutocompleteTrigger);
 
   /**
    * Available measure units for the measure type given
@@ -79,43 +118,21 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  readonly zoneChange = output<Feature>();
-  readonly zoneWithBufferChange = output<Feature>();
-  readonly bufferChange = output<number>();
-  readonly measureUnitChange = output<MeasureLengthUnit>();
-
-  formValueChanges$$: Subscription;
-  bufferValueChanges$$: Subscription;
-
-  constructor() {
-    effect(() => {
-      this.queryType();
-      this.formControl.setValue('');
-    });
-    effect(() => {
-      const zone = this.zone();
-      if (!zone) {
-        this.zoneWithBuffer = undefined;
-        this.bufferFormControl.setValue(0);
-      }
-    });
-  }
+  filteredEntities$: Observable<Feature[]>;
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
       (value) => {
         if (value.length) {
-          this.store().view.filter((feature) => {
-            const filterNormalized = value
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            const featureNameNormalized = feature.properties.nom
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            return featureNameNormalized.includes(filterNormalized);
-          });
+          const filterNormalized = this.normalizeString(value);
+
+          this.store().view.filter((feature) =>
+            this.normalizeString(feature.properties.nom).includes(
+              filterNormalized
+            )
+          );
+        } else {
+          this.store().view.clear();
         }
       }
     );
@@ -123,74 +140,26 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     this.bufferValueChanges$$ = this.bufferFormControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((value) => {
-        if (
-          this.measureUnit === MeasureLengthUnit.Meters &&
-          value > 0 &&
-          value <= 100000
-        ) {
-          this.bufferChange.emit(value);
-          this.spatialFilterService
-            .loadBufferGeometry(
-              this.selectedZone,
-              SpatialFilterType.Predefined,
-              value,
-              this.queryType()
-            )
-            .subscribe((featureGeom: Feature) => {
-              this.zoneWithBuffer = featureGeom;
-              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-            });
-        } else if (
-          this.measureUnit === MeasureLengthUnit.Kilometers &&
-          value > 0 &&
-          value <= 100
-        ) {
-          this.bufferChange.emit(value);
-          this.spatialFilterService
-            .loadBufferGeometry(
-              this.selectedZone,
-              SpatialFilterType.Predefined,
-              value * 1000,
-              this.queryType()
-            )
-            .subscribe((featureGeom: Feature) => {
-              this.zoneWithBuffer = featureGeom;
-              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-            });
-        } else if (value === 0 && this.layers().length > 0) {
-          this.bufferChange.emit(value);
-          this.zoneWithBufferChange.emit(this.selectedZone);
-        } else if (
-          value < 0 ||
-          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
-          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)
-        ) {
-          this.bufferFormControl.setValue(0);
-          this.messageService.alert(
-            'igo.geo.spatialFilter.bufferAlert',
-            'igo.geo.spatialFilter.warning'
-          );
-        }
+        this.updateBuffer(value);
       });
+
+    this.filteredEntities$ = this.store()
+      .view.all$()
+      .pipe(
+        map((entities) => {
+          if (!this._queryType) return [];
+          return entities;
+        })
+      );
   }
 
   ngOnDestroy() {
     this.formValueChanges$$.unsubscribe();
+    this.bufferValueChanges$$.unsubscribe();
   }
 
   displayFn(feature?: Feature): string | undefined {
     return feature ? feature.properties.nom : undefined;
-  }
-
-  onZoneChange(feature) {
-    if (feature && this.queryType) {
-      this.spatialFilterService
-        .loadItemById(feature, this.queryType())
-        .subscribe((featureGeom: Feature) => {
-          this.selectedZone = featureGeom;
-          this.zoneChange.emit(featureGeom);
-        });
-    }
   }
 
   /**
@@ -198,14 +167,149 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
    * @internal
    */
   onMeasureUnitChange(unit: MeasureLengthUnit) {
-    if (unit === this.measureUnit) {
-      return;
-    } else {
-      this.measureUnit = unit;
-      this.measureUnitChange.emit(this.measureUnit);
-      this.measureUnit === MeasureLengthUnit.Meters
-        ? this.bufferFormControl.setValue(this.bufferFormControl.value * 1000)
-        : this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
+    if (unit === this.measureUnit) return;
+    this.measureUnit = unit;
+    this.measureUnitChange.emit(this.measureUnit);
+    const value = this.bufferFormControl.value;
+    if (value !== null) {
+      const converted =
+        unit === MeasureLengthUnit.Meters ? value * 1000 : value / 1000;
+      this.bufferFormControl.setValue(converted);
     }
+  }
+
+  /**
+   * multiple selection of zones
+   */
+
+  select(event: MatAutocompleteSelectedEvent): void {
+    const zone = event.option.value;
+    const buffer = this.bufferFormControl.value;
+    if (buffer === null) {
+      const id = zone?.meta?.id;
+      if (!this.isSelected(zone) && !this.inFlightIds.has(id)) {
+        this.inFlightIds.add(id);
+        this.spatialFilterService
+          .loadItemById(zone, this.queryType)
+          .pipe(
+            take(1),
+            finalize(() => this.inFlightIds.delete(id))
+          )
+          .subscribe((featureGeom: Feature) => {
+            this.addZone.emit(featureGeom);
+            this.selectedZones.push(featureGeom);
+            this.cdRef.detectChanges();
+          });
+      }
+    } else {
+      this.applyBuffer(buffer, zone);
+    }
+    this.resetInputAndPanel();
+  }
+
+  remove(feature: Feature): void {
+    const index = this.selectedZones.findIndex(
+      (item) => item.meta.id === feature.meta.id
+    );
+
+    if (index >= 0) {
+      this.selectedZones.splice(index, 1);
+      this.removeZone.emit(feature);
+    }
+
+    if (this.selectedZones.length === 0) {
+      this.zonesWithBuffer = [];
+    }
+    this.resetInputAndPanel();
+  }
+
+  isSelected(entity: Feature): boolean {
+    return this.selectedZones.some((z) => z.meta.id === entity.meta.id);
+  }
+
+  private applyBuffer(buffer: number, zone: Feature) {
+    const value = this.normalizeBuffer(buffer);
+    if (value === null) {
+      this.resetBufferWithWarning();
+      return;
+    }
+
+    this.spatialFilterService
+      .loadBufferGeometry(
+        zone,
+        SpatialFilterType.Predefined,
+        value,
+        this.queryType
+      )
+      .subscribe((featureGeom: Feature) => {
+        const zonesWithBuffer = this.zonesWithBuffer.findIndex(
+          (item) => item.meta.id === featureGeom.meta.id
+        );
+        if (zonesWithBuffer <= 0) {
+          this.zonesWithBuffer.push(featureGeom);
+          this.selectedZones = this.zonesWithBuffer;
+        }
+
+        this.zonesWithBufferChange.emit(this.zonesWithBuffer);
+      });
+  }
+
+  private updateBuffer(value: number) {
+    const normalized = this.normalizeBuffer(value);
+    if (normalized === null) {
+      this.resetBufferWithWarning();
+      return;
+    }
+
+    this.bufferChange.emit(value);
+    this.spatialFilterService
+      .loadBuffersGeometry(this.selectedZones, {
+        filterType: SpatialFilterType.Predefined,
+        buffer: normalized,
+        type: this.queryType
+      })
+      .subscribe((featuresGeom: Feature[]) => {
+        this.selectedZones = this.zonesWithBuffer = featuresGeom;
+        this.zonesWithBufferChange.emit(this.zonesWithBuffer);
+      });
+  }
+
+  private normalizeBuffer(value: number): number | null {
+    if (this.measureUnit === MeasureLengthUnit.Meters) {
+      return value >= 0 && value <= 100000 ? value : null;
+    }
+    if (this.measureUnit === MeasureLengthUnit.Kilometers) {
+      return value >= 0 && value <= 100 ? value * 1000 : null;
+    }
+    return null;
+  }
+
+  private resetBufferWithWarning(): void {
+    this.bufferFormControl.setValue(0);
+    this.messageService.alert(
+      'igo.geo.spatialFilter.bufferAlert',
+      'igo.geo.spatialFilter.warning'
+    );
+  }
+
+  private normalizeString(str: string): string {
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  private resetInputAndPanel() {
+    this.formControl.setValue('');
+    this.clearAutocompleteSelection();
+    this.repositionAutocomplete();
+  }
+
+  private clearAutocompleteSelection(): void {
+    this.autocomplete().options.forEach((opt) => opt.deselect());
+  }
+
+  private repositionAutocomplete() {
+    requestAnimationFrame(() => this.autocompleteTrigger().updatePosition());
   }
 }

@@ -1,0 +1,17 @@
+:host mat-form-field {
+  width: 150px;
+}
+
+::ng-deep .igo-datepicker-month-year-picker .mat-calendar-period-button {
+  pointer-events: none;
+  cursor: default;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.igo-datepicker-custom-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 8px 8px;
+  gap: 5px;
+}
