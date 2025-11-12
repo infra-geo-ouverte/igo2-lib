@@ -50,7 +50,7 @@ import { skipWhile } from 'rxjs/operators';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { DownloadService } from '../../download/shared/download.service';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { isLayerGroup, isLayerItem } from '../../layer';
+import { LayerId, isLayerGroup, isLayerItem } from '../../layer';
 import { LayerService } from '../../layer/shared/layer.service';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { Layer } from '../../layer/shared/layers/layer';
@@ -150,7 +150,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private previousLayerSpecs$ = new BehaviorSubject<
     {
-      id: string;
+      id: LayerId;
       visible: boolean;
       opacity: number;
       queryable: boolean;
@@ -281,7 +281,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
         this.loading$.next(true);
         const previousSpecs: {
-          id: string;
+          id: LayerId;
           visible: boolean;
           opacity: number;
           queryable: boolean;
@@ -445,7 +445,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  public onlySelected(event: MatSlideToggleChange, id: string) {
+  public onlySelected(event: MatSlideToggleChange, id: LayerId) {
     let layersWithSelection = this.form.value.layersWithSelection;
     if (event.checked) {
       layersWithSelection.push(id);
@@ -457,7 +457,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.form.patchValue({ layersWithSelection });
   }
 
-  public onlySelectedClick(event, id: string) {
+  public onlySelectedClick(event, id: LayerId) {
     if (this.form.value.layers.find((layerId) => layerId === id)) {
       event.stopPropagation();
     }

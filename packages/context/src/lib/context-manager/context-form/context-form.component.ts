@@ -45,15 +45,16 @@ export class ContextFormComponent {
   readonly context = input<Context>();
   readonly disabled = input(false);
 
-  // TODO: replace any by ContextOptions or Context
-  readonly submitForm = output<any>();
-  readonly clone = output<any>();
-  readonly delete = output<any>();
+  readonly submitForm = output<unknown>();
+  readonly clone = output<unknown>();
+  readonly delete = output<unknown>();
 
   constructor() {
     effect(() => {
       const context = this.context();
-      this.buildForm(context);
+      if (context) {
+        this.buildForm(context);
+      }
     });
   }
 

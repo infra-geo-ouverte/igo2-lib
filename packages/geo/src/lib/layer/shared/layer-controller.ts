@@ -11,6 +11,7 @@ import {
 import { type MapBase } from '../../map/shared/map.abstract';
 import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 import { LayerSelectionModel } from './layer-selection';
+import { LayerId } from './layers';
 import type { AnyLayer } from './layers/any-layer';
 import type { Layer } from './layers/layer';
 import type { LayerGroup } from './layers/layer-group';
@@ -209,11 +210,15 @@ export class LayerController extends LayerSelectionModel {
     this.notify();
   }
 
-  getById(id: string): AnyLayer {
+  getById(id: LayerId): AnyLayer {
     return this.all.find((layer) => layer.id && layer.id === id);
   }
 
-  getBySourceId(id: string): AnyLayer {
+  getByTitle(title: string): AnyLayer {
+    return this.all.find((layer) => layer.title && layer.title === title);
+  }
+
+  getBySourceId(id: LayerId): AnyLayer {
     return this.all.find(
       (layer) => layer.dataSource?.id && layer.dataSource.id === id
     );
@@ -323,7 +328,9 @@ export class LayerController extends LayerSelectionModel {
     }
 
     const parent: LayerGroup | undefined = layer.parentId
-      ? (this.getById(layer.parentId.split(TREE_SEPERATOR).pop()) as LayerGroup)
+      ? (this.getById(
+          layer.parentId.toString().split(TREE_SEPERATOR).pop()
+        ) as LayerGroup)
       : undefined;
     layer.add(parent);
 

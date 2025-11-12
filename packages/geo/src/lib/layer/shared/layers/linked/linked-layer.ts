@@ -12,6 +12,7 @@ import type { LayerController } from '../../layer-controller';
 import type { AnyLayer } from '../any-layer';
 import type { Layer } from '../layer';
 import type { LayerGroup } from '../layer-group';
+import { LayerId } from '../layer.interface';
 import {
   AnyPropertyOptions,
   LayersLinkProperties,
@@ -259,7 +260,7 @@ export class Linked {
     return this.links.filter((link) => link.linkedIds.includes(linkId));
   }
 
-  private removeArrayItem<T extends { id: string }>(
+  private removeArrayItem<T extends { id: LayerId }>(
     item: T,
     array: T[],
     key: keyof T = 'id'
@@ -270,7 +271,7 @@ export class Linked {
     }
   }
 
-  private getLinkedLayersOnZindex(id: string): Layer[] {
+  private getLinkedLayersOnZindex(id: LayerId): Layer[] {
     return [...this.getByProperty(LinkedProperties.ZINDEX).layers]
       ?.concat(this.layer)
       .filter((layer) => layer.id !== id);

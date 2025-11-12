@@ -1,32 +1,53 @@
 :host {
   padding: 0 8px;
   height: 100%;
+  display: flex;
+  align-items: center;
   background-color: var(--mat-sys-surface-bright);
 }
 
-mat-select {
-  width: 150px;
+.poi-select {
+  width: 175px;
   height: 100%;
+}
 
-  ::ng-deep {
-    .mat-mdc-select-trigger {
-      height: 100%;
-    }
+.poi-option {
+  padding-right: 6px;
+  padding-left: 6px;
+
+  .poi-option-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .poi-option-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .poi-option-button {
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  ::ng-deep .mat-pseudo-checkbox {
+    display: none;
   }
 }
 
-::ng-deep {
-  .poi-option {
-    .mdc-list-item__primary-text {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex: 1;
-      overflow: visible;
-    }
+::ng-deep .poi-select .mat-mdc-select-trigger {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 
-    button {
-      margin-right: -16px;
-    }
+::ng-deep .poi-select-panel {
+  .mdc-list-item__primary-text {
+    width: 100%;
   }
 }

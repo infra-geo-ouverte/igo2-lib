@@ -4,6 +4,7 @@ import {
   DrawControl,
   FeatureStore,
   FeatureWithDraw,
+  LayerId,
   VectorLayer
 } from '@igo2/geo';
 
@@ -19,8 +20,8 @@ export class DrawState {
   private mapState = inject(MapState);
 
   public stores: FeatureStore<FeatureWithDraw>[] = [];
-  public layersID: string[] = [];
-  public drawControls: [string, DrawControl][] = [];
+  public layersID: LayerId[] = [];
+  public drawControls: [LayerId, DrawControl][] = [];
   public activeDrawingLayer: VectorLayer;
 
   constructor() {

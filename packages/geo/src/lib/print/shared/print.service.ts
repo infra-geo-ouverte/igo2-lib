@@ -243,7 +243,8 @@ export class PrintService {
   ) {
     if (
       map.layerController.all.find(
-        (layer) => layer.visible && layer.id.startsWith('igo-measures-')
+        (layer) =>
+          layer.visible && layer.id.toString().startsWith('igo-measures-')
       )
     ) {
       let canvasOverlayHTMLMeasures;

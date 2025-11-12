@@ -18,13 +18,7 @@ import {
 } from '@igo2/geo';
 
 import { DetailedContext } from '../../context-manager';
-import { ShareMapRouteKeysOptions, ShareOption } from './share-map.interface';
-
-export const MOCK_SHARE_OPTION: ShareOption = {
-  layerlistControls: {
-    querystring: ''
-  }
-};
+import { ShareMapRouteKeysOptions } from './share-map.interface';
 
 export const SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK: ShareMapRouteKeysOptions = {
   languageKey: 'lang',
@@ -73,7 +67,8 @@ export const CONTEXT_MOCK: DetailedContext = {
 };
 
 /*********** WMS Layer ***********/
-const imageLayerOptions: ImageLayerOptions = {
+export const imageLayerOptions: ImageLayerOptions = {
+  id: '1',
   visible: true,
   zIndex: 11,
   opacity: 1,

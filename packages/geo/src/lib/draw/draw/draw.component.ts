@@ -86,6 +86,7 @@ import {
 } from '../../feature';
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { DrawControl } from '../../geometry/shared/controls/draw';
+import type { LayerId } from '../../layer/shared';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import {
@@ -179,12 +180,12 @@ export class DrawComponent implements OnInit, OnDestroy {
   public geometryType = GeometryType; // Reference to the GeometryType enum
   readonly map = input<IgoMap>(undefined); // Map to draw on
   readonly stores = model<FeatureStore<FeatureWithDraw>[]>([]);
-  readonly drawControls = model<[string, DrawControl][]>([]);
+  readonly drawControls = model<[LayerId, DrawControl][]>([]);
   readonly activeDrawingLayer = model<VectorLayer>();
 
   readonly activeLayerChange = output<VectorLayer>();
-  readonly drawControlsEvent = output<[string, DrawControl][]>();
-  readonly layersIDEvent = output<string>();
+  readonly drawControlsEvent = output<[LayerId, DrawControl][]>();
+  readonly layersIDEvent = output<LayerId>();
 
   fillColor: string;
   strokeColor: string;
@@ -939,7 +940,9 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public createLayer(newTitle?, isNewLayer?) {
     for (const layer of this.allLayers) {
-      const numberId = Number(layer.id.replace('igo-draw-layer', ''));
+      const numberId = Number(
+        layer.id.toString().replace('igo-draw-layer', '')
+      );
       this.layerCounterID = Math.max(numberId, this.layerCounterID);
     }
     this.activeDrawingLayer.set(

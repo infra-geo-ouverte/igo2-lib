@@ -1,10 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common/tool';
-import {
-  ContextEditBindingDirective,
-  ContextEditComponent
-} from '@igo2/context';
+import { ContextEditComponent } from '@igo2/context';
 
 import { ToolState } from '../../tool/tool.state';
 
@@ -17,7 +14,7 @@ import { ToolState } from '../../tool/tool.state';
 @Component({
   selector: 'igo-context-editor-tool',
   templateUrl: './context-editor-tool.component.html',
-  imports: [ContextEditComponent, ContextEditBindingDirective]
+  imports: [ContextEditComponent]
 })
 export class ContextEditorToolComponent {
   private toolState = inject(ToolState);

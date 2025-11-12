@@ -11,8 +11,8 @@
         }
       },
       "contextManager": {
-        "clone": "Clone this context",
-        "delete": "Delete this context",
+        "clone": "Clone",
+        "delete": "Delete",
         "dialog": {
           "cloneMsg": "The context '{{value}}' was cloned",
           "cloneTitle": "Context cloned",
@@ -26,7 +26,8 @@
           "saveMsg": "The context '{{value}}' was saved",
           "saveTitle": "Context saved"
         },
-        "edit": "Edit this context",
+        "edit": "Edit",
+        "share": "Share by URL",
         "errors": {
           "uncaught": {
             "message": "Sorry, service is currently not available. Please try again later",
@@ -64,8 +65,8 @@
         "emptyContextTooltip": "Create a new empty context",
         "contextMap": "Context from map",
         "contextMapTooltip": "Create a new context from map layers",
-        "hide": "Hide this context",
-        "show": "Show up this context",
+        "hide": "Hide",
+        "show": "Show up",
         "showHidden": "Show hidden contexts",
         "noResult": "No results for selected filters"
       },
