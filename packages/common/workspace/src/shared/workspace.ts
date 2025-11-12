@@ -47,7 +47,7 @@ export class Workspace<E extends object = object> {
   /**
    * Workspace id
    */
-  get id(): string {
+  get id(): string | number {
     return this.options.id;
   }
 

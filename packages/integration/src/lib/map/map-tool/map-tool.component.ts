@@ -9,10 +9,7 @@ import {
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common/tool';
-import {
-  ContextListBindingDirective,
-  ContextListComponent
-} from '@igo2/context';
+import { ContextListComponent } from '@igo2/context';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
@@ -62,7 +59,6 @@ import { MapState } from './../map.state';
     MetadataButtonComponent,
     LayerViewerComponent,
     ContextListComponent,
-    ContextListBindingDirective,
     IgoLanguageModule
   ]
 })

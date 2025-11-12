@@ -38,6 +38,11 @@ export function shareMapKeyDefs(
       key: options.layers,
       params: {
         index: undefined,
+        id: {
+          key: 'id',
+          parse: (params) => extractParam(params, 'id'),
+          stringify: (value: string) => `${value}`
+        },
         names: {
           key: 'n',
           parse: (params) => extractParam(params, 'n'),

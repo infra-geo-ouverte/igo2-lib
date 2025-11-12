@@ -7,7 +7,7 @@ import { BehaviorSubject, Subject, Subscription, combineLatest } from 'rxjs';
 import type { DataSource } from '../../../datasource/shared/datasources/datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import type { LayerOptions, LayerType } from './layer.interface';
+import type { LayerId, LayerOptions, LayerType } from './layer.interface';
 
 export type AnyLayerBase = LayerBase | LayerGroupBase;
 
@@ -33,11 +33,14 @@ export abstract class LayerBase {
     return this.options.isIgoInternalLayer || false;
   }
 
-  get id(): string {
-    return String(this.options.id);
+  get id(): LayerId {
+    return this.options.id;
+  }
+  set id(value: LayerId) {
+    this.options.id = value;
   }
 
-  get parentId(): string {
+  get parentId(): LayerId | undefined {
     return this.parent?.id ?? this.options.parentId;
   }
 

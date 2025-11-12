@@ -106,10 +106,13 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should correctly parse valid URL layers parameters into expected result', () => {
-    const { groups, ...rest } = MOCK_PARAMS;
+    const { ...rest } = MOCK_PARAMS;
     const result = shareMapParseUrl.parseLayers({ ...rest });
     expect(result).toBeDefined();
-    expect(result).toEqual(EXPECTED_LAYERS_OPTIONS);
+    expect(result).toEqual([
+      ...EXPECTED_GROUPS_OPTIONS,
+      ...EXPECTED_LAYERS_OPTIONS
+    ]);
   });
 
   it('should return undefined for layersOptions when parameters are missing', () => {
@@ -141,6 +144,28 @@ describe('ShareMapParseUrl', () => {
         visible: true,
         zIndex: 10
       }
+    ]);
+  });
+
+  it('should correctly parse layers including those with an ID', () => {
+    const params: Params = {
+      urls: 'https://testgeoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi',
+      layers: '0,[bgr_v_centr_servc_geomt_act]n,0t,1v,10z;1id,1v,1z',
+      pos: '@-71.83131,46.86842,11z'
+    };
+    const result = shareMapParseUrl.parseLayers(params);
+
+    expect(result).toEqual([
+      {
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://testgeoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi',
+          params: { LAYERS: 'bgr_v_centr_servc_geomt_act' }
+        } as AnyDataSourceOptions,
+        visible: true,
+        zIndex: 10
+      },
+      { id: '1', visible: true, zIndex: 1 }
     ]);
   });
 

@@ -7,6 +7,7 @@ import {
   FeatureStore,
   FeatureWithDraw,
   IgoMap,
+  LayerId,
   VectorLayer
 } from '@igo2/geo';
 
@@ -47,14 +48,14 @@ export class DrawingToolComponent {
     return this.mapState.map;
   }
 
-  get layersID(): string[] {
+  get layersID(): LayerId[] {
     return this.drawState.layersID;
   }
 
-  get drawControls(): [string, DrawControl][] {
+  get drawControls(): [LayerId, DrawControl][] {
     return this.drawState.drawControls;
   }
-  set drawControls(dc: [string, DrawControl][]) {
+  set drawControls(dc: [LayerId, DrawControl][]) {
     this.drawState.drawControls = dc;
   }
 
@@ -65,11 +66,11 @@ export class DrawingToolComponent {
     this.drawState.activeDrawingLayer = value;
   }
 
-  public addLayersID(layerID: string) {
+  public addLayersID(layerID: LayerId) {
     this.layersID.push(layerID);
   }
 
-  public addDrawControls(dc: [string, DrawControl][]) {
+  public addDrawControls(dc: [LayerId, DrawControl][]) {
     this.drawControls = dc;
   }
 }

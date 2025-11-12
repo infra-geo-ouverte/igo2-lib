@@ -12,6 +12,7 @@ import { ShareMapLegacyParser } from './share-map-legacy.service';
 import {
   LayerProperties,
   PositionParams,
+  ServiceType,
   ShareMapKeysDefinitions
 } from './share-map.interface';
 import {
@@ -24,7 +25,9 @@ import {
 type BaseLayerOptionsParsed = Pick<
   LayerOptions,
   'visible' | 'zIndex' | 'opacity' | 'parentId'
->;
+> &
+  Partial<Pick<LayerOptions, 'id'>>;
+
 type LayerOptionsParsed = BaseLayerOptionsParsed &
   Pick<LayerOptions, 'sourceOptions'>;
 
@@ -97,31 +100,44 @@ export class ShareMapParser {
     layer: string,
     urls: string[]
   ): LayerOptionsParsed | undefined {
-    const urlIndex = this.extractUrlIndex(layer);
-    if (urlIndex === undefined) return undefined;
-
-    const layerNames = this.extractLayerNames(layer);
-    if (layerNames === undefined) return undefined;
-
     const { zIndex, visibility, type, opacity, parentId } =
       this.extractLayerProperties(layer);
-
-    const url = urls[urlIndex];
-    const version = this.extractVersionFromUrl(url);
-
-    const sourceOptions = buildDataSourceOptions(
-      type,
-      url,
-      layerNames,
-      version
-    );
-
-    return ObjectUtils.removeUndefined({
-      sourceOptions,
+    const base = {
       visible: visibility,
       zIndex,
       opacity,
       parentId
+    } satisfies BaseLayerOptionsParsed;
+
+    const layerNames = this.extractLayerNames(layer);
+
+    if (layerNames) {
+      const urlIndex = this.extractUrlIndex(layer);
+      if (urlIndex === undefined) return undefined;
+
+      const url = urls[urlIndex];
+      const version = this.extractVersionFromUrl(url);
+
+      const sourceOptions = buildDataSourceOptions(
+        type,
+        url,
+        layerNames,
+        version
+      );
+
+      return ObjectUtils.removeUndefined({
+        id: undefined,
+        sourceOptions,
+        ...base
+      } satisfies OptionalRequired<LayerOptionsParsed>);
+    }
+
+    const id = this.extractLayerId(layer);
+    if (!id) return undefined;
+    return ObjectUtils.removeUndefined({
+      id,
+      sourceOptions: undefined,
+      ...base
     } satisfies OptionalRequired<LayerOptionsParsed>);
   }
 
@@ -142,6 +158,13 @@ export class ShareMapParser {
   private extractVersionFromUrl(url: string): string | undefined {
     const versionDef = this.keysDefinitions.layers.params.version;
     return versionDef.parse(url) as string;
+  }
+
+  private extractLayerId(layer: string): string | undefined {
+    const { id } = this.keysDefinitions.layers.params;
+    const regex = new RegExp(`([a-zA-Z0-9_]+)${id.key}\\b`);
+    const match = layer.match(regex);
+    return match ? match[1] : undefined;
   }
 
   private extractUrlIndex(layer: string): number | undefined {
@@ -169,7 +192,7 @@ export class ShareMapParser {
     return {
       zIndex: params.zIndex.parse(properties) as number,
       visibility: params.visible.parse(properties) as boolean,
-      type: params.type.parse(properties) as any,
+      type: params.type.parse(properties) as ServiceType,
       opacity: params.opacity.parse(properties) as number,
       parentId: params.parentId.parse(properties) as string
     } satisfies OptionalRequired<LayerProperties>;

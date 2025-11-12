@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
@@ -36,6 +37,7 @@ import { PoiService } from './shared/poi.service';
     StopPropagationDirective,
     MatIconModule,
     MatDividerModule,
+    MatTooltipModule,
     IgoLanguageModule
   ],
   providers: [PoiService]
@@ -129,10 +131,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   createPoi() {
     const view = this.map.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new olPoint(view.getCenter()).transform(
-      proj,
-      'EPSG:4326'
-    );
+    const center = new olPoint(view.getCenter()).transform(proj, 'EPSG:4326');
 
     const poi: Poi = {
       title: '',

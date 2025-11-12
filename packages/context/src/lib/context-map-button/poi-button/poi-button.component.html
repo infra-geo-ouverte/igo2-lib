@@ -1,32 +1,52 @@
 <mat-select
+  panelClass="poi-select-panel"
+  class="poi-select"
   [placeholder]="'igo.context.poiButton.placeholder' | translate"
   floatPlaceholder="never"
 >
   <mat-option (click)="createPoi()" class="poi-option">
-    <div class="titlePoi">
-      {{ 'igo.context.poiButton.create' | translate }}
-    </div>
-    <button
-      igoStopPropagation
-      mat-icon-button
-      color="primary"
-      (click)="createPoi()"
+    <div
+      class="poi-option-row"
+      [matTooltip]="'igo.context.poiButton.create' | translate"
+      matTooltipPosition="above"
     >
-      <mat-icon>add-circle</mat-icon>
-    </button>
+      <div class="poi-option-text">
+        {{ 'igo.context.poiButton.create' | translate }}
+      </div>
+      <div class="poi-option-button">
+        <button
+          igoStopPropagation
+          mat-icon-button
+          color="primary"
+          (click)="createPoi()"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div>
+    </div>
   </mat-option>
   <mat-divider />
   @for (poi of pois; track poi) {
     <mat-option class="poi-option" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
-      <div class="titlePoi">{{ poi.title }}</div>
-      <button
-        mat-icon-button
-        igoStopPropagation
-        color="warn"
-        (click)="deletePoi(poi)"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="poi-option-row">
+        <div
+          class="poi-option-text"
+          [matTooltip]="poi.title"
+          matTooltipPosition="above"
+        >
+          {{ poi.title }}
+        </div>
+        <div class="poi-option-button">
+          <button
+            mat-icon-button
+            igoStopPropagation
+            color="warn"
+            (click)="deletePoi(poi)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
     </mat-option>
   }
 </mat-select>

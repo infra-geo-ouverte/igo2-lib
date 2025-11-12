@@ -6,6 +6,7 @@ import {
   IgoMap,
   Layer,
   LayerGroup,
+  LayerId,
   MapViewController,
   WMSDataSourceOptions,
   findParentId,
@@ -24,36 +25,30 @@ import {
   LayerParams,
   PositionParams,
   ServiceType,
-  ShareMapKeysDefinitions,
-  ShareOption
+  ShareMapKeysDefinitions
 } from './share-map.interface';
 import { getFlattenOptions } from './share-map.utils';
 
 export class ShareMapEncoder {
   private context: DetailedContext | undefined;
+  language: string;
 
   constructor(
     private SHARE_MAP_DEFS: ShareMapKeysDefinitions,
     private document: Document
   ) {}
 
-  generateUrl(
-    map: IgoMap,
-    context: DetailedContext,
-    publicShareOption: ShareOption,
-    language: string | undefined
-  ): string {
+  generateUrl(map: IgoMap, context: DetailedContext): string {
     this.context = context;
-    const querystring = publicShareOption.layerlistControls?.querystring ?? '';
 
     const layers = [
       map.layerController.baseLayer,
       ...map.layerController.layersFlattened
     ].filter(Boolean);
 
-    const queryUrl = this.buildQueryUrl(layers, querystring);
+    const queryUrl = this.buildQueryUrl(layers);
 
-    const urlBaseConfig = this.getBaseUrlConfig(map.viewController, language);
+    const urlBaseConfig = this.getBaseUrlConfig(map.viewController);
     return queryUrl !== '' ? urlBaseConfig + '&' + queryUrl : urlBaseConfig;
   }
 
@@ -62,7 +57,7 @@ export class ShareMapEncoder {
    * This is necessary for sharing the map context.
    */
   private replaceGroupLocalIds(layers: AnyLayer[]): void {
-    const idMap = new Map<string, string>();
+    const idMap = new Map<LayerId, LayerId>();
     const existingIds = new Set(
       layers.map((layer) => layer.id).filter(Boolean)
     );
@@ -70,15 +65,15 @@ export class ShareMapEncoder {
     // eslint-disable-next-line prefer-const
     let counter = 1;
     layers.forEach((layer) => {
-      if (layer.id && layer.id.includes(ID_GROUP_PREFIX)) {
+      if (layer.id && layer.id.toString().includes(ID_GROUP_PREFIX)) {
         const newId = this.getUniqueId(existingIds, counter);
-        idMap.set(layer.id, String(newId));
+        idMap.set(layer.id, newId);
         layer.options.id = newId;
       }
     });
   }
 
-  private getUniqueId(existingIds: Set<string>, counter: number) {
+  private getUniqueId(existingIds: Set<string | number>, counter: number) {
     while (existingIds.has(String(counter))) {
       counter++;
     }
@@ -128,19 +123,17 @@ export class ShareMapEncoder {
     return layers.filter(isLayerItem) as Layer[];
   }
 
-  private buildQueryUrl(layers: AnyLayer[], querystring: string) {
+  private buildQueryUrl(layers: AnyLayer[]) {
     const layersSharable = this.isLayerSharable(layers);
+    this.replaceGroupLocalIds(layersSharable);
     const layersChanged = this.getFilteredMapLayers(layersSharable);
 
     const groups = this.getLayerGroups(layersChanged);
 
-    this.replaceGroupLocalIds(groups);
-
     const groupsQueryUrl = this.buildGroupsQueryUrl(groups);
 
     const layersByService = this.generateLayersOptionsByService(
-      this.getLayerItems(layersChanged),
-      querystring
+      this.getLayerItems(layersChanged)
     );
     const layersQueryUrl = this.buildLayersQueryUrl(layersByService);
 
@@ -205,8 +198,8 @@ export class ShareMapEncoder {
 
   private getIdsNestedParent(
     node: Layer | LayerGroup,
-    ids?: string[]
-  ): string[] | undefined {
+    ids?: LayerId[]
+  ): LayerId[] | undefined {
     if (!node.parent) return ids;
 
     if (node.parent) {
@@ -222,36 +215,41 @@ export class ShareMapEncoder {
   }
 
   private generateLayersOptionsByService(
-    layers: Layer[],
-    querystring: string
+    layers: Layer[]
   ): [url: string, layers: LayerParams[]][] {
     const layersByUrl = new Map<string, LayerParams[]>();
 
     layers.forEach((layer) => {
-      const [url, params] = this.generateLayerOption(layer, querystring);
+      const [url, params] = this.generateLayerOption(layer);
       if (!layersByUrl.has(url)) {
         layersByUrl.set(url, [params]);
       } else {
         layersByUrl.get(url)!.push(params);
       }
     });
-    return Array.from(layersByUrl.entries()).map(([url, layerParams], i) => {
-      layerParams.forEach((params) => {
-        params.index = i;
-      });
+
+    let customIndex = 0;
+    return Array.from(layersByUrl.entries()).map(([url, layerParams]) => {
+      const hasNoId = layerParams.some((p) => !p.id);
+      if (hasNoId) {
+        layerParams.forEach((params) => {
+          if (!params.id) {
+            params.index = customIndex;
+          }
+        });
+        customIndex++;
+      }
       return [url, layerParams];
     });
   }
 
   private generateLayerOption(
-    layer: Layer,
-    querystring: string
+    layer: Layer
   ): [url: string, layers: LayerParams] {
     const dataSourceOptions = layer.dataSource.options as AnyDataSourceOptions;
-
     return [
       this.concatUrlWithVersion(dataSourceOptions),
-      this.getLayerParams(layer, querystring)
+      this.getLayerParams(layer)
     ];
   }
 
@@ -292,18 +290,42 @@ export class ShareMapEncoder {
     return dataSourceOptions.url;
   }
 
-  private getLayerParams(layer: Layer, queryString?: string): LayerParams {
+  private getLayerParams(layer: Layer): LayerParams {
     const dataSourceOptions = layer.dataSource.options;
+    const isExisting = this.hasLayerId(this.context.layers, layer.id);
     return {
       index: undefined,
-      names: this.getLayerNames(dataSourceOptions),
-      type: dataSourceOptions?.type,
+      ...(isExisting
+        ? { id: layer.id }
+        : {
+            names: this.getLayerNames(dataSourceOptions),
+            type: dataSourceOptions?.type
+          }),
       opacity: this.getOpacity(layer.opacity),
       parentId: layer.parent?.id,
       visible: this.getVisibility(layer.visible),
-      zIndex: layer.zIndex,
-      queryString: this.getQueryString(dataSourceOptions?.type, queryString)
-    } satisfies OptionalRequired<LayerParams>;
+      zIndex: layer.zIndex
+    };
+  }
+
+  /** Recursive */
+  private hasLayerId(
+    layersOptions: AnyLayerOptions[],
+    targetId: string | number
+  ): boolean {
+    return layersOptions.some((l) => {
+      if (!isLayerGroupOptions(l)) {
+        if (l.id !== undefined && targetId !== undefined) {
+          return String(l.id) === String(targetId);
+        }
+        return false;
+      }
+
+      if (isLayerGroupOptions(l) && Array.isArray(l.children)) {
+        return this.hasLayerId(l.children, targetId);
+      }
+      return false;
+    });
   }
 
   private getOpacity(opacity: number): number | undefined {
@@ -314,25 +336,40 @@ export class ShareMapEncoder {
     return !!visibility;
   }
 
-  private getQueryString(
-    type: string,
-    queryString: string
-  ): string | undefined {
-    return (type === 'wms' || type === 'wmts') && queryString !== ''
-      ? queryString
-      : undefined;
-  }
-
   private buildLayersQueryUrl(
     layersByService: [url: string, params: LayerParams[]][]
   ): string | undefined {
     if (layersByService.length === 0) return undefined;
     const { urlsKey, layers } = this.SHARE_MAP_DEFS;
-    const urls = layersByService.map(([url]) => url).join(',');
-    const layersWithParams = layersByService
-      .flatMap(([_, params]) => params.map((p) => this.stringifyLayerParams(p)))
-      .join(';');
-    return `${urlsKey}=${urls}&${layers.key}=${layersWithParams}`;
+    const urls: string[] = [];
+    const layerParams: string[] = [];
+    for (const [url, layer] of layersByService) {
+      let needUrl = false;
+
+      for (const param of layer) {
+        layerParams.push(this.stringifyLayerParams(param));
+        if (param.id == null) {
+          needUrl = true;
+        }
+      }
+
+      // If some layer have no id push the url service.
+      if (needUrl) {
+        urls.push(url);
+      }
+    }
+
+    if (layerParams.length === 0) return undefined;
+
+    const queryParts: string[] = [];
+
+    if (urls.length > 0) {
+      queryParts.push(`${urlsKey}=${urls.join(',')}`);
+    }
+
+    queryParts.push(`${layers.key}=${layerParams.join(';')}`);
+
+    return queryParts.join('&');
   }
 
   private stringifyLayerParams(params: LayerParams): string {
@@ -342,13 +379,13 @@ export class ShareMapEncoder {
       restParams,
       this.SHARE_MAP_DEFS.layers.params
     );
-    return `${index},${stringifiedParams}`;
+
+    return restParams.id != null
+      ? `${stringifiedParams}`
+      : `${index},${stringifiedParams}`;
   }
 
-  private getBaseUrlConfig(
-    viewController: MapViewController,
-    language: string | undefined
-  ): string {
+  private getBaseUrlConfig(viewController: MapViewController): string {
     const { pos, contextKey, languageKey } = this.SHARE_MAP_DEFS;
     const href = this.document.location.href;
     const baseUrl = this.sanitizeBaseUrl(href);
@@ -363,13 +400,13 @@ export class ShareMapEncoder {
     const contextUri = this.context?.uri;
     if (contextUri) params.push(`${contextKey}=${contextUri}`);
 
-    if (language && !baseUrl.includes(`${languageKey}=`))
-      params.push(`${languageKey}=${language}`);
+    if (this.language && !baseUrl.includes(`${languageKey}=`))
+      params.push(`${languageKey}=${this.language}`);
 
     return `${baseUrl}${params.join('&')}`;
   }
 
-  private sanitizeBaseUrl(baseUrl: string): string {
+  sanitizeBaseUrl(baseUrl: string): string {
     if (!baseUrl.includes('?')) {
       return `${baseUrl}?`;
     }
@@ -391,7 +428,6 @@ export class ShareMapEncoder {
 
   private extractKeys(defs: ShareMapKeysDefinitions): string[] {
     const keys: string[] = [];
-
     for (const key in defs) {
       if (Object.prototype.hasOwnProperty.call(defs, key)) {
         const value = defs[key];

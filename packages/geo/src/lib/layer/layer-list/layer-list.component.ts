@@ -36,7 +36,7 @@ import { MessageService } from '@igo2/core/message';
 import { LayerGroupComponent } from '../layer-group';
 import { LayerItemComponent } from '../layer-item';
 import type { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
-import { LayerType } from '../shared';
+import { LayerId, LayerType } from '../shared';
 import type { LayerController } from '../shared/layer-controller';
 import type { AnyLayer } from '../shared/layers/any-layer';
 import type { Layer } from '../shared/layers/layer';
@@ -84,7 +84,7 @@ export class LayerListComponent {
 
   private _transformer = (layer: AnyLayer, level: number): LayerFlatNode => {
     return {
-      id: layer.id || layer.options.name,
+      id: layer.id?.toString() || layer.options.name,
       isGroup: !!isLayerGroup(layer),
       descendantLevels: isLayerGroup(layer)
         ? layer.descendantsLevel
@@ -150,11 +150,12 @@ export class LayerListComponent {
   }
 
   getLayerType(layer: Layer): LayerType | 'measure' | 'draw' {
+    const id = layer.id.toString();
     return layer.type === 'raster'
       ? 'raster'
-      : layer.id.includes('measure')
+      : id.includes('measure')
         ? 'measure'
-        : layer.id.includes('draw')
+        : id.includes('draw')
           ? 'draw'
           : 'vector';
   }
@@ -235,7 +236,7 @@ export class LayerListComponent {
     node.data.expanded = this.treeControl.isExpanded(node);
   }
 
-  private findNodeByLayerId(id: string): LayerFlatNode | undefined {
+  private findNodeByLayerId(id: LayerId): LayerFlatNode | undefined {
     return this.treeControl.dataNodes.find((node) => node.id === id);
   }
 

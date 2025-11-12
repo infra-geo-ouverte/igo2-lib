@@ -31,8 +31,10 @@ export interface LayerOptions extends LayerOptionsBase {
   showButtonZoomToExtent?: boolean;
 }
 
+export type LayerId = string | number;
+
 export interface LayerOptionsBase {
-  id?: string | number;
+  id?: LayerId;
   /**
    * An unique identifier calculated client side
    * The name prop provide a way to have a unique identifier between all layers
@@ -46,7 +48,7 @@ export interface LayerOptionsBase {
   minResolution?: number;
   maxResolution?: number;
   showInLayerList?: boolean;
-  parentId?: string;
+  parentId?: LayerId;
 }
 
 export interface LayerSecurityOptions {
@@ -54,8 +56,8 @@ export interface LayerSecurityOptions {
 }
 
 export interface GeoWorkspaceOptions {
-  srcId?: string;
-  workspaceId?: string;
+  srcId?: LayerId;
+  workspaceId?: LayerId;
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;

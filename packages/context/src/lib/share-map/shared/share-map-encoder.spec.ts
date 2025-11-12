@@ -7,8 +7,8 @@ import {
   CONTEXT_MOCK,
   MAP_GROUP_MOCK,
   MAP_MOCK,
-  MOCK_SHARE_OPTION,
-  SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK
+  SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK,
+  imageLayerOptions
 } from './share-map.mock';
 
 const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
@@ -22,8 +22,7 @@ const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
         opacity: 0.5,
         parentId: undefined,
         visible: true,
-        zIndex: 3,
-        queryString: undefined
+        zIndex: 3
       }
     ]
   ],
@@ -37,8 +36,7 @@ const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
         opacity: undefined,
         parentId: undefined,
         visible: false,
-        zIndex: 2,
-        queryString: undefined
+        zIndex: 2
       }
     ]
   ],
@@ -52,14 +50,15 @@ const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
         opacity: undefined,
         parentId: undefined,
         visible: true,
-        zIndex: 1,
-        queryString: undefined
+        zIndex: 1
       }
     ]
   ]
 ];
 const EXPECTED_LAYERS_QUERY_URL: string =
   'urls=https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer,https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts,https://ws.mapserver.transports.gouv.qc.ca/swtq&layers=0,[0]n,3t,0.5o,1v,3z;1,[carte_gouv_qc_ro]n,1t,0v,2z;2,[etablissement_mtq]n,0t,1v,1z';
+const EXPECTED_LAYER_QUERY_ID: string =
+  'urls=https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer,https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts&layers=0,[0]n,3t,0.5o,1v,3z;1,[carte_gouv_qc_ro]n,1t,0v,2z;1id,1v,1z';
 
 describe('ShareMapEncoder', () => {
   let shareMapEncoder: ShareMapEncoder;
@@ -107,7 +106,7 @@ describe('ShareMapEncoder', () => {
   it('should return empty array from generateLayersOptionsByService()', () => {
     shareMapEncoder['context'] = CONTEXT_MOCK;
 
-    const result = shareMapEncoder['generateLayersOptionsByService']([], '');
+    const result = shareMapEncoder['generateLayersOptionsByService']([]);
     expect(result).toEqual([]);
   });
 
@@ -116,10 +115,7 @@ describe('ShareMapEncoder', () => {
     const layers = MAP_MOCK.layerController.layersFlattened.filter(
       isLayerItem
     ) as Layer[];
-    const result = shareMapEncoder['generateLayersOptionsByService'](
-      layers,
-      MOCK_SHARE_OPTION.layerlistControls.querystring
-    );
+    const result = shareMapEncoder['generateLayersOptionsByService'](layers);
     expect(result.length).toBe(3);
     expect(result).toEqual(EXPECTED_LAYERS_BY_SERVICE);
   });
@@ -139,23 +135,14 @@ describe('ShareMapEncoder', () => {
 
   it('should generate URL correctly from generateUrl()', () => {
     const map = MAP_MOCK;
-    const result = shareMapEncoder.generateUrl(
-      map,
-      CONTEXT_MOCK,
-      MOCK_SHARE_OPTION,
-      ''
-    );
+    const result = shareMapEncoder.generateUrl(map, CONTEXT_MOCK);
     expect(result).toBe(`${EXPECTED_BASE_URL}&${EXPECTED_LAYERS_QUERY_URL}`);
   });
 
   it('should generate URL with language from generateUrl()', () => {
     const map = MAP_MOCK;
-    const result = shareMapEncoder.generateUrl(
-      map,
-      CONTEXT_MOCK,
-      MOCK_SHARE_OPTION,
-      'en'
-    );
+    shareMapEncoder.language = 'en';
+    const result = shareMapEncoder.generateUrl(map, CONTEXT_MOCK);
 
     expect(result).toBe(
       `${EXPECTED_BASE_URL}&${SHARE_MAP_DEFS.languageKey}=en&${EXPECTED_LAYERS_QUERY_URL}`
@@ -168,10 +155,7 @@ describe('ShareMapEncoder', () => {
 
       const map = MAP_MOCK;
 
-      const result = shareMapEncoder['getBaseUrlConfig'](
-        map.viewController,
-        undefined
-      );
+      const result = shareMapEncoder['getBaseUrlConfig'](map.viewController);
       expect(result).toBe(`${EXPECTED_BASE_URL}`);
     });
 
@@ -180,12 +164,7 @@ describe('ShareMapEncoder', () => {
       shareMapEncoder['context'] = CONTEXT_MOCK;
       mockDocument.location.pathname = `${mockDocument.location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd&tool=about`;
 
-      const result = shareMapEncoder.generateUrl(
-        map,
-        CONTEXT_MOCK,
-        MOCK_SHARE_OPTION,
-        undefined
-      );
+      const result = shareMapEncoder.generateUrl(map, CONTEXT_MOCK);
 
       expect(result).toBe(
         `${location.origin}${location.pathname}?tool=about&${posStringified}&${EXPECTED_LAYERS_QUERY_URL}`
@@ -197,12 +176,7 @@ describe('ShareMapEncoder', () => {
       shareMapEncoder['context'] = CONTEXT_MOCK;
       mockDocument.location.pathname = `${location.pathname}?pos=@-77.51804,48.58602&urls=qsdsd,qsd`;
 
-      const result = shareMapEncoder.generateUrl(
-        map,
-        CONTEXT_MOCK,
-        MOCK_SHARE_OPTION,
-        undefined
-      );
+      const result = shareMapEncoder.generateUrl(map, CONTEXT_MOCK);
       expect(result).toBe(`${EXPECTED_BASE_URL}&${EXPECTED_LAYERS_QUERY_URL}`);
     });
 
@@ -212,12 +186,7 @@ describe('ShareMapEncoder', () => {
       const EXPECTED_URLS = `${urlsKey}=https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer`;
       const EXPECTED_LAYERS = `${layers.key}=0,[0]n,3t,0.5o,1pid,1v,3z`;
       const EXPECTED_GROUPS = `${groups.key}=1id,test2t,2z,1v,0e;2id,test1t,1z,1v,0e`;
-      const result = shareMapEncoder.generateUrl(
-        MAP_GROUP_MOCK,
-        CONTEXT_MOCK,
-        MOCK_SHARE_OPTION,
-        ''
-      );
+      const result = shareMapEncoder.generateUrl(MAP_GROUP_MOCK, CONTEXT_MOCK);
 
       expect(result).toBe(
         `${EXPECTED_BASE_URL}&${EXPECTED_URLS}&${EXPECTED_LAYERS}&${EXPECTED_GROUPS}`
@@ -265,8 +234,21 @@ describe('ShareMapEncoder', () => {
         id: 4,
         title: 'Nested Layer'
       } as AnyLayerOptions;
-      const parentId = findParentId(tree as any, target);
+      const parentId = findParentId(tree, target);
       expect(parentId).toBe('1.3');
+    });
+  });
+
+  describe('share layer exists in context', () => {
+    it('should generate a URL that includes the layer ID when the updated layer belongs to the current context', () => {
+      const map = MAP_MOCK;
+      const CLONED_CONTETX_MOCK = structuredClone(CONTEXT_MOCK);
+      CLONED_CONTETX_MOCK.layers.push({ ...imageLayerOptions, visible: false });
+      shareMapEncoder['context'] = CLONED_CONTETX_MOCK;
+
+      const result = shareMapEncoder.generateUrl(map, CLONED_CONTETX_MOCK);
+
+      expect(result).toBe(`${EXPECTED_BASE_URL}&${EXPECTED_LAYER_QUERY_ID}`);
     });
   });
 });

@@ -1,21 +1,19 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { ShareMapApiComponent } from './share-map/share-map-api.component';
 import { ShareMapUrlComponent } from './share-map/share-map-url.component';
 import { ShareMapComponent } from './share-map/share-map.component';
 
 export const SHARE_MAP_DIRECTIVES = [
   ShareMapComponent,
-  ShareMapUrlComponent,
-  ShareMapApiComponent
+  ShareMapUrlComponent
 ] as const;
 
 /**
  * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for the set
  */
 @NgModule({
-  imports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent],
-  exports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent]
+  imports: [ShareMapComponent, ShareMapUrlComponent],
+  exports: [ShareMapComponent, ShareMapUrlComponent]
 })
 export class IgoShareMapModule {
   static forRoot(): ModuleWithProviders<IgoShareMapModule> {

@@ -1,6 +1,7 @@
+type TreeId = string | number;
 export interface ITreeConfig<T> {
   getChildren: (dataNode: T) => T[] | undefined | null;
-  getId: (dataNode: T) => string;
+  getId: (dataNode: T) => TreeId;
   getLevel: (dataNode: T) => number;
   reverse?: boolean;
 }
@@ -11,7 +12,7 @@ export class Tree<T> {
   private _data: T[];
 
   getChildren: (dataNode: T) => T[] | undefined | null;
-  getId: (dataNode: T) => string;
+  getId: (dataNode: T) => TreeId;
   getLevel: (dataNode: T) => number;
 
   constructor(
@@ -81,7 +82,7 @@ export class Tree<T> {
   }
 
   private _addBefore(
-    beforeId: string | undefined,
+    beforeId: TreeId | undefined,
     recipient = this._data,
     ...nodes: T[]
   ): T[] {
@@ -120,7 +121,7 @@ export class Tree<T> {
    * @param beforeId
    */
   private move(
-    beforeId: string | undefined,
+    beforeId: TreeId | undefined,
     recipient: T[],
     ...nodes: T[]
   ): T[] {
@@ -129,7 +130,7 @@ export class Tree<T> {
   }
 
   private _getPosition(
-    id: string,
+    id: TreeId,
     ancestorsIndex: number[] = [],
     values = this._data
   ) {
@@ -227,7 +228,7 @@ export class Tree<T> {
   }
 
   /** Recursive */
-  private getAncestorById(id: string, data = this._data): T[] | undefined {
+  private getAncestorById(id: TreeId, data = this._data): T[] | undefined {
     let ancestor: T[];
     data.some((item) => {
       if (this.getId(item) === id) {
@@ -262,7 +263,7 @@ export class Tree<T> {
     }, [] as T[]);
   }
 
-  private getIndex(id: string, ancestor: T[]): number {
+  private getIndex(id: TreeId, ancestor: T[]): number {
     return ancestor.findIndex((node) => this.getId(node) === id);
   }
 }

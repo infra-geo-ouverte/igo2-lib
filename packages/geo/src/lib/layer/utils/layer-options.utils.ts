@@ -12,6 +12,7 @@ import {
   AnyLayerOptions,
   ID_GROUP_PREFIX,
   LayerGroupOptions,
+  LayerId,
   LayerOptions
 } from '../shared';
 import { isLayerGroupOptions, isLayerItemOptions } from './layer.utils';
@@ -116,7 +117,7 @@ function insertOptions(
 }
 
 /** Recursive */
-function _getNodeById(id: string, data: AnyLayerOptions[]): AnyLayerOptions {
+function _getNodeById(id: LayerId, data: AnyLayerOptions[]): AnyLayerOptions {
   let node: AnyLayerOptions;
   data.some((item) => {
     const identifier = getLayerOptionIdentifier(item);

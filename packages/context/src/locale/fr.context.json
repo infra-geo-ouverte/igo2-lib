@@ -11,8 +11,8 @@
         }
       },
       "contextManager": {
-        "clone": "Cloner ce contexte",
-        "delete": "Supprimer ce contexte",
+        "clone": "Cloner",
+        "delete": "Supprimer",
         "dialog": {
           "cloneMsg": "Le contexte '{{value}}' a été cloné",
           "cloneTitle": "Contexte cloné",
@@ -26,7 +26,8 @@
           "saveMsg": "Le contexte '{{value}}' a été enregistré",
           "saveTitle": "Contexte enregistré"
         },
-        "edit": "Éditer ce contexte",
+        "edit": "Éditer",
+        "share": "Partager par URL",
         "errors": {
           "uncaught": {
             "message": "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
@@ -64,8 +65,8 @@
         "emptyContextTooltip": "Créer un nouveau contexte vide",
         "contextMap": "Contexte à partir de la carte",
         "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte",
-        "hide": "Masquer ce contexte",
-        "show": "Montrer ce contexte",
+        "hide": "Masquer",
+        "show": "Montrer",
         "showHidden": "Montrer les contextes masqués",
         "noResult": "Aucun résultat pour les filtres sélectionnés"
       },

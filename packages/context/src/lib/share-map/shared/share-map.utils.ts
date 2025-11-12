@@ -108,12 +108,11 @@ export function hasModernShareParams(
   params: Params,
   keysDefinitions: ShareMapKeysDefinitions
 ): boolean {
-  const { urlsKey, layers, groups } = keysDefinitions;
+  const { layers, groups } = keysDefinitions;
   const hasGroups = !!getParamValue(params, groups.key);
   const hasLayers = !!getParamValue(params, layers.key);
-  const hasUrls = !!getParamValue(params, urlsKey);
 
-  return (hasLayers && hasUrls) || hasGroups;
+  return hasLayers || hasGroups;
 }
 
 export function getParamValue(params: Params, key: string): string | undefined {
