@@ -34,6 +34,7 @@ import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { TypePermission } from './context.enum';
 import {
   Context,
+  ContextDetailedChanges,
   ContextMapView,
   ContextPermission,
   ContextProfils,
@@ -160,10 +161,10 @@ export class ContextService {
     return of([]);
   }
 
-  setDefault(id: string): Observable<any> {
+  setDefault(id: string): Observable<string | undefined> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
-      return this.http.post(url, { defaultContextId: id });
+      return this.http.post<string>(url, { defaultContextId: id });
     } else {
       this.storageService.set('favorite.context.uri', id);
       return of(undefined);
@@ -186,6 +187,11 @@ export class ContextService {
       (key) =>
         (contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id))
     );
+
+    if (id === this.context$.value?.id) {
+      this.context$.next(undefined);
+      this.loadContext(this.defaultContextUri);
+    }
 
     if (imported) {
       this.importedContext = this.importedContext.filter((c) => c.id !== id);
@@ -228,9 +234,12 @@ export class ContextService {
     );
   }
 
-  update(id: string, context: DetailedContext): Observable<Context> {
+  update(
+    id: string,
+    context: DetailedContext
+  ): Observable<ContextDetailedChanges> {
     const url = this.baseUrl + '/contexts/' + id;
-    return this.http.patch<Context>(url, context);
+    return this.http.patch<ContextDetailedChanges>(url, context);
   }
 
   // =================================================================
@@ -243,7 +252,10 @@ export class ContextService {
     return this.http.post<void>(url, association);
   }
 
-  deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
+  deleteToolAssociation(
+    contextId: string,
+    toolId: string
+  ): Observable<unknown> {
     const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
     return this.http.delete(url);
   }
@@ -284,9 +296,9 @@ export class ContextService {
 
   getLocalContexts(): Observable<ContextsList> {
     const url = this.getPath(this.options.contextListFile);
-    return this.http.get<ContextsList>(url).pipe(
-      map((res: any) => {
-        return { ours: res };
+    return this.http.get<Context[]>(url).pipe(
+      map((res) => {
+        return { ours: res } satisfies ContextsList;
       })
     );
   }
@@ -471,9 +483,10 @@ export class ContextService {
 
     context.tools = this.tools.map((tool) => {
       return {
-        id: String(tool.id),
+        id: tool.id,
+        name: tool.name,
         global: tool.global
-      } as Tool;
+      };
     });
 
     return context;
@@ -527,20 +540,11 @@ export class ContextService {
         delete layerOptions.source;
         context.layers.push(layerOptions);
       } else {
-        if (!(layer.ol.getSource() instanceof olVectorSource)) {
-          const catalogLayer = layer.options;
-          catalogLayer.zIndex = layer.zIndex;
-          catalogLayer.visible = layer.visible;
-          catalogLayer.opacity = layer.opacity;
-          delete catalogLayer.source;
-          context.layers.push(catalogLayer);
-        } else {
-          const extraFeatures = this.getExtraFeatures(layer);
-          extraFeatures.name = layer.options.title;
-          extraFeatures.opacity = layer.opacity;
-          extraFeatures.visible = layer.visible;
-          context.extraFeatures.push(extraFeatures);
-        }
+        const extraFeatures = this.getExtraFeatures(layer);
+        extraFeatures.name = layer.options.title;
+        extraFeatures.opacity = layer.opacity;
+        extraFeatures.visible = layer.visible;
+        context.extraFeatures.push(extraFeatures);
       }
     });
 
@@ -556,9 +560,7 @@ export class ContextService {
     if (layer.ol.getSource() instanceof Cluster) {
       const clusterSource = layer.ol.getSource() as Cluster;
       olFeatures = clusterSource.getFeatures();
-      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
-        cluster.get('features')
-      );
+      olFeatures = olFeatures.flatMap((cluster) => cluster.get('features'));
     } else {
       const source = layer.ol.getSource() as olVectorSource;
       olFeatures = source.getFeatures();

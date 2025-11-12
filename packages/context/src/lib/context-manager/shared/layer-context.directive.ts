@@ -19,7 +19,7 @@ import {
   mergeLayersOptions,
   sortLayersByZindex
 } from '@igo2/geo';
-import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
+import type { AnyLayer, AnyLayerOptions, IgoMap, LayerId } from '@igo2/geo';
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
@@ -152,7 +152,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {
     const params = this.queryParams;
     const currentContext = this.contextService.context$.value.uri;
-    const currentLayerid: string = layer.id;
+    const currentLayerid = layer.id;
 
     let visible = layer.visible;
     if (!params || !currentLayerid) {
@@ -163,8 +163,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
-      let visiblelayers: string[] = [];
-      let invisiblelayers: string[] = [];
+      let visiblelayers: LayerId[] = [];
+      let invisiblelayers: LayerId[] = [];
       const visibleOnLayers =
         params[this.shareMapService.routeService.options.visibleOnLayersKey];
 

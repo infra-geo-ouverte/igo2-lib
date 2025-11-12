@@ -49,6 +49,16 @@ export interface DetailedContext extends Context {
   extraFeatures?: ExtraFeatures[];
 }
 
+export interface ContextDetailedChanges extends Pick<DetailedContext, 'id'> {
+  layers: IProcessChanges<AnyLayerOptions>;
+}
+
+export interface IProcessChanges<T> {
+  created: T[];
+  updated: T[];
+  deleted: number[];
+}
+
 export interface ContextMapView extends MapViewOptions {
   keepCurrentView?: boolean;
   homeExtent?: ContextHomeExtent;

@@ -9,7 +9,12 @@ import {
 import { Widget } from '@igo2/common/widget';
 import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
-import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
+import {
+  EditionWorkspace,
+  FeatureWorkspace,
+  LayerId,
+  WfsWorkspace
+} from '@igo2/geo';
 
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 
@@ -214,7 +219,7 @@ export class WorkspaceState implements OnDestroy {
     this.workspaceMaximize$.next(maximized);
   }
 
-  public setActiveWorkspaceById(id: string) {
+  public setActiveWorkspaceById(id: LayerId) {
     const wksFromId = this.store.all().find((workspace) => workspace.id === id);
     if (wksFromId) {
       this.store.activateWorkspace(wksFromId);

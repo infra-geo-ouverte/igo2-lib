@@ -1,14 +1,1 @@
-@if (hasApi) {
-  <mat-tab-group>
-    <mat-tab [label]="'igo.context.shareMap.shareWithApi' | translate">
-      <igo-share-map-api [map]="map()" />
-    </mat-tab>
-    <mat-tab [label]="'igo.context.shareMap.shareWithUrl' | translate">
-      <igo-share-map-url [map]="map()" />
-    </mat-tab>
-  </mat-tab-group>
-}
-
-@if (!hasApi) {
-  <igo-share-map-url [map]="map()" />
-}
+<igo-share-map-url [map]="map()" />

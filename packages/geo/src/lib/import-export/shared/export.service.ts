@@ -23,7 +23,7 @@ import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
-import { Layer, VectorLayer, isLayerGroup } from '../../layer';
+import { Layer, LayerId, VectorLayer, isLayerGroup } from '../../layer';
 import { IgoMap } from '../../map';
 import {
   EditionWorkspace,
@@ -289,13 +289,13 @@ export class ExportService {
     writeExcelFile(workBook, title, { compression: true });
   }
 
-  private getTitleFromLayers(layers: string[], map: IgoMap): string {
+  private getTitleFromLayers(layers: LayerId[], map: IgoMap): string {
     return layers.length === 1
       ? this.getLayerTitleFromId(layers[0], map)
       : 'igo';
   }
 
-  private getLayerTitleFromId(id: string, map: IgoMap): string {
+  private getLayerTitleFromId(id: LayerId, map: IgoMap): string {
     const layer = map.layerController.getById(id);
     return layer.title;
   }
@@ -486,7 +486,11 @@ export class ExportService {
     else if (layer.options.workspace?.enabled) {
       const wks = this.getWorkspaceByLayerId(layer.id, store);
       if (wks?.entityStore?.stateView.all().length) {
-        const features = this.getFeaturesFromWorkspace(wks, layer.id, data);
+        const features = this.getFeaturesFromWorkspace(
+          wks,
+          layer.id.toString(),
+          data
+        );
         return of(features).pipe(
           catchError((e) => {
             throw e;
@@ -500,7 +504,7 @@ export class ExportService {
     return of([]);
   }
 
-  getWorkspaceByLayerId(id: string, store: WorkspaceStore): Workspace {
+  getWorkspaceByLayerId(id: LayerId, store: WorkspaceStore): Workspace {
     const wksFromLayerId = store
       .all()
       .find(

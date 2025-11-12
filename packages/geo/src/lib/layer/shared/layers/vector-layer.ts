@@ -270,7 +270,10 @@ export class VectorLayer extends Layer {
   private removeLayerFromIDB(): void {
     const geoDB = new GeoDB();
     const layerDB = new LayerDB();
-    merge(geoDB.delete(this.id), layerDB.delete(this.id)).subscribe();
+    merge(
+      geoDB.delete(this.id.toString()),
+      layerDB.delete(this.id.toString())
+    ).subscribe();
   }
 
   private maintainOptionsInIdb() {
@@ -313,7 +316,7 @@ export class VectorLayer extends Layer {
     const geoDB = new GeoDB();
     geoDB
       .update(
-        this.options.sourceOptions.url || this.id,
+        this.options.sourceOptions.url || this.id.toString(),
         this.id,
         geojsonObject,
         InsertSourceInsertDBEnum.User,

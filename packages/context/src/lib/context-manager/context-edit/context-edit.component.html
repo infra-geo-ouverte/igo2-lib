@@ -2,6 +2,6 @@
   <igo-context-form
     [btnSubmitText]="'igo.context.contextManager.save' | translate"
     [context]="context()"
-    (submitForm)="submitForm.emit($event)"
+    (submitForm)="onEdit($event)"
   />
 }

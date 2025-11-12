@@ -53,9 +53,7 @@
           [horizontal]="false"
           [mode]="actionbarMode"
         />
-      }
 
-      @if (auth.authenticated && contextConfigs) {
         <button
           class="users-filter"
           mat-icon-button
@@ -67,7 +65,7 @@
         </button>
       }
       <mat-menu #accountMenu="matMenu">
-        @for (user of users; track user) {
+        @for (user of users; track user.name) {
           @if (!user.childs) {
             <button mat-menu-item class="profil-menu">
               <mat-checkbox
@@ -93,7 +91,7 @@
               <span>{{ user.title }}</span>
             </button>
             <mat-menu #subAccountMenu="matMenu">
-              @for (child of user.childs; track child) {
+              @for (child of user.childs; track child.name) {
                 <button mat-menu-item class="profil-menu">
                   <mat-checkbox
                     [checked]="getPermission(child).checked"
@@ -112,7 +110,7 @@
           <mat-checkbox
             [checked]="showHidden"
             (click)="$event.stopPropagation()"
-            (change)="showHiddenContexts.emit($event.checked)"
+            (change)="onShowHiddenContexts()"
           />
           <span>
             {{ 'igo.context.contextManager.showHidden' | translate }}
@@ -134,7 +132,10 @@
           collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
         "
       >
-        @for (context of $any(groupContexts).value; track context) {
+        @for (
+          context of $any(groupContexts).value;
+          track context.id ?? context.uri
+        ) {
           <igo-context-item
             igoListItem
             color="accent"
@@ -147,40 +148,47 @@
               this.defaultContextId &&
               this.defaultContextId === context.id
             "
-            (edit)="edit.emit(context)"
-            (delete)="delete.emit(context)"
-            (clone)="clone.emit(context)"
-            (save)="save.emit(context)"
-            (hide)="hideContext(context)"
+            [isDesktop]="isDesktop"
+            (edit)="onEdit(context)"
+            (delete)="onDelete(context)"
+            (clone)="onClone(context)"
+            (save)="onSave(context)"
+            (hide)="onHideContext(context)"
             (show)="showContext(context)"
-            (favorite)="favorite.emit(context)"
-            (manageTools)="manageTools.emit(context)"
-            (managePermissions)="managePermissions.emit(context)"
+            (favorite)="onFavorite(context)"
+            (manageTools)="onManageTools(context)"
+            (managePermissions)="onManagePermissions(context)"
             (select)="onSelect(context)"
             (unselect)="unselect.emit(context)"
+            (share)="onShareContext(context)"
           />
         }
       </igo-collapsible>
     }
     @if ($any(groupContexts).value.length && !auth.authenticated; as context) {
-      @for (context of $any(groupContexts).value; track context) {
+      @for (
+        context of $any(groupContexts).value;
+        track context.id ?? context.uri
+      ) {
         <igo-context-item
           igoListItem
           color="accent"
-          [showFavorite]="
-            configService.getConfig('favoriteContext4NonAuthenticated')
-          "
-          [selected]="
-            selectedContext() && selectedContext().uri === context.uri
-          "
+          [selected]="isContextSelected(context)"
           [context]="context"
           [default]="
             contextConfigs
               ? defaultContextId === context.id
               : defaultContextId === context.uri
           "
-          (favorite)="favorite.emit(context)"
-          (select)="select.emit(context)"
+          [isDesktop]="isDesktop"
+          (edit)="onEdit(context)"
+          (delete)="onDelete(context)"
+          (clone)="onClone(context)"
+          (save)="onSave(context)"
+          (hide)="onHideContext(context)"
+          (show)="showContext(context)"
+          (favorite)="onFavorite(context)"
+          (select)="onSelect(context)"
           (unselect)="unselect.emit(context)"
         />
       }

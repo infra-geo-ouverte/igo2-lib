@@ -18,7 +18,7 @@ import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
 import { AnyLayer } from './any-layer';
 import { LayerBase, LayerGroupBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
-import { type LayerOptions } from './layer.interface';
+import { LayerId, type LayerOptions } from './layer.interface';
 import { Linked } from './linked/linked-layer';
 
 export abstract class Layer extends LayerBase {
@@ -32,10 +32,6 @@ export abstract class Layer extends LayerBase {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
-
-  get id(): string {
-    return String(this.options.id || this.dataSource.id);
-  }
 
   get visible() {
     return super.visible;
@@ -198,7 +194,7 @@ export abstract class Layer extends LayerBase {
     }
   }
 
-  private findParentByLinkId(layers: AnyLayer[], id: string): Layer {
+  private findParentByLinkId(layers: AnyLayer[], id: LayerId): Layer {
     return layers.find((layer) => {
       if (!isLayerItem(layer)) {
         return;
