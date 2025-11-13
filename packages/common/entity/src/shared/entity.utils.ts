@@ -1,6 +1,11 @@
 import { t } from 'typy';
 
-import { EntityKey } from './entity.interfaces';
+import {
+  AnyChoiceEntityField,
+  AnyEntityField,
+  ChoiceEntityFieldWithLabelField,
+  EntityKey
+} from './entity.interfaces';
 
 /**
  * Get an entity's named property. Nested properties are supported
@@ -77,4 +82,26 @@ export function getEntityIcon(entity: object): string {
 export function getEntityRevision(entity: object): number {
   const meta = (entity as any).meta || {};
   return meta.revision || 0;
+}
+
+export function getColumnKeyWithoutPropertiesTag(key: string): string {
+  if (key.includes('properties.')) {
+    return key.split('.')[1];
+  }
+  return key;
+}
+
+export function isChoiceField(
+  field: AnyEntityField
+): field is AnyChoiceEntityField {
+  return (
+    (field as AnyChoiceEntityField).type === 'list' ||
+    (field as AnyChoiceEntityField).type === 'autocomplete'
+  );
+}
+
+export function isChoiceFieldWithLabelField(
+  field: AnyEntityField
+): field is ChoiceEntityFieldWithLabelField {
+  return (field as ChoiceEntityFieldWithLabelField).labelField !== undefined;
 }

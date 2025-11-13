@@ -7,22 +7,25 @@ import {
   inject,
   input
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { DragAndDropDirective } from '@igo2/common/drag-drop';
 import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
 
-import { Subscription } from 'rxjs';
-import { concatMap, first, skipWhile } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { concatMap, filter, first, skipWhile } from 'rxjs/operators';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { LayerService } from '../../layer/shared/layer.service';
+import { ProjectionsLimitationsOptions } from '../../map/';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { detectFileEPSG } from '../../map/shared/projection.utils';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { StyleService } from '../../style/style-service/style.service';
+import { EpsgSelectorModalComponent } from '../epsg-selector-modal/epsg-selector-modal.component';
 import {
   handleFileImportError,
   handleFileImportSuccess
@@ -46,6 +49,7 @@ export class DropGeoFileDirective
   private messageService = inject(MessageService);
   private layerService = inject(LayerService);
   private confirmDialogService = inject(ConfirmDialogService);
+  private dialog = inject(MatDialog);
 
   private epsgCode$$: Subscription[] = [];
   private filesDropped$$: OutputRefSubscription;
@@ -55,6 +59,8 @@ export class DropGeoFileDirective
   }
 
   readonly contextUri = input<string>(undefined);
+  readonly projectionsLimitations =
+    input<ProjectionsLimitationsOptions>(undefined);
 
   ngOnInit() {
     this.filesDropped$$ = this.filesDropped.subscribe((files) => {
@@ -90,10 +96,16 @@ export class DropGeoFileDirective
             skipWhile((code) => !code),
             first(),
             concatMap((epsgCode) => {
-              return this.importService.import(
-                file,
-                epsgCode === 'epsgNotDefined' ? undefined : epsgCode
-              );
+              if (!epsgCode || epsgCode === 'epsgNotDefined') {
+                return this.openEPSGModal(file).pipe(
+                  filter((selectedCode) => !!selectedCode), // user must select
+                  concatMap((selectedCode) =>
+                    this.importService.import(file, selectedCode)
+                  )
+                );
+              } else {
+                return this.importService.import(file, epsgCode);
+              }
             })
           )
           .subscribe(
@@ -143,5 +155,19 @@ export class DropGeoFileDirective
       this.messageService,
       this.config.getConfig('importExport.clientSideFileSizeMaxMb')
     );
+  }
+
+  private openEPSGModal(file): Observable<string> {
+    const dialogRef = this.dialog.open(EpsgSelectorModalComponent, {
+      width: '600px',
+      data: {
+        fileName: file.name,
+        projections: this.importService.computeProjections(
+          this.projectionsLimitations()
+        )
+      }
+    });
+
+    return dialogRef.afterClosed();
   }
 }
