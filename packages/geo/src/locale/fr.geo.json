@@ -70,6 +70,11 @@
         "ogreServer": {
           "title": "Erreur 500 du service Ogre",
           "text": "Erreur de la conversion du fichier en geojson. Il est possible que le fichier soit trop volumineux, essayer de l'importer en format geojson"
+        },
+        "epsgUndefined": {
+          "text": "Le projection pour le fichier <strong> {{fileName}} </strong> n'a pas pu être détecté automatiquement. Veuillez sélectionner une projection afin de poursuivre le téléversement.",
+          "title": "Système de coordonnées (projection)",
+          "note": "Si la projection de votre fichier n’est pas dans la liste, vous devez convertir votre fichier vers un système de coordonnées compatible."
         }
       },
       "export": {

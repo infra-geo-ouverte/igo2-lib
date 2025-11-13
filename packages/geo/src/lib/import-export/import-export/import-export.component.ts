@@ -56,11 +56,14 @@ import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
-import { computeProjectionsConstraints } from '../../map/shared';
 import { IgoMap } from '../../map/shared/map';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { StyleService } from '../../style/style-service/style.service';
-import { ExportOptions, GeometryCollection } from '../shared/export.interface';
+import {
+  ExportOptions,
+  GeometryCollection,
+  RADIUS_NAME
+} from '../shared/export.interface';
 import { ExportService } from '../shared/export.service';
 import {
   AnyExportFormat,
@@ -142,8 +145,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$ = new BehaviorSubject<InputProjections[]>([]);
-  private projectionsConstraints: ProjectionsLimitationsOptions;
+  public projections$: BehaviorSubject<InputProjections[]> =
+    new BehaviorSubject([]);
 
   public popupChecked = false;
   private configFormats: AnyExportFormat[];
@@ -162,7 +165,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   readonly map = input<IgoMap>(undefined);
 
   readonly contextUri = input<string>(undefined);
-  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>({});
+  readonly projectionsLimitations =
+    input<ProjectionsLimitationsOptions>(undefined);
 
   /**
    * Store that holds the available workspaces.
@@ -215,7 +219,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.computeProjections();
+    const projections = this.importService.computeProjections(
+      this.projectionsLimitations() ?? {}
+    );
+    this.projections$.next(projections);
 
     this.layers$$ = this.map().layerController.all$.subscribe((layers) => {
       const exportableLayers = layers.filter((layer) => {
@@ -340,90 +347,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     } else {
       this.importForm.patchValue({ inputProj: undefined });
     }
-  }
-
-  private computeProjections() {
-    this.projectionsConstraints = computeProjectionsConstraints(
-      this.projectionsLimitations()
-    );
-    const projections: InputProjections[] = [];
-
-    if (this.projectionsConstraints.nad83) {
-      projections.push({
-        translateKey: 'nad83',
-        alias: 'NAD83',
-        code: 'EPSG:4269',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-    if (this.projectionsConstraints.wgs84) {
-      projections.push({
-        translateKey: 'wgs84',
-        alias: 'WGS84',
-        code: 'EPSG:4326',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-    if (this.projectionsConstraints.webMercator) {
-      projections.push({
-        translateKey: 'webMercator',
-        alias: 'Web Mercator',
-        code: 'EPSG:3857',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-
-    if (this.projectionsConstraints.mtm) {
-      // all mtm zones
-      const minZone = this.projectionsConstraints.mtmZone.minZone;
-      const maxZone = this.projectionsConstraints.mtmZone.maxZone;
-
-      for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
-        const code =
-          mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-        projections.push({
-          translateKey: 'mtm',
-          alias: `MTM ${mtmZone}`,
-          code,
-          zone: `${mtmZone}`,
-          extent: undefined,
-          def: undefined
-        });
-      }
-    }
-
-    if (this.projectionsConstraints.utm) {
-      // all utm zones
-      const minZone = this.projectionsConstraints.utmZone.minZone;
-      const maxZone = this.projectionsConstraints.utmZone.maxZone;
-
-      for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
-        const code =
-          utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
-        projections.push({
-          translateKey: 'utm',
-          alias: `UTM ${utmZone}`,
-          code,
-          zone: `${utmZone}`,
-          extent: undefined,
-          def: undefined
-        });
-      }
-    }
-
-    let configProjection: InputProjections[] = [];
-    if (this.projectionsConstraints.projFromConfig) {
-      configProjection = (this.config.getConfig('projections') ||
-        []) as InputProjections[];
-    }
-
-    this.projections$.next(configProjection.concat(projections));
   }
 
   public getLayerTitleById(id): string {
@@ -573,7 +496,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.onFileExportError(error);
         throw error;
       });
-      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      const transformedFeatures =
+        await this.exportService.transformFeaturesToExportFormat(
+          features,
+          layer
+        );
+
+      const geomTypes = this.exportService.getGeomTypes(
+        transformedFeatures,
+        data.format
+      );
       if (!isCSV || !data.combineLayers || data.layers.length === 1) {
         fileName = layer.title;
         if (data.name) {
@@ -722,7 +654,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.onFileExportError(error);
         throw error;
       });
-      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      const transformedFeatures =
+        await this.exportService.transformFeaturesToExportFormat(
+          features,
+          layer
+        );
+      const geomTypes = this.exportService.getGeomTypes(
+        transformedFeatures,
+        data.format
+      );
       return types.concat(geomTypes);
     }, Promise.resolve([]));
   }
@@ -812,7 +752,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private circleToPoint(feature: OlFeature) {
-    const radius: number = feature.get('rad');
+    const radius: number = feature.get(RADIUS_NAME);
 
     if (radius) {
       const point = new olPoint([
@@ -912,6 +852,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileExportError(error: Error) {
     this.loading$.next(false);
+    if (error.name === 'maxFieldsSize') {
+      this.messageService.error(
+        'igo.geo.export.failed.tip',
+        'igo.geo.export.failed.title'
+      );
+      return;
+    }
     handleFileExportError(error, this.messageService);
   }
 
