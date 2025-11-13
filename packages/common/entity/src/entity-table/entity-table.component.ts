@@ -68,7 +68,8 @@ import {
   EntityTableColumnRenderer,
   EntityTableScrollBehavior,
   EntityTableSelectionState,
-  EntityTableTemplate
+  EntityTableTemplate,
+  isChoiceField
 } from '../shared';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 
@@ -402,7 +403,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           column.name,
           this.formBuilder.control(item[key])
         );
-      } else if (column.type === 'list') {
+      } else if (isChoiceField(column) && column.type === 'list') {
         if (column.multiple) {
           this.formGroup.setControl(
             column.name,
@@ -418,7 +419,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
             ? this.formGroup.controls[column.name].setValue(parseInt(item[key]))
             : this.formGroup.controls[column.name].setValue(item[key]);
         }
-      } else if (column.type === 'autocomplete') {
+      } else if (isChoiceField(column) && column.type === 'autocomplete') {
         this.formGroup.setControl(
           column.name,
           this.formBuilder.control(item[key])
@@ -838,7 +839,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (!this.isEdition(record)) {
         value = value ? '&#10003;' : ''; // check mark
       }
-    } else if (column.type === 'list' && value && column.domainValues) {
+    } else if (
+      isChoiceField(column) &&
+      column.type === 'list' &&
+      value &&
+      column.domainValues
+    ) {
       const entity = record.entity as any;
       if (column.multiple) {
         let list_id;
@@ -881,7 +887,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           });
         }
       }
-    } else if (column.type === 'autocomplete' && value && column.domainValues) {
+    } else if (
+      isChoiceField(column) &&
+      column.type === 'autocomplete' &&
+      value &&
+      column.domainValues
+    ) {
       const entity = record.entity as any;
       if (!this.isEdition(record) && column.linkColumnForce) {
         value =

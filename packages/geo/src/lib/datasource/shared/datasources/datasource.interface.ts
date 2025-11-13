@@ -1,3 +1,5 @@
+import { BaseEntityTableColumn } from '@igo2/common/entity';
+
 import type { Type } from 'ol/geom/Geometry';
 
 import { Encoders, Preset, Tokenizer } from 'flexsearch';
@@ -40,7 +42,8 @@ export interface DataSourceOptions {
   fieldNameGeometry?: string;
 }
 
-export interface SourceFieldsOptionsParams {
+export interface SourceFieldsOptionsParams
+  extends Omit<BaseEntityTableColumn, 'title'> {
   name: any;
   alias?: any;
   values?: any;
@@ -48,11 +51,18 @@ export interface SourceFieldsOptionsParams {
   allowedOperatorsType?: OgcFilterOperatorType;
   step?: number;
   relation?: RelationOptions;
-  type?: number | number[] | string | string[] | boolean | Date;
+  type?:
+    | 'number'
+    | 'number[]'
+    | 'string'
+    | 'string[]'
+    | 'boolean'
+    | 'Date'
+    | 'list'
+    | 'autocomplete'; // TODO the type need to be analyze
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
-  linkColumnForce?: string;
   multiple?: boolean;
   tooltip?: string;
   searchIndex?: searchIndexOptions;

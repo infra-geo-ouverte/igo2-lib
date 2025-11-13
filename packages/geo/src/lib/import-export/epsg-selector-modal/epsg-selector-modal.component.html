@@ -1,0 +1,56 @@
+<h2 mat-dialog-title class="mat-typography">
+  {{ 'igo.geo.dropGeoFile.epsgUndefined.title' | translate }}
+</h2>
+<div mat-dialog-content class="mat-typography">
+  <p
+    [innerHTML]="
+      'igo.geo.dropGeoFile.epsgUndefined.text'
+        | translate: { fileName: data.fileName }
+    "
+  ></p>
+  <div class="igo-input-container">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>{{
+        'igo.geo.importExportForm.importProjPlaceholder' | translate
+      }}</mat-label>
+      <mat-select [(value)]="selectedEpsg">
+        @for (projection of data?.projections; track projection) {
+          <mat-option
+            [value]="projection.code"
+            (click)="$event.stopPropagation()"
+          >
+            @if (projection.translateKey) {
+              <span matListItemTitle>
+                {{
+                  'igo.geo.importExportForm.projections.' +
+                    projection.translateKey | translate: projection
+                }}
+              </span>
+            }
+            @if (!projection.translateKey) {
+              <span matListItemTitle>
+                {{ projection.alias }}
+              </span>
+            }
+          </mat-option>
+        }
+      </mat-select>
+      <mat-hint>
+        {{ 'igo.geo.dropGeoFile.epsgUndefined.note' | translate }}
+      </mat-hint>
+    </mat-form-field>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">
+    {{ 'igo.common.confirmDialog.cancelBtn' | translate }}
+  </button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="confirm()"
+    [disabled]="!selectedEpsg"
+  >
+    {{ 'igo.common.confirmDialog.confirmBtn' | translate }}
+  </button>
+</div>

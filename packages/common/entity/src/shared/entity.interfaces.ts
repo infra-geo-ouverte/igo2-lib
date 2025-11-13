@@ -90,7 +90,8 @@ export interface TableRelation {
   table: string;
 }
 
-export interface EntityTableColumn {
+export type EntityTableColumn = SelectEntityTableColumn | BaseEntityTableColumn;
+/*export interface EntityTableColumn {
   validation?: EntityTableColumnValidation;
   name: string;
   title: string;
@@ -114,7 +115,7 @@ export interface EntityTableColumn {
   onChange?: (event: Event) => void;
   onClick?: (event: Event) => void;
   onFocus?: (event: Event) => void;
-}
+}*/
 
 export interface SelectOption {
   id: number;
@@ -129,4 +130,86 @@ export interface EntityTableButton {
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';
   editMode?: boolean;
+}
+
+export type AnyEntityField = AnyChoiceEntityField | BaseEntityField;
+
+export type AnyChoiceEntityField =
+  | ChoiceEntityFieldWithDomain
+  | ChoiceEntityFieldWithLabelField;
+
+export interface ChoiceEntityFieldWithDomain extends BaseChoiceEntityField {
+  domainValues: SelectOption[];
+}
+
+export interface ChoiceEntityFieldWithLabelField extends BaseChoiceEntityField {
+  labelField: string;
+}
+
+interface BaseChoiceEntityField extends BaseEntityField {
+  domainValues?: SelectOption[];
+  type: 'list' | 'autocomplete';
+  dataType: EntityDataType;
+  /** Define the caracters who structure the array. This allow a workaround to handle stringify list with custom caracter */
+  arrayIdentifier?: [string, string];
+}
+
+export type EntityDataType = 'string' | 'number' | 'object';
+
+interface BaseEntityField {
+  multiple?: boolean;
+  name: string;
+  relation?: EntityRelation;
+  type?: string;
+}
+
+export interface EntityRelation {
+  table?: string;
+  url?: string;
+  params?: EntityRelationParam;
+  choiceList?: {
+    path?: {
+      /**
+       * The list property allows you to determine a path to resolve to access the list in an Object.
+       * This is required when the API returns an Object instead of a raw List
+       **/
+      list?: string;
+      /** Default is "id" */
+      id?: string;
+      /** Default is "value" */
+      value?: string;
+    };
+  };
+}
+
+export interface EntityRelationParam {
+  name?: string;
+  field: string;
+}
+
+export type SelectEntityTableColumn = AnyChoiceEntityField &
+  BaseEntityTableColumn;
+
+export interface BaseEntityTableColumn extends BaseEntityField {
+  primary?: boolean;
+  renderer?: EntityTableColumnRenderer;
+  sort?: boolean;
+  step?: number;
+  title: string;
+  tooltip?: string;
+  validation?: EntityTableColumnValidation & { send?: boolean };
+  visible?: boolean;
+  icon?: string;
+  linkColumnForce?: string;
+  cellClassFunc?: (
+    entity: object,
+    record: EntityRecord<object>
+  ) => {
+    [key: string]: boolean;
+  };
+  valueAccessor?: (entity: object, record?: EntityRecord<object>) => any;
+  onBlur?: (event: Event) => void;
+  onChange?: (event: Event) => void;
+  onClick?: (event: Event) => void;
+  onFocus?: (event: Event) => void;
 }

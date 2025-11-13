@@ -70,6 +70,11 @@
         "ogreServer": {
           "title": "Ogre server error 500",
           "text": "Error in convert to geojson. Maybe file is too big, try to import that file in geojson format"
+        },
+        "epsgUndefined": {
+          "text": "The projection for the file <strong> {{fileName}} </strong> could not be detected automatically. Please select a projection to continue the upload.",
+          "title": "Coordinate System (Projection)",
+          "note": "If your file's projection is not in the list, you must convert your file to a compatible coordinate system."
         }
       },
       "export": {
