@@ -313,8 +313,9 @@ export class ShareMapEncoder {
     layersOptions: AnyLayerOptions[],
     targetId: string | number
   ): boolean {
-    if (!targetId) return false;
+    if (targetId == null) return false;
     return layersOptions.some((l) => {
+      if (!l) return false;
       if (!isLayerGroupOptions(l)) {
         return String(l.id) === String(targetId);
       }
