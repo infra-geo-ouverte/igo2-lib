@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
+import { EpsgSelectorModalComponent } from './epsg-selector-modal/epsg-selector-modal.component';
 import { ExportButtonComponent } from './export-button/export-button.component';
 import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
@@ -7,15 +8,26 @@ import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
 export const IMPORT_EXPORT_DIRECTIVES = [
   ImportExportComponent,
   DropGeoFileDirective,
-  ExportButtonComponent
+  ExportButtonComponent,
+  EpsgSelectorModalComponent
 ] as const;
 
 /**
  * @deprecated import the components directly or IMPORT_EXPORT_DIRECTIVES for the set
  */
 @NgModule({
-  imports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent],
-  exports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
+  imports: [
+    ImportExportComponent,
+    DropGeoFileDirective,
+    ExportButtonComponent,
+    EpsgSelectorModalComponent
+  ],
+  exports: [
+    ImportExportComponent,
+    DropGeoFileDirective,
+    ExportButtonComponent,
+    EpsgSelectorModalComponent
+  ]
 })
 export class IgoImportExportModule {
   static forRoot(): ModuleWithProviders<IgoImportExportModule> {

@@ -19,7 +19,15 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { circular } from 'ol/geom/Polygon';
 
 import { FeatureCollection } from 'geojson';
-import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
+import {
+  Observable,
+  Observer,
+  catchError,
+  lastValueFrom,
+  of,
+  tap,
+  throwError
+} from 'rxjs';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
@@ -30,11 +38,16 @@ import {
   FeatureWorkspace,
   WfsWorkspace
 } from '../../workspace';
+import { TableDataService } from '../../workspace/shared/table-data.service';
 import {
   ExportInvalidFileError,
   ExportNothingToExportError
 } from './export.errors';
-import { ExportOptions, GeometryCollection } from './export.interface';
+import {
+  ExportOptions,
+  GeometryCollection,
+  RADIUS_NAME
+} from './export.interface';
 import { AnyExportFormat, ExportOgreFormat } from './export.type';
 import { isCsvExport } from './export.utils';
 
@@ -46,6 +59,7 @@ const SHAPEFILE_FIELD_MAX_LENGHT = 255;
 export class ExportService {
   private config = inject(ConfigService);
   private httpClient = inject(HttpClient);
+  private tableDataService = inject(TableDataService);
 
   static ogreFormats: Record<ExportOgreFormat, string> = {
     GML: 'gml',
@@ -268,15 +282,19 @@ export class ExportService {
       const features = await lastValueFrom(
         this.getFeatures(map, layer, data, store)
       );
+      const transformedFeatures = await this.transformFeaturesToExportFormat(
+        features,
+        layer
+      );
 
-      const formattedFeatures = features?.length
-        ? this.formatFeatures(features, 'GeoJSON')
+      const formattedFeatures = transformedFeatures?.length
+        ? this.formatFeatures(transformedFeatures, 'GeoJSON')
         : null;
 
-      const collection: FeatureCollection = features
+      const collection: FeatureCollection = transformedFeatures
         ? JSON.parse(formattedFeatures)
         : {
-            features: []
+            transformedFeatures: []
           };
       const rows = collection.features.map((feature) =>
         this.formatRecord(feature.properties)
@@ -338,6 +356,10 @@ export class ExportService {
       dataProjection: projectionOut,
       featureProjection: projectionIn
     });
+
+    const sizeError = this.checkOgrePayloadSize(featuresText);
+    if (sizeError) return sizeError;
+
     const url = `${this.ogreUrl}/convertJson`;
 
     const formData = new FormData();
@@ -366,6 +388,7 @@ export class ExportService {
 
     formData.append('outputName', this.formatFilename(outputName));
     formData.append('format', ogreFormat);
+    formData.append('forceUTF8', 'true');
 
     return this.httpClient
       .post(url, formData, {
@@ -544,7 +567,7 @@ export class ExportService {
 
     geomTypes.forEach((geomType) => {
       geomType.features.forEach((feature) => {
-        const radius: number = feature.get('rad');
+        const radius: number = feature.get(RADIUS_NAME);
         if (radius) {
           const center4326: number[] = [
             feature.get('longitude'),
@@ -558,5 +581,38 @@ export class ExportService {
     });
 
     return geomTypes;
+  }
+
+  /**
+   * Checks if the given payload exceeds the OGRE maximum allowed size (2MB).
+   * @param payload The GeoJSON payload as a string.
+   * @returns An Observable that throws an error if the payload is too large, or undefined if the size is acceptable.
+   */
+  private checkOgrePayloadSize(payload: string): Observable<never> | undefined {
+    const OGRE_MAX_SIZE = 2 * 1024 * 1024; // 2MB
+    const byteLength = new TextEncoder().encode(payload).length;
+    if (byteLength > OGRE_MAX_SIZE) {
+      const error = new Error();
+      error.name = 'maxFieldsSize';
+      error.message = `GeoJSON too large for OGRE: ${byteLength} bytes (max is ${OGRE_MAX_SIZE})`;
+      return throwError(() => error);
+    }
+    return undefined;
+  }
+
+  /**
+   * Transform features to an export-friendly format (titles and domain values).
+   */
+  async transformFeaturesToExportFormat(
+    features: OlFeature<OlGeometry>[],
+    layer: Layer
+  ): Promise<OlFeature<OlGeometry>[]> {
+    const options = layer.dataSource.options;
+
+    return this.tableDataService.formatData(
+      features,
+      options.sourceFields,
+      options.relations
+    );
   }
 }
