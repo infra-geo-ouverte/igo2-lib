@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@angular/build": "^20.3.4",
-    "@angular/cli": "^20.3.4",
+    "@angular/cli": "^20.3.9",
     "@angular/compiler-cli": "^20.3.3",
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
