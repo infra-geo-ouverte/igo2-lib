@@ -27,6 +27,7 @@ import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation, withStaticConfig } from '@igo2/core/language';
+import { provideOffline } from '@igo2/geo';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routing';
@@ -64,6 +65,7 @@ bootstrapApplication(AppComponent, {
     provideTranslation(withStaticConfig(environment.igo.language)),
     provideAuthentification(),
     provideIcon(),
+    provideOffline({ enable: true }),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' }

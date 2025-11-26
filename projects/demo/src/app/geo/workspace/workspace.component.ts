@@ -25,11 +25,7 @@ import {
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
-  OSMDataSource,
-  OSMDataSourceOptions,
   VectorLayerOptions,
-  WFSDataSource,
-  WFSDataSourceOptions,
   WorkspaceSelectorDirective
 } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
@@ -122,49 +118,42 @@ export class AppWorkspaceComponent implements OnInit {
         })
       );
 
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
-        this.map.layerController.add(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource,
-            baseLayer: true,
-            visible: true
-          } satisfies LayerOptions)
-        );
-      });
-
-    const wfsDataSourceOptions: WFSDataSourceOptions = {
-      type: 'wfs',
-      url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-      params: {
-        featureTypes: 'etablissement_mtq',
-        fieldNameGeometry: 'geometry',
-        version: '2.0.0',
-        outputFormat: 'geojson'
-      },
-      sourceFields: [
-        { name: 'idetablis', alias: 'ID' },
-        { name: 'nometablis', alias: 'Name' },
-        { name: 'typetablis', alias: 'Type' }
-      ]
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wfsDataSourceOptions)
-      .subscribe((dataSource: WFSDataSource) => {
-        const layerOptions: VectorLayerOptions = {
+    this.layerService
+      .createLayers([
+        {
+          title: 'OSM',
+          sourceOptions: {
+            type: 'osm'
+          },
+          baseLayer: true,
+          visible: true
+        } satisfies LayerOptions,
+        {
           title: 'Simple WFS ',
           maxResolution: 3000,
           visible: true,
-          source: dataSource
-        };
-        this.map.layerController.add(
-          this.layerService.createLayer(layerOptions)
-        );
+          workspace: {
+            enabled: true
+          },
+          sourceOptions: {
+            type: 'wfs',
+            url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+            params: {
+              featureTypes: 'etablissement_mtq',
+              fieldNameGeometry: 'geometry',
+              version: '2.0.0',
+              outputFormat: 'geojson'
+            },
+            sourceFields: [
+              { name: 'idetablis', alias: 'ID' },
+              { name: 'nometablis', alias: 'Name' },
+              { name: 'typetablis', alias: 'Type' }
+            ]
+          }
+        } satisfies VectorLayerOptions
+      ])
+      .subscribe((layers) => {
+        this.map.layerController.add(...layers);
       });
   }
 
