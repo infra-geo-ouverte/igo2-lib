@@ -174,8 +174,14 @@ export class LayerViewerBottomActionsComponent {
   }
 
   toggleSelectionVisibility(): void {
+    var allHidden = this.allSelectionVisibilityHidden;
     this.selected.forEach((layer) => {
-      layer.visible = !layer.visible;
+      layer.visible = allHidden;
+      if (isLayerGroup(layer)) {
+        (<LayerGroup>layer).children.forEach((child) => {
+          child.visible = allHidden;
+        });
+      }
     });
     this.layerChange.emit();
   }
