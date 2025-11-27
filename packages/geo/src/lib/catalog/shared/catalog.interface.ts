@@ -65,8 +65,9 @@ export interface CatalogItem {
   externalProvider?: boolean;
 }
 
-export interface CatalogItemLayer<L = MetadataLayerOptions>
-  extends CatalogItem {
+export interface CatalogItemLayer<
+  L = MetadataLayerOptions
+> extends CatalogItem {
   options: L;
 }
 

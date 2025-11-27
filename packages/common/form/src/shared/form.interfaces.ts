@@ -50,8 +50,9 @@ interface FormFieldSubscriberOptions {
   control: UntypedFormControl;
 }
 
-export interface FormField<T extends FormFieldInputs = FormFieldInputs>
-  extends FormFieldConfig<T> {
+export interface FormField<
+  T extends FormFieldInputs = FormFieldInputs
+> extends FormFieldConfig<T> {
   control: UntypedFormControl;
 }
 

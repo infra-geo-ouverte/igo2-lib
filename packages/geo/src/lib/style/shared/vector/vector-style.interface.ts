@@ -4,8 +4,7 @@ import olStyle from 'ol/style/Style';
 
 import type { Feature } from '../../../feature/shared/feature.interfaces';
 
-export interface FeatureCommonVectorStyleOptions
-  extends CommonVectorStyleOptions {
+export interface FeatureCommonVectorStyleOptions extends CommonVectorStyleOptions {
   feature: Feature | olFeature<OlGeometry>;
 }
 
