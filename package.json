@@ -97,7 +97,7 @@
     "ng-packagr": "^20.3.0",
     "prettier": "^3.5.0",
     "sass": "^1.93.0",
-    "semantic-release": "^24.2.0",
+    "semantic-release": "^25.0.2",
     "tsx": "^4.20.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.0"
