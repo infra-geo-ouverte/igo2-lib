@@ -25,8 +25,7 @@ export interface StoredQueriesResponse {
   features: StoredQueriesData[];
 }
 
-export interface StoredQueriesReverseSearchSourceOptions
-  extends SearchSourceOptions {
+export interface StoredQueriesReverseSearchSourceOptions extends SearchSourceOptions {
   storedquery_id: string;
   longField: string;
   latField: string;

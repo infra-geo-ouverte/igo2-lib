@@ -9,8 +9,7 @@ export interface FormDialogFormConfig {
   formGroupsConfigs?: FormGroupsConfig[];
 }
 export interface FormDialogData
-  extends FormDialogOptions,
-    FormDialogFormConfig {}
+  extends FormDialogOptions, FormDialogFormConfig {}
 export interface FormDialogOptions extends MatDialogConfig {
   data$?: BehaviorSubject<Record<string, any>>;
   title?: string;

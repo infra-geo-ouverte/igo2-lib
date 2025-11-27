@@ -38,8 +38,7 @@ export interface ILayerDataHighlight {
 }
 
 interface QueryWMSDataSourceOptions
-  extends WMSDataSourceOptions,
-    Omit<QueryableDataSourceOptions, 'url'> {}
+  extends WMSDataSourceOptions, Omit<QueryableDataSourceOptions, 'url'> {}
 
 export interface ILayerItemResponse extends ImageLayerOptions {
   title: string;

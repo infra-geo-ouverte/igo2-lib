@@ -78,10 +78,10 @@ export class ShareMapService {
 
     return Boolean(
       params[pos.key] ||
-        params[projectionKey] ||
-        params[rotationKey] ||
-        params[zoomKey] ||
-        params[centerKey]
+      params[projectionKey] ||
+      params[rotationKey] ||
+      params[zoomKey] ||
+      params[centerKey]
     );
   }
 }
