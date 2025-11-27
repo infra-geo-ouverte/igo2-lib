@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-viewer-bottom-actions/layer-viewer-bottom-actions.component.scss"],
+  "sourcesContent": [".igo-layer-actions-container {\n  padding: 0px 6px 0px 4px;\n}\n\n.igo-layer-actions-container > div {\n  text-align: center;\n}\n\n.igo-layer-button-group,\n.actions-buttons-multi {\n  display: flex;\n  align-items: center;\n  flex-direction: row-reverse;\n  overflow-x: auto;\n  overflow-y: hidden;\n\n  &::-webkit-scrollbar {\n    height: 4px;\n  }\n\n  &::-webkit-scrollbar-track {\n    background: #f1f1f1;\n  }\n\n  &::-webkit-scrollbar-thumb {\n    background: #888;\n\n    &:hover {\n      background: #555;\n    }\n  }\n}\n\n.igo-layer-button-group {\n  padding-top: 4px;\n}\n\nigo-panel {\n  height: unset;\n}\n\n::ng-deep .panel-opacity-menu {\n  overflow: visible !important;\n\n  #opacity-slider {\n    margin: 0 16px;\n  }\n}\n"],
+  "mappings": "AAAA,CAAA,4BAAA,QACE,EAAA,IAAA,EAAA,IAGF,CAJA,2BAIA,CAAA,IACE,WAAA,OAGF,CAAA,uBAAA,CAAA,sBAEE,QAAA,KACA,YAAA,OACA,eAAA,YACA,WAAA,KACA,WAAA,OAEA,CARF,sBAQE,oBAAA,CARF,qBAQE,oBACE,OAAA,IAGF,CAZF,sBAYE,0BAAA,CAZF,qBAYE,0BACE,WAAA,QAGF,CAhBF,sBAgBE,0BAAA,CAhBF,qBAgBE,0BACE,WAAA,KAEA,CAnBJ,sBAmBI,yBAAA,OAAA,CAnBJ,qBAmBI,yBAAA,OACE,WAAA,KAKN,CAzBA,uBA0BE,YAAA,IAGF,UACE,OAAA,MAGF,UAAA,CAAA,mBACE,SAAA,kBAEA,UAAA,CAHF,mBAGE,CAAA,eA5CF,OA6CI,EAAA",
+  "names": []
+}

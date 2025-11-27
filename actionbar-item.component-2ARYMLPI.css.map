@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/action/src/actionbar/actionbar-item.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep mat-list-item:hover {\n    cursor: pointer;\n  }\n\n  mat-list-item {\n    &.igo-actionbar-item-disabled {\n      color: rgba(0, 0, 0, 0.26);\n      cursor: default !important;\n    }\n\n    &.igo-actionbar-item-no-display {\n      display: none;\n    }\n\n    ::ng-deep {\n      button {\n        &[matlistitemavatar] {\n          margin-left: 4px;\n        }\n        .mat-mdc-button-persistent-ripple {\n          display: none;\n        }\n      }\n    }\n  }\n\n  .item-checkbox ::ng-deep mat-checkbox label {\n    margin-left: 28px;\n  }\n\n  .actionbar-item {\n    [matline] {\n      padding-left: 16px;\n    }\n  }\n}\n"],
+  "mappings": "AACE,MAAA,UAAA,aAAA,OACE,OAAA,QAIA,MAAA,aAAA,CAAA,4BACE,MAAA,UACA,OAAA,kBAGF,MAAA,aAAA,CAAA,8BACE,QAAA,KAKE,MAAA,cAAA,UAAA,MAAA,CAAA,mBACE,YAAA,IAEF,MAAA,cAAA,UAAA,OAAA,CAAA,iCACE,QAAA,KAMR,MAAA,CAAA,cAAA,UAAA,aAAA,MACE,YAAA,KAIA,MAAA,CAAA,eAAA,CAAA,SACE,aAAA",
+  "names": []
+}

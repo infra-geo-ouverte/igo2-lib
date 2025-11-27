@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/table/src/table.component.scss"],
+  "sourcesContent": ["/*** Main ***/\n:host {\n  width: 100%;\n  height: 100%;\n  display: block;\n}\n\n.table-container {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  overflow: auto;\n  flex: 1 1 auto;\n}\n\n.table-box {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n}\n\n.table-header {\n  min-height: 64px;\n  max-width: 500px;\n  display: flex;\n  flex: 0 1 auto;\n  align-items: baseline;\n  padding: 8px 24px 0;\n  font-size: 20px;\n  justify-content: space-between;\n}\n\ntr[mat-header-row],\ntr[mat-row] {\n  height: 60px;\n}\n\n.mat-cell-text {\n  overflow: hidden;\n  word-wrap: break-word;\n}\n\ntd[mat-cell] {\n  padding-right: 15px;\n}\n\nth.mat-mdc-header-cell {\n  padding-right: 5px;\n}\n\nbutton {\n  margin-right: 10px;\n}\n"],
+  "mappings": "AACA,MACE,MAAA,KACA,OAAA,KACA,QAAA,MAGF,CAAA,gBACE,QAAA,KACA,eAAA,OACA,OAAA,KACA,SAAA,KACA,KAAA,EAAA,EAAA,KAGF,CAAA,UACE,OAAA,KACA,QAAA,KACA,eAAA,OAGF,CAAA,aACE,WAAA,KACA,UAAA,MACA,QAAA,KACA,KAAA,EAAA,EAAA,KACA,YAAA,SA1BF,QA2BE,IAAA,KAAA,EACA,UAAA,KACA,gBAAA,cAGF,EAAA,CAAA,gBAAA,EAAA,CAAA,SAEE,OAAA,KAGF,CAAA,cACE,SAAA,OACA,UAAA,WAGF,EAAA,CAAA,UACE,cAAA,KAGF,EAAA,CAAA,oBACE,cAAA,IAGF,OACE,aAAA",
+  "names": []
+}

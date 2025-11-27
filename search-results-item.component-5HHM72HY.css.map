@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/search/search-results/search-results-item.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep small {\n    color: #8c8c8c;\n  }\n\n  div[matlistitemmeta] {\n    &:empty {\n      display: none;\n    }\n  }\n\n  ::ng-deep .search-result-tooltip {\n    white-space: pre-line;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,UAAA,MACE,MAAA,QAIA,MAAA,GAAA,CAAA,gBAAA,OACE,QAAA,KAIJ,MAAA,UAAA,CAAA,sBACE,YAAA",
+  "names": []
+}

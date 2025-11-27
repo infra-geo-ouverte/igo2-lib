@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/search/search-results/search-results.component.scss"],
+  "sourcesContent": [":host {\n  .moreResults {\n    cursor: pointer;\n    color: blue;\n    float: right;\n    margin-right: 10px;\n    margin-top: 5px;\n  }\n\n  igo-list ::ng-deep mat-list {\n    height: 100%;\n    .custom-tabs-view .mat-mdc-tab-header-pagination {\n      min-width: 20px;\n    }\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,YACE,OAAA,QACA,MAAA,KACA,MAAA,MACA,aAAA,KACA,WAAA,IAGF,MAAA,SAAA,UAAA,SACE,OAAA,KACA,MAAA,SAAA,UAAA,SAAA,CAAA,iBAAA,CAAA,8BACE,UAAA",
+  "names": []
+}

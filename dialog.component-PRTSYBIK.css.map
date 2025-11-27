@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/common/dialog/dialog.component.scss"],
+  "sourcesContent": ["pre,\ncode {\n  font-family: monospace, monospace;\n}\npre {\n  overflow: auto;\n}\npre > code {\n  display: block;\n  padding: 1rem;\n  word-wrap: normal;\n}\n\n.example-label {\n  display: table-cell;\n  font-size: 14px;\n  margin-left: 8px;\n  min-width: 120px;\n}\n\n.example-button-row {\n  display: table-cell;\n  max-width: 600px;\n}\n\n.example-button-row .mat-mdc-button-base {\n  margin: 8px 8px 8px 0;\n}\n"],
+  "mappings": "AAAA,IAAA,KAEE,YAAA,SAAA,CAAA,UAEF,IACE,SAAA,KAEF,GAAA,CAAA,KACE,QAAA,MARF,QASE,KACA,UAAA,OAGF,CAAA,cACE,QAAA,WACA,UAAA,KACA,YAAA,IACA,UAAA,MAGF,CAAA,mBACE,QAAA,WACA,UAAA,MAGF,CALA,mBAKA,CAAA,oBAzBA,OA0BE,IAAA,IAAA,IAAA",
+  "names": []
+}

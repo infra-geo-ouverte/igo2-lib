@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/filter/spatial-filter-tool/spatial-filter-tool.component.scss"],
+  "sourcesContent": [":host {\n  $base-padding: 0px 12px;\n\n  igo-spatial-filter-item {\n    display: block;\n    padding: $base-padding;\n  }\n\n  ::ng-deep .mat-mdc-tab-body-wrapper {\n    margin-top: 12px;\n    padding: $base-padding;\n  }\n}\n"],
+  "mappings": "AAGE,MAAA,wBACE,QAAA,MADF,QAFe,EAAA,KAOf,MAAA,UAAA,CAAA,yBACE,WAAA,KANF,QAFe,EAAA",
+  "names": []
+}

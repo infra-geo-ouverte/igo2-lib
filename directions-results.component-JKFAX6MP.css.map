@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/directions/directions-results/directions-results.component.scss"],
+  "sourcesContent": [".igo-input-container {\n  width: 100%;\n  padding: 20px 10px;\n  box-sizing: border-box;\n\n  mat-form-field {\n    width: 100%;\n  }\n}\n.igo-route-title {\n  font-weight: bold;\n  margin: 0;\n}\n\n.step {\n  cursor: pointer;\n}\n"],
+  "mappings": "AAAA,CAAA,oBACE,MAAA,KADF,QAEE,KAAA,KACA,WAAA,WAEA,CALF,oBAKE,eACE,MAAA,KAGJ,CAAA,gBACE,YAAA,IAVF,OAWE,EAGF,CAAA,KACE,OAAA",
+  "names": []
+}

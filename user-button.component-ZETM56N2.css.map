@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/src/style/partial/common-utils.scss", "packages/context/src/lib/context-map-button/user-button/user-button.component.scss"],
+  "sourcesContent": ["@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n", "@use '../../../../../common/src/style/partial/common-utils';\n@import '../../../../../core/src/style/partial/media';\n\n:host {\n  @include common-utils.square-button();\n\n  .igo-user-button-container {\n    display: flex;\n    gap: 4px;\n\n    button {\n      background-color: #fff;\n      &:hover {\n        background-color: #efefef;\n      }\n    }\n  }\n\n  .igo-user-button-more-container {\n    display: flex;\n    gap: 4px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,OAAA,cACE,YACA,MAAA,OAAA,CAAA,WAAA,MAAA,OAAA,CAAA,wBAFF,cAII,YCCJ,MAAA,CAAA,0BACE,QAAA,KACA,IAAA,IAEA,MAAA,CAJF,0BAIE,OACE,iBAAA,KACA,MAAA,CANJ,0BAMI,MAAA,OACE,iBAAA,QAKN,MAAA,CAAA,+BACE,QAAA,KACA,IAAA",
+  "names": []
+}

@@ -1,0 +1,16 @@
+{
+  "triangle": {
+    "height": 32,
+    "pixelRatio": 2,
+    "width": 45,
+    "x": 0,
+    "y": 0
+  },
+  "circle": {
+    "height": 32,
+    "pixelRatio": 2,
+    "width": 31,
+    "x": 45,
+    "y": 0
+  }
+}

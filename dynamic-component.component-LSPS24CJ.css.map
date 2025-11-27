@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/common/dynamic-component/dynamic-component.component.scss"],
+  "sourcesContent": ["pre,\ncode {\n  font-family: monospace, monospace;\n}\npre {\n  overflow: auto;\n}\npre > code {\n  display: block;\n  padding: 1rem;\n  word-wrap: normal;\n}\n"],
+  "mappings": "AAAA,IAAA,KAEE,YAAA,SAAA,CAAA,UAEF,IACE,SAAA,KAEF,GAAA,CAAA,KACE,QAAA,MARF,QASE,KACA,UAAA",
+  "names": []
+}

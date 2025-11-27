@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/form/src/form-field/form-field.component.scss"],
+  "sourcesContent": ["::ng-deep {\n  mat-form-field {\n    width: 100%;\n  }\n\n  .igo-form-disable-switch {\n    margin-right: 8px;\n  }\n}\n"],
+  "mappings": "AACE,UAAA,eACE,MAAA,KAGF,UAAA,CAAA,wBACE,aAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/collapsible/src/collapsible.component.scss"],
+  "sourcesContent": [":host ::ng-deep .mat-mdc-list .mat-mdc-list-item.mat-mdc-list-item-avatar {\n  height: auto;\n  width: auto;\n  padding: 0;\n}\n\nmat-list-item {\n  overflow: hidden;\n}\n"],
+  "mappings": "AAAA,MAAA,UAAA,CAAA,aAAA,CAAA,iBAAA,CAAA,yBACE,OAAA,KACA,MAAA,KAFF,QAGE,EAGF,cACE,SAAA",
+  "names": []
+}

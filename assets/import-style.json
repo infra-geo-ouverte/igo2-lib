@@ -1,0 +1,42 @@
+{
+  "default": {
+    "style": {
+      "fill": {
+        "color": "rgba(0,255,0,0.3)"
+      },
+      "stroke": {
+        "color": "black"
+      },
+      "circle": {
+        "fill": {
+          "color": "rgba(0,255,0,0.3)"
+        },
+        "stroke": {
+          "color": "black"
+        },
+        "radius": 5
+      }
+    }
+  },
+  "bureaux_locaux": {
+    "styleByAttribute": {
+      "type": "circle",
+      "attribute": "type",
+      "data": ["local", "regional"],
+      "fill": ["blue", "red"],
+      "stroke": ["black", "black"],
+      "label": "type"
+    }
+  },
+  "countries": {
+    "style": {
+      "fill": {
+        "color": "red"
+      },
+      "stroke": {
+        "color": "black",
+        "width": 4
+      }
+    }
+  }
+}

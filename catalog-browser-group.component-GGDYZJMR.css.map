@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/catalog/catalog-browser/catalog-browser-group.component.scss"],
+  "sourcesContent": [".igo-catalog-group-title {\n  cursor: pointer;\n}\n\n.igo-cataloggroup-external-icon {\n  cursor: help;\n}\n\n.catalog-browser-group-carret {\n  margin-right: 16px;\n}\n\n.igo-catalog-group-title {\n  font-weight: 500;\n}\n\n:host {\n  .mdc-list-item__end,\n  .mdc-list-item__start {\n    color: black;\n  }\n}\n"],
+  "mappings": "AAAA,CAAA,wBACE,OAAA,QAGF,CAAA,+BACE,OAAA,KAGF,CAAA,6BACE,aAAA,KAGF,CAZA,wBAaE,YAAA,IAIA,MAAA,CAAA,mBAAA,MAAA,CAAA,qBAEE,MAAA",
+  "names": []
+}

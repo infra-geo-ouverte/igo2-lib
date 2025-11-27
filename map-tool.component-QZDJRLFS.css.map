@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/map/map-tool/map-tool.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep {\n    .mat-mdc-tab-body-content {\n      overflow: hidden;\n    }\n  }\n}\n"],
+  "mappings": "AAEI,MAAA,UAAA,CAAA,yBACE,SAAA",
+  "names": []
+}

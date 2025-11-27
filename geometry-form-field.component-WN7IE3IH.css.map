@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/geometry/geometry-form-field/geometry-form-field.component.scss"],
+  "sourcesContent": [":host {\n  display: block;\n  width: 100%;\n}\n\n.geometry-type-toggle,\n.draw-guide-field {\n  width: 100%;\n}\n\n.geometry-type-toggle {\n  padding: 10px;\n  text-align: center;\n}\n\n.draw-guide-field mat-icon {\n  margin: 0 10px;\n}\n\n.draw-guide-units {\n  padding: 10px;\n}\n"],
+  "mappings": "AAAA,MACE,QAAA,MACA,MAAA,KAGF,CAAA,qBAAA,CAAA,iBAEE,MAAA,KAGF,CALA,qBALA,QAWE,KACA,WAAA,OAGF,CAVA,iBAUA,SAfA,OAgBE,EAAA,KAGF,CAAA,iBAnBA,QAoBE",
+  "names": []
+}

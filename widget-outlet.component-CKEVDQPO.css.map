@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/widget/src/widget-outlet/widget-outlet.component.scss"],
+  "sourcesContent": [":host {\n  igo-dynamic-outlet {\n    height: 100%;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,mBACE,OAAA",
+  "names": []
+}

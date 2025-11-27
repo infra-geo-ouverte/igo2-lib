@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/catalog/catalog-library/add-catalog-dialog.component.scss"],
+  "sourcesContent": ["mat-form-field {\n  width: 100%;\n}\n\n.add-catalog-button-top-padding {\n  padding-top: 25px;\n}\n\n.igo-form {\n  padding: 10px 5px 5px;\n}\n\n.igo-form-button-group {\n  text-align: center;\n}\n\nbutton {\n  cursor: pointer;\n}\n\nbutton#addCatalogBtnDialog[disabled='true'] {\n  cursor: default;\n  background-color: rgba(0, 0, 0, 0.12);\n  color: rgba(0, 0, 0, 0.26);\n}\n\n.error {\n  color: red;\n}\n"],
+  "mappings": "AAAA,eACE,MAAA,KAGF,CAAA,+BACE,YAAA,KAGF,CAAA,SARA,QASE,KAAA,IAAA,IAGF,CAAA,sBACE,WAAA,OAGF,OACE,OAAA,QAGF,MAAA,CAAA,mBAAA,CAAA,eACE,OAAA,QACA,iBAAA,UACA,MAAA,UAGF,CAAA,MACE,MAAA",
+  "names": []
+}

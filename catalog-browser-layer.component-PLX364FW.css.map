@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/catalog/catalog-browser/catalog-browser-layer.component.scss", "packages/core/src/style/partial/core.variables.scss"],
+  "sourcesContent": ["@import '../../../../../core/src/style/partial/core.variables';\n\n.igo-cataloglayer-title {\n  cursor: pointer;\n}\n\n.catalog-browser-layer-carret {\n  margin-right: 16px;\n}\n\n.igo-cataloglayer-legend-container {\n  padding-left: 18px;\n  width: calc(100% - 18px);\n  margin-left: $igo-icon-size;\n}\n\n.igo-cataloglayer-external-icon {\n  cursor: help;\n}\n\n:host {\n  .mdc-list-item__end,\n  .mdc-list-item__start {\n    color: black;\n  }\n}\n", "$igo-margin: 5px;\n$igo-padding: 5px;\n$igo-icon-size: 40px;\n\n$app-background-color: rgb(255, 255, 255);\n"],
+  "mappings": "AAEA,CAAA,uBACE,OAAA,QAGF,CAAA,6BACE,aAAA,KAGF,CAAA,kCACE,aAAA,KACA,MAAA,KAAA,KAAA,EAAA,MACA,YCXc,KDchB,CAAA,+BACE,OAAA,KAIA,MAAA,CAAA,mBAAA,MAAA,CAAA,qBAEE,MAAA",
+  "names": []
+}

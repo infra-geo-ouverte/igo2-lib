@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/custom-html/src/custom-html.component.scss"],
+  "sourcesContent": [":host {\n  .custom-html {\n    padding: 20px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,YAAA,QACE",
+  "names": []
+}

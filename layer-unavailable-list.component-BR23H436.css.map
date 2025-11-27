@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-unavailable/layer-unavailable-list/layer-unavailable-list.component.scss"],
+  "sourcesContent": ["igo-list {\n  height: auto;\n\n  ::ng-deep mat-list {\n    padding-bottom: 0;\n  }\n}\n"],
+  "mappings": "AAAA,SACE,OAAA,KAEA,SAAA,UAAA,SACE,eAAA",
+  "names": []
+}

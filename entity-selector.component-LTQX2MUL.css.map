@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/entity/src/entity-selector/entity-selector.component.scss"],
+  "sourcesContent": ["mat-form-field {\n  width: 100%;\n}\n"],
+  "mappings": "AAAA,eACE,MAAA",
+  "names": []
+}

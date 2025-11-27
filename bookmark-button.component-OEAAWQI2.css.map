@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/src/style/partial/common-utils.scss", "packages/context/src/lib/context-map-button/bookmark-button/bookmark-button.component.scss", "packages/core/src/style/partial/core.variables.scss"],
+  "sourcesContent": ["@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n", "@use '../../../../../common/src/style/partial/common-utils';\n@import '../../../../../core/src/style/partial/core.variables';\n\n:host {\n  @include common-utils.square-button();\n\n  .igo-bookmark-button-container {\n    width: $igo-icon-size;\n    button {\n      background-color: #fff;\n      &:hover {\n        background-color: #efefef;\n      }\n    }\n  }\n}\n", "$igo-margin: 5px;\n$igo-padding: 5px;\n$igo-icon-size: 40px;\n\n$app-background-color: rgb(255, 255, 255);\n"],
+  "mappings": "AACE,MAAA,OAAA,cACE,YACA,MAAA,OAAA,CAAA,WAAA,MAAA,OAAA,CAAA,wBAFF,cAII,YCCJ,MAAA,CAAA,8BACE,MCLY,KDMZ,MAAA,CAFF,8BAEE,OACE,iBAAA,KACA,MAAA,CAJJ,8BAII,MAAA,OACE,iBAAA",
+  "names": []
+}

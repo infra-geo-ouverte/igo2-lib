@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/core/activity/activity.component.scss"],
+  "sourcesContent": [":host {\n  .sub-content {\n    margin-top: 12px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,YACE,WAAA",
+  "names": []
+}

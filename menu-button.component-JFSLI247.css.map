@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/src/style/partial/common-utils.scss"],
+  "sourcesContent": ["@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n"],
+  "mappings": "AACE,MAAA,OAAA,cACE,YACA,MAAA,OAAA,CAAA,WAAA,MAAA,OAAA,CAAA,wBAFF,cAII",
+  "names": []
+}

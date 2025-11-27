@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/search/search-selector/search-selector.component.scss", "packages/common/src/style/partial/common-utils.scss", "packages/core/src/style/partial/core.variables.scss"],
+  "sourcesContent": ["@use '../../../../../common/src/style/partial/common-utils';\n@import '../../../../../core/src/style/partial/core.variables';\n\n:host {\n  .igo-search-selector-button {\n    @include common-utils.square-button();\n    border-radius: 0;\n  }\n\n  .igo-search-selector-radio-group {\n    display: inline-flex;\n    flex-direction: column;\n  }\n\n  .igo-search-selector-radio-group mat-radio-button {\n    margin: $igo-margin;\n  }\n}\n", "@mixin square-button() {\n  button {\n    border-radius: 0 !important;\n    .mat-ripple,\n    .mdc-icon-button__ripple {\n      border-radius: 0 !important;\n    }\n  }\n}\n", "$igo-margin: 5px;\n$igo-padding: 5px;\n$igo-icon-size: 40px;\n\n$app-background-color: rgb(255, 255, 255);\n"],
+  "mappings": "AAIE,MAAA,CAAA,2BAAA,cAEE,ECLF,MAAA,CDGA,2BCHA,ODGA,cCFE,YACA,MAAA,CDCF,2BCDE,OAAA,CAAA,WAAA,MAAA,CDCF,2BCDE,OAAA,CAAA,wBDCF,cCCI,YDIJ,MAAA,CAAA,gCACE,QAAA,YACA,eAAA,OAGF,MAAA,CALA,gCAKA,iBAVA,OEJW",
+  "names": []
+}

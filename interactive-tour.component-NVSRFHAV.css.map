@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/interactive-tour/src/interactive-tour.component.scss"],
+  "sourcesContent": ["igo-interactive-tour > button.mat-mdc-raised-button.tour-button-tool-icon {\n  box-shadow: none;\n}\n\n.shepherd-has-title .shepherd-content .shepherd-header {\n  padding: 0.5em 0.75em;\n}\n\n.shepherd-title {\n  margin: 0px !important;\n  font-weight: revert !important;\n}\n\n.shepherd-progress {\n  margin-right: 15px;\n  color: hsla(0, 0%, 45%, 1);\n}\n\n.shepherd-text {\n  font-size: 14px !important;\n}\n\n.shepherd-element {\n  border: 1px solid;\n  border-color: #474747;\n  box-shadow: 4px 5px rgb(101, 101, 101, 0.6);\n}\n"],
+  "mappings": "AAAA,oBAAA,CAAA,MAAA,CAAA,qBAAA,CAAA,sBACE,WAAA,KAGF,CAAA,mBAAA,CAAA,iBAAA,CAAA,gBAJA,QAKE,KAAA,MAGF,CAAA,eARA,OASE,YACA,YAAA,iBAGF,CAAA,kBACE,aAAA,KACA,MAAA,QAGF,CAAA,cACE,UAAA,eAGF,CAAA,iBACE,OAAA,IAAA,MACA,aAAA,QACA,WAAA,IAAA,IAAA",
+  "names": []
+}

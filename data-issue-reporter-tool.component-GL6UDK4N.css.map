@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/geometry-form/data-issue-reporter-tool/data-issue-reporter-tool.component.scss"],
+  "sourcesContent": [":host {\n  .actions-container {\n    button:not(:last-child) {\n      margin-right: 8px;\n    }\n  }\n  .form-container {\n    width: 100%;\n    padding: 10px;\n\n    igo-form-field {\n      display: block;\n      height: auto;\n    }\n  }\n}\n"],
+  "mappings": "AAEI,MAAA,CAAA,kBAAA,MAAA,KAAA,aACE,aAAA,IAGJ,MAAA,CAAA,eACE,MAAA,KALA,QAMA,KAEA,MAAA,CAJF,eAIE,eACE,QAAA,MACA,OAAA",
+  "names": []
+}

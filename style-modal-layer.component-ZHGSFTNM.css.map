@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/style/style-modal/layer/style-modal-layer.component.scss"],
+  "sourcesContent": ["h2 {\n  font-weight: bold;\n  font-size: large;\n}\n\n.igo-form {\n  padding: 10px;\n}\n\n.color-picker {\n  display: grid;\n  grid-template-columns: auto 1fr;\n  align-items: center;\n  grid-gap: 16px;\n  margin-bottom: 16px;\n\n  span {\n    display: flex;\n    align-items: center;\n\n    mat-icon {\n      margin-right: 8px;\n    }\n  }\n}\n\n.edit-colorpicker {\n  padding: 10px 0;\n}\n\nbutton {\n  margin-right: 5px;\n}\n"],
+  "mappings": "AAAA,GACE,YAAA,IACA,UAAA,MAGF,CAAA,SALA,QAME,KAGF,CAAA,aACE,QAAA,KACA,sBAAA,KAAA,IACA,YAAA,OACA,SAAA,KACA,cAAA,KAEA,CAPF,aAOE,KACE,QAAA,KACA,YAAA,OAEA,CAXJ,aAWI,KAAA,SACE,aAAA,IAKN,CAAA,iBA1BA,QA2BE,KAAA,EAGF,OACE,aAAA",
+  "names": []
+}

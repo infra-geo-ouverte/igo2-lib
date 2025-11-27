@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/simple-map/simple-map.component.scss"],
+  "sourcesContent": ["igo-map-browser {\n  width: 100%;\n  height: 350px;\n}\n"],
+  "mappings": "AAAA,gBACE,MAAA,KACA,OAAA",
+  "names": []
+}

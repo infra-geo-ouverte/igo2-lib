@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/filter/ogc-filter-time/ogc-filter-time-slider.component.scss"],
+  "sourcesContent": [":host {\n  ::ng-deep input {\n    text-align: center !important;\n    margin: auto 5px auto 5px !important;\n  }\n\n  .datetime-container {\n    text-align: center;\n  }\n\n  .slider-container {\n    text-align: center;\n  }\n\n  .datetime-input {\n    display: inline-block;\n    margin: 5px 25px;\n  }\n\n  .date-input {\n    width: 120px;\n    margin-right: 25px;\n  }\n\n  .time-input {\n    display: inherit;\n    margin-right: 25px;\n  }\n\n  .hour-input,\n  .minute-input {\n    width: 40px;\n  }\n\n  .minute-input {\n    margin-left: 10px;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,UAAA,MACE,WAAA,iBADF,OAEE,KAAA,cAGF,MAAA,CAAA,mBACE,WAAA,OAGF,MAAA,CAAA,iBACE,WAAA,OAGF,MAAA,CAAA,eACE,QAAA,aAdF,OAeE,IAAA,KAGF,MAAA,CAAA,WACE,MAAA,MACA,aAAA,KAGF,MAAA,CAAA,WACE,QAAA,QACA,aAAA,KAGF,MAAA,CAAA,WAAA,MAAA,CAAA,aAEE,MAAA,KAGF,MAAA,CALA,aAME,YAAA",
+  "names": []
+}

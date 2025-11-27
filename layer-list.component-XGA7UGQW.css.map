@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-list/layer-list.component.scss"],
+  "sourcesContent": [".--not-desktop {\n  igo-layer-group,\n  igo-layer-item {\n    ::ng-deep .list-secondary-actions {\n      button {\n        visibility: visible !important;\n      }\n    }\n  }\n}\n\n.tree-node-item {\n  flex: 1;\n}\n\nmat-tree-node {\n  position: relative;\n  min-height: 40px;\n\n  &:hover,\n  &.--drag-hover {\n    &::after {\n      content: '';\n      position: absolute;\n      inset: 0;\n      border-style: solid;\n      border-width: 1px;\n      border-color: transparent;\n      pointer-events: none;\n    }\n  }\n}\n"],
+  "mappings": "AAIM,CAAA,cAAA,gBAAA,UAAA,CAAA,uBAAA,OAAA,CAAA,cAAA,eAAA,UAAA,CAAA,uBAAA,OACE,WAAA,kBAMR,CAAA,eACE,KAAA,EAGF,cACE,SAAA,SACA,WAAA,KAIE,aAAA,MAAA,OAAA,aAAA,CAAA,YAAA,OACE,QAAA,GACA,SAAA,SAnBA,MAoBA,EACA,aAAA,MACA,aAAA,IACA,aAAA,YACA,eAAA",
+  "names": []
+}

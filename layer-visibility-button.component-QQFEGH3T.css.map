@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-visibility-button/layer-visibility-button.component.scss"],
+  "sourcesContent": [":host {\n  .disabled,\n  .visibility-hidden {\n    &.out-of-range {\n      opacity: 0.54;\n    }\n  }\n}\n\nmat-icon {\n  &[matBadge] ::ng-deep .mat-badge-content {\n    font-size: 12px;\n  }\n}\n"],
+  "mappings": "AAGI,MAAA,CAAA,QAAA,CAAA,aAAA,MAAA,CAAA,iBAAA,CAAA,aACE,QAAA,IAMJ,QAAA,CAAA,UAAA,UAAA,CAAA,kBACE,UAAA",
+  "names": []
+}

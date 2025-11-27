@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/spinner/src/spinner.component.scss"],
+  "sourcesContent": ["$igo-spinner-size: 40px;\n$igo-spinner-border-width: 4px;\n$igo-spinner-top-left: 2px;\n\n:host {\n  .igo-spinner-container {\n    display: none;\n    position: relative;\n    pointer-events: none;\n  }\n\n  .igo-spinner-container.igo-spinner-shown {\n    display: block;\n  }\n\n  mat-progress-spinner {\n    height: $igo-spinner-size;\n    width: $igo-spinner-size;\n    border-radius: 50%;\n  }\n\n  .igo-spinner-background {\n    height: $igo-spinner-size - $igo-spinner-border-width;\n    width: $igo-spinner-size - $igo-spinner-border-width;\n    border-radius: 50%;\n    border: $igo-spinner-border-width solid #ffffff;\n    position: absolute;\n    top: $igo-spinner-top-left;\n    left: $igo-spinner-top-left;\n  }\n}\n"],
+  "mappings": "AAKE,MAAA,CAAA,sBACE,QAAA,KACA,SAAA,SACA,eAAA,KAGF,MAAA,CANA,qBAMA,CAAA,kBACE,QAAA,MAGF,MAAA,qBACE,OAhBe,KAiBf,MAjBe,KAKjB,cAaE,IAGF,MAAA,CAAA,uBACE,OAAA,KACA,MAAA,KAlBF,cAmBE,IACA,OAAA,IAAA,MAAA,QACA,SAAA,SACA,IAzBmB,IA0BnB,KA1BmB",
+  "names": []
+}

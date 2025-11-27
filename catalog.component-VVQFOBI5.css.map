@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/catalog/catalog.component.scss"],
+  "sourcesContent": ["igo-map-browser {\n  width: 100%;\n  height: 300px;\n}\n"],
+  "mappings": "AAAA,gBACE,MAAA,KACA,OAAA",
+  "names": []
+}

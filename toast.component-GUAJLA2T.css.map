@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/toast/toast.component.scss"],
+  "sourcesContent": [":host {\n  position: absolute;\n  bottom: 0px;\n  width: 100%;\n  max-height: calc(100% - 50px);\n  background-color: rgb(255, 255, 255);\n}\n\nigo-feature-details ::ng-deep table {\n  width: 100%;\n}\n"],
+  "mappings": "AAAA,MACE,SAAA,SACA,OAAA,EACA,MAAA,KACA,WAAA,KAAA,KAAA,EAAA,MACA,iBAAA,KAGF,oBAAA,UAAA,MACE,MAAA",
+  "names": []
+}

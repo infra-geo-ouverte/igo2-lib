@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-manager/context-form/context-form.component.scss"],
+  "sourcesContent": ["form {\n  margin: 10px;\n}\n\n.full-width {\n  width: 100%;\n}\n\n#uriInput {\n  .fieldWrapper {\n    display: block;\n    overflow: hidden;\n  }\n  .prefix {\n    float: left;\n  }\n}\n\n#copyButton {\n  width: 24px;\n  float: right;\n  position: relative;\n  top: -58px;\n  left: 5px;\n}\n"],
+  "mappings": "AAAA,YACE,KAGF,CAAA,WACE,MAAA,KAIA,CAAA,SAAA,CAAA,aACE,QAAA,MACA,SAAA,OAEF,CAJA,SAIA,CAAA,OACE,MAAA,KAIJ,CAAA,WACE,MAAA,KACA,MAAA,MACA,SAAA,SACA,IAAA,MACA,KAAA",
+  "names": []
+}

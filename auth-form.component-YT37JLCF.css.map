@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/auth/form/src/auth-form/auth-form.component.scss"],
+  "sourcesContent": ["$colorFont: #888;\n\n:host {\n  z-index: 999;\n}\n\ndiv.login {\n  z-index: 200;\n  width: 90%;\n  min-width: 360px;\n  max-width: 600px;\n  padding: 25px 50px;\n  border: 1px solid;\n  background-color: #fff;\n  border-color: $colorFont;\n}\n\n.center-block {\n  position: fixed;\n  top: 20%;\n  left: 50%;\n  transform: translate(-50%, 0);\n}\n\n.backgroundDisable {\n  position: fixed;\n  top: 0;\n  left: 0;\n  background: #000;\n  opacity: 0.8;\n  z-index: 100;\n  height: 100%;\n  width: 100%;\n}\n"],
+  "mappings": "AAEA,MACE,QAAA,IAGF,GAAA,CAAA,MACE,QAAA,IACA,MAAA,IACA,UAAA,MACA,UAAA,MARF,QASE,KAAA,KACA,OAAA,IAAA,MACA,iBAAA,KACA,aAdU,KAiBZ,CAAA,aACE,SAAA,MACA,IAAA,IACA,KAAA,IACA,UAAA,UAAA,MAGF,CAAA,kBACE,SAAA,MACA,IAAA,EACA,KAAA,EACA,WAAA,KACA,QAAA,GACA,QAAA,IACA,OAAA,KACA,MAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/context/src/lib/context-map-button/poi-button/poi-button.component.scss"],
+  "sourcesContent": [":host {\n  background-color: white;\n  padding: 0 8px;\n  height: 100%;\n}\n\nmat-select {\n  width: 150px;\n  height: 100%;\n\n  ::ng-deep {\n    .mat-mdc-select-trigger {\n      height: 100%;\n    }\n  }\n}\n\n::ng-deep {\n  .poi-option {\n    .mdc-list-item__primary-text {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      flex: 1;\n      overflow: visible;\n    }\n\n    button {\n      margin-right: -16px;\n    }\n  }\n}\n"],
+  "mappings": "AAAA,MACE,iBAAA,KADF,QAEE,EAAA,IACA,OAAA,KAGF,WACE,MAAA,MACA,OAAA,KAGE,WAAA,UAAA,CAAA,uBACE,OAAA,KAOF,UAAA,CAAA,WAAA,CAAA,4BACE,QAAA,KACA,gBAAA,cACA,YAAA,OACA,KAAA,EACA,SAAA,QAGF,UAAA,CARA,WAQA,OACE,aAAA",
+  "names": []
+}

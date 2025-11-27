@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/integration/src/lib/map/map-details-tool/map-details-tool.component.scss"],
+  "sourcesContent": [":host {\n  .map-empty,\n  .search-tool,\n  .catalog-tool,\n  .context-tool {\n    margin: 10px;\n  }\n\n  .map-empty {\n    text-align: justify;\n  }\n\n  .search-tool,\n  .catalog-tool,\n  .context-tool {\n    cursor: pointer;\n  }\n\n  mat-list mat-list-item h4 {\n    font-weight: bold;\n  }\n\n  mat-list-item ::ng-deep .mdc-list-item__primary-text {\n    font-size: smaller;\n  }\n\n  mat-list.mat-mdc-list-base\n    mat-list-item.mat-mdc-list-item\n    ::ng-deep\n    div.mdc-list-item__content\n    div.mdc-list-item__primary-text {\n    padding-left: 5px;\n  }\n\n  .mapDetailsList {\n    overflow: hidden;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,UAAA,MAAA,CAAA,YAAA,MAAA,CAAA,aAAA,MAAA,CAAA,aAAA,OAIE,KAGF,MAAA,CAPA,UAQE,WAAA,QAGF,MAAA,CAXA,YAWA,MAAA,CAXA,aAWA,MAAA,CAXA,aAcE,OAAA,QAGF,MAAA,SAAA,cAAA,GACE,YAAA,IAGF,MAAA,cAAA,UAAA,CAAA,4BACE,UAAA,QAGF,MAAA,QAAA,CAAA,kBAAA,aAAA,CAAA,kBAAA,UAAA,GAAA,CAAA,uBAAA,GAAA,CAJA,4BASE,aAAA,IAGF,MAAA,CAAA,eACE,SAAA",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/draw/draw/draw-layer-popup.component.scss"],
+  "sourcesContent": [":host {\n  .fields-container {\n    display: flex;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,CAAA,iBACE,QAAA",
+  "names": []
+}

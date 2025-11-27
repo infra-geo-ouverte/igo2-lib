@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/map/baselayers-switcher/mini-basemap.component.scss"],
+  "sourcesContent": ["@import '../../../../../core/src/style/partial/core.variables';\n\n.igo-mini-basemap-container {\n  width: calc(#{$igo-icon-size} * 2);\n  height: calc(#{$igo-icon-size} * 2);\n  background-color: rgba(255, 255, 255, 0.01);\n  border: 2px solid white;\n  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);\n  cursor: pointer;\n\n  &:hover {\n    .igo-mini-basemap-title {\n      color: black;\n      text-shadow: 0 0 5px white;\n    }\n  }\n}\n\n.igo-mini-basemap-container > div {\n  width: 100%;\n  height: 100%;\n}\n\n.igo-mini-basemap-title {\n  position: relative;\n  top: -76px;\n  height: 76px;\n  width: 76px;\n  text-align: center;\n  vertical-align: bottom;\n  color: white;\n  text-shadow: 0 0 5px black;\n  white-space: normal;\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n}\n"],
+  "mappings": "AAEA,CAAA,2BACE,MAAA,KACA,OAAA,KACA,iBAAA,UACA,OAAA,IAAA,MAAA,MACA,WAAA,EAAA,IAAA,IAAA,UACA,OAAA,QAGE,CATJ,0BASI,OAAA,CAAA,uBACE,MAAA,KACA,YAAA,EAAA,EAAA,IAAA,MAKN,CAhBA,0BAgBA,CAAA,IACE,MAAA,KACA,OAAA,KAGF,CAZI,uBAaF,SAAA,SACA,IAAA,MACA,OAAA,KACA,MAAA,KACA,WAAA,OACA,eAAA,OACA,MAAA,KACA,YAAA,EAAA,EAAA,IAAA,MACA,YAAA,OACA,QAAA,KACA,YAAA,SACA,gBAAA",
+  "names": []
+}

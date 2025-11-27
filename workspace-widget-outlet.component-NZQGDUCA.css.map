@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/workspace/src/workspace-widget-outlet/workspace-widget-outlet.component.scss"],
+  "sourcesContent": ["igo-widget-outlet {\n  height: 100%;\n}\n"],
+  "mappings": "AAAA,kBACE,OAAA",
+  "names": []
+}

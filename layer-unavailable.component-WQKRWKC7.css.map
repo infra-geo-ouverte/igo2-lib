@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/layer/layer-unavailable/layer-unavailable.component.scss"],
+  "sourcesContent": [":host {\n  mat-list-item {\n    padding-left: 1px;\n  }\n\n  ::ng-deep {\n    .mdc-list-item__content {\n      display: flex;\n      align-items: center;\n      flex-direction: row-reverse;\n      justify-content: flex-end;\n    }\n\n    .mat-mdc-list-item-title {\n      font-size: 12px !important;\n    }\n\n    .mdc-list-item__end {\n      margin-left: 8px;\n      margin-right: 4px;\n    }\n  }\n}\n\n.align-disabled-button-with-tooltip {\n  display: inline-block;\n}\n"],
+  "mappings": "AACE,MAAA,cACE,aAAA,IAIA,MAAA,UAAA,CAAA,uBACE,QAAA,KACA,YAAA,OACA,eAAA,YACA,gBAAA,SAGF,MAAA,UAAA,CAAA,wBACE,UAAA,eAGF,MAAA,UAAA,CAAA,mBACE,YAAA,IACA,aAAA,IAKN,CAAA,mCACE,QAAA",
+  "names": []
+}

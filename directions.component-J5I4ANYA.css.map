@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/directions/directions.component.scss"],
+  "sourcesContent": [".directions-options {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  margin: 0 12px;\n\n  mat-slide-toggle {\n    width: 100%;\n    padding: 10px;\n\n    ::ng-deep .mdc-form-field {\n      width: 100%;\n    }\n\n    ::ng-deep .mdc-label {\n      margin-left: 0;\n      margin-right: auto;\n      width: auto;\n      padding-right: 0;\n    }\n\n    ::ng-deep .mdc-slide-toggle {\n      margin-left: auto;\n      margin-right: 0;\n    }\n  }\n}\n"],
+  "mappings": "AAAA,CAAA,mBACE,QAAA,KACA,UAAA,OACA,YAAA,OAHF,OAIE,EAAA,KAEA,CANF,mBAME,iBACE,MAAA,KAPJ,QAQI,KAEA,CAVJ,mBAUI,iBAAA,UAAA,CAAA,eACE,MAAA,KAGF,CAdJ,mBAcI,iBAAA,UAAA,CAAA,UACE,YAAA,EACA,aAAA,KACA,MAAA,KACA,cAAA,EAGF,CArBJ,mBAqBI,iBAAA,UAAA,CAAA,iBACE,YAAA,KACA,aAAA",
+  "names": []
+}

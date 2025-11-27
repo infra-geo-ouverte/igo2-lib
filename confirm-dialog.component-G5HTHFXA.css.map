@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/confirm-dialog/src/confirm-dialog.component.scss"],
+  "sourcesContent": ["h2 {\n  margin: 5px 0 10px;\n}\n\ndiv[mat-dialog-content] {\n  max-width: 200px;\n}\n\ndiv[mat-dialog-actions] {\n  margin: 10px 0 0 0;\n}\n"],
+  "mappings": "AAAA,UACE,IAAA,EAAA,KAGF,GAAA,CAAA,oBACE,UAAA,MAGF,GAAA,CAAA,oBARA,OASE,KAAA,EAAA",
+  "names": []
+}

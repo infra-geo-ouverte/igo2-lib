@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/common/form/src/form-group/form-group.component.scss"],
+  "sourcesContent": [":host {\n  width: 100%;\n  height: 100%;\n  display: block;\n  overflow: auto;\n  padding: 10px 5px;\n  box-sizing: border-box;\n\n  .igo-form-field-colspan-2 {\n    width: 100%;\n  }\n\n  .igo-form-field-colspan-1 {\n    width: 50%;\n  }\n}\n"],
+  "mappings": "AAAA,MACE,MAAA,KACA,OAAA,KACA,QAAA,MACA,SAAA,KAJF,QAKE,KAAA,IACA,WAAA,WAEA,MAAA,CAAA,yBACE,MAAA,KAGF,MAAA,CAAA,yBACE,MAAA",
+  "names": []
+}

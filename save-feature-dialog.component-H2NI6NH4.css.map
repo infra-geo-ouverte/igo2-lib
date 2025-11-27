@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["packages/geo/src/lib/search/search-results/save-feature-dialog.component.scss"],
+  "sourcesContent": [":host {\n  mat-form-field {\n    width: 100%;\n  }\n\n  .create-layer-button-top-padding {\n    padding-top: 25px;\n  }\n\n  .igo-form {\n    padding: 10px 5px 5px;\n  }\n\n  .igo-form-button-group {\n    text-align: center;\n  }\n\n  button {\n    cursor: pointer;\n  }\n\n  button#createLayerBtnDialog[disabled='true'] {\n    cursor: default;\n    background-color: rgba(0, 0, 0, 0.12);\n    color: rgba(0, 0, 0, 0.26);\n  }\n\n  .error {\n    color: red;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,eACE,MAAA,KAGF,MAAA,CAAA,gCACE,YAAA,KAGF,MAAA,CAAA,SARA,QASE,KAAA,IAAA,IAGF,MAAA,CAAA,sBACE,WAAA,OAGF,MAAA,OACE,OAAA,QAGF,MAAA,MAAA,CAAA,oBAAA,CAAA,eACE,OAAA,QACA,iBAAA,UACA,MAAA,UAGF,MAAA,CAAA,MACE,MAAA",
+  "names": []
+}

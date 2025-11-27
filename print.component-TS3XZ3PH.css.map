@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/demo/src/app/geo/print/print.component.scss"],
+  "sourcesContent": [":host {\n  igo-print {\n    overflow-y: auto;\n    width: 100%;\n    height: 100%;\n  }\n}\n"],
+  "mappings": "AACE,MAAA,UACE,WAAA,KACA,MAAA,KACA,OAAA",
+  "names": []
+}
