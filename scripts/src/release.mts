@@ -7,7 +7,7 @@ executor('Library release', async () => {
   try {
     const result = await semanticRelease({
       branches: [
-        'release/\\d+(\\.\\d+)?\\.x',
+        'release/*.x',
         'master',
         { name: 'next', prerelease: 'next' }
       ],
