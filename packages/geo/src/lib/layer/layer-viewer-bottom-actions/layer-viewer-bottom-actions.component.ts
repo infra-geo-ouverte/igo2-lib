@@ -173,9 +173,15 @@ export class LayerViewerBottomActionsComponent {
     this.opacity = event.value;
   }
 
-  toggleSelectionVisibility(): void {
-    this.selected.forEach((layer) => {
-      layer.visible = !layer.visible;
+  toggleSelectionVisibility(
+    layers = this.selected,
+    visibility = this.allSelectionVisibilityHidden
+  ): void {
+    layers.forEach((layer) => {
+      layer.visible = visibility;
+      if (isLayerGroup(layer)) {
+        this.toggleSelectionVisibility(layer.children, visibility);
+      }
     });
     this.layerChange.emit();
   }
