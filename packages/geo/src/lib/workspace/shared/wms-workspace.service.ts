@@ -117,8 +117,7 @@ export class WmsWorkspaceService {
     layer.createLink();
 
     interface WFSoptions
-      extends WFSDataSourceOptions,
-        OgcFilterableDataSourceOptions {}
+      extends WFSDataSourceOptions, OgcFilterableDataSourceOptions {}
 
     let wks;
     const wksLayerOption: GeoWorkspaceOptions = {

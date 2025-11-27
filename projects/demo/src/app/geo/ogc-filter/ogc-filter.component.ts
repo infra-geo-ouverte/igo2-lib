@@ -79,8 +79,7 @@ export class AppOgcFilterComponent {
       });
 
     interface WFSOptions
-      extends WFSDataSourceOptions,
-        OgcFilterableDataSourceOptions {}
+      extends WFSDataSourceOptions, OgcFilterableDataSourceOptions {}
 
     const datasource: WFSOptions = {
       type: 'wfs',

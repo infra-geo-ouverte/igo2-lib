@@ -151,8 +151,7 @@ export class EditionWorkspaceService {
       : wmsLinkId),
       (layer.options.linkedLayers.links = clonedLinks));
     interface WFSoptions
-      extends WFSDataSourceOptions,
-        OgcFilterableDataSourceOptions {}
+      extends WFSDataSourceOptions, OgcFilterableDataSourceOptions {}
 
     layer.createLink();
 

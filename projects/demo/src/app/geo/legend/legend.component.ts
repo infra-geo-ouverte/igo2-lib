@@ -185,8 +185,7 @@ export class AppLegendComponent {
     };
 
     interface LayerOptionsWithMetadata
-      extends LayerOptions,
-        MetadataLayerOptions {}
+      extends LayerOptions, MetadataLayerOptions {}
 
     this.dataSourceService
       .createAsyncDataSource(datasource)

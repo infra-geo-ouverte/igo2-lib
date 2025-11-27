@@ -52,8 +52,7 @@ export interface FeatureStoreOptions extends EntityStoreOptions {
   layer?: VectorLayer;
 }
 
-export interface FeatureStoreStrategyOptions
-  extends EntityStoreStrategyOptions {
+export interface FeatureStoreStrategyOptions extends EntityStoreStrategyOptions {
   // When the store moves features into view, the view extent, which is also the features extent,
   // is scaled by those factors, effectively resulting in a decentered view or a more zoomed in/out view.
   // These factors are applied to the top, right, bottom and left directions, in that order.
@@ -64,14 +63,12 @@ export interface FeatureStoreStrategyOptions
   areaRatio?: number;
 }
 
-export interface FeatureStoreLoadingStrategyOptions
-  extends FeatureStoreStrategyOptions {
+export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
   getFeatureId?: (Feature) => EntityKey;
   motion?: FeatureMotion;
 }
 
-export interface FeatureStorePropertyTypeStrategyOptions
-  extends FeatureStoreStrategyOptions {
+export interface FeatureStorePropertyTypeStrategyOptions extends FeatureStoreStrategyOptions {
   map: IgoMap;
 }
 
@@ -87,14 +84,12 @@ export type FeatureStoreInMapResolutionStrategyOptions =
 export type FeatureStoreLoadingLayerStrategyOptions =
   FeatureStoreStrategyOptions;
 
-export interface FeatureStoreSearchIndexStrategyOptions
-  extends EntityStoreStrategyOptions {
+export interface FeatureStoreSearchIndexStrategyOptions extends EntityStoreStrategyOptions {
   sourceFields?: SourceFieldsOptionsParams[];
   percentDistinctValueRatio?: number;
 }
 
-export interface FeatureStoreSelectionStrategyOptions
-  extends FeatureStoreStrategyOptions {
+export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrategyOptions {
   map: IgoMap;
   getFeatureId?: (Feature) => EntityKey;
   motion?: FeatureMotion;
