@@ -2,9 +2,9 @@ import olFormatEsriJSON from 'ol/format/EsriJSON';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import olSourceVector from 'ol/source/Vector';
 
+import { Legend } from '../../../layer/shared/layers/legend.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 import { DataSource } from './datasource';
-import { Legend } from './datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
   declare public ol: olSourceVector;
@@ -63,12 +63,12 @@ export class ArcGISRestDataSource extends DataSource {
     });
   }
 
-  getLegend(): Legend[] {
+  public onUnwatch() {
+    // empty
+  }
+
+  getLegend(): Legend {
     const legendInfo = this.options.legendInfo;
-    const legend = super.getLegend();
-    if (legendInfo === undefined || legend.length > 0) {
-      return legend;
-    }
     if (!legendInfo) {
       return;
     }
@@ -89,7 +89,7 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td >` +
+          `" alt ='' /></td><td>` +
           label +
           '</td></tr>';
       }
@@ -104,13 +104,13 @@ export class ArcGISRestDataSource extends DataSource {
           htmlString +=
             `<tr><td align='left'><img src="` +
             src +
-            `" alt ='' /></td><td >` +
+            `" alt ='' /></td><td>` +
             label +
             '</td></tr>';
         } else if (legendElement.symbol.type !== 'esriPMS') {
           svg = this.createSVG(legendElement.symbol);
           htmlString +=
-            `<tr><td align='left'>` + svg + `</td><td >` + label + '</td></tr>';
+            `<tr><td align='left'>` + svg + `</td><td>` + label + '</td></tr>';
         }
       }
     } else if (legendInfo.type === 'simple') {
@@ -125,24 +125,24 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td >` +
+          `" alt ='' /></td><td>` +
           label +
           '</td></tr>';
       } else if (legendInfo.symbol.type !== 'esriPMS') {
         svg = this.createSVG(legendInfo.symbol);
         htmlString +=
-          `<tr><td align='left'>` + svg + `</td><td >` + label + '</td></tr>';
+          `<tr><td align='left'>` + svg + `</td><td>` + label + '</td></tr>';
       }
     }
     htmlString += '</table>';
-    return [{ html: htmlString }];
+    return { html: htmlString };
   }
 
-  htmlImgSrc(contentType: string, imageData: string): string {
+  private htmlImgSrc(contentType: string, imageData: string): string {
     return `data:${contentType};base64,${imageData}`;
   }
 
-  createSVG(symbol): string {
+  private createSVG(symbol): string {
     let svg = '';
 
     const color: number[] = symbol.color ? symbol.color : [0, 0, 0, 0];
@@ -233,9 +233,5 @@ export class ArcGISRestDataSource extends DataSource {
       }
     }
     return svg;
-  }
-
-  public onUnwatch() {
-    // empty
   }
 }

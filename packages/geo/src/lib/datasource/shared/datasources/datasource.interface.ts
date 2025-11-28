@@ -107,17 +107,6 @@ export interface SourceFieldsValidationParams {
   send?: boolean;
 }
 
-export interface Legend {
-  collapsed?: boolean;
-  display?: boolean;
-  url?: string;
-  html?: string;
-  style?: Record<string, string | number>;
-  title?: string;
-  currentStyle?: string;
-  imgGraphValue?: string;
-}
-
 // refer to https://openlayers.org/en/latest/apidoc/module-ol_tilegrid_TileGrid-TileGrid.html
 export interface TileGridOptions {
   extent: [number, number, number, number];

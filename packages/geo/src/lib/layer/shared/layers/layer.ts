@@ -8,17 +8,22 @@ import { Source } from 'ol/source';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { DataSource, Legend } from '../../../datasource/shared/datasources';
+import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import {
   isLayerLinked,
   isLinkMaster
 } from '../../shared/layers/linked/linked-layer.utils';
-import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
+import {
+  isLayerGroup,
+  isLayerItem,
+  isSaveableLayer
+} from '../../utils/layer.utils';
 import { AnyLayer } from './any-layer';
 import { LayerBase, LayerGroupBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
 import { type LayerOptions } from './layer.interface';
+import { Legend } from './legend.interface';
 import { Linked } from './linked/linked-layer';
 
 export abstract class Layer extends LayerBase {
@@ -27,8 +32,7 @@ export abstract class Layer extends LayerBase {
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
-  legend: Legend[];
-  legendCollapsed = true;
+  legends$ = new BehaviorSubject<Legend[]>([]);
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
@@ -81,27 +85,43 @@ export abstract class Layer extends LayerBase {
     };
   }
 
+  get legends(): Legend[] {
+    return this.legends$.getValue();
+  }
+
+  private initLegends(): void {
+    if (isLayerGroup(this)) {
+      return;
+    }
+    let currentLegends: Legend[] = this.legends ?? [];
+    const ls = this.options?.legendsSpecifications;
+    if (ls?.legends) {
+      const lsLegends = ls?.legends;
+      if (ls?.handleLegendMethod === 'merge') {
+        currentLegends = currentLegends.concat(lsLegends);
+      } else if (
+        ls?.handleLegendMethod === 'impose' ||
+        !ls?.handleLegendMethod
+      ) {
+        this.legends$.next(lsLegends);
+        return;
+      }
+    }
+    const dataSourceLegend = this.dataSource.getLegend();
+    if (dataSourceLegend) {
+      currentLegends.push(dataSourceLegend);
+    }
+    this.legends$.next(currentLegends);
+  }
+
   constructor(
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
     @Optional() protected authInterceptor?: AuthInterceptor
   ) {
     super(options);
-
+    this.legends$.next([]);
     this.dataSource = options.source;
-
-    this.legendCollapsed = options.legendOptions
-      ? options.legendOptions.collapsed
-        ? options.legendOptions.collapsed
-        : true
-      : true;
-
-    if (
-      options.legendOptions &&
-      (options.legendOptions.url || options.legendOptions.html)
-    ) {
-      this.legend = this.dataSource.setLegend(options.legendOptions);
-    }
 
     if (this.visible) {
       this.dataSource.addEvents();
@@ -110,6 +130,7 @@ export abstract class Layer extends LayerBase {
     this.ol = this.createOlLayer();
     this.ol.set('_layer', this, true);
 
+    this.initLegends();
     super.afterCreated();
   }
 
@@ -128,7 +149,6 @@ export abstract class Layer extends LayerBase {
         });
       }
     });
-
     this.createLink();
   }
 

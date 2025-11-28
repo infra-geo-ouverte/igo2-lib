@@ -112,6 +112,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
     this.layers$$ = this.map.layerController.all$.subscribe(() => {
       this.isVisible();
+      this.handleAlreadyAddedLayer();
     });
 
     this.resolution$$ = this.map.viewController.resolution$.subscribe(
@@ -163,12 +164,26 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     this.onToggleClick(event);
   }
 
+  private handleAlreadyAddedLayer() {
+    const alreadyAddedLayer = this.map.layerController.getById(this.layer.id);
+    if (alreadyAddedLayer) {
+      this.igoLayer$.next(alreadyAddedLayer as Layer);
+    }
+  }
+
   askForLegend() {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
-    this.layerService
-      .createAsyncLayer(this.layer.options)
-      .pipe(first())
-      .subscribe((layer) => this.igoLayer$.next(layer));
+    const alreadyAddedLayer = this.map.layerController.getById(this.layer.id);
+    if (alreadyAddedLayer) {
+      this.igoLayer$.next(alreadyAddedLayer as Layer);
+    } else {
+      this.layerService
+        .createAsyncLayer(this.layer.options)
+        .pipe(first())
+        .subscribe((layer) => {
+          this.igoLayer$.next(layer);
+        });
+    }
   }
 
   /**

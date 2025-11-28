@@ -59,8 +59,6 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
 
   @Input() excludeBaseLayers = false;
 
-  @Input() updateLegendOnResolutionChange = false;
-
   @Input() allowShowAllLegends = false;
 
   @Input() showAllLegendsValue = false;

@@ -109,8 +109,6 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   @Input() expandLegendOfVisibleLayers = false;
 
-  @Input() updateLegendOnResolutionChange = false;
-
   @Input() selectedTabAtOpening: string;
 
   @Input() ogcButton = true;
@@ -192,8 +190,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
         showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange
       },
       queryBadge: this.queryBadge,
       ...this._layerViewerOptions
