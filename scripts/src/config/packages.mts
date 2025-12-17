@@ -83,7 +83,7 @@ export async function publishPackage(
 ): Promise<void> {
   const tag = RELEASE_TAGS.find((tag) => version.includes(tag));
 
-  let command = `npm publish --provenance --access public`;
+  let command = `npm publish --access public`;
 
   if (tag) {
     command += ` --tag ${tag}`;
