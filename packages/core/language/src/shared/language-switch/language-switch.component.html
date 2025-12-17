@@ -1,0 +1,9 @@
+<a
+  tabindex="0"
+  class="btn-link"
+  [ngClass]="position()"
+  role="button"
+  (click)="languageService.toggleLanguage()"
+>
+  {{ languageService.getSwitchLabel() }}
+</a>

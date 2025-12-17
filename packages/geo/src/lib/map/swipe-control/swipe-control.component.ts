@@ -70,7 +70,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    */
   ngOnDestroy(): void {
     this.swipeEnabled$$.unsubscribe();
-    this.map().swipeEnabled$.unsubscribe();
+    // this.map().swipeEnabled$.unsubscribe();
     this.displaySwipeOff();
   }
 
