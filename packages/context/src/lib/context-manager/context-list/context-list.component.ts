@@ -319,14 +319,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   // Comparator function to sort by context.title
-  sortByContextTitle = (
-    a: KeyValue<string, DetailedContext>,
-    b: KeyValue<string, DetailedContext>
+  sortByKeyPriority = (
+    a: KeyValue<string, DetailedContext[]>,
+    b: KeyValue<string, DetailedContext[]>
   ): number => {
-    const titleA = a.value?.title?.toLowerCase() || '';
-    const titleB = b.value?.title?.toLowerCase() || '';
-
-    return titleA.localeCompare(titleB);
+    const ORDER = ['ours', 'shared', 'public'];
+    return ORDER.indexOf(a.key) - ORDER.indexOf(b.key);
   };
 
   private next() {
