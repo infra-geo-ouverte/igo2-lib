@@ -121,17 +121,51 @@
   </div>
 
   @for (
-    groupContexts of $any(contexts$ | async) | keyvalue;
+    groupContexts of $any(contexts$ | async) | keyvalue: sortByContextTitle;
     track groupContexts
   ) {
-    @if ($any(groupContexts).value.length && auth.authenticated) {
-      <igo-collapsible
-        [title]="titleMapping[$any(groupContexts).key] | translate"
-        [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
-        (toggle)="
-          collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
-        "
-      >
+    @if ($any(groupContexts).value.length) {
+      @if (auth.authenticated) {
+        <igo-collapsible
+          [title]="titleMapping[$any(groupContexts).key] | translate"
+          [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
+          (toggle)="
+            collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
+          "
+        >
+          @for (
+            context of $any(groupContexts).value;
+            track context.id ?? context.uri
+          ) {
+            <igo-context-item
+              igoListItem
+              color="accent"
+              [selected]="
+                selectedContext() && selectedContext().uri === context.uri
+              "
+              [context]="context"
+              [default]="
+                context.id &&
+                this.defaultContextId &&
+                this.defaultContextId === context.id
+              "
+              [isDesktop]="isDesktop"
+              (edit)="onEdit(context)"
+              (delete)="onDelete(context)"
+              (clone)="onClone(context)"
+              (save)="onSave(context)"
+              (hide)="onHideContext(context)"
+              (show)="showContext(context)"
+              (favorite)="onFavorite(context)"
+              (manageTools)="onManageTools(context)"
+              (managePermissions)="onManagePermissions(context)"
+              (select)="onSelect(context)"
+              (unselect)="unselect.emit(context)"
+              (share)="onShareContext(context)"
+            />
+          }
+        </igo-collapsible>
+      } @else {
         @for (
           context of $any(groupContexts).value;
           track context.id ?? context.uri
@@ -139,14 +173,12 @@
           <igo-context-item
             igoListItem
             color="accent"
-            [selected]="
-              selectedContext() && selectedContext().uri === context.uri
-            "
+            [selected]="isContextSelected(context)"
             [context]="context"
             [default]="
-              context.id &&
-              this.defaultContextId &&
-              this.defaultContextId === context.id
+              contextConfigs
+                ? defaultContextId === context.id
+                : defaultContextId === context.uri
             "
             [isDesktop]="isDesktop"
             (edit)="onEdit(context)"
@@ -156,41 +188,10 @@
             (hide)="onHideContext(context)"
             (show)="showContext(context)"
             (favorite)="onFavorite(context)"
-            (manageTools)="onManageTools(context)"
-            (managePermissions)="onManagePermissions(context)"
             (select)="onSelect(context)"
             (unselect)="unselect.emit(context)"
-            (share)="onShareContext(context)"
           />
         }
-      </igo-collapsible>
-    }
-    @if ($any(groupContexts).value.length && !auth.authenticated; as context) {
-      @for (
-        context of $any(groupContexts).value;
-        track context.id ?? context.uri
-      ) {
-        <igo-context-item
-          igoListItem
-          color="accent"
-          [selected]="isContextSelected(context)"
-          [context]="context"
-          [default]="
-            contextConfigs
-              ? defaultContextId === context.id
-              : defaultContextId === context.uri
-          "
-          [isDesktop]="isDesktop"
-          (edit)="onEdit(context)"
-          (delete)="onDelete(context)"
-          (clone)="onClone(context)"
-          (save)="onSave(context)"
-          (hide)="onHideContext(context)"
-          (show)="showContext(context)"
-          (favorite)="onFavorite(context)"
-          (select)="onSelect(context)"
-          (unselect)="unselect.emit(context)"
-        />
       }
     }
   }

@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -317,6 +317,17 @@ export class ContextListComponent implements OnInit, OnDestroy {
   setSelected(context: DetailedContext) {
     this.selectedContext.set(context);
   }
+
+  // Comparator function to sort by context.title
+  sortByContextTitle = (
+    a: KeyValue<string, DetailedContext>,
+    b: KeyValue<string, DetailedContext>
+  ): number => {
+    const titleA = a.value?.title?.toLowerCase() || '';
+    const titleB = b.value?.title?.toLowerCase() || '';
+
+    return titleA.localeCompare(titleB);
+  };
 
   private next() {
     this.change$.next();
