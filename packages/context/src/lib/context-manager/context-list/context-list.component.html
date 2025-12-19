@@ -121,7 +121,7 @@
   </div>
 
   @for (
-    groupContexts of $any(contexts$ | async) | keyvalue: sortByContextTitle;
+    groupContexts of $any(contexts$ | async) | keyvalue: sortByKeyPriority;
     track groupContexts
   ) {
     @if ($any(groupContexts).value.length) {
