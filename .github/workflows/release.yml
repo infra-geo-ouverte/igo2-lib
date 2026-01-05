@@ -21,6 +21,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # to enable use of OIDC for npm provenance
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,7 +52,7 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: npm run release
+        run: npx semantic-release
 
   deploy-gh-pages:
     name: Deploy demo content to Pages
