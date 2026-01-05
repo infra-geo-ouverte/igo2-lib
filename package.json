@@ -39,10 +39,7 @@
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test.libs": "npm run test --workspace=packages",
     "compodoc": "npx compodoc -p tsconfig.json",
-    "circular-deps": "madge --circular --extensions ts packages",
-    "publish": "node --import tsx scripts/src/publish.mts",
-    "pre-release": "node --import tsx scripts/src/pre-release.mts",
-    "release": "node --import tsx scripts/src/release.mts"
+    "circular-deps": "madge --circular --extensions ts packages"
   },
   "dependencies": {
     "@angular/animations": "^20.3.3",
