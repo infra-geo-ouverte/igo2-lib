@@ -10,7 +10,8 @@
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git",
+    "directory": "packages/common"
   },
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
