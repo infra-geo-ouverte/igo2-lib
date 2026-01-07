@@ -1,7 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 
-import { ConfigService } from '@igo2/core/config';
-
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 
@@ -10,7 +8,6 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 })
 export class LanguageService {
   translate = inject(TranslateService);
-  configService = inject(ConfigService);
 
   private language: string;
   readonly language$ = new BehaviorSubject<string>(undefined);
@@ -47,29 +44,5 @@ export class LanguageService {
     ]).subscribe(() => {
       this.language$.next(this.language);
     });
-  }
-  public toggleLanguage() {
-    const newLang = this.language === 'en' ? 'fr' : 'en';
-    this.setLanguage(newLang);
-  }
-
-  public getSwitchLabel(): string {
-    return this.language === 'en' ? 'Français' : 'English';
-  }
-
-  getSwitcherConfig(): { enabled: boolean; position: 'header' | 'map' } {
-    const cfg = this.configService.getConfig<{
-      enabled: boolean;
-      position?: 'header' | 'map';
-    }>('languageSwitcher');
-    const hasHeader = this.configService.getConfig<boolean>(
-      'header.hasHeader',
-      true
-    );
-
-    const enabled = cfg?.enabled ?? false;
-    const position = cfg?.position ?? (hasHeader ? 'header' : 'map');
-
-    return { enabled, position };
   }
 }

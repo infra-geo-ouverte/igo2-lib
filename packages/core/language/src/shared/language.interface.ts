@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 export interface LanguageOptions {
   prefix?: string | string[];
   ignoreLibsLocale?: boolean;
+  switcher?: {
+    enabled?: boolean;
+    position?: 'header' | 'sidebar';
+  };
 }
 
 export abstract class LanguageLoaderBase implements TranslateLoader {
