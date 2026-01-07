@@ -18,7 +18,6 @@ export class LanguageSwitchComponent {
   readonly position = input<'header' | 'sidebar'>('sidebar');
 
   languageService = inject(LanguageService);
-  // configService = inject(ConfigService);
 
   public toggleLanguage() {
     const newLang = this.languageService.getLanguage() === 'en' ? 'fr' : 'en';
