@@ -6,10 +6,12 @@ import {
   IgoMap,
   IgoMapModule,
   LayerService,
+  MVTDataSource,
   MapViewOptions,
   TileLayer,
   TileLayerOptions,
   VectorLayerOptions,
+  VectorTileLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions
 } from '@igo2/geo';
@@ -86,46 +88,45 @@ export class AppHoverComponent {
           title: 'Casernes',
           visible: true,
           source: dataSource,
+          hoverAttribute: 'Caserne: ${no_caserne} \nMun: ${nom_ssi}',
           igoStyle: {
-            styleByAttribute: {
-              attribute: 'en_caserne',
-              data: ['true', 'false'],
-              stroke: ['red', 'blue'],
-              fill: ['#ffffff', '#ffffff'],
-              radius: [7, 7],
-              width: [2, 2]
-            },
-            hoverStyle: {
-              label: {
-                attribute: 'Caserne: ${no_caserne} \nMun: ${nom_ssi}',
-                style: {
-                  textAlign: 'left',
-                  textBaseline: 'top',
-                  font: '12px Calibri,sans-serif',
-                  fill: { color: '#000' },
-                  backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-                  backgroundStroke: {
-                    color: 'rgba(200, 200, 200, 0.75)',
-                    width: 2
-                  },
-                  stroke: { color: '#fff', width: 3 },
-                  overflow: true,
-                  offsetX: 20,
-                  offsetY: 10,
-                  padding: [2.5, 2.5, 2.5, 2.5]
-                }
-              },
-              baseStyle: {
-                circle: {
-                  stroke: {
-                    color: 'orange',
-                    width: 5
-                  },
-                  radius: 15
-                }
+            geostylerStyle: {
+              global: {
+                name: 'Basic Circle',
+                rules: [
+                  {
+                    name: 'Rule 1',
+                    symbolizers: [
+                      {
+                        kind: 'Mark',
+                        wellKnownName: 'triangle',
+                        radius: 10,
+                        strokeColor: '#c21515',
+                        strokeWidth: 2
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
+        };
+        this.map.layerController.add(
+          this.layerService.createLayer(layerOptions)
+        );
+      });
+    this.dataSourceService
+      .createAsyncDataSource({
+        featureClass: 'feature',
+        type: 'mvt',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
+      })
+      .subscribe((dataSource: MVTDataSource) => {
+        const layerOptions: VectorTileLayerOptions = {
+          title: 'RTSS',
+          visible: true,
+          source: dataSource,
+          hoverAttribute: 'RTSS: ${num_rts}'
         };
         this.map.layerController.add(
           this.layerService.createLayer(layerOptions)

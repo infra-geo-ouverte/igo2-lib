@@ -14,8 +14,6 @@ import {
   ID_GROUP_PREFIX,
   LayerService,
   MapBrowserComponent,
-  StyleListService,
-  StyleService,
   isLayerGroupOptions,
   mergeLayersOptions,
   sortLayersByZindex
@@ -26,10 +24,7 @@ import { ObjectUtils, uuid } from '@igo2/utils';
 import { Subscription } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
-import {
-  addImportedFeaturesStyledToMap,
-  addImportedFeaturesToMap
-} from '../../context-import-export/shared/context-import.utils';
+import { addImportedFeaturesToMap } from '../../context-import-export/shared/context-import.utils';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import {
   hasLegacyParams,
@@ -46,8 +41,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private contextService = inject(ContextService);
   private layerService = inject(LayerService);
   private configService = inject(ConfigService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private shareMapService = inject(ShareMapService);
 
   private context$$: Subscription;
@@ -104,9 +97,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
     this.contextLayers = [];
     this.layerService.unavailableLayers = [];
-
-    const importExportOptions = this.configService.getConfig('importExport');
-
     this.layerService
       .createLayers(contextLayers, context.uri)
       .subscribe((layers) => {
@@ -114,16 +104,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            if (!importExportOptions?.importWithStyle) {
-              addImportedFeaturesToMap(featureCollection, this.map);
-            } else {
-              addImportedFeaturesStyledToMap(
-                featureCollection,
-                this.map,
-                this.styleListService,
-                this.styleService
-              );
-            }
+            addImportedFeaturesToMap(featureCollection, this.map);
           });
         }
 

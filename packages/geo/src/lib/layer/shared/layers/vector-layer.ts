@@ -54,7 +54,6 @@ import {
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
 import { GeostylerService } from '../../../style/geostyler/geostyler.service';
-import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -183,6 +182,8 @@ export class VectorLayer extends Layer {
       console.error(
         'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
       );
+      this.options.igoStyle.editable = false;
+      delete this.options.igoStyle?.geostylerStyle;
     }
     if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
       this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);
@@ -288,7 +289,6 @@ export class VectorLayer extends Layer {
   }
 
   private maintainOptionsInIdb() {
-    this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
     const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo?.contextUri,

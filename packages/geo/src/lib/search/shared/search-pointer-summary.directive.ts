@@ -16,9 +16,8 @@ import olFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import * as olGeom from 'ol/geom';
-import * as olgeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import Point from 'ol/geom/Point';
 import { transform } from 'ol/proj';
 import * as olStyle from 'ol/style';
 
@@ -30,6 +29,7 @@ import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
 import { LayerService } from '../../layer/shared/layer.service';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
@@ -125,7 +125,7 @@ export class SearchPointerSummaryDirective
   private initStore() {
     const store = this.store;
 
-    const layer = this.layerService.createVectorLayer({
+    const layer = this.layerService.createLayer({
       isIgoInternalLayer: true,
       id: 'searchPointerSummaryId',
       title: 'searchPointerSummary',
@@ -135,7 +135,7 @@ export class SearchPointerSummaryDirective
       exportable: false,
       browsable: false,
       style: this.pointerPositionSummaryMarkerStyle
-    });
+    }) as VectorLayer;
     tryBindStoreLayer(store, layer);
   }
 
@@ -354,7 +354,7 @@ export class SearchPointerSummaryDirective
   private addPointerOverlay(text: string) {
     this.clearLayer();
 
-    const geometry = new olgeom.Point(
+    const geometry = new Point(
       transform(this.lonLat, 'EPSG:4326', this.mapProjection)
     );
     const feature = new olFeature({ geometry });
@@ -386,70 +386,6 @@ export class SearchPointerSummaryDirective
     if (this.store) {
       this.store.clearLayer();
     }
-  }
-
-  /**
-   *
-   * @param feature This directive is not based on geostyler, to prevent regression if the geostyler service is not provided.
-   * @returns
-   */
-  hoverFeatureMarkerStyle(
-    feature: olFeature<olGeom.Geometry>
-  ): olStyle.Style[] {
-    const olStyleText = new olStyle.Style({
-      text: new olStyle.Text({
-        text: feature.get('hoverSummary'),
-        textAlign: 'left',
-        textBaseline: 'top',
-        font: '12px Calibri,sans-serif',
-        fill: new olStyle.Fill({ color: '#000' }),
-        backgroundFill: new olStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
-        backgroundStroke: new olStyle.Stroke({
-          color: 'rgba(200, 200, 200, 0.75)',
-          width: 2
-        }),
-        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
-        overflow: true,
-        offsetX: 10,
-        offsetY: 20,
-        padding: [2.5, 2.5, 2.5, 2.5]
-      })
-    });
-    const olStyles = [olStyleText];
-    switch (feature.getGeometry().getType()) {
-      case 'Point':
-        olStyles.push(
-          new olStyle.Style({
-            image: new olStyle.Circle({
-              radius: 10,
-              stroke: new olStyle.Stroke({
-                color: 'blue',
-                width: 3
-              })
-            })
-          })
-        );
-        break;
-      default:
-        olStyles.push(
-          new olStyle.Style({
-            stroke: new olStyle.Stroke({
-              color: 'white',
-              width: 5
-            })
-          })
-        );
-        olStyles.push(
-          new olStyle.Style({
-            stroke: new olStyle.Stroke({
-              color: 'blue',
-              width: 3
-            })
-          })
-        );
-    }
-
-    return olStyles;
   }
 
   /**

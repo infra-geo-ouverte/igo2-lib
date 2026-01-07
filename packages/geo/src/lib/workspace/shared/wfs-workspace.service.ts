@@ -25,11 +25,7 @@ import {
   VectorLayer
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
-import {
-  FeatureCommonVectorStyleOptions,
-  OverlayStyleOptions,
-  getCommonVectorSelectedStyle
-} from '../../style/shared';
+import { LayerSelectionOlStyle } from '../../style/shared/layer/layer-style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -99,9 +95,6 @@ export class WfsWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle: OverlayStyleOptions =
-      this.configService.getConfig('queryOverlayStyle');
-
     const id = layer.id + '.FeatureStore';
 
     if (!layer.link) {
@@ -114,28 +107,19 @@ export class WfsWorkspaceService {
       ];
       layer.createLink();
     }
-
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: this.layerService.createVectorLayer({
+      layer: this.layerService.createLayer({
         id,
         linkedLayers: {
           linkId: id
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: (feature) => {
-          return getCommonVectorSelectedStyle(
-            Object.assign(
-              {},
-              { feature },
-              confQueryOverlayStyle?.selection || {}
-            ) as FeatureCommonVectorStyleOptions
-          );
-        },
+        style: LayerSelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
+      }) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

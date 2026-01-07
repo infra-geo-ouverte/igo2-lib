@@ -29,6 +29,7 @@ import {
   VectorTileLayer,
   VectorTileLayerOptions
 } from '@igo2/geo';
+import { QueryState } from '@igo2/integration';
 
 import olFeature from 'ol/Feature';
 import olLineString from 'ol/geom/LineString';
@@ -58,6 +59,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppQueryComponent {
   private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
+  private queryState = inject(QueryState);
 
   public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
     []
@@ -189,10 +191,6 @@ export class AppQueryComponent {
             }
           ],
           queryLayerFeatures: false
-        },
-        mapboxStyle: {
-          url: 'assets/mapboxStyleExample-vectortile.json',
-          source: 'ahocevar'
         }
       } as VectorTileLayerOptions)
       .subscribe((layer: VectorTileLayer) =>
@@ -235,7 +233,10 @@ export class AppQueryComponent {
     const features: Feature[] = results.features;
     if (features.length && features[0]) {
       this.features$.next(features);
-      this.map.queryResultsOverlay.setFeatures(features, FeatureMotion.None);
+      this.queryState.queryResultsOverlayAll.setFeatures(
+        features,
+        FeatureMotion.None
+      );
     }
   }
 

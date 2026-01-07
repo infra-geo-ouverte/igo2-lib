@@ -43,6 +43,7 @@ import {
 import { LAYER } from '../../layer/shared/layer.enums';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { getTooltipsOfOlGeometry } from '../../measure';
 import { QueryableDataSourceOptions } from '../../query/shared';
@@ -408,7 +409,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       layerCounterID = Math.max(numberId, layerCounterID);
     }
 
-    const searchLayer = this.layerService.createVectorLayer({
+    const searchLayer = this.layerService.createLayer({
       isIgoInternalLayer: true,
       id: 'igo-search-layer' + ++layerCounterID,
       title: layerTitle,
@@ -416,25 +417,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         type: 'vector',
         queryable: true
       } as QueryableDataSourceOptions),
-      igoStyle: {
-        editable: false,
-        igoStyleObject: {
-          fill: { color: 'rgba(255,255,255,0.4)' },
-          stroke: { color: 'rgba(143,7,7,1)', width: 1 },
-          circle: {
-            fill: { color: 'rgba(255,255,255,0.4)' },
-            stroke: { color: 'rgba(143,7,7,1)', width: 1 },
-            radius: 5
-          }
-        }
-      },
       style: styles,
       showInLayerList: true,
       exportable: true,
       workspace: {
         enabled: true
       }
-    });
+    }) as VectorLayer;
 
     tryBindStoreLayer(activeStore, searchLayer);
     tryAddLoadingStrategy(

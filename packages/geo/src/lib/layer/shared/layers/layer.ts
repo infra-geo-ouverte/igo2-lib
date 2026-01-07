@@ -19,7 +19,7 @@ import {
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { GeostylerService } from '../../../style/geostyler/geostyler.service';
-import { GeostylerStyleInterfaceOptions } from '../../../style/shared/vector/vector-style.interface';
+import { GeostylerStyleInterfaceOptions } from '../../../style/shared/layer/layer-style.interface';
 import {
   isLayerLinked,
   isLinkMaster

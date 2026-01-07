@@ -22,6 +22,7 @@ import {
   FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
+  LayerMarkerOlStyle,
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
@@ -34,7 +35,6 @@ import {
   SpatialFilterTypeComponent,
   VectorLayer,
   VectorLayerOptions,
-  createOverlayMarkerStyle,
   featureToOl,
   isLayerItem,
   moveToOlFeatures
@@ -518,9 +518,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       const icon = features[0].meta.icon;
       let style: olstyle.Style;
       if (!icon) {
-        style = createOverlayMarkerStyle();
+        style = LayerMarkerOlStyle({ text: undefined });
       } else {
-        style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
+        style =
+          this.createSvgIcon(icon) || LayerMarkerOlStyle({ text: undefined });
       }
 
       const options: VectorLayerOptions = {

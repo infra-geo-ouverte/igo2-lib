@@ -11,6 +11,7 @@
             {{ 'igo.geo.style.fill' | translate }}
           </span>
           <igo-color-picker-form-field
+            outputFormat="hex"
             formControlName="fill"
             (colorChange)="setLayerFillColor($event)"
           ></igo-color-picker-form-field>
@@ -21,6 +22,7 @@
           {{ 'igo.geo.style.stroke' | translate }}
         </span>
         <igo-color-picker-form-field
+          outputFormat="hex"
           formControlName="stroke"
           (colorChange)="setLayerStrokeColor($event)"
         ></igo-color-picker-form-field>

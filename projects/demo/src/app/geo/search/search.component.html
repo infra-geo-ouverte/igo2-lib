@@ -37,6 +37,9 @@
         (search)="onSearch($event)"
         (clearFeature)="removeFeatureFromMap()"
         (searchSettingsChange)="onSearchSettingsChange()"
+        (searchResultsGeometryStatus)="
+          onSearchResultsGeometryStatusChange($event)
+        "
         [reverseSearchCoordsFormatEnabled]="igoReverseSearchCoordsFormatEnabled"
         (reverseSearchCoordsFormatStatus)="
           onReverseCoordsFormatStatusChange($event)

@@ -18,9 +18,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { asArray as ColorAsArray } from 'ol/color';
-import olStyle from 'ol/style/Style';
+import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 
+import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
+import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
+import { GeostylerStyleInterfaceOptions } from '../../shared/layer/layer-style.interface';
 import {
   LayerMatDialogData,
   StyleModalData
@@ -61,18 +64,30 @@ export class StyleModalLayerComponent implements OnInit {
     strokeColor: 'rgba(143,7,7,1)'
   };
 
-  get layerOlStyle(): olStyle {
-    const style = this.data.layer.ol.getStyle();
-    return style instanceof Function ? undefined : (style as olStyle).clone();
+  get layerGsStyle(): GeostylerStyleInterfaceOptions {
+    return this.data.layer.geostylerStyle$?.getValue();
+  }
+
+  set layerGsStyle(gsStyle: GeostylerStyleInterfaceOptions) {
+    this.data.layer.geostylerStyle$.next(gsStyle);
   }
 
   ngOnInit() {
-    this.linestringOnly = true;
-    for (const feature of this.data.layer.ol.getSource().getFeatures()) {
-      if (feature.getGeometry()?.getType() !== 'LineString') {
-        this.linestringOnly = false;
-      }
+    let features: Feature<Geometry>[] = [];
+    if (this.data.layer instanceof VectorLayer) {
+      features = this.data.layer.ol.getSource().getFeatures();
+    } else if (this.data.layer instanceof VectorTileLayer) {
+      features = this.data.layer.ol.getFeaturesInExtent(
+        this.data.layer.map.viewController.getExtent()
+      );
     }
+
+    this.linestringOnly = features.every(
+      (feature) =>
+        feature.getGeometry()?.getType() === 'LineString' ||
+        feature.getGeometry()?.getType() === 'MultiLineString'
+    );
+
     this.buildStyleData();
     this.buildForm();
   }
@@ -91,56 +106,95 @@ export class StyleModalLayerComponent implements OnInit {
     };
     this.initialValues = {
       fillColor: this.getLayerFillColor(),
-      strokeColor: this.getLayerStrokeColor()
+      strokeColor: this.getLayerStrokeColor(),
+      gsStyle: JSON.parse(JSON.stringify(this.layerGsStyle ?? {}))
     };
   }
 
-  private getLayerFillColor() {
-    let fillColor = this.defaultValues.fillColor;
-    const style = this.layerOlStyle;
-    if (style?.getFill()?.getColor()) {
-      const arrayColor = style.getFill().getColor();
-      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 0.4
-      })`;
+  private getLayerFillColor(): string {
+    if (this.layerGsStyle) {
+      const colors = [];
+      this.layerGsStyle.global.rules.map((rule) => ({
+        ...rule,
+        symbolizers: rule.symbolizers.map((symbolizer) => {
+          if (symbolizer.kind === 'Fill' || symbolizer.kind === 'Mark') {
+            colors.push(symbolizer.color);
+          }
+        })
+      }));
+      colors.push(this.defaultValues.fillColor);
+      return colors[0];
+    } else {
+      return this.defaultValues.fillColor;
     }
-    return fillColor;
   }
 
-  private getLayerStrokeColor() {
-    let strokeColor = this.defaultValues.strokeColor;
-    const style = this.layerOlStyle;
-    if (style?.getStroke()?.getColor()) {
-      const arrayColor = style.getStroke().getColor();
-      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 1
-      })`;
+  private getLayerStrokeColor(): string {
+    if (this.layerGsStyle) {
+      const colors = [];
+      this.layerGsStyle.global.rules.map((rule) => ({
+        ...rule,
+        symbolizers: rule.symbolizers.map((symbolizer) => {
+          if (symbolizer.kind === 'Line') {
+            colors.push(symbolizer.color);
+          } else if (symbolizer.kind === 'Mark') {
+            colors.push(symbolizer.strokeColor);
+          }
+        })
+      }));
+      colors.push(this.defaultValues.strokeColor);
+      return colors[0];
+    } else {
+      return this.defaultValues.strokeColor;
     }
-    return strokeColor;
   }
 
   setLayerFillColor(event) {
-    const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
-    (s.getImage() as any).getFill().setColor(cAA);
-    s.getFill().setColor(cAA);
-    this.data.layer.ol.setStyle(s);
+    if (this.layerGsStyle) {
+      const updated = { ...this.layerGsStyle };
+      updated.global.rules = updated.global.rules.map((rule) => ({
+        ...rule,
+        symbolizers: rule.symbolizers.map((symbolizer) =>
+          symbolizer.kind === 'Fill' || symbolizer.kind === 'Mark'
+            ? { ...symbolizer, color: event }
+            : symbolizer
+        )
+      }));
+      this.layerGsStyle = updated;
+    }
     this.styleModalData.fillColor = event;
+    this.initialValues.fillColor = event;
   }
 
   setLayerStrokeColor(event) {
-    const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
-    (s.getImage() as any).getStroke().setColor(cAA);
-    s.getStroke().setColor(cAA);
-    this.data.layer.ol.setStyle(s);
+    if (this.layerGsStyle) {
+      const updated = { ...this.layerGsStyle };
+      updated.global.rules = updated.global.rules.map((rule) => ({
+        ...rule,
+        symbolizers: rule.symbolizers.map((symbolizer) => {
+          if (symbolizer.kind === 'Line') {
+            return { ...symbolizer, color: event };
+          } else if (symbolizer.kind === 'Mark') {
+            return { ...symbolizer, strokeColor: event };
+          } else {
+            return symbolizer;
+          }
+        })
+      }));
+      this.layerGsStyle = updated;
+    }
     this.styleModalData.strokeColor = event;
+    this.initialValues.strokeColor = event;
   }
 
   cancel() {
     this.dialogRef.close();
-    this.setLayerFillColor(this.initialValues.fillColor);
-    this.setLayerStrokeColor(this.initialValues.strokeColor);
+    if (this.initialValues.gsStyle) {
+      this.layerGsStyle = this.initialValues.gsStyle;
+    } else {
+      this.setLayerFillColor(this.initialValues.fillColor);
+      this.setLayerStrokeColor(this.initialValues.strokeColor);
+    }
   }
 
   confirm() {

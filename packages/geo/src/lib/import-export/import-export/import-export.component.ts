@@ -58,8 +58,6 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { computeProjectionsConstraints } from '../../map/shared';
 import { IgoMap } from '../../map/shared/map';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { StyleService } from '../../style/style-service/style.service';
 import { ExportOptions, GeometryCollection } from '../shared/export.interface';
 import { ExportService } from '../shared/export.service';
 import {
@@ -109,8 +107,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private exportService = inject(ExportService);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private formBuilder = inject(UntypedFormBuilder);
   private config = inject(ConfigService);
   private storageService = inject(StorageService);
@@ -871,29 +867,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    if (!importExportOptions?.importWithStyle) {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map,
-        this.contextUri,
-        this.messageService,
-        this.layerService,
-        confirmDialogService
-      );
-    } else {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map,
-        this.contextUri,
-        this.messageService,
-        this.layerService,
-        confirmDialogService,
-        this.styleListService,
-        this.styleService
-      );
-    }
+
+    handleFileImportSuccess(
+      file,
+      features,
+      this.map,
+      this.contextUri,
+      this.messageService,
+      this.layerService,
+      confirmDialogService
+    );
   }
 
   private onFileImportError(file: File, error: Error) {

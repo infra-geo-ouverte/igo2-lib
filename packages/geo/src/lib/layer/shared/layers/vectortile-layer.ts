@@ -64,6 +64,8 @@ export class VectorTileLayer extends Layer {
       console.error(
         'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
       );
+      this.options.igoStyle.editable = false;
+      delete this.options.igoStyle?.geostylerStyle;
     }
     if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
       this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);

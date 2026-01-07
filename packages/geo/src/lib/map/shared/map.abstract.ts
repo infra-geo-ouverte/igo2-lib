@@ -29,8 +29,6 @@ export abstract class MapBase {
   status$: Subject<SubjectStatus>;
   propertyChange$: Subject<LayerWatcherChange>;
   overlay: Overlay;
-  queryResultsOverlay: Overlay;
-  searchResultsOverlay: Overlay;
   viewController: MapViewController;
   geolocationController: MapGeolocationController;
   swipeEnabled$: BehaviorSubject<boolean>;

@@ -31,12 +31,10 @@ import {
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 import {
-  FeatureCommonVectorStyleOptions,
-  OverlayStyleOptions
-} from '../../style/shared/vector/vector-style.interface';
-import { StyleService } from '../../style/style-service/style.service';
+  LayerNearTransparentOlStyle,
+  LayerSelectionOlStyle
+} from '../../style/shared/layer/layer-style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -51,7 +49,6 @@ export class WmsWorkspaceService {
   private layerService = inject(LayerService);
   private storageService = inject(StorageService);
   private capabilitiesService = inject(CapabilitiesService);
-  private styleService = inject(StyleService);
   private configService = inject(ConfigService);
   private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
 
@@ -155,23 +152,7 @@ export class WmsWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: this.styleService.createStyle({
-          fill: {
-            color: 'rgba(255, 255, 255, 0.01)'
-          },
-          stroke: {
-            color: 'rgba(255, 255, 255, 0.01)'
-          },
-          circle: {
-            fill: {
-              color: 'rgba(255, 255, 255, 0.01)'
-            },
-            stroke: {
-              color: 'rgba(255, 255, 255, 0.01)'
-            },
-            radius: 5
-          }
-        }),
+        style: LayerNearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -254,9 +235,6 @@ export class WmsWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle: OverlayStyleOptions =
-      this.configService.getConfig('queryOverlayStyle');
-
     const id = layer.id + '.FeatureStore';
 
     if (!layer.link) {
@@ -269,28 +247,19 @@ export class WmsWorkspaceService {
       ];
       layer.createLink();
     }
-
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: this.layerService.createVectorLayer({
+      layer: this.layerService.createLayer({
         id,
         linkedLayers: {
           linkId: id
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: (feature) => {
-          return getCommonVectorSelectedStyle(
-            Object.assign(
-              {},
-              { feature },
-              confQueryOverlayStyle?.selection || {}
-            ) as FeatureCommonVectorStyleOptions
-          );
-        },
+        style: LayerSelectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
+      }) as VectorLayer,
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

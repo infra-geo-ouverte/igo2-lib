@@ -98,7 +98,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   ): string {
     switch (format) {
       case 'hex':
-        color = tinycolor(color).toHexString();
+        color = tinycolor(color).toHex8String();
         break;
       case 'rgba':
         color = tinycolor(color).toRgbString();

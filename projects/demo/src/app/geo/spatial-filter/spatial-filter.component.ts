@@ -26,6 +26,7 @@ import {
   IgoMap,
   IgoQueryModule,
   Layer,
+  LayerMarkerOlStyle,
   LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
@@ -41,7 +42,6 @@ import {
   SpatialFilterThematic,
   SpatialFilterType,
   VectorLayer,
-  createOverlayMarkerStyle,
   featureToOl,
   isLayerGroup,
   moveToOlFeatures
@@ -402,7 +402,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         });
       };
 
-      const igoLayer = this.layerService.createVectorLayer({
+      const igoLayer = this.layerService.createLayer({
         isIgoInternalLayer: true,
         title: ('Zone ' +
           i +
@@ -422,7 +422,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           queryable: true
         } as QueryableDataSourceOptions),
         visible: true
-      });
+      }) as VectorLayer;
 
       const featuresOl = features.map((feature: Feature) => {
         return featureToOl(feature, this.map.projectionCode);
@@ -473,9 +473,11 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
           const icon: string = features[0].meta.icon;
           let style: olstyle.Style;
           if (!icon) {
-            style = createOverlayMarkerStyle();
+            style = LayerMarkerOlStyle({ text: undefined });
           } else {
-            style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
+            style =
+              this.createSvgIcon(icon) ||
+              LayerMarkerOlStyle({ text: undefined });
           }
 
           const olLayer = this.layerService.createLayer({

@@ -10,12 +10,14 @@ export const CONFIG_DEPRECATED: Record<string, DeprecatedOptions> = {
     mayBeRemoveIn: new Date('2024-06-06')
   },
   importWithStyle: {
-    alternativeKey: 'importExport.importWithStyle',
-    mayBeRemoveIn: new Date('2024-06-06')
+    mayBeRemoveIn: new Date('2026-09-06')
   },
   hasGeolocateButton: {
     alternativeKey: 'geolocate.button.visible',
     mayBeRemoveIn: new Date('2024-06-06')
+  },
+  hasFeatureEmphasisOnSelection: {
+    mayBeRemoveIn: new Date('2026-09-06')
   }
 };
 

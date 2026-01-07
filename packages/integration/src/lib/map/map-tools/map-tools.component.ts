@@ -36,6 +36,7 @@ import {
   TimeFilterButtonComponent,
   TrackFeatureButtonComponent,
   VectorLayer,
+  VectorTileLayer,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -371,8 +372,11 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   isStyleEditButton(layer: Layer): boolean {
-    if (layer instanceof VectorLayer) {
-      if (layer.options?.igoStyle?.editable) {
+    if (layer instanceof VectorLayer || layer instanceof VectorTileLayer) {
+      if (
+        layer.options?.igoStyle?.editable &&
+        layer.geostylerStyle$?.getValue()
+      ) {
         return true;
       }
     }
