@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
@@ -21,6 +21,7 @@ import {
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
+  Overlay,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
@@ -29,7 +30,6 @@ import {
   VectorTileLayer,
   VectorTileLayerOptions
 } from '@igo2/geo';
-import { QueryState } from '@igo2/integration';
 
 import olFeature from 'ol/Feature';
 import olLineString from 'ol/geom/LineString';
@@ -56,10 +56,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     AsyncPipe
   ]
 })
-export class AppQueryComponent {
+export class AppQueryComponent implements OnInit {
   private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
-  private queryState = inject(QueryState);
 
   public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
     []
@@ -77,6 +76,7 @@ export class AppQueryComponent {
     center: [-73, 47.2],
     zoom: 6
   };
+  public queryResultsOverlayAll: Overlay;
 
   constructor() {
     this.dataSourceService
@@ -197,6 +197,9 @@ export class AppQueryComponent {
         this.map.layerController.add(layer)
       );
   }
+  ngOnInit(): void {
+    this.queryResultsOverlayAll = new Overlay(this.map);
+  }
 
   addFeatures(dataSource: FeatureDataSource): void {
     const feature1 = new olFeature<olLineString>({
@@ -233,10 +236,7 @@ export class AppQueryComponent {
     const features: Feature[] = results.features;
     if (features.length && features[0]) {
       this.features$.next(features);
-      this.queryState.queryResultsOverlayAll.setFeatures(
-        features,
-        FeatureMotion.None
-      );
+      this.queryResultsOverlayAll.setFeatures(features, FeatureMotion.None);
     }
   }
 
