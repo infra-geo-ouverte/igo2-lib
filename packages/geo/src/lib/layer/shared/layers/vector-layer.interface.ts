@@ -52,8 +52,9 @@ export interface VectorLayerOptions extends LayerOptions {
 export interface IdbInfo {
   storeToIdb: boolean;
   contextUri?: string;
-  /** Interface restricted for system usage. You don't need to set a value */
-  firstLoad?: boolean;
+  /** Interfaces restricted for system usage*/
+  _firstLoad?: boolean;
+  _deleteFromIdb?: boolean;
 }
 
 export interface VectorAnimation {

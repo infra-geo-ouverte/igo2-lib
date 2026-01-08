@@ -9,7 +9,7 @@ import { asArray as ColorAsArray } from 'ol/color';
 import { easeOut } from 'ol/easing';
 import BaseEvent from 'ol/events/Event';
 import { Extent } from 'ol/extent';
-import { FeatureLoader } from 'ol/featureloader';
+import { FeatureLoader, FeatureUrlFunction } from 'ol/featureloader';
 import * as olformat from 'ol/format';
 import { ReadOptions } from 'ol/format/Feature';
 import Geometry from 'ol/geom/Geometry';
@@ -128,29 +128,36 @@ export class VectorLayer extends Layer {
 
     const vector = new olLayerVector(olOptions);
     const vectorSource = vector.getSource() as olSourceVector;
-    const url = vectorSource.getUrl();
+    let url = vectorSource.getUrl();
     if (typeof url === 'function') {
       return vector;
     }
-    if (url || olOptions.sourceOptions?.type === 'wfs') {
-      let loader: FeatureLoader;
-      const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
+    let loader: FeatureLoader;
+    if (
+      olOptions.sourceOptions?.type === 'wfs' &&
+      (olOptions.sourceOptions?.params ||
+        (olOptions.sourceOptions as WFSDataSourceOptions)?.paramsWFS)
+    ) {
+      loader = (extent, resolution, proj, success, failure) => {
+        this.customWFSLoader(
+          vectorSource,
+          olOptions.sourceOptions as WFSDataSourceOptions,
+          extent,
+          resolution,
+          proj,
+          success,
+          failure
+        );
+      };
+    } else {
       if (
-        wfsOptions?.type === 'wfs' &&
-        (wfsOptions.params || wfsOptions.paramsWFS)
+        !url &&
+        this.options.idbInfo?.storeToIdb &&
+        this.options.idbInfo?._firstLoad === false
       ) {
-        loader = (extent, resolution, proj, success, failure) => {
-          this.customWFSLoader(
-            vectorSource,
-            wfsOptions,
-            extent,
-            resolution,
-            proj,
-            success,
-            failure
-          );
-        };
-      } else {
+        url = this.id.toString();
+      }
+      if (url) {
         loader = (extent, resolution, proj, success, failure) => {
           this.customLoader(
             vectorSource,
@@ -163,9 +170,9 @@ export class VectorLayer extends Layer {
           );
         };
       }
-      if (loader) {
-        vectorSource.setLoader(loader);
-      }
+    }
+    if (loader) {
+      vectorSource.setLoader(loader);
     }
 
     if (this.options.idbInfo?.storeToIdb) {
@@ -190,7 +197,7 @@ export class VectorLayer extends Layer {
     fromEvent<BaseEvent>(vector, 'sourceready')
       .pipe(
         tap(() => {
-          if (this.options.idbInfo.firstLoad !== false) {
+          if (this.options.idbInfo._firstLoad !== false) {
             this.maintainFeaturesInIdb();
             this.maintainOptionsInIdb();
           }
@@ -213,12 +220,17 @@ export class VectorLayer extends Layer {
         switchMap(() =>
           merge(
             fromEvent<BaseEvent>(vector, 'change'),
+            fromEvent<ObjectEvent>(vector, 'change:visible'),
+            fromEvent<ObjectEvent>(vector, 'change:opacity'),
             fromEvent<ObjectEvent>(vector, 'change:zIndex')
           )
         )
       )
       .pipe(debounceTime(750))
-      .subscribe(() => this.maintainOptionsInIdb());
+      .subscribe(() => {
+        this.maintainOptionsInIdb();
+
+      });
   }
 
   private handlePreload(): void {
@@ -261,7 +273,10 @@ export class VectorLayer extends Layer {
 
   remove(): void {
     this.watcher.unsubscribe();
-    if (this.options.idbInfo?.storeToIdb) {
+    if (
+      this.options.idbInfo?.storeToIdb &&
+      this.options.idbInfo?._deleteFromIdb
+    ) {
       this.removeLayerFromIDB();
     }
     super.remove();
@@ -293,9 +308,11 @@ export class VectorLayer extends Layer {
         id: this.id,
         isIgoInternalLayer: this.isIgoInternalLayer,
         title: this.title,
+        visible: this.visible,
+        opacity: this.opacity,
         igoStyle: this.options.igoStyle,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
-          firstLoad: false
+          _firstLoad: false
         })
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
@@ -306,6 +323,7 @@ export class VectorLayer extends Layer {
 
   private maintainFeaturesInIdb() {
     const dsFeatures = this.dataSource.ol.getFeatures();
+    dsFeatures.forEach((f) => f.unset('_featureStore', true));
     const geojsonObject = JSON.parse(
       new olformat.GeoJSON().writeFeatures(dsFeatures, {
         dataProjection: 'EPSG:4326',
@@ -316,7 +334,7 @@ export class VectorLayer extends Layer {
     const geoDB = new GeoDB();
     geoDB
       .update(
-        this.options.sourceOptions.url || this.id.toString(),
+        this.options.sourceOptions?.url || this.id.toString(),
         this.id,
         geojsonObject,
         InsertSourceInsertDBEnum.User,
@@ -723,7 +741,7 @@ export class VectorLayer extends Layer {
    */
   private customLoader(
     vectorSource: olSourceVector,
-    url: string,
+    url: string | FeatureUrlFunction,
     extent: Extent,
     resolution: number,
     projection: olProjection,
@@ -750,7 +768,7 @@ export class VectorLayer extends Layer {
     let modifiedUrl = url;
     if (typeof url !== 'function') {
       const alteredUrlWithKeyAuth =
-        this.authInterceptor.alterUrlWithKeyAuth(url);
+        this.authInterceptor?.alterUrlWithKeyAuth(url);
       if (alteredUrlWithKeyAuth) {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
