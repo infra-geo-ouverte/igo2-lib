@@ -22,7 +22,7 @@ import {
   isLayerLinked,
   isLayerLinkedTogether
 } from '../shared/layers/linked';
-import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
+import { isBaseLayer, isIdbLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 
 @Component({
   selector: 'igo-layer-viewer-bottom-actions',
@@ -112,6 +112,11 @@ export class LayerViewerBottomActionsComponent {
   }
 
   removeLayers(): void {
+    this.selected
+      .filter((layer) => isIdbLayer(layer))
+      .forEach((layer) => {
+        layer.options.idbInfo._deleteFromIdb = true;
+      });
     this.controller().remove(...this.selected);
     this.controller().clearSelection();
   }
