@@ -42,7 +42,7 @@
     "circular-deps": "madge --circular --extensions ts packages"
   },
   "dependencies": {
-    "@angular/animations": "^20.3.3",
+    "@angular/animations": "^21.0.8",
     "@angular/cdk": "^20.2.7",
     "@angular/common": "^20.3.3",
     "@angular/compiler": "^20.3.3",
