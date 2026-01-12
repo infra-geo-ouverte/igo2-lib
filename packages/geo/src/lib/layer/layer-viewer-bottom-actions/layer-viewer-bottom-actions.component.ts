@@ -13,6 +13,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import * as olextent from 'ol/extent';
 
 import type { MapBase } from '../../map/shared/map.abstract';
+import { isIdbLayer } from '../../offline/offline.utils';
 import { LayerListToolService } from '../layer-list-tool';
 import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerController } from '../shared/layer-controller';
@@ -22,7 +23,7 @@ import {
   isLayerLinked,
   isLayerLinkedTogether
 } from '../shared/layers/linked';
-import { isBaseLayer, isIdbLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
+import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 
 @Component({
   selector: 'igo-layer-viewer-bottom-actions',
