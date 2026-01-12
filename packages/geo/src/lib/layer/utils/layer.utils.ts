@@ -5,8 +5,6 @@ import type {
   Layer,
   LayerGroup,
   LayerGroupOptions,
-  VectorLayer,
-  VectorLayerOptions,
   VectorTileLayerOptions
 } from '../shared/layers';
 
@@ -30,14 +28,6 @@ export function isLayerGroup(layer: AnyLayer): layer is LayerGroup {
 
 export function isLayerItem(layer: AnyLayer): layer is Layer {
   return !isLayerGroup(layer);
-}
-
-export function isIdbLayer(layer: AnyLayer): layer is VectorLayer {
-  return (
-    isLayerItem(layer) &&
-    layer.type === 'vector' &&
-    (layer.options as VectorLayerOptions).idbInfo?.storeToIdb
-  );
 }
 
 export function isBaseLayer(layer: AnyLayer): layer is Layer {
