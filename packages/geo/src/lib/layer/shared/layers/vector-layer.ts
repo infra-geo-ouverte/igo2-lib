@@ -133,15 +133,15 @@ export class VectorLayer extends Layer {
       return vector;
     }
     let loader: FeatureLoader;
+    const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
     if (
-      olOptions.sourceOptions?.type === 'wfs' &&
-      (olOptions.sourceOptions?.params ||
-        (olOptions.sourceOptions as WFSDataSourceOptions)?.paramsWFS)
+      wfsOptions?.type === 'wfs' &&
+      (wfsOptions.params || wfsOptions.paramsWFS)
     ) {
       loader = (extent, resolution, proj, success, failure) => {
         this.customWFSLoader(
           vectorSource,
-          olOptions.sourceOptions as WFSDataSourceOptions,
+          wfsOptions,
           extent,
           resolution,
           proj,
@@ -229,7 +229,6 @@ export class VectorLayer extends Layer {
       .pipe(debounceTime(750))
       .subscribe(() => {
         this.maintainOptionsInIdb();
-
       });
   }
 
