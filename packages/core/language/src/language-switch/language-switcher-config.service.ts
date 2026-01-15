@@ -18,8 +18,7 @@ export class LanguageSwitcherConfigService {
 
     const enabled = languageConfig?.switcher?.enabled ?? false;
 
-    const position =
-      languageConfig?.switcher?.position ?? (hasHeader ? 'header' : 'sidebar');
+    const position = hasHeader ? 'header' : 'sidebar';
 
     return { enabled, position };
   }

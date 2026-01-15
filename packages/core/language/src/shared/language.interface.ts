@@ -5,8 +5,7 @@ export interface LanguageOptions {
   prefix?: string | string[];
   ignoreLibsLocale?: boolean;
   switcher?: {
-    enabled?: boolean;
-    position?: 'header' | 'sidebar';
+    enabled?: boolean
   };
 }
 
