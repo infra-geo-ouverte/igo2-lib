@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,9 +14,6 @@ import { LanguageService } from '../shared/language.service';
   styleUrls: ['./language-switch.component.scss']
 })
 export class LanguageSwitchComponent {
-  readonly enabled = input(false);
-  readonly position = input<'header' | 'sidebar'>('sidebar');
-
   languageService = inject(LanguageService);
 
   public toggleLanguage() {

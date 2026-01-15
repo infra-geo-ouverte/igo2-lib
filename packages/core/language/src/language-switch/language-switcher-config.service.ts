@@ -8,19 +8,12 @@ import { LanguageOptions } from '../shared/language.interface';
 export class LanguageSwitcherConfigService {
   private configService = inject(ConfigService);
 
-  getSwitcherConfig(): { enabled: boolean; position: 'header' | 'sidebar' } {
+  getSwitcherConfig(): boolean {
     const languageConfig =
       this.configService.getConfig<LanguageOptions>('language');
 
-    const hasHeader = this.configService.getConfig<boolean>(
-      'header.hasHeader',
-      true
-    );
-
     const enabled = languageConfig?.switcher?.enabled ?? false;
 
-    const position = hasHeader ? 'header' : 'sidebar';
-
-    return { enabled, position };
+    return enabled;
   }
 }

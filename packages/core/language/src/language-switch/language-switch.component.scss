@@ -16,37 +16,3 @@
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
 }
-
-.btn-link.header:active,
-.btn-link.header:focus-visible {
-  outline: 2px solid white;
-  outline-offset: 2px;
-}
-
-.btn-link.header {
-  position: static !important;
-  transform: none !important;
-  color: white !important;
-  width: auto;
-  height: auto;
-  padding: 0;
-  border: none;
-  font:
-    normal 0.8rem/1.2rem 'roboto',
-    sans-serif !important;
-}
-
-.btn-link.sidebar {
-  font:
-    normal 0.8rem/1.2rem 'roboto',
-    sans-serif !important;
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--mat-sys-primary) !important;
-  padding: 0;
-  white-space: nowrap;
-  word-break: normal;
-  overflow-wrap: normal;
-}
