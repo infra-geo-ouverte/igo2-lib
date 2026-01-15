@@ -1,47 +1,47 @@
 <app-doc-viewer title="Language" subtitle="Core">
   <section>
-  <p>Translate your angular application</p>
+    <p>Translate your angular application</p>
 
-  <li>Import <code>IgoLanguageModule</code> only once</li>
-  <li>
-    Configure the
-    <a
-      href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/projects/demo/src/locale"
-      >locale files</a
-    >
-  </li>
+    <li>Import <code>IgoLanguageModule</code> only once</li>
+    <li>
+      Configure the
+      <a
+        href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/projects/demo/src/locale"
+        >locale files</a
+      >
+    </li>
 
-  <app-example-viewer codeFolder="core/language">
-    <div class="d-flex actions-container">
-      <button mat-raised-button (click)="changeLanguage('en')">English</button>
-      <button mat-raised-button (click)="changeLanguage('fr')">Français</button>
-    </div>
+    <app-example-viewer codeFolder="core/language">
+      <div class="d-flex actions-container">
+        <button mat-raised-button (click)="changeLanguage('en')">
+          English
+        </button>
+        <button mat-raised-button (click)="changeLanguage('fr')">
+          Français
+        </button>
+      </div>
 
-    <div class="m-t-12">
-      {{ 'welcome' | translate: app }}
-    </div>
-  </app-example-viewer>
-</section>
-<section>
-  <h3>Language switcher button</h3>
-  <p>Button to translate your angular application.</p>
-  <li>Dependencies: LanguageService</li>
+      <div class="m-t-12">
+        {{ 'welcome' | translate: app }}
+      </div>
+    </app-example-viewer>
+  </section>
+  <section>
+    <h3>Language switcher button</h3>
+    <p>Button to translate your angular application.</p>
+    <li>Dependencies: LanguageService</li>
+  </section>
+  <section>
+    <app-example-viewer codeFolder="core/language">
+      <div class="d-flex actions-container">
+        <button matButton (click)="toggleLanguage()">
+          {{ getSwitchLabel() | translate }}
+        </button>
+      </div>
 
-</section>
-<section>
-   <app-example-viewer codeFolder="core/language">
-    <div class="d-flex actions-container">
-    <button
-      matButton
-      (click)="toggleLanguage()"
-    >
-    {{ getSwitchLabel() | translate }}
-    </button>
-    </div>
-
-    <div class="m-t-12">
-      {{ 'welcome' | translate: app }}
-    </div>
-  </app-example-viewer>
-</section>
+      <div class="m-t-12">
+        {{ 'welcome' | translate: app }}
+      </div>
+    </app-example-viewer>
+  </section>
 </app-doc-viewer>

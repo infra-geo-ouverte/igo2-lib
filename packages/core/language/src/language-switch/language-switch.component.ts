@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslateModule} from '@ngx-translate/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 
 import { LanguageService } from '../shared/language.service';
 

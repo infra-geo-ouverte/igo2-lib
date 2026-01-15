@@ -5,7 +5,7 @@ export interface LanguageOptions {
   prefix?: string | string[];
   ignoreLibsLocale?: boolean;
   switcher?: {
-    enabled?: boolean
+    enabled?: boolean;
   };
 }
 

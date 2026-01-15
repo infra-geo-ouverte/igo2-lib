@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
-import { LanguageOptions } from '@igo2/core/language';
+
+import { LanguageOptions } from '../shared/language.interface';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageSwitcherConfigService {
