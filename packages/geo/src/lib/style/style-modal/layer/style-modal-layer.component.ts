@@ -1,3 +1,4 @@
+import { KeyValuePipe } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   FormsModule,
@@ -14,19 +15,29 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import { ColorPickerFormFieldComponent } from '@igo2/common/color';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import Feature from 'ol/Feature';
-import Geometry from 'ol/geom/Geometry';
+import Geometry, { Type } from 'ol/geom/Geometry';
 
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
-import { GeostylerStyleInterfaceOptions } from '../../shared/layer/layer-style.interface';
+import {
+  HandledLayerStyle,
+  LayerStyle
+} from '../../shared/layer/layer-style.interface';
+import {
+  LayerRandomGsStyle,
+  isEditableLayerStyle,
+  isGeostylerLayerStyle
+} from '../../shared/layer/layer-style.utils';
 import {
   LayerMatDialogData,
-  StyleModalData
+  StyleModalLayerData
 } from '../shared/style-modal.interface';
 
 @Component({
@@ -42,7 +53,10 @@ import {
     ColorPickerFormFieldComponent,
     MatDialogActions,
     MatButtonModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    MatInputModule,
+    MatSelectModule,
+    KeyValuePipe
   ]
 })
 export class StyleModalLayerComponent implements OnInit {
@@ -54,22 +68,44 @@ export class StyleModalLayerComponent implements OnInit {
 
   public form: UntypedFormGroup;
 
-  public styleModalData: StyleModalData;
-  public linestringOnly: boolean;
+  public geometryTypes = new Map<Type, number>();
+  public featuresProperties = new Map<string, number>();
+  public mostFrequentGeometryType: Type;
 
-  private initialValues: StyleModalData;
-
-  private defaultValues: StyleModalData = {
-    fillColor: 'rgba(255,255,255,0.4)',
-    strokeColor: 'rgba(143,7,7,1)'
+  public showForm = {
+    fill: true,
+    stroke: true,
+    width: true,
+    fields: true,
+    radius: false
   };
 
-  get layerGsStyle(): GeostylerStyleInterfaceOptions {
-    return this.data.layer.geostylerStyle$?.getValue();
+  private initialHandledLayerStyle: HandledLayerStyle;
+
+  private defaultValues: StyleModalLayerData = {
+    fillColor: 'rgba(255,255,255,0.4)',
+    strokeColor: 'rgba(143,7,7,1)',
+    strokeWidth: 3,
+    field: '_mapTitle',
+    radius: 3
+  };
+
+  get style(): LayerStyle {
+    const ls = this.data.layer.style;
+    return isEditableLayerStyle(ls)
+      ? ls
+      : {
+          editable: true,
+          type: 'Geostyler',
+          style: LayerRandomGsStyle(
+            this.defaultValues.field,
+            Array.from(this.geometryTypes.keys())
+          )
+        };
   }
 
-  set layerGsStyle(gsStyle: GeostylerStyleInterfaceOptions) {
-    this.data.layer.geostylerStyle$.next(gsStyle);
+  set style(value: LayerStyle) {
+    this.data.layer.style = value;
   }
 
   ngOnInit() {
@@ -81,132 +117,215 @@ export class StyleModalLayerComponent implements OnInit {
         this.data.layer.map.viewController.getExtent()
       );
     }
+    this.computeInfoFromFeatures(features);
 
-    this.linestringOnly = features.every(
-      (feature) =>
-        feature.getGeometry()?.getType() === 'LineString' ||
-        feature.getGeometry()?.getType() === 'MultiLineString'
-    );
-
-    this.buildStyleData();
     this.buildForm();
+  }
+
+  private computeInfoFromFeatures(olFeatures: Feature<Geometry>[]): void {
+    olFeatures.forEach((olFeature) => {
+      const type = olFeature.getGeometry()?.getType();
+      if (type) {
+        const current = this.geometryTypes.get(type) ?? 0;
+        this.geometryTypes.set(type, current + 1);
+      }
+
+      const properties = olFeature.getProperties();
+
+      Object.keys(properties).forEach((propName) => {
+        if (propName === 'geometry' || propName.startsWith('_')) return;
+        const currentPropCount = this.featuresProperties.get(propName) ?? 0;
+        this.featuresProperties.set(propName, currentPropCount + 1);
+      });
+    });
+    let maxCount = 0;
+    this.geometryTypes.forEach((count, type) => {
+      if (count > maxCount) {
+        maxCount = count;
+        this.mostFrequentGeometryType = type;
+      }
+    });
+
+    switch (this.mostFrequentGeometryType) {
+      case 'Point':
+      case 'MultiPoint':
+      case 'Circle':
+        this.showForm = {
+          fill: true,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: true
+        };
+        break;
+
+      case 'Polygon':
+      case 'MultiPolygon':
+        this.showForm = {
+          fill: true,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: false
+        };
+        break;
+      case 'LineString':
+      case 'MultiLineString':
+        this.showForm = {
+          fill: false,
+          stroke: true,
+          width: true,
+          fields: true,
+          radius: false
+        };
+        break;
+      default:
+        break;
+    }
   }
 
   private buildForm() {
     this.form = this.formBuilder.group({
       fill: [this.getLayerFillColor()],
-      stroke: [this.getLayerStrokeColor()]
+      stroke: [this.getLayerStrokeColor()],
+      strokeWidth: [this.getLayerStrokeWidth()],
+      field: [this.getLayerLabelField()],
+      radius: [this.getLayerRadius()]
     });
+    const layerStyle = this.data.layer.style;
+    this.initialHandledLayerStyle = isGeostylerLayerStyle(layerStyle)
+      ? JSON.parse(JSON.stringify(layerStyle))
+      : layerStyle;
   }
 
-  private buildStyleData() {
-    this.styleModalData = {
-      fillColor: this.getLayerFillColor(),
-      strokeColor: this.getLayerStrokeColor()
-    };
-    this.initialValues = {
-      fillColor: this.getLayerFillColor(),
-      strokeColor: this.getLayerStrokeColor(),
-      gsStyle: JSON.parse(JSON.stringify(this.layerGsStyle ?? {}))
-    };
+  private getLayerStyleValue<T>(
+    extractor: (s: any) => T | undefined,
+    defaultValue: T
+  ): T {
+    if (!this.style) return defaultValue;
+    for (const rule of this.style.style?.rules ?? []) {
+      for (const s of rule.symbolizers ?? []) {
+        const v = extractor(s);
+        if (v !== undefined && v !== null) return v;
+      }
+    }
+    return defaultValue;
   }
 
   private getLayerFillColor(): string {
-    if (this.layerGsStyle) {
-      const colors = [];
-      this.layerGsStyle.global.rules.map((rule) => ({
-        ...rule,
-        symbolizers: rule.symbolizers.map((symbolizer) => {
-          if (symbolizer.kind === 'Fill' || symbolizer.kind === 'Mark') {
-            colors.push(symbolizer.color);
-          }
-        })
-      }));
-      colors.push(this.defaultValues.fillColor);
-      return colors[0];
-    } else {
-      return this.defaultValues.fillColor;
-    }
+    return this.getLayerStyleValue<string>(
+      (s) => (s.kind === 'Fill' || s.kind === 'Mark' ? s.color : undefined),
+      this.defaultValues.fillColor
+    );
   }
 
   private getLayerStrokeColor(): string {
-    if (this.layerGsStyle) {
-      const colors = [];
-      this.layerGsStyle.global.rules.map((rule) => ({
-        ...rule,
-        symbolizers: rule.symbolizers.map((symbolizer) => {
-          if (symbolizer.kind === 'Line') {
-            colors.push(symbolizer.color);
-          } else if (symbolizer.kind === 'Mark') {
-            colors.push(symbolizer.strokeColor);
-          }
-        })
-      }));
-      colors.push(this.defaultValues.strokeColor);
-      return colors[0];
-    } else {
-      return this.defaultValues.strokeColor;
-    }
+    return this.getLayerStyleValue<string>(
+      (s) =>
+        s.kind === 'Line'
+          ? s.color
+          : s.kind === 'Mark'
+            ? s.strokeColor
+            : s.kind === 'Fill'
+              ? s.outlineColor
+              : undefined,
+      this.defaultValues.strokeColor
+    );
   }
 
-  setLayerFillColor(event) {
-    if (this.layerGsStyle) {
-      const updated = { ...this.layerGsStyle };
-      updated.global.rules = updated.global.rules.map((rule) => ({
-        ...rule,
-        symbolizers: rule.symbolizers.map((symbolizer) =>
-          symbolizer.kind === 'Fill' || symbolizer.kind === 'Mark'
-            ? { ...symbolizer, color: event }
-            : symbolizer
-        )
-      }));
-      this.layerGsStyle = updated;
-    }
-    this.styleModalData.fillColor = event;
-    this.initialValues.fillColor = event;
+  private getLayerStrokeWidth(): number {
+    return this.getLayerStyleValue<number>(
+      (s) =>
+        s.kind === 'Line'
+          ? s.width
+          : s.kind === 'Mark'
+            ? s.strokeWidth
+            : s.kind === 'Fill'
+              ? s.outlineWidth
+              : undefined,
+      this.defaultValues.strokeWidth
+    );
+  }
+  private getLayerLabelField(): string {
+    return this.getLayerStyleValue<string>(
+      (s) =>
+        s.kind === 'Text' && s.label != null
+          ? s.label.toString().replace('{{', '').replace('}}', '')
+          : undefined,
+      this.defaultValues.field
+    );
+  }
+  private getLayerRadius(): number {
+    return this.getLayerStyleValue<number>(
+      (s) => (s.kind === 'Mark' ? s.radius : undefined),
+      this.defaultValues.radius
+    );
   }
 
-  setLayerStrokeColor(event) {
-    if (this.layerGsStyle) {
-      const updated = { ...this.layerGsStyle };
-      updated.global.rules = updated.global.rules.map((rule) => ({
-        ...rule,
-        symbolizers: rule.symbolizers.map((symbolizer) => {
-          if (symbolizer.kind === 'Line') {
-            return { ...symbolizer, color: event };
-          } else if (symbolizer.kind === 'Mark') {
-            return { ...symbolizer, strokeColor: event };
-          } else {
-            return symbolizer;
-          }
-        })
-      }));
-      this.layerGsStyle = updated;
-    }
-    this.styleModalData.strokeColor = event;
-    this.initialValues.strokeColor = event;
+  private updateLayerSymbolizers(updater: (symbolizer: any) => any): void {
+    if (!this.style) return;
+    const updated = {
+      ...this.style,
+      style: {
+        ...this.style.style,
+        rules: (this.style.style.rules ?? []).map((rule) => ({
+          ...rule,
+          symbolizers: (rule.symbolizers ?? []).map((sym) => {
+            const newSym = updater(sym);
+            return newSym === undefined ? sym : newSym;
+          })
+        }))
+      }
+    };
+    this.style = updated;
+  }
+
+  setLayerFillColor(event: string) {
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Fill' || sym.kind === 'Mark'
+        ? { ...sym, color: event }
+        : undefined
+    );
+  }
+  setLayerStrokeColor(event: string) {
+    this.updateLayerSymbolizers((sym) => {
+      if (sym.kind === 'Line') return { ...sym, color: event };
+      if (sym.kind === 'Mark') return { ...sym, strokeColor: event };
+      if (sym.kind === 'Fill') return { ...sym, outlineColor: event };
+      return undefined;
+    });
+  }
+  setLayerStrokeWidth(value: number | string) {
+    const width = Number(value);
+    this.updateLayerSymbolizers((sym) => {
+      if (sym.kind === 'Line') return { ...sym, width };
+      if (sym.kind === 'Mark') return { ...sym, strokeWidth: width };
+      if (sym.kind === 'Fill') return { ...sym, outlineWidth: width };
+      return undefined;
+    });
+  }
+
+  setLayerFieldLabel(event: MatSelectChange) {
+    const label = event.value;
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Text' ? { ...sym, label: `{{${label}}}` } : undefined
+    );
+  }
+  setLayerRadius(value: number | string) {
+    const radius = Number(value);
+    this.updateLayerSymbolizers((sym) =>
+      sym.kind === 'Mark' ? { ...sym, radius } : undefined
+    );
   }
 
   cancel() {
     this.dialogRef.close();
-    if (this.initialValues.gsStyle) {
-      this.layerGsStyle = this.initialValues.gsStyle;
-    } else {
-      this.setLayerFillColor(this.initialValues.fillColor);
-      this.setLayerStrokeColor(this.initialValues.strokeColor);
-    }
+    this.data.layer.style = this.initialHandledLayerStyle;
   }
 
   confirm() {
     this.confirmFlag = true;
-    if (this.form.get('fill').value) {
-      this.styleModalData.fillColor = this.form.get('fill').value;
-    }
-
-    if (this.form.get('stroke').value) {
-      this.styleModalData.strokeColor = this.form.get('stroke').value;
-    }
-    this.dialogRef.close(this.styleModalData);
+    this.dialogRef.close();
   }
 
   openPicker() {

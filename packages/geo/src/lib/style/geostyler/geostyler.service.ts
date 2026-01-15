@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 
+import { Style as OlStyle } from 'ol/style';
+
 import { LegendRenderer } from 'geostyler-legend';
 import { OlStyleParser as OpenLayersParser } from 'geostyler-openlayers-parser';
-import { IconSymbolizer, Style, WriteStyleResult } from 'geostyler-style';
+import {
+  Style as GsStyle,
+  IconSymbolizer,
+  WriteStyleResult
+} from 'geostyler-style';
 import { Observable, from, map, tap } from 'rxjs';
 
-import { StyleSourceType } from '../shared/style.enum';
-import { GeostylerLegendType } from './geostyler.enum';
+import { OlStyleLikeOrFlatLike } from '../shared/layer/layer-style.interface';
+import { GeostylerLegendType } from './geostyler.interface';
 
 @Injectable()
 export class GeostylerService {
@@ -35,25 +41,21 @@ export class GeostylerService {
    * @param Observable geostyler WriteStyleResult
    * @returns
    */
-  public geostylerToOl(options: Style): Observable<WriteStyleResult> {
-    return this.geostylerTo(options, StyleSourceType.OpenLayers);
+  public geostylerToOl(options: GsStyle): Observable<WriteStyleResult> {
+    const olParser = new OpenLayersParser();
+    return from(olParser.writeStyle(options)).pipe(
+      tap((res) => this.handleWarningsAndError(res))
+    );
   }
 
-  private geostylerTo(
-    options: Style,
-    destStyle: StyleSourceType
-  ): Observable<WriteStyleResult> {
-    if (destStyle === StyleSourceType.OpenLayers) {
-      const olParser = new OpenLayersParser();
-      return from(olParser.writeStyle(options)).pipe(
-        tap((res) => this.handleWarningsAndError(res))
-      );
-    }
+  public olStyleToGeostyler(options: OlStyleLikeOrFlatLike): GsStyle {
+    const olParser = new OpenLayersParser();
+    return olParser.olStyleToGeoStylerStyle(options as OlStyle | OlStyle[]);
   }
 
   public geostylerStyleToLegend(
-    style: Style,
-    type: GeostylerLegendType = GeostylerLegendType.SVG,
+    style: GsStyle,
+    type: GeostylerLegendType = 'svg',
     width?: number,
     height?: number
   ): Observable<string> {
@@ -61,8 +63,8 @@ export class GeostylerService {
   }
 
   public geostylerStylesToLegend(
-    styles: Style[],
-    type: GeostylerLegendType = GeostylerLegendType.SVG,
+    styles: GsStyle[],
+    type: GeostylerLegendType = 'svg',
     width?: number,
     height?: number
   ): Observable<string> {
@@ -93,7 +95,7 @@ export class GeostylerService {
       map((r: Element) => {
         const serializer = new XMLSerializer();
         const svgXmlString = serializer.serializeToString(r);
-        if (type === GeostylerLegendType.SVG) {
+        if (type === 'svg') {
           return svgXmlString;
         } else {
           const blob = new Blob([svgXmlString], {
@@ -106,9 +108,9 @@ export class GeostylerService {
     );
   }
 
-  private transferLayersToLegend(styles: Style[]): Style[] {
+  private transferLayersToLegend(styles: GsStyle[]): GsStyle[] {
     const _styles = [...styles];
-    const layerDescriptorsList: Style[] = [];
+    const layerDescriptorsList: GsStyle[] = [];
     _styles.forEach((_stylesItem) => {
       const descriptorLayerRulesAdapted = [];
       const descriptorLayerName = _stylesItem.name;
@@ -131,7 +133,7 @@ export class GeostylerService {
           )
         });
       });
-      const styleNoRadius: Style = {
+      const styleNoRadius: GsStyle = {
         name: descriptorLayerName,
         rules: descriptorLayerRulesAdapted
       };

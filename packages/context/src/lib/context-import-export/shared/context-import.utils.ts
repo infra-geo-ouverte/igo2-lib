@@ -3,7 +3,6 @@ import {
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
-  LayerRandomGsStyle,
   LayerRandomOlStyleFunction,
   QueryableDataSourceOptions,
   VectorLayer
@@ -11,7 +10,7 @@ import {
 
 import OlFeature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry, Type } from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {
   DetailedContext,
@@ -152,27 +151,11 @@ export function addImportedFeaturesToMap(
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
-  const _mapTitle = olFeatures.every(
-    (olFeature) => olFeature.getProperties()._mapTitle !== undefined
-  )
-    ? '_mapTitle'
-    : undefined;
-
-  const geometryTypes = new Set<Type>();
-  olFeatures.forEach((olFeature) => {
-    geometryTypes.add(olFeature.getGeometry().getType());
-  });
 
   const layer = new VectorLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    igoStyle: {
-      editable: true,
-      geostylerStyle: {
-        global: LayerRandomGsStyle(_mapTitle, Array.from(geometryTypes))
-      }
-    },
     style: LayerRandomOlStyleFunction(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity

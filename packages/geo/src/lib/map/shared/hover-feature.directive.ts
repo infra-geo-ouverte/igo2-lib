@@ -381,13 +381,27 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     if (template === '*') {
       let summary = '';
       for (const [key, value] of Object.entries(properties)) {
-        if (!key.startsWith('_') && key !== 'geometry' && key !== 'boundedby') {
-          summary += `${key}: ${value}` + '\n';
+        const lowerKey = key.toLocaleLowerCase();
+        if (
+          !key.startsWith('_') &&
+          lowerKey !== 'geometry' &&
+          lowerKey !== 'boundedby'
+        ) {
+          summary += `${key}: ${value}\n`;
         }
       }
-      return summary.length >= 2 ? summary.slice(0, -2) : summary;
+      return summary.trimEnd();
     }
-    return template.replace(/\${(.*?)}/g, (_, key) => properties[key] ?? '');
+    // handle ${...}
+    if (template.includes('${')) {
+      return template.replace(/\${(.*?)}/g, (_, key) => properties[key] ?? '');
+    }
+
+    // handle direct property
+    if (Object.prototype.hasOwnProperty.call(properties, template)) {
+      return properties[template] ?? '';
+    }
+    return template;
   }
 
   /**

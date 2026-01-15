@@ -2,8 +2,6 @@ import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 
-import { Type } from 'ol/geom/Geometry';
-
 import { first, of } from 'rxjs';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -18,10 +16,7 @@ import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import {
-  LayerRandomGsStyle,
-  LayerRandomOlStyleFunction
-} from '../../style/shared/layer/layer-style.utils';
+import { LayerRandomOlStyleFunction } from '../../style/shared/layer/layer-style.utils';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -43,28 +38,13 @@ export function addLayerAndFeaturesToMap(
   };
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
-  const _mapTitle = olFeatures.every(
-    (olFeature) => olFeature.getProperties()._mapTitle !== undefined
-  )
-    ? '_mapTitle'
-    : undefined;
 
-  const geometryTypes = new Set<Type>();
-  olFeatures.forEach((olFeature) => {
-    geometryTypes.add(olFeature.getGeometry().getType());
-  });
   const layer = layerService.createLayer({
     id,
     title: layerTitle,
     workspace: { enabled: true, searchIndexEnabled: true },
     isIgoInternalLayer: true,
     source,
-    igoStyle: {
-      editable: true,
-      geostylerStyle: {
-        global: LayerRandomGsStyle(_mapTitle, Array.from(geometryTypes))
-      }
-    },
     style: LayerRandomOlStyleFunction(),
     idbInfo: { storeToIdb, contextUri: contextUri }
   }) as VectorLayer;

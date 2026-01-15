@@ -9,7 +9,9 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { GeostylerService } from '../../../style/geostyler/geostyler.service';
+import { OlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.interface';
+import { isOlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.utils';
+import { StyleService } from '../../../style/style-service/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -27,9 +29,9 @@ export class VectorTileLayer extends Layer {
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    public geostylerService?: GeostylerService
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor, geostylerService);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -38,8 +40,13 @@ export class VectorTileLayer extends Layer {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVectorTile
     });
-
-    const vectorTile = new olLayerVectorTile(olOptions);
+    this.style = this.options.style;
+    const vectorTile = new olLayerVectorTile({
+      ...olOptions,
+      style: isOlStyleLikeOrFlatLike(olOptions.style)
+        ? (this.options.style as OlStyleLikeOrFlatLike)
+        : undefined
+    });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
     vectorTileSource.setTileLoadFunction(
@@ -55,21 +62,8 @@ export class VectorTileLayer extends Layer {
         }
       }
     );
-    this.handleStyles();
 
     return vectorTile;
-  }
-  private handleStyles() {
-    if (!this.geostylerService && this.options.igoStyle?.geostylerStyle) {
-      console.error(
-        'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
-      );
-      this.options.igoStyle.editable = false;
-      delete this.options.igoStyle?.geostylerStyle;
-    }
-    if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
-      this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);
-    }
   }
 
   /**

@@ -21,6 +21,7 @@ import {
   AnyLayer,
   ExportButtonComponent,
   ExportOptions,
+  GeostylerService,
   IgoMap,
   Layer,
   LayerLegendListBindingDirective,
@@ -37,6 +38,8 @@ import {
   TrackFeatureButtonComponent,
   VectorLayer,
   VectorTileLayer,
+  isEditableLayerStyle,
+  isOlStyleLikeOrFlatLike,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -92,6 +95,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   private importExportState = inject(ImportExportState);
   private configService = inject(ConfigService);
   mediaService = inject(MediaService);
+  private geostylerService = inject(GeostylerService, { optional: true });
   private cdr = inject(ChangeDetectorRef);
 
   isDesktop: boolean;
@@ -372,13 +376,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   isStyleEditButton(layer: Layer): boolean {
+    if (!this.geostylerService) return false;
     if (layer instanceof VectorLayer || layer instanceof VectorTileLayer) {
-      if (
-        layer.options?.igoStyle?.editable &&
-        layer.geostylerStyle$?.getValue()
-      ) {
-        return true;
-      }
+      return (
+        layer.visible &&
+        (isEditableLayerStyle(layer.style) ||
+          isOlStyleLikeOrFlatLike(layer.style))
+      );
     }
     return false;
   }

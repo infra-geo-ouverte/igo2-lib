@@ -89,25 +89,25 @@ export class AppHoverComponent {
           visible: true,
           source: dataSource,
           hoverAttribute: 'Caserne: ${no_caserne} \nMun: ${nom_ssi}',
-          igoStyle: {
-            geostylerStyle: {
-              global: {
-                name: 'Basic Circle',
-                rules: [
-                  {
-                    name: 'Rule 1',
-                    symbolizers: [
-                      {
-                        kind: 'Mark',
-                        wellKnownName: 'triangle',
-                        radius: 10,
-                        strokeColor: '#c21515',
-                        strokeWidth: 2
-                      }
-                    ]
-                  }
-                ]
-              }
+          style: {
+            type: 'Geostyler',
+            editable: false,
+            style: {
+              name: 'Basic Circle',
+              rules: [
+                {
+                  name: 'Rule 1',
+                  symbolizers: [
+                    {
+                      kind: 'Mark',
+                      wellKnownName: 'triangle',
+                      radius: 10,
+                      strokeColor: '#c21515',
+                      strokeWidth: 2
+                    }
+                  ]
+                }
+              ]
             }
           }
         };

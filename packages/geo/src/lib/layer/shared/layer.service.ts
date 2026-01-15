@@ -30,8 +30,8 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { GeostylerService } from '../../style/geostyler/geostyler.service';
 import { LayerClusterOlStyleFunction } from '../../style/shared/layer/layer-style.utils';
+import { StyleService } from '../../style/style-service/style.service';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
   AnyLayer,
@@ -59,7 +59,7 @@ export class LayerService {
   private messageService = inject(MessageService);
   private geoNetworkService = inject(GeoNetworkService, { optional: true });
   private authInterceptor = inject(AuthInterceptor, { optional: true });
-  private geostylerService = inject(GeostylerService, { optional: true });
+  private styleService = inject(StyleService, { optional: true });
 
   public unavailableLayers: AnyLayerItemOptions[] = [];
 
@@ -188,18 +188,20 @@ export class LayerService {
       const source = layerOptions.source as ArcGISRestDataSource;
       layerOptions.style = source.options.params.style;
     }
-    if (layerOptions.source instanceof ClusterDataSource) {
-      layerOptions.style = (feature) => {
-        return LayerClusterOlStyleFunction(feature, layerOptions.clusterParam);
-      };
-    }
-    return new VectorLayer(
+    const vectorLayer = new VectorLayer(
       layerOptions,
       this.messageService,
       this.authInterceptor,
       this.geoNetworkService,
-      this.geostylerService
+      this.styleService
     );
+
+    if (layerOptions.source instanceof ClusterDataSource) {
+      vectorLayer.style = (feature) => {
+        return LayerClusterOlStyleFunction(feature, layerOptions.clusterParam);
+      };
+    }
+    return vectorLayer;
   }
 
   private createVectorTileLayer(
@@ -209,7 +211,7 @@ export class LayerService {
       layerOptions,
       this.messageService,
       this.authInterceptor,
-      this.geostylerService
+      this.styleService
     );
   }
 

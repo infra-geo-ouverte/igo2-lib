@@ -1,15 +1,15 @@
-import { Style as GeostylerStyle } from 'geostyler-style';
+import { StyleLike } from 'ol/style/Style';
+import { FlatStyleLike } from 'ol/style/flat';
 
-export interface IgoStyle {
+import { Style as GsStyle } from 'geostyler-style';
+
+export interface GeostylerLayerStyle {
   editable?: boolean;
-  geostylerStyle?: GeostylerStyleInterfaceOptions;
-}
-export interface GeostylerStyleInterfaceOptions {
-  global?: GeostylerStyle;
+  type: 'Geostyler';
+  style: GsStyle;
 }
 
-export interface LayerInteractionStyleOptions {
-  base?: GeostylerStyle;
-  selection?: GeostylerStyle;
-  focus?: GeostylerStyle;
-}
+export type LayerStyle = GeostylerLayerStyle;
+
+export type HandledLayerStyle = LayerStyle | OlStyleLikeOrFlatLike;
+export type OlStyleLikeOrFlatLike = StyleLike | FlatStyleLike;

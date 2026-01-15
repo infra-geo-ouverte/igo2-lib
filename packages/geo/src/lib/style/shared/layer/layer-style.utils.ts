@@ -8,19 +8,110 @@ import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
 import Icon from 'ol/style/Icon';
 import Stroke from 'ol/style/Stroke';
-import Style, { StyleLike } from 'ol/style/Style';
+import Style, { StyleFunction, StyleLike } from 'ol/style/Style';
 import Text from 'ol/style/Text';
+import { FlatStyleLike, Rule } from 'ol/style/flat';
 
 import { Style as GsStyle, Symbolizer } from 'geostyler-style';
 
 import { featuresAreTooDeepInView } from '../../../feature/shared/feature.utils';
 import { ClusterParam } from '../../../layer/shared/clusterParam';
 import { IgoMap } from '../../../map/shared/map';
+import { LayerStyle, OlStyleLikeOrFlatLike } from './layer-style.interface';
+
+/** Instance ol/style/Style */
+export function isOlStyleInstance(obj: any): obj is Style {
+  return obj instanceof Style;
+}
+
+export function isOlStyleInstanceArray(obj: any): obj is Style[] {
+  return Array.isArray(obj) && obj.every(isOlStyleInstance);
+}
+
+export function isEditableLayerStyle(
+  obj: any
+): obj is LayerStyle & { editable: true } {
+  if (!obj || typeof obj !== 'object') return false;
+  return typeof obj.editable === 'boolean' && obj.editable === true;
+}
+
+/** StyleFunction : (feature, resolution) => Style | Style[] | undefined */
+export function isStyleFunction(obj: any): obj is StyleLike {
+  return typeof obj === 'function';
+}
+
+export function isFlatStyleLikeArray(obj: any): obj is Style[] {
+  return Array.isArray(obj) && obj.every(isFlatStyleLike);
+}
+
+export function isFlatStyleLike(obj: any): obj is FlatStyleLike {
+  if (!obj || typeof obj !== 'object') return false;
+  const flatKeys = [
+    'fill-color',
+    'fill-opacity',
+    'stroke-color',
+    'stroke-width',
+    'stroke-opacity',
+    'circle-radius',
+    'circle-fill-color',
+    'icon-src',
+    'icon-scale',
+    'text-field',
+    'text-font',
+    'text-size',
+    'zIndex',
+    'renderer'
+  ];
+  return (
+    flatKeys.some((k) => Object.prototype.hasOwnProperty.call(obj, k)) ||
+    isFlatStyleLikeArray(obj) ||
+    isRuleArray(obj)
+  );
+}
+
+export function isRuleArray(obj: any): obj is Rule[] {
+  return Array.isArray(obj) && obj.every(isRule);
+}
+
+function isRule(obj: any): obj is Rule {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'style' in obj && // obligatoire
+    (isFlatStyleLike(obj.style) ||
+      (Array.isArray(obj.style) && obj.style.every(isFlatStyleLike)))
+  );
+}
+/** StyleLike englobe généralement Style instance ou StyleFunction */
+export function isStyleLike(obj: any): obj is StyleLike {
+  if (!obj) return false;
+  return (
+    obj &&
+    (isOlStyleInstance(obj) ||
+      isOlStyleInstanceArray(obj) ||
+      isStyleFunction(obj))
+  );
+}
+
+export function isOlStyleLikeOrFlatLike(
+  obj: any
+): obj is OlStyleLikeOrFlatLike {
+  if (!obj) return false;
+  return isStyleLike(obj) || isFlatStyleLike(obj);
+}
+
+export function isGeostylerLayerStyle(
+  value: unknown
+): value is LayerStyle & { type: 'Geostyler'; style: GsStyle } {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as LayerStyle;
+  return v?.type === 'Geostyler';
+}
 
 export function LayerQueryResultsOlStyleFunction(
   map?: IgoMap,
   type?: 'focus' | 'selection'
-) {
+): StyleLike {
   return LayerSearchResultsOlStyleFunction(map, type);
 }
 
@@ -240,10 +331,7 @@ export function LayerMarkerOlStyle({
  * // const styleFn = LayerRandomOlStyleFunction();
  * // someLayer.setStyle(styleFn);
  */
-export function LayerRandomOlStyleFunction(): (
-  olFeature: OlFeature<OlGeometry>,
-  resolution: number
-) => Style {
+export function LayerRandomOlStyleFunction(): StyleFunction {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
@@ -382,7 +470,7 @@ export function LayerRandomGsStyle(
 export function LayerClusterOlStyleFunction(
   feature: RenderFeature | OlFeature<OlGeometry>,
   clusterParam: ClusterParam = {}
-) {
+): Style | Style[] {
   let style: StyleLike = LayerMarkerOlStyle({
     markerColor: 'rgba(24, 134, 45)'
   });

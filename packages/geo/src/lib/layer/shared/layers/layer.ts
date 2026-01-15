@@ -8,18 +8,13 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import { Source } from 'ol/source';
 
-import {
-  BehaviorSubject,
-  Subscription,
-  combineLatest,
-  mergeMap,
-  of
-} from 'rxjs';
+import { BehaviorSubject, Subscription, mergeMap, of } from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { GeostylerService } from '../../../style/geostyler/geostyler.service';
-import { GeostylerStyleInterfaceOptions } from '../../../style/shared/layer/layer-style.interface';
+import { HandledLayerStyle } from '../../../style/shared/layer/layer-style.interface';
+import { isOlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.utils';
+import { StyleService } from '../../../style/style-service/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -42,12 +37,20 @@ export abstract class Layer extends LayerBase {
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
-  geostylerStyle$ = new BehaviorSubject<GeostylerStyleInterfaceOptions>(null);
+  private style$ = new BehaviorSubject<HandledLayerStyle>(null);
   legends$ = new BehaviorSubject<Legend[]>([]);
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
-  private geostylerStyle$$: Subscription;
+  private styles$$: Subscription[] = [];
+
+  get style(): HandledLayerStyle {
+    return this.style$.getValue();
+  }
+
+  set style(value: HandledLayerStyle) {
+    this.style$.next(value);
+  }
 
   get id(): string {
     return String(this.options.id || this.dataSource.id);
@@ -107,7 +110,7 @@ export abstract class Layer extends LayerBase {
     }
     let currentLegends: Legend[] = this.legends ?? [];
     const ls = this.options?.legendsSpecifications;
-    if (ls?.legends) {
+    if (ls?.legends?.length) {
       const lsLegends = ls?.legends;
       if (ls?.handleLegendMethod === 'merge') {
         currentLegends = currentLegends.concat(lsLegends);
@@ -130,7 +133,7 @@ export abstract class Layer extends LayerBase {
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
     @Optional() protected authInterceptor?: AuthInterceptor,
-    @Optional() protected geostylerService?: GeostylerService
+    @Optional() protected styleService?: StyleService
   ) {
     super(options);
     this.legends$.next([]);
@@ -163,44 +166,49 @@ export abstract class Layer extends LayerBase {
       }
     });
     this.createLink();
-    this.handleGeostylerStyleAndLegend();
+    this.handleLayerStyle();
+    this.handleLayerLegend();
   }
 
-  handleGeostylerStyleAndLegend() {
-    this.geostylerStyle$$ = this.geostylerStyle$
-      .pipe(
-        mergeMap((geostylerStyle) => {
-          if (geostylerStyle && this.geostylerService) {
-            return combineLatest([
-              this.geostylerService.geostylerToOl(geostylerStyle.global),
-              this.geostylerService.geostylerStyleToLegend(
-                geostylerStyle.global
-              )
-            ]);
-          } else {
-            return of(null);
-          }
-        })
-      )
-      .subscribe((gsReturns) => {
-        if (gsReturns) {
-          const writeStyleResult = gsReturns[0];
-          const legend = gsReturns[1];
+  handleLayerStyle(): void {
+    this.styles$$.push(
+      this.style$
+        .pipe(
+          mergeMap((style) => {
+            return (
+              this.styleService?.getLayerOlStyle(style) ??
+              of(isOlStyleLikeOrFlatLike(style) ? style : undefined)
+            );
+          })
+        )
+        .subscribe((olStyle) => {
           switch (true) {
             case this.ol instanceof VectorLayer:
             case this.ol instanceof VectorTileLayer:
-              if (writeStyleResult?.output) {
-                this.ol.setStyle(writeStyleResult.output);
-              }
-              if (legend) {
-                this.legends$.next([{ title: this.title, html: legend }]);
-              }
+              this.ol.setStyle(olStyle);
               break;
             default:
               break;
           }
-        }
-      });
+        })
+    );
+  }
+
+  handleLayerLegend(): void {
+    this.styles$$.push(
+      this.style$
+        .pipe(
+          mergeMap(
+            (style) =>
+              this.styleService?.getLegendFromLayerStyle(style) ?? of(undefined)
+          )
+        )
+        .subscribe((legend) => {
+          if (legend) {
+            this.legends$.next([{ title: this.title, html: legend }]);
+          }
+        })
+    );
   }
 
   createLink(): void {
@@ -235,8 +243,8 @@ export abstract class Layer extends LayerBase {
         this.map.layerController.remove(masterLayer);
       }
     }
-    if (this.geostylerStyle$$) {
-      this.geostylerStyle$$.unsubscribe();
+    if (this.styles$$) {
+      this.styles$$.forEach((style) => style.unsubscribe());
     }
   }
 

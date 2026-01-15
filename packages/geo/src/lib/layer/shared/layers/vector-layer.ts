@@ -53,7 +53,12 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { GeostylerService } from '../../../style/geostyler/geostyler.service';
+import { OlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.interface';
+import {
+  isEditableLayerStyle,
+  isOlStyleLikeOrFlatLike
+} from '../../../style/shared/layer/layer-style.utils';
+import { StyleService } from '../../../style/style-service/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -94,9 +99,9 @@ export class VectorLayer extends Layer {
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
     private geoNetworkService?: GeoNetworkService,
-    public geostylerService?: GeostylerService
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor, geostylerService);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -126,8 +131,13 @@ export class VectorLayer extends Layer {
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
-
-    const vector = new olLayerVector(olOptions);
+    this.style = this.options.style;
+    const vector = new olLayerVector({
+      ...olOptions,
+      style: isOlStyleLikeOrFlatLike(olOptions.style)
+        ? (this.options.style as OlStyleLikeOrFlatLike)
+        : undefined
+    });
     const vectorSource = vector.getSource() as olSourceVector;
     const url = vectorSource.getUrl();
     if (typeof url === 'function') {
@@ -168,26 +178,11 @@ export class VectorLayer extends Layer {
         vectorSource.setLoader(loader);
       }
     }
-    this.handleStyles();
-
     if (this.options.idbInfo?.storeToIdb) {
       this.handleIdbStorage(vector);
     }
 
     return vector;
-  }
-
-  private handleStyles() {
-    if (!this.geostylerService && this.options.igoStyle?.geostylerStyle) {
-      console.error(
-        'Your app is not build to handle geostyler styles formats. You must provide withGeostyler()'
-      );
-      this.options.igoStyle.editable = false;
-      delete this.options.igoStyle?.geostylerStyle;
-    }
-    if (this.geostylerService && this.options.igoStyle?.geostylerStyle) {
-      this.geostylerStyle$.next(this.options.igoStyle?.geostylerStyle);
-    }
   }
 
   private handleIdbStorage(
@@ -304,7 +299,7 @@ export class VectorLayer extends Layer {
         id: this.id,
         isIgoInternalLayer: this.isIgoInternalLayer,
         title: this.title,
-        igoStyle: this.options.igoStyle,
+        style: isEditableLayerStyle(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           firstLoad: false
         })
