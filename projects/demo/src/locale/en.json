@@ -28,5 +28,9 @@
     "bottomright": "Bottom right corner of the map",
     "newpage": "On a new page",
     "newimage": "On a new image"
+  },
+  "language":{
+    "english":"English",
+    "french":"Français"
   }
 }

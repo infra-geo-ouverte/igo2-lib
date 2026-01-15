@@ -1,4 +1,5 @@
 <app-doc-viewer title="Language" subtitle="Core">
+  <section>
   <p>Translate your angular application</p>
 
   <li>Import <code>IgoLanguageModule</code> only once</li>
@@ -20,4 +21,27 @@
       {{ 'welcome' | translate: app }}
     </div>
   </app-example-viewer>
+</section>
+<section>
+  <h3>Language switcher button</h3>
+  <p>Button to translate your angular application.</p>
+  <li>Dependencies: LanguageService</li>
+
+</section>
+<section>
+   <app-example-viewer codeFolder="core/language">
+    <div class="d-flex actions-container">
+    <button
+      matButton
+      (click)="toggleLanguage()"
+    >
+    {{ getSwitchLabel() | translate }}
+    </button>
+    </div>
+
+    <div class="m-t-12">
+      {{ 'welcome' | translate: app }}
+    </div>
+  </app-example-viewer>
+</section>
 </app-doc-viewer>

@@ -27,5 +27,17 @@ export class AppLanguageComponent {
   changeLanguage(language: string) {
     this.languageService.setLanguage(language);
     console.log(this.languageService);
+  };
+
+  // Language Switcher
+  public toggleLanguage() {
+    const newLang = this.languageService.getLanguage() === 'en' ? 'fr' : 'en';
+    this.languageService.setLanguage(newLang);
+  }
+
+  public getSwitchLabel(): string {
+    return this.languageService.getLanguage() === 'en'
+      ? 'language.french'
+      : 'language.english';
   }
 }
