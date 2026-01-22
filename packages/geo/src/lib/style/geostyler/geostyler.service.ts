@@ -7,12 +7,8 @@ import {
   IconSymbolizer,
   WriteStyleResult
 } from 'geostyler-style';
-import { Observable, from, map, tap } from 'rxjs';
 
-import {
-  AnyStyle,
-  AnyOlStyle
-} from '../shared/layer/layer-style.interface';
+import { AnyOlStyle, AnyStyle } from '../shared/layer/layer-style.interface';
 import { isGeostylerLayerStyle } from '../shared/layer/layer-style.utils';
 import { StyleService } from '../style-service/style.service';
 import { GeostylerLegendType } from './geostyler.interface';
@@ -47,28 +43,22 @@ export class GeostylerService extends StyleService {
    * @param Observable geostyler WriteStyleResult
    * @returns
    */
-  public getStyle(
-    options: AnyStyle
-  ): Observable<AnyOlStyle> {
+  public getStyle(options: AnyStyle): Promise<AnyOlStyle> {
     const olParser = new OpenLayersParser();
     if (isGeostylerLayerStyle(options)) {
-      return from(olParser.writeStyle(options.style)).pipe(
-        tap((res) => this.handleWarningsAndError(res)),
-        map((res) => res.output as AnyOlStyle)
-      );
+      return olParser.writeStyle(options.style).then((res) => {
+        this.handleWarningsAndError(res);
+        return res.output;
+      });
     } else {
       super.getStyle(options);
     }
   }
 
-  public getLegend(
-    options: AnyStyle
-  ): Observable<string> {
-    if (isGeostylerLayerStyle(options)) {
-      return this.geostylerStylesToLegend([options.style]);
-    } else {
-      super.getLegend(options);
-    }
+  async getLegend(options: AnyStyle): Promise<string | undefined> {
+    return isGeostylerLayerStyle(options)
+      ? this.geostylerStylesToLegend([options.style])
+      : super.getLegend(options);
   }
 
   private geostylerStylesToLegend(
@@ -76,7 +66,7 @@ export class GeostylerService extends StyleService {
     type: GeostylerLegendType = 'svg',
     width?: number,
     height?: number
-  ): Observable<string> {
+  ): Promise<string> {
     const layerDescriptors = this.transferLayersToLegend(styles);
 
     const nbOfRules = styles.reduce(
@@ -100,21 +90,19 @@ export class GeostylerService extends StyleService {
       size: [width ?? 300, height ?? computedHeightByStyles],
       hideRect: true
     });
-    return from(renderer.renderAsImage('svg')).pipe(
-      map((r: Element) => {
-        const serializer = new XMLSerializer();
-        const svgXmlString = serializer.serializeToString(r);
-        if (type === 'svg') {
-          return svgXmlString;
-        } else {
-          const blob = new Blob([svgXmlString], {
-            type: 'image/svg+xml'
-          });
-          const urlCreator = window.URL;
-          return urlCreator.createObjectURL(blob);
-        }
-      })
-    );
+    return renderer.renderAsImage('svg').then((r) => {
+      const serializer = new XMLSerializer();
+      const svgXmlString = serializer.serializeToString(r);
+      if (type === 'svg') {
+        return svgXmlString;
+      } else {
+        const blob = new Blob([svgXmlString], {
+          type: 'image/svg+xml'
+        });
+        const urlCreator = window.URL;
+        return urlCreator.createObjectURL(blob);
+      }
+    });
   }
 
   private transferLayersToLegend(styles: GsStyle[]): GsStyle[] {

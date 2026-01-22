@@ -8,7 +8,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import { Source } from 'ol/source';
 
-import { BehaviorSubject, Subscription, of } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
@@ -49,7 +49,7 @@ export abstract class Layer extends LayerBase {
 
   set style(value: AnyStyle) {
     this._style = value;
-    this.handleLayerStyle();
+    this.setStyle();
   }
 
   get visible() {
@@ -167,31 +167,25 @@ export abstract class Layer extends LayerBase {
     this.createLink();
   }
 
-  private handleLayerStyle(): void {
-    const olStyles$$ = (
-      this.styleService?.getStyle(this.style) ?? of(undefined)
-    ).subscribe((olStyle) => {
-      switch (true) {
-        case this.ol instanceof VectorLayer:
-        case this.ol instanceof VectorTileLayer:
-          this.ol.setStyle(olStyle);
-          break;
-        default:
-          break;
-      }
-    });
-    this.subcriptions$$.push(olStyles$$);
-    this.handleLayerLegendFromLayerStyle();
+  private async setStyle(): Promise<void> {
+    const style = await this.styleService?.getStyle(this.style);
+    switch (true) {
+      case this.ol instanceof VectorLayer:
+      case this.ol instanceof VectorTileLayer:
+        this.ol.setStyle(style);
+        break;
+      default:
+        break;
+    }
+
+    this.setLegendFromStyle();
   }
-  private handleLayerLegendFromLayerStyle(): void {
-    const legends$$ = (
-      this.styleService?.getLegend(this.style) ?? of(undefined)
-    ).subscribe((legend) => {
-      if (legend) {
-        this.legends$.next([{ title: this.title, html: legend }]);
-      }
-    });
-    this.subcriptions$$.push(legends$$);
+
+  private async setLegendFromStyle(): Promise<void> {
+    const legend = await this.styleService?.getLegend(this.style);
+    this.legends$.next([
+      legend ? { title: this.title, html: legend } : undefined
+    ]);
   }
 
   createLink(): void {
