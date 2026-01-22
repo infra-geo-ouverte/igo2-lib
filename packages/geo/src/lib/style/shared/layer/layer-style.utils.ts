@@ -17,7 +17,7 @@ import { Style as GsStyle, Symbolizer } from 'geostyler-style';
 import { featuresAreTooDeepInView } from '../../../feature/shared/feature.utils';
 import { ClusterParam } from '../../../layer/shared/clusterParam';
 import { IgoMap } from '../../../map/shared/map';
-import { LayerStyle, OlStyleLikeOrFlatLike } from './layer-style.interface';
+import { LayerStyle, AnyOlStyle } from './layer-style.interface';
 
 /** Instance ol/style/Style */
 export function isOlStyleInstance(obj: any): obj is Style {
@@ -93,9 +93,9 @@ export function isStyleLike(obj: any): obj is StyleLike {
   );
 }
 
-export function isOlStyleLikeOrFlatLike(
+export function isAnyOlStyle(
   obj: any
-): obj is OlStyleLikeOrFlatLike {
+): obj is AnyOlStyle {
   if (!obj) return false;
   return isStyleLike(obj) || isFlatStyleLike(obj);
 }

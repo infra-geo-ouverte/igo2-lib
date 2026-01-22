@@ -9,8 +9,8 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { OlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.interface';
-import { isOlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.utils';
+import { AnyOlStyle } from '../../../style/shared/layer/layer-style.interface';
+import { isAnyOlStyle } from '../../../style/shared/layer/layer-style.utils';
 import { StyleService } from '../../../style/style-service/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
@@ -43,8 +43,8 @@ export class VectorTileLayer extends Layer {
     this.style = this.options.style;
     const vectorTile = new olLayerVectorTile({
       ...olOptions,
-      style: isOlStyleLikeOrFlatLike(olOptions.style)
-        ? (this.options.style as OlStyleLikeOrFlatLike)
+      style: isAnyOlStyle(olOptions.style)
+        ? (this.options.style as AnyOlStyle)
         : undefined
     });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;

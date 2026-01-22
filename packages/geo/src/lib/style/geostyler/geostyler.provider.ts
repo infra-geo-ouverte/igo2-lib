@@ -10,8 +10,7 @@ export function withGeostyler(): StyleFeature<StyleFeatureKind.Geostyler> {
     providers: [
       {
         provide: StyleService,
-        useClass: GeostylerService,
-        deps: []
+        useClass: GeostylerService
       },
       // Force instantiate GeostylerService service to avoid require it in any constructor.
       provideAppInitializer(() => {

@@ -10,8 +10,8 @@ import {
 import { Observable, from, map, tap } from 'rxjs';
 
 import {
-  HandledLayerStyle,
-  OlStyleLikeOrFlatLike
+  AnyStyle,
+  AnyOlStyle
 } from '../shared/layer/layer-style.interface';
 import { isGeostylerLayerStyle } from '../shared/layer/layer-style.utils';
 import { StyleService } from '../style-service/style.service';
@@ -47,27 +47,27 @@ export class GeostylerService extends StyleService {
    * @param Observable geostyler WriteStyleResult
    * @returns
    */
-  public getLayerOlStyle(
-    options: HandledLayerStyle
-  ): Observable<OlStyleLikeOrFlatLike> {
+  public getStyle(
+    options: AnyStyle
+  ): Observable<AnyOlStyle> {
     const olParser = new OpenLayersParser();
     if (isGeostylerLayerStyle(options)) {
       return from(olParser.writeStyle(options.style)).pipe(
         tap((res) => this.handleWarningsAndError(res)),
-        map((res) => res.output as OlStyleLikeOrFlatLike)
+        map((res) => res.output as AnyOlStyle)
       );
     } else {
-      super.getLayerOlStyle(options);
+      super.getStyle(options);
     }
   }
 
-  public getLegendFromLayerStyle(
-    options: HandledLayerStyle
+  public getLegend(
+    options: AnyStyle
   ): Observable<string> {
     if (isGeostylerLayerStyle(options)) {
       return this.geostylerStylesToLegend([options.style]);
     } else {
-      super.getLegendFromLayerStyle(options);
+      super.getLegend(options);
     }
   }
 

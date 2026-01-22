@@ -25,7 +25,7 @@ describe('GeostylerService', () => {
   describe('getLayerOlStyle', () => {
     it('should convert a GeoStyler style to OpenLayers style', (done) => {
       service
-        .getLayerOlStyle({
+        .getStyle({
           editable: false,
           type: 'Geostyler',
           style: {
@@ -54,7 +54,7 @@ describe('GeostylerService', () => {
   describe('getLegendFromLayerStyle', () => {
     it('should generate a legend', (done) => {
       service
-        .getLegendFromLayerStyle({
+        .getLegend({
           editable: false,
           type: 'Geostyler',
           style: {

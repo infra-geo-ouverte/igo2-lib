@@ -2,23 +2,22 @@ import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 
-import { isOlStyleLikeOrFlatLike } from '../shared';
+import { isAnyOlStyle } from '../shared';
 import {
-  HandledLayerStyle,
-  OlStyleLikeOrFlatLike
+  AnyStyle,
+  AnyOlStyle
 } from '../shared/layer/layer-style.interface';
 
 @Injectable()
 export class StyleService {
-  constructor() {}
-  getLayerOlStyle(
-    options: HandledLayerStyle
-  ): Observable<OlStyleLikeOrFlatLike> {
-    return isOlStyleLikeOrFlatLike(options) ? of(options) : of(undefined);
+  getStyle(
+    options: AnyStyle
+  ): Observable<AnyOlStyle> {
+    return isAnyOlStyle(options) ? of(options) : of(undefined);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getLegendFromLayerStyle(options: HandledLayerStyle): Observable<string> {
+  getLegend(options: AnyStyle): Observable<string> {
     return of(undefined);
   }
 }

@@ -39,7 +39,7 @@ import {
   VectorLayer,
   VectorTileLayer,
   isEditableLayerStyle,
-  isOlStyleLikeOrFlatLike,
+  isAnyOlStyle,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -379,7 +379,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       return (
         layer.visible &&
         (isEditableLayerStyle(layer.style) ||
-          isOlStyleLikeOrFlatLike(layer.style))
+          isAnyOlStyle(layer.style))
       );
     }
     return false;

@@ -53,10 +53,10 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { OlStyleLikeOrFlatLike } from '../../../style/shared/layer/layer-style.interface';
+import { AnyOlStyle } from '../../../style/shared/layer/layer-style.interface';
 import {
   isEditableLayerStyle,
-  isOlStyleLikeOrFlatLike
+  isAnyOlStyle
 } from '../../../style/shared/layer/layer-style.utils';
 import { StyleService } from '../../../style/style-service/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
@@ -134,8 +134,8 @@ export class VectorLayer extends Layer {
     this.style = this.options.style;
     const vector = new olLayerVector({
       ...olOptions,
-      style: isOlStyleLikeOrFlatLike(olOptions.style)
-        ? (this.options.style as OlStyleLikeOrFlatLike)
+      style: isAnyOlStyle(olOptions.style)
+        ? (this.options.style as AnyOlStyle)
         : undefined
     });
     const vectorSource = vector.getSource() as olSourceVector;

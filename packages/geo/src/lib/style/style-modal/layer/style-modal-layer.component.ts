@@ -27,7 +27,7 @@ import Geometry, { Type } from 'ol/geom/Geometry';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
 import {
-  HandledLayerStyle,
+  AnyStyle,
   LayerStyle
 } from '../../shared/layer/layer-style.interface';
 import {
@@ -80,7 +80,7 @@ export class StyleModalLayerComponent implements OnInit {
     radius: false
   };
 
-  private initialHandledLayerStyle: HandledLayerStyle;
+  private initialHandledLayerStyle: AnyStyle;
 
   private defaultValues: StyleModalLayerData = {
     fillColor: 'rgba(255,255,255,0.4)',

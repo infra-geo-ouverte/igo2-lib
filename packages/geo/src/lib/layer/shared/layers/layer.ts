@@ -12,7 +12,7 @@ import { BehaviorSubject, Subscription, of } from 'rxjs';
 
 import { DataSource } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { HandledLayerStyle } from '../../../style/shared/layer/layer-style.interface';
+import { AnyStyle } from '../../../style/shared/layer/layer-style.interface';
 import { StyleService } from '../../../style/style-service/style.service';
 import {
   isLayerLinked,
@@ -40,14 +40,14 @@ export abstract class Layer extends LayerBase {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
-  private _style: HandledLayerStyle;
+  private _style: AnyStyle;
   private subcriptions$$: Subscription[] = [];
 
-  get style(): HandledLayerStyle {
+  get style(): AnyStyle {
     return this._style;
   }
 
-  set style(value: HandledLayerStyle) {
+  set style(value: AnyStyle) {
     this._style = value;
     this.handleLayerStyle();
   }
@@ -169,7 +169,7 @@ export abstract class Layer extends LayerBase {
 
   private handleLayerStyle(): void {
     const olStyles$$ = (
-      this.styleService?.getLayerOlStyle(this.style) ?? of(undefined)
+      this.styleService?.getStyle(this.style) ?? of(undefined)
     ).subscribe((olStyle) => {
       switch (true) {
         case this.ol instanceof VectorLayer:
@@ -185,7 +185,7 @@ export abstract class Layer extends LayerBase {
   }
   private handleLayerLegendFromLayerStyle(): void {
     const legends$$ = (
-      this.styleService?.getLegendFromLayerStyle(this.style) ?? of(undefined)
+      this.styleService?.getLegend(this.style) ?? of(undefined)
     ).subscribe((legend) => {
       if (legend) {
         this.legends$.next([{ title: this.title, html: legend }]);

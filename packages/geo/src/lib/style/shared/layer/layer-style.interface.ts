@@ -11,5 +11,5 @@ export interface GeostylerLayerStyle {
 
 export type LayerStyle = GeostylerLayerStyle;
 
-export type HandledLayerStyle = LayerStyle | OlStyleLikeOrFlatLike;
-export type OlStyleLikeOrFlatLike = StyleLike | FlatStyleLike;
+export type AnyStyle = LayerStyle | AnyOlStyle;
+export type AnyOlStyle = StyleLike | FlatStyleLike;
