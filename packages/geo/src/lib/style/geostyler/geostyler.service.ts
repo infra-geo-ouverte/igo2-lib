@@ -43,16 +43,16 @@ export class GeostylerService extends StyleService {
    * @param Observable geostyler WriteStyleResult
    * @returns
    */
-  public getStyle(options: AnyStyle): Promise<AnyOlStyle> {
-    const olParser = new OpenLayersParser();
-    if (isGeostylerLayerStyle(options)) {
-      return olParser.writeStyle(options.style).then((res) => {
-        this.handleWarningsAndError(res);
-        return res.output;
-      });
-    } else {
-      super.getStyle(options);
+  async getStyle(options: AnyStyle): Promise<AnyOlStyle> {
+    if (!isGeostylerLayerStyle(options)) {
+      return super.getStyle(options);
     }
+
+    const olParser = new OpenLayersParser();
+    return olParser.writeStyle(options.style).then((writeStyleResult) => {
+      this.handleWarningsAndError(writeStyleResult);
+      return writeStyleResult.output;
+    });
   }
 
   async getLegend(options: AnyStyle): Promise<string | undefined> {
@@ -61,7 +61,7 @@ export class GeostylerService extends StyleService {
       : super.getLegend(options);
   }
 
-  private geostylerStylesToLegend(
+  private async geostylerStylesToLegend(
     styles: GsStyle[],
     type: GeostylerLegendType = 'svg',
     width?: number,
