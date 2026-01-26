@@ -53,10 +53,13 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { AnyOlStyle } from '../../../style/shared/layer/layer-style.interface';
 import {
-  isEditableLayerStyle,
-  isAnyOlStyle
+  AnyOlStyle,
+  AnyStyle
+} from '../../../style/shared/layer/layer-style.interface';
+import {
+  isAnyOlStyle,
+  isEditableLayerStyle
 } from '../../../style/shared/layer/layer-style.utils';
 import { StyleService } from '../../../style/style-service/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
@@ -92,6 +95,25 @@ export class VectorLayer extends Layer {
 
   get exportable(): boolean {
     return this.options.exportable !== false;
+  }
+
+  private _style: AnyStyle;
+  get style(): AnyStyle {
+    return this._style;
+  }
+
+  set style(value: AnyStyle) {
+    Promise.all([this.styleService?.getStyle(value), this.styleService?.getLegend(value)])
+      .then(([style, legend]) => {
+        this.ol.setStyle(style);
+        this.legends$.next([
+          legend ? { title: this.title, html: legend } : undefined
+        ]);
+        this._style = value;
+      })
+      .catch(error => {
+        console.error("style or legend promises rejected:", error);
+      });
   }
 
   constructor(
@@ -201,7 +223,7 @@ export class VectorLayer extends Layer {
         | WebSocketDataSource
         | ClusterDataSource
       ) &
-        olSourceVector<OlFeature<Geometry>>
+      olSourceVector<OlFeature<Geometry>>
     >
   ): void {
     fromEvent<BaseEvent>(vector, 'sourceready')
@@ -398,7 +420,7 @@ export class VectorLayer extends Layer {
               .getStroke()
               .setWidth(
                 easeOut(elapsedRatio) *
-                  (styleClone.getImage().getStroke().getWidth() * 3)
+                (styleClone.getImage().getStroke().getWidth() * 3)
               );
           }
           if (styleClone.getStroke()) {
