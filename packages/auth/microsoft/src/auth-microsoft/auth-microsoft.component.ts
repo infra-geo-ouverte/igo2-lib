@@ -1,14 +1,14 @@
 import {
-  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
   inject,
   output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatError } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
-import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -38,13 +38,12 @@ import {
   templateUrl: './auth-microsoft.component.html',
   styleUrls: ['./auth-microsoft.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent]
+  imports: [MatButtonModule, MatError, MatIconModule, IgoLanguageModule]
 })
 export class AuthMicrosoftComponent {
   private authService = inject(AuthService);
-  private config = inject(ConfigService);
-  private appRef = inject(ApplicationRef);
   private msalService = inject(MsalService);
+  private config = inject(ConfigService);
   private msalGuardConfig =
     inject<MSPMsalGuardConfiguration[]>(MSAL_GUARD_CONFIG);
 
@@ -53,7 +52,7 @@ export class AuthMicrosoftComponent {
   readonly login = output<boolean>();
   private broadcastService: MsalBroadcastService;
 
-  svgIcon: IconSvg = MICROSOFT_ICON;
+  error = '';
 
   constructor() {
     this.options = this.config.getConfig('auth.microsoft');
@@ -83,7 +82,7 @@ export class AuthMicrosoftComponent {
     }
   }
 
-  public loginMicrosoft() {
+  public loginUser() {
     this.msalService
       .loginPopup({ ...this.getConf().authRequest } as PopupRequest)
       .subscribe((response: AuthenticationResult) => {
@@ -101,7 +100,6 @@ export class AuthMicrosoftComponent {
         this.authService
           .loginWithToken(tokenAccess, 'microsoft', { tokenId })
           .subscribe(() => {
-            this.appRef.tick();
             this.login.emit(true);
           });
       })
