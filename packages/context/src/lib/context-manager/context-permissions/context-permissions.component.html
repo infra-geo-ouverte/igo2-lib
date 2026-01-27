@@ -10,7 +10,7 @@
       <div class="scopeForm">
         <mat-radio-group
           [(ngModel)]="context().scope"
-          (change)="scopeChanged.emit(context())"
+          (change)="onScopeChanged(context())"
         >
           <mat-radio-button value="private">
             {{ 'igo.context.permission.scope.private' | translate }}
@@ -99,11 +99,11 @@
                       <button
                         mat-icon-button
                         [matTooltip]="
-                          'igo.context().permission.delete' | translate
+                          'igo.context.permission.delete' | translate
                         "
                         matTooltipShowDelay="500"
                         color="warn"
-                        (click)="removePermission.emit(permission)"
+                        (click)="onRemovePermission(permission)"
                       >
                         <mat-icon>delete</mat-icon>
                       </button>
