@@ -6,9 +6,9 @@ import {
   output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
-import { IconSvg, IgoIconComponent, MICROSOFT_ICON } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -36,7 +36,7 @@ import { MsalServiceb2c } from './auth-msalServiceb2c.service';
   templateUrl: './auth-microsoftb2c.component.html',
   styleUrls: ['./auth-microsoftb2c.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, IgoLanguageModule, IgoIconComponent],
+  imports: [MatButtonModule, IgoLanguageModule, MatIconModule],
   providers: [MsalServiceb2c]
 })
 export class AuthMicrosoftb2cComponent {
@@ -51,8 +51,6 @@ export class AuthMicrosoftb2cComponent {
   private readonly _destroying$ = new Subject<void>();
   readonly login = output<boolean>();
   private broadcastService: MsalBroadcastServiceb2c;
-
-  svgIcon: IconSvg = MICROSOFT_ICON;
 
   constructor() {
     this.options = this.config.getConfig('auth.microsoftb2c') || {};

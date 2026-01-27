@@ -23,11 +23,12 @@
         "logged": "Connecté avec Google"
       },
       "microsoft": {
-        "login": "Se connecter avec compte Azure"
+        "login": "Se connecter avec Microsoft"
       },
       "microsoftb2c": {
-        "login": "Se connecter"
-      }
+        "login": "Se connecter avec Microsoft"
+      },
+      "or": "Ou"
     }
   }
 }
