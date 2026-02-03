@@ -958,8 +958,8 @@ export class IChercheReverseSearchSource
           geometry: true,
           icon: true
         },
-        options.params || {},
-        this.params
+        this.params,
+        options.params || {}
       )
     });
   }
