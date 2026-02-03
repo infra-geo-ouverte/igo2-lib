@@ -5,7 +5,7 @@ import { IgoDBSchema } from './indexed-db.interface';
 
 export function createIndexedDb(): Observable<IDBPDatabase<IgoDBSchema>> {
   return from(
-    openDB<IgoDBSchema>('igo2DB', 3, {
+    openDB<IgoDBSchema>('igo2DB', undefined, {
       upgrade(db) {
         const geoDataStore = db.createObjectStore('geoData', {
           keyPath: 'url',
