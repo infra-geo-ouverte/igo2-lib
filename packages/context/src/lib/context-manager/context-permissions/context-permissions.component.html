@@ -41,7 +41,7 @@
             (optionSelected)="onProfilSelected($event.option.value)"
             [displayWith]="displayFn"
           >
-            @for (profil of this.profils; track profil) {
+            @for (profil of this.profils(); track profil) {
               <mat-option [value]="profil">
                 {{ profil.title }}<br />
                 <small>{{ profil.name }}</small>
@@ -83,8 +83,8 @@
                 <mat-list-item>
                   <mat-icon matListItemIcon>person</mat-icon>
                   <h4 matListItemTitle>
-                    {{ permission.profilTitle }}
-                    <small>{{ permission.profil }}</small>
+                    {{ permission.title }}
+                    <!-- <small>{{ permission.profil }}</small> -->
                   </h4>
                   <div
                     matListItemMeta
@@ -93,8 +93,9 @@
                   >
                     @if (
                       canWrite ||
-                      permission.profil ===
-                        authService.decodeToken().user.sourceId
+                      (isContextPermissionUser(permission) &&
+                        permission.user.externalId ===
+                          authService.decodeToken().user.id)
                     ) {
                       <button
                         mat-icon-button

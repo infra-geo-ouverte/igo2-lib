@@ -44,12 +44,12 @@ import { debounce } from 'rxjs/operators';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextItemComponent } from '../context-item/context-item.component';
+import { ContextUserPermission } from '../context-permissions/context-permission.interface';
 import {
   Context,
   ContextDetailedChanges,
   ContextProfils,
   ContextServiceOptions,
-  ContextUserPermission,
   ContextsList,
   DetailedContext
 } from '../shared/context.interface';
@@ -118,16 +118,16 @@ export class ContextListComponent implements OnInit, OnDestroy {
   readonly map = input<IgoMap>(undefined);
 
   @Input()
-  get defaultContextId(): string {
+  get defaultContextId(): string | number {
     return this.contextConfigs
       ? this._defaultContextId
       : (this.storageService.get('favorite.context.uri') as string) ||
           this._defaultContextId;
   }
-  set defaultContextId(value: string) {
+  set defaultContextId(value: string | number) {
     this._defaultContextId = value;
   }
-  private _defaultContextId: string;
+  private _defaultContextId: string | number;
 
   public collapsed: { contextScope }[] = [];
 
@@ -664,7 +664,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   onFavorite(context: Context) {
     if (!context.id) {
-      context.id = context.uri;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      context.id = context.uri as any;
     }
     this.contextService.setDefault(context.id).subscribe((defaultId) => {
       if (this.previousMessageId) {

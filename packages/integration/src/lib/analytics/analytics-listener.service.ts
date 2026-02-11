@@ -58,7 +58,7 @@ export class AnalyticsListenerService {
         this.analyticsService.trackEvent(
           'context',
           'activateContext',
-          context.id || context.uri
+          context.id.toString() || context.uri
         );
       }
     });

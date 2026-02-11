@@ -36,7 +36,6 @@ import {
   Context,
   ContextDetailedChanges,
   ContextMapView,
-  ContextPermission,
   ContextProfils,
   ContextServiceOptions,
   ContextsList,
@@ -60,7 +59,7 @@ export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
-  public defaultContextId$ = new BehaviorSubject<string>(undefined);
+  public defaultContextId$ = new BehaviorSubject<number | string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   public importedContext: DetailedContext[] = [];
   public toolsChanged$ = new Subject<DetailedContext>();
@@ -128,7 +127,7 @@ export class ContextService {
     return this.http.get<Context>(url);
   }
 
-  getDetails(id: string): Observable<DetailedContext> {
+  getDetails(id: number): Observable<DetailedContext> {
     const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http.get<DetailedContext>(url).pipe(
       catchError((res) => {
@@ -161,7 +160,7 @@ export class ContextService {
     return of([]);
   }
 
-  setDefault(id: string): Observable<string | undefined> {
+  setDefault(id: string | number): Observable<string | undefined> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
       return this.http.post<string>(url, { defaultContextId: id });
@@ -171,17 +170,17 @@ export class ContextService {
     }
   }
 
-  hideContext(id: string) {
+  hideContext(id: number) {
     const url = this.baseUrl + '/contexts/' + id + '/hide';
     return this.http.post(url, {});
   }
 
-  showContext(id: string) {
+  showContext(id: number) {
     const url = this.baseUrl + '/contexts/' + id + '/show';
     return this.http.post(url, {});
   }
 
-  delete(id: string, imported = false): Observable<void> {
+  delete(id: number, imported = false): Observable<void> {
     const contexts: ContextsList = { ours: [] };
     Object.keys(this.contexts$.value).forEach(
       (key) =>
@@ -222,7 +221,7 @@ export class ContextService {
     );
   }
 
-  clone(id: string, properties = {}): Observable<Context> {
+  clone(id: number, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
     return this.http.post<Context>(url, properties).pipe(
       map((contextCloned) => {
@@ -235,7 +234,7 @@ export class ContextService {
   }
 
   update(
-    id: string,
+    id: number,
     context: DetailedContext
   ): Observable<ContextDetailedChanges> {
     const url = this.baseUrl + '/contexts/' + id;
@@ -258,38 +257,6 @@ export class ContextService {
   ): Observable<unknown> {
     const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
     return this.http.delete(url);
-  }
-
-  getPermissions(id: string): Observable<ContextPermission[]> {
-    const url = this.baseUrl + '/contexts/' + id + '/permissions';
-    return this.http.get<ContextPermission[]>(url);
-  }
-
-  addPermissionAssociation(
-    contextId: string,
-    profil: string,
-    type: TypePermission
-  ): Observable<ContextPermission[]> {
-    const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
-    const association = {
-      profil,
-      typePermission: type
-    };
-
-    return this.http.post<ContextPermission[]>(url, association).pipe(
-      catchError((res) => {
-        this.handleError(res, undefined, true);
-        throw [res]; // TODO Not sure about this.
-      })
-    );
-  }
-
-  deletePermissionAssociation(
-    contextId: string,
-    permissionId: string
-  ): Observable<void> {
-    const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
-    return this.http.delete<void>(url);
   }
 
   // ======================================================================
@@ -366,6 +333,11 @@ export class ContextService {
         this.getDefault().subscribe(
           (_context: DetailedContext) => {
             this.defaultContextUri = _context.uri;
+            // @todo workaround, the API doesn't remove the null values anymore.
+            // It seem that the context having hard time with those values and it doesn't wihtout this tweak
+            _context.tools = _context.tools.map((tool) =>
+              ObjectUtils.removeNull(tool)
+            );
             this.addContextToList(_context);
             this.setContext(_context);
           },
@@ -647,7 +619,7 @@ export class ContextService {
 
   private handleError(
     error: HttpErrorResponse,
-    uri: string,
+    uri: string | number,
     permissionError?: boolean
   ) {
     const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
