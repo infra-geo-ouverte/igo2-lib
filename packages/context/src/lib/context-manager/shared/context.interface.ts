@@ -10,10 +10,8 @@ import {
 
 import { FeatureCollection } from 'geojson';
 
-import { TypePermission } from './context.enum';
-
 export interface Context {
-  id?: string;
+  id?: number;
   title?: string;
   uri?: string;
   scope?: string; // Scope: 'public' | 'protected' | 'private';
@@ -83,25 +81,6 @@ export interface ContextServiceOptions {
   basePath?: string;
   contextListFile?: string;
   defaultContextUri?: string;
-}
-
-export interface ContextPermission {
-  id?: string;
-  contextId?: string;
-  profil: string;
-  profilTitle?: string;
-  typePermission: TypePermission;
-}
-
-export interface ContextPermissionsList {
-  read: ContextPermission[];
-  write: ContextPermission[];
-}
-
-export interface ContextUserPermission {
-  name: string;
-  checked: boolean;
-  indeterminate?: boolean;
 }
 
 export interface ContextProfils {
