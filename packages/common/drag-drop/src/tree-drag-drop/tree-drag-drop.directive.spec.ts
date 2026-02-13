@@ -1,29 +1,32 @@
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  MatTreeFlatDataSource,
-  MatTreeFlattener,
-  MatTreeModule,
-  MatTreeNode
-} from '@angular/material/tree';
+import { MatTree, MatTreeModule, MatTreeNode } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 
 import { mergeTestConfig } from 'packages/common/test-config';
 
 import { TreeDragDropDirective } from './tree-drag-drop.directive';
-import { DropPositionType, TreeFlatNode } from './tree-drag-drop.interface';
-import { TREE_MOCK } from './tree-drag-drop.mock';
+import { DropPositionType } from './tree-drag-drop.interface';
+import { ITREE_ITEM_MOCK, TREE_MOCK } from './tree-drag-drop.mock';
 
 @Component({
   template: `
     <mat-tree
+      #tree
       igoTreeDragDrop
-      [treeControl]="treeControl"
+      [tree]="tree"
+      [config]="treeConfig"
       [dataSource]="dataSource"
+      [childrenAccessor]="childrenAccessor"
     >
-      <mat-tree-node *matTreeNodeDef="let node">
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
         <div>Test</div>
+      </mat-tree-node>
+      <mat-tree-node
+        *matTreeNodeDef="let node; when: isGroup"
+        matTreeNodeToggle
+      >
+        <div>Group</div>
       </mat-tree-node>
     </mat-tree>
   `,
@@ -31,37 +34,19 @@ import { TREE_MOCK } from './tree-drag-drop.mock';
   standalone: false
 })
 class TestComponent {
-  treeControl = new FlatTreeControl<any>(
-    (node) => node.level,
-    (node) => node.isGroup
-  );
-
-  private _transformer = (node: any, level: number): any => {
-    return {
-      id: node.id,
-      level: level,
-      data: node,
-      disabled: false
-    };
+  readonly tree = viewChild(MatTree);
+  dataSource = TREE_MOCK; // Assuming TREE_MOCK is hierarchical
+  childrenAccessor = (node: ITREE_ITEM_MOCK) => node.children ?? [];
+  isGroup = (_: number, node: ITREE_ITEM_MOCK) => !!node.children;
+  treeConfig = {
+    isGroup: (node: ITREE_ITEM_MOCK) => !!node.children,
+    descendantLevels: (node: ITREE_ITEM_MOCK) => (node.children?.length ? 1 : 0) // Simplified for mock
   };
-  treeFlattener = new MatTreeFlattener(
-    this._transformer,
-    (node) => node.level,
-    (node) => node.isGroup,
-    (node) => node.children.sort((a, b) => a.zIndex + b.zIndex)
-  );
-
-  dataSource = new MatTreeFlatDataSource<any, any>(
-    this.treeControl,
-    this.treeFlattener,
-    TREE_MOCK
-  );
 }
 
 describe('DragDropTreeDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let directive: TreeDragDropDirective;
-  let treeControl: FlatTreeControl<TreeFlatNode>;
   let treeNodesDebug: DebugElement[];
 
   beforeEach(() => {
@@ -77,7 +62,6 @@ describe('DragDropTreeDirective', () => {
       By.directive(TreeDragDropDirective)
     );
     directive = debugElement.injector.get(TreeDragDropDirective);
-    treeControl = directive.treeControl();
 
     treeNodesDebug = fixture.debugElement.queryAll(By.directive(MatTreeNode));
   });
@@ -147,24 +131,20 @@ describe('DragDropTreeDirective', () => {
   });
 
   it('should emit onDrop event with correct data', () => {
-    const draggedNode: TreeFlatNode = treeControl.dataNodes.find(
-      (node) => !node.isGroup
-    );
-    const ref: TreeFlatNode = treeControl.dataNodes.find(
-      (node) => node.id !== draggedNode.id
-    );
+    const draggedNode = fixture.componentInstance.dataSource[0].children[0];
+    const ref = fixture.componentInstance.dataSource[1];
     const position: DropPositionType = 'inside';
 
     spyOn<any>(directive, 'getPosition').and.returnValue({
       x: 0,
       y: 0,
-      level: ref.level,
+      level: 1,
       type: position
     });
     spyOn(directive.onDrop, 'emit').and.callThrough();
 
     directive.draggedNode = draggedNode;
-    directive.dropNodeTarget = ref;
+    directive.dropNodeTarget.set(ref);
     directive.drop(new DragEvent('drop'));
 
     expect(directive.onDrop.emit).toHaveBeenCalledWith({
@@ -172,6 +152,62 @@ describe('DragDropTreeDirective', () => {
       ref,
       position
     });
+  });
+
+  it('should allow dropping a group into another group', () => {
+    const draggedGroup = fixture.componentInstance.dataSource[1]; // Node 3
+    const targetGroup = fixture.componentInstance.dataSource[0]; // Node 1
+    const position: DropPositionType = 'inside';
+
+    spyOn<any>(directive, 'getPosition').and.returnValue({
+      x: 0,
+      y: 0,
+      level: 1, // Dropping inside level 0 -> level 1
+      type: position
+    });
+    spyOn(directive.onDrop, 'emit').and.callThrough();
+    spyOn(directive.onDropError, 'emit').and.callThrough();
+
+    directive.draggedNode = draggedGroup;
+    directive.dropNodeTarget.set(targetGroup);
+    directive.drop(new DragEvent('drop'));
+
+    expect(directive.onDropError.emit).not.toHaveBeenCalled();
+    expect(directive.onDrop.emit).toHaveBeenCalled();
+  });
+
+  it('should prevent dropping a group into its own descendant', () => {
+    const nodes = directive.nodes();
+
+    const parentNode = nodes.find((n) => n.data?.id === '1')?.data;
+    if (!parentNode) {
+      throw new Error('Parent node not found');
+    }
+
+    // Expand parent node to ensure descendants are rendered/found
+    directive.tree().expand(parentNode);
+    fixture.detectChanges();
+
+    const nodesAfterExpand = directive.nodes();
+
+    const childNode = nodesAfterExpand.find((n) => n.data?.id === '2')?.data;
+    const siblingNode = nodesAfterExpand.find((n) => n.data?.id === '3')?.data;
+
+    directive.draggedNode = parentNode;
+
+    directive['nodesEffect']?.destroy();
+
+    if (!childNode) {
+      throw new Error('Child node not found');
+    }
+    if (!siblingNode) {
+      throw new Error('Sibling node not found');
+    }
+
+    expect(directive['isHoverDescendant'](childNode.id, childNode)).toBe(true);
+    expect(directive['isHoverDescendant'](siblingNode.id, siblingNode)).toBe(
+      false
+    );
   });
 });
 

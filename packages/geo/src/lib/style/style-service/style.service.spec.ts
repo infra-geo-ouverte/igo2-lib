@@ -6,11 +6,7 @@ import { StyleService } from './style.service';
 
 describe('StyleService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        providers: [StyleService]
-      })
-    );
+    TestBed.configureTestingModule(mergeTestConfig({}));
   });
 
   it('should ...', inject([StyleService], (service: StyleService) => {

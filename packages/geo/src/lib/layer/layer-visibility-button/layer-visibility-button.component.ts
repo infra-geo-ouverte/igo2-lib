@@ -18,8 +18,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { IgoBadgeIconDirective } from '@igo2/common/badge';
 import { IconSvg, IgoIconComponent } from '@igo2/common/icon';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
-import { getFilterBadge } from '@igo2/geo';
 
+import { getFilterBadge } from '../../datasource/shared/datasources/wms-wfs.utils';
 import { AnyLayer } from '../shared/layers/any-layer';
 import { isLayerItem } from '../utils';
 

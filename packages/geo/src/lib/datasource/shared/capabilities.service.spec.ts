@@ -6,12 +6,7 @@ import { CapabilitiesService } from './capabilities.service';
 
 describe('CapabilitiesService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [],
-        providers: [CapabilitiesService]
-      })
-    );
+    TestBed.configureTestingModule(mergeTestConfig({}));
   });
 
   it('should ...', inject(

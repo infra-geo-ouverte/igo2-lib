@@ -1,61 +1,69 @@
 <mat-tree
+  #tree
   [class.--not-desktop]="!isDesktop()"
   igoTreeDragDrop
+  [tree]="tree"
+  [config]="treeConfig"
   [treeDragDropIsDisabled]="isDragDropDisabled()"
   [maxLevel]="viewerOptions()?.group?.maxHierarchyLevel"
-  [dataSource]="dataSource"
-  [treeControl]="treeControl"
+  [dataSource]="layers()"
+  [childrenAccessor]="childrenAccessor"
+  [trackBy]="trackByFn"
   (dragStart)="dragStart()"
   (onDrop)="dropNode($event)"
   (onDropError)="dropNodeError($event)"
 >
   <!-- This is the tree node template for leaf nodes -->
   <mat-tree-node
+    #treeNode="matTreeNode"
     *matTreeNodeDef="let node"
-    [class.--selected]="isSelected(node.data)"
-    [class.--children-selected]="isDescendantSelection(node.data)"
+    [class.--selected]="isSelected(node)"
+    [class.--children-selected]="isDescendantSelection(node)"
   >
     <igo-layer-item
-      [matTreeNodePadding]="node.level === 0 ? 1 : node.level"
-      [matTreeNodePaddingIndent]="node.level === 0 ? 16 : 24 + 16 / node.level"
+      [matTreeNodePadding]="treeNode.level === 0 ? 1 : treeNode.level"
+      [matTreeNodePaddingIndent]="
+        treeNode.level === 0 ? 16 : 24 + 16 / treeNode.level
+      "
       class="tree-node-item"
-      [layer]="node.data"
-      [visible]="node.data.visible"
+      [layer]="node"
+      [visible]="node.visible"
       [viewerOptions]="viewerOptions()"
-      [selected]="isSelected(node.data) || isDescendantSelection(node.data)"
-      [selectionDisabled]="isDescendantSelection(node.data)"
+      [selected]="isSelected(node) || isDescendantSelection(node)"
+      [selectionDisabled]="isDescendantSelection(node)"
       (action)="toggleActive($event)"
-      (selectChange)="handleSelect($event, node.data)"
+      (selectChange)="handleSelect($event, node)"
     />
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
   <mat-tree-node
-    *matTreeNodeDef="let node; when: isGroup"
-    [class.--selected]="isSelected(node.data)"
-    [class.--children-selected]="isDescendantSelection(node.data)"
+    #treeNode="matTreeNode"
+    *matTreeNodeDef="let node; when: isNodeGroup"
+    [class.--selected]="isSelected(node)"
+    [class.--children-selected]="isDescendantSelection(node)"
   >
     <igo-layer-group
-      matTreeNodePadding
+      [matTreeNodePadding]="treeNode.level"
       [matTreeNodePaddingIndent]="24"
       class="tree-node-item"
-      [layer]="node.data"
+      [layer]="node"
       [viewerOptions]="viewerOptions()"
-      [selected]="isSelected(node.data) || isDescendantSelection(node.data)"
-      [selectionDisabled]="isDescendantSelection(node.data)"
+      [selected]="isSelected(node) || isDescendantSelection(node)"
+      [selectionDisabled]="isDescendantSelection(node)"
       (action)="toggleActive($event)"
-      (expand)="treeControl.toggle(node); handleNodeToggle(node)"
-      (selectChange)="handleSelect($event, node.data)"
+      (expand)="tree.toggle(node); handleNodeToggle(node)"
+      (selectChange)="handleSelect($event, node)"
     >
       <button
         mat-icon-button
         matTreeNodeToggle
         class="layer-indicator"
-        [attr.aria-label]="'Toggle ' + node.data.title"
+        [attr.aria-label]="'Toggle ' + node.title"
         (click)="handleNodeToggle(node)"
       >
         <mat-icon class="mat-icon-rtl-mirror">
           {{
-            treeControl.isExpanded(node)
+            tree.isExpanded(node)
               ? 'keyboard_arrow_down'
               : 'keyboard_arrow_right'
           }}
