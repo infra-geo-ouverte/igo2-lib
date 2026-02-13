@@ -81,11 +81,11 @@
             >
               @for (permission of groupPermissions.value; track permission) {
                 <mat-list-item>
-                  <mat-icon matListItemIcon>person</mat-icon>
-                  <h4 matListItemTitle>
-                    {{ permission.title }}
-                    <!-- <small>{{ permission.profil }}</small> -->
-                  </h4>
+                  <mat-icon matListItemIcon [title]="permission.profilType">{{
+                    permission.profilType === 'user' ? 'person' : 'badge'
+                  }}</mat-icon>
+
+                  <span matListItemTitle>{{ permission.title }}</span>
                   <div
                     matListItemMeta
                     igoStopPropagation

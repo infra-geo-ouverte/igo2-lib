@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 
-import { Tool, ToolService } from '@igo2/common/tool';
+import { ToolService } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
-import { LanguageService } from '@igo2/core/language';
+import { ObjectUtils } from '@igo2/utils';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,7 +18,6 @@ export class ContextState {
   private contextService = inject(ContextService);
   private toolService = inject(ToolService);
   private toolState = inject(ToolState);
-  private languageService = inject(LanguageService);
 
   /**
    * Observable of the active context
@@ -52,8 +51,9 @@ export class ContextState {
 
     const tools = [];
     const contextTools = context.tools || [];
-    contextTools.forEach((contextTool: Tool) => {
-      const baseTool = this.toolService.getTool(contextTool.name);
+    contextTools.forEach((contextTool) => {
+      const contextToolFormated = ObjectUtils.removeNull(contextTool);
+      const baseTool = this.toolService.getTool(contextToolFormated.name);
       if (baseTool === undefined) {
         return;
       }
@@ -61,9 +61,11 @@ export class ContextState {
       const options = Object.assign(
         {},
         baseTool.options || {},
-        contextTool.options || {}
+        contextToolFormated.options || {}
       );
-      const tool = Object.assign({}, baseTool, contextTool, { options });
+      const tool = Object.assign({}, baseTool, contextToolFormated, {
+        options
+      });
       tools.push(tool);
     });
 

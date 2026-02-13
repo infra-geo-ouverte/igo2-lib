@@ -30,13 +30,16 @@ export type IAnyContextPermission =
 
 export interface IContextPermissionUser extends IBaseContextPermission {
   userId: number;
+  profilType: 'user';
   user: {
+    id: number;
     externalId: number;
   };
 }
 
 export interface IContextPermissionProfil extends IBaseContextPermission {
   profilId: number;
+  profilType: 'profil';
 }
 
 interface IBaseContextPermission {

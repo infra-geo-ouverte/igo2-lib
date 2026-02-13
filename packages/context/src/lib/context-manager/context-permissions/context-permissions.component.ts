@@ -147,7 +147,7 @@ export class ContextPermissionsComponent implements OnInit {
   private buildForm(): void {
     this.form = this.formBuilder.group({
       id: null,
-      userId: null,
+      userExternalId: null,
       profilId: null,
       typePermission: ['read']
     });
@@ -156,7 +156,7 @@ export class ContextPermissionsComponent implements OnInit {
   onProfilSelected(value: ContextUserOrProfils) {
     this.form.setValue({
       id: value.id,
-      userId: value.type === 'user' ? value.id : null,
+      userExternalId: value.type === 'user' ? value.id : null,
       profilId: value.type === 'profil' ? value.id : null,
       typePermission: this.form.value.typePermission
     });
