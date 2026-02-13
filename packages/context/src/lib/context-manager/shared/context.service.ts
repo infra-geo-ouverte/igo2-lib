@@ -187,11 +187,6 @@ export class ContextService {
         (contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id))
     );
 
-    if (id === this.context$.value?.id) {
-      this.context$.next(undefined);
-      this.loadContext(this.defaultContextUri);
-    }
-
     if (imported) {
       this.importedContext = this.importedContext.filter((c) => c.id !== id);
       return of(this.contexts$.next(contexts));
@@ -201,6 +196,7 @@ export class ContextService {
     return this.http.delete<void>(url).pipe(
       tap(() => {
         this.contexts$.next(contexts);
+        this.loadContext(this.defaultContextUri);
       })
     );
   }
@@ -330,22 +326,17 @@ export class ContextService {
   loadDefaultContext() {
     const loadFct = (direct = false) => {
       if (!direct && this.baseUrl && this.authService.authenticated) {
-        this.getDefault().subscribe(
-          (_context: DetailedContext) => {
+        this.getDefault().subscribe({
+          next: (_context) => {
             this.defaultContextUri = _context.uri;
-            // @todo workaround, the API doesn't remove the null values anymore.
-            // It seem that the context having hard time with those values and it doesn't wihtout this tweak
-            _context.tools = _context.tools.map((tool) =>
-              ObjectUtils.removeNull(tool)
-            );
             this.addContextToList(_context);
             this.setContext(_context);
           },
-          () => {
+          error: () => {
             this.defaultContextId$.next(undefined);
             this.loadContext(this.defaultContextUri);
           }
-        );
+        });
       } else {
         this.loadContext(this.defaultContextUri);
       }

@@ -21,7 +21,7 @@ export class ContextPermissionService {
 
   constructor() {
     const options = this.config.getConfig('context');
-    this.baseUrl = options.url ?? '';
+    this.baseUrl = options?.url ?? '';
   }
 
   getAll(id: number): Observable<IAnyContextPermission[]> {
