@@ -333,7 +333,7 @@ export class VectorLayer extends Layer {
     const geoDB = new GeoDB();
     geoDB
       .update(
-        this.options.sourceOptions?.url || this.id.toString(),
+        this.options?.sourceOptions?.url || this.id.toString(),
         this.id,
         geojsonObject,
         InsertSourceInsertDBEnum.User,
