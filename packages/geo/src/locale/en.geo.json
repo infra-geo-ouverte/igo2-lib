@@ -237,6 +237,8 @@
           "name": "Group name",
           "create": "Create group",
           "rename": "Rename group",
+          "moreOptions": "Group tools",
+          "remove": "Remove this group from the map",
           "hide": "Hide group",
           "hideChildren": "Hided by a group",
           "show": "Show group"

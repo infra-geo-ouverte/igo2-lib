@@ -237,6 +237,8 @@
           "name": "Nom du groupe",
           "create": "Créer un groupe",
           "rename": "Renommer le groupe",
+          "moreOptions": "Outils du groupe",
+          "remove": "Retirer le groupe de la carte",
           "hide": "Masquer le groupe",
           "hideChildren": "Masquer par un groupe",
           "show": "Afficher le groupe"
@@ -297,7 +299,7 @@
           "styleModalTooltip": "Éditer le style des entités sélectionnées"
         },
         "saveBtn": "Sauvegarder",
-        "cancelBtn": "Cancel",
+        "cancelBtn": "Annuler",
         "saveFeatureInLayer": "Ajouter la sélection dans une couche",
         "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
