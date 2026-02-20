@@ -93,6 +93,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   isLayerItem = isLayerItem;
+  isLayerGroup = isLayerGroup;
 
   handleRename(): void {
     const layer = this.selected[0] as LayerGroup;

@@ -19,7 +19,9 @@
             ? isLayersRemovable(selected)
               ? ('igo.geo.layer.removeSelectedLayers' | translate)
               : ('igo.geo.layer.removeSelectedLayersRestriction' | translate)
-            : 'igo.geo.layer.removeLayer'
+            : isLayerGroup(selected[0])
+              ? ('igo.geo.layer.group.remove' | translate)
+              : ('igo.geo.layer.removeLayer' | translate)
           ) | translate
         "
         (click)="removeLayers()"
