@@ -667,13 +667,14 @@ export class ContextListComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       context.id = context.uri as any;
     }
+
     this.contextService.setDefault(context.id).subscribe((defaultId) => {
       if (this.previousMessageId) {
         this.messageService.remove(this.previousMessageId);
       }
 
       this.contextService.defaultContextId$.next(defaultId);
-      if (defaultId) {
+      if (defaultId != null && String(defaultId) === String(context.id)) {
         const messageObj = this.messageService.success(
           'igo.context.contextManager.dialog.favoriteMsg',
           'igo.context.contextManager.dialog.favoriteTitle',
