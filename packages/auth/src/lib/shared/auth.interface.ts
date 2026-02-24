@@ -16,10 +16,12 @@ export interface IInfosUser {
 }
 
 export interface AuthOptions {
-  url?: string;
+  url: string;
+  igoApiUrl: string;
   tokenKey?: string;
   allowAnonymous?: boolean;
   loginRoute?: string;
+  logoutRedirectRoute?: string;
   logoutRoute?: string;
   homeRoute?: string;
   trustHosts?: string[];

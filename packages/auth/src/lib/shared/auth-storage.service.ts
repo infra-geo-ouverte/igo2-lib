@@ -1,15 +1,15 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { BaseStorage, StorageScope } from '@igo2/core/storage';
 
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
+import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 
 import { AuthStorageOptions } from './auth-storage.interface';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
+import { UserService } from './user/user.service';
 
 const DEBOUNCE_TIME = 3000; // 3 seconds;
 
@@ -20,8 +20,8 @@ export class AuthStorageService
   extends BaseStorage<AuthStorageOptions>
   implements OnDestroy
 {
-  private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
   private tokenService = inject(TokenService);
 
   private preferencesChanged$ = new Subject<void>();
@@ -34,11 +34,27 @@ export class AuthStorageService
 
     super(config);
 
-    this.authService.authenticate$.subscribe((isAuthenticated) => {
-      if (isAuthenticated && this.options.url) {
-        this.getUser();
-      }
-    });
+    this.authService.authenticate$
+      .pipe(
+        switchMap((isAuthenticated) => {
+          if (isAuthenticated && this.options.url) {
+            return this.userService.user$;
+          }
+          return EMPTY;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((user) => {
+        if (!user?.preference) {
+          return;
+        }
+
+        this.serverPreferences = { ...user.preference };
+        for (const key of Object.keys(user.preference)) {
+          const value = user.preference[key];
+          super.set(key, value);
+        }
+      });
 
     this.preferencesChanged$
       .pipe(
@@ -106,20 +122,6 @@ export class AuthStorageService
     }
   }
 
-  private getUser() {
-    this.http
-      .get(this.options.url)
-      .subscribe((userIgo: { preference: object }) => {
-        if (userIgo && userIgo.preference) {
-          this.serverPreferences = { ...userIgo.preference };
-          for (const key of Object.keys(userIgo.preference)) {
-            const value = userIgo.preference[key];
-            super.set(key, value);
-          }
-        }
-      });
-  }
-
   private syncPreferences() {
     if (Object.keys(this.pendingPreferences).length === 0) {
       return;
@@ -139,11 +141,9 @@ export class AuthStorageService
     this.pendingPreferences = {};
 
     if (Object.keys(changedPreferences).length > 0) {
-      this.http
-        .patch(this.options.url, { preference: changedPreferences })
-        .subscribe(() => {
-          Object.assign(this.serverPreferences, changedPreferences);
-        });
+      this.userService.updatePreference(changedPreferences).subscribe(() => {
+        Object.assign(this.serverPreferences, changedPreferences);
+      });
     }
   }
 }
