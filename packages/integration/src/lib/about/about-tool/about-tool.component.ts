@@ -79,7 +79,7 @@ export class AboutToolComponent implements OnInit {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  readonly trainingGuideURLs = model(undefined);
+  readonly trainingGuideURLs = model<string[] | undefined>(undefined);
 
   public effectiveVersion: string;
   private _html = 'igo.integration.aboutTool.html';

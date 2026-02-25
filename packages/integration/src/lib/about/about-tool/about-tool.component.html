@@ -1,6 +1,4 @@
-@if (
-  auth.authenticated && trainingGuideURLs() && trainingGuideURLs().length === 1
-) {
+@if (auth.authenticated && trainingGuideURLs()?.length === 1) {
   <button
     class="training-guide-button"
     matButton="elevated"
@@ -10,14 +8,12 @@
     [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
     (click)="openGuide()"
   >
-    <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
+    {{ 'igo.integration.aboutTool.trainingGuide' | translate }}
     <mat-icon>description</mat-icon>
   </button>
 }
 
-@if (
-  auth.authenticated && trainingGuideURLs() && trainingGuideURLs().length > 1
-) {
+@if (auth.authenticated && (trainingGuideURLs()?.length ?? 0) > 1) {
   <button
     class="training-guide-button"
     matButton="elevated"
@@ -27,7 +23,7 @@
     [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
     [matMenuTriggerFor]="menu"
   >
-    <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
+    {{ 'igo.integration.aboutTool.trainingGuide' | translate }}
     <mat-icon>description</mat-icon>
   </button>
 }
