@@ -1,9 +1,8 @@
 table {
   width: 100%;
 
-  .igo-striped tbody tr:nth-child(odd) {
-    background-color: var(--mat-sys-surface-container-low);
-    color: black;
+  &.igo-striped tbody tr:nth-child(odd) {
+    background-color: var(--mat-sys-surface-container-high);
   }
 }
 
