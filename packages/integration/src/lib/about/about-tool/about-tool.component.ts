@@ -122,18 +122,27 @@ export class AboutToolComponent implements OnInit {
   }
 
   openGuide(guide?) {
-    this.loading = true;
     const url = guide
-      ? this.baseUrlGuide + guide + '?'
-      : this.baseUrlGuide + this.trainingGuideURLs()[0] + '?';
+      ? this.baseUrlGuide + guide
+      : this.baseUrlGuide + this.trainingGuideURLs()[0];
+
+    this.loading = true;
     this.http
       .get(url, {
         responseType: 'blob'
       })
-      .subscribe(() => {
-        this.loading = false;
-        window.open(url, '_blank');
-        this.cdRef.detectChanges();
+      .subscribe({
+        next: (blob) => {
+          this.loading = false;
+
+          const blobUrl = URL.createObjectURL(blob);
+          window.open(blobUrl, '_blank');
+          // To avoid memory leak we need to revoke the object, 60 seconds to handle larger object like video
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+          this.cdRef.markForCheck();
+        },
+        error: () => (this.loading = false)
       });
   }
 
