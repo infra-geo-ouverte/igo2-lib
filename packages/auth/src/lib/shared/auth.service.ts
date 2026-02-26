@@ -7,7 +7,7 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
@@ -51,9 +51,9 @@ export class AuthService {
 
   constructor() {
     this.authOptions = this.config.getConfig('auth');
-    if (this.authenticated) {
-      this.initializeAuthentication().subscribe();
-    }
+
+    this.initializeAuthentication(this.authenticated).subscribe();
+
     this.authenticate$.subscribe((authenticated) => {
       this.logged$.next(authenticated);
       globalCacheBusterNotifier.next();
@@ -112,7 +112,7 @@ export class AuthService {
     }
   }
 
-  logoutInternal(): void {
+  private logoutInternal(): void {
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
@@ -203,11 +203,18 @@ export class AuthService {
             }
           }
         }),
-        switchMap(() => this.initializeAuthentication())
+        switchMap(() => this.initializeAuthentication(true))
       );
   }
 
-  private initializeAuthentication(): Observable<IUser> {
+  private initializeAuthentication(
+    isAuthenticated: boolean
+  ): Observable<IUser> {
+    if (!isAuthenticated) {
+      this.authenticate$.next(false);
+      return EMPTY;
+    }
+
     return this.userService
       .sync()
       .pipe(tap(() => this.authenticate$.next(true)));
