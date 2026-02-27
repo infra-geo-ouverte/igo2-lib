@@ -179,8 +179,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
               err.error.caught = true;
               this.getLegend = false;
               this.cdRef.detectChanges();
-              return err;
             }
+            throw err;
           })
         )
         .subscribe((obsLegGraph) => {

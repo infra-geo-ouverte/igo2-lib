@@ -1,5 +1,10 @@
 <mat-tab-group
-  [selectedIndex]="!data.addedCatalog && data.predefinedCatalogs.length ? 0 : 1"
+  [selectedIndex]="
+    !data.addedCatalog ||
+    (data.error && data.isPredefinedCatalog && data.predefinedCatalogs.length)
+      ? 0
+      : 1
+  "
 >
   <mat-tab
     [label]="'igo.geo.catalog.library.predefined' | translate"
@@ -48,28 +53,20 @@
         </div>
       </igo-form>
     }
-    @if (data.error && data.addedCatalog && emailAddress) {
-      <span>
-        <p class="error">
-          {{
-            languageService.translate.instant(
-              'igo.geo.catalog.externalProvider.unavailableWithEmail',
-              { value: data.addedCatalog.url, email: emailAddress }
-            )
-          }}
-        </p>
-      </span>
-    }
-    @if (data.error && data.addedCatalog && !emailAddress) {
-      <span>
-        <p class="error">
-          {{
-            languageService.translate.instant('igo.geo.catalog.unavailable', {
-              value: data.addedCatalog.url
-            })
-          }}
-        </p>
-      </span>
-    }
   </mat-tab>
 </mat-tab-group>
+
+@if (data.error && data.addedCatalog) {
+  <p class="error">
+    {{
+      emailAddress
+        ? languageService.translate.instant(
+            'igo.geo.catalog.externalProvider.unavailableWithEmail',
+            { value: data.addedCatalog.url, email: emailAddress }
+          )
+        : languageService.translate.instant('igo.geo.catalog.unavailable', {
+            value: data.addedCatalog.url
+          })
+    }}
+  </p>
+}
