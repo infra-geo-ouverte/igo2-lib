@@ -11,6 +11,7 @@ import {
   input,
   output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -42,7 +43,8 @@ import { Feature } from '../shared';
     JsonPipe,
     KeyValuePipe,
     IgoLanguageModule,
-    SecureImagePipe
+    SecureImagePipe,
+    MatButtonModule
   ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
@@ -121,7 +123,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     if (!value.body) {
       return;
     }
-    const regexBase = /<base href="[\w:\/\.]+">/;
+    const regexBase = /<base href="[\w:/.]+">/;
     if (!regexBase.test(value.body)) {
       const url = new URL(value.url, window.location.origin);
       value.body = value.body.replace(
@@ -165,7 +167,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         );
     } else {
       let url = value;
-      if (this.isEmbeddedLink(value)) {
+      if (this.hasEmbeddedLinks(value)) {
         const div = document.createElement('div');
         div.innerHTML = value;
         url = div.children[0].getAttribute('href');
@@ -174,14 +176,14 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isUrl(value) {
+  isUrl(value: unknown): boolean {
     if (typeof value === 'string') {
       const regex = /^https?:\/\//;
       return regex.test(value);
     }
   }
 
-  isDoc(value) {
+  isDoc(value: unknown): boolean {
     if (typeof value === 'string') {
       if (this.isUrl(value)) {
         const regex = /(pdf|docx?|xlsx?)$/;
@@ -192,7 +194,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isImg(value) {
+  isImg(value: unknown): boolean {
     if (typeof value === 'string') {
       if (this.isUrl(value)) {
         const regex = /(jpe?g|png|gif)$/;
@@ -203,7 +205,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isEmbeddedLink(value) {
+  hasEmbeddedLinks(value: unknown): boolean {
     if (typeof value === 'string') {
       const matchRegex = /<a/g;
       const match = value.match(matchRegex) || [];
