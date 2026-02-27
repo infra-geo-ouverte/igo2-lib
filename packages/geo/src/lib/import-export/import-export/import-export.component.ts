@@ -229,11 +229,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         if (isLayerGroup(layer)) {
           return false;
         }
-        return (
-          (layer instanceof VectorLayer && layer.exportable === true) ||
-          (layer.dataSource.options.download &&
-            layer.dataSource.options.download.url)
-        );
+
+        if (layer instanceof VectorLayer) {
+          return layer.exportable || layer.dataSource.options.download?.url;
+        }
+
+        return false;
       });
       this.exportableLayers$.next(exportableLayers as Layer[]);
     });
