@@ -2,13 +2,16 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   Input,
   OnDestroy,
   OnInit,
   inject,
-  input
+  input,
+  signal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,8 +54,8 @@ import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
 import pointOnFeature from '@turf/point-on-feature';
-import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import { DirectionState } from '../../directions/directions.state';
 import { MapState } from '../../map/map.state';
@@ -74,8 +77,10 @@ import { SearchState } from '../search.state';
   styles: [
     `
       :host {
-        display: block;
-        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100%;
       }
     `
   ],
@@ -123,9 +128,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private isSelectedResultOutOfView$$: Subscription;
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
-
-  public debouncedEmpty$ = new BehaviorSubject<boolean>(true);
-  private debouncedEmpty$$: Subscription;
+  private destroyRef = inject(DestroyRef);
+  public debouncedEmpty = signal(true);
 
   /**
    * Store holding the search results
@@ -144,23 +148,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   get featureTitle(): string {
-    return this.feature ? getEntityTitle(this.feature) : undefined;
+    return this.feature() ? getEntityTitle(this.feature()) : undefined;
   }
 
-  get feature$(): Observable<Feature> {
-    return this.store.stateView
-      .firstBy$((e) => e.state.focused)
-      .pipe(
-        map(
-          (element) =>
-            (this.feature = element
-              ? (element.entity.data as Feature)
-              : undefined)
-        )
-      );
-  }
-
-  public feature: Feature;
+  feature = signal<Feature>(undefined);
 
   public term = '';
   private searchTerm$$: Subscription;
@@ -208,9 +199,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           searchTerm !== ''
         ) {
           this.term = searchTerm;
-          this.debouncedEmpty$.next(false);
+          this.debouncedEmpty.set(false);
         } else if (searchTerm === '') {
-          this.debouncedEmpty$.next(true);
+          this.debouncedEmpty.set(true);
         }
       }
     );
@@ -322,9 +313,17 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.debouncedEmpty$$ = this.store.stateView.empty$
-      .pipe(debounceTime(1500))
-      .subscribe((empty) => this.debouncedEmpty$.next(empty));
+    this.store.stateView.empty$
+      .pipe(debounceTime(1500), takeUntilDestroyed(this.destroyRef))
+      .subscribe((empty) => this.debouncedEmpty.set(empty));
+
+    this.store.stateView
+      .firstBy$((e) => e.state.focused)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((element) => {
+        const feature = element ? (element.entity.data as Feature) : undefined;
+        this.feature.set(feature);
+      });
   }
 
   private monitorResultOutOfView() {
@@ -332,7 +331,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       this.map.viewController.state$,
       this.searchState.selectedResult$
     ])
-      .pipe(debounceTime(100))
+      .pipe(debounceTime(100), takeUntilDestroyed(this.destroyRef))
       .subscribe((bunch) => {
         const selectedResult = bunch[1] as SearchResult<Feature>;
         if (!selectedResult) {
@@ -468,9 +467,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     if (this.getRoute$$) {
       this.getRoute$$.unsubscribe();
-    }
-    if (this.debouncedEmpty$$) {
-      this.debouncedEmpty$$.unsubscribe();
     }
   }
 
@@ -644,9 +640,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   zoomToFeatureExtent() {
-    if (this.feature.geometry) {
-      const localOlFeature = this.format.readFeature(this.feature, {
-        dataProjection: this.feature.projection,
+    const feature = this.feature();
+    if (feature?.geometry) {
+      const localOlFeature = this.format.readFeature(feature, {
+        dataProjection: feature.projection,
         featureProjection: this.map.projectionCode
       });
       moveToOlFeatures(
@@ -717,14 +714,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
               .all()
               .find((e) => e.position === 1);
             let coord;
-            if (this.feature.geometry) {
-              if (this.feature.geometry.type === 'Point') {
+            const feature = this.feature();
+            if (feature?.geometry) {
+              if (feature.geometry.type === 'Point') {
                 coord = [
-                  this.feature.geometry.coordinates[0],
-                  this.feature.geometry.coordinates[1]
+                  feature.geometry.coordinates[0],
+                  feature.geometry.coordinates[1]
                 ];
               } else {
-                const point = pointOnFeature(this.feature.geometry);
+                const point = pointOnFeature(feature.geometry);
                 coord = [
                   point.geometry.coordinates[0],
                   point.geometry.coordinates[1]
