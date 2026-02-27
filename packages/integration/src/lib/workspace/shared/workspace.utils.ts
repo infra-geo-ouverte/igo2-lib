@@ -149,7 +149,7 @@ export function getWorkspaceActions(
       ) =>
         of(
           (ws.layer.options.sourceOptions as OgcFilterableDataSourceOptions)
-            ?.ogcFilters.enabled
+            ?.ogcFilters?.enabled
         )
     },
     {
