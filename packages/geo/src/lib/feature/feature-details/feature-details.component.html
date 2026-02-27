@@ -1,6 +1,6 @@
 @let properties = feature()?.properties;
 @if (
-  ready && feature() && isObject(properties) && properties.target !== 'iframe'
+  ready && feature() && isObject(properties) && properties?.target !== 'iframe'
 ) {
   <table class="igo-striped">
     <tbody>
@@ -9,12 +9,12 @@
         track property
       ) {
         <tr>
-          @if (properties.target === '_blank' && property.key === 'url') {
+          @if (properties?.target === '_blank' && property.key === 'url') {
             <td>
               <mat-icon matListItemIcon>{{ icon }}</mat-icon>
             </td>
           }
-          @if (properties.target === '_blank' && property.key === 'url') {
+          @if (properties?.target === '_blank' && property.key === 'url') {
             <td>
               <a
                 href="{{ property.value }}"
@@ -24,29 +24,28 @@
                 {{ 'igo.geo.targetHtmlUrl' | translate }} {{ title }}</a
               >
               <button
-                class="copyClipboard"
-                mat-icon-button
+                matIconButton
                 (click)="copyTextToClipboard(property.value)"
               >
                 <mat-icon>content_copy</mat-icon>
               </button>
             </td>
           }
-          @if (properties.target === undefined) {
+          @if (properties?.target === undefined) {
             <td id="keyValue">
               {{ property.key }}
             </td>
           }
           @if (
-            properties.target === undefined &&
+            properties?.target === undefined &&
             !isObject(property.value) &&
             !isUrl(property.value) &&
-            !isEmbeddedLink(property.value)
+            !hasEmbeddedLinks(property.value)
           ) {
             <td [innerHTML]="property.value"></td>
           }
           @if (
-            properties.target === undefined && isEmbeddedLink(property.value)
+            properties?.target === undefined && hasEmbeddedLinks(property.value)
           ) {
             <td>
               <u
@@ -57,7 +56,7 @@
             </td>
           }
           @if (
-            properties.target === undefined &&
+            properties?.target === undefined &&
             !isObject(property.value) &&
             (isDoc(property.value) || isUrl(property.value)) &&
             !isImg(property.value)
@@ -69,8 +68,7 @@
                 >{{ 'igo.geo.targetHtmlUrl' | translate }}</u
               >
               <button
-                class="copyClipboard"
-                mat-icon-button
+                matIconButton
                 (click)="copyTextToClipboard(property.value)"
               >
                 <mat-icon>content_copy</mat-icon>
@@ -78,7 +76,7 @@
             </td>
           }
           @if (
-            properties.target === undefined &&
+            properties?.target === undefined &&
             !isObject(property.value) &&
             isUrl(property.value) &&
             isImg(property.value)
@@ -99,7 +97,7 @@
               </a>
             </td>
           }
-          @if (properties.target === undefined && isObject(property.value)) {
+          @if (properties?.target === undefined && isObject(property.value)) {
             <td [innerHTML]="property.value | json"></td>
           }
         </tr>
@@ -111,6 +109,6 @@
 @if (isHtmlDisplay()) {
   <iframe
     [srcdoc]="htmlSanitizer(properties)"
-    [src]="urlSanitizer(properties.url)"
+    [src]="urlSanitizer(properties?.url)"
   ></iframe>
 }
