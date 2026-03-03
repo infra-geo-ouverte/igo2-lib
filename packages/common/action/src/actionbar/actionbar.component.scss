@@ -37,7 +37,7 @@ $igo-actionbar-item-icon-padding: 8px;
   #topChevron {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--mat-sys-on-primary-container);
     z-index: 3;
     display: flex;
     justify-content: center;
@@ -54,7 +54,7 @@ $igo-actionbar-item-icon-padding: 8px;
   #lowChevron {
     position: sticky;
     bottom: 0;
-    background-color: white;
+    background-color: var(--mat-sys-on-primary-container);
     z-index: 3;
     display: flex;
     justify-content: center;

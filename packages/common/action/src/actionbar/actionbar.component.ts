@@ -26,7 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStoreWatcher } from '@igo2/common/entity';
 import { IgoLanguageModule } from '@igo2/core/language';
-import { Media, MediaService } from '@igo2/core/media';
+import { MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -95,21 +95,17 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Height Condition for scroll button
    */
-  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
+  heightCondition$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Position Condition for top scroll button
    */
-  positionConditionTop$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  positionConditionTop$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Position Condition for low scroll button
    */
-  positionConditionLow$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  positionConditionLow$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Action store
@@ -216,31 +212,22 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
 
   get heightCondition(): boolean {
     const el = this.elRef.nativeElement;
-    if (this.scrollActive() === false) {
-      if (el.clientHeight < el.scrollHeight) {
-        return true;
-      }
-    }
-    return false;
+    return !this.scrollActive() && el.clientHeight < el.scrollHeight
+      ? true
+      : false;
   }
 
   get positionConditionTop(): boolean {
-    if (this.elRef.nativeElement.scrollTop === 0) {
-      return false;
-    }
-    return true;
+    return this.elRef.nativeElement.scrollTop === 0 ? false : true;
   }
 
   get positionConditionLow(): boolean {
     const el = this.elRef.nativeElement;
-    if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
-      return false;
-    }
-    return true;
+    return el.scrollTop >= el.scrollHeight - el.clientHeight ? false : true;
   }
 
   get isDesktop(): boolean {
-    return this.mediaService.getMedia() === Media.Desktop;
+    return this.mediaService.isDesktop() || this.mediaService.isTablet();
   }
 
   /**
