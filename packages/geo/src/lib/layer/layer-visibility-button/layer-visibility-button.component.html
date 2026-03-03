@@ -1,24 +1,30 @@
+@let hiddenByParent = this.parentDisplayed() === false ? true : false;
 <button
   mat-icon-button
   [ngClass]="{
     disabled: disabled(),
     'out-of-range': !inResolutionsRange(),
-    'visibility-hidden': !visible
+    'visibility-hidden': !visible()
   }"
-  [color]="visible ? 'primary' : 'default'"
+  [color]="visible() ? 'primary' : 'default'"
   tooltip-position="below"
   matTooltipShowDelay="500"
-  [matTooltip]="tooltip() ?? defaultTooltip | translate"
+  [matTooltip]="tooltipText()"
   (click)="toggle($event)"
 >
+  @let badge = this.badge();
   <igo-icon
-    matBadge="?"
+    matBadge="icon"
+    [igoMatBadgeIcon]="badge ? 'filter_alt' : 'help'"
+    [igoMatBadgeInverseColor]="!!badge"
+    [igoMatBadgeBackgroundColor]="badge ? '#fff' : null"
+    [matBadgeDisabled]="visible() ? (hiddenByParent ? true : false) : true"
     matBadgeColor="accent"
     matBadgeSize="small"
     matBadgePosition="after"
-    [matBadgeHidden]="!showQueryBadge()"
+    [matBadgeHidden]="!badge && !showQueryBadge()"
     [icon]="
-      visible
+      visible()
         ? hiddenByParent
           ? eyeClosedSvg
           : 'visibility'
