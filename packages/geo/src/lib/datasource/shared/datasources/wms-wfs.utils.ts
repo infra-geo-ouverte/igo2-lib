@@ -9,6 +9,8 @@ import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
 
 import {
+  isIgoLogicalArray,
+  isOgcFilterDuringOptions,
   parseDateOperation,
   searchFilter
 } from '../../../filter/shared/filter.utils';
@@ -18,13 +20,18 @@ import {
   IOgcFiltersOptionSaveable,
   IOgcInterfaceFilterOptions,
   IgoLogicalArrayOptions,
+  OgcFilterableDataSourceOptions,
   OgcFiltersOptions,
   OgcInterfaceFilterOptions,
   OgcSelectorFields
 } from '../../../filter/shared/ogc-filter.interface';
+import { AnyDataSourceOptions } from './any-datasource.interface';
 import { EventRefresh } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
+import {
+  TimeFilterableDataSourceOptions,
+  WMSDataSourceOptions
+} from './wms-datasource.interface';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -363,4 +370,119 @@ function handleFilterDate(
       }
     }
   });
+}
+
+function isOgcFilterableDataSourceOptions(
+  dataSourceOptions: AnyDataSourceOptions
+): dataSourceOptions is OgcFilterableDataSourceOptions {
+  return 'ogcFilters' in dataSourceOptions;
+}
+
+function isTimeFilterableDataSourceOptions(
+  datasourceOption: AnyDataSourceOptions
+): datasourceOption is TimeFilterableDataSourceOptions {
+  return 'timeFilter' in datasourceOption;
+}
+
+export function getFilterBadge(
+  dataSourceOptions: AnyDataSourceOptions
+): number | undefined {
+  if (
+    !isOgcFilterableDataSourceOptions(dataSourceOptions) &&
+    !isTimeFilterableDataSourceOptions(dataSourceOptions)
+  ) {
+    return undefined;
+  }
+
+  let cnt = 0;
+
+  if (
+    isOgcFilterableDataSourceOptions(dataSourceOptions) &&
+    dataSourceOptions.ogcFilters
+  ) {
+    cnt += getOGCFilterBadge(dataSourceOptions.ogcFilters) ?? 0;
+  }
+
+  if (
+    isTimeFilterableDataSourceOptions(dataSourceOptions) &&
+    dataSourceOptions.timeFilter
+  ) {
+    cnt += getTimeFilterBadge(dataSourceOptions) ?? 0;
+  }
+
+  return cnt > 0 ? cnt : undefined;
+}
+
+function getOGCFilterBadge(options: OgcFiltersOptions): number | undefined {
+  if (!options) return undefined;
+
+  let cnt = 0;
+  if (!options.advancedOgcFilters) {
+    cnt += countOgcActiveSelectors(options);
+  } else if (options.filters) {
+    cnt +=
+      isIgoLogicalArray(options.filters) &&
+      Array.isArray(options.filters.filters)
+        ? options.filters.filters.length
+        : 1;
+  }
+
+  if (options.filters && options.interfaceOgcFilters) {
+    cnt += countOgcActiveInterface(options);
+  }
+
+  return cnt || undefined;
+}
+
+function countOgcActiveSelectors(options: OgcFiltersOptions): number {
+  return OgcSelectorFields.reduce((total, field) => {
+    const selectorField = options[field];
+    if (!selectorField) return total;
+
+    const activeGroup = selectorField.groups.find((group) => group.enabled);
+    if (!activeGroup) return total;
+
+    const activatedCount = (activeGroup.computedSelectors ?? []).reduce(
+      (sum, selectorGroup) =>
+        sum +
+        (selectorGroup.selectors?.filter((button) => button.enabled).length ??
+          0),
+      0
+    );
+
+    return total + activatedCount;
+  }, 0);
+}
+
+function countOgcActiveInterface(options: OgcFiltersOptions): number {
+  return options.interfaceOgcFilters.reduce((cnt, interfaceOgc) => {
+    const layerFilter = searchFilter(
+      options.filters,
+      'propertyName',
+      interfaceOgc.propertyName
+    );
+    if (
+      layerFilter &&
+      isOgcFilterDuringOptions(layerFilter) &&
+      interfaceOgc.active
+    ) {
+      return cnt + (interfaceOgc.begin || interfaceOgc.end ? 1 : 0);
+    }
+    return cnt;
+  }, 0);
+}
+
+function getTimeFilterBadge(
+  timeFilterableOptions: TimeFilterableDataSourceOptions
+): number | undefined {
+  if (
+    timeFilterableOptions.timeFilterable &&
+    timeFilterableOptions.timeFilter &&
+    timeFilterableOptions.timeFilter.value &&
+    timeFilterableOptions.timeFilter.enabled
+  ) {
+    return 1;
+  } else {
+    return undefined;
+  }
 }
