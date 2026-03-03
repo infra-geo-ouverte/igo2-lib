@@ -38,7 +38,8 @@ import { Action } from '../shared/action.interfaces';
     MatCheckboxModule,
     AsyncPipe,
     IgoLanguageModule,
-    IgoIconComponent
+    IgoIconComponent,
+    MatButtonModule
   ]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
@@ -141,14 +142,14 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
     if (isObservable(action.checkCondition)) {
       this.checkCondition$$ = action.checkCondition.subscribe(
-        (checkCondition: boolean) => this.updateCheckCondition(checkCondition)
+        (checkCondition) => this.updateCheckCondition(checkCondition)
       );
     } else {
       this.updateCheckCondition(action.checkCondition);
     }
 
     if (isObservable(action.tooltip)) {
-      this.tooltip$$ = action.tooltip.subscribe((tooltip: string) =>
+      this.tooltip$$ = action.tooltip.subscribe((tooltip) =>
         this.updateTooltip(tooltip)
       );
     } else {
@@ -158,20 +159,20 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     if (action.availability !== undefined) {
       this.availability$$ = action
         .availability(...args)
-        .subscribe((available: boolean) => (this.disabled = !available));
+        .subscribe((available) => (this.disabled = !available));
     }
 
-    this.disabled$$ = this.disabled$.subscribe((disabled: boolean) =>
+    this.disabled$$ = this.disabled$.subscribe((disabled) =>
       this.updateNgClass({ 'igo-actionbar-item-disabled': disabled })
     );
 
     if (action.display !== undefined) {
       this.display$$ = action
         .display(...args)
-        .subscribe((display: boolean) => (this.noDisplay = !display));
+        .subscribe((display) => (this.noDisplay = !display));
     }
 
-    this.noDisplay$$ = this.noDisplay$.subscribe((noDisplay: boolean) =>
+    this.noDisplay$$ = this.noDisplay$.subscribe((noDisplay) =>
       this.updateNgClass({ 'igo-actionbar-item-no-display': noDisplay })
     );
   }
@@ -212,7 +213,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
    * @internal
    */
   onClick() {
-    if (this.disabled === true) {
+    if (this.disabled) {
       return;
     }
     this.trigger.emit(this.action());
