@@ -2,10 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  EffectRef,
   OnDestroy,
   OnInit,
-  effect,
   inject,
   input
 } from '@angular/core';
@@ -87,7 +85,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public hasOsrmPrivateAccess = false;
   public twoSourcesAvailable = false;
 
-  private zoomOnActiveRoute$$: EffectRef;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   private routesQueries$$: Subscription[] = [];
@@ -111,7 +108,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   readonly debounce = input(200);
   readonly length = input(2);
   readonly coordRoundedDecimals = input(6);
-  readonly zoomOnActiveRoute = input.required<boolean>();
   readonly authenticated$ = input.required<BehaviorSubject<boolean>>();
 
   /**
@@ -129,10 +125,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   get enabledProfileHasAuthorization() {
     return this.directionsSourceService.sources[0].getEnabledProfile()
       .authorization;
-  }
-
-  constructor() {
-    this.monitorActiveRouteZoom();
   }
 
   ngOnInit(): void {
@@ -171,7 +163,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
-    this.zoomOnActiveRoute$$.destroy();
     this.authenticated$$.unsubscribe();
     this.freezeStores();
 
@@ -206,41 +197,37 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.monitorEntityStoreChange();
   }
 
-  private monitorActiveRouteZoom() {
-    this.zoomOnActiveRoute$$ = effect(() => {
-      this.zoomOnActiveRoute();
-      if (this.routesFeatureStore().count >= 1) {
-        const activeRoute: FeatureWithDirections = this.routesFeatureStore()
-          .all()
-          .find((route) => route.properties.active);
+  zoomOnActiveRoute(): void {
+    if (this.routesFeatureStore().count >= 1) {
+      const activeRoute: FeatureWithDirections = this.routesFeatureStore()
+        .all()
+        .find((route) => route.properties.active);
 
-        if (activeRoute) {
-          const stopsCoordinates: Coordinate[] = this.stopsStore()
-            .all()
-            .map((stop) =>
-              olProj.transform(stop.coordinates, 'EPSG:4326', 'EPSG:3857')
-            );
-          const routeCoordinates: Coordinate[] =
-            activeRoute.geometry.coordinates;
-          const coordinates: Coordinate[] = [
-            ...stopsCoordinates,
-            ...routeCoordinates
-          ];
-          const routeExtent = coordinates.reduce(
-            ([x_min, y_min, x_max, y_max], [x, y]) => [
-              Math.min(x_min, x),
-              Math.min(y_min, y),
-              Math.max(x_max, x),
-              Math.max(y_max, y)
-            ],
-            [Infinity, Infinity, -Infinity, -Infinity]
+      if (activeRoute) {
+        const stopsCoordinates: Coordinate[] = this.stopsStore()
+          .all()
+          .map((stop) =>
+            olProj.transform(stop.coordinates, 'EPSG:4326', 'EPSG:3857')
           );
-          this.routesFeatureStore().layer.map.viewController.zoomToExtent(
-            routeExtent as [number, number, number, number]
-          );
-        }
+        const routeCoordinates: Coordinate[] = activeRoute.geometry.coordinates;
+        const coordinates: Coordinate[] = [
+          ...stopsCoordinates,
+          ...routeCoordinates
+        ];
+        const routeExtent = coordinates.reduce(
+          ([x_min, y_min, x_max, y_max], [x, y]) => [
+            Math.min(x_min, x),
+            Math.min(y_min, y),
+            Math.max(x_max, x),
+            Math.max(y_max, y)
+          ],
+          [Infinity, Infinity, -Infinity, -Infinity]
+        );
+        this.routesFeatureStore().layer.map.viewController.zoomToExtent(
+          routeExtent as [number, number, number, number]
+        );
       }
-    });
+    }
   }
 
   private initOlInteraction() {
