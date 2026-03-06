@@ -68,10 +68,6 @@ export class DirectionsToolComponent implements OnInit {
     return this.directionState.stepFeatureStore;
   }
 
-  get zoomOnActiveRoute() {
-    return this.directionState.zoomToActiveRoute;
-  }
-
   get authenticated$() {
     return this.authService.authenticate$;
   }

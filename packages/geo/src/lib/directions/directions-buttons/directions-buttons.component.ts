@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, inject, input, model } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -39,10 +39,11 @@ export class DirectionsButtonsComponent {
   private directionsService = inject(DirectionsService);
 
   readonly contextUri = input.required<string>();
-  readonly zoomOnActiveRoute = model.required<boolean>();
   readonly stopsStore = input.required<StopsStore>();
   readonly routesFeatureStore = input.required<RoutesFeatureStore>();
   readonly stepsFeatureStore = input.required<StepsFeatureStore>();
+
+  readonly zoomOnActiveRoute = output<void>();
 
   public downloadDirectionsBtnDisabled = false;
 
@@ -63,14 +64,6 @@ export class DirectionsButtonsComponent {
    */
   resetStops(): void {
     this.stopsStore().clearStops();
-  }
-
-  /**
-   * Triggers the zoom on the active route.
-   *
-   */
-  setZoomOnActiveRoute(): void {
-    this.zoomOnActiveRoute.set(true);
   }
 
   /**
