@@ -100,9 +100,7 @@ export class LayerVisibilityButtonComponent implements OnInit {
       this.visible.set(visible);
     });
 
-    layer.status$.subscribe(() => {
-      this.badge.set(this.getBadge());
-    });
+    this.badge.set(this.getBadge());
   }
 
   toggle(event: Event) {
