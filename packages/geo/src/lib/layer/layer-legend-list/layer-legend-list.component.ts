@@ -56,30 +56,31 @@ export class LayerLegendListComponent {
   isLayerItem = isLayerItem;
   constructor() {
     effect(() => {
-      const layers = this.computeShownLayers(this.layers());
+      const layers = this.layers() ?? [];
+
+      const shownLayers = this.computeShownLayers(layers);
+      this.layersLegend.set(shownLayers);
+
       this.handleLayersChange(layers);
     });
   }
 
   private handleLayersChange(layers: AnyLayer[]) {
-    this.layersLegend.set(layers);
-    const layersValue = this.layers();
-
     this.hasVisibleOrInRangeLayers.set(
-      layersValue
+      layers
         .filter((layer) => !isBaseLayer(layer))
         .filter((layer) => layer.displayed).length > 0
     );
 
     this.hasVisibleAndNotInRangeLayers.set(
-      layersValue
+      layers
         .filter((layer) => !isBaseLayer(layer))
         .filter((layer) => layer.visible && !layer.isInResolutionsRange)
         .length > 0
     );
 
     this.layersInUi.set(
-      layersValue.filter(
+      layers.filter(
         (layer) =>
           layer.showInLayerList !== false &&
           (!this.excludeBaseLayers() || !isBaseLayer(layer))
