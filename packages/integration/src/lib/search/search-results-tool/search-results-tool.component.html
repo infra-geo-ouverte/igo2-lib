@@ -1,26 +1,24 @@
 @if (debouncedEmpty()) {
   @if (!store || store.stateView.empty) {
-    <div>
-      <section>
-        <h4>
-          <strong>{{
-            'igo.integration.searchResultsTool.noResults' | translate
-          }}</strong>
-        </h4>
-        <p>
-          <strong>{{
-            'igo.integration.searchResultsTool.doSearch' | translate
-          }}</strong>
-        </p>
-        <div
-          [innerHTML]="
-            'igo.integration.searchResultsTool.examples'
-              | translate
-              | sanitizeHtml
-          "
-        ></div>
-      </section>
-    </div>
+    <section class="search-results-tool-empty">
+      <h4>
+        <strong>{{
+          'igo.integration.searchResultsTool.noResults' | translate
+        }}</strong>
+      </h4>
+      <p>
+        <strong>{{
+          'igo.integration.searchResultsTool.doSearch' | translate
+        }}</strong>
+      </p>
+      <div
+        [innerHTML]="
+          'igo.integration.searchResultsTool.examples'
+            | translate
+            | sanitizeHtml
+        "
+      ></div>
+    </section>
   }
 } @else {
   @let feature = this.feature();
