@@ -82,6 +82,10 @@ import { SearchState } from '../search.state';
         flex: 1;
         height: 100%;
       }
+
+      .search-results-tool-empty {
+        padding: 0 16px;
+      }
     `
   ],
   imports: [
