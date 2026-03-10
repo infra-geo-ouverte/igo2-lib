@@ -46,6 +46,9 @@ export abstract class Layer extends LayerBase {
         .filter((m) => m.options?.showOnEachLayerVisibility)
         .map((message) => this.showMessage(message));
     }
+    if (value && this.link) {
+      this.link.display();
+    }
 
     value ? this.dataSource.addEvents() : this.dataSource.removeEvents();
   }

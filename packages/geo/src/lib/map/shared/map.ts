@@ -162,7 +162,7 @@ export class IgoMap implements MapBase {
   updateView(options: MapViewOptions) {
     const currentView = this.ol.getView();
     const viewOptions: MapViewOptions = {
-      ...currentView.getProperties(),
+      ...(currentView.getProperties() as MapViewOptions),
       ...options
     };
 

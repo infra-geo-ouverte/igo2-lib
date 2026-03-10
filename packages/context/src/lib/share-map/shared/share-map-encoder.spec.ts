@@ -20,30 +20,16 @@ import {
 
 const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
   [
-    'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer',
-    [
-      {
-        index: 0,
-        names: '0',
-        type: 'imagearcgisrest',
-        opacity: 0.5,
-        parentId: undefined,
-        visible: true,
-        zIndex: 3
-      }
-    ]
-  ],
-  [
     'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
     [
       {
-        index: 1,
+        index: 0,
         names: 'carte_gouv_qc_ro',
         type: 'wmts',
         opacity: undefined,
         parentId: undefined,
         visible: false,
-        zIndex: 2
+        zIndex: 3
       }
     ]
   ],
@@ -51,10 +37,24 @@ const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
     'https://ws.mapserver.transports.gouv.qc.ca/swtq',
     [
       {
-        index: 2,
+        index: 1,
         names: 'etablissement_mtq',
         type: 'wms',
         opacity: undefined,
+        parentId: undefined,
+        visible: true,
+        zIndex: 2
+      }
+    ]
+  ],
+  [
+    'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer',
+    [
+      {
+        index: 2,
+        names: '0',
+        type: 'imagearcgisrest',
+        opacity: 0.5,
         parentId: undefined,
         visible: true,
         zIndex: 1
@@ -63,7 +63,7 @@ const EXPECTED_LAYERS_BY_SERVICE: [url: string, layers: LayerParams[]][] = [
   ]
 ];
 const EXPECTED_LAYERS_QUERY_URL: string =
-  'urls=https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer,https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts,https://ws.mapserver.transports.gouv.qc.ca/swtq&layers=0,[0]n,3t,0.5o,1v,3z;1,[carte_gouv_qc_ro]n,1t,0v,2z;2,[etablissement_mtq]n,0t,1v,1z';
+  'urls=https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts,https://ws.mapserver.transports.gouv.qc.ca/swtq,https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/SmallCraftHarbours_Fr/MapServer&layers=0,[carte_gouv_qc_ro]n,1t,0v,3z;1,[etablissement_mtq]n,0t,1v,2z;2,[0]n,3t,0.5o,1v,1z';
 
 describe('ShareMapEncoder', () => {
   let shareMapEncoder: ShareMapEncoder;
@@ -150,13 +150,18 @@ describe('ShareMapEncoder', () => {
     const expectedQuery = new URLSearchParams();
     const { urlsKey, layers, pos } = SHARE_MAP_DEFS;
     expectedQuery.set(pos.key, '@-71.51804,46.58602');
+    const splittedParams = EXPECTED_LAYERS_QUERY_URL.split('&');
     expectedQuery.set(
       urlsKey,
-      EXPECTED_LAYERS_QUERY_URL.split('&')[0].split('=')[1]
+      splittedParams
+        .find((params) => params.includes(`${urlsKey}=`))
+        .split('=')[1]
     );
     expectedQuery.set(
       layers.key,
-      EXPECTED_LAYERS_QUERY_URL.split('&')[1].split('=')[1]
+      splittedParams
+        .find((params) => params.includes(`${layers.key}=`))
+        .split('=')[1]
     );
 
     const [baseUrl] = result.split('?');

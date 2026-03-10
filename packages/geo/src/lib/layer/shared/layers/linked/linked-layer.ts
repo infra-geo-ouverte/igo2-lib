@@ -21,7 +21,7 @@ import {
 } from './linked-layer.interface';
 
 export class Linked {
-  private children: Layer[] = [];
+  readonly children: Layer[] = [];
   private watcher = new LayerWatcher();
   private bidirectionnalChildren: Layer[] = [];
   private childrenByProperty = new Map<LinkedProperties, AnyPropertyOptions>();
@@ -217,6 +217,15 @@ export class Linked {
     });
 
     this.enable(LinkedProperties.ZINDEX);
+  }
+
+  display(): void {
+    // Some child doesn't have a z-index and may be hidden by the main layer.
+    this.children.forEach((link) => {
+      if (link.options.zIndex == null) {
+        link.zIndex = (this.layer.zIndex ?? 1) + 1;
+      }
+    });
   }
 
   private disable(...properties: LinkedProperties[]): void {
