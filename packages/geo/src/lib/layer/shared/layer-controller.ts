@@ -17,9 +17,6 @@ import type { Layer } from './layers/layer';
 import type { LayerGroup } from './layers/layer-group';
 import { isLayerLinked } from './layers/linked/linked-layer.utils';
 
-// Below 10 is reserved for BaseLayer
-const ZINDEX_MIN = 10;
-
 /**
  * We got four kind of layers
  * TreeLayer: all layers to show in the layer manager
@@ -113,7 +110,8 @@ export class LayerController extends LayerSelectionModel {
     this.layersFlattened = [...this.tree.flattened];
     addedLayers.forEach((layer) => layer.add());
 
-    this.recalculateZindex();
+    const baseLayerZindex = this.baseLayer ? 1 : 0;
+    this.recalculateZindex(baseLayerZindex);
     this.notify();
   }
 
@@ -278,17 +276,8 @@ export class LayerController extends LayerSelectionModel {
     this.notify();
   }
 
-  private getBefore(layer: AnyLayer): AnyLayer {
-    return this.treeLayers.find(
-      (layerTree) => layerTree.zIndex <= layer.zIndex
-    );
-  }
-
   /** Recursive */
-  private recalculateZindex(
-    minIndex = this.baseLayers.length,
-    layers = this.treeLayers
-  ) {
+  private recalculateZindex(minIndex = 0, layers = this.treeLayers) {
     return [...layers].reverse().reduce((previousZindex, layer) => {
       let zIndex = ++previousZindex;
       layer.zIndex = zIndex;
@@ -388,11 +377,6 @@ export class LayerController extends LayerSelectionModel {
     this.tree.clear();
   }
 
-  private clearSystems(): void {
-    this._systemLayers.forEach((layer) => this._remove(layer));
-    this._systemLayers = [];
-  }
-
   private clearOther(): void {
     this._otherLayers.forEach((layer) => this._remove(layer));
     this._otherLayers = [];
@@ -404,22 +388,12 @@ export class LayerController extends LayerSelectionModel {
 
   private setZindex(layer: AnyLayer, offset?: number): void {
     if (isBaseLayer(layer)) {
-      return this.handleBaselayerZIndex(layer, offset);
+      return;
     }
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const maxZIndex = Math.max(
-        ZINDEX_MIN,
-        ...this.treeLayers.map((l) => l.zIndex)
-      );
+      const maxZIndex = Math.max(...this.treeLayers.map((l) => l.zIndex));
       layer.zIndex = maxZIndex + 1 + (offset ?? 0);
     }
-  }
-
-  private handleBaselayerZIndex(layer: Layer, offset?: number) {
-    const maxZIndex = Math.max(0, ...this.baseLayers.map((l) => l.zIndex));
-
-    const zIndex = maxZIndex + 1 + (offset ?? 0);
-    layer.zIndex = zIndex > ZINDEX_MIN ? ZINDEX_MIN : zIndex;
   }
 
   private notify(): void {
