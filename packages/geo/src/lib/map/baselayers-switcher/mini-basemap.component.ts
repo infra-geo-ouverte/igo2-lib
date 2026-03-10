@@ -8,6 +8,8 @@ import {
   input
 } from '@angular/core';
 
+import View from 'ol/View';
+
 import {
   AnyLayerOptions,
   Layer,
@@ -44,16 +46,25 @@ export class MiniBaseMapComponent implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      this.display();
-      this.basemap.ol.getView().changed();
-    });
-    effect(() => {
       this.handleBaseLayerChanged(this.baseLayer());
     });
   }
 
   ngAfterViewInit() {
-    this.basemap.ol.setView(this.map().ol.getView());
+    const mainView = this.map().ol.getView();
+    const basemapView = new View({
+      center: mainView.getCenter(),
+      zoom: mainView.getZoom(),
+      projection: mainView.getProjection(),
+      minZoom: mainView.getMinZoom(),
+      maxZoom: mainView.getMaxZoom()
+    });
+    this.basemap.ol.setView(basemapView);
+
+    mainView.on(['change:center', 'change:resolution'], () => {
+      this.basemap.ol.getView().setCenter(mainView.getCenter());
+      this.basemap.ol.getView().setZoom(mainView.getZoom());
+    });
   }
 
   changeBaseLayer(baseLayer: Layer) {
