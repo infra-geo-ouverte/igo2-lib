@@ -13,7 +13,7 @@ import {
 import { EntityStore, EntityStoreWatcher } from '@igo2/common/entity';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 
-import { BehaviorSubject, zip } from 'rxjs';
+import { BehaviorSubject, first, zip } from 'rxjs';
 
 import { Layer, isLayerItem } from '../../layer';
 import { LayerService } from '../../layer/shared/layer.service';
@@ -82,6 +82,8 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Whether a group can be toggled when it's collapsed
    */
   readonly toggleCollapsedGroup = input(true);
+
+  private isAddingLayers = new BehaviorSubject(false);
 
   /**
    * @internal
@@ -181,6 +183,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     catalogLayers: CatalogItemLayer[],
     event: AddedChangeEmitter | AddedChangeGroupEmitter
   ) {
+    this.isAddingLayers.next(true);
     const layers$ = catalogLayers.map((layer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
@@ -197,6 +200,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       }
       this.store().state.updateMany(catalogLayers, { added: true });
       this.map().layerController.add(...layers.filter(Boolean));
+      this.isAddingLayers.next(false);
     });
   }
 
@@ -205,6 +209,19 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @param layers Catalog layers
    */
   private removeLayersFromMap(layers: CatalogItemLayer[]) {
+    if (this.isAddingLayers.value) {
+      this.isAddingLayers
+        .pipe(first((value) => value === false))
+        .subscribe((_isReady) => {
+          this._removeLayersFromMap(layers);
+        });
+    } else;
+    {
+      this._removeLayersFromMap(layers);
+    }
+  }
+
+  private _removeLayersFromMap(layers: CatalogItemLayer[]) {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store().state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {

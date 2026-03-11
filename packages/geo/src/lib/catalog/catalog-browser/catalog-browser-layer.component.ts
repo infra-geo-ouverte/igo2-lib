@@ -202,6 +202,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
         this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
+        clearTimeout(this.lastTimeoutRequest);
         if (this.isPreview$.value) {
           this.remove(event);
           this.isPreview$.next(false);
