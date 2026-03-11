@@ -80,7 +80,7 @@ export class ShareMapParser {
   }
 
   parsePosition(params: Params): PositionParams | undefined {
-    const position = params[this.keysDefinitions.pos.key];
+    const position = decodeURIComponent(params[this.keysDefinitions.pos.key]);
     if (!position) {
       return this.legacy.parsePosition(params);
     }
@@ -182,7 +182,9 @@ export class ShareMapParser {
     if (!matches) return undefined;
 
     return matches
-      .map((match) => match.slice(1, -`]${names.key}`.length))
+      .map((match) =>
+        decodeURIComponent(match.slice(1, -`]${names.key}`.length))
+      )
       .join('\n')
       .split(',');
   }

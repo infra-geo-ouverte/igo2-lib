@@ -564,13 +564,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
     const { toolKey, sidenavKey, languageKey } =
       this.shareMapService.routeService.options;
     const { context: contextKey } = this.shareMapService.options;
-    const baseOrigin = this.shareMapService.encoder.sanitizeBaseUrl(
+    const baseOrigin = this.shareMapService.sanitizeBaseUrl(
       this.shareMapService.document.location.href
     );
 
     const url =
       context.uri === currentContext.uri
-        ? this.shareMapService.encoder.generateUrl(
+        ? this.shareMapService.generateUrl(
             this.map(),
             this.contextService.context$.value
           )
@@ -578,7 +578,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
     const params: string[] = [];
 
-    const currentLanguage = this.shareMapService.encoder.language;
+    const currentLanguage = this.shareMapService.language;
     if (currentLanguage && !url.includes(`${languageKey}=`))
       params.push(`${languageKey}=${currentLanguage}`);
 

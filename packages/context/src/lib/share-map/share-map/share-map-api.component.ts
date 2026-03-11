@@ -52,7 +52,7 @@ export class ShareMapApiComponent implements OnInit {
 
   public url: string;
   public userId: string;
-  public idContextShared: string;
+  public idContextShared: number;
 
   ngOnInit(): void {
     this.auth.authenticate$.subscribe(() => {
@@ -139,7 +139,7 @@ export class ShareMapApiComponent implements OnInit {
     return this.contextService.create(context);
   }
 
-  private _updateContextShared(map: IgoMap, formValues, id: string) {
+  private _updateContextShared(map: IgoMap, formValues, id: number) {
     const context = this.contextService.getContextFromMap(map);
     return this.contextService.update(id, {
       title: formValues.title,

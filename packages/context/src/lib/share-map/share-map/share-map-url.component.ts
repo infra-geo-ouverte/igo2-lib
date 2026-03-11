@@ -64,7 +64,7 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   }
 
   generateUrl(): void {
-    this.url = this.shareMapService.encoder.generateUrl(
+    this.url = this.shareMapService.generateUrl(
       this.map(),
       this.contextService.context$.value
     );

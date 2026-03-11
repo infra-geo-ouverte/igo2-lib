@@ -71,9 +71,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
       this.shareMapService.hasPositionParams(this.queryParams) &&
       shouldOverrideView
     ) {
-      const positions = this.shareMapService.parser.parsePosition(
-        this.queryParams
-      );
+      const positions = this.shareMapService.parsePosition(this.queryParams);
       this.component.setView({ ...viewContext, ...positions });
     } else if (shouldOverrideView) {
       this.component.setView(viewContext);

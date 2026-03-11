@@ -45,8 +45,13 @@ export function shareMapKeyDefs(
         },
         names: {
           key: 'n',
-          parse: (params) => extractParam(params, 'n'),
-          stringify: (value: string) => `[${value}]`
+          parse: (params) => {
+            const param = extractParam(params, 'n');
+            if (!param) return undefined;
+            const unbracketed = param.slice(1, -1);
+            return decodeURIComponent(unbracketed);
+          },
+          stringify: (value: string) => `[${encodeURIComponent(value)}]`
         },
         opacity: {
           key: 'o',
@@ -91,7 +96,14 @@ export function shareMapKeyDefs(
           key: 'pid',
           parse: (params) => extractIdParam(params, 'pid')
         },
-        title: { key: 't', parse: (params) => extractParam(params, 't') },
+        title: {
+          key: 't',
+          parse: (params) => {
+            const param = extractParam(params, 't');
+            return param ? decodeURIComponent(param) : undefined;
+          },
+          stringify: (value: string) => encodeURIComponent(value)
+        },
         visible: {
           key: 'v',
           parse: (params) => parseBooleanParam(params, 'v'),

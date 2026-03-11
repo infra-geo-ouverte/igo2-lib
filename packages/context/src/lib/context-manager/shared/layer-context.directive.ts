@@ -225,9 +225,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     const contextValue = this.shareMapService.getContext(this.queryParams);
 
     if (!contextValue || contextValue === uri) {
-      const layersOptions = this.shareMapService.parser.parseLayers(
-        this.queryParams
-      );
+      const layersOptions = this.shareMapService.parseLayers(this.queryParams);
       if (layersOptions.length) {
         return mergeLayersOptions([...layers], layersOptions);
       }

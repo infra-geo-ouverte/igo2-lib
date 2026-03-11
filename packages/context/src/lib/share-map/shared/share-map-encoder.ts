@@ -46,10 +46,12 @@ export class ShareMapEncoder {
       ...map.layerController.layersFlattened
     ].filter(Boolean);
 
-    const queryUrl = this.buildQueryUrl(layers);
+    const urlParams = this.getBaseUrlConfig(map.viewController);
+    this.buildQueryUrl(layers, urlParams);
 
-    const urlBaseConfig = this.getBaseUrlConfig(map.viewController);
-    return queryUrl !== '' ? urlBaseConfig + '&' + queryUrl : urlBaseConfig;
+    const [baseUrl] = this.document.location.href.split('?');
+    const queryString = urlParams.toString();
+    return queryString !== '' ? `${baseUrl}?${queryString}` : baseUrl;
   }
 
   /**
@@ -123,21 +125,28 @@ export class ShareMapEncoder {
     return layers.filter(isLayerItem) as Layer[];
   }
 
-  private buildQueryUrl(layers: AnyLayer[]) {
+  private buildQueryUrl(layers: AnyLayer[], urlParams: URLSearchParams) {
     const layersSharable = this.isLayerSharable(layers);
     this.replaceGroupLocalIds(layersSharable);
     const layersChanged = this.getFilteredMapLayers(layersSharable);
 
     const groups = this.getLayerGroups(layersChanged);
-
-    const groupsQueryUrl = this.buildGroupsQueryUrl(groups);
+    const groupsQueryValue = this.buildGroupsQueryValue(groups);
 
     const layersByService = this.generateLayersOptionsByService(
       this.getLayerItems(layersChanged)
     );
-    const layersQueryUrl = this.buildLayersQueryUrl(layersByService);
+    const [urls, layerParams] = this.buildLayersQueryValues(layersByService);
 
-    return [layersQueryUrl, groupsQueryUrl].filter(Boolean).join('&');
+    if (urls.length > 0) {
+      urlParams.set(this.SHARE_MAP_DEFS.urlsKey, urls.join(','));
+    }
+    if (layerParams.length > 0) {
+      urlParams.set(this.SHARE_MAP_DEFS.layers.key, layerParams.join(';'));
+    }
+    if (groupsQueryValue) {
+      urlParams.set(this.SHARE_MAP_DEFS.groups.key, groupsQueryValue);
+    }
   }
 
   /**
@@ -292,7 +301,9 @@ export class ShareMapEncoder {
 
   private getLayerParams(layer: Layer): LayerParams {
     const dataSourceOptions = layer.dataSource.options;
-    const isExisting = this.hasLayerId(this.context.layers, layer.id);
+    const isExisting = this.context?.layers
+      ? this.hasLayerId(this.context.layers, layer.id)
+      : false;
     return {
       index: undefined,
       ...(isExisting
@@ -335,11 +346,9 @@ export class ShareMapEncoder {
     return !!visibility;
   }
 
-  private buildLayersQueryUrl(
+  private buildLayersQueryValues(
     layersByService: [url: string, params: LayerParams[]][]
-  ): string | undefined {
-    if (layersByService.length === 0) return undefined;
-    const { urlsKey, layers } = this.SHARE_MAP_DEFS;
+  ): [urls: string[], layerParams: string[]] {
     const urls: string[] = [];
     const layerParams: string[] = [];
     for (const [url, layer] of layersByService) {
@@ -358,17 +367,7 @@ export class ShareMapEncoder {
       }
     }
 
-    if (layerParams.length === 0) return undefined;
-
-    const queryParts: string[] = [];
-
-    if (urls.length > 0) {
-      queryParts.push(`${urlsKey}=${urls.join(',')}`);
-    }
-
-    queryParts.push(`${layers.key}=${layerParams.join(';')}`);
-
-    return queryParts.join('&');
+    return [urls, layerParams];
   }
 
   private stringifyLayerParams(params: LayerParams): string {
@@ -384,45 +383,36 @@ export class ShareMapEncoder {
       : `${index},${stringifiedParams}`;
   }
 
-  private getBaseUrlConfig(viewController: MapViewController): string {
+  private getBaseUrlConfig(viewController: MapViewController): URLSearchParams {
     const { pos, contextKey, languageKey } = this.SHARE_MAP_DEFS;
     const href = this.document.location.href;
-    const baseUrl = this.sanitizeBaseUrl(href);
+    const urlParams = this.getSanitizedParams(href);
 
-    const params: string[] = [];
     if (pos) {
       const positionStringified = this.stringifyPosition(
         this.getPosition(viewController)
       );
-      params.push(`${pos.key}=${positionStringified}`);
+      urlParams.set(pos.key, positionStringified);
     }
     const contextUri = this.context?.uri;
-    if (contextUri) params.push(`${contextKey}=${contextUri}`);
+    if (contextUri) urlParams.set(contextKey, contextUri);
 
-    if (this.language && !baseUrl.includes(`${languageKey}=`))
-      params.push(`${languageKey}=${this.language}`);
+    if (this.language && !urlParams.has(languageKey))
+      urlParams.set(languageKey, this.language);
 
-    return `${baseUrl}${params.join('&')}`;
+    return urlParams;
   }
 
-  sanitizeBaseUrl(baseUrl: string): string {
-    if (!baseUrl.includes('?')) {
-      return `${baseUrl}?`;
-    }
+  getSanitizedParams(baseUrl: string): URLSearchParams {
+    const [, queryString] = baseUrl.split('?');
+    const params = new URLSearchParams(queryString);
 
     const keys = this.extractKeys(this.SHARE_MAP_DEFS);
-
-    const [base, queryString] = baseUrl.split('?');
-    const params = new URLSearchParams(queryString);
     keys.forEach((key) => {
       params.delete(key);
     });
 
-    const newQueryString = params.toString();
-    if (newQueryString !== '') {
-      return `${base}?${newQueryString}&`;
-    }
-    return `${base}?`;
+    return params;
   }
 
   private extractKeys(defs: ShareMapKeysDefinitions): string[] {
@@ -501,18 +491,15 @@ export class ShareMapEncoder {
     return result === '' ? undefined : result;
   }
 
-  private buildGroupsQueryUrl(layers: LayerGroup[]): string | undefined {
+  private buildGroupsQueryValue(layers: LayerGroup[]): string | undefined {
     if (layers.length === 0) return undefined;
-    const { key } = this.SHARE_MAP_DEFS.groups;
 
-    const queryUrl = layers
+    return layers
       .map((layer) => {
         const params = this.getLayerGroupParams(layer);
         return this.stringifyGroupParams(params);
       })
       .join(';');
-
-    return `${key}=${queryUrl}`;
   }
 
   private getLayerGroupParams(layer: LayerGroup): GroupParams {
