@@ -26,12 +26,6 @@ import {
   PrintResolution
 } from './print.type';
 
-declare global {
-  interface Navigator {
-    msSaveBlob?: (blob: any, defaultName?: string) => boolean;
-  }
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -1424,13 +1418,9 @@ export class PrintService {
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      if (navigator.msSaveBlob) {
-        this.addFileToZip(name, canvas.msToBlob());
-      } else {
-        canvas.toBlob((blob) => {
-          this.addFileToZip(name, blob);
-        }, blobFormat);
-      }
+      canvas.toBlob((blob) => {
+        this.addFileToZip(name, blob);
+      }, blobFormat);
     } catch {
       this.messageService.error(
         'igo.geo.printForm.corsErrorMessageBody',
