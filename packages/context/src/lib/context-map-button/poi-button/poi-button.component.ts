@@ -31,14 +31,14 @@ import { PoiService } from './shared/poi.service';
   templateUrl: './poi-button.component.html',
   styleUrls: ['./poi-button.component.scss'],
   imports: [
-    MatSelectModule,
-    MatOptionModule,
+    IgoLanguageModule,
     MatButtonModule,
-    StopPropagationDirective,
-    MatIconModule,
     MatDividerModule,
+    MatIconModule,
+    MatOptionModule,
+    MatSelectModule,
     MatTooltipModule,
-    IgoLanguageModule
+    StopPropagationDirective
   ],
   providers: [PoiService]
 })
@@ -49,6 +49,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
   private confirmDialogService = inject(ConfirmDialogService);
+  selected: Poi;
 
   @Input()
   get map(): IgoMap {

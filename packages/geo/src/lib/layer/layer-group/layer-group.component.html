@@ -1,4 +1,6 @@
 <div class="layer-content">
+  <ng-content />
+
   @if (viewerOptions().mode === 'selection') {
     <mat-checkbox
       [checked]="selected()"
@@ -6,7 +8,6 @@
       (change)="handleSelect($event)"
     />
   }
-  <ng-content />
   <span class="igo-layer-title" (click)="handleExpand()">{{
     layer().title
   }}</span>
