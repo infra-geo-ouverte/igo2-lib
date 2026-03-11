@@ -3,11 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { Params } from '@angular/router';
 
 import { RouteService, RouteServiceOptions } from '@igo2/core/route';
+import { AnyLayerOptions, IgoMap } from '@igo2/geo';
 
+import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { shareMapKeyDefs } from './share-map-definitions';
 import { ShareMapEncoder } from './share-map-encoder';
 import { ShareMapParser } from './share-map-parser';
 import {
+  PositionParams,
   SHARE_MAP_KEYS_DEFAULT_OPTIONS,
   ShareMapKeysDefinitions,
   ShareMapRouteKeysOptions
@@ -20,13 +23,22 @@ export class ShareMapService {
   routeService = inject(RouteService);
   document = inject<Document>(DOCUMENT);
 
-  private language = '';
+  get language(): string {
+    return this._language;
+  }
+  set language(value: string) {
+    this._language = value;
+    if (this.encoder) {
+      this.encoder.language = value;
+    }
+  }
+  private _language = '';
 
   options: ShareMapRouteKeysOptions;
   optionsLegacy: RouteServiceOptions;
   keysDefinitions: ShareMapKeysDefinitions;
-  encoder: ShareMapEncoder;
-  parser: ShareMapParser;
+  private encoder: ShareMapEncoder;
+  private parser: ShareMapParser;
 
   constructor() {
     this.options = SHARE_MAP_KEYS_DEFAULT_OPTIONS;
@@ -47,9 +59,27 @@ export class ShareMapService {
       const language = params[this.keysDefinitions.languageKey];
       if (language) {
         this.language = language;
-        this.encoder.language = language;
       }
     });
+  }
+
+  generateUrl(map: IgoMap, context: DetailedContext): string {
+    return this.encoder.generateUrl(map, context);
+  }
+
+  parsePosition(params: Params): PositionParams | undefined {
+    return this.parser.parsePosition(params);
+  }
+
+  parseLayers(params: Params): AnyLayerOptions[] | undefined {
+    return this.parser.parseLayers(params);
+  }
+
+  sanitizeBaseUrl(baseUrl: string): string {
+    const params = this.encoder.getSanitizedParams(baseUrl);
+    const [base] = baseUrl.split('?');
+    const queryString = params.toString();
+    return queryString !== '' ? `${base}?${queryString}&` : `${base}?`;
   }
 
   getContext(params: Params): string | undefined {
@@ -59,16 +89,20 @@ export class ShareMapService {
   }
 
   getZoom(params: Params): number | undefined {
-    return this.parser.parsePosition(params).zoom;
+    return this.parsePosition(params).zoom;
   }
 
   getUrlWithApi(formValues) {
     const loc = this.document.location;
     const origin = loc.origin;
     const pathname = loc.pathname;
-    return this.language
-      ? `${origin + pathname}?context=${formValues.uri}&lang=${this.language}`
-      : `${origin + pathname}?context=${formValues.uri}`;
+    const search = loc.search;
+    const params = new URLSearchParams(search);
+    params.set('context', formValues.uri);
+    if (this.language) {
+      params.set('lang', this.language);
+    }
+    return `${origin}${pathname}?${params.toString()}`;
   }
 
   hasPositionParams(params: Params): boolean {

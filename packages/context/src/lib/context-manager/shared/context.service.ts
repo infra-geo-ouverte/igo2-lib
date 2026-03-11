@@ -137,6 +137,16 @@ export class ContextService {
     );
   }
 
+  getDetailsByUri(uri: string): Observable<DetailedContext> {
+    const url = `${this.baseUrl}/contexts/uri/${uri}/details`;
+    return this.http.get<DetailedContext>(url).pipe(
+      catchError((res) => {
+        this.handleError(res, uri);
+        throw res;
+      })
+    );
+  }
+
   getDefault(): Observable<DetailedContext> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
@@ -582,9 +592,9 @@ export class ContextService {
         return of(contextToLoad);
       }
 
-      // TODO : use always id or uri
-      const id = contextToLoad ? contextToLoad.id : uri;
-      return this.getDetails(id);
+      return contextToLoad
+        ? this.getDetails(contextToLoad.id)
+        : this.getDetailsByUri(uri);
     }
 
     const importedContext = this.contexts$.value.ours.find((currentContext) => {
