@@ -230,15 +230,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             },
             {
               title: 'igo.geo.search.icherche.type.cycleStop',
-              value: 'haltes_cyclables',
-              enabled: types.indexOf('haltes_cyclables') !== -1,
-              hashtags: ['haltevelo', 'haltes_cyclables']
+              value: 'haltes-cyclables',
+              enabled: types.indexOf('haltes-cyclables') !== -1,
+              hashtags: ['haltevelo']
             },
             {
               title: 'igo.geo.search.icherche.type.restArea',
-              value: 'haltes_routieres',
-              enabled: types.indexOf('haltes_routieres') !== -1,
-              hashtags: ['halteroute', 'haltes_routieres']
+              value: 'haltes-routieres',
+              enabled: types.indexOf('haltes-routieres') !== -1,
+              hashtags: ['halteroute']
             },
             {
               title: 'igo.geo.search.icherche.type.hq',
