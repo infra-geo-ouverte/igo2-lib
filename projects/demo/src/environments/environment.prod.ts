@@ -31,6 +31,7 @@ export const environment: EnvironmentOptions = {
       }
     ],
     auth: {
+      url: '',
       tokenKey: 'testIgo2Lib',
       intern: {
         enabled: true

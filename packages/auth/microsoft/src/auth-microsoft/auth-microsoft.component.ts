@@ -1,6 +1,8 @@
 import {
+  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   inject,
   output
 } from '@angular/core';
@@ -9,29 +11,9 @@ import { MatError } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import {
-  MSAL_GUARD_CONFIG,
-  MsalBroadcastService,
-  MsalService
-} from '@azure/msal-angular';
-import {
-  AuthenticationResult,
-  InteractionRequiredAuthError,
-  InteractionStatus,
-  PopupRequest,
-  PublicClientApplication,
-  SilentRequest
-} from '@azure/msal-browser';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-
-import {
-  AuthMicrosoftOptions,
-  MSPMsalGuardConfiguration
-} from '../shared/auth-microsoft.interface';
+import { AuthMsalService } from '../shared/auth-msal.service';
 
 @Component({
   selector: 'igo-auth-microsoft',
@@ -40,84 +22,33 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatError, MatIconModule, IgoLanguageModule]
 })
-export class AuthMicrosoftComponent {
-  private authService = inject(AuthService);
-  private msalService = inject(MsalService);
-  private config = inject(ConfigService);
-  private msalGuardConfig =
-    inject<MSPMsalGuardConfiguration[]>(MSAL_GUARD_CONFIG);
+export class AuthMicrosoftComponent implements OnInit {
+  private auth = inject(AuthService) as AuthMsalService;
+  private appRef = inject(ApplicationRef);
 
-  private options?: AuthMicrosoftOptions;
-  private readonly _destroying$ = new Subject<void>();
   readonly login = output<boolean>();
-  private broadcastService: MsalBroadcastService;
 
   error = '';
 
-  constructor() {
-    this.options = this.config.getConfig('auth.microsoft');
-
-    this.msalService.instance = new PublicClientApplication({
-      auth: this.options,
-      cache: {
-        cacheLocation: 'sessionStorage'
-      }
-    });
-
-    this.broadcastService = new MsalBroadcastService(this.msalService.instance);
-
-    if (this.options?.clientId) {
-      this.broadcastService.inProgress$
-        .pipe(
-          filter(
-            (status: InteractionStatus) => status === InteractionStatus.None
-          ),
-          takeUntil(this._destroying$)
-        )
-        .subscribe(() => {
-          this.checkAccount();
-        });
-    } else {
-      console.warn('Microsoft authentification needs "clientId" option');
+  ngOnInit(): void {
+    if (this.auth.autoLogin) {
+      this.loginUser();
     }
   }
 
   public loginUser() {
-    this.msalService
-      .loginPopup({ ...this.getConf().authRequest } as PopupRequest)
-      .subscribe((response: AuthenticationResult) => {
-        this.msalService.instance.setActiveAccount(response.account);
-        this.checkAccount();
-      });
-  }
-
-  private checkAccount() {
-    this.msalService.instance
-      .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
-      .then((response: AuthenticationResult) => {
-        const tokenAccess = response.accessToken;
-        const tokenId = response.idToken;
-        this.authService
-          .loginWithToken(tokenAccess, 'microsoft', { tokenId })
-          .subscribe(() => {
-            this.login.emit(true);
+    this.auth.login().subscribe({
+      next: () => {
+        this.appRef.tick();
+        this.login.emit(true);
+      },
+      error: (err) => {
+        this.auth
+          .translateError('igo.auth.error.microsoft.', err)
+          .subscribe((translatedErrorMsg) => {
+            this.error = translatedErrorMsg;
           });
-      })
-      .catch(async (error) => {
-        if (error instanceof InteractionRequiredAuthError) {
-          // fallback to interaction when silent call fails
-          return this.msalService.acquireTokenPopup(
-            this.getConf().authRequest as SilentRequest
-          );
-        }
-        console.log(error);
-      })
-      .catch(() => {
-        console.log('Silent token fails');
-      });
-  }
-
-  private getConf(): MSPMsalGuardConfiguration {
-    return this.msalGuardConfig.filter((conf) => conf.type === 'add')[0];
+      }
+    });
   }
 }

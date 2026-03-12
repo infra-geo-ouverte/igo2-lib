@@ -1,8 +1,14 @@
 import type { MsalGuardConfiguration } from '@azure/msal-angular';
 import type { BrowserAuthOptions } from '@azure/msal-browser';
 
+export interface MsalGuardConfigurationWithType extends MsalGuardConfiguration {
+  type: string;
+}
 export interface AuthMicrosoftOptions extends BrowserAuthOptions {
   enabled?: boolean;
+  autoLogin?: boolean;
+  domainHint?: string;
+  applicationId?: string;
 }
 
 export interface AuthMicrosoftb2cOptions {
@@ -34,6 +40,6 @@ export interface AuthMicrosoftb2cOptionsAuthority {
   authority: string;
 }
 
-export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
+export interface MsalGuardConfigurationWithType extends MsalGuardConfiguration {
   type: string;
 }

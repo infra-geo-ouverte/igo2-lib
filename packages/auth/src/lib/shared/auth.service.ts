@@ -11,6 +11,7 @@ import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
+import { AuthType } from './auth-type.enum';
 import { AuthOptions, IInfosUser, User } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
@@ -24,7 +25,7 @@ interface IToken {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService<T extends AuthOptions = AuthOptions> {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
   private userService = inject(UserService);
@@ -37,8 +38,10 @@ export class AuthService {
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   public languageForce = false;
+  public authOptions: T;
+  public authType: AuthType = AuthType.Intern;
+
   private anonymous = false;
-  private authOptions: AuthOptions;
 
   get hasAuthService() {
     return this.authOptions?.url !== undefined;
@@ -74,14 +77,16 @@ export class AuthService {
   loginWithToken(
     token: string,
     type: string,
-    infosUser?: IInfosUser
+    infosUser?: IInfosUser,
+    applicationId?: string
   ): Observable<IUser> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
       token,
       typeConnection: type,
-      infosUser
+      infosUser,
+      applicationId
     };
 
     return this.loginCall(body, myHeader);
@@ -162,6 +167,23 @@ export class AuthService {
     return this.http.patch<User>(this.authOptions?.url, user);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  translateError(prefix: string, error: any): Observable<string> {
+    return new Observable((observer) => {
+      try {
+        this.languageService.translate
+          .get(prefix + error.error.message)
+          .subscribe((errorMsg) => {
+            observer.next(errorMsg);
+            observer.complete();
+          });
+      } catch {
+        if (error.error) observer.next(error.error.message);
+        observer.complete();
+      }
+    });
+  }
+
   private encodePassword(password: string) {
     return Base64.encode(password);
   }
@@ -187,7 +209,7 @@ export class AuthService {
     return false;
   }
 
-  private loginCall(body, headers) {
+  protected loginCall(body, headers) {
     return this.http
       .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
       .pipe(
@@ -199,7 +221,9 @@ export class AuthService {
               this.languageService.setLanguage(tokenDecoded.user.locale);
             }
             if (tokenDecoded.user.isExpired) {
-              this.messageService.alert('igo.auth.error.Password expired');
+              this.messageService.alert(
+                'igo.auth.error.intern.Password expired'
+              );
             }
           }
         }),
