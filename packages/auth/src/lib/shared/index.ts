@@ -5,6 +5,7 @@ export * from './auth.guard';
 export * from './auth.interceptor';
 export * from './auth.interface';
 export * from './auth.service';
+export * from './auth-type.enum';
 export * from './logged.guard';
 export * from './profils.guard';
 export * from './token.interface';

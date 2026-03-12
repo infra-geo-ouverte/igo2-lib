@@ -26,7 +26,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 import {
   AuthMicrosoftb2cOptions,
-  MSPMsalGuardConfiguration
+  MsalGuardConfigurationWithType
 } from '../shared/auth-microsoft.interface';
 import { MsalBroadcastServiceb2c } from './auth-msalBroadcastServiceb2c.service';
 import { MsalServiceb2c } from './auth-msalServiceb2c.service';
@@ -45,7 +45,7 @@ export class AuthMicrosoftb2cComponent {
   private appRef = inject(ApplicationRef);
   private msalService = inject(MsalServiceb2c);
   private msalGuardConfig =
-    inject<MSPMsalGuardConfiguration[]>(MSAL_GUARD_CONFIG);
+    inject<MsalGuardConfigurationWithType[]>(MSAL_GUARD_CONFIG);
 
   private options: AuthMicrosoftb2cOptions;
   private readonly _destroying$ = new Subject<void>();
@@ -112,7 +112,7 @@ export class AuthMicrosoftb2cComponent {
       });
   }
 
-  private getConf(): MSPMsalGuardConfiguration {
+  private getConf(): MsalGuardConfigurationWithType {
     return this.msalGuardConfig.filter((conf) => conf.type === 'b2c')[0];
   }
 }

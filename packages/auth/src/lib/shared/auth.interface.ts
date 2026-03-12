@@ -2,6 +2,31 @@ import { Provider } from '@angular/core';
 
 import { BaseUser } from '@igo2/core/user';
 
+export interface AuthInternOptions {
+  enabled?: boolean;
+}
+
+export interface AuthFacebookOptions {
+  enabled?: boolean;
+  appId: string;
+}
+
+export interface AuthGoogleOptions {
+  enabled?: boolean;
+  apiKey: string;
+  clientId: string;
+}
+
+export interface AuthByKeyOptions {
+  domainRegFilters?: string;
+  keyProperty?: string;
+  keyValue?: string;
+}
+export interface WithCredentialsOptions {
+  withCredentials?: boolean;
+  domainRegFilters?: string;
+}
+
 export interface User extends BaseUser {
   source?: string;
   sourceId?: string;
