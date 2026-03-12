@@ -17,7 +17,11 @@ export interface IInfosUser {
 
 export interface AuthOptions {
   url: string;
-  igoApiUrl: string;
+  user?: {
+    apiUrl: string;
+    // Allow to sync the user. Use it when the user may not exist on the user API system.
+    withSync?: boolean;
+  };
   tokenKey?: string;
   allowAnonymous?: boolean;
   loginRoute?: string;

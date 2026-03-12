@@ -20,7 +20,7 @@ export class UserService {
   user$ = this._user$.asObservable();
 
   constructor() {
-    this.baseUrl = `${this.config.getConfig('auth.igoApiUrl')}/users`;
+    this.baseUrl = `${this.config.getConfig('auth.user.apiUrl')}/users`;
   }
 
   getUser(): Observable<IUser> {

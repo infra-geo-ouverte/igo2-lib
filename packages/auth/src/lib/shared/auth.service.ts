@@ -215,8 +215,15 @@ export class AuthService {
       return EMPTY;
     }
 
-    return this.userService
-      .sync()
-      .pipe(tap(() => this.authenticate$.next(true)));
+    if (this.authOptions.user) {
+      const obs$ = this.authOptions.user.withSync
+        ? this.userService.sync()
+        : this.userService.getUser();
+
+      return obs$.pipe(tap(() => this.authenticate$.next(true)));
+    }
+
+    this.authenticate$.next(true);
+    return EMPTY;
   }
 }
