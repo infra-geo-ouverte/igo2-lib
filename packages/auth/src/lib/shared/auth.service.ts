@@ -142,14 +142,9 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     if (!this.router) {
       return;
     }
-    const redirectUrl = this.redirectUrl || this.router.url;
+    const redirectUrl = this.redirectUrl ?? this.authOptions.homeRoute ?? '/';
 
-    if (redirectUrl === this.authOptions.loginRoute) {
-      const homeRoute = this.authOptions.homeRoute || '/';
-      this.router.navigateByUrl(homeRoute);
-    } else if (redirectUrl) {
-      this.router.navigateByUrl(redirectUrl);
-    }
+    this.router.navigateByUrl(redirectUrl);
   }
 
   getUserInfo(): Observable<User> {
