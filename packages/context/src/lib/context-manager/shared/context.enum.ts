@@ -1,8 +1,5 @@
-export enum TypePermission {
-  null,
-  read,
-  write
-}
+export const TypePermission = ['read', 'write'] as const;
+export type TypePermission = (typeof TypePermission)[number];
 
 export enum Scope {
   public,

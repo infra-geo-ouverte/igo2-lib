@@ -9,15 +9,19 @@
   @if (titleHtml) {
     <span
       matListItemTitle
+      class="igo-list-item-with-text-overflow-ellipsis"
       [innerHtml]="titleHtml"
       matTooltipShowDelay="500"
       [matTooltip]="tooltipHtml"
       matTooltipClass="search-result-tooltip"
     ></span>
   } @else {
-    @if (!titleHtml) {
-      <span matTooltipShowDelay="500" [matTooltip]="title">{{ title }}</span>
-    }
+    <span
+      class="igo-list-item-with-text-overflow-ellipsis"
+      matTooltipShowDelay="500"
+      [matTooltip]="title"
+      >{{ title }}</span
+    >
   }
 
   <div matListItemMeta>

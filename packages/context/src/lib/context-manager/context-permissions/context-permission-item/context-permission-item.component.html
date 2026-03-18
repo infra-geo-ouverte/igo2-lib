@@ -1,0 +1,26 @@
+@let permission = this.permission();
+
+<mat-list-item>
+  <mat-icon matListItemIcon [matTooltip]="type()">
+    {{ icon() }}
+  </mat-icon>
+
+  <span matListItemTitle [matTooltip]="permission.title">
+    {{ permission.title }}
+  </span>
+
+  <span matListItemLine>{{ type() }}</span>
+  <div matListItemMeta class="igo-actions-container">
+    @if (canDelete()) {
+      <button
+        mat-icon-button
+        [matTooltip]="'igo.context.permission.delete' | translate"
+        matTooltipShowDelay="500"
+        color="warn"
+        (click)="onDelete()"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    }
+  </div>
+</mat-list-item>
