@@ -1,10 +1,9 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   model,
   signal
@@ -30,7 +29,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '@igo2/auth';
 import { CollapsibleComponent } from '@igo2/common/collapsible';
 import { ListComponent } from '@igo2/common/list';
-import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
@@ -38,13 +36,11 @@ import { MessageService } from '@igo2/core/message';
 import { Subscription, map, of, switchMap, tap } from 'rxjs';
 
 import { ContextService } from '../shared';
-import { TypePermission } from '../shared/context.enum';
 import { Context } from '../shared/context.interface';
+import { ContextPermissionItemComponent } from './context-permission-item/context-permission-item.component';
 import {
-  ContextPermissionsList,
   ContextUserOrProfils,
-  IAnyContextPermission,
-  IContextPermissionUser
+  IAnyContextPermission
 } from './context-permission.interface';
 import { ContextPermissionService } from './context-permission.service';
 
@@ -53,22 +49,21 @@ import { ContextPermissionService } from './context-permission.service';
   templateUrl: './context-permissions.component.html',
   styleUrls: ['./context-permissions.component.scss'],
   imports: [
-    MatRadioModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatOptionModule,
-    MatButtonModule,
-    ListComponent,
     CollapsibleComponent,
-    MatListModule,
+    FormsModule,
+    IgoLanguageModule,
+    ListComponent,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatFormFieldModule,
     MatIconModule,
-    StopPropagationDirective,
+    MatInputModule,
+    MatListModule,
+    MatOptionModule,
+    MatRadioModule,
     MatTooltipModule,
-    KeyValuePipe,
-    IgoLanguageModule
+    ReactiveFormsModule,
+    ContextPermissionItemComponent
   ]
 })
 export class ContextPermissionsComponent implements OnInit {
@@ -79,18 +74,25 @@ export class ContextPermissionsComponent implements OnInit {
   private contextService = inject(ContextService);
   private contextPermissionService = inject(ContextPermissionService);
   private messageService = inject(MessageService);
-  private cd = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef); // Modern way to handle cleanup
   public form: UntypedFormGroup;
 
   readonly context = model<Context>();
-  readonly permissions = model<ContextPermissionsList>();
+  readonly permissions = model<IAnyContextPermission[]>();
+  readonly permissionsRead = computed(() =>
+    this.permissions().filter(
+      (permission) => permission.typePermission === 'read'
+    )
+  );
+  readonly permissionsWrite = computed(() =>
+    this.permissions().filter(
+      (permission) => permission.typePermission === 'write'
+    )
+  );
 
   profils = signal<ContextUserOrProfils[]>([]);
 
-  get canWrite(): boolean {
-    return this.context().permission === TypePermission[TypePermission.write];
-  }
+  canWrite = computed(() => this.context().permission === 'write');
 
   private baseUrlProfils;
 
@@ -118,8 +120,6 @@ export class ContextPermissionsComponent implements OnInit {
     this.handleEditedContextChange();
   }
 
-  isContextPermissionUser = isContextPermissionUser;
-
   displayFn(profil?: ContextUserOrProfils): string | undefined {
     return profil ? profil.title : undefined;
   }
@@ -130,16 +130,14 @@ export class ContextPermissionsComponent implements OnInit {
       .add(contextId, value)
       .subscribe((permission) => {
         this.permissions.update((permissions) => {
-          const list = permissions[
-            permission.typePermission
-          ] as IAnyContextPermission[];
-          list.push(permission);
-
-          return permissions;
+          permissions.push(permission);
+          return [...permissions];
         });
         this.messageService.success(
           'igo.context.permission.dialog.addMsg',
-          'igo.context.permission.dialog.addTitle'
+          'igo.context.permission.dialog.addTitle',
+          undefined,
+          { value: permission.title }
         );
       });
   }
@@ -167,15 +165,12 @@ export class ContextPermissionsComponent implements OnInit {
     this.contextPermissionService
       .delete(contextId, permission.id)
       .subscribe(() => {
-        const list = this.permissions()[
-          permission.typePermission
-        ] as IAnyContextPermission[];
-        const index = list.findIndex((p) => {
-          return p.id === permission.id;
-        });
         this.permissions.update((permissions) => {
-          permissions[permission.typePermission].splice(index, 1);
-          return permissions;
+          const index = permissions.findIndex((p) => {
+            return p.id === permission.id;
+          });
+          permissions.splice(index, 1);
+          return [...permissions];
         });
 
         this.messageService.success(
@@ -184,7 +179,6 @@ export class ContextPermissionsComponent implements OnInit {
           undefined,
           { value: permission.title }
         );
-        this.cd.detectChanges();
       });
   }
 
@@ -215,13 +209,8 @@ export class ContextPermissionsComponent implements OnInit {
         // 3. Automatically unsubscribe when component is destroyed
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((permissionsArray) => {
-        // 4. Process the final result
-        const data = permissionsArray || [];
-        this.permissions.set({
-          read: data.filter((p) => p.typePermission.toString() === 'read'),
-          write: data.filter((p) => p.typePermission.toString() === 'write')
-        });
+      .subscribe((permissions) => {
+        this.permissions.set(permissions);
       });
   }
 
@@ -244,9 +233,3 @@ const normalizeStr = (str: string): string =>
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-
-function isContextPermissionUser(
-  permission: IAnyContextPermission
-): permission is IContextPermissionUser {
-  return (permission as IContextPermissionUser).userId != null;
-}

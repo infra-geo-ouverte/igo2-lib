@@ -10,12 +10,14 @@ import {
 
 import { FeatureCollection } from 'geojson';
 
+import { TypePermission } from './context.enum';
+
 export interface Context {
   id?: number;
   title?: string;
   uri?: string;
   scope?: string; // Scope: 'public' | 'protected' | 'private';
-  permission?: string; // TypePermission: 'read' | 'write'
+  permission?: TypePermission;
   description?: string;
   icon?: string;
   iconImage?: string;

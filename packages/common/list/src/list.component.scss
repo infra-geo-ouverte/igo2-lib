@@ -48,7 +48,8 @@
       outline: none;
     }
 
-    .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text {
+    // TODO APPLY ON OTHER LIST THAT NEED OVERFLOW LIKE CATALOGUE
+    .igo-list-item-with-text-overflow-ellipsis {
       white-space: normal;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -57,10 +58,6 @@
       line-height: 18px;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
-    }
-
-    .mat-mdc-list .mat-mdc-list-item.mdc-list-item--with-leading-icon {
-      height: common.$igo-list-item-height;
     }
 
     .mat-mdc-list

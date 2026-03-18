@@ -31,7 +31,6 @@ import {
 } from 'rxjs/operators';
 
 import { ShareMapService } from '../../share-map/shared/share-map.service';
-import { TypePermission } from './context.enum';
 import {
   Context,
   ContextDetailedChanges,
@@ -216,9 +215,9 @@ export class ContextService {
     return this.http.post<Context>(url, context).pipe(
       map((contextCreated) => {
         if (this.authService.authenticated) {
-          contextCreated.permission = TypePermission[TypePermission.write];
+          contextCreated.permission = 'write';
         } else {
-          contextCreated.permission = TypePermission[TypePermission.read];
+          contextCreated.permission = 'read';
         }
         this.contexts$.value.ours.unshift(contextCreated);
         this.contexts$.next(this.contexts$.value);
@@ -231,7 +230,7 @@ export class ContextService {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
     return this.http.post<Context>(url, properties).pipe(
       map((contextCloned) => {
-        contextCloned.permission = TypePermission[TypePermission.write];
+        contextCloned.permission = 'write';
         this.contexts$.value.ours.unshift(contextCloned);
         this.contexts$.next(this.contexts$.value);
         return contextCloned;
@@ -679,12 +678,12 @@ export class ContextService {
   private addContextToList(context: Context) {
     const contextFound = this.findContext(context);
     if (!contextFound) {
-      const contextSimplifie = {
+      const contextSimplifie: Context = {
         id: context.id,
         uri: context.uri,
         title: context.title,
         scope: context.scope,
-        permission: TypePermission[TypePermission.read]
+        permission: 'read'
       };
 
       if (this.contexts$.value && this.contexts$.value.public) {

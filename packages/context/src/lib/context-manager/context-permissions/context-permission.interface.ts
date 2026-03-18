@@ -8,11 +8,6 @@ export interface ContextPermission {
   typePermission: TypePermission;
 }
 
-export interface ContextPermissionsList {
-  read: IAnyContextPermission[];
-  write: IAnyContextPermission[];
-}
-
 export interface ContextUserPermission {
   name: string;
   checked: boolean;
@@ -31,6 +26,7 @@ export type IAnyContextPermission =
 export interface IContextPermissionUser extends IBaseContextPermission {
   userId: number;
   profilType: 'user';
+  userSource: string;
   user: {
     id: number;
     externalId: number;

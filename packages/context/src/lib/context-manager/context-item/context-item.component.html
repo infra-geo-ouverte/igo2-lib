@@ -58,8 +58,7 @@
       @if (
         collapsed &&
         selected() &&
-        (context().permission === typePermission[typePermission.write] ||
-          context().imported)
+        (context().permission === 'write' || context().imported)
       ) {
         <button
           class="save-button"
@@ -111,7 +110,7 @@
             <span>{{ 'igo.context.contextManager.clone' | translate }}</span>
           </button>
 
-          @if (context().permission === typePermission[typePermission.write]) {
+          @if (context().permission === 'write') {
             <button
               class="edit-button"
               mat-menu-item
@@ -162,10 +161,7 @@
           </button>
         }
 
-        @if (
-          context().permission === typePermission[typePermission.write] ||
-          context().imported
-        ) {
+        @if (context().permission === 'write' || context().imported) {
           <button
             class="delete-button"
             mat-menu-item
