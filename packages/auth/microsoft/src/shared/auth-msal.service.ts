@@ -4,7 +4,7 @@ import { AuthOptions, AuthService, AuthType, IUser } from '@igo2/auth';
 
 import { MSAL_GUARD_CONFIG, MsalService } from '@azure/msal-angular';
 import { PopupRequest } from '@azure/msal-browser';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Observable, finalize, switchMap, tap } from 'rxjs';
 
 import {
   AuthMicrosoftOptions,
@@ -24,7 +24,7 @@ export class AuthMsalService extends AuthService<IAuthMsalOptions> {
     inject<MsalGuardConfigurationWithType[]>(MSAL_GUARD_CONFIG);
 
   private _isInitialized$: Observable<void>;
-  public autoLogin = false;
+  autoLogin = false;
 
   constructor() {
     super();
@@ -34,7 +34,8 @@ export class AuthMsalService extends AuthService<IAuthMsalOptions> {
     this._isInitialized$ = this.msalService.initialize();
   }
 
-  public login(): Observable<IUser> {
+  login(): Observable<IUser> {
+    this.isLogging.set(true);
     return this._isInitialized$.pipe(
       switchMap(() =>
         this.msalService.loginPopup(this.getConf().authRequest as PopupRequest)
@@ -47,7 +48,8 @@ export class AuthMsalService extends AuthService<IAuthMsalOptions> {
           { tokenId: idToken },
           this.authOptions.microsoft.applicationId
         )
-      )
+      ),
+      finalize(() => this.isLogging.set(false))
     );
   }
 
