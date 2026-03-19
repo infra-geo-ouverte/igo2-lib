@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
@@ -8,7 +8,7 @@ import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AuthType } from './auth-type.enum';
@@ -43,6 +43,8 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   private anonymous = false;
 
+  isLogging = signal(false);
+
   get hasAuthService() {
     return this.authOptions?.url !== undefined;
   }
@@ -64,6 +66,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   login(username: string, password: string): Observable<IUser> {
+    this.isLogging.set(true);
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
@@ -71,7 +74,9 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
       password: this.encodePassword(password)
     };
 
-    return this.loginCall(body, myHeader);
+    return this.loginCall(body, myHeader).pipe(
+      finalize(() => this.isLogging.set(false))
+    );
   }
 
   loginWithToken(
