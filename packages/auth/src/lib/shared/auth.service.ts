@@ -7,7 +7,7 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
-import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
@@ -236,7 +236,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   ): Observable<IUser> {
     if (!isAuthenticated) {
       this.authenticate$.next(false);
-      return EMPTY;
+      return of(null);
     }
 
     if (this.authOptions.user) {
@@ -248,6 +248,6 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     }
 
     this.authenticate$.next(true);
-    return EMPTY;
+    return of(null);
   }
 }
