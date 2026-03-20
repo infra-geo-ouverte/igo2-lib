@@ -125,6 +125,7 @@ export class LayerController extends LayerSelectionModel {
     }
 
     layer.visible = true;
+    layer.zIndex = 0;
     this.baseLayerSelection = layer;
 
     this._map.viewController.olView.setMinZoom(
@@ -391,7 +392,7 @@ export class LayerController extends LayerSelectionModel {
       return;
     }
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const maxZIndex = Math.max(...this.treeLayers.map((l) => l.zIndex));
+      const maxZIndex = Math.max(...this.treeLayers.map((l) => l.zIndex), 0);
       layer.zIndex = maxZIndex + 1 + (offset ?? 0);
     }
   }
