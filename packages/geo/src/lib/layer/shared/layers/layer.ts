@@ -2,6 +2,7 @@ import { Optional } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
+import { uuid } from '@igo2/utils';
 
 import OlLayer from 'ol/layer/Layer';
 import { Source } from 'ol/source';
@@ -86,6 +87,10 @@ export abstract class Layer extends LayerBase {
     @Optional() protected authInterceptor?: AuthInterceptor
   ) {
     super(options);
+
+    if (!options.id) {
+      options.id = uuid();
+    }
 
     this.dataSource = options.source;
 
