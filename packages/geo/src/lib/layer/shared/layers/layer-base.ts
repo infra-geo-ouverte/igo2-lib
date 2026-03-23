@@ -133,6 +133,7 @@ export abstract class LayerBase {
 
   get saveableOptions(): Partial<LayerOptions> {
     return {
+      id: this.id,
       title: this.options.title,
       zIndex: this.zIndex,
       visible: this.visible,
