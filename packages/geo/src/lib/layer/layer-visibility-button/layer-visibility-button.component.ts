@@ -23,7 +23,7 @@ import { getFilterBadge } from '../../datasource/shared/datasources/wms-wfs.util
 import { AnyLayer } from '../shared/layers/any-layer';
 import { isLayerItem } from '../utils';
 
-const EYE_CLOSE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>eye-closed</title><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
+const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>eye-closed</title><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
 
 @Component({
   selector: 'igo-layer-visibility-button',
@@ -46,9 +46,9 @@ export class LayerVisibilityButtonComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private languageService = inject(LanguageService);
 
-  eyeClosedSvg: IconSvg = {
+  eyeClosedByGroupSvg: IconSvg = {
     name: 'eye-closed',
-    svg: EYE_CLOSE_SVG
+    svg: EYE_CLOSE_BY_GROUP_SVG
   };
   parentDisplayed = signal<boolean>(undefined);
   visible = signal<boolean>(undefined);
@@ -77,14 +77,15 @@ export class LayerVisibilityButtonComponent implements OnInit {
         )
       );
     }
+    return tooltip;
   });
 
   readonly visibilityChange = output<Event>();
 
   constructor() {
     this.iconRegistry.addSvgIconLiteral(
-      'eye-closed',
-      this.sanitizer.bypassSecurityTrustHtml(EYE_CLOSE_SVG)
+      'eye-closed-by-group',
+      this.sanitizer.bypassSecurityTrustHtml(EYE_CLOSE_BY_GROUP_SVG)
     );
   }
 
