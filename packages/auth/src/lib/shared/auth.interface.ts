@@ -43,11 +43,7 @@ export interface IInfosUser {
 export interface AuthOptions {
   url: string;
   /** User api url is the igo user versus the url is the authentification API */
-  user?: {
-    apiUrl: string;
-    // Allow to sync the user. Use it when the user may not exist on the user API system.
-    withSync?: boolean;
-  };
+  user?: IAuthUserIgoOptions;
   tokenKey?: string;
   allowAnonymous?: boolean;
   loginRoute?: string;
@@ -59,6 +55,12 @@ export interface AuthOptions {
   hostsWithCredentials?: WithCredentialsOptions[];
   hostsByKey?: AuthByKeyOptions[];
   intern?: AuthInternOptions;
+}
+
+export interface IAuthUserIgoOptions {
+  apiUrl: string;
+  // Allow to sync the user. Use it when the user may not exist on the user API system.
+  withSync?: boolean;
 }
 
 export interface AuthByKeyOptions {
@@ -81,5 +83,6 @@ export interface AuthFeature<KindT extends AuthFeatureKind> {
 }
 
 export enum AuthFeatureKind {
-  Microsoft = 0
+  Microsoft = 0,
+  User
 }

@@ -21,7 +21,9 @@ export class AuthStorageService
   implements OnDestroy
 {
   private authService = inject(AuthService);
-  private userService = inject(UserService);
+  private userService = inject(UserService, {
+    optional: true
+  });
   private tokenService = inject(TokenService);
 
   private preferencesChanged$ = new Subject<void>();
@@ -31,13 +33,12 @@ export class AuthStorageService
 
   constructor() {
     const config = inject(ConfigService);
-
     super(config);
 
     this.authService.authenticate$
       .pipe(
         switchMap((isAuthenticated) => {
-          if (isAuthenticated && this.options.url) {
+          if (isAuthenticated && this.userService) {
             return this.userService.user$;
           }
           return EMPTY;
@@ -77,11 +78,7 @@ export class AuthStorageService
     value: string | object | boolean | number,
     scope: StorageScope = StorageScope.LOCAL
   ) {
-    if (
-      scope === StorageScope.LOCAL &&
-      this.authService.authenticated &&
-      this.options.url
-    ) {
+    if (scope === StorageScope.LOCAL && this.authService.authenticated) {
       this.pendingPreferences[key] = value;
       this.preferencesChanged$.next();
     }
@@ -89,11 +86,7 @@ export class AuthStorageService
   }
 
   remove(key: string, scope: StorageScope = StorageScope.LOCAL) {
-    if (
-      scope === StorageScope.LOCAL &&
-      this.authService.authenticated &&
-      this.options.url
-    ) {
+    if (scope === StorageScope.LOCAL && this.authService.authenticated) {
       this.pendingPreferences[key] = undefined;
       this.preferencesChanged$.next();
     }
@@ -101,11 +94,7 @@ export class AuthStorageService
   }
 
   clear(scope: StorageScope = StorageScope.LOCAL) {
-    if (
-      scope === StorageScope.LOCAL &&
-      this.authService.authenticated &&
-      this.options.url
-    ) {
+    if (scope === StorageScope.LOCAL && this.authService.authenticated) {
       this.pendingPreferences = {};
       this.preferencesChanged$.next();
     }
@@ -141,7 +130,7 @@ export class AuthStorageService
     this.pendingPreferences = {};
 
     if (Object.keys(changedPreferences).length > 0) {
-      this.userService.updatePreference(changedPreferences).subscribe(() => {
+      this.userService?.updatePreference(changedPreferences).subscribe(() => {
         Object.assign(this.serverPreferences, changedPreferences);
       });
     }
