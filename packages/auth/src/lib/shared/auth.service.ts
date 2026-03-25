@@ -28,7 +28,9 @@ interface IToken {
 export class AuthService<T extends AuthOptions = AuthOptions> {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
-  private userService = inject(UserService);
+  private userService = inject(UserService, {
+    optional: true
+  });
   private config = inject(ConfigService);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
@@ -239,7 +241,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
       return of(null);
     }
 
-    if (this.authOptions.user) {
+    if (this.userService) {
       const obs$ = this.authOptions.user.withSync
         ? this.userService.sync()
         : this.userService.getUser();

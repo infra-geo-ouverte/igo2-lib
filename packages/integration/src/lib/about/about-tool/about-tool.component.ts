@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { AuthService } from '@igo2/auth';
+import { AuthService, UserService } from '@igo2/auth';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
@@ -48,6 +48,9 @@ export class AboutToolComponent implements OnInit {
   private http = inject(HttpClient);
   private cdRef = inject(ChangeDetectorRef);
   private languageService = inject(LanguageService);
+  private userService = inject(UserService, {
+    optional: true
+  });
 
   private configOptions: AllEnvironmentOptions;
   @Input()
@@ -85,7 +88,6 @@ export class AboutToolComponent implements OnInit {
   private _html = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
-  private baseUrlProfil;
   private baseUrlGuide;
 
   public loading = false;
@@ -98,26 +100,24 @@ export class AboutToolComponent implements OnInit {
     const configVersion = this.configOptions.version;
     this.effectiveVersion =
       configVersion?.app || configVersion?.lib || version.lib;
-    this.baseUrlProfil = this.configOptions.storage?.url;
     this.baseUrlGuide =
       this.configOptions.depot?.url +
       // todo validate this property
       (this.configOptions.depot as any)?.guideUrl;
   }
 
-  ngOnInit() {
-    if (this.auth.authenticated && this.configOptions.context?.url) {
-      this.http.get(this.baseUrlProfil).subscribe((profil) => {
-        const recast = profil as any;
-        this.trainingGuideURLs.set(recast.guides);
-        this.cdRef.detectChanges();
-      });
-    } else if (
-      this.auth.authenticated &&
-      !this.configOptions.context?.url &&
-      this.configOptions.depot?.trainingGuides
-    ) {
-      this.trainingGuideURLs.set(this.configOptions.depot?.trainingGuides);
+  ngOnInit(): void {
+    if (this.auth.authenticated) {
+      if (this.configOptions.context?.url) {
+        this.userService?.getUser().subscribe((user) => {
+          this.trainingGuideURLs.set(user['guides']);
+        });
+      } else {
+        const trainingGuides = this.configOptions.depot?.trainingGuides;
+        if (trainingGuides) {
+          this.trainingGuideURLs.set(trainingGuides);
+        }
+      }
     }
   }
 
