@@ -1,10 +1,10 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import {
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup
+  UntypedFormBuilder
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,6 @@ export class ContextFormComponent {
   private formBuilder = inject(UntypedFormBuilder);
   private messageService = inject(MessageService);
 
-  public form: UntypedFormGroup;
   public prefix: string;
 
   readonly btnSubmitText = input<string>();
@@ -49,14 +48,13 @@ export class ContextFormComponent {
   readonly clone = output<unknown>();
   readonly delete = output<unknown>();
 
-  constructor() {
-    effect(() => {
-      const context = this.context();
-      if (context) {
-        this.buildForm(context);
-      }
-    });
-  }
+  // WORKAROUND, the context-form is shown before the editedContext emit and we got change detection problem
+  readonly form = computed<FormGroup | undefined>(() => {
+    const context = this.context();
+    if (context) {
+      return this.buildForm(context);
+    }
+  });
 
   public handleFormSubmit(value) {
     let inputs = Object.assign({}, value);
@@ -71,7 +69,7 @@ export class ContextFormComponent {
   }
 
   public copyTextToClipboard() {
-    const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
+    const text = this.prefix + '-' + this.form().value.uri.replace(' ', '');
     const successful = this.clipboard.copy(text);
     if (successful) {
       this.messageService.success(
@@ -81,12 +79,12 @@ export class ContextFormComponent {
     }
   }
 
-  private buildForm(context: Context): void {
+  private buildForm(context: Context): FormGroup {
     const uriSplit = context.uri.split('-');
     this.prefix = uriSplit.shift();
     const uri = uriSplit.join('-');
 
-    this.form = this.formBuilder.group({
+    return this.formBuilder.group({
       title: [context.title],
       uri: [uri || ' ']
     });
