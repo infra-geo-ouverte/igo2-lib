@@ -1,49 +1,31 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnDestroy,
-  OnInit,
   inject,
-  output,
-  signal
+  output
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
-import { Subscription } from 'rxjs';
-
 import { ContextFormComponent } from '../context-form/context-form.component';
 import { ContextService } from '../shared';
-import { Context, DetailedContext } from '../shared/context.interface';
+import { Context } from '../shared/context.interface';
 
 @Component({
   selector: 'igo-context-edit',
-  templateUrl: './context-edit.component.html',
-  imports: [ContextFormComponent, IgoLanguageModule]
+  imports: [ContextFormComponent, IgoLanguageModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './context-edit.component.html'
 })
-export class ContextEditComponent implements OnInit, OnDestroy {
+export class ContextEditComponent {
   private contextService = inject(ContextService);
   private messageService = inject(MessageService);
 
-  readonly context = signal<Context>(undefined);
+  readonly context = toSignal(this.contextService.editedContext$);
 
   readonly submitSuccessed = output<Context>();
-
-  private editedContext$$: Subscription;
-
-  ngOnInit() {
-    this.editedContext$$ = this.contextService.editedContext$.subscribe(
-      (context) => this.handleEditedContextChange(context)
-    );
-  }
-
-  ngOnDestroy() {
-    this.editedContext$$.unsubscribe();
-  }
-
-  private handleEditedContextChange(context: DetailedContext) {
-    this.context.set(context);
-  }
 
   onEdit(context: Context) {
     const id = this.context().id;
