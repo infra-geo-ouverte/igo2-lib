@@ -124,7 +124,7 @@ describe('DragDropTreeDirective', () => {
     treeNode.dispatchEvent(dragOverEvent);
 
     spyOn(directive, 'drop').and.callThrough();
-    spyOn(directive.onDrop, 'emit').and.callThrough();
+    spyOn(directive.dropped, 'emit').and.callThrough();
 
     directive.drop(dropEvent);
     expect(directive.drop).toHaveBeenCalledWith(dropEvent);
@@ -141,13 +141,13 @@ describe('DragDropTreeDirective', () => {
       level: 1,
       type: position
     });
-    spyOn(directive.onDrop, 'emit').and.callThrough();
+    spyOn(directive.dropped, 'emit').and.callThrough();
 
     directive.draggedNode = draggedNode;
     directive.dropNodeTarget.set(ref);
     directive.drop(new DragEvent('drop'));
 
-    expect(directive.onDrop.emit).toHaveBeenCalledWith({
+    expect(directive.dropped.emit).toHaveBeenCalledWith({
       node: draggedNode,
       ref,
       position
@@ -165,15 +165,15 @@ describe('DragDropTreeDirective', () => {
       level: 1, // Dropping inside level 0 -> level 1
       type: position
     });
-    spyOn(directive.onDrop, 'emit').and.callThrough();
-    spyOn(directive.onDropError, 'emit').and.callThrough();
+    spyOn(directive.dropped, 'emit').and.callThrough();
+    spyOn(directive.droppedError, 'emit').and.callThrough();
 
     directive.draggedNode = draggedGroup;
     directive.dropNodeTarget.set(targetGroup);
     directive.drop(new DragEvent('drop'));
 
-    expect(directive.onDropError.emit).not.toHaveBeenCalled();
-    expect(directive.onDrop.emit).toHaveBeenCalled();
+    expect(directive.droppedError.emit).not.toHaveBeenCalled();
+    expect(directive.dropped.emit).toHaveBeenCalled();
   });
 
   it('should prevent dropping a group into its own descendant', () => {

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   inject,
@@ -59,11 +60,12 @@ import { isLayerGroup, isLayerItem } from '../utils/layer.utils';
     IgoLanguageModule
   ]
 })
-export class LayerListComponent {
+export class LayerListComponent implements AfterViewInit {
   private messageService = inject(MessageService);
 
-  public toggleOpacity = false;
-  isInit: boolean;
+  toggleOpacity = false;
+
+  expansionKey = (node: AnyLayer) => String(node.id);
 
   readonly controller = input.required<LayerController>();
   readonly layers = input.required<AnyLayer[]>();
@@ -74,7 +76,7 @@ export class LayerListComponent {
 
   readonly activeChange = output<AnyLayer>();
 
-  readonly tree = viewChild<MatTree<AnyLayer, AnyLayer>>(MatTree);
+  readonly tree = viewChild<MatTree<AnyLayer, string>>(MatTree);
 
   childrenAccessor = (layer: AnyLayer) => {
     if (isLayerGroup(layer)) {
@@ -98,6 +100,15 @@ export class LayerListComponent {
     this.controller().isSelected(layer);
   isDescendantSelection = (layer: AnyLayer): boolean =>
     this.controller().isDescendantSelection(layer);
+
+  ngAfterViewInit(): void {
+    const layers = this.layers();
+    const tree = this.tree();
+
+    if (tree && layers) {
+      this.expandGroup(layers, tree);
+    }
+  }
 
   toggleActive(layer: AnyLayer): void {
     const isSelected = this.controller().isSelected(layer);
@@ -202,15 +213,28 @@ export class LayerListComponent {
   }
 
   handleNodeToggle(node: AnyLayer): void {
-    if (isLayerGroup(node)) {
-      if (node.expanded !== undefined) {
-        node.expanded = !node.expanded;
+    if (!isLayerGroup(node)) {
+      return;
+    }
+
+    const tree = this.tree();
+    tree.toggle(node);
+    node.expanded = tree.isExpanded(node);
+  }
+
+  private expandGroup(
+    layers: AnyLayer[],
+    tree: MatTree<AnyLayer, string>
+  ): void {
+    layers.forEach((layer) => {
+      if (!isLayerGroup(layer)) {
+        return;
+      }
+      if (layer.expanded) {
+        tree.expand(layer);
       }
 
-      const tree = this.tree();
-      if (tree) {
-        node.expanded = tree.isExpanded(node);
-      }
-    }
+      this.expandGroup(layer.children, tree);
+    });
   }
 }

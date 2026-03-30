@@ -9,9 +9,10 @@
   [dataSource]="layers()"
   [childrenAccessor]="childrenAccessor"
   [trackBy]="trackByFn"
+  [expansionKey]="expansionKey"
   (dragStart)="dragStart()"
-  (onDrop)="dropNode($event)"
-  (onDropError)="dropNodeError($event)"
+  (dropped)="dropNode($event)"
+  (droppedError)="dropNodeError($event)"
 >
   <!-- This is the tree node template for leaf nodes -->
   <mat-tree-node
@@ -51,12 +52,11 @@
       [selected]="isSelected(node) || isDescendantSelection(node)"
       [selectionDisabled]="isDescendantSelection(node)"
       (action)="toggleActive($event)"
-      (expand)="tree.toggle(node); handleNodeToggle(node)"
+      (expand)="handleNodeToggle(node)"
       (selectChange)="handleSelect($event, node)"
     >
       <button
         mat-icon-button
-        matTreeNodeToggle
         class="layer-indicator"
         [attr.aria-label]="'Toggle ' + node.title"
         (click)="handleNodeToggle(node)"
