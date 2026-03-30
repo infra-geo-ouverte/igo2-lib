@@ -46,7 +46,8 @@ export interface ITreeConfig<T> {
   standalone: true
 })
 export class TreeDragDropDirective<
-  T extends { id: string | number } = { id: string | number }
+  T extends { id: string | number } = { id: string | number },
+  K = T
 > implements OnDestroy {
   private elementRef = inject(ElementRef);
   private renderer = inject(Renderer2);
@@ -66,7 +67,7 @@ export class TreeDragDropDirective<
   // But we can stick to simple class logic
   highlightedNode: T | undefined;
 
-  readonly tree = input.required<CdkTree<T>>();
+  readonly tree = input.required<CdkTree<T, K>>();
   readonly childrenAccessor = input.required<(node: T) => T[]>();
   readonly config = input.required<ITreeConfig<T>>();
 
@@ -79,11 +80,9 @@ export class TreeDragDropDirective<
 
   readonly dragStart = output<T>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  readonly onDrop = output<TreeDropEvent<T>>();
+  readonly dropped = output<TreeDropEvent<T>>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  readonly onDropError = output<DropPermission>();
+  readonly droppedError = output<DropPermission>();
 
   @HostListener('dragover', ['$event']) hostDragOver(event: Event): void {
     event.preventDefault();
@@ -110,7 +109,7 @@ export class TreeDragDropDirective<
   readonly nodes = contentChildren(MatTreeNode, { descendants: true });
 
   constructor() {
-    this.onDrop.subscribe(() => this.dragEnd());
+    this.dropped.subscribe(() => this.dragEnd());
 
     effect(() => {
       const disabled = this.treeDragDropIsDisabled();
@@ -219,7 +218,7 @@ export class TreeDragDropDirective<
 
     const validation = this.canDropNode(nodeTarget, dropPosition);
     if (!validation.canDrop) {
-      this.onDropError.emit(validation);
+      this.droppedError.emit(validation);
       return;
     }
 
@@ -247,7 +246,7 @@ export class TreeDragDropDirective<
         }
 
         this.tree().expand(nodeTarget);
-        return this.onDrop.emit({
+        return this.dropped.emit({
           node: this.draggedNode,
           ref: nodeTarget,
           position: dropPosition.type
@@ -260,14 +259,14 @@ export class TreeDragDropDirective<
       dropPosition.level !== targetNodeLevel
     ) {
       const ancestor = this.getNodeAncestors(nodeTarget.id);
-      return this.onDrop.emit({
+      return this.dropped.emit({
         node: this.draggedNode,
         ref: ancestor,
         position: dropPosition.type
       });
     }
 
-    this.onDrop.emit({
+    this.dropped.emit({
       node: this.draggedNode,
       ref: nodeTarget,
       position: dropPosition.type

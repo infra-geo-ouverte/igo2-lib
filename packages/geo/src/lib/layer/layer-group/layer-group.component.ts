@@ -98,7 +98,6 @@ export class LayerGroupComponent implements OnInit {
   }
 
   handleExpand(): void {
-    // TODO: The 'emit' function requires a mandatory void argument
     this.expand.emit();
   }
 
