@@ -4,7 +4,6 @@ export interface IUser {
   preference: IUserPreference | null;
   externalId: number;
   guides?: string[];
-  hasOsrmPrivateAccess?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

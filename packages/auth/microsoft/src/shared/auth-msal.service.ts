@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { AuthOptions, AuthService, AuthType, IUser } from '@igo2/auth';
+import { AuthOptions, AuthService, IUser } from '@igo2/auth';
 
 import { MSAL_GUARD_CONFIG, MsalService } from '@azure/msal-angular';
 import { PopupRequest } from '@azure/msal-browser';
@@ -29,7 +29,6 @@ export class AuthMsalService extends AuthService<IAuthMsalOptions> {
   constructor() {
     super();
 
-    this.authType = AuthType.MicrosoftIntranet;
     this.autoLogin = this.authOptions.microsoft?.autoLogin === true;
     this._isInitialized$ = this.msalService.initialize();
   }

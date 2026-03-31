@@ -11,13 +11,6 @@ export const environment: EnvironmentOptions = {
         profiles: [
           {
             name: 'driving'
-          },
-          {
-            name: 'forestier',
-            authorization: {
-              url: '/apis/igo2/user/igo',
-              property: 'hasOsrmPrivateAccess'
-            }
           }
         ]
       }

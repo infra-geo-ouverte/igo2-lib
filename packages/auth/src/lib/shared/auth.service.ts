@@ -11,7 +11,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
-import { AuthType } from './auth-type.enum';
 import { AuthOptions, IInfosUser, User } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
@@ -41,7 +40,6 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   public redirectUrl: string;
   public languageForce = false;
   public authOptions: T;
-  public authType: AuthType = AuthType.Intern;
 
   private anonymous = false;
 
