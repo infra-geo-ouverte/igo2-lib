@@ -33,7 +33,6 @@ import { SearchService } from '../search/shared/search.service';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
 import { DirectionsResultsComponent } from './directions-results/directions-results.component';
-import { BaseDirectionsSourceOptionsProfile } from './directions-sources';
 import { DirectionsSourceService } from './shared/directions-source.service';
 import { DirectionsType, ProposalType } from './shared/directions.enum';
 import {
@@ -82,7 +81,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
 
   public projection = 'EPSG:4326';
-  public hasOsrmPrivateAccess = false;
   public twoSourcesAvailable = false;
 
   private storeEmpty$$: Subscription;
@@ -128,22 +126,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.authenticated$$ = this.authenticated$().subscribe(
-      (authenticated: boolean) => {
-        if (authenticated) {
-          const profileWithAuth: BaseDirectionsSourceOptionsProfile =
-            this.directionsSourceService.sources[0].getProfileWithAuthorization();
-          if (profileWithAuth) {
-            this.http
-              .get(profileWithAuth.authorization.url)
-              .subscribe((user) => {
-                this.hasOsrmPrivateAccess =
-                  user[profileWithAuth.authorization.property];
-              });
-          }
-        }
-      }
-    );
     this.twoSourcesAvailable =
       this.directionsSourceService.sources[0].profiles.length === 2
         ? true
@@ -522,29 +504,5 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
-  }
-
-  onTogglePrivateModeControl(isActive: boolean) {
-    this.directionsSourceService.sources[0].profiles.forEach(
-      (profile) => (profile.enabled = false)
-    );
-    if (isActive) {
-      this.directionsSourceService.sources[0].profiles.find(
-        (profile) => profile.authorization
-      ).enabled = true;
-      this.messageService.alert(
-        this.languageService.translate.instant(
-          'igo.geo.directions.forestRoadsWarning.text'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.directions.forestRoadsWarning.title'
-        )
-      );
-    } else {
-      this.directionsSourceService.sources[0].profiles.find(
-        (profile) => !profile.authorization
-      ).enabled = true;
-    }
-    this.getRoutes();
   }
 }

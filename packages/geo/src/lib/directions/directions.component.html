@@ -6,15 +6,6 @@
   >
     {{ 'igo.geo.directions.toggle.activateControl' | translate }}
   </mat-slide-toggle>
-  @if (hasOsrmPrivateAccess && twoSourcesAvailable) {
-    <mat-slide-toggle
-      [checked]="enabledProfileHasAuthorization"
-      [labelPosition]="'before'"
-      (change)="onTogglePrivateModeControl($event.checked)"
-    >
-      {{ 'igo.geo.directions.toggle.type' | translate }}
-    </mat-slide-toggle>
-  }
 </div>
 
 <igo-directions-inputs
