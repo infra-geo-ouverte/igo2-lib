@@ -2,13 +2,12 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   computed,
   inject,
   input,
-  output,
-  signal
+  output
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
@@ -19,11 +18,13 @@ import { IgoBadgeIconDirective } from '@igo2/common/badge';
 import { IconSvg, IgoIconComponent } from '@igo2/common/icon';
 import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 
+import { of, switchMap } from 'rxjs';
+
 import { getFilterBadge } from '../../datasource/shared/datasources/wms-wfs.utils';
 import { AnyLayer } from '../shared/layers/any-layer';
 import { isLayerItem } from '../utils';
 
-const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>eye-closed</title><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
+const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
 
 @Component({
   selector: 'igo-layer-visibility-button',
@@ -41,7 +42,7 @@ const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox=
     IgoBadgeIconDirective
   ]
 })
-export class LayerVisibilityButtonComponent implements OnInit {
+export class LayerVisibilityButtonComponent {
   private iconRegistry = inject(MatIconRegistry);
   private sanitizer = inject(DomSanitizer);
   private languageService = inject(LanguageService);
@@ -50,16 +51,25 @@ export class LayerVisibilityButtonComponent implements OnInit {
     name: 'eye-closed',
     svg: EYE_CLOSE_BY_GROUP_SVG
   };
-  parentDisplayed = signal<boolean>(undefined);
-  visible = signal<boolean>(undefined);
-
   readonly layer = input.required<AnyLayer>();
   readonly tooltip = input<string>(undefined);
   readonly disabled = input<boolean>(undefined);
   readonly showQueryBadge = input<boolean>(undefined);
   readonly inResolutionsRange = input<boolean>(undefined);
 
-  badge = signal<number | undefined>(undefined);
+  readonly parentDisplayed = toSignal(
+    toObservable(this.layer).pipe(
+      switchMap((layer) => layer.parent$),
+      switchMap((parent) => (parent ? parent.displayed$ : of(undefined)))
+    ),
+    { initialValue: false }
+  );
+
+  readonly visible = toSignal(
+    toObservable(this.layer).pipe(switchMap((layer) => layer.visible$))
+  );
+
+  readonly badge = computed(() => this.getBadge(this.layer()));
 
   defaultTooltipText = computed(() => {
     return this.languageService.translate.instant(
@@ -67,7 +77,7 @@ export class LayerVisibilityButtonComponent implements OnInit {
     );
   });
 
-  tooltipText = computed(() => {
+  readonly tooltipText = computed(() => {
     const tooltip = this.defaultTooltipText();
     if (this.badge()) {
       return (
@@ -89,32 +99,15 @@ export class LayerVisibilityButtonComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    const layer = this.layer();
-    this.visible.set(layer.visible);
-
-    layer.parent?.displayed$.subscribe((displayed) => {
-      this.parentDisplayed.set(displayed);
-    });
-
-    layer.visible$.subscribe((visible) => {
-      this.visible.set(visible);
-    });
-
-    this.badge.set(this.getBadge());
-  }
-
   toggle(event: Event) {
     this.layer().visible = !this.layer().visible;
     this.visibilityChange.emit(event);
   }
 
-  private getBadge(): number | undefined {
-    const result = isLayerItem(this.layer())
-      ? getFilterBadge(this.layer().dataSource.options)
+  private getBadge(layer: AnyLayer): number | undefined {
+    return isLayerItem(layer)
+      ? getFilterBadge(layer.dataSource.options)
       : undefined;
-
-    return result;
   }
 
   private getDefaultTooltip(): string {

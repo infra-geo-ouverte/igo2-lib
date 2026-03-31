@@ -2,19 +2,32 @@ import { SubjectStatus } from '@igo2/utils';
 
 import BaseLayer from 'ol/layer/Base';
 
-import { BehaviorSubject, Subject, Subscription, combineLatest } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest
+} from 'rxjs';
 
 import type { DataSource } from '../../../datasource/shared/datasources/datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import type { LayerId, LayerOptions, LayerType } from './layer.interface';
 
-export type AnyLayerBase = LayerBase | LayerGroupBase;
+interface ILayerGroup {
+  id: LayerId;
+  map: MapBase;
+  displayed$: Observable<boolean>;
+  addChild(layer: LayerBase<ILayerGroup>): void;
+  removeChild(layer: LayerBase<ILayerGroup>): void;
+}
 
-export abstract class LayerBase {
+export type AnyLayerBase = LayerBase<ILayerGroup> | LayerGroupBase<ILayerGroup>;
+
+export abstract class LayerBase<G extends ILayerGroup = ILayerGroup> {
   abstract type: LayerType;
   abstract ol: BaseLayer;
-  abstract parent: LayerGroupBase;
   protected abstract createOlLayer(): BaseLayer;
 
   public collapsed: boolean;
@@ -114,6 +127,14 @@ export abstract class LayerBase {
   private _visible$ = new BehaviorSubject<boolean>(undefined);
   readonly visible$ = this._visible$.asObservable();
 
+  get parent(): G {
+    return this.parent$.value;
+  }
+  set parent(parent: G) {
+    this.parent$.next(parent);
+  }
+  readonly parent$ = new BehaviorSubject<G>(undefined);
+
   get displayed(): boolean {
     return this._displayed$.value;
   }
@@ -172,16 +193,16 @@ export abstract class LayerBase {
     this.map = map;
   }
 
-  add(parent?: LayerGroupBase): void {
+  add(parent?: G): void {
     this._add(parent);
   }
 
-  private _add(parent?: LayerGroupBase): void {
+  private _add(parent?: G): void {
     this.addParent(parent);
     this.parent ? this.parent.addChild(this) : this.map.ol.addLayer(this.ol);
   }
 
-  addParent(parent?: LayerGroupBase): void {
+  addParent(parent?: G): void {
     if (this.parent && this.parent === parent) {
       return;
     }
@@ -210,12 +231,12 @@ export abstract class LayerBase {
     this.dataSource?.destroy();
   }
 
-  reset(parent?: LayerGroupBase): void {
+  reset(parent?: G): void {
     this._remove();
     this._add(parent);
   }
 
-  moveTo(parent?: LayerGroupBase): void {
+  moveTo(parent?: G): void {
     if (parent == null && this.parent == null) {
       return;
     }
@@ -252,13 +273,16 @@ export abstract class LayerBase {
   }
 }
 
-export abstract class LayerGroupBase extends LayerBase {
+export abstract class LayerGroupBase<G extends ILayerGroup = ILayerGroup>
+  extends LayerBase<G>
+  implements ILayerGroup
+{
   type: LayerType = 'group';
-  children: LayerBase[];
+  children: LayerBase<G>[];
 
-  abstract get descendants(): LayerBase[];
+  abstract get descendants(): LayerBase<G>[];
 
-  abstract addChild(layer: LayerBase): void;
-  abstract removeChild(layer: LayerBase): void;
-  abstract isDescendant(layer: LayerBase): boolean;
+  abstract addChild(layer: LayerBase<G>): void;
+  abstract removeChild(layer: LayerBase<G>): void;
+  abstract isDescendant(layer: LayerBase<G>): boolean;
 }

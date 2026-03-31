@@ -240,7 +240,7 @@
           "moreOptions": "Group tools",
           "remove": "Remove this group from the map",
           "hide": "Hide group",
-          "hideChildren": "Hided by a group",
+          "hideChildren": "Layer hidden by a group",
           "show": "Show group"
         },
         "type": {
