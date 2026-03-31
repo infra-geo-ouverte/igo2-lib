@@ -11,8 +11,7 @@ import { type LayerGroupOptions } from './layer-group.interface';
 
 export const ID_GROUP_PREFIX = 'local-group_';
 
-export class LayerGroup extends LayerGroupBase {
-  parent: LayerGroup;
+export class LayerGroup extends LayerGroupBase<LayerGroup> {
   declare ol: Group;
   expanded: boolean;
   private isInResolutionsRange$$: Subscription;
@@ -64,7 +63,7 @@ export class LayerGroup extends LayerGroupBase {
     this.children.forEach((child) => child.init(map));
   }
 
-  add(parent?: LayerGroupBase): void {
+  add(parent?: LayerGroup): void {
     super.add(parent);
 
     this.setChildrenObserver();

@@ -240,7 +240,7 @@
           "moreOptions": "Outils du groupe",
           "remove": "Retirer le groupe de la carte",
           "hide": "Masquer le groupe",
-          "hideChildren": "Masquer par un groupe",
+          "hideChildren": "Couche masquée par un groupe",
           "show": "Afficher le groupe"
         },
         "type": {

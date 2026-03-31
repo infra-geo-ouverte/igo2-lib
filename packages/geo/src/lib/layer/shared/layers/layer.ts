@@ -17,14 +17,13 @@ import {
 } from '../../shared/layers/linked/linked-layer.utils';
 import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
 import { AnyLayer } from './any-layer';
-import { LayerBase, LayerGroupBase } from './layer-base';
+import { LayerBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
 import { LayerId, type LayerOptions } from './layer.interface';
 import { Linked } from './linked/linked-layer';
 
-export abstract class Layer extends LayerBase {
+export abstract class Layer extends LayerBase<LayerGroup> {
   declare dataSource: DataSource;
-  parent: LayerGroup;
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
@@ -170,7 +169,7 @@ export abstract class Layer extends LayerBase {
     }
   }
 
-  add(parent?: LayerGroupBase): void {
+  add(parent?: LayerGroup): void {
     super.add(parent);
 
     if (isLayerLinked(this)) {
