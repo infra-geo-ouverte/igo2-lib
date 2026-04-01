@@ -12,7 +12,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { EntityStoreWatcher } from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
-import { MessageService } from '@igo2/core/message';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 import Collection from 'ol/Collection';
@@ -78,7 +77,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private directionsSourceService = inject(DirectionsSourceService);
   private searchService = inject(SearchService);
   private queryService = inject(QueryService);
-  private messageService = inject(MessageService);
 
   public projection = 'EPSG:4326';
   public twoSourcesAvailable = false;
@@ -96,7 +94,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   public previousStops: Stop[] = [];
 
   private searchs$$: Subscription[] = [];
-  private authenticated$$: Subscription;
 
   readonly contextUri = input<string>(undefined);
   readonly stopsStore = input.required<StopsStore>();
@@ -142,10 +139,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.queryService.queryEnabled = true;
-    this.storeEmpty$$.unsubscribe();
-    this.storeChange$$.unsubscribe();
-    this.routesQueries$$.map((u) => u.unsubscribe());
-    this.authenticated$$.unsubscribe();
+    this.storeEmpty$$?.unsubscribe();
+    this.storeChange$$?.unsubscribe();
+    this.routesQueries$$?.map((u) => u.unsubscribe());
     this.freezeStores();
 
     const stopsFeatureStore = this.stopsFeatureStore();
