@@ -191,7 +191,7 @@ export class AppQueryComponent {
           queryLayerFeatures: false
         },
         mapboxStyle: {
-          url: 'assets/mapboxStyleExample-vectortile.json',
+          url: 'mapboxStyleExample-vectortile.json',
           source: 'ahocevar'
         }
       } as VectorTileLayerOptions)

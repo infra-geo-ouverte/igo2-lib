@@ -960,7 +960,7 @@ export class PrintService {
     div.style.textAlign = 'center';
 
     const img = this.document.createElement('img');
-    img.src = './assets/igo2/geo/images/north-direction.png';
+    img.src = './igo2/geo/images/north-direction.png';
     img.style.maxWidth = '50mm';
     img.style.maxHeight = '50mm';
     img.style.transform = 'rotate(' + rotation + 'rad)';

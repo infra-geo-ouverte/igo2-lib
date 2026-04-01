@@ -13,7 +13,7 @@ import {
 export class ImageErrorDirective {
   private el = inject(ElementRef);
 
-  readonly errorImageUrl = input('./assets/igo2/common/images/na.png');
+  readonly errorImageUrl = input('./igo2/common/images/na.png');
   readonly hideError = input(false);
 
   @HostListener('error', ['$event'])
