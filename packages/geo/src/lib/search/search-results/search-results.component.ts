@@ -312,9 +312,13 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   displayMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
+    const sourceId = group.source.getId();
+    if (this.pageIterator[sourceId] === undefined) {
+      this.pageIterator[sourceId] = 1;
+    }
     const options: TextSearchOptions = {
-      sourceId: group.source.getId(),
-      page: ++this.pageIterator[group.source.getId()]
+      sourceId,
+      page: ++this.pageIterator[sourceId]
     };
 
     let terms;
