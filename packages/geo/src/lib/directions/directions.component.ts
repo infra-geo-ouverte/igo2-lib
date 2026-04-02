@@ -4,6 +4,7 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input
 } from '@angular/core';
@@ -103,6 +104,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   readonly debounce = input(200);
   readonly length = input(2);
   readonly coordRoundedDecimals = input(6);
+  readonly zoomToActiveRoute = input.required<boolean>();
   readonly authenticated$ = input.required<BehaviorSubject<boolean>>();
 
   /**
@@ -120,6 +122,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   get enabledProfileHasAuthorization() {
     return this.directionsSourceService.sources[0].getEnabledProfile()
       .authorization;
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.zoomToActiveRoute()) {
+        this.zoomOnActiveRoute();
+      }
+    });
   }
 
   ngOnInit(): void {
