@@ -1,7 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/core/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { MediaService } from './media.service';
 
 describe('MediaService', () => {

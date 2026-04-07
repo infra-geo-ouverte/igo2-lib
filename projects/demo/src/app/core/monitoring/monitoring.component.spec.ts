@@ -5,8 +5,7 @@ import {
   MONITORING_OPTIONS
 } from '@igo2/core/monitoring';
 
-import { mergeTestConfig } from 'projects/demo/src/test-config';
-
+import { mergeTestConfig } from '../../../test-config';
 import { AppMonitoringComponent } from './monitoring.component';
 
 describe('MonitoringComponent', () => {

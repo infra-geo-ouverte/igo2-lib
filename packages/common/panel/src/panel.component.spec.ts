@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/common/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { PanelComponent } from './panel.component';
 
 describe('PanelComponent', () => {

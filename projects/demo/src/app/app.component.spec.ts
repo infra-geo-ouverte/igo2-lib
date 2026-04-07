@@ -11,8 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { IgoAuthFormModule } from '@igo2/auth/form';
 
-import { mergeTestConfig } from 'projects/demo/src/test-config';
-
+import { mergeTestConfig } from '../test-config';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {

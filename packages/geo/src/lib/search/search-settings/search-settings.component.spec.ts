@@ -12,8 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { provideMockTranslation } from '@igo2/core/language';
 
-import { mergeTestConfig } from 'packages/geo/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';

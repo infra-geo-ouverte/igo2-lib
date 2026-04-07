@@ -3,8 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree, MatTreeModule, MatTreeNode } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 
-import { mergeTestConfig } from 'packages/common/test-config';
-
+import { mergeTestConfig } from '../../../test-config';
 import { TreeDragDropDirective } from './tree-drag-drop.directive';
 import { DropPositionType } from './tree-drag-drop.interface';
 import { ITREE_ITEM_MOCK, TREE_MOCK } from './tree-drag-drop.mock';

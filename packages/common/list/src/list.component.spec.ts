@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatListModule } from '@angular/material/list';
 
-import { mergeTestConfig } from 'packages/common/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { ListComponent } from './list.component';
 
 describe('ListComponent', () => {

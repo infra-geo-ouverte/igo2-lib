@@ -2,8 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MediaService } from '@igo2/core/media';
 
-import { mergeTestConfig } from 'packages/common/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { FlexibleComponent } from './flexible.component';
 
 describe('FlexibleComponent', () => {

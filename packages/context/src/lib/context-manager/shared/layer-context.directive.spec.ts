@@ -18,9 +18,9 @@ import {
 import { LayerService } from '@igo2/geo';
 import { StyleListService, StyleService } from '@igo2/geo';
 
-import { mergeTestConfig } from 'packages/context/test-config';
 import { BehaviorSubject } from 'rxjs';
 
+import { mergeTestConfig } from '../../../../test-config';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextService } from './context.service';
 import { LayerContextDirective } from './layer-context.directive';

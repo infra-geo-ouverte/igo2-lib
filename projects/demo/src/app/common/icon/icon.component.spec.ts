@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { mergeTestConfig } from 'projects/demo/src/test-config';
-
+import { mergeTestConfig } from '../../../test-config';
 import { AppIconComponent } from './icon.component';
 
 describe('AppIconComponent', () => {
