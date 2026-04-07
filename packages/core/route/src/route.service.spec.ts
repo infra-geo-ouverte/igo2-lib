@@ -2,9 +2,9 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { mergeTestConfig } from 'packages/core/test-config';
 import { of } from 'rxjs';
 
+import { mergeTestConfig } from '../../test-config';
 import { RouteService } from './route.service';
 
 describe('RouteService', () => {

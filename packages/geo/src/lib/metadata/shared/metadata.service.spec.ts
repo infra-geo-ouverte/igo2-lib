@@ -1,7 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/geo/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { MetadataService } from './metadata.service';
 
 describe('MetadataService', () => {

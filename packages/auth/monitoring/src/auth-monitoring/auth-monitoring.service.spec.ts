@@ -12,8 +12,8 @@ import {
 } from '@igo2/core/monitoring';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { mergeTestConfig } from 'packages/auth/test-config';
 
+import { mergeTestConfig } from '../../../test-config';
 import { AuthMonitoringService } from './auth-monitoring.service';
 
 const initialize = (

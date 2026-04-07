@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/context/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { ContextPermissionService } from './context-permission.service';
 
 describe('ContextPermissionService', () => {

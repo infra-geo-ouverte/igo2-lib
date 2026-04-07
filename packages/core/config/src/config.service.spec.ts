@@ -4,8 +4,7 @@ import {
 } from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/core/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { ConfigService } from './config.service';
 
 describe('ConfigService', () => {

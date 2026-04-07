@@ -8,8 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TimeFrame } from '@igo2/utils';
 
-import { mergeTestConfig } from 'packages/common/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { TimepickerComponent } from './timepicker.component';
 
 describe('TimepickerComponent', () => {

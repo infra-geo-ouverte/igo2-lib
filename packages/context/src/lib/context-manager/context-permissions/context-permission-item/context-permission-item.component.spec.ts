@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/context/test-config';
-
+import { mergeTestConfig } from '../../../../../test-config';
 import { ContextPermissionItemComponent } from './context-permission-item.component';
 
 describe('ContextPermissionItemComponent', () => {

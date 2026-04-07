@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'projects/demo/src/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { ExampleSeeCodeComponent } from './example-see-code.component';
 
 describe('ExampleSeeCodeComponent', () => {

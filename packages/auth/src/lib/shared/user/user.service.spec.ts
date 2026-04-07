@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/auth/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { USER_AUTH_OPTIONS, UserService } from './user.service';
 
 describe('UserService', () => {
