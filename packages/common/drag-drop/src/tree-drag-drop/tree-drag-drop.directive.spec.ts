@@ -92,6 +92,21 @@ describe('DragDropTreeDirective', () => {
     expect(directive.dragEnd).toHaveBeenCalled();
   });
 
+  it('should toggle --dragging class on host element', () => {
+    const hostElement = fixture.debugElement.query(
+      By.directive(TreeDragDropDirective)
+    ).nativeElement;
+    expect(hostElement.classList.contains('--dragging')).toBe(false);
+
+    directive.onDragStart(fixture.componentInstance.dataSource[0]);
+    fixture.detectChanges();
+    expect(hostElement.classList.contains('--dragging')).toBe(true);
+
+    directive.dragEnd();
+    fixture.detectChanges();
+    expect(hostElement.classList.contains('--dragging')).toBe(false);
+  });
+
   it('should handle drag over and leave events', () => {
     const treeNodeDragged = treeNodesDebug[1].nativeElement;
     const treeNode = treeNodesDebug[0].nativeElement;
