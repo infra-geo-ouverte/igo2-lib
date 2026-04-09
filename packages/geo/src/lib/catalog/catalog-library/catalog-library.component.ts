@@ -175,7 +175,8 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.addingCatalog$$ = this.capabilitiesService
       .getCapabilities(
         addedCatalog.type as TypeCapabilitiesStrings,
-        addedCatalog.url
+        addedCatalog.url,
+        addedCatalog.version
       )
       .pipe(
         catchError((e) => {
