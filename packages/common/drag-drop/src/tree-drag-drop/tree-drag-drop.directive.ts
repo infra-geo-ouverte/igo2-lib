@@ -2,8 +2,6 @@ import { CdkTree } from '@angular/cdk/tree';
 import {
   Directive,
   ElementRef,
-  HostBinding,
-  HostListener,
   OnDestroy,
   Renderer2,
   booleanAttribute,
@@ -43,7 +41,13 @@ export interface ITreeConfig<T> {
  */
 @Directive({
   selector: '[igoTreeDragDrop]',
-  standalone: true
+  standalone: true,
+  host: {
+    '[class.--dragging]': 'dragging()',
+    '(dragover)': 'hostDragOver($event)',
+    '(dragleave)': 'hostDragLeave($event)',
+    '(drop)': 'hostDrop($event)'
+  }
 })
 export class TreeDragDropDirective<
   T extends { id: string | number } = { id: string | number },
@@ -63,6 +67,7 @@ export class TreeDragDropDirective<
   dropLineTarget = signal<HTMLElement | null>(null);
   previousDropLine = signal<HTMLElement | null>(null);
   dropPosition = signal<DropPosition | null>(null);
+  dragging = signal(false);
   // Use a Set or just manage classes manually since SelectionModel was providing simple toggle
   // But we can stick to simple class logic
   highlightedNode: T | undefined;
@@ -83,28 +88,6 @@ export class TreeDragDropDirective<
   readonly dropped = output<TreeDropEvent<T>>();
 
   readonly droppedError = output<DropPermission>();
-
-  @HostListener('dragover', ['$event']) hostDragOver(event: Event): void {
-    event.preventDefault();
-  }
-
-  @HostListener('dragleave', ['$event']) hostDragLeave(event: DragEvent): void {
-    const rect = this.elementRef.nativeElement.getBoundingClientRect();
-    if (
-      event.clientY < rect.top ||
-      event.clientY >= rect.bottom ||
-      event.clientX < rect.left ||
-      event.clientX >= rect.right
-    ) {
-      this.dragLeave();
-    }
-  }
-
-  @HostListener('drop', ['$event']) hostDrop(event: DragEvent): void {
-    this.drop(event);
-  }
-
-  @HostBinding('class.--dragging') dragging = signal(false);
 
   readonly nodes = contentChildren(MatTreeNode, { descendants: true });
 
@@ -134,6 +117,9 @@ export class TreeDragDropDirective<
     });
 
     effect(() => {
+      if (!this.dragging()) {
+        return;
+      }
       const targetNode = this.dropNodeTarget();
       const position = this.dropPosition();
       const dropLineTarget = this.dropLineTarget();
@@ -168,6 +154,26 @@ export class TreeDragDropDirective<
     }
   }
 
+  hostDragOver(event: Event): void {
+    event.preventDefault();
+  }
+
+  hostDragLeave(event: DragEvent): void {
+    const rect = this.elementRef.nativeElement.getBoundingClientRect();
+    if (
+      event.clientY < rect.top ||
+      event.clientY >= rect.bottom ||
+      event.clientX < rect.left ||
+      event.clientX >= rect.right
+    ) {
+      this.dragLeave();
+    }
+  }
+
+  hostDrop(event: DragEvent): void {
+    this.drop(event);
+  }
+
   onDragStart(node: T): void {
     this.addDropTargetLine();
 
@@ -180,6 +186,9 @@ export class TreeDragDropDirective<
 
   dragEnd(): void {
     this.dragging.set(false);
+    this.dropNodeTarget.set(null);
+    this.dropPosition.set(null);
+
     if (this.draggedNode) {
       this.removeNodeClass(this.draggedNode.id, '--dragged');
       this.draggedNode = null;
