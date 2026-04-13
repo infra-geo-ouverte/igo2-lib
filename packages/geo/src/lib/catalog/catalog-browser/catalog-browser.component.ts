@@ -192,6 +192,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       if (catalog.profils?.length) {
         layer.options.security = { profils: catalog.profils };
       }
+      layer.options.id = layer.id;
       return this.layerService.createAsyncLayer(layer.options);
     });
     zip(...layers$).subscribe((layers) => {
@@ -225,14 +226,14 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store().state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const currLayer = this.map().layerController.getById(
+        const currLayer = this.map().layerController.getBySourceId(
           String(layer.options.id)
         );
         if (currLayer !== undefined) {
           this.map().layerController.remove(currLayer);
         }
       } else {
-        const currLayer = this.map().layerController.getById(layer.id);
+        const currLayer = this.map().layerController.getBySourceId(layer.id);
         if (currLayer !== undefined) {
           this.map().layerController.remove(currLayer);
         }
