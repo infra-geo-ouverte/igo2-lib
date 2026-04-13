@@ -123,7 +123,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.isPreview$$.unsubscribe();
-    this.resolution$$.unsubscribe();
+    this.resolution$$?.unsubscribe();
     this.layers$$.unsubscribe();
   }
 
