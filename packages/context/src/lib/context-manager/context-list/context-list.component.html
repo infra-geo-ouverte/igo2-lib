@@ -173,6 +173,9 @@
           <igo-context-item
             igoListItem
             color="accent"
+            [showFavorite]="
+              configService.getConfig('favoriteContext4NonAuthenticated')
+            "
             [selected]="isContextSelected(context)"
             [context]="context"
             [default]="
