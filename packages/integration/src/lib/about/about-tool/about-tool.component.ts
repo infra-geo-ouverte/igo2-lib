@@ -98,8 +98,7 @@ export class AboutToolComponent implements OnInit {
     );
     this.configOptions = this.configService.getConfigs();
     const configVersion = this.configOptions.version;
-    this.effectiveVersion =
-      configVersion?.app || configVersion?.lib || version.lib;
+    this.effectiveVersion = configVersion?.app ?? version.app;
     this.baseUrlGuide =
       this.configOptions.depot?.url +
       // todo validate this property
