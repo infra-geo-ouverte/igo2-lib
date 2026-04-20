@@ -10,9 +10,18 @@
     color: var(--mat-sys-on-primary) !important;
     background-color: var(--mat-sys-on-primary-container);
 
-    ::ng-deep mat-icon {
-      fill: var(--mat-sys-on-primary);
-      color: var(--mat-sys-on-primary);
+    ::ng-deep {
+      mat-icon {
+        fill: var(--mat-sys-on-primary);
+        color: var(--mat-sys-on-primary);
+      }
+
+      .mat-mdc-button-disabled {
+        mat-icon {
+          fill: inherit;
+          color: inherit;
+        }
+      }
     }
   }
 
