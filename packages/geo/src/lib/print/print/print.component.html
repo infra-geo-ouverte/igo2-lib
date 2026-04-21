@@ -1,10 +1,10 @@
 <igo-print-form
-  [outputFormat]="outputFormat"
-  [paperFormat]="paperFormat"
-  [orientation]="orientation"
-  [imageFormat]="imageFormat"
-  [resolution]="resolution"
-  [legendPosition]="legendPosition"
+  [outputFormat]="outputFormat()"
+  [paperFormat]="paperFormat()"
+  [orientation]="orientation()"
+  [imageFormat]="imageFormat()"
+  [resolution]="resolution()"
+  [legendPosition]="legendPosition()"
   [disabled$]="disabled$"
   (submit)="handleFormSubmit($event)"
 />
