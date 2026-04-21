@@ -380,7 +380,8 @@
           "newpage": "Sur une nouvelle page",
           "newimage": "Sur une nouvelle image"
         },
-        "showNorthArrow": "Afficher la flèche du nord"
+        "showNorthArrow": "Afficher la flèche du nord",
+        "timeout": "Impression - Certaines requêtes atteignent la durée maximale de {{value}} secondes"
       },
       "directions": {
         "buttons": {

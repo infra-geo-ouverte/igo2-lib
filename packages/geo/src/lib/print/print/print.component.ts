@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 
 import { SecureImagePipe } from '@igo2/common/image';
 
@@ -29,75 +29,20 @@ export class PrintComponent {
 
   public disabled$ = new BehaviorSubject(false);
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-
-  @Input()
-  get outputFormat(): PrintOutputFormat {
-    return this._outputFormat;
-  }
-  set outputFormat(value: PrintOutputFormat) {
-    this._outputFormat = value;
-  }
-  private _outputFormat: PrintOutputFormat;
-
-  @Input()
-  get paperFormat(): PrintPaperFormat {
-    return this._paperFormat;
-  }
-  set paperFormat(value: PrintPaperFormat) {
-    this._paperFormat = value;
-  }
-  private _paperFormat: PrintPaperFormat;
-
-  @Input()
-  get orientation(): PrintOrientation {
-    return this._orientation;
-  }
-  set orientation(value: PrintOrientation) {
-    this._orientation = value;
-  }
-  private _orientation: PrintOrientation;
-
-  @Input()
-  get imageFormat(): PrintSaveImageFormat {
-    return this._imageFormat;
-  }
-  set imageFormat(value: PrintSaveImageFormat) {
-    this._imageFormat = value;
-  }
-  private _imageFormat: PrintSaveImageFormat;
-
-  @Input()
-  get legendPosition(): PrintLegendPosition {
-    return this._legendPosition;
-  }
-  set legendPosition(value: PrintLegendPosition) {
-    this._legendPosition = value;
-  }
-  private _legendPosition: PrintLegendPosition;
-
-  @Input()
-  get resolution(): PrintResolution {
-    return this._resolution;
-  }
-  set resolution(value: PrintResolution) {
-    this._resolution = value;
-  }
-  private _resolution: PrintResolution;
+  readonly map = input<IgoMap>(undefined);
+  readonly outputFormat = input<PrintOutputFormat>(undefined);
+  readonly paperFormat = input<PrintPaperFormat>(undefined);
+  readonly orientation = input<PrintOrientation>(undefined);
+  readonly imageFormat = input<PrintSaveImageFormat>(undefined);
+  readonly legendPosition = input<PrintLegendPosition>(undefined);
+  readonly resolution = input<PrintResolution>(undefined);
 
   handleFormSubmit(data: PrintOptions) {
     this.disabled$.next(true);
 
     if (data.isPrintService === true) {
       this.printService
-        .print(this.map, data)
+        .print(this.map(), data)
         .pipe(take(1))
         .subscribe(() => {
           this.disabled$.next(false);
@@ -120,7 +65,7 @@ export class PrintComponent {
 
       this.printService
         .downloadMapImage(
-          this.map,
+          this.map(),
           data.resolution,
           data.imageFormat,
           data.showProjection,

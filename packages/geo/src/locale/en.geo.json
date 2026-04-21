@@ -381,7 +381,8 @@
           "newpage": "On a new page",
           "newimage": "On a new image"
         },
-        "showNorthArrow": "Show north arrow"
+        "showNorthArrow": "Show north arrow",
+        "timeout": "Print - Some requests reach the maximum time of {{value}} seconds"
       },
       "directions": {
         "buttons": {
