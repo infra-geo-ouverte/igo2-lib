@@ -117,13 +117,16 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
         this.onCatalogSelect(selectedCatalog);
       }
     }
-    this.predefinedCatalogs.set(
-      this.predefinedCatalogs().map((c) => {
-        c.id = c.id ?? Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url));
-        c.title = c.title === '' || !c.title ? c.url : c.title;
-        return c;
-      })
-    );
+    this.predefinedCatalogs.update((catalogs) => {
+      return catalogs.map((catalog) => {
+        catalog.type = catalog.type ?? 'wms';
+        catalog.id =
+          catalog.id ?? Md5.hashStr(catalog.type + standardizeUrl(catalog.url));
+        catalog.title =
+          catalog.title === '' || !catalog.title ? catalog.url : catalog.title;
+        return catalog;
+      });
+    });
   }
 
   getCatalogs(): Observable<Catalog[]> {
