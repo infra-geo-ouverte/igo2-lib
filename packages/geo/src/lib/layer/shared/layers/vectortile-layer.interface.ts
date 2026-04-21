@@ -5,6 +5,7 @@ import olStyle from 'ol/style/Style';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt-datasource.interface';
+import { AnyStyle } from '../../../style/provider-based/shared/style.interface';
 import { IgoStyle } from '../../../style/shared/vector/vector-style.interface';
 import { LayerOptions } from './layer.interface';
 
@@ -21,4 +22,5 @@ export interface VectorTileLayerOptions extends LayerOptions {
   ol?: olLayerVectorTile;
   declutter?: boolean;
   igoStyle?: IgoStyle;
+  providerBasedStyle?: AnyStyle;
 }

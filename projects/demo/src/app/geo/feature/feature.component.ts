@@ -13,6 +13,7 @@ import {
   MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSourceOptions,
+  StyleEngineKind,
   VectorLayer
 } from '@igo2/geo';
 
@@ -186,8 +187,9 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         animation: {
           duration: 2000
         },
-        igoStyle: {
-          mapboxStyle: {
+        providerBasedStyle: {
+          type: StyleEngineKind.Mapbox,
+          style: {
             url: 'mapboxStyleExample-feature.json',
             source: 'source_nameX'
           }

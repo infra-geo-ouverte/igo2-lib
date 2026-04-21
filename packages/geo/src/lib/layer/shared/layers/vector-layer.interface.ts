@@ -15,6 +15,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { WebSocketDataSourceOptions } from '../../../datasource/shared/datasources/websocket-datasource.interface';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
+import { AnyStyle } from '../../../style/provider-based/shared/style.interface';
 import { IgoStyle } from '../../../style/shared/vector/vector-style.interface';
 import { ClusterParam } from '../clusterParam';
 import { LayerOptions } from './layer.interface';
@@ -39,6 +40,7 @@ export interface VectorLayerOptions extends LayerOptions {
         arg0: RenderFeature | Feature<any>,
         arg1: number
       ) => void | olStyle | olStyle[]);
+  providerBasedStyle?: AnyStyle;
   browsable?: boolean;
   exportable?: boolean;
   ol?: olLayerVector<olSourceVector>;

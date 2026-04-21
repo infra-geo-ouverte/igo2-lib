@@ -9,6 +9,8 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { AnyStyle } from '../../../style/provider-based/shared/style.interface';
+import { StyleServiceV2 } from '../../../style/provider-based/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -22,10 +24,33 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
+  private _style: AnyStyle;
+  get style(): AnyStyle {
+    return this._style;
+  }
+
+  set style(value: AnyStyle) {
+    Promise.all([
+      this.styleService?.getStyle(value, this.ol),
+      this.styleService?.getLegend(value)
+    ])
+      .then(([style, legend]) => {
+        this.ol.setStyle(style);
+        this.dataSource.setLegend(
+          Object.assign({}, this.options.legendOptions, { html: legend })
+        );
+        this._style = value;
+      })
+      .catch((error) => {
+        console.error('style or legend promises rejected:', error);
+      });
+  }
+
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    public styleService?: StyleServiceV2
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new TileWatcher(this);

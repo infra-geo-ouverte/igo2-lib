@@ -1,16 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
-import olLayerVectorTile from 'ol/layer/VectorTile';
 import { Style } from 'ol/style';
 import * as olStyle from 'ol/style';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
-import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 
@@ -37,6 +34,8 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { AnyStyle } from '../../style/provider-based/shared/style.interface';
+import { StyleServiceV2 } from '../../style/provider-based/style.service';
 import { StyleService } from '../../style/style-service/style.service';
 import {
   computeMVTOptionsOnHover,
@@ -64,8 +63,8 @@ import { LayerGroup } from './layers/layer-group';
   providedIn: 'root'
 })
 export class LayerService {
-  private http = inject(HttpClient);
   private styleService = inject(StyleService);
+  private styleServiceV2 = inject(StyleServiceV2);
   private dataSourceService = inject(DataSourceService);
   private messageService = inject(MessageService);
   private geoNetworkService = inject(GeoNetworkService, { optional: true });
@@ -197,7 +196,8 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style[] | Style | OlStyleLike = layerOptions.style;
+    let style: AnyStyle = layerOptions.style;
+
     let igoLayer: VectorLayer;
 
     if (!layerOptions.igoStyle) {
@@ -282,11 +282,14 @@ export class LayerService {
         layerOptionsOl,
         this.messageService,
         this.authInterceptor,
-        this.geoNetworkService
+        this.geoNetworkService,
+        this.styleServiceV2
       );
     }
 
-    this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
+    if (layerOptions.providerBasedStyle) {
+      igoLayer.style = layerOptions.providerBasedStyle;
+    }
 
     return igoLayer;
   }
@@ -356,7 +359,8 @@ export class LayerService {
       igoLayer = new VectorTileLayer(
         layerOptions,
         this.messageService,
-        this.authInterceptor
+        this.authInterceptor,
+        this.styleServiceV2
       );
     }
 
@@ -372,54 +376,11 @@ export class LayerService {
       );
     }
 
-    this.applyMapboxStyle(igoLayer, layerOptionsOl);
+    if (layerOptions.providerBasedStyle) {
+      igoLayer.style = layerOptions.providerBasedStyle;
+    }
+
     return igoLayer;
-  }
-
-  private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
-    if (layerOptions.igoStyle?.mapboxStyle) {
-      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe((res) => {
-        if (res.sprite) {
-          const url = this.getAbsoluteUrl(
-            layerOptions.igoStyle.mapboxStyle.url,
-            res.sprite
-          );
-          this.getStuff(url + '.json').subscribe((res2) => {
-            stylefunction(
-              layer.ol as olLayerVectorTile,
-              res,
-              layerOptions.igoStyle.mapboxStyle.source,
-              undefined,
-              res2,
-              url + '.png'
-            );
-          });
-        } else {
-          stylefunction(
-            layer.ol as olLayerVectorTile,
-            res,
-            layerOptions.igoStyle.mapboxStyle.source
-          );
-        }
-      });
-    }
-  }
-
-  private getStuff(url: string) {
-    return this.http.get<any>(url);
-  }
-
-  private getAbsoluteUrl(source, url) {
-    const r = new RegExp('^http|//', 'i');
-    if (r.test(url)) {
-      return url;
-    } else {
-      if (source.substr(source.length - 1) === '/') {
-        return source + url;
-      } else {
-        return source + '/' + url;
-      }
-    }
   }
 
   createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {

@@ -15,7 +15,10 @@ export interface IgoStyleBase {
   editable?: boolean;
   hoverStyle?: StyleByAttribute;
   igoStyleObject?: Record<string, any>;
-  mapboxStyle?: MapboxStyle;
+  mapboxStyle?: {
+    url: string;
+    source: string;
+  };
   styleByAttribute?: StyleByAttribute;
 }
 
@@ -63,9 +66,4 @@ export interface IgoLabel {
   maxResolution?: number;
   minScaleDenom?: number;
   maxScaleDenom?: number;
-}
-
-export interface MapboxStyle {
-  url: string;
-  source: string;
 }

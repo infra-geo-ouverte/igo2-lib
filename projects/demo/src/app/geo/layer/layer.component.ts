@@ -218,7 +218,25 @@ export class AppLayerComponent {
           preload: { bypassResolution: true, bypassVisible: true },
           type: 'vector',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=aeroport&srsname=EPSG:4326&outputformat=geojson'
-        } satisfies FeatureDataSourceOptions
+        } satisfies FeatureDataSourceOptions,
+        providerBasedStyle: {
+          type: 'Geostyler',
+          style: {
+            name: 'Basic Circle',
+            rules: [
+              {
+                name: 'Rule 1',
+                symbolizers: [
+                  {
+                    kind: 'Mark',
+                    wellKnownName: 'circle',
+                    color: '#FF00AA'
+                  }
+                ]
+              }
+            ]
+          }
+        }
       } satisfies VectorLayerOptions
     ];
 
