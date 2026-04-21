@@ -230,6 +230,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           return false;
         }
 
+        if (layer.dataSource.options.download?.url) {
+          return true;
+        }
+
         if (layer instanceof VectorLayer) {
           return layer.exportable || layer.dataSource.options.download?.url;
         }
@@ -519,7 +523,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
 
       if (data.format === 'URL' && isLayerItem(layer)) {
-        this.handleUrlExport(layer);
+        return this.handleUrlExport(layer);
       }
 
       if (data.format === 'GPX') {
