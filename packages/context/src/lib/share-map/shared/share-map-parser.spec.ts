@@ -19,6 +19,7 @@ const EXPECTED_POSITION: PositionParams = {
   zoom: 5,
   rotation: (90 * Math.PI) / 180 // convert 90 degree to radians
 };
+
 const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
   {
     sourceOptions: {
@@ -82,6 +83,16 @@ const MOCK_PARAMS: Params = {
     '0,[0]n,3t,0.5o,1v,3z;1,[carte_gouv_qc_ro]n,1t,0v,2z;2,[etablissement_mtq]n,0t,1v,1z',
   pos: '@-71.51804,46.58602,90r,5z',
   groups: '1id,test2t,1z,1v,0e;2id,test1t,2z,1pid,1v,0e'
+};
+
+const MOCK_LAYER_ON_THE_FLY_LEGACY: Params = {
+  wmsUrl: 'https:%2F%2Ftestgeoegl.msp.gouv.qc.ca%2Fapis%2Fwss%2Fcomplet.fcgi',
+  layers: 'MSP_DIRECTION_REG_COG_P_V'
+};
+
+const MOCK_LAYER_ON_THE_FLY: Params = {
+  urls: 'https:%2F%2Fgeoegl.msp.gouv.qc.ca%2Fapis%2Fwss%2Fcomplet.fcgi%3F',
+  layers: '0,%5Bmsp_v_couverture_cellulaire_s%5Dn,0t,1v'
 };
 
 describe('ShareMapParseUrl', () => {
@@ -167,6 +178,24 @@ describe('ShareMapParseUrl', () => {
       },
       { id: '1', visible: true, zIndex: 1 }
     ]);
+  });
+
+  it('should use parser for on the fly layer params without legacy', () => {
+    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+
+    shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY);
+
+    expect(shareMapParseUrl.legacy.parseUrl).not.toHaveBeenCalled();
+  });
+
+  it('should use legacy parser for on the fly layer params', () => {
+    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+
+    shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY_LEGACY);
+
+    expect(shareMapParseUrl.legacy.parseUrl).toHaveBeenCalledWith(
+      MOCK_LAYER_ON_THE_FLY_LEGACY
+    );
   });
 
   describe('parse position', () => {

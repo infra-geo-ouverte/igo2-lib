@@ -30,10 +30,6 @@ import {
   addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
-import {
-  hasLegacyParams,
-  hasModernShareParams
-} from '../../share-map/shared/share-map.utils';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
@@ -210,14 +206,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private handleContextWithSharedUrl(
     context: DetailedContext
   ): AnyLayerOptions[] {
-    if (
-      !this.queryParams ||
-      (!hasLegacyParams(this.queryParams, this.shareMapService.optionsLegacy) &&
-        !hasModernShareParams(
-          this.queryParams,
-          this.shareMapService.keysDefinitions
-        ))
-    ) {
+    if (!this.queryParams) {
       return context.layers;
     }
 
