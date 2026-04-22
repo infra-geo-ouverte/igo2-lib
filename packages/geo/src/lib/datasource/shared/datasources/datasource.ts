@@ -24,7 +24,7 @@ export abstract class DataSource {
 
   get saveableOptions(): Partial<DataSourceOptions> {
     return {
-      id: this.options.id,
+      id: this.id,
       type: this.options.type,
       url: this.options.url
     };
@@ -39,7 +39,7 @@ export abstract class DataSource {
     protected dataService?: DataService
   ) {
     this.options = options;
-    this.id = this.options.id || this.generateId();
+    this.id = this.options.id ?? this.generateId();
     this.ol = this.createOlSource();
   }
 
