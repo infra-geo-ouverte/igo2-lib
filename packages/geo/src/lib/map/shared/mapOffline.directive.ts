@@ -16,8 +16,7 @@ interface OfflinableSourceOptions extends DataSourceOptions {
 }
 
 @Directive({
-  selector: '[igoMapOffline]',
-  standalone: true
+  selector: '[igoMapOffline]'
 })
 export class MapOfflineDirective implements AfterViewInit {
   private networkService = inject(NetworkService);

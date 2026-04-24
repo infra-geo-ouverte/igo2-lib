@@ -1,4 +1,4 @@
-import { Directive, HostListener, Renderer2, inject } from '@angular/core';
+import { Directive, Renderer2, inject } from '@angular/core';
 
 /**
  * <igoSidenavShim> directive.
@@ -8,7 +8,11 @@ import { Directive, HostListener, Renderer2, inject } from '@angular/core';
  */
 @Directive({
   selector: '[igoSidenavShim]',
-  standalone: true
+  host: {
+    '(opened)': 'onOpen()',
+    '(closedStart)': 'onCloseStart()',
+    '(closed)': 'onClose()'
+  }
 })
 export class SidenavShimDirective {
   private renderer = inject(Renderer2);
@@ -16,12 +20,10 @@ export class SidenavShimDirective {
   private focusedElement: HTMLElement;
   private blurElement: HTMLElement;
 
-  @HostListener('open', ['$event'])
   onOpen() {
     this.focusedElement = document.activeElement as HTMLElement;
   }
 
-  @HostListener('close-start', ['$event'])
   onCloseStart() {
     const focusedElement = document.activeElement as HTMLElement;
     if (focusedElement !== this.focusedElement) {
@@ -31,7 +33,6 @@ export class SidenavShimDirective {
     }
   }
 
-  @HostListener('close', ['$event'])
   onClose() {
     if (this.blurElement) {
       this.renderer.selectRootElement(this.blurElement).blur();

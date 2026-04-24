@@ -153,7 +153,7 @@ export class DirectionsButtonsComponent {
       .view.all()
       .forEach((stop) => {
         let coords = '';
-        let stopText = '';
+        let stopText: string;
         if (stop.text !== roundCoordToString(stop.coordinates, 6).join(', ')) {
           stopText = stop.text;
           coords = ` (${roundCoordToString(stop.coordinates, 6).join(', ')})`;
@@ -265,9 +265,8 @@ export class DirectionsButtonsComponent {
     const stopsCoordinates: Coordinate[] = this.stopsStore()
       .view.all()
       .map((stop) => roundCoordTo(stop.coordinates, 6));
-    let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
-      directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
+      const directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
       return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -68,7 +68,6 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
     MatTooltipModule,
     MatOptionModule,
     MatButtonToggleModule,
-    NgStyle,
     MatCheckboxModule,
     MatRadioModule,
     MatIconModule,

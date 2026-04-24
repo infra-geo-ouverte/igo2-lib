@@ -358,7 +358,6 @@ export class OgcFilterWriter {
     propertyName?: string,
     defaultOperatorsType?: OgcFilterOperatorType
   ) {
-    let effectiveOperators = {};
     let allowedOperators;
     let fieldsHasSpatialOperator: boolean;
     let includeContains: boolean;
@@ -398,6 +397,7 @@ export class OgcFilterWriter {
       ? allowedOperators
       : OgcFilterOperatorType.BasicAndSpatial;
 
+    let effectiveOperators;
     switch (allowedOperators.toLowerCase()) {
       case OgcFilterOperatorType.All:
         effectiveOperators = this.operators;

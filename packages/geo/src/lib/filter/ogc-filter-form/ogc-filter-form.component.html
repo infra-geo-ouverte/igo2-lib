@@ -9,7 +9,7 @@
   />
 
   <mat-form-field
-    [ngClass]="{
+    [class]="{
       logical:
         activeFilters.indexOf(currentFilter()) !== 0 &&
         currentFilter().active === true,
@@ -111,7 +111,7 @@
   }
 
   <mat-form-field
-    [ngClass]="{
+    [class]="{
       operator: (currentFilterIsSpatial$ | async) === false,
       dualInput: (currentFilterIsSpatial$ | async)
     }"

@@ -17,8 +17,7 @@ import { EntityTableScrollBehavior } from '../shared/entity.enums';
  * Directive that handles an entity table row click and selection.
  */
 @Directive({
-  selector: '[igoEntityTableRow]',
-  standalone: true
+  selector: '[igoEntityTableRow]'
 })
 export class EntityTableRowDirective {
   private renderer = inject(Renderer2);

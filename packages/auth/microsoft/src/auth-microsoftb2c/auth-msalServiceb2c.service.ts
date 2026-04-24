@@ -11,6 +11,7 @@ import {
   AuthenticationResult,
   EndSessionPopupRequest,
   EndSessionRequest,
+  HandleRedirectPromiseOptions,
   IPublicClientApplication,
   Logger,
   PopupRequest,
@@ -53,8 +54,21 @@ export class MsalServiceb2c implements IMsalService {
   ): Observable<AuthenticationResult> {
     return from(this.instance.acquireTokenSilent(silentRequest));
   }
-  handleRedirectObservable(hash?: string): Observable<AuthenticationResult> {
-    return from(this.instance.handleRedirectPromise(hash || this.redirectHash));
+
+  handleRedirectObservable(
+    hashOrOptions?: string | HandleRedirectPromiseOptions
+  ): Observable<AuthenticationResult | null> {
+    let finalOptions: HandleRedirectPromiseOptions = {
+      hash: this.redirectHash
+    };
+
+    if (typeof hashOrOptions === 'string') {
+      finalOptions.hash = hashOrOptions;
+    } else if (hashOrOptions) {
+      finalOptions = { ...finalOptions, ...hashOrOptions };
+    }
+
+    return from(this.instance.handleRedirectPromise(finalOptions));
   }
   loginPopup(request?: PopupRequest): Observable<AuthenticationResult> {
     return from(this.instance.loginPopup(request));
@@ -63,7 +77,7 @@ export class MsalServiceb2c implements IMsalService {
     return from(this.instance.loginRedirect(request));
   }
   logout(logoutRequest?: EndSessionRequest): Observable<void> {
-    return from(this.instance.logout(logoutRequest));
+    return from(this.instance.logoutPopup(logoutRequest));
   }
   logoutRedirect(logoutRequest?: EndSessionRequest): Observable<void> {
     return from(this.instance.logoutRedirect(logoutRequest));

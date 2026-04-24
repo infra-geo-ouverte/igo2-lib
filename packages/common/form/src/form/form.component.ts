@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +23,7 @@ import { getAllFormFields } from '../shared/form.utils';
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ReactiveFormsModule, NgClass]
+  imports: [FormsModule, ReactiveFormsModule]
 })
 export class FormComponent implements OnChanges {
   /**

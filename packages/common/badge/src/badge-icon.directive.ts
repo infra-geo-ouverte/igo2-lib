@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
  */
 @Directive({
   selector: '[igoMatBadgeIcon]',
-  standalone: true,
   providers: [MatIconModule]
 })
 export class IgoBadgeIconDirective implements OnInit {

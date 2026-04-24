@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -53,14 +53,12 @@ import {
     MatListModule,
     MatIconModule,
     CollapseDirective,
-    NgClass,
     MatFormFieldModule,
     MatSelectModule,
     MatTooltipModule,
     FormsModule,
     MatOptionModule,
     ImageErrorDirective,
-    NgStyle,
     AsyncPipe,
     IgoLanguageModule,
     SanitizeHtmlPipe

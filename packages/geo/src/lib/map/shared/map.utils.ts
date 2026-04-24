@@ -164,12 +164,10 @@ export function stringToLonLat(
       degreesLon,
       minutesLon,
       secondsLon,
-      decimalLon,
       negativeLat,
       degreesLat,
       minutesLat,
-      secondsLat,
-      decimalLat
+      secondsLat
     ] = coordStr.match(patternDmd);
 
     lon = convertDMSToDD(
@@ -185,15 +183,8 @@ export function stringToLonLat(
       directionLat
     );
   } else if (ddRegex.test(coordStr)) {
-    [
-      ,
-      negativeLon,
-      degreesLon,
-      decimalLon,
-      negativeLat,
-      degreesLat,
-      decimalLat
-    ] = coordStr.match(patternDd);
+    [, negativeLon, degreesLon, , negativeLat, degreesLat, ,] =
+      coordStr.match(patternDd);
 
     lon = convertDMSToDD(
       parseFloat((negativeLon ? negativeLon : '') + degreesLon),

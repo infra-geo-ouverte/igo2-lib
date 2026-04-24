@@ -84,7 +84,6 @@ export class AnalyticsListenerService {
       layers.forEach((layer) => {
         let wmsParams: string;
         let wmtsParams: string;
-        let xyzParams: string;
         let restParams: string;
 
         if (isLayerGroup(layer)) {
@@ -137,20 +136,11 @@ export class AnalyticsListenerService {
             });
             break;
           }
-          case 'xyz':
-            /* const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
-            const xyzName: string = layer.title;
-            const xyzUrl: string = xyzDataSource.url;
-            const xyzType: string = layer.dataSource.options.type;
-            xyzParams = JSON.stringify({layer: xyzName, type: xyzType, url: xyzUrl});
-            */
-            // todo
-            break;
         }
         this.analyticsService.trackLayer(
           'layer',
           'addLayer',
-          wmsParams || wmtsParams || xyzParams || restParams
+          wmsParams || wmtsParams || restParams
         );
       });
     });

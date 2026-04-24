@@ -247,7 +247,7 @@ export class CatalogService {
     );
 
     // integrate imposed group -----------------------------------------------------
-    let request2$ = [];
+    let request2$: Observable<unknown>[];
 
     function flatDeepLayer(arr) {
       return arr.reduce(

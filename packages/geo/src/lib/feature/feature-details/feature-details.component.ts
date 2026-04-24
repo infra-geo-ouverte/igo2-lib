@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, JsonPipe, KeyValuePipe, NgStyle } from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -37,7 +37,6 @@ import { Feature } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
-    NgStyle,
     ImageErrorDirective,
     AsyncPipe,
     JsonPipe,
@@ -229,8 +228,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   filterFeatureProperties(feature): Record<string, any> {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
-    let offlineButtonState;
-
     const toolbox = this.toolbox();
     if (
       feature.properties &&
@@ -246,35 +243,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         properties[allowedFieldsAndAlias[field]] = feature.properties[field];
       });
       return properties;
-    } else if (offlineButtonState !== undefined) {
-      if (!offlineButtonState) {
-        if (
-          this.state.connection &&
-          feature.meta &&
-          feature.meta.excludeAttribute
-        ) {
-          const excludeAttribute = feature.meta.excludeAttribute;
-          excludeAttribute.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        } else if (
-          !this.state.connection &&
-          feature.meta &&
-          feature.meta.excludeAttributeOffline
-        ) {
-          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        }
-      } else {
-        if (feature.meta && feature.meta.excludeAttributeOffline) {
-          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        }
-      }
     } else {
       if (
         this.state.connection &&

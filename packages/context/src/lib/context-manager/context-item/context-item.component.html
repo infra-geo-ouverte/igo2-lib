@@ -1,7 +1,4 @@
-<mat-list-item
-  class="mat-list-item"
-  [ngClass]="{ 'mat-list-item-light': hidden }"
->
+<mat-list-item class="mat-list-item" [class.mat-list-item-light]="hidden">
   @if (auth.authenticated) {
     <button
       matListItemAvatar

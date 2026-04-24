@@ -111,7 +111,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
   sortAlphaOnIcon = SORT_ALPHA_ON_ICON;
   sortAlphaOffIcon = SORT_ALPHA_OFF_ICON;
 
-  @Input() isDesktop: boolean;
+  readonly isDesktop = input<boolean>(undefined);
+
   @Input()
   get contexts(): ContextsList {
     return this._contexts;

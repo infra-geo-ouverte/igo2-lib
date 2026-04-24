@@ -13,6 +13,7 @@ import OlModify from 'ol/interaction/Modify';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 
+import { Geometry } from 'geojson';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
@@ -307,7 +308,7 @@ export class EditionWorkspace extends Workspace {
     olGeometry?: OlGeometry
   ) {
     const projection = this.map.ol.getView().getProjection();
-    let geometry = feature.geometry;
+    let geometry: Geometry;
 
     // If an olGeometry is passed, it means that it is a new feature
     if (olGeometry) {

@@ -15,8 +15,7 @@ import { AuthFacebookOptions } from '../shared/auth-facebook.interface';
   selector: 'igo-auth-facebook',
   templateUrl: './auth-facebook.component.html',
   styleUrls: ['./auth-facebook.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthFacebookComponent {
   private authService = inject(AuthService);

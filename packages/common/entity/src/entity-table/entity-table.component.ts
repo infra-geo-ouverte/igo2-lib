@@ -1,5 +1,5 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -69,6 +69,7 @@ import {
   EntityTableScrollBehavior,
   EntityTableSelectionState,
   EntityTableTemplate,
+  SelectOption,
   isChoiceField
 } from '../shared';
 import { EntityTableRowDirective } from './entity-table-row.directive';
@@ -117,7 +118,6 @@ interface RowData {
     MatTableModule,
     MatTooltipModule,
     NgClass,
-    NgStyle,
     ReactiveFormsModule,
     SanitizeHtmlPipe,
     SecureImagePipe,
@@ -140,7 +140,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
-  public filteredOptions = {};
+  public filteredOptions: Record<string, Observable<SelectOption[]>> = {};
 
   /**
    * Reference to the column renderer types

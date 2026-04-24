@@ -12,6 +12,7 @@ import { ActionStore } from '@igo2/common/action';
 import {
   EntityStoreFilterSelectionStrategy,
   EntityTableButton,
+  EntityTableColumn,
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common/entity';
@@ -31,7 +32,6 @@ import { catchError, map, skipWhile, take } from 'rxjs/operators';
 
 import {
   RelationOptions,
-  SourceFieldsOptionsParams,
   WMSDataSource
 } from '../../datasource/shared/datasources';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -301,11 +301,7 @@ export class EditionWorkspaceService {
     const relations = layer.dataSource.options.relations || [];
 
     const rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
-    let buttons = [];
-    let columns = [];
-    let relationsColumn = [];
-
-    buttons = [
+    const buttons = [
       {
         name: 'edition',
         title: undefined,
@@ -393,7 +389,7 @@ export class EditionWorkspaceService {
       return;
     }
 
-    columns = fields.map((field: SourceFieldsOptionsParams) => {
+    const columns: EntityTableColumn[] = fields.map((field) => {
       const column = {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
@@ -427,7 +423,7 @@ export class EditionWorkspaceService {
       return column;
     });
 
-    relationsColumn = relations.map((relation: RelationOptions) => {
+    const relationsColumn = relations.map((relation: RelationOptions) => {
       return {
         name: `properties.${relation.name}`,
         title: relation.alias ? relation.alias : relation.name,
