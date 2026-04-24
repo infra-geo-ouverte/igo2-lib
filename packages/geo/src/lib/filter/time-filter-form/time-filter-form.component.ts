@@ -134,7 +134,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   get step(): number {
-    let step = 10800000;
+    let step: number;
     const options = this.options();
     if (options.step === undefined) {
       switch (this.type) {

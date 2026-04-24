@@ -18,7 +18,7 @@ export class StringUtils {
     const nextThis = s1.slice(
       changeData.mtc.length + changeData.del.length + changeData.sbs.length
     ); // remaining part of "this"
-    let result = ''; // the glorious result
+    let result: string; // the glorious result
     if (changeData.del.length > 0) {
       changeData.del = '<span class="deleted">' + changeData.del + '</span>';
     }

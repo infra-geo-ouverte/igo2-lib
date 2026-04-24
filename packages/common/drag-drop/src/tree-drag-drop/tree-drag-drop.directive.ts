@@ -41,7 +41,6 @@ export interface ITreeConfig<T> {
  */
 @Directive({
   selector: '[igoTreeDragDrop]',
-  standalone: true,
   host: {
     '[class.--dragging]': 'dragging()',
     '(dragover)': 'hostDragOver($event)',

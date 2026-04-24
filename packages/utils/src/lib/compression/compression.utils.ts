@@ -80,7 +80,7 @@ export class Compression {
     let out = '';
     let bits = 16;
     let chr = 0;
-    let rem = 0;
+    let rem: number;
     for (const c of s) {
       const value = this.base64Index.get(c);
       if (bits > 6) {
@@ -109,8 +109,8 @@ export class Compression {
       return c;
     }
 
-    let chr = 0;
-    let rem = 0;
+    let chr: number;
+    let rem: number;
     let bits = 16;
     let out = '';
     let j = 1;

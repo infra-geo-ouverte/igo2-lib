@@ -55,7 +55,6 @@ import { getInfoFromSourceOptions } from './catalog-library-tool.utils';
   templateUrl: './catalog-library-tool.component.html',
   styleUrls: ['./catalog-library-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CatalogLibraryComponent,
     MatButtonModule,

@@ -24,7 +24,7 @@
             <div
               #legend
               class="igo-layer-legend"
-              [ngClass]="{ 'with-title': item.title }"
+              [class.with-title]="item.title"
             >
               @if (currentStyle !== undefined) {
                 <mat-form-field subscriptSizing="dynamic">
@@ -71,7 +71,7 @@
                   }
                   @if (item.html) {
                     <div
-                      [ngStyle]="item.style"
+                      [style]="item.style"
                       [innerHTML]="item.html | sanitizeHtml"
                     ></div>
                   }

@@ -34,13 +34,13 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
     "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
-    "@turf/point-on-feature": "^7.2.0",
-    "jspdf": "^4.0.0",
+    "@turf/point-on-feature": "^7.3.0",
+    "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.0",
     "rxjs": "^7.8.0"
   },

@@ -303,7 +303,7 @@ export class PrintService {
           )
         );
       forkJoin(images$).subscribe((dataImages) => {
-        html = dataImages.reduce((acc, current) => (acc += current), html);
+        html = dataImages.reduce((acc, current) => acc + current, html);
         html += '</table>';
         html += '</div>';
         observer.next(html);
@@ -926,8 +926,8 @@ export class PrintService {
     width: number,
     yPosition = 0
   ) {
-    let xPosition = 0;
-    let northArrowDimension = 0;
+    let xPosition: number;
+    let northArrowDimension: number;
     if (doc instanceof CanvasRenderingContext2D) {
       northArrowDimension = 50;
       xPosition =
@@ -1143,9 +1143,9 @@ export class PrintService {
           // Separate the setenses to be approx. the same length
           const nbCommentChar = comment.length;
           const CommentLengthToCut = Math.floor(nbCommentChar / commentNbLine);
-          let commentCurrentLine = '';
+          let commentCurrentLine: string;
           let positionFirstCutChar = 0;
-          let positionLastBlank;
+          let positionLastBlank: number;
           // Loop for the number of line calculated
           for (let i = 0; i < commentNbLine; i++) {
             // For all line except last
@@ -1482,7 +1482,7 @@ export class PrintService {
   }
 
   private pdf_units2points(n, unit): number {
-    let k = 1;
+    let k: number;
 
     // this code is borrowed from jsPDF
     //  as it does not expose a public API

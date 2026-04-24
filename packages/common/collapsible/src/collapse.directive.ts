@@ -9,8 +9,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoCollapse]',
-  standalone: true
+  selector: '[igoCollapse]'
 })
 export class CollapseDirective {
   private renderer = inject(Renderer2);

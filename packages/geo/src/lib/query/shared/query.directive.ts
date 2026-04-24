@@ -37,8 +37,7 @@ import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
  * the layer level.
  */
 @Directive({
-  selector: '[igoQuery]',
-  standalone: true
+  selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
   private component = inject(MapBrowserComponent, { self: true });

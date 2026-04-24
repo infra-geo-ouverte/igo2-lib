@@ -9,8 +9,7 @@ import { Cacheable } from 'ts-cacheable';
 import { fetchImageFromDepotUrl } from './image';
 
 @Pipe({
-  name: 'secureImage',
-  standalone: true
+  name: 'secureImage'
 })
 export class SecureImagePipe implements PipeTransform {
   private http = inject(HttpClient);

@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -27,7 +26,6 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
   styleUrls: ['./baselayers-switcher.component.scss'],
   animations: [baseLayersSwitcherSlideInOut()],
   imports: [
-    NgClass,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,

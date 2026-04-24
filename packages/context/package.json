@@ -36,12 +36,12 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/animations": "^20.0.0",
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/material": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/material": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
     "@igo2/auth": "*",
     "@igo2/common": "*",
     "@igo2/core": "*",

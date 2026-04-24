@@ -43,8 +43,7 @@ import { StyleService } from '../../style/style-service/style.service';
  * the layer level.
  */
 @Directive({
-  selector: '[igoHoverFeature]',
-  standalone: true
+  selector: '[igoHoverFeature]'
 })
 export class HoverFeatureDirective implements OnInit, OnDestroy {
   private component = inject(MapBrowserComponent, { self: true });

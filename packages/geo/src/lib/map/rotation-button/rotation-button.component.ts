@@ -1,4 +1,4 @@
-import { AsyncPipe, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AfterContentInit, Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,6 @@ import { IgoMap } from '../shared/map';
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
-    NgStyle,
     AsyncPipe,
     IgoLanguageModule
   ]

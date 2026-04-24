@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,7 +27,6 @@ import { DetailedContext } from '../shared/context.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListModule,
-    NgClass,
     MatButtonModule,
     StopPropagationDirective,
     MatTooltipModule,

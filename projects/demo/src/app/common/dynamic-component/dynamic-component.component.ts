@@ -34,8 +34,7 @@ export class AppSalutationComponent implements OnUpdateInputs {
   selector: 'app-explanation-component',
   template:
     '<p>I am a dynamic component, rendered into an IgoDynamicOutlet.</p>',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppExplanationComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);

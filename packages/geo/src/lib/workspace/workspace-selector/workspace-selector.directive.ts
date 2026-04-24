@@ -34,8 +34,7 @@ import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { AnyWorkspace } from '../shared/workspace.interface';
 
 @Directive({
-  selector: '[igoWorkspaceSelector]',
-  standalone: true
+  selector: '[igoWorkspaceSelector]'
 })
 export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   private component = inject(WorkspaceSelectorComponent);

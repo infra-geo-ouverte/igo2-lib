@@ -9,8 +9,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoListItem]',
-  standalone: true
+  selector: '[igoListItem]'
 })
 export class ListItemDirective {
   renderer = inject(Renderer2);

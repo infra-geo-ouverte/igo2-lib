@@ -13,8 +13,7 @@ import { FeatureDetailsComponent } from './feature-details.component';
 
 @Directive({
   // This directive allow to view the route between the user coordinates and the feature
-  selector: '[igoFeatureDetailsDirective]',
-  standalone: true
+  selector: '[igoFeatureDetailsDirective]'
 })
 export class FeatureDetailsDirective implements OnInit {
   private el = inject(ElementRef);

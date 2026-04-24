@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,10 +24,8 @@ import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.co
     MatListModule,
     MatIconModule,
     CollapseDirective,
-    NgStyle,
     MatButtonModule,
     MatTooltipModule,
-    NgClass,
     LayerLegendComponent,
     TimeFilterFormComponent,
     AsyncPipe,

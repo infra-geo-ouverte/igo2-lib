@@ -20,8 +20,7 @@ import { IgoMap } from '../shared/map';
 @Component({
   selector: 'igo-swipe-control',
   templateUrl: './swipe-control.component.html',
-  styleUrls: ['./swipe-control.component.scss'],
-  standalone: true
+  styleUrls: ['./swipe-control.component.scss']
 })
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   private destroyRef = inject(DestroyRef);

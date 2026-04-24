@@ -227,8 +227,8 @@ export class LayerController extends LayerSelectionModel {
     const position = this.tree.getPosition(layer);
 
     if (type === 'below') {
-      let index = position.pop();
-      return position.concat(++index);
+      const index = position.pop();
+      return position.concat(index + 1);
     }
 
     return position;
@@ -280,7 +280,7 @@ export class LayerController extends LayerSelectionModel {
   /** Recursive */
   private recalculateZindex(minIndex = 0, layers = this.treeLayers) {
     return [...layers].reverse().reduce((previousZindex, layer) => {
-      let zIndex = ++previousZindex;
+      let zIndex = previousZindex + 1;
       layer.zIndex = zIndex;
       if (isLayerGroup(layer)) {
         zIndex = this.recalculateZindex(zIndex, layer.children);
@@ -384,7 +384,7 @@ export class LayerController extends LayerSelectionModel {
   }
 
   private getZindexOffset(layer: AnyLayer, previousOffset = 0): number {
-    return layer.zIndex ? 0 : previousOffset++;
+    return layer.zIndex ? 0 : previousOffset;
   }
 
   private setZindex(layer: AnyLayer, offset?: number): void {

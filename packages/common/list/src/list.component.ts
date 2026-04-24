@@ -1,9 +1,7 @@
-import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -23,7 +21,10 @@ import { ListItemDirective } from './list-item.directive';
   selector: 'igo-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  imports: [MatListModule, ClickoutDirective, NgClass]
+  imports: [MatListModule, ClickoutDirective],
+  host: {
+    '(document:keydown)': 'handleKeyboardEvent($event)'
+  }
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private el = inject(ElementRef);
@@ -75,8 +76,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     descendants: true
   });
 
-  @HostListener('document:keydown', ['$event'])
-  @HostListener('document:enter', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     // It would be nice to be able to unsubscribe to the event
     // completely but until ES7 this won't be possible because

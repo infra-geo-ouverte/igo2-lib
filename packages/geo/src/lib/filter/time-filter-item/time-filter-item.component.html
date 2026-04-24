@@ -13,7 +13,7 @@
     <span
       matListItemTitle
       (click)="toggleLegendOnClick()"
-      [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
+      [style.cursor]="filtersCollapsed ? 'default' : 'pointer'"
       >{{ layer().title }}</span
     >
     @if (header()) {
@@ -31,8 +31,7 @@
         "
         (click)="toggleLayerVisibility()"
       >
-        <mat-icon
-          [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+        <mat-icon [class.disabled]="(inResolutionRange$ | async) === false"
           >{{ layer().visible ? 'visibility' : 'visibility_off' }}
         </mat-icon>
       </button>

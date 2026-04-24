@@ -49,7 +49,7 @@
           ) {
             <td>
               <u
-                [ngStyle]="{ cursor: 'pointer', color: 'blue' }"
+                [style]="{ cursor: 'pointer', color: 'blue' }"
                 (click)="openSecureUrl(property.value)"
                 >{{ getEmbeddedLinkText(property.value) }}</u
               >
@@ -63,7 +63,7 @@
           ) {
             <td>
               <u
-                [ngStyle]="{ cursor: 'pointer', color: 'blue' }"
+                [style]="{ cursor: 'pointer', color: 'blue' }"
                 (click)="openSecureUrl(property.value)"
                 >{{ 'igo.geo.targetHtmlUrl' | translate }}</u
               >

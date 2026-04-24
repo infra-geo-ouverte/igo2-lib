@@ -16,8 +16,7 @@ import { AuthGoogleOptions } from '../shared/auth-google.interface';
   selector: 'igo-auth-google',
   templateUrl: './auth-google.component.html',
   styleUrls: ['./auth-google.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthGoogleComponent {
   private authService = inject(AuthService);

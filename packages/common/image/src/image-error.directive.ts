@@ -7,8 +7,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoImageError]',
-  standalone: true
+  selector: '[igoImageError]'
 })
 export class ImageErrorDirective {
   private el = inject(ElementRef);

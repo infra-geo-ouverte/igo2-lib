@@ -6,8 +6,7 @@ import { MapService } from '../../map/shared/map.service';
 import { OgcFilterableListComponent } from './ogc-filterable-list.component';
 
 @Directive({
-  selector: '[igoOgcFilterableListBinding]',
-  standalone: true
+  selector: '[igoOgcFilterableListBinding]'
 })
 export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
   private mapService = inject(MapService);

@@ -22,8 +22,7 @@ import { IgoMap } from '../../map/shared/map';
  * to avoid too many emitted values.
  */
 @Directive({
-  selector: '[igoPointerPosition]',
-  standalone: true
+  selector: '[igoPointerPosition]'
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
   private component = inject(MapBrowserComponent, { self: true });

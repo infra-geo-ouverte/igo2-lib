@@ -65,7 +65,10 @@
         @for (group of results$ | async; track group) {
           <mat-tab [label]="computeGroupTitle(group)">
             <ng-container
-              *ngTemplateOutlet="storeItemTemplate; context: { group: group }"
+              *ngTemplateOutlet="
+                storeItemTemplateGroup;
+                context: { group: group }
+              "
             />
           </mat-tab>
         }
@@ -73,12 +76,12 @@
     } @else {
       @for (group of results$ | async; track group) {
         <ng-container
-          *ngTemplateOutlet="storeItemTemplate; context: { group: group }"
+          *ngTemplateOutlet="storeItemTemplateGroup; context: { group: group }"
         />
       }
     }
 
-    <ng-template #storeItemTemplate let-group="group">
+    <ng-template #storeItemTemplateGroup let-group="group">
       @for (result of group.results; track result) {
         <igo-search-results-item
           igoListItem
