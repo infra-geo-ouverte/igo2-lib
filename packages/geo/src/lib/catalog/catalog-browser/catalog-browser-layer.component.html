@@ -15,18 +15,15 @@
 
   <div matListItemMeta>
     @if (layer().externalProvider) {
-      <button disabled="true" mat-icon-button>
-        <mat-icon
-          class="igo-cataloglayer-external-icon"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
-          color="primary"
-          (click)="$event.stopPropagation()"
-        >
-          public
-        </mat-icon>
-      </button>
+      <mat-icon
+        class="igo-cataloglayer-external-icon"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
+        color="primary"
+      >
+        public
+      </mat-icon>
     }
     <igo-metadata-button [layer]="$any(layer())" />
 
