@@ -169,14 +169,25 @@ export class ContextService {
     return of([]);
   }
 
-  setDefault(id: string | number): Observable<string | undefined> {
+  setDefault(id: string | number): Observable<string | number | undefined> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
       return this.http.post<string>(url, { defaultContextId: id });
     } else {
-      this.storageService.set('favorite.context.uri', id);
-      return of(undefined);
+      return this.setDefaultLocalStorage(id);
     }
+  }
+
+  private setDefaultLocalStorage(
+    id: string | number
+  ): Observable<string | number | undefined> {
+    const selectedId = this.storageService.get('favorite.context.uri');
+    if (selectedId === id) {
+      this.storageService.remove('favorite.context.uri');
+    } else {
+      this.storageService.set('favorite.context.uri', id);
+    }
+    return of(selectedId === id ? undefined : id);
   }
 
   hideContext(id: number) {
