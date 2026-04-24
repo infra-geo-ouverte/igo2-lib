@@ -21,20 +21,15 @@
 
   <div matListItemMeta>
     @if (group().externalProvider) {
-      <button disabled="true" mat-icon-button>
-        @if (group().externalProvider) {
-          <mat-icon
-            class="igo-cataloggroup-external-icon"
-            tooltip-position="below"
-            matTooltipShowDelay="500"
-            [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
-            color="primary"
-            (click)="$event.stopPropagation()"
-          >
-            public
-          </mat-icon>
-        }
-      </button>
+      <mat-icon
+        class="igo-cataloggroup-external-icon"
+        color="primary"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
+      >
+        public
+      </mat-icon>
     }
 
     @if ((added$ | async) && (preview$ | async) === false) {
