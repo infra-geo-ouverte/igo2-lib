@@ -1,14 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": ".",
     "outDir": "../../out-tsc/lib",
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
     "types": [],
     "paths": {
-      "@igo2/*": ["../../dist/*"]
+      "@igo2/*": ["dist/*"]
     }
   },
   "exclude": ["./src/test.ts", "**/*.spec.ts"],
