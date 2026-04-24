@@ -159,8 +159,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
-      let visiblelayers: LayerId[] = [];
-      let invisiblelayers: LayerId[] = [];
       const visibleOnLayers =
         params[this.shareMapService.routeService.options.visibleOnLayersKey];
 
@@ -184,8 +182,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       }
 
       // After, managing named layer by id (context.json OR id from datasource)
-      visiblelayers = visibleOnLayersParams.split(',');
-      invisiblelayers = visibleOffLayersParams.split(',');
+      const visiblelayers: LayerId[] = visibleOnLayersParams.split(',');
+      const invisiblelayers: LayerId[] = visibleOffLayersParams.split(',');
       if (
         visiblelayers.indexOf(currentLayerid) > -1 ||
         visiblelayers.indexOf(currentLayerid.toString()) > -1

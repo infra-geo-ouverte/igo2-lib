@@ -12,7 +12,6 @@ import {
   FeatureMotion,
   FeatureStoreSelectionStrategy,
   FeatureWorkspace,
-  OgcFilterableDataSource,
   OgcFilterableDataSourceOptions,
   WfsWorkspace,
   mapExtentStrategyActiveToolTip,
@@ -241,11 +240,8 @@ export function getWorkspaceActions(
       args: [workspace]
     }
   ];
-  let returnActions = (workspace.layer.dataSource as OgcFilterableDataSource)
-    .options.ogcFilters?.enabled
-    ? actions
-    : actions.filter((action) => action.id !== 'ogcFilter');
-  returnActions =
+
+  const returnActions =
     workspace.layer.options.workspace.printable !== false
       ? actions
       : actions.filter((action) => action.id !== 'print');

@@ -14,8 +14,7 @@ import { SpinnerComponent } from './spinner.component';
  * is greater than 0.
  */
 @Directive({
-  selector: '[igoSpinnerActivity]',
-  standalone: true
+  selector: '[igoSpinnerActivity]'
 })
 export class SpinnerActivityDirective implements OnInit, OnDestroy {
   private spinner = inject(SpinnerComponent, { self: true });

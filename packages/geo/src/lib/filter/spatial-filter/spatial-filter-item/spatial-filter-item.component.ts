@@ -10,7 +10,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import {
   FormsModule,
@@ -102,7 +104,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
 
-  @Input({ required: true }) map: IgoMap;
+  readonly map = input.required<IgoMap>();
 
   @Input()
   get type(): SpatialFilterType {
@@ -139,7 +141,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(
           geom.getCoordinates(),
-          this.map.projection,
+          this.map().projection,
           'EPSG:4326'
         );
         return new olStyle.Style({
@@ -203,11 +205,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   private _type: SpatialFilterType;
 
-  @Input() queryType: SpatialFilterQueryType;
+  readonly queryType = input<SpatialFilterQueryType>(undefined);
 
-  @Input() zones: Feature[];
+  readonly zones = input<Feature[]>(undefined);
 
-  @Input() loading;
+  readonly loading = model(undefined);
 
   @Input({ required: true })
   get store(): EntityStore<Feature> {
@@ -229,9 +231,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: AnyLayer[] = [];
+  readonly layers = input<AnyLayer[]>([]);
 
-  @Input() allLayers: AnyLayer[] = [];
+  readonly allLayers = input<AnyLayer[]>([]);
 
   @Input()
   get thematicLength(): number {
@@ -529,7 +531,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         exportable: false,
         browsable: false
       }),
-      map: this.map,
+      map: this.map(),
       hitTolerance: 15,
       motion: FeatureMotion.Default,
       many: true,
@@ -820,7 +822,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     this.toggleSearch.emit();
     this.store.entities$.pipe(debounceTime(500)).subscribe((value) => {
-      if (value.length && this.layers.length === this.thematicLength + 1) {
+      if (value.length && this.layers().length === this.thematicLength + 1) {
         this.openWorkspace.emit();
         this.createTableTemplate();
       }
@@ -831,7 +833,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Launch clear button (clear store and map layers)
    */
   clearButton() {
-    this.loading = true;
+    this.loading.set(true);
     if (this.store) {
       this.store.clear();
     }
@@ -843,7 +845,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.buffer = 0;
     this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
-    this.loading = false;
+    this.loading.set(false);
     this.tableTemplate = undefined;
   }
 
@@ -870,18 +872,19 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   disableSearchButton(): boolean {
     if (this.type === SpatialFilterType.Predefined) {
+      const queryType = this.queryType();
       if (this.selectedItemType === SpatialFilterItemType.Address) {
-        if (this.queryType !== undefined && this.zones.length > 0) {
-          return this.loading;
+        if (queryType !== undefined && this.zones().length > 0) {
+          return this.loading();
         }
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
-          this.queryType !== undefined &&
-          this.zones.length > 0 &&
+          queryType !== undefined &&
+          this.zones().length > 0 &&
           this.selectedThematics.selected.length > 0
         ) {
-          return this.loading;
+          return this.loading();
         }
       }
     }
@@ -893,14 +896,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.selectedItemType === SpatialFilterItemType.Address &&
         this.formControl.value !== null
       ) {
-        return this.loading;
+        return this.loading();
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
           this.selectedThematics.selected.length > 0 &&
           this.formControl.value !== null
         ) {
-          return this.loading;
+          return this.loading();
         }
       }
     }
@@ -908,11 +911,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   disabledClearSearch() {
-    let disable = true;
+    let disable: boolean;
     this.selectedItemType === SpatialFilterItemType.Address
-      ? (disable = this.queryType === undefined)
+      ? (disable = this.queryType() === undefined)
       : (disable =
-          this.queryType === undefined &&
+          this.queryType() === undefined &&
           this.selectedThematics.selected.length === 0);
 
     return disable;

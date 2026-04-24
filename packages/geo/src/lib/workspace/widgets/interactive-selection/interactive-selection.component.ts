@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -57,13 +57,12 @@ enum SelectionAction {
   templateUrl: './interactive-selection.component.html',
   styleUrls: ['./interactive-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     IgoLanguageModule,
     FormComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    AsyncPipe
   ]
 })
 export class InteractiveSelectionFormComponent

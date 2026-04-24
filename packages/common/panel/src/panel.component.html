@@ -2,7 +2,7 @@
   <div
     class="igo-panel-header"
     title=""
-    [ngClass]="{ 'igo-cursor-pointer': cursorPointer() === true }"
+    [class.igo-cursor-pointer]="cursorPointer() === true"
   >
     <div class="panel-left">
       <ng-content select="[panelLeftButton]" />

@@ -152,7 +152,7 @@
                 this.defaultContextId &&
                 this.defaultContextId === context.id
               "
-              [isDesktop]="isDesktop"
+              [isDesktop]="isDesktop()"
               (edit)="onEdit(context)"
               (delete)="onDelete(context)"
               (clone)="onClone(context)"
@@ -186,7 +186,7 @@
                 ? defaultContextId === context.id
                 : defaultContextId === context.uri
             "
-            [isDesktop]="isDesktop"
+            [isDesktop]="isDesktop()"
             (edit)="onEdit(context)"
             (delete)="onDelete(context)"
             (clone)="onClone(context)"

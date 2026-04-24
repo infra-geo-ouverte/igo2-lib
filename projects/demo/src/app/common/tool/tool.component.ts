@@ -35,8 +35,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 @Component({
   selector: 'app-salutation-tool',
   template: ` <p>Hello, my name is {{ name() }}.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
@@ -56,8 +55,7 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 @Component({
   selector: 'app-about-tool',
   template: ` <p>I'm a tool inside a toolbox.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppAboutToolComponent {}
 

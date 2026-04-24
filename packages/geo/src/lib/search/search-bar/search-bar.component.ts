@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,7 +47,6 @@ import { SearchService } from '../shared/search.service';
   styleUrls: ['./search-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

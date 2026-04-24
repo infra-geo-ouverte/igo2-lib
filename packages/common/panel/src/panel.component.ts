@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
@@ -6,7 +5,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   templateUrl: './panel.component.html',
   styleUrls: ['./panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass],
   host: {
     '[class.igo-panel-with-header]': 'withHeader()'
   }

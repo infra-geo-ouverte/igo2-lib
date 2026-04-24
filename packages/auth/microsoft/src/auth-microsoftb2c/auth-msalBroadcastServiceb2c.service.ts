@@ -42,7 +42,8 @@ export class MsalBroadcastServiceb2c {
         this.authService
           .getLogger()
           .verbose(
-            `BroadcastService - ${message.eventType} results in setting inProgress to ${status}`
+            `BroadcastService - ${message.eventType} results in setting inProgress to ${status}`,
+            message.correlationId
           );
         this._inProgress.next(status);
       }

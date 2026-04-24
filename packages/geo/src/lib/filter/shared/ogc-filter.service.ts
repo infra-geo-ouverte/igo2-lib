@@ -44,13 +44,14 @@ export class OGCFilterService {
       );
     }
 
-    let interfaceFilters: OgcInterfaceFilterOptions[];
     if (!ogcFilters.interfaceOgcFilters) {
-      interfaceFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-        ogcFilters.filters,
-        geometryField
-      );
+      ogcFilters.interfaceOgcFilters =
+        ogcFilterWriter.defineInterfaceFilterSequence(
+          ogcFilters.filters,
+          geometryField
+        );
     } else {
+      let interfaceFilters: OgcInterfaceFilterOptions[];
       if (!ogcFilters.advancedOgcFilters) {
         interfaceFilters = this.mergeInterfaceFilters(
           ogcFilters.filters,

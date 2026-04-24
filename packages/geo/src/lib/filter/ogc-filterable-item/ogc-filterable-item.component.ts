@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,11 +36,9 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
   templateUrl: './ogc-filterable-item.component.html',
   styleUrls: ['./ogc-filterable-item.component.scss'],
   imports: [
-    NgClass,
     MatListModule,
     MatIconModule,
     CollapseDirective,
-    NgStyle,
     MatTooltipModule,
     MatButtonModule,
     LayerLegendComponent,

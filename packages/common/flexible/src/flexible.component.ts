@@ -18,8 +18,7 @@ import { FlexibleDirection, FlexibleState } from './flexible.type';
 @Component({
   selector: 'igo-flexible',
   templateUrl: './flexible.component.html',
-  styleUrls: ['./flexible.component.scss'],
-  standalone: true
+  styleUrls: ['./flexible.component.scss']
 })
 export class FlexibleComponent implements OnInit, OnDestroy {
   private el = inject(ElementRef);

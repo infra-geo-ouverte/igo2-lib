@@ -7,8 +7,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoDragAndDrop]',
-  standalone: true
+  selector: '[igoDragAndDrop]'
 })
 export class DragAndDropDirective {
   readonly allowedExtensions = input<string[]>([]);
@@ -17,7 +16,7 @@ export class DragAndDropDirective {
 
   protected readonly filesInvalid = output<File[]>();
 
-  @HostBinding('style.background') private background = 'inherit';
+  @HostBinding('style.background') background = 'inherit';
 
   @HostListener('dragover', ['$event'])
   public onDragOver(evt) {

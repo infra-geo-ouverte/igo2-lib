@@ -3,7 +3,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
-  HostListener,
   ViewContainerRef,
   inject,
   input,
@@ -16,7 +15,10 @@ import { filter, take } from 'rxjs/operators';
 
 @Directive({
   selector: '[igoContextMenu]',
-  standalone: true
+  host: {
+    '(longpress)': 'onContextMenu($any($event))',
+    '(contextmenu)': 'onContextMenu($event)'
+  }
 })
 export class ContextMenuDirective {
   overlay = inject(Overlay);
@@ -34,9 +36,7 @@ export class ContextMenuDirective {
     y: number;
   }>();
 
-  @HostListener('longpress', ['$event'])
-  @HostListener('contextmenu', ['$event'])
-  public onContextMenu(e: MouseEvent | TouchEvent): void {
+  onContextMenu(e: MouseEvent | TouchEvent): void {
     let x;
     let y;
     if (e instanceof MouseEvent) {

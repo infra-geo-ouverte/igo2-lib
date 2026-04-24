@@ -1,4 +1,4 @@
-<div class="igo-search-bar-container" [ngClass]="{ empty: empty$ | async }">
+<div class="igo-search-bar-container" [class.empty]="empty$ | async">
   <mat-form-field [floatLabel]="floatLabel()" [appearance]="appearance()">
     @if (label()) {
       <mat-label>{{ label() }}</mat-label>
@@ -7,7 +7,7 @@
       #input
       matInput
       autocomplete="off"
-      [ngClass]="{ hasSearchIcon: showSearchButton }"
+      [class.hasSearchIcon]="showSearchButton"
       [disabled]="disabled$ | async"
       [placeholder]="
         placeholder()

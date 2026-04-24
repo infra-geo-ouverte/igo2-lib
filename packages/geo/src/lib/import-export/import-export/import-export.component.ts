@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   OnDestroy,
@@ -99,7 +99,6 @@ type SelectMode = 'import' | 'export';
     MatButtonModule,
     SpinnerComponent,
     CustomHtmlComponent,
-    NgClass,
     MatSlideToggleModule,
     MatInputModule,
     AsyncPipe,

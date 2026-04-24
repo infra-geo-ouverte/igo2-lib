@@ -1,6 +1,6 @@
 <igo-geometry-form-field-input
   [formControl]="formControl"
-  [map]="map"
+  [map]="map()"
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
@@ -194,7 +194,7 @@
   <button
     matButton="elevated"
     class="remove-button"
-    [disabled]="allLayers.length === 0"
+    [disabled]="allLayers().length === 0"
     (click)="clearButton()"
   >
     {{ 'igo.geo.spatialFilter.removeLayer' | translate }}

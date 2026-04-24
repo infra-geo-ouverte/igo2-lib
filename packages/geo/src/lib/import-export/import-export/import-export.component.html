@@ -126,9 +126,9 @@
             </mat-select-trigger>
             @for (layer of exportableLayers$ | async; track layer) {
               <mat-option
-                [ngClass]="{
-                  'igo-export-layer-mat-option': layerHasSelectedFeatures(layer)
-                }"
+                [class.igo-export-layer-mat-option]="
+                  layerHasSelectedFeatures(layer)
+                "
                 [value]="layer.id"
                 (click)="$event.stopPropagation()"
               >

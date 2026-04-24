@@ -228,8 +228,6 @@ export class ShareMapLegacyParser {
     }
     let visibleOnLayersParams = '';
     let visibleOffLayersParams = '';
-    let visiblelayers: string[] = [];
-    let invisiblelayers: string[] = [];
     if (queryParams['visiblelayers']) {
       visibleOnLayersParams = queryParams['visiblelayers'];
     }
@@ -247,8 +245,8 @@ export class ShareMapLegacyParser {
     }
 
     // After, managing named layer by id (context.json OR id from datasource)
-    visiblelayers = visibleOnLayersParams.split(',');
-    invisiblelayers = visibleOffLayersParams.split(',');
+    const visiblelayers = visibleOnLayersParams.split(',');
+    const invisiblelayers = visibleOffLayersParams.split(',');
     if (
       visiblelayers.indexOf(currentLayerid) > -1 ||
       visiblelayers.indexOf(currentLayerid.toString()) > -1

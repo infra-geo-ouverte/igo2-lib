@@ -1,4 +1,4 @@
-<div [ngClass]="{ 'separate-item': header() === true }">
+<div [class.separate-item]="header() === true">
   <mat-list-item>
     @if (header()) {
       <mat-icon
@@ -14,7 +14,7 @@
     @if (header()) {
       <span
         matListItemTitle
-        [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
+        [style.cursor]="filtersCollapsed ? 'default' : 'pointer'"
         [matTooltip]="layer().title"
         matTooltipShowDelay="500"
         (click)="toggleLegendOnClick()"
@@ -50,8 +50,7 @@
           "
           (click)="toggleLayerVisibility()"
         >
-          <mat-icon
-            [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+          <mat-icon [class.disabled]="(inResolutionRange$ | async) === false"
             >{{ layer().visible ? 'visibility' : 'visibility_off' }}
           </mat-icon>
         </button>

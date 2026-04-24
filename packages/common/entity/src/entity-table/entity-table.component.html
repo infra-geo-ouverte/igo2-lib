@@ -1,4 +1,4 @@
-<div class="table-container" [ngStyle]="{ height: tableHeight }">
+<div class="table-container" [style.height]="tableHeight">
   <table
     id="currentWorkspaceTable"
     mat-table
@@ -188,13 +188,17 @@
                           "
                           [value]="row.cellData[column.name].value"
                         >
-                          <mat-option
-                            *ngFor="let option of column.domainValues"
-                            [value]="option.id"
-                            [disabled]="option.disabled"
-                          >
-                            {{ option.value }}
-                          </mat-option>
+                          @for (
+                            option of $any(column).domainValues;
+                            track option
+                          ) {
+                            <mat-option
+                              [value]="option.id"
+                              [disabled]="option.disabled"
+                            >
+                              {{ option.value }}
+                            </mat-option>
+                          }
                         </mat-select>
                       }
                       @case ('autocomplete') {
@@ -222,14 +226,14 @@
                           "
                           panelWidth="430px"
                         >
-                          <mat-option
-                            *ngFor="
-                              let option of filteredOptions[column.name] | async
-                            "
-                            [value]="option.id"
-                          >
-                            {{ option.value }}
-                          </mat-option>
+                          @for (
+                            option of filteredOptions[column.name] | async;
+                            track option
+                          ) {
+                            <mat-option [value]="option.id">
+                              {{ option.value }}
+                            </mat-option>
+                          }
                         </mat-autocomplete>
                       }
                       @default {

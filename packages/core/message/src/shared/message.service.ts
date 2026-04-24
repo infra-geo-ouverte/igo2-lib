@@ -36,7 +36,7 @@ export class MessageService {
       if (this.toastr.toasts.length === 0) {
         this.activeMessageTranslations = [];
       }
-      this.toastr.toasts.map((toast) => {
+      this.toastr.toasts.map((toast: ActiveToast<any>) => {
         const activeMessageTranslation = this.activeMessageTranslations.find(
           (amt) => amt.id === toast.toastId
         );

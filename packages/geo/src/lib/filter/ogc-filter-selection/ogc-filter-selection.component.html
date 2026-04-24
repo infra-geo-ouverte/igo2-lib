@@ -43,7 +43,7 @@
                   tooltip-position="below"
                   matTooltipShowDelay="500"
                   matTooltipClass="material-tooltip"
-                  [ngStyle]="getButtonColor(ogcPushButton)"
+                  [style]="getButtonColor(ogcPushButton)"
                   [checked]="ogcPushButton.enabled"
                   (change)="
                     onSelectionChange(ogcPushButton, selector.selectorType)
