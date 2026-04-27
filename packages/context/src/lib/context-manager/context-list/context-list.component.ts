@@ -29,6 +29,7 @@ import {
 } from '@igo2/common/action';
 import { CollapsibleComponent } from '@igo2/common/collapsible';
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
+import { IgoIconComponent } from '@igo2/common/icon';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -37,6 +38,10 @@ import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 import { type IgoMap, MapService, isLayerItemOptions } from '@igo2/geo';
 
+import {
+  SORT_ALPHA_OFF_ICON,
+  SORT_ALPHA_ON_ICON
+} from 'packages/common/icon/src/shared/icons';
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { debounceTime, switchMap, take, tap } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
@@ -77,7 +82,8 @@ import { ContextListControlsEnum } from './context-list.enum';
     ListItemDirective,
     AsyncPipe,
     KeyValuePipe,
-    IgoLanguageModule
+    IgoLanguageModule,
+    IgoIconComponent
   ]
 })
 export class ContextListComponent implements OnInit, OnDestroy {
@@ -101,6 +107,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
   private previousMessageId: number;
+
+  sortAlphaOnIcon = SORT_ALPHA_ON_ICON;
+  sortAlphaOffIcon = SORT_ALPHA_OFF_ICON;
 
   @Input() isDesktop: boolean;
   @Input()

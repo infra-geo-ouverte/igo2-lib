@@ -30,16 +30,19 @@
 
     <div class="actions-container">
       <button
-        class="sort-alpha"
-        [class.--active]="sortedAlpha"
         mat-icon-button
         [matTooltip]="
-          'igo.context.contextManager.sortAlphabetically' | translate
+          sortedAlpha
+            ? ('igo.context.contextManager.sortDefault' | translate)
+            : ('igo.context.contextManager.sortAlphabetically' | translate)
         "
         matTooltipShowDelay="500"
         (click)="toggleSort()"
       >
-        <mat-icon color="primary">sort_by_alpha</mat-icon>
+        <igo-icon
+          color="primary"
+          [icon]="sortedAlpha ? sortAlphaOnIcon : sortAlphaOffIcon"
+        />
       </button>
 
       @if (auth.authenticated && contextConfigs) {

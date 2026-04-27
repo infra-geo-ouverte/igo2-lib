@@ -58,6 +58,7 @@
         "sharedContexts": "Shared contexts",
         "filterPlaceHolder": "Filter by name",
         "sortAlphabetically": "Sort alphabetically",
+        "sortDefault": "Sort by default",
         "sortContextOrder": "Replace according to the creation date",
         "userAccount": "User account",
         "filterUser": "Filter by user group",
