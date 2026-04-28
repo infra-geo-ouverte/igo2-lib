@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -47,7 +47,8 @@ import { Catalog } from '../shared/catalog.abstract';
     AsyncPipe,
     IgoLanguageModule,
     FormComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    NgTemplateOutlet
   ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
