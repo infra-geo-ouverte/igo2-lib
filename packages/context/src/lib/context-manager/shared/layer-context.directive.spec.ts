@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Params } from '@angular/router';
 
-import { ConfigService } from '@igo2/core/config';
 import { RouteServiceOptions } from '@igo2/core/route';
 import {
   AnyLayer,
@@ -15,12 +14,9 @@ import {
   WMTSDataSource,
   WMTSDataSourceOptions
 } from '@igo2/geo';
-import { LayerService } from '@igo2/geo';
-import { StyleListService, StyleService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { mergeTestConfig } from '../../../../test-config';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextService } from './context.service';
 import { LayerContextDirective } from './layer-context.directive';
@@ -78,50 +74,38 @@ function createWmsLayer(options: ImageLayerOptions): ImageLayer {
 
 describe('LayerContextDirective', () => {
   let directive: LayerContextDirective;
-  let mockContextService: jasmine.SpyObj<ContextService>;
-  let mockShareMapService: jasmine.SpyObj<ShareMapService>;
+  let mockContextService: ContextService;
+  let mockShareMapService: ShareMapService;
   let mockWmsLayer: AnyLayer;
   let mockWmtsLayer: AnyLayer;
-
+  const queryParams$ = new BehaviorSubject<Params>({});
   beforeEach(() => {
-    const mockRouteService = jasmine.createSpyObj(
-      'RouteService',
-      ['queryParams'],
-      {
-        options: ROUTE_OPTION_MOCK
-      }
-    );
-    mockContextService = jasmine.createSpyObj('ContextService', [], {
+    const mockRouteService = {
+      queryParams: queryParams$,
+      options: ROUTE_OPTION_MOCK // Simple property assignment
+    };
+    mockContextService = {
       context$: new BehaviorSubject({ uri: 'mockContextUri' })
+    } as ContextService;
+
+    mockShareMapService = {
+      getContext: vi.fn().mockReturnValue('mockContextUri'),
+      optionsLegacy: {},
+      keysDefinitions: {},
+      routeService: mockRouteService
+    } as unknown as ShareMapService;
+
+    TestBed.configureTestingModule({
+      providers: [
+        LayerContextDirective,
+        { provide: MapBrowserComponent, useValue: {} },
+        { provide: ContextService, useValue: mockContextService },
+        { provide: ShareMapService, useValue: mockShareMapService }
+      ]
     });
-    mockShareMapService = jasmine.createSpyObj(
-      'ShareMapService',
-      ['getContext'],
-      {
-        optionsLegacy: {},
-        keysDefinitions: {},
-        routeService: mockRouteService
-      }
-    );
-    mockShareMapService.getContext.and.returnValue('mockContextUri');
 
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        providers: [
-          LayerContextDirective,
-          { provide: MapBrowserComponent, useValue: {} },
-          { provide: ContextService, useValue: mockContextService },
-          { provide: LayerService, useValue: {} },
-          { provide: ConfigService, useValue: {} },
-          { provide: StyleListService, useValue: {} },
-          { provide: StyleService, useValue: {} },
-          { provide: ShareMapService, useValue: mockShareMapService }
-        ]
-      })
-    );
-
-    mockWmsLayer = createWmsLayer(imageLayerOptions);
-    mockWmtsLayer = createWmtsLayer(tileLayerOptions);
+    mockWmsLayer = createWmsLayer({ ...imageLayerOptions });
+    mockWmtsLayer = createWmtsLayer({ ...tileLayerOptions });
     directive = TestBed.inject(LayerContextDirective);
   });
 

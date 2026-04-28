@@ -76,7 +76,7 @@ describe('ShareMapEncoder', () => {
     SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
     const origin = globalThis?.location?.origin ?? '';
     const pathname = globalThis?.location?.pathname ?? '';
-    const search = globalThis?.location?.search ?? '';
+    const search = '';
     const hash = globalThis?.location?.hash ?? '';
     mockDocument = {
       location: {

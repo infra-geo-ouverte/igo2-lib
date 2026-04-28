@@ -1,18 +1,9 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../test-config';
 import { ActivityService } from './activity.service';
 
 describe('ActivityService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        providers: [ActivityService]
-      })
-    );
-  });
-
-  it('should ...', inject([ActivityService], (service: ActivityService) => {
+  it('should create', inject([ActivityService], (service: ActivityService) => {
     expect(service).toBeTruthy();
   }));
 });

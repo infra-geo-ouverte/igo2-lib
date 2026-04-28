@@ -6,7 +6,7 @@ import {
 
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
-  [BrowserTestingModule],
+  BrowserTestingModule,
   platformBrowserTesting(),
   {
     teardown: { destroyAfterEach: false }

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IgoCustomHtmlModule } from '@igo2/common/custom-html';
-import { IgoLanguageModule } from '@igo2/core/language';
+import { provideConfig } from '@igo2/core/config';
+import { provideMockTranslation } from '@igo2/core/language';
 
 import { AboutToolComponent } from './about-tool.component';
 
@@ -11,8 +11,15 @@ describe('AboutToolComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IgoLanguageModule, IgoCustomHtmlModule],
-      declarations: [AboutToolComponent]
+      imports: [AboutToolComponent],
+      providers: [
+        provideMockTranslation(),
+        provideConfig({
+          default: {
+            version: { app: '1.0.0' }
+          }
+        })
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AboutToolComponent);

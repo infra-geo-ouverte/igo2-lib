@@ -16,7 +16,7 @@
       },
       "architect": {
         "build": {
-          "defaultConfiguration": "developpement",
+          "defaultConfiguration": "development",
           "builder": "@angular/build:application",
           "options": {
             "aot": true,
@@ -145,7 +145,7 @@
                 }
               ]
             },
-            "developpement": {
+            "development": {
               "optimization": false,
               "sourceMap": true,
               "namedChunks": false,
@@ -168,12 +168,6 @@
             }
           }
         },
-        "extract-i18n": {
-          "builder": "@angular/build:extract-i18n",
-          "options": {
-            "buildTarget": "demo:build"
-          }
-        },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
@@ -185,24 +179,11 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "projects/demo/src/test.ts",
-            "tsConfig": "projects/demo/tsconfig.spec.json",
-            "karmaConfig": "projects/demo/karma.conf.js",
-            "styles": ["projects/demo/src/styles.scss"],
-            "stylePreprocessorOptions": {
-              "includePaths": ["node_modules"]
-            },
-            "scripts": [],
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "projects/demo/public",
-                "output": ""
-              }
-            ],
-            "codeCoverage": true
+            "runnerConfig": "projects/demo/vitest.config.ts",
+            "browsers": ["chromium"],
+            "coverage": true
           }
         },
         "e2e": {
@@ -246,16 +227,17 @@
             "production": {
               "project": "packages/auth/ng-package.json",
               "tsConfig": "packages/auth/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/auth/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "packages/auth/src/test.ts",
-            "tsConfig": "packages/auth/tsconfig.spec.json",
-            "karmaConfig": "packages/auth/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/auth/vitest.config.ts",
+            "coverage": true
           }
         },
         "lint": {
@@ -292,16 +274,17 @@
             "production": {
               "project": "packages/common/ng-package.json",
               "tsConfig": "packages/common/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/common/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "packages/common/src/test.ts",
-            "tsConfig": "packages/common/tsconfig.spec.json",
-            "karmaConfig": "packages/common/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/common/vitest.config.ts",
+            "coverage": true
           }
         },
         "lint": {
@@ -338,16 +321,18 @@
             "production": {
               "project": "packages/core/ng-package.json",
               "tsConfig": "packages/core/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/core/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "packages/core/test.ts",
-            "tsConfig": "packages/core/tsconfig.spec.json",
-            "karmaConfig": "packages/core/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/core/vitest.config.ts",
+            "providersFile": "packages/core/src/test-providers.ts",
+            "coverage": true
           }
         },
         "lint": {
@@ -384,16 +369,19 @@
             "production": {
               "project": "packages/geo/ng-package.json",
               "tsConfig": "packages/geo/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/geo/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "packages/geo/src/test.ts",
-            "tsConfig": "packages/geo/tsconfig.spec.json",
-            "karmaConfig": "packages/geo/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/geo/vitest.config.ts",
+            "providersFile": "packages/geo/src/test-providers.ts",
+            "browsers": ["chromium"],
+            "coverage": true
           }
         },
         "lint": {
@@ -424,6 +412,9 @@
             "production": {
               "project": "packages/utils/ng-package.json",
               "tsConfig": "packages/utils/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/utils/tsconfig.lib.json"
             }
           }
         },
@@ -438,11 +429,10 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "packages/utils/tsconfig.spec.json",
-            "karmaConfig": "packages/utils/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/utils/vitest.config.ts",
+            "coverage": true
           }
         }
       }
@@ -469,16 +459,19 @@
             "production": {
               "project": "packages/context/ng-package.json",
               "tsConfig": "packages/context/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/context/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "packages/context/src/test.ts",
-            "tsConfig": "packages/context/tsconfig.spec.json",
-            "karmaConfig": "packages/context/karma.conf.js",
-            "codeCoverage": true
+            "runnerConfig": "packages/context/vitest.config.ts",
+            "providersFile": "packages/context/src/test-providers.ts",
+            "browsers": ["chromium"],
+            "coverage": true
           }
         },
         "lint": {
@@ -515,7 +508,17 @@
             "production": {
               "project": "packages/integration/ng-package.json",
               "tsConfig": "packages/integration/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "packages/integration/tsconfig.lib.json"
             }
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "runnerConfig": "packages/integration/vitest.config.ts",
+            "coverage": true
           }
         },
         "lint": {
