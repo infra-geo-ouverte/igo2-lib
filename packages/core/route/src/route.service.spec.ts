@@ -1,28 +1,22 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
 
-import { mergeTestConfig } from '../../test-config';
 import { RouteService } from './route.service';
 
 describe('RouteService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [RouterTestingModule],
-        providers: [
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              queryParams: of({ zoom: 8 })
-            }
-          },
-          RouteService
-        ]
-      })
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParams: of({ zoom: 8 })
+          }
+        }
+      ]
+    });
   });
 
   it('should create the service', inject(

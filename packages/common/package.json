@@ -69,6 +69,9 @@
     "./custom-html": {
       "import": "./custom-html/src/public_api.ts"
     },
+    "./datepicker": {
+      "import": "./datepicker/src/public_api.ts"
+    },
     "./dom": {
       "import": "./dom/src/public_api.ts"
     },
@@ -111,6 +114,9 @@
     "./panel": {
       "import": "./panel/src/public_api.ts"
     },
+    "./resizable-bar": {
+      "import": "./resizable-bar/src/public_api.ts"
+    },
     "./select-value-dialog": {
       "import": "./select-value-dialog/src/public_api.ts"
     },
@@ -125,6 +131,9 @@
     },
     "./table": {
       "import": "./table/src/public_api.ts"
+    },
+    "./timepicker": {
+      "import": "./timepicker/src/public_api.ts"
     },
     "./tool": {
       "import": "./tool/src/public_api.ts"

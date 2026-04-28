@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, Injector, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -32,65 +33,68 @@ export class MessageService {
 
   constructor() {
     this.options = this.configService.getConfig('message');
-    this.languageService.language$.pipe(debounceTime(500)).subscribe(() => {
-      if (this.toastr.toasts.length === 0) {
-        this.activeMessageTranslations = [];
-      }
-      this.toastr.toasts.map((toast: ActiveToast<any>) => {
-        const activeMessageTranslation = this.activeMessageTranslations.find(
-          (amt) => amt.id === toast.toastId
-        );
-        if (activeMessageTranslation) {
-          const translatedTextInterpolateParams = {
-            ...activeMessageTranslation.textInterpolateParams
-          };
-          const translatedTitleInterpolateParams = {
-            ...activeMessageTranslation.titleInterpolateParams
-          };
+    this.languageService.language$
+      .pipe(debounceTime(500), takeUntilDestroyed())
+      .subscribe(() => {
+        if (this.toastr.toasts.length === 0) {
+          this.activeMessageTranslations = [];
+        }
+        this.toastr.toasts.forEach((toast) => {
+          const activeMessageTranslation = this.activeMessageTranslations.find(
+            (amt) => amt.id === toast.toastId
+          );
+          if (activeMessageTranslation) {
+            const translatedTextInterpolateParams = {
+              ...activeMessageTranslation.textInterpolateParams
+            };
+            const translatedTitleInterpolateParams = {
+              ...activeMessageTranslation.titleInterpolateParams
+            };
 
-          if (activeMessageTranslation.textInterpolateParams) {
-            Object.keys(activeMessageTranslation.textInterpolateParams).map(
-              (k) => {
+            if (activeMessageTranslation.textInterpolateParams) {
+              Object.keys(
+                activeMessageTranslation.textInterpolateParams
+              ).forEach((k) => {
                 if (k) {
                   translatedTextInterpolateParams[k] =
                     this.languageService.translate.instant(
                       activeMessageTranslation.textInterpolateParams[k]
                     );
                 }
-              }
-            );
-          }
-          if (activeMessageTranslation.titleInterpolateParams) {
-            Object.keys(activeMessageTranslation.titleInterpolateParams).map(
-              (k) => {
+              });
+            }
+            if (activeMessageTranslation.titleInterpolateParams) {
+              Object.keys(
+                activeMessageTranslation.titleInterpolateParams
+              ).forEach((k) => {
                 if (k) {
                   translatedTitleInterpolateParams[k] =
                     this.languageService.translate.instant(
                       activeMessageTranslation.titleInterpolateParams[k]
                     );
                 }
-              }
-            );
-          }
+              });
+            }
 
-          forkJoin([
-            this.languageService.translate.get(
-              activeMessageTranslation.textKey,
-              translatedTextInterpolateParams
-            ),
-            this.languageService.translate.get(
-              activeMessageTranslation.titleKey,
-              translatedTitleInterpolateParams
-            )
-          ])
-            .pipe(first())
-            .subscribe((res: [string, string]) => {
-              toast.toastRef.componentInstance.message = res[0];
-              toast.toastRef.componentInstance.title = res[1];
-            });
-        }
+            forkJoin([
+              this.languageService.translate.get(
+                activeMessageTranslation.textKey,
+                translatedTextInterpolateParams
+              ),
+              this.languageService.translate.get(
+                activeMessageTranslation.titleKey,
+                translatedTitleInterpolateParams
+              )
+            ])
+              .pipe(first())
+              .subscribe((res: [string, string]) => {
+                const instance = toast.toastRef.componentInstance as any;
+                instance.message = res[0];
+                instance.title = res[1];
+              });
+          }
+        });
       });
-    });
   }
 
   private get toastr(): ToastrService {
@@ -298,7 +302,7 @@ export class MessageService {
     const translatedTitlenterpolateParams = { ...titleInterpolateParams };
 
     if (textInterpolateParams) {
-      Object.keys(textInterpolateParams).map((k) => {
+      Object.keys(textInterpolateParams).forEach((k) => {
         const value = textInterpolateParams[k];
         if (value) {
           translatedTextInterpolateParams[k] =
@@ -309,7 +313,7 @@ export class MessageService {
       });
     }
     if (titleInterpolateParams) {
-      Object.keys(titleInterpolateParams).map((k) => {
+      Object.keys(titleInterpolateParams).forEach((k) => {
         if (k) {
           const value = titleInterpolateParams[k];
           translatedTitlenterpolateParams[k] =

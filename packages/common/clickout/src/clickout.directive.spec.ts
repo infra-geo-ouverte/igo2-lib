@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { mergeTestConfig } from '../../test-config';
 import { ClickoutDirective } from './clickout.directive';
 
 @Component({
@@ -15,11 +14,9 @@ describe('ClickoutDirective', () => {
   let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [TestHostComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [TestHostComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
     fixture.detectChanges();

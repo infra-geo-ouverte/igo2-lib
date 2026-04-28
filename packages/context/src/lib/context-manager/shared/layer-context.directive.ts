@@ -72,7 +72,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.context$$.unsubscribe();
+    this.context$$?.unsubscribe();
   }
 
   private handleContextChange(context: DetailedContext) {

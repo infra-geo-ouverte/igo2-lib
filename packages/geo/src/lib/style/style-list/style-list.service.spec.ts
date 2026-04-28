@@ -1,19 +1,12 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../../../test-config';
 import { StyleListService } from './style-list.service';
 
 describe('StyleListService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [],
-        providers: [StyleListService]
-      })
-    );
-  });
-
-  it('should ...', inject([StyleListService], (service: StyleListService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('should create', inject(
+    [StyleListService],
+    (service: StyleListService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });
