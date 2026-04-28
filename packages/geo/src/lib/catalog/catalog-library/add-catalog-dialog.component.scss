@@ -1,29 +1,33 @@
-:host {
-  mat-tab-group {
-    padding: 10px;
-  }
-  igo-form {
-    overflow: hidden;
-  }
+h4 {
+  padding: 0 12px;
+}
 
-  .actions-container {
-    button:not(:last-child) {
-      margin-right: 8px;
-    }
-  }
-  .form-container {
-    width: 100%;
+mat-tab-group {
+  padding: 12px;
+}
+
+igo-form {
+  overflow: hidden;
+  padding: 0 12px 12px 12px;
+}
+
+.actions-container {
+  display: flex;
+  column-gap: 8px;
+}
+
+.form-container {
+  width: 100%;
+  height: auto;
+  padding-top: 12px;
+
+  igo-form-field {
+    display: block;
     height: auto;
-    padding: 10px;
-
-    igo-form-field {
-      display: block;
-      height: auto;
-    }
   }
-  .error {
-    overflow-wrap: break-word;
-    padding: 0 20px;
-    color: red;
-  }
+}
+.error {
+  overflow-wrap: break-word;
+  padding: 0 20px;
+  color: red;
 }

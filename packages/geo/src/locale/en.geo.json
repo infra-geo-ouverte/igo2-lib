@@ -21,6 +21,7 @@
         },
         "library.predefined.select": "Select a catalog",
         "library.custom.title": "Title",
+        "library.cancel": "Cancel",
         "library.add": "Add this catalog to the list",
         "library.predefined": "Predefined list",
         "library.custom": "Advanced configuration",

@@ -1,60 +1,87 @@
-<mat-tab-group
-  [selectedIndex]="
-    !data.addedCatalog ||
-    (data.error && data.isPredefinedCatalog && data.predefinedCatalogs.length)
-      ? 0
-      : 1
-  "
->
-  <mat-tab
-    [label]="'igo.geo.catalog.library.predefined' | translate"
-    [disabled]="!data.predefinedCatalogs.length"
-  >
-    @if (predefinedForm$ | async; as form) {
-      <igo-form
-        [form]="form"
-        [formData]="data$ | async"
-        (submitForm)="onPredefinedSubmit($any($event))"
-      >
-        @if (form.fields.length) {
-          <div class="form-container">
-            @for (field of form.fields; track field) {
-              <igo-form-field [field]="field" />
-            }
-          </div>
-        }
-        <div formButtons class="actions-container">
-          <button matButton="filled" type="submit" color="primary">
-            {{ 'igo.geo.catalog.library.add' | translate }}
-          </button>
-        </div>
-      </igo-form>
-    }
-  </mat-tab>
+<h4>{{ 'igo.geo.catalog.library.addBtn' | translate }}</h4>
 
-  <mat-tab class="tabs" [label]="'igo.geo.catalog.library.custom' | translate">
-    @if (customForm$ | async; as form) {
-      <igo-form
-        [form]="form"
-        [formData]="customData$ | async"
-        (submitForm)="onCustomSubmit($any($event))"
-      >
-        @if (form.fields.length) {
-          <div class="form-container">
-            @for (field of form.fields; track field) {
-              <igo-form-field [field]="field" />
-            }
-          </div>
-        }
-        <div formButtons class="actions-container">
-          <button matButton="filled" type="submit" color="primary">
-            {{ 'igo.geo.catalog.library.add' | translate }}
-          </button>
+<ng-template #customTab>
+  @let form = customForm$ | async;
+
+  @if (form) {
+    <igo-form
+      [form]="form"
+      [formData]="customData$ | async"
+      (submitForm)="onCustomSubmit($any($event))"
+    >
+      @if (form.fields.length) {
+        <div class="form-container">
+          @for (field of form.fields; track field) {
+            <igo-form-field [field]="field" />
+          }
         </div>
-      </igo-form>
-    }
-  </mat-tab>
-</mat-tab-group>
+      }
+      <div formButtons class="actions-container">
+        <button matButton="filled" type="submit" color="primary">
+          {{ 'igo.geo.catalog.library.add' | translate }}
+        </button>
+        <button
+          matButton="outlined"
+          type="button"
+          color="primary"
+          (click)="dialogRef.close()"
+        >
+          {{ 'igo.geo.catalog.library.cancel' | translate }}
+        </button>
+      </div>
+    </igo-form>
+  }
+</ng-template>
+
+@if (data.predefinedCatalogs.length) {
+  <mat-tab-group
+    [selectedIndex]="
+      !data.addedCatalog ||
+      (data.error && data.isPredefinedCatalog && data.predefinedCatalogs.length)
+        ? 0
+        : 1
+    "
+  >
+    <mat-tab [label]="'igo.geo.catalog.library.predefined' | translate">
+      @let form = predefinedForm$ | async;
+
+      @if (form) {
+        <igo-form
+          [form]="form"
+          [formData]="data$ | async"
+          (submitForm)="onPredefinedSubmit($any($event))"
+        >
+          @if (form.fields.length) {
+            <div class="form-container">
+              @for (field of form.fields; track field) {
+                <igo-form-field [field]="field" />
+              }
+            </div>
+          }
+          <div formButtons class="actions-container">
+            <button matButton="filled" type="submit" color="primary">
+              {{ 'igo.geo.catalog.library.add' | translate }}
+            </button>
+            <button
+              matButton="outlined"
+              type="button"
+              color="primary"
+              (click)="dialogRef.close()"
+            >
+              {{ 'igo.geo.catalog.library.cancel' | translate }}
+            </button>
+          </div>
+        </igo-form>
+      }
+    </mat-tab>
+
+    <mat-tab [label]="'igo.geo.catalog.library.custom' | translate">
+      <ng-container *ngTemplateOutlet="customTab" />
+    </mat-tab>
+  </mat-tab-group>
+} @else {
+  <ng-container *ngTemplateOutlet="customTab" />
+}
 
 @if (data.error && data.addedCatalog) {
   <p class="error">
