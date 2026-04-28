@@ -29,8 +29,11 @@ import {
 } from '@igo2/common/action';
 import { CollapsibleComponent } from '@igo2/common/collapsible';
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
-import { IgoIconComponent } from '@igo2/common/icon';
-import { SORT_ALPHA_OFF_ICON, SORT_ALPHA_ON_ICON } from '@igo2/common/icon';
+import {
+  IgoIconComponent,
+  SORT_ALPHA_OFF_ICON,
+  SORT_ALPHA_ON_ICON
+} from '@igo2/common/icon';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
