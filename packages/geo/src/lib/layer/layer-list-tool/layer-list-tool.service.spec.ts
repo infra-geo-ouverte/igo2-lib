@@ -1,26 +1,21 @@
-// import { InjectionToken } from '@angular/core';
-// import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-// import { TEST_CONFIG } from '../../../test-config';
-// import { LayerListToolService } from './layer-list-tool.service';
+import { FormDialogService } from '@igo2/common/form';
 
-// describe('LayerListToolService', () => {
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({
-//       ...TEST_CONFIG,
-//       providers: [
-//         LayerListToolService,
-//         InjectionToken,
-//         NgxIndexedDBService,
-//         ...TEST_CONFIG.providers
-//       ]
-//     });
-//   });
+import { LayerService } from '../shared';
+import { LayerListToolService } from './layer-list-tool.service';
 
-//   it('should ...', inject(
-//     [LayerListToolService],
-//     (service: LayerListToolService) => {
-//       expect(service).toBeTruthy();
-//     }
-//   ));
-// });
+describe('LayerListToolService', () => {
+  let service: LayerListToolService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [LayerListToolService, LayerService, FormDialogService]
+    });
+    service = TestBed.inject(LayerListToolService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

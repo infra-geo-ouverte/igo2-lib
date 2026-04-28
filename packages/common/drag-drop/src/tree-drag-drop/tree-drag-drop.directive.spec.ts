@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree, MatTreeModule, MatTreeNode } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 
-import { mergeTestConfig } from '../../../test-config';
 import { TreeDragDropDirective } from './tree-drag-drop.directive';
 import { DropPositionType } from './tree-drag-drop.interface';
 import { ITREE_ITEM_MOCK, TREE_MOCK } from './tree-drag-drop.mock';
@@ -29,8 +28,7 @@ import { ITREE_ITEM_MOCK, TREE_MOCK } from './tree-drag-drop.mock';
       </mat-tree-node>
     </mat-tree>
   `,
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
-  standalone: false
+  imports: [MatTreeModule, TreeDragDropDirective]
 })
 class TestComponent {
   readonly tree = viewChild(MatTree);
@@ -49,12 +47,9 @@ describe('DragDropTreeDirective', () => {
   let treeNodesDebug: DebugElement[];
 
   beforeEach(() => {
-    fixture = TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [MatTreeModule, TreeDragDropDirective],
-        declarations: [TestComponent]
-      })
-    ).createComponent(TestComponent);
+    fixture = TestBed.configureTestingModule({
+      imports: [TestComponent]
+    }).createComponent(TestComponent);
 
     fixture.detectChanges();
     const debugElement = fixture.debugElement.query(
@@ -82,8 +77,8 @@ describe('DragDropTreeDirective', () => {
     const dragStartEvent = new DragEvent('dragstart');
     const dragEndEvent = new DragEvent('dragend');
 
-    spyOn(directive, 'onDragStart').and.callThrough();
-    spyOn(directive, 'dragEnd').and.callThrough();
+    vi.spyOn(directive, 'onDragStart');
+    vi.spyOn(directive, 'dragEnd');
 
     treeNode.dispatchEvent(dragStartEvent);
     expect(directive.onDragStart).toHaveBeenCalled();
@@ -116,8 +111,8 @@ describe('DragDropTreeDirective', () => {
 
     treeNodeDragged.dispatchEvent(dragStartEvent);
 
-    spyOn(directive, 'dragOver').and.callThrough();
-    spyOn(directive, 'dragLeave').and.callThrough();
+    vi.spyOn(directive, 'dragOver');
+    vi.spyOn(directive, 'dragLeave');
 
     treeNode.dispatchEvent(dragOverEvent);
     expect(directive.dragOver).toHaveBeenCalled();
@@ -137,8 +132,8 @@ describe('DragDropTreeDirective', () => {
     treeNodeDragged.dispatchEvent(dragStartEvent);
     treeNode.dispatchEvent(dragOverEvent);
 
-    spyOn(directive, 'drop').and.callThrough();
-    spyOn(directive.dropped, 'emit').and.callThrough();
+    vi.spyOn(directive, 'drop');
+    vi.spyOn(directive.dropped, 'emit');
 
     directive.drop(dropEvent);
     expect(directive.drop).toHaveBeenCalledWith(dropEvent);
@@ -149,13 +144,13 @@ describe('DragDropTreeDirective', () => {
     const ref = fixture.componentInstance.dataSource[1];
     const position: DropPositionType = 'inside';
 
-    spyOn<any>(directive, 'getPosition').and.returnValue({
+    vi.spyOn(directive as any, 'getPosition').mockReturnValue({
       x: 0,
       y: 0,
       level: 1,
       type: position
     });
-    spyOn(directive.dropped, 'emit').and.callThrough();
+    vi.spyOn(directive.dropped, 'emit');
 
     directive.draggedNode = draggedNode;
     directive.dropNodeTarget.set(ref);
@@ -173,14 +168,14 @@ describe('DragDropTreeDirective', () => {
     const targetGroup = fixture.componentInstance.dataSource[0]; // Node 1
     const position: DropPositionType = 'inside';
 
-    spyOn<any>(directive, 'getPosition').and.returnValue({
+    vi.spyOn(directive as any, 'getPosition').mockReturnValue({
       x: 0,
       y: 0,
       level: 1, // Dropping inside level 0 -> level 1
       type: position
     });
-    spyOn(directive.dropped, 'emit').and.callThrough();
-    spyOn(directive.droppedError, 'emit').and.callThrough();
+    vi.spyOn(directive.dropped, 'emit');
+    vi.spyOn(directive.droppedError, 'emit');
 
     directive.draggedNode = draggedGroup;
     directive.dropNodeTarget.set(targetGroup);

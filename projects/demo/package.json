@@ -10,7 +10,7 @@
     "lint.fix": "ng lint demo --fix",
     "e2e": "ng run demo:e2e:production",
     "e2e.local": "ng run demo:e2e:local",
-    "test": "ng test demo --watch=false --browsers=ChromeHeadless",
+    "test": "ng test demo --watch=false",
     "test.watch": "ng test demo",
     "circular-deps": "madge --circular --extensions ts ./src"
   }

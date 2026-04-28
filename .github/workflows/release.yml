@@ -45,8 +45,11 @@ jobs:
       - name: Quality
         run: npm run circular-deps & npm run lint & npm run format.check
 
+      - name: Install Playwright dependencies
+        run: npx playwright install --with-deps chromium
+
       - name: Test
-        run: npm run e2e & npm run test
+        run: npm run e2e & npm run test.ci
 
       - name: Release
         env:

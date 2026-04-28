@@ -1,18 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { provideMockTranslation } from '@igo2/core/language';
 
-import { mergeTestConfig } from '../../../../test-config';
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
@@ -24,37 +13,20 @@ describe('SearchSettingsComponent', () => {
   let fixture: ComponentFixture<SearchSettingsComponent>;
 
   beforeEach(async () => {
-    const spy = jasmine.createSpyObj('SearchSourceService', [
-      'getSources',
-      'getEnabledSources'
-    ]);
-    spy.getSources = jasmine.createSpy().and.returnValue([]);
-    spy.getEnabledSources = jasmine.createSpy().and.returnValue([]);
-
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [
-          CommonModule,
-          MatTooltipModule,
-          MatIconModule,
-          MatButtonModule,
-          MatMenuModule,
-          MatRadioModule,
-          MatCheckboxModule,
-          MatDividerModule,
-          MatSlideToggleModule,
-          MatIconTestingModule,
-          SearchSettingsComponent
-        ],
-        providers: [
-          { provide: SearchSourceService, useValue: spy },
-          provideMockTranslation(),
-          provideDefaultIChercheSearchResultFormatter(),
-          provideDefaultCoordinatesSearchResultFormatter(),
-          provideILayerSearchResultFormatter()
-        ]
-      })
-    ).compileComponents();
+    const searchSourceService = {
+      getSources: vi.fn(() => []),
+      getEnabledSources: vi.fn(() => [])
+    };
+    await TestBed.configureTestingModule({
+      imports: [SearchSettingsComponent],
+      providers: [
+        { provide: SearchSourceService, useValue: searchSourceService },
+        provideMockTranslation(),
+        provideDefaultIChercheSearchResultFormatter(),
+        provideDefaultCoordinatesSearchResultFormatter(),
+        provideILayerSearchResultFormatter()
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SearchSettingsComponent);
     component = fixture.componentInstance;

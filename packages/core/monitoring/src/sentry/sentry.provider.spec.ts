@@ -32,8 +32,8 @@ describe('Provide Sentry monitoring', () => {
     const providers = provideSentryMonitoring(options);
 
     expect(providers).toEqual(
-      jasmine.arrayContaining([
-        jasmine.objectContaining({ provide: ErrorHandler })
+      expect.arrayContaining([
+        expect.objectContaining({ provide: ErrorHandler })
       ])
     );
   });

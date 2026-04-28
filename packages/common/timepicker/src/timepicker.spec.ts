@@ -1,14 +1,7 @@
-import { DatePipe } from '@angular/common';
-import { Renderer2 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TimeFrame } from '@igo2/utils';
 
-import { mergeTestConfig } from '../../test-config';
 import { TimepickerComponent } from './timepicker.component';
 
 describe('TimepickerComponent', () => {
@@ -16,19 +9,9 @@ describe('TimepickerComponent', () => {
   let fixture: ComponentFixture<TimepickerComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [
-          TimepickerComponent,
-          BrowserAnimationsModule,
-          FormsModule,
-          MatFormFieldModule,
-          ReactiveFormsModule,
-          MatSelectModule
-        ],
-        providers: [DatePipe, Renderer2]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [TimepickerComponent]
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -22,7 +22,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint integration",
     "lint.fix": "ng lint integration --fix",
-    "test": "",
+    "test": "ng test integration --watch=false",
     "watch": "ng build integration --watch"
   },
   "exports": {
