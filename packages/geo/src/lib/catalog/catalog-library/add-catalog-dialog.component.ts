@@ -79,14 +79,14 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
       return { value: t, title: t };
     });
     this.storeViewAll$$ = this.data.store.view.all$().subscribe(() => {
-      const predefinedChoices = this.data.predefinedCatalogs
-        .filter((c) => !this.data.store.get(c.id))
-        .map((predefinedCatalog) => {
+      const predefinedChoices = this.data.predefinedCatalogs.map(
+        (predefinedCatalog) => {
           return {
             value: predefinedCatalog.id,
             title: predefinedCatalog.title
           };
-        });
+        }
+      );
 
       const predefinedFieldConfigs = [
         {
