@@ -301,9 +301,14 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     }
   }
 
+  private toggleLegend(collapsed: boolean) {
+    this.layer().legendCollapsed = collapsed;
+    this.showLegend$.next(!collapsed);
+  }
+
   toggleLegendOnClick() {
     if (!this.filtersCollapsed) {
-      this.showLegend$.next(!this.showLegend$.value);
+      this.toggleLegend(this.showLegend$.value);
     }
   }
 

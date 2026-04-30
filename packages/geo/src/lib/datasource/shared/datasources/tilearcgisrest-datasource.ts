@@ -1,9 +1,9 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 import { Options } from 'ol/source/TileArcGISRest';
 
-import { Legend } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
+import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 
 export class TileArcGISRestDataSource extends DataSource {
@@ -42,23 +42,37 @@ export class TileArcGISRestDataSource extends DataSource {
     return new olSourceTileArcGISRest(this.options as Options);
   }
 
-  public onUnwatch() {
-    // empty
-  }
-
-  getLegend(): Legend {
+  getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
+    const legend = super.getLegend();
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
+      return legend;
+    }
 
     if (!legendInfo) {
       return;
     }
-    let htmlString = '';
+    let htmlString = '<table>';
 
     for (const legendElement of legendInfo.legend) {
       const src = `${this.options.url}/${legendInfo.layerId}/images/${legendElement.url}`;
       const label = legendElement.label.replace('<Null>', 'Null');
-      htmlString += `<tr><td align='left'><img src="${src}" alt ='' /></td><td>${label}</td></tr>`;
+      htmlString +=
+        `<tr><td align='left'><img src="` +
+        src +
+        `" alt ='' /></td><td >` +
+        label +
+        '</td></tr>';
     }
-    return { html: `<table>${htmlString}</table>` };
+    htmlString += '</table>';
+    return [{ html: htmlString }];
+  }
+
+  public onUnwatch() {
+    // empty
   }
 }

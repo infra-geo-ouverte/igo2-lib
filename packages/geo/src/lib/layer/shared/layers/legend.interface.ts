@@ -1,16 +1,26 @@
-export interface Legend {
-  title?: string;
+import { MapViewOptions } from '../../../map/shared/map.interface';
+
+export interface LegendOptions {
+  collapsed?: boolean;
+  display?: boolean;
   url?: string;
   html?: string;
+  stylesAvailable?: ItemStyleOptions[];
 }
 
-export interface LegendsSpecifications {
-  legends?: Legend[];
-  handleLegendMethod?: 'merge' | 'impose';
+export interface LegendMapViewOptions extends MapViewOptions {
+  scale?: number;
+  size?: [number, number];
 }
 
-export interface LegendState {
-  // refer to import { LayerId } from './layer.interface'; prevent circular dependency!
-  id: string | number;
-  shown?: boolean;
+export interface ItemStyleOptions {
+  name: string;
+  title?: string;
+}
+
+export interface OutputLayerLegend {
+  title: string;
+  url: string;
+  display: boolean;
+  isInResolutionsRange: boolean;
 }

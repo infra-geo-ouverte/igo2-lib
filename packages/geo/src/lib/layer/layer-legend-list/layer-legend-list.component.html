@@ -17,7 +17,11 @@
   <igo-list [navigation]="false" [selection]="false">
     @for (layer of layersLegend(); track layer; let i = $index) {
       @if (!(excludeBaseLayers() && isLayerItem(layer) && layer.baseLayer)) {
-        <igo-layer-legend-item igoListItem [layer]="$any(layer)" />
+        <igo-layer-legend-item
+          igoListItem
+          [layer]="$any(layer)"
+          [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
+        />
       }
     }
   </igo-list>

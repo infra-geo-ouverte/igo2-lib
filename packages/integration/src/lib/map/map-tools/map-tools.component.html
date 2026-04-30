@@ -51,6 +51,7 @@
         [showAllLegendsValue]="showAllLegendsValue$ | async"
         (allLegendsShown)="onShowAllLegends($event)"
         [excludeBaseLayers]="excludeBaseLayers"
+        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
       />
     }
     @if ((layers$ | async).length !== 0) {

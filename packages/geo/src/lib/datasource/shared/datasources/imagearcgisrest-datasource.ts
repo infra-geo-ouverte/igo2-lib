@@ -1,8 +1,8 @@
 import ImageArcGISRest from 'ol/source/ImageArcGISRest';
 
-import { Legend } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
+import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
 
 export class ImageArcGISRestDataSource extends DataSource {
@@ -57,23 +57,37 @@ export class ImageArcGISRestDataSource extends DataSource {
     });
   }
 
-  public onUnwatch() {
-    // empty
-  }
-
-  getLegend(): Legend {
+  getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
+    const legend = super.getLegend();
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
+      return legend;
+    }
 
     if (!legendInfo) {
       return;
     }
-    let htmlString = '';
+    let htmlString = '<table>';
 
     for (const legendElement of legendInfo.legend) {
       const src = `${this.options.url}/${legendInfo.layerId}/images/${legendElement.url}`;
       const label = legendElement.label.replace('<Null>', 'Null');
-      htmlString += `<tr><td align='left'><img src="${src}" alt ='' /></td><td>${label}</td></tr>`;
+      htmlString +=
+        `<tr><td align='left'><img src="` +
+        src +
+        `" alt ='' /></td><td >` +
+        label +
+        '</td></tr>';
     }
-    return { html: `<table>${htmlString}</table>` };
+    htmlString += '</table>';
+    return [{ html: htmlString }];
+  }
+
+  public onUnwatch() {
+    // empty
   }
 }

@@ -17,9 +17,10 @@ import {
   TimeFilterType
 } from '../../filter/shared/time-filter.enum';
 import { TimeFilterOptions } from '../../filter/shared/time-filter.interface';
-import { LayerOptions } from '../../layer/shared/layers/layer.interface';
-import { Legend } from '../../layer/shared/layers/legend.interface';
-import { MapExtent } from '../../map/shared/map.interface';
+import type {
+  ItemStyleOptions,
+  LegendOptions
+} from '../../layer/shared/layers/legend.interface';
 import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import {
@@ -35,10 +36,7 @@ import { ArcGISRestDataSourceOptions } from './datasources/arcgisrest-datasource
 import { CartoDataSourceOptions } from './datasources/carto-datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './datasources/imagearcgisrest-datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './datasources/tilearcgisrest-datasource.interface';
-import {
-  WMSDataSourceOptions,
-  WmsLayerFromCapabilitiesParsing
-} from './datasources/wms-datasource.interface';
+import { WMSDataSourceOptions } from './datasources/wms-datasource.interface';
 import { WMTSDataSourceOptions } from './datasources/wmts-datasource.interface';
 
 @Injectable({
@@ -246,12 +244,11 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions,
     capabilities: any
   ): WMSDataSourceOptions {
-    const wmsLayersParam = baseOptions.params.LAYERS;
-    const layer: WmsLayerFromCapabilitiesParsing =
-      this.findDataSourceInCapabilities(
-        capabilities.Capability.Layer,
-        wmsLayersParam
-      );
+    const layers = (baseOptions.params as any).LAYERS;
+    const layer = this.findDataSourceInCapabilities(
+      capabilities.Capability.Layer,
+      layers
+    );
 
     if (!layer) {
       throw {
@@ -261,11 +258,12 @@ export class CapabilitiesService {
       };
     }
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
-    const abstract = layer.Abstract;
-    const keywordList = layer.KeywordList;
+    const abstract = layer.Abstract ? layer.Abstract : undefined;
+    const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
     let queryable = layer.queryable;
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
+    const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
     let isExtentInGeographic = true;
     if (layer.EX_GeographicBoundingBox) {
       layer.EX_GeographicBoundingBox.forEach((coord, index) => {
@@ -281,11 +279,11 @@ export class CapabilitiesService {
     }
 
     const extent = isExtentInGeographic
-      ? (olproj.transformExtent(
+      ? olproj.transformExtent(
           layer.EX_GeographicBoundingBox,
           'EPSG:4326',
-          this.mapService.getMap().projectionCode
-        ) as MapExtent)
+          this.mapService.getMap().projection
+        )
       : undefined;
 
     let queryFormat: QueryFormat;
@@ -315,6 +313,15 @@ export class CapabilitiesService {
       queryable = false;
     }
 
+    if (baseOptions.params.STYLES) {
+      const style = legendOptions?.stylesAvailable?.find(
+        (style) => style.name === baseOptions.params.STYLES
+      );
+      if (!style) {
+        delete baseOptions.params.STYLES;
+      }
+    }
+
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
@@ -327,8 +334,8 @@ export class CapabilitiesService {
           abstract,
           keywordList
         },
-        legendsSpecifications: { legends: this.getLegendsFromWmsStyle(layer) }
-      } as LayerOptions,
+        legendOptions
+      },
       queryable,
       queryFormat,
       timeFilter: timeFilterable ? timeFilter : undefined,
@@ -532,7 +539,7 @@ export class CapabilitiesService {
     }
   }
 
-  getTimeFilter(layer: WmsLayerFromCapabilitiesParsing): TimeFilterOptions {
+  getTimeFilter(layer): TimeFilterOptions {
     let dimension;
 
     if (layer.Dimension) {
@@ -553,23 +560,24 @@ export class CapabilitiesService {
     }
   }
 
-  public getLegendsFromWmsStyle(
-    layer: WmsLayerFromCapabilitiesParsing
-  ): Legend[] {
-    const legends = [];
-    layer.Style.forEach((s) => {
-      const url = s.LegendURL[0].OnlineResource;
-      if (url.includes(`layer=${layer.Name}`)) {
-        if (s.Title === 'default' && s.Name === 'default') {
-          // skip for mapserver default style
-        } else {
-          legends.push({
-            url: url,
-            title: s.Title ?? s.Name
-          } satisfies Legend);
-        }
-      }
-    });
-    return legends.length ? legends : undefined;
+  getStyle(Style): LegendOptions {
+    const styleOptions: ItemStyleOptions[] = Style.map((style) => {
+      return {
+        name: style.Name,
+        title: style.Title
+      };
+    })
+      // Handle repeat the style "default" in output  (MapServer or OpenLayer)
+      .filter(
+        (item, index, self) =>
+          self.findIndex((i: ItemStyleOptions) => i.name === item.name) ===
+          index
+      );
+
+    const legendOptions: LegendOptions = {
+      stylesAvailable: styleOptions
+    } as LegendOptions;
+
+    return legendOptions;
   }
 }

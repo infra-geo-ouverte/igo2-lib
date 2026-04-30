@@ -3,6 +3,7 @@
     igoLayerLegendListBinding
     [excludeBaseLayers]="excludeBaseLayers"
     [allowShowAllLegends]="allowShowAllLegends()"
+    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
     [showAllLegendsValue]="showAllLegendsValue$ | async"
     (allLegendsShown)="onShowAllLegends($event)"
   />

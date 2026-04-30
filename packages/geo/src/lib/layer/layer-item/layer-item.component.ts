@@ -5,7 +5,6 @@ import {
   HostBinding,
   OnDestroy,
   OnInit,
-  effect,
   inject,
   input,
   output,
@@ -21,7 +20,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
-import { StorageService } from '@igo2/core/storage';
 
 import { Subscription } from 'rxjs';
 
@@ -32,7 +30,6 @@ import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerVisibilityButtonComponent } from '../layer-visibility-button';
 import type { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
-import { LegendState } from '../shared/layers/legend.interface';
 
 @Component({
   selector: 'igo-layer-item',
@@ -54,7 +51,6 @@ import { LegendState } from '../shared/layers/legend.interface';
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
   private networkService = inject(NetworkService);
-  private storageservice = inject(StorageService);
 
   showLegend = signal(true);
   inResolutionRange = true;
@@ -103,13 +99,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       : 'igo.geo.layer.showLayer';
   }
 
-  constructor() {
-    effect(() => {
-      this.showLegend();
-      this.maintainLegendStateStorage();
-    });
-  }
-
   ngOnInit() {
     this.layer().displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
@@ -121,12 +110,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       layer.firstLoadComponent === true
     ) {
       layer.firstLoadComponent = false;
-      this.showLegend.set(true);
+      layer.legendCollapsed = false;
     }
-    const legendState = this.getLegendState();
-    if (legendState?.shown !== undefined) {
-      this.showLegend.set(legendState?.shown);
-    }
+
+    this.toggleLegend(layer.legendCollapsed);
     this.updateQueryBadge();
 
     const resolution$ = layer.map.viewController.resolution$;
@@ -143,36 +130,13 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       });
   }
 
-  private getLegendStates(): LegendState[] {
-    return (this.storageservice.get('legendStates') as LegendState[]) ?? [];
-  }
-  private getLegendState(): LegendState {
-    const legendsStates = this.getLegendStates();
-    return legendsStates.find((l) => l.id === this.layer().id);
-  }
-
-  maintainLegendStateStorage() {
-    let legendStates = this.getLegendStates();
-    let legendState = this.getLegendState();
-    if (!legendState) {
-      legendState = {
-        id: this.layer().id,
-        shown: undefined
-      };
-    }
-    legendState.shown = this.showLegend();
-
-    legendStates = legendStates.filter((l) => l.id !== legendState.id);
-    legendStates.push(legendState);
-    this.storageservice.set('legendStates', legendStates);
-  }
-
   ngOnDestroy() {
     this.resolution$$?.unsubscribe();
     this.network$$?.unsubscribe();
   }
 
   toggleLegend(collapsed: boolean) {
+    this.layer().legendCollapsed = collapsed;
     this.showLegend.set(!collapsed);
   }
 
@@ -219,7 +183,14 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   private onResolutionChange() {
-    this.inResolutionRange = this.layer().isInResolutionsRange;
+    const inResolutionRange = this.layer().isInResolutionsRange;
+    if (
+      inResolutionRange === false &&
+      this.viewerOptions().legend.updateOnResolutionChange === true
+    ) {
+      this.toggleLegend(true);
+    }
+    this.inResolutionRange = inResolutionRange;
   }
 
   private updateQueryBadge() {
