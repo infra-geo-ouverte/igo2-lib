@@ -185,23 +185,6 @@
             "browsers": ["chromium"],
             "coverage": true
           }
-        },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "configFile": "projects/demo/e2e/cypress.config.ts",
-            "devServerTarget": "demo:serve",
-            "browser": "chrome"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "demo:serve:production"
-            },
-            "local": {
-              "watch": true,
-              "headless": false
-            }
-          }
         }
       }
     },
