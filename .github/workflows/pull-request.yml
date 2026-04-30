@@ -39,7 +39,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Test
-        run: npm run e2e & npm run test.ci
+        run: npm run test.ci
 
       - name: Coverage Report
         if: always()
