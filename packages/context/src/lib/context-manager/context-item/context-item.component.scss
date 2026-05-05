@@ -1,9 +1,23 @@
 :host {
   overflow: hidden;
+
+  &:hover .igo-actions-container button,
+  &.igo-list-item-focused .igo-actions-container button,
+  .--not-desktop button,
+  .--selected button {
+    visibility: visible !important;
+  }
 }
 
 .igo-actions-container {
   flex-shrink: 0;
+  button {
+    visibility: hidden;
+
+    &.disabled {
+      visibility: visible;
+    }
+  }
 }
 
 .igo-actions-expand-container {
@@ -14,10 +28,10 @@ mat-icon.disabled {
   color: rgba(0, 0, 0, 0.38);
 }
 
-.mdc-list-item--with-leading-avatar .mdc-list-item__start {
-  margin: 0 8px 0 0;
+button[matlistitemavatar] {
+  margin-right: 8px;
 }
 
-button[matlistitemavatar] {
-  background-color: inherit;
+.mdc-list-item--with-leading-avatar .mat-mdc-list-item-avatar {
+  background-color: transparent;
 }

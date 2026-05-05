@@ -1,6 +1,6 @@
 import { DomUtils } from './dom.utils';
 
-const PATH_PREBUILT_THEMES = 'assets/igo2/core/theming/prebuilt-themes';
+const PATH_PREBUILT_THEMES = 'igo2/core/theming/prebuilt-themes';
 const LINK_ID = 'theme-styles';
 
 export function loadTheme(

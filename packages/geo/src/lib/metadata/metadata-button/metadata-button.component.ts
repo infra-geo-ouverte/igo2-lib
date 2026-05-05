@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   ViewEncapsulation,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -43,16 +43,16 @@ export class MetadataButtonComponent {
   private metadataService = inject(MetadataService);
   private dialog = inject(MatDialog);
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() color = 'primary';
+  readonly color = input('primary');
 
   openMetadata(metadata: MetadataOptions) {
     if (metadata.extern) {
       if (!metadata.url && metadata.abstract) {
         this.dialog.open(MetadataAbstractComponent, {
           data: {
-            layerTitle: this.layer.title,
+            layerTitle: this.layer().title,
             abstract: metadata.abstract,
             type: metadata.type
           }
@@ -63,7 +63,7 @@ export class MetadataButtonComponent {
     } else if (!metadata.extern && metadata.abstract) {
       this.dialog.open(MetadataAbstractComponent, {
         data: {
-          layerTitle: this.layer.title,
+          layerTitle: this.layer().title,
           abstract: metadata.abstract,
           type: metadata.type
         }
@@ -72,10 +72,11 @@ export class MetadataButtonComponent {
   }
 
   get options(): MetadataLayerOptions {
-    if (!this.layer) {
+    const layer = this.layer();
+    if (!layer) {
       return;
     }
-    return this.layer.options;
+    return layer.options;
   }
 }
 

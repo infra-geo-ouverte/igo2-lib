@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -25,18 +25,18 @@ export class FormGroupComponent {
   /**
    * Form field group
    */
-  @Input() group: FormFieldGroup;
+  readonly group = input<FormFieldGroup>(undefined);
 
   /**
    * Field placeholder
    */
-  @Input() errors: Record<string, string>;
+  readonly errors = input<Record<string, string>>(undefined);
 
   /**
    * Form group control
    */
   get formControl(): UntypedFormGroup {
-    return this.group.control;
+    return this.group().control;
   }
 
   /**
@@ -72,7 +72,7 @@ export class FormGroupComponent {
    * Get error message
    */
   getErrorMessage(): string {
-    const options = this.group.options || {};
+    const options = this.group().options || {};
     return getControlErrorMessage(this.formControl, options.errors || {});
   }
 }

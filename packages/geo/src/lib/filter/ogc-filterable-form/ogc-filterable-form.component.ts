@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
@@ -30,26 +30,28 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
   ]
 })
 export class OgcFilterableFormComponent {
-  @Input() datasource: OgcFilterableDataSource;
+  readonly datasource = input<OgcFilterableDataSource>(undefined);
 
-  @Input() map: MapBase;
+  readonly map = input<MapBase>(undefined);
 
-  @Input() refreshFilters: () => void;
+  readonly refreshFilters = input<() => void>(undefined);
 
   get refreshFunc() {
-    return this.refreshFilters;
+    return this.refreshFilters();
   }
 
   get advancedOgcFilters(): boolean {
-    if (this.datasource.options.ogcFilters) {
-      return this.datasource.options.ogcFilters.advancedOgcFilters;
+    const datasource = this.datasource();
+    if (datasource.options.ogcFilters) {
+      return datasource.options.ogcFilters.advancedOgcFilters;
     }
     return;
   }
 
   get currentFilter(): any {
-    return this.datasource.options.ogcFilters.interfaceOgcFilters
-      ? this.datasource.options.ogcFilters.interfaceOgcFilters[0]
+    const datasource = this.datasource();
+    return datasource.options.ogcFilters.interfaceOgcFilters
+      ? datasource.options.ogcFilters.interfaceOgcFilters[0]
       : undefined;
   }
 

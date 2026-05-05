@@ -1,19 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnChanges,
   OnDestroy,
-  Output,
-  ViewChild,
-  inject
+  inject,
+  input,
+  output,
+  viewChild
 } from '@angular/core';
-import {
-  MatPaginator,
-  MatPaginatorModule,
-  PageEvent
-} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
@@ -44,42 +39,36 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   private entitySortChange$$: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
-  @Input() entitySortChange$ = new BehaviorSubject<boolean>(false);
+  readonly entitySortChange$ = input(new BehaviorSubject<boolean>(false));
   /**
    * Entity store
    */
-  @Input() store: EntityStore<object>;
+  readonly store = input<EntityStore<object>>(undefined);
 
   /**
    * Paginator options
    */
-  @Input()
-  paginatorOptions: EntityTablePaginatorOptions;
-
-  /**
-   * Event emitted when the paginator changes the page size or page index.
-   */
-  @Output() page: EventEmitter<PageEvent>;
+  readonly paginatorOptions = input<EntityTablePaginatorOptions>(undefined);
 
   public length = 0;
 
   /**
    * Paginator emitted.
    */
-  @Output() paginatorChange: EventEmitter<MatPaginator> =
-    new EventEmitter<MatPaginator>();
+  readonly paginatorChange = output<MatPaginator>();
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  readonly paginator = viewChild(MatPaginator);
 
   ngOnChanges() {
     this.unsubscribeAll();
-    this.count$$ = this.store.stateView.count$.subscribe((count) => {
+    this.count$$ = this.store().stateView.count$.subscribe((count) => {
       this.length = count;
       this.emitPaginator();
     });
-    this.entitySortChange$$ = this.entitySortChange$.subscribe(() => {
-      if (this.paginator) {
-        this.paginator.firstPage();
+    this.entitySortChange$$ = this.entitySortChange$().subscribe(() => {
+      const paginator = this.paginator();
+      if (paginator) {
+        paginator.firstPage();
       }
     });
     this.initPaginatorOptions();
@@ -87,20 +76,20 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   }
 
   initPaginatorOptions() {
-    this.disabled = this.paginatorOptions?.disabled || this.disabled;
-    this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
-    this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
+    this.disabled = this.paginatorOptions()?.disabled || this.disabled;
+    this.pageIndex = this.paginatorOptions()?.pageIndex || this.pageIndex;
+    this.pageSize = this.paginatorOptions()?.pageSize || this.pageSize;
     this.pageSizeOptions =
-      this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
+      this.paginatorOptions()?.pageSizeOptions || this.pageSizeOptions;
     if (this.mediaService.isMobile()) {
       this.showFirstLastButtons = false;
       this.hidePageSize = true;
     } else {
       this.showFirstLastButtons =
-        this.paginatorOptions?.showFirstLastButtons ||
+        this.paginatorOptions()?.showFirstLastButtons ||
         this.showFirstLastButtons;
       this.hidePageSize =
-        this.paginatorOptions?.hidePageSize || this.hidePageSize;
+        this.paginatorOptions()?.hidePageSize || this.hidePageSize;
     }
   }
 
@@ -109,38 +98,38 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
       this.languageService.translate
         .get('igo.common.paginator.firstPageLabel')
         .subscribe((label: string) => {
-          this.paginator._intl.firstPageLabel = label;
+          this.paginator()._intl.firstPageLabel = label;
         })
     );
 
-    this.paginator._intl.getRangeLabel = this.rangeLabel;
+    this.paginator()._intl.getRangeLabel = this.rangeLabel;
 
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.itemsPerPageLabel')
         .subscribe((label: string) => {
-          this.paginator._intl.itemsPerPageLabel = label;
+          this.paginator()._intl.itemsPerPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.lastPageLabel')
         .subscribe((label: string) => {
-          this.paginator._intl.lastPageLabel = label;
+          this.paginator()._intl.lastPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.nextPageLabel')
         .subscribe((label: string) => {
-          this.paginator._intl.nextPageLabel = label;
+          this.paginator()._intl.nextPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.previousPageLabel')
         .subscribe((label: string) => {
-          this.paginator._intl.previousPageLabel = label;
+          this.paginator()._intl.previousPageLabel = label;
         })
     );
   }
@@ -182,6 +171,6 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   }
 
   emitPaginator() {
-    this.paginatorChange.emit(this.paginator);
+    this.paginatorChange.emit(this.paginator());
   }
 }

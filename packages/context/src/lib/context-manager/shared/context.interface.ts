@@ -13,11 +13,11 @@ import { FeatureCollection } from 'geojson';
 import { TypePermission } from './context.enum';
 
 export interface Context {
-  id?: string;
+  id?: number;
   title?: string;
   uri?: string;
   scope?: string; // Scope: 'public' | 'protected' | 'private';
-  permission?: string; // TypePermission: 'read' | 'write'
+  permission?: TypePermission;
   description?: string;
   icon?: string;
   iconImage?: string;
@@ -49,6 +49,16 @@ export interface DetailedContext extends Context {
   extraFeatures?: ExtraFeatures[];
 }
 
+export interface ContextDetailedChanges extends Pick<DetailedContext, 'id'> {
+  layers: IProcessChanges<AnyLayerOptions>;
+}
+
+export interface IProcessChanges<T> {
+  created: T[];
+  updated: T[];
+  deleted: number[];
+}
+
 export interface ContextMapView extends MapViewOptions {
   keepCurrentView?: boolean;
   homeExtent?: ContextHomeExtent;
@@ -73,25 +83,6 @@ export interface ContextServiceOptions {
   basePath?: string;
   contextListFile?: string;
   defaultContextUri?: string;
-}
-
-export interface ContextPermission {
-  id?: string;
-  contextId?: string;
-  profil: string;
-  profilTitle?: string;
-  typePermission: TypePermission;
-}
-
-export interface ContextPermissionsList {
-  read: ContextPermission[];
-  write: ContextPermission[];
-}
-
-export interface ContextUserPermission {
-  name: string;
-  checked: boolean;
-  indeterminate?: boolean;
 }
 
 export interface ContextProfils {

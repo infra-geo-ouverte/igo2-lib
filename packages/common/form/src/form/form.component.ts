@@ -3,12 +3,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnChanges,
-  Output,
   SimpleChanges,
-  ViewChild
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -31,27 +30,27 @@ export class FormComponent implements OnChanges {
   /**
    * Form
    */
-  @Input() form: Form;
+  readonly form = input<Form>(undefined);
 
   /**
    * Input data
    */
-  @Input() formData: Record<string, any>;
+  readonly formData = input<Record<string, any>>(undefined);
 
   /**
    * Form autocomplete
    */
-  @Input() autocomplete = 'off';
+  readonly autocomplete = input('off');
 
   /**
    * Event emitted when the form is submitted
    */
-  @Output() submitForm = new EventEmitter<Record<string, any>>();
+  readonly submitForm = output<Record<string, any>>();
 
-  @ViewChild('buttons', { static: true }) buttons: ElementRef;
+  readonly buttons = viewChild<ElementRef>('buttons');
 
   get hasButtons(): boolean {
-    return this.buttons.nativeElement.children.length !== 0;
+    return this.buttons().nativeElement.children.length !== 0;
   }
 
   /**
@@ -84,18 +83,18 @@ export class FormComponent implements OnChanges {
 
   getData(): Record<string, any> {
     const data = {};
-    getAllFormFields(this.form).forEach((field: FormField) => {
+    getAllFormFields(this.form()).forEach((field: FormField) => {
       this.updateDataWithFormField(data, field);
     });
     return data;
   }
 
   private setData(data: Record<string, any>) {
-    this.form.fields.forEach((field: FormField) => {
+    this.form().fields.forEach((field: FormField) => {
       field.control.setValue(t(data, field.name).safeObject);
     });
 
-    this.form.groups.forEach((group: FormFieldGroup) => {
+    this.form().groups.forEach((group: FormFieldGroup) => {
       group.fields.forEach((field: FormField) => {
         field.control.setValue(t(data, field.name).safeObject);
       });
@@ -113,6 +112,6 @@ export class FormComponent implements OnChanges {
    * Clear form
    */
   private clear() {
-    this.form.control.reset();
+    this.form().control.reset();
   }
 }

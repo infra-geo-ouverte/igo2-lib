@@ -39,10 +39,7 @@
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test.libs": "npm run test --workspace=packages",
     "compodoc": "npx compodoc -p tsconfig.json",
-    "circular-deps": "madge --circular --extensions ts packages",
-    "publish": "node --import tsx scripts/src/publish.mts",
-    "pre-release": "node --import tsx scripts/src/pre-release.mts",
-    "release": "node --import tsx scripts/src/release.mts"
+    "circular-deps": "madge --circular --extensions ts packages"
   },
   "dependencies": {
     "@angular/animations": "^20.3.3",
@@ -54,8 +51,9 @@
     "@angular/material": "^20.2.7",
     "@angular/platform-browser": "^20.3.3",
     "@angular/router": "^20.3.3",
-    "@igo2/sdg-core": "1.0.0-next.110",
+    "@igo2/sdg-core": "1.1.0-next.16",
     "core-js": "^3.32.2",
+    "jspdf": "^4.0.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.8.0"
   },
@@ -71,7 +69,7 @@
     "@cypress/schematic": "^4.0.0",
     "@semantic-release/exec": "^7.0.0",
     "@semantic-release/git": "^10.0.0",
-    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/github": "^12.0.0",
     "@stylistic/eslint-plugin": "^5.4.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "@types/flexsearch": "^0.7.6",
@@ -81,8 +79,8 @@
     "@types/node": "^24.7.0",
     "@types/tinycolor2": "^1.4.4",
     "angular-eslint": "^20.3.0",
-    "conventional-changelog-cli": "^5.0.0",
-    "cypress": "^15.3.0",
+    "conventional-changelog-cli": "^4.1.0",
+    "cypress": "^4.2.0",
     "eslint": "^9.37.0",
     "execa": "^9.6.0",
     "jasmine-core": "~5.1.0",
@@ -97,7 +95,7 @@
     "ng-packagr": "^20.3.0",
     "prettier": "^3.5.0",
     "sass": "^1.93.0",
-    "semantic-release": "^24.2.0",
+    "semantic-release": "^25.0.2",
     "tsx": "^4.20.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.0"

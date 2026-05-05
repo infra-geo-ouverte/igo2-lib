@@ -1,38 +1,50 @@
 import {
-  ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
 import { ContextFormComponent } from '../context-form/context-form.component';
+import { ContextService } from '../shared';
 import { Context } from '../shared/context.interface';
 
 @Component({
   selector: 'igo-context-edit',
-  templateUrl: './context-edit.component.html',
-  imports: [ContextFormComponent, IgoLanguageModule]
+  imports: [ContextFormComponent, IgoLanguageModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './context-edit.component.html'
 })
 export class ContextEditComponent {
-  private cd = inject(ChangeDetectorRef);
+  private contextService = inject(ContextService);
+  private messageService = inject(MessageService);
 
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.refresh();
-  }
-  private _context: Context;
+  readonly context = toSignal(this.contextService.editedContext$);
 
-  @Output() submitForm = new EventEmitter<Context>();
+  readonly submitSuccessed = output<Context>();
 
-  refresh() {
-    this.cd.detectChanges();
+  onEdit(context: Context) {
+    const id = this.context().id;
+    this.contextService.update(id, context).subscribe(() => {
+      this.messageService.success(
+        'igo.context.contextManager.dialog.saveMsg',
+        'igo.context.contextManager.dialog.saveTitle',
+        undefined,
+        {
+          value: context.title || this.context().title
+        }
+      );
+      const currentContext = this.contextService.context$.value;
+      if (currentContext && currentContext.id === id) {
+        currentContext.title = context.title;
+        currentContext.uri = context.uri;
+      }
+      this.contextService.setEditedContext(undefined);
+      this.submitSuccessed.emit(context);
+    });
   }
 }

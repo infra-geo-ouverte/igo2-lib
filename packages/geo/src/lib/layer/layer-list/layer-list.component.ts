@@ -1,12 +1,11 @@
-import { SelectionModel } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  input,
+  output,
+  viewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -17,17 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {
-  MatTreeFlatDataSource,
-  MatTreeFlattener,
-  MatTreeModule
-} from '@angular/material/tree';
+import { MatTree, MatTreeModule } from '@angular/material/tree';
 
 import {
   DropPermission,
+  ITreeConfig,
   TreeDragDropDirective,
-  TreeDropEvent,
-  TreeFlatNode
+  TreeDropEvent
 } from '@igo2/common/drag-drop';
 import { IconSvg, VECTOR_SQUARE_ICON } from '@igo2/common/icon';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -42,8 +37,6 @@ import type { AnyLayer } from '../shared/layers/any-layer';
 import type { Layer } from '../shared/layers/layer';
 import type { LayerGroup } from '../shared/layers/layer-group';
 import { isLayerGroup, isLayerItem } from '../utils/layer.utils';
-
-type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
 
 @Component({
   selector: 'igo-layer-list',
@@ -67,99 +60,80 @@ type LayerFlatNode<T = AnyLayer> = TreeFlatNode<T>;
     IgoLanguageModule
   ]
 })
-export class LayerListComponent {
+export class LayerListComponent implements AfterViewInit {
   private messageService = inject(MessageService);
 
-  public toggleOpacity = false;
-  isInit: boolean;
+  toggleOpacity = false;
 
-  @Input({ required: true }) controller: LayerController;
+  expansionKey = (node: AnyLayer) => String(node.id);
 
-  @Input({ required: true })
-  set layers(layers: AnyLayer[]) {
-    this._layers = layers;
-    this.updateDatasource(layers ?? []);
-  }
-  get layers(): AnyLayer[] {
-    return this._layers;
-  }
-  private _layers: AnyLayer[];
+  readonly controller = input.required<LayerController>();
+  readonly layers = input.required<AnyLayer[]>();
+  readonly isDesktop = input<boolean>(undefined);
+  readonly isDragDropDisabled = input<boolean>(undefined);
+  readonly selectAll = input<boolean>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
 
-  @Input() isDesktop: boolean;
-  @Input() isDragDropDisabled: boolean;
-  @Input() selectAll: boolean;
-  @Input() viewerOptions: LayerViewerOptions;
+  readonly activeChange = output<AnyLayer>();
 
-  @Output() activeChange = new EventEmitter<AnyLayer>();
+  readonly tree = viewChild<MatTree<AnyLayer, string>>(MatTree);
 
-  private _transformer = (layer: AnyLayer, level: number): LayerFlatNode => {
-    return {
-      id: layer.id || layer.options.name,
-      isGroup: !!isLayerGroup(layer),
-      descendantLevels: isLayerGroup(layer)
-        ? layer.descendantsLevel
-        : undefined,
-      level: level,
-      data: layer,
-      disabled: false
-    };
+  childrenAccessor = (layer: AnyLayer) => {
+    if (isLayerGroup(layer)) {
+      return layer.children
+        .filter((l) => l.showInLayerList)
+        .sort((a, b) => a.zIndex + b.zIndex);
+    }
+    return [];
   };
 
-  treeControl = new FlatTreeControl<LayerFlatNode>(
-    (node) => node.level,
-    (node) => node.isGroup
-  );
-
-  treeFlattener = new MatTreeFlattener(
-    this._transformer,
-    (node) => node.level,
-    (node) => node.isGroup,
-    (node) =>
-      (node as LayerGroup).children
-        .filter((layer) => layer.showInLayerList)
-        .sort((a, b) => a.zIndex + b.zIndex)
-  );
-
-  dataSource: MatTreeFlatDataSource<AnyLayer, LayerFlatNode>;
-
-  constructor() {
-    this.dataSource = new MatTreeFlatDataSource(
-      this.treeControl,
-      this.treeFlattener,
-      []
-    );
-  }
-
-  isGroup = (_: number, node: LayerFlatNode) => node.isGroup;
-
+  treeConfig: ITreeConfig<AnyLayer> = {
+    isGroup: (layer) => isLayerGroup(layer),
+    descendantLevels: (layer) =>
+      isLayerGroup(layer) ? layer.descendantsLevel : undefined
+  };
+  isNodeGroup = (_: number, node: AnyLayer) => isLayerGroup(node);
   isLayerGroup = isLayerGroup;
   isLayerItem = isLayerItem;
 
-  isSelected = (layer: AnyLayer): boolean => this.controller.isSelected(layer);
+  isSelected = (layer: AnyLayer): boolean =>
+    this.controller().isSelected(layer);
   isDescendantSelection = (layer: AnyLayer): boolean =>
-    this.controller.isDescendantSelection(layer);
+    this.controller().isDescendantSelection(layer);
+
+  ngAfterViewInit(): void {
+    const layers = this.layers();
+    const tree = this.tree();
+
+    if (tree && layers) {
+      this.expandGroup(layers, tree);
+    }
+  }
 
   toggleActive(layer: AnyLayer): void {
-    const isSelected = this.controller.isSelected(layer);
+    const isSelected = this.controller().isSelected(layer);
 
-    this.controller.clearSelection();
+    this.controller().clearSelection();
 
     if (!isSelected) {
-      this.controller.select(layer);
+      this.controller().select(layer);
     }
     this.activeChange.emit(layer);
   }
 
   handleSelect(checked: boolean, layer: AnyLayer): void {
-    checked ? this.controller.select(layer) : this.controller.deselect(layer);
+    checked
+      ? this.controller().select(layer)
+      : this.controller().deselect(layer);
   }
 
   getLayerType(layer: Layer): LayerType | 'measure' | 'draw' {
+    const id = layer.id.toString();
     return layer.type === 'raster'
       ? 'raster'
-      : layer.id.includes('measure')
+      : id.includes('measure')
         ? 'measure'
-        : layer.id.includes('draw')
+        : id.includes('draw')
           ? 'draw'
           : 'vector';
   }
@@ -177,43 +151,46 @@ export class LayerListComponent {
           : VECTOR_SQUARE_ICON;
   }
 
-  dropNode({ node, ref, position }: TreeDropEvent<AnyLayer>): void {
-    let nodesToDrop = [node.data];
+  trackByFn(_index: number, node: AnyLayer): string {
+    return String(node.id);
+  }
 
-    if (this.controller.hasSelection) {
-      // The selection could contains data from the outside the TreeController
-      nodesToDrop = this.controller.selected.filter(
-        (layer) => !!this.findNodeByLayerId(layer.id)
-      );
+  dropNode(event: TreeDropEvent<AnyLayer>): void {
+    const { node, ref, position } = event;
+    let nodesToDrop = [node];
+
+    const controller = this.controller();
+    if (controller.hasSelection) {
+      nodesToDrop = controller.selected;
     }
 
-    if (node.isGroup) {
+    if (isLayerGroup(node)) {
       nodesToDrop = nodesToDrop.filter(
-        (nodeDrop) => !(node.data as LayerGroup).isDescendant(nodeDrop)
+        (nodeDrop) => !node.isDescendant(nodeDrop)
       );
     }
 
-    if (ref.isGroup) {
+    if (isLayerGroup(ref)) {
       const isSelected = nodesToDrop.some((nodeDrop) => nodeDrop.id === ref.id);
       if (isSelected) {
         nodesToDrop = nodesToDrop.filter((nodeDrop) => nodeDrop.id !== ref.id);
       }
     }
 
-    if (!nodesToDrop.includes(node.data)) {
-      nodesToDrop.push(node.data);
+    if (!nodesToDrop.includes(node)) {
+      nodesToDrop.push(node);
     }
 
     switch (position) {
       case 'above':
-        this.controller.moveAbove(ref.data, ...nodesToDrop);
+        controller.moveAbove(ref, ...nodesToDrop);
         break;
       case 'inside':
-        this.controller.moveInside(ref.data as LayerGroup, ...nodesToDrop);
+        controller.moveInside(ref as LayerGroup, ...nodesToDrop);
         break;
 
       default:
-        this.controller.moveBelow(ref.data, ...nodesToDrop);
+        controller.moveBelow(ref, ...nodesToDrop);
         break;
     }
   }
@@ -228,66 +205,36 @@ export class LayerListComponent {
   }
 
   dragStart(): void {
-    if (this.viewerOptions.mode === 'selection') {
+    if (this.viewerOptions().mode === 'selection') {
       return;
     }
 
-    this.controller.clearSelection();
+    this.controller().clearSelection();
   }
 
-  handleNodeToggle(node: LayerFlatNode<LayerGroup>): void {
-    node.data.expanded = this.treeControl.isExpanded(node);
-  }
-
-  private findNodeByLayerId(id: string): LayerFlatNode | undefined {
-    return this.treeControl.dataNodes.find((node) => node.id === id);
-  }
-
-  private updateDatasource(layers: AnyLayer[]): void {
-    const expansionModel = this.treeControl.expansionModel;
-    this.dataSource.data = layers;
-
-    this.isInit
-      ? this.restoreModel(expansionModel, (node) =>
-          this.treeControl.expand(node)
-        )
-      : this.expandGroup(layers);
-
-    if (!this.isInit && layers.length) {
-      this.isInit = true;
+  handleNodeToggle(node: AnyLayer): void {
+    if (!isLayerGroup(node)) {
+      return;
     }
+
+    const tree = this.tree();
+    tree.toggle(node);
+    node.expanded = tree.isExpanded(node);
   }
 
-  /** Recursive */
-  private expandGroup(layers: AnyLayer[]): void {
+  private expandGroup(
+    layers: AnyLayer[],
+    tree: MatTree<AnyLayer, string>
+  ): void {
     layers.forEach((layer) => {
       if (!isLayerGroup(layer)) {
         return;
       }
       if (layer.expanded) {
-        const node = this.findNodeByLayerId(layer.id);
-        if (!node) {
-          return;
-        }
-        this.treeControl.expand(node);
+        tree.expand(layer);
       }
 
-      this.expandGroup(layer.children);
-    });
-  }
-
-  private restoreModel(
-    model: SelectionModel<LayerFlatNode>,
-    callback: (node: LayerFlatNode) => void
-  ) {
-    const ids: string[] = Array.from(model['_selection']).map(
-      (value) => value['id']
-    );
-    model.clear();
-    this.treeControl.dataNodes.forEach((node) => {
-      if (model.isSelected(node) || ids.includes(node.id)) {
-        callback(node);
-      }
+      this.expandGroup(layer.children, tree);
     });
   }
 }

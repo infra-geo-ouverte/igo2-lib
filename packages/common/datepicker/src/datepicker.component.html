@@ -1,0 +1,47 @@
+<mat-form-field subscriptSizing="dynamic">
+  @if (startView() === 'multi-year' && calendarType() === 'year') {
+    <mat-label>
+      {{ placeholder() }}
+    </mat-label>
+  }
+
+  <!-- Text input for displaying the selected date -->
+  <input
+    matInput
+    type="text"
+    name="dateLabel"
+    [formControl]="dateLabelFormControl"
+    [placeholder]="placeholder()"
+    (blur)="handleDateLabelBlur()"
+    [readonly]="todaySelected"
+  />
+  <!-- Hidden input for the actual datepicker -->
+  <input
+    [matDatepicker]="picker"
+    hidden="true"
+    name="date"
+    [formControl]="dateFormControl"
+    [min]="resolveDate(minDate())"
+    [max]="resolveDate(maxDate())"
+    [matDatepickerFilter]="datepickerFilter()"
+  />
+
+  <mat-datepicker-toggle matIconSuffix [for]="picker" [disabled]="disabled" />
+  <mat-datepicker
+    #picker
+    [startView]="startView()"
+    [startAt]="resolveDate(startAt())"
+    [panelClass]="panelClassName"
+  >
+    @if (showActions) {
+      <mat-datepicker-actions>
+        <button mat-button (click)="clearDate()">
+          {{ clearButtonLabel() }}
+        </button>
+        <button mat-raised-button color="primary" (click)="setToday()">
+          {{ todayButtonLabel() }}
+        </button>
+      </mat-datepicker-actions>
+    }
+  </mat-datepicker>
+</mat-form-field>

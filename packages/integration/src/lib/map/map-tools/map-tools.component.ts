@@ -6,8 +6,9 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild,
-  inject
+  inject,
+  input,
+  viewChild
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -101,23 +102,23 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   private visibleOrInRangeLayers$$: Subscription;
   public delayedShowEmptyMapContent = false;
 
-  @Input() allowShowAllLegends = false;
+  readonly allowShowAllLegends = input(false);
 
-  @Input() showAllLegendsValue = false;
+  readonly showAllLegendsValue = input(false);
 
-  @Input() toggleLegendOnVisibilityChange = false;
+  readonly toggleLegendOnVisibilityChange = input(false);
 
-  @Input() expandLegendOfVisibleLayers = false;
+  readonly expandLegendOfVisibleLayers = input(false);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
-  @Input() selectedTabAtOpening: string;
+  readonly selectedTabAtOpening = input<string>(undefined);
 
-  @Input() ogcButton = true;
+  readonly ogcButton = input(true);
 
-  @Input() timeButton = true;
+  readonly timeButton = input(true);
 
-  @Input() layerAdditionAllowed = true;
+  readonly layerAdditionAllowed = input(true);
 
   @Input()
   get layerListControls(): LayerListControlsOptions {
@@ -147,7 +148,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  @Input() queryBadge = false;
+  readonly queryBadge = input(false);
 
   get visibleOrInRangeLayers$(): Observable<AnyLayer[]> {
     return this.layers$.pipe(
@@ -191,16 +192,16 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
-        showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showForVisibleLayers: this.expandLegendOfVisibleLayers(),
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange(),
+        updateOnResolutionChange: this.updateLegendOnResolutionChange()
       },
-      queryBadge: this.queryBadge,
+      queryBadge: this.queryBadge(),
       ...this._layerViewerOptions
     };
   }
 
-  @ViewChild('tabGroup', { static: true }) tabGroup;
+  readonly tabGroup = viewChild('tabGroup');
 
   get searchToolInToolbar(): boolean {
     return (
@@ -236,11 +237,11 @@ export class MapToolsComponent implements OnInit, OnDestroy {
         this.layers$.next(layers);
       });
 
-    if (this.allowShowAllLegends) {
+    if (this.allowShowAllLegends()) {
       this.mapState.showAllLegendsValue =
         this.mapState.showAllLegendsValue !== undefined
           ? this.mapState.showAllLegendsValue
-          : this.showAllLegendsValue || false;
+          : this.showAllLegendsValue() || false;
       this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
     } else {
       this.showAllLegendsValue$.next(false);
@@ -267,7 +268,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     if (userSelectedTab !== undefined) {
       this.layerListToolState.setSelectedTab(userSelectedTab);
     } else {
-      if (this.selectedTabAtOpening === 'legend') {
+      if (this.selectedTabAtOpening() === 'legend') {
         this.layerListToolState.setSelectedTab(1);
       } else {
         this.layerListToolState.setSelectedTab(0);
@@ -291,7 +292,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       return false;
     } else if (
       this.layers$.getValue().length !== 0 &&
-      this.allowShowAllLegends === false
+      this.allowShowAllLegends() === false
     ) {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(
@@ -342,13 +343,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   isTimeFilterButton(layer): boolean {
     const options = layer.dataSource.options;
-    return this.timeButton && options.timeFilterable && options.timeFilter;
+    return this.timeButton() && options.timeFilterable && options.timeFilter;
   }
 
   isOGCFilterButton(layer): boolean {
     const options = layer.dataSource.options;
     return (
-      this.ogcButton &&
+      this.ogcButton() &&
       options.ogcFilters &&
       options.ogcFilters.enabled &&
       (options.ogcFilters.pushButtons ||

@@ -1,10 +1,10 @@
-@if (layerIsExportable()) {
+@if (isExportable()) {
   <button
     mat-icon-button
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.download.action' | translate"
-    [color]="color"
+    [color]="color()"
   >
     <mat-icon>file_save</mat-icon>
   </button>

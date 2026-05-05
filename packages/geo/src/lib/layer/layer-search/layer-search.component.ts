@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -30,16 +30,17 @@ import { debounceTime } from 'rxjs';
 export class LayerSearchComponent implements OnInit {
   control = new FormControl();
 
-  @Input() initialValue: string;
-  @Input() floatLabel: FloatLabelType;
-  @Input() placeholder: string;
-  @Input() tooltip: string;
+  readonly initialValue = input<string>(undefined);
+  readonly floatLabel = input<FloatLabelType>(undefined);
+  readonly placeholder = input<string>(undefined);
+  readonly tooltip = input<string>(undefined);
 
-  @Output() searchChange = new EventEmitter<string | undefined>();
+  readonly searchChange = output<string | undefined>();
 
   ngOnInit(): void {
-    if (this.initialValue) {
-      this.control.setValue(this.initialValue, {
+    const initialValue = this.initialValue();
+    if (initialValue) {
+      this.control.setValue(initialValue, {
         emitEvent: false
       });
     }

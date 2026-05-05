@@ -2,10 +2,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,13 +15,11 @@ import { MatInputModule } from '@angular/material/input';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { RouteService } from '@igo2/core/route';
 import type { IgoMap } from '@igo2/geo';
 
 import { Subscription, combineLatest } from 'rxjs';
 
 import { ContextService } from '../../context-manager/shared/context.service';
-import { ShareOption } from '../shared/share-map.interface';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({
@@ -33,8 +31,8 @@ import { ShareMapService } from '../shared/share-map.service';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    CustomHtmlComponent,
-    IgoLanguageModule
+    IgoLanguageModule,
+    CustomHtmlComponent
   ]
 })
 export class ShareMapUrlComponent implements OnInit, OnDestroy {
@@ -43,32 +41,18 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   private shareMapService = inject(ShareMapService);
   private contextService = inject(ContextService);
   private cdRef = inject(ChangeDetectorRef);
-  private route = inject(RouteService);
 
   private mapState$$: Subscription;
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   public url: string;
-  private publicShareOption: ShareOption = {
-    layerlistControls: { querystring: '' }
-  };
-  private language: string;
-
-  constructor() {
-    this.route.queryParams.subscribe((params) => {
-      const lang = params[this.route.options.languageKey];
-      if (lang) {
-        this.language = lang;
-      }
-    });
-  }
 
   ngOnInit(): void {
     this.generateUrl();
     this.mapState$$ = combineLatest([
-      this.map.viewController.state$,
-      this.map.status$
+      this.map().viewController.state$,
+      this.map().status$
     ]).subscribe(() => {
       this.generateUrl();
       this.cdRef.detectChanges();
@@ -80,11 +64,9 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   }
 
   generateUrl(): void {
-    this.url = this.shareMapService.encoder.generateUrl(
-      this.map,
-      this.contextService.context$.value,
-      this.publicShareOption,
-      this.language
+    this.url = this.shareMapService.generateUrl(
+      this.map(),
+      this.contextService.context$.value
     );
   }
 

@@ -2,9 +2,8 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -26,7 +25,7 @@ export class AuthFacebookComponent {
 
   private options?: AuthFacebookOptions;
 
-  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  readonly login = output<boolean>();
 
   constructor() {
     this.options = this.config.getConfig('auth.facebook');

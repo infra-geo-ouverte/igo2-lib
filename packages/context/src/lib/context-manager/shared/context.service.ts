@@ -31,11 +31,10 @@ import {
 } from 'rxjs/operators';
 
 import { ShareMapService } from '../../share-map/shared/share-map.service';
-import { TypePermission } from './context.enum';
 import {
   Context,
+  ContextDetailedChanges,
   ContextMapView,
-  ContextPermission,
   ContextProfils,
   ContextServiceOptions,
   ContextsList,
@@ -59,7 +58,7 @@ export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
-  public defaultContextId$ = new BehaviorSubject<string>(undefined);
+  public defaultContextId$ = new BehaviorSubject<number | string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   public importedContext: DetailedContext[] = [];
   public toolsChanged$ = new Subject<DetailedContext>();
@@ -127,11 +126,21 @@ export class ContextService {
     return this.http.get<Context>(url);
   }
 
-  getDetails(id: string): Observable<DetailedContext> {
+  getDetails(id: number): Observable<DetailedContext> {
     const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http.get<DetailedContext>(url).pipe(
       catchError((res) => {
         this.handleError(res, id);
+        throw res;
+      })
+    );
+  }
+
+  getDetailsByUri(uri: string): Observable<DetailedContext> {
+    const url = `${this.baseUrl}/contexts/uri/${uri}/details`;
+    return this.http.get<DetailedContext>(url).pipe(
+      catchError((res) => {
+        this.handleError(res, uri);
         throw res;
       })
     );
@@ -160,27 +169,38 @@ export class ContextService {
     return of([]);
   }
 
-  setDefault(id: string): Observable<any> {
+  setDefault(id: string | number): Observable<string | number | undefined> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
-      return this.http.post(url, { defaultContextId: id });
+      return this.http.post<string>(url, { defaultContextId: id });
     } else {
-      this.storageService.set('favorite.context.uri', id);
-      return of(undefined);
+      return this.setDefaultLocalStorage(id);
     }
   }
 
-  hideContext(id: string) {
+  private setDefaultLocalStorage(
+    id: string | number
+  ): Observable<string | number | undefined> {
+    const selectedId = this.storageService.get('favorite.context.uri');
+    if (selectedId === id) {
+      this.storageService.remove('favorite.context.uri');
+    } else {
+      this.storageService.set('favorite.context.uri', id);
+    }
+    return of(selectedId === id ? undefined : id);
+  }
+
+  hideContext(id: number) {
     const url = this.baseUrl + '/contexts/' + id + '/hide';
     return this.http.post(url, {});
   }
 
-  showContext(id: string) {
+  showContext(id: number) {
     const url = this.baseUrl + '/contexts/' + id + '/show';
     return this.http.post(url, {});
   }
 
-  delete(id: string, imported = false): Observable<void> {
+  delete(id: number, imported = false): Observable<void> {
     const contexts: ContextsList = { ours: [] };
     Object.keys(this.contexts$.value).forEach(
       (key) =>
@@ -196,6 +216,7 @@ export class ContextService {
     return this.http.delete<void>(url).pipe(
       tap(() => {
         this.contexts$.next(contexts);
+        this.loadContext(this.defaultContextUri);
       })
     );
   }
@@ -205,9 +226,9 @@ export class ContextService {
     return this.http.post<Context>(url, context).pipe(
       map((contextCreated) => {
         if (this.authService.authenticated) {
-          contextCreated.permission = TypePermission[TypePermission.write];
+          contextCreated.permission = 'write';
         } else {
-          contextCreated.permission = TypePermission[TypePermission.read];
+          contextCreated.permission = 'read';
         }
         this.contexts$.value.ours.unshift(contextCreated);
         this.contexts$.next(this.contexts$.value);
@@ -216,11 +237,11 @@ export class ContextService {
     );
   }
 
-  clone(id: string, properties = {}): Observable<Context> {
+  clone(id: number, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
     return this.http.post<Context>(url, properties).pipe(
       map((contextCloned) => {
-        contextCloned.permission = TypePermission[TypePermission.write];
+        contextCloned.permission = 'write';
         this.contexts$.value.ours.unshift(contextCloned);
         this.contexts$.next(this.contexts$.value);
         return contextCloned;
@@ -228,9 +249,12 @@ export class ContextService {
     );
   }
 
-  update(id: string, context: DetailedContext): Observable<Context> {
+  update(
+    id: number,
+    context: DetailedContext
+  ): Observable<ContextDetailedChanges> {
     const url = this.baseUrl + '/contexts/' + id;
-    return this.http.patch<Context>(url, context);
+    return this.http.patch<ContextDetailedChanges>(url, context);
   }
 
   // =================================================================
@@ -243,50 +267,21 @@ export class ContextService {
     return this.http.post<void>(url, association);
   }
 
-  deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
+  deleteToolAssociation(
+    contextId: string,
+    toolId: string
+  ): Observable<unknown> {
     const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
     return this.http.delete(url);
-  }
-
-  getPermissions(id: string): Observable<ContextPermission[]> {
-    const url = this.baseUrl + '/contexts/' + id + '/permissions';
-    return this.http.get<ContextPermission[]>(url);
-  }
-
-  addPermissionAssociation(
-    contextId: string,
-    profil: string,
-    type: TypePermission
-  ): Observable<ContextPermission[]> {
-    const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
-    const association = {
-      profil,
-      typePermission: type
-    };
-
-    return this.http.post<ContextPermission[]>(url, association).pipe(
-      catchError((res) => {
-        this.handleError(res, undefined, true);
-        throw [res]; // TODO Not sure about this.
-      })
-    );
-  }
-
-  deletePermissionAssociation(
-    contextId: string,
-    permissionId: string
-  ): Observable<void> {
-    const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
-    return this.http.delete<void>(url);
   }
 
   // ======================================================================
 
   getLocalContexts(): Observable<ContextsList> {
     const url = this.getPath(this.options.contextListFile);
-    return this.http.get<ContextsList>(url).pipe(
-      map((res: any) => {
-        return { ours: res };
+    return this.http.get<Context[]>(url).pipe(
+      map((res) => {
+        return { ours: res } satisfies ContextsList;
       })
     );
   }
@@ -351,17 +346,17 @@ export class ContextService {
   loadDefaultContext() {
     const loadFct = (direct = false) => {
       if (!direct && this.baseUrl && this.authService.authenticated) {
-        this.getDefault().subscribe(
-          (_context: DetailedContext) => {
+        this.getDefault().subscribe({
+          next: (_context) => {
             this.defaultContextUri = _context.uri;
             this.addContextToList(_context);
             this.setContext(_context);
           },
-          () => {
+          error: () => {
             this.defaultContextId$.next(undefined);
             this.loadContext(this.defaultContextUri);
           }
-        );
+        });
       } else {
         this.loadContext(this.defaultContextUri);
       }
@@ -471,9 +466,10 @@ export class ContextService {
 
     context.tools = this.tools.map((tool) => {
       return {
-        id: String(tool.id),
+        id: tool.id,
+        name: tool.name,
         global: tool.global
-      } as Tool;
+      };
     });
 
     return context;
@@ -527,20 +523,11 @@ export class ContextService {
         delete layerOptions.source;
         context.layers.push(layerOptions);
       } else {
-        if (!(layer.ol.getSource() instanceof olVectorSource)) {
-          const catalogLayer = layer.options;
-          catalogLayer.zIndex = layer.zIndex;
-          catalogLayer.visible = layer.visible;
-          catalogLayer.opacity = layer.opacity;
-          delete catalogLayer.source;
-          context.layers.push(catalogLayer);
-        } else {
-          const extraFeatures = this.getExtraFeatures(layer);
-          extraFeatures.name = layer.options.title;
-          extraFeatures.opacity = layer.opacity;
-          extraFeatures.visible = layer.visible;
-          context.extraFeatures.push(extraFeatures);
-        }
+        const extraFeatures = this.getExtraFeatures(layer);
+        extraFeatures.name = layer.options.title;
+        extraFeatures.opacity = layer.opacity;
+        extraFeatures.visible = layer.visible;
+        context.extraFeatures.push(extraFeatures);
       }
     });
 
@@ -556,9 +543,7 @@ export class ContextService {
     if (layer.ol.getSource() instanceof Cluster) {
       const clusterSource = layer.ol.getSource() as Cluster;
       olFeatures = clusterSource.getFeatures();
-      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
-        cluster.get('features')
-      );
+      olFeatures = olFeatures.flatMap((cluster) => cluster.get('features'));
     } else {
       const source = layer.ol.getSource() as olVectorSource;
       olFeatures = source.getFeatures();
@@ -617,9 +602,9 @@ export class ContextService {
         return of(contextToLoad);
       }
 
-      // TODO : use always id or uri
-      const id = contextToLoad ? contextToLoad.id : uri;
-      return this.getDetails(id);
+      return contextToLoad
+        ? this.getDetails(contextToLoad.id)
+        : this.getDetailsByUri(uri);
     }
 
     const importedContext = this.contexts$.value.ours.find((currentContext) => {
@@ -645,7 +630,7 @@ export class ContextService {
 
   private handleError(
     error: HttpErrorResponse,
-    uri: string,
+    uri: string | number,
     permissionError?: boolean
   ) {
     const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
@@ -704,12 +689,12 @@ export class ContextService {
   private addContextToList(context: Context) {
     const contextFound = this.findContext(context);
     if (!contextFound) {
-      const contextSimplifie = {
+      const contextSimplifie: Context = {
         id: context.id,
         uri: context.uri,
         title: context.title,
         scope: context.scope,
-        permission: TypePermission[TypePermission.read]
+        permission: 'read'
       };
 
       if (this.contexts$.value && this.contexts$.value.public) {

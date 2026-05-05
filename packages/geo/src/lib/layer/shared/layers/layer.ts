@@ -2,6 +2,7 @@ import { Optional } from '@angular/core';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
+import { uuid } from '@igo2/utils';
 
 import OlLayer from 'ol/layer/Layer';
 import { Source } from 'ol/source';
@@ -16,14 +17,13 @@ import {
 } from '../../shared/layers/linked/linked-layer.utils';
 import { isLayerItem, isSaveableLayer } from '../../utils/layer.utils';
 import { AnyLayer } from './any-layer';
-import { LayerBase, LayerGroupBase } from './layer-base';
+import { LayerBase } from './layer-base';
 import { type LayerGroup } from './layer-group';
-import { type LayerOptions } from './layer.interface';
+import { LayerId, type LayerOptions } from './layer.interface';
 import { Linked } from './linked/linked-layer';
 
-export abstract class Layer extends LayerBase {
+export abstract class Layer extends LayerBase<LayerGroup> {
   declare dataSource: DataSource;
-  parent: LayerGroup;
 
   ol: OlLayer<Source>;
   hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
@@ -32,10 +32,6 @@ export abstract class Layer extends LayerBase {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$: Subscription;
-
-  get id(): string {
-    return String(this.options.id || this.dataSource.id);
-  }
 
   get visible() {
     return super.visible;
@@ -49,6 +45,9 @@ export abstract class Layer extends LayerBase {
       this.options?.messages
         .filter((m) => m.options?.showOnEachLayerVisibility)
         .map((message) => this.showMessage(message));
+    }
+    if (value && this.link) {
+      this.link.display();
     }
 
     value ? this.dataSource.addEvents() : this.dataSource.removeEvents();
@@ -87,6 +86,10 @@ export abstract class Layer extends LayerBase {
     @Optional() protected authInterceptor?: AuthInterceptor
   ) {
     super(options);
+
+    if (!options.id) {
+      options.id = uuid();
+    }
 
     this.dataSource = options.source;
 
@@ -166,7 +169,7 @@ export abstract class Layer extends LayerBase {
     }
   }
 
-  add(parent?: LayerGroupBase): void {
+  add(parent?: LayerGroup): void {
     super.add(parent);
 
     if (isLayerLinked(this)) {
@@ -198,7 +201,7 @@ export abstract class Layer extends LayerBase {
     }
   }
 
-  private findParentByLinkId(layers: AnyLayer[], id: string): Layer {
+  private findParentByLinkId(layers: AnyLayer[], id: LayerId): Layer {
     return layers.find((layer) => {
       if (!isLayerItem(layer)) {
         return;

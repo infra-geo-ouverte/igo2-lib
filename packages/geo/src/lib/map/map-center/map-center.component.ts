@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, input } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -17,7 +17,7 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
    * Get an active map
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Listener of toggle from advanced-map-tool
@@ -28,8 +28,9 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Set a visibility for cursor of the center of the map
    */
   ngAfterViewInit() {
-    if (this.map) {
-      this.displayCenter$$ = this.map.mapCenter$.subscribe((value) => {
+    const map = this.map();
+    if (map) {
+      this.displayCenter$$ = map.mapCenter$.subscribe((value) => {
         document.getElementById('mapCenter').style.visibility = value
           ? 'visible'
           : 'hidden';
@@ -55,8 +56,8 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
       'wheel',
       (event) => {
         event.deltaY > 0
-          ? this.map.viewController.zoomOut()
-          : this.map.viewController.zoomIn();
+          ? this.map().viewController.zoomOut()
+          : this.map().viewController.zoomIn();
       },
       true
     );

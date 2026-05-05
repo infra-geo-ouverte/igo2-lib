@@ -3,12 +3,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -83,18 +82,18 @@ export class InteractiveSelectionFormComponent
     buffer: undefined,
     action: SelectionAction.Add
   });
-  @Input() map: IgoMap;
-  @Input() workspace: FeatureWorkspace | WfsWorkspace;
+  readonly map = input<IgoMap>(undefined);
+  readonly workspace = input<FeatureWorkspace | WfsWorkspace>(undefined);
 
   /**
    * Event emitted on complete
    */
-  @Output() complete = new EventEmitter<void>();
+  readonly complete = output<void>();
 
   /**
    * Event emitted on cancel
    */
-  @Output() cancel = new EventEmitter<void>();
+  readonly cancel = output<void>();
   ngOnInit(): void {
     const fieldConfigs = [
       {
@@ -105,7 +104,7 @@ export class InteractiveSelectionFormComponent
           validator: Validators.required
         },
         inputs: {
-          map: this.map,
+          map: this.map(),
           geometryTypeField: true,
           geometryType: 'Polygon',
           drawGuideField: false,
@@ -247,11 +246,12 @@ export class InteractiveSelectionFormComponent
    * On close, emit the cancel event
    */
   onClose() {
+    // TODO: The 'emit' function requires a mandatory void argument
     this.cancel.emit();
   }
 
   onSubmit(data: DataSelectionData) {
-    const featureStore = this.workspace.entityStore as FeatureStore;
+    const featureStore = this.workspace().entityStore as FeatureStore;
     const storeFeatures = featureStore.all();
 
     const buffer = data.buffer ? +data.buffer : undefined;
@@ -310,7 +310,7 @@ export class InteractiveSelectionFormComponent
   }
 
   clear() {
-    const featureStore = this.workspace.entityStore as FeatureStore;
+    const featureStore = this.workspace().entityStore as FeatureStore;
     featureStore.state.updateAll({ selected: false });
     this.form$.value.control.reset();
     this.setAction(SelectionAction.Add);

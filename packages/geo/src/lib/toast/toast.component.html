@@ -2,7 +2,7 @@
   #flex
   collapsedMobile="51px"
   expandedMobile="300px"
-  [state]="state"
+  [state]="state()"
   (swipeup)="swipe($event.type)"
   (swipedown)="swipe($event.type)"
 >
@@ -15,7 +15,7 @@
       }}</mat-icon>
     </button>
 
-    @if (feature.geometry) {
+    @if (feature().geometry) {
       <button
         mat-icon-button
         panelRightButton
@@ -26,6 +26,6 @@
       </button>
     }
 
-    <igo-feature-details [feature]="feature"></igo-feature-details>
+    <igo-feature-details [feature]="feature()" />
   </igo-panel>
 </igo-flexible>

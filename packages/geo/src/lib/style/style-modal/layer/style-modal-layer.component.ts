@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, model } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -47,7 +47,7 @@ export class StyleModalLayerComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
   data = inject<LayerMatDialogData>(MAT_DIALOG_DATA);
 
-  @Input() confirmFlag = false;
+  confirmFlag = model(false);
 
   public form: UntypedFormGroup;
 
@@ -144,7 +144,7 @@ export class StyleModalLayerComponent implements OnInit {
   }
 
   confirm() {
-    this.confirmFlag = true;
+    this.confirmFlag.set(true);
     if (this.form.get('fill').value) {
       this.styleModalData.fillColor = this.form.get('fill').value;
     }

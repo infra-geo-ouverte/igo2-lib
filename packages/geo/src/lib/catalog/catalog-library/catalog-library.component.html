@@ -3,16 +3,15 @@
     <igo-catalog-library-item
       igoListItem
       color="accent"
-      [map]="map"
+      [map]="map()"
       [catalog]="catalog"
       (catalogRemove)="onCatalogRemove(catalog)"
       (select)="onCatalogSelect(catalog)"
-    >
-    </igo-catalog-library-item>
+    />
   }
 </igo-list>
 
-@if (addCatalogAllowed) {
+@if (addCatalogAllowed()) {
   <div class="btnAddCatalog">
     <button
       matButton="elevated"

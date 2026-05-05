@@ -60,83 +60,83 @@ export class DataSourceService {
   public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
   createAsyncDataSource(
-    context: AnyDataSourceOptions,
+    options: AnyDataSourceOptions,
     detailedContextUri?: string
   ): Observable<DataSource> {
-    if (!context.type) {
-      console.error(context);
+    if (!options.type) {
+      console.error(options);
       throw new Error('Datasource needs a type');
     }
     let dataSource;
-    switch (context.type.toLowerCase()) {
+    switch (options.type.toLowerCase()) {
       case 'osm':
-        dataSource = this.createOSMDataSource(context as OSMDataSourceOptions);
+        dataSource = this.createOSMDataSource(options as OSMDataSourceOptions);
         break;
       case 'vector':
         dataSource = this.createFeatureDataSource(
-          context as FeatureDataSourceOptions
+          options as FeatureDataSourceOptions
         );
         break;
       case 'wfs':
-        dataSource = this.createWFSDataSource(context as WFSDataSourceOptions);
+        dataSource = this.createWFSDataSource(options as WFSDataSourceOptions);
         break;
       case 'wms': {
-        const wmsContext = context as WMSDataSourceOptions;
+        const wmsContext = options as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
         dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
       }
       case 'wmts':
         dataSource = this.createWMTSDataSource(
-          context as WMTSDataSourceOptions
+          options as WMTSDataSourceOptions
         );
         break;
       case 'xyz':
-        dataSource = this.createXYZDataSource(context as XYZDataSourceOptions);
+        dataSource = this.createXYZDataSource(options as XYZDataSourceOptions);
         break;
       case 'tiledebug':
         dataSource = this.createTileDebugDataSource(
-          context as TileDebugDataSource
+          options as TileDebugDataSource
         );
         break;
       case 'carto':
         dataSource = this.createCartoDataSource(
-          context as CartoDataSourceOptions
+          options as CartoDataSourceOptions
         );
         break;
       case 'arcgisrest':
         dataSource = this.createArcGISRestDataSource(
-          context as ArcGISRestDataSourceOptions,
+          options as ArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'imagearcgisrest':
         dataSource = this.createArcGISRestImageDataSource(
-          context as ArcGISRestImageDataSourceOptions,
+          options as ArcGISRestImageDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'websocket':
         dataSource = this.createWebSocketDataSource(
-          context as FeatureDataSourceOptions
+          options as FeatureDataSourceOptions
         );
         break;
       case 'mvt':
-        dataSource = this.createMVTDataSource(context as MVTDataSourceOptions);
+        dataSource = this.createMVTDataSource(options as MVTDataSourceOptions);
         break;
       case 'tilearcgisrest':
         dataSource = this.createTileArcGISRestDataSource(
-          context as TileArcGISRestDataSourceOptions,
+          options as TileArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'cluster':
         dataSource = this.createClusterDataSource(
-          context as ClusterDataSourceOptions
+          options as ClusterDataSourceOptions
         );
         break;
       default:
-        console.error(context);
+        console.error(options);
         throw new Error('Invalid datasource type');
     }
 
@@ -146,30 +146,30 @@ export class DataSourceService {
   }
 
   private createOSMDataSource(
-    context: OSMDataSourceOptions
+    options: OSMDataSourceOptions
   ): Observable<OSMDataSource> {
-    return new Observable((d) => d.next(new OSMDataSource(context)));
+    return new Observable((d) => d.next(new OSMDataSource(options)));
   }
 
   private createFeatureDataSource(
-    context: FeatureDataSourceOptions
+    options: FeatureDataSourceOptions
   ): Observable<FeatureDataSource> {
-    return new Observable((d) => d.next(new FeatureDataSource(context)));
+    return new Observable((d) => d.next(new FeatureDataSource(options)));
   }
 
   private createWebSocketDataSource(
-    context: FeatureDataSourceOptions
+    options: FeatureDataSourceOptions
   ): Observable<WebSocketDataSource> {
-    return new Observable((d) => d.next(new WebSocketDataSource(context)));
+    return new Observable((d) => d.next(new WebSocketDataSource(options)));
   }
 
   private createWFSDataSource(
-    context: WFSDataSourceOptions
+    options: WFSDataSourceOptions
   ): Observable<WFSDataSource> {
     return new Observable((d) =>
       d.next(
         new WFSDataSource(
-          context,
+          options,
           this.wfsDataSourceService,
           this.ogcFilterService,
           this.authInterceptor
@@ -179,19 +179,19 @@ export class DataSourceService {
   }
 
   private createWMSDataSource(
-    context: WMSDataSourceOptions,
+    options: WMSDataSourceOptions,
     detailedContextUri?: string
   ): Observable<any> {
     const observables = [];
-    if (context.optionsFromCapabilities && window.navigator.onLine) {
+    if (options.optionsFromCapabilities && window.navigator.onLine) {
       observables.push(
-        this.capabilitiesService.getWMSOptions(context).pipe(
+        this.capabilitiesService.getWMSOptions(options).pipe(
           catchError((e) => {
             this.messageService.error(
               'igo.geo.dataSource.unavailable',
               'igo.geo.dataSource.unavailableTitle',
               undefined,
-              { value: context.params.LAYERS }
+              { value: options.params.LAYERS }
             );
             throw e;
           })
@@ -201,11 +201,11 @@ export class DataSourceService {
 
     if (
       this.optionsService &&
-      context.optionsFromApi &&
+      options.optionsFromApi &&
       window.navigator.onLine
     ) {
       observables.push(
-        this.optionsService.getWMSOptions(context, detailedContextUri).pipe(
+        this.optionsService.getWMSOptions(options, detailedContextUri).pipe(
           catchError((e) => {
             e.error.toDisplay = true;
             e.error.title = this.languageService.translate.instant(
@@ -220,7 +220,7 @@ export class DataSourceService {
       );
     }
 
-    observables.push(of(context));
+    observables.push(of(options));
 
     return forkJoin(observables).pipe(
       map((options: WMSDataSourceOptions[]) => {
@@ -258,10 +258,10 @@ export class DataSourceService {
   }
 
   private createWMTSDataSource(
-    context: WMTSDataSourceOptions
+    options: WMTSDataSourceOptions
   ): Observable<WMTSDataSource> {
-    if (context.optionsFromCapabilities && window.navigator.onLine) {
-      return this.capabilitiesService.getWMTSOptions(context).pipe(
+    if (options.optionsFromCapabilities && window.navigator.onLine) {
+      return this.capabilitiesService.getWMTSOptions(options).pipe(
         map((options: WMTSDataSourceOptions) => {
           return options ? new WMTSDataSource(options) : undefined;
         }),
@@ -270,55 +270,55 @@ export class DataSourceService {
             'igo.geo.dataSource.unavailable',
             'igo.geo.dataSource.unavailableTitle',
             undefined,
-            { value: context.layer }
+            { value: options.layer }
           );
           return of(undefined);
         })
       );
     }
 
-    return new Observable((d) => d.next(new WMTSDataSource(context)));
+    return new Observable((d) => d.next(new WMTSDataSource(options)));
   }
 
   private createXYZDataSource(
-    context: XYZDataSourceOptions
+    options: XYZDataSourceOptions
   ): Observable<XYZDataSource> {
-    return new Observable((d) => d.next(new XYZDataSource(context)));
+    return new Observable((d) => d.next(new XYZDataSource(options)));
   }
 
   private createTileDebugDataSource(
-    context: TileDebugDataSourceOptions
+    options: TileDebugDataSourceOptions
   ): Observable<TileDebugDataSource> {
-    return new Observable((d) => d.next(new TileDebugDataSource(context)));
+    return new Observable((d) => d.next(new TileDebugDataSource(options)));
   }
 
   private createCartoDataSource(
-    context: CartoDataSourceOptions
+    options: CartoDataSourceOptions
   ): Observable<CartoDataSource> {
-    if (context.mapId) {
+    if (options.mapId) {
       return this.capabilitiesService
-        .getCartoOptions(context)
+        .getCartoOptions(options)
         .pipe(
           map((options: CartoDataSourceOptions) => new CartoDataSource(options))
         );
     }
-    return new Observable((d) => d.next(new CartoDataSource(context)));
+    return new Observable((d) => d.next(new CartoDataSource(options)));
   }
 
   private createArcGISRestDataSource(
-    context: ArcGISRestDataSourceOptions,
+    options: ArcGISRestDataSourceOptions,
     detailedContextUri?: string
   ): Observable<ArcGISRestDataSource> {
     const observables = [];
     if (window.navigator.onLine) {
       observables.push(
-        this.capabilitiesService.getArcgisOptions(context).pipe(
+        this.capabilitiesService.getArcgisOptions(options).pipe(
           catchError((e) => {
             this.messageService.error(
               'igo.geo.dataSource.unavailable',
               'igo.geo.dataSource.unavailableTitle',
               undefined,
-              { value: context.layer }
+              { value: options.layer }
             );
             throw e;
           })
@@ -327,12 +327,12 @@ export class DataSourceService {
     }
     if (
       this.optionsService &&
-      context.optionsFromApi &&
+      options.optionsFromApi &&
       window.navigator.onLine
     ) {
       observables.push(
         this.optionsService
-          .getArcgisRestOptions(context, detailedContextUri)
+          .getArcgisRestOptions(options, detailedContextUri)
           .pipe(
             catchError((e) => {
               e.error.toDisplay = true;
@@ -347,7 +347,7 @@ export class DataSourceService {
           )
       );
     }
-    observables.push(of(context));
+    observables.push(of(options));
     return forkJoin(observables).pipe(
       map((options: ArcGISRestDataSource[]) => {
         const optionsMerged = options.reduce((a, b) =>
@@ -362,20 +362,20 @@ export class DataSourceService {
   }
 
   private createArcGISRestImageDataSource(
-    context: ArcGISRestImageDataSourceOptions,
+    options: ArcGISRestImageDataSourceOptions,
     detailedContextUri?: string
   ): Observable<ArcGISRestImageDataSourceOptions> {
     const observables = [];
 
     if (window.navigator.onLine) {
       observables.push(
-        this.capabilitiesService.getImageArcgisOptions(context).pipe(
+        this.capabilitiesService.getImageArcgisOptions(options).pipe(
           catchError((e) => {
             this.messageService.error(
               'igo.geo.dataSource.unavailable',
               'igo.geo.dataSource.unavailableTitle',
               undefined,
-              { value: context.params.LAYERS }
+              { value: options.params.LAYERS }
             );
             throw e;
           })
@@ -384,12 +384,12 @@ export class DataSourceService {
     }
     if (
       this.optionsService &&
-      context.optionsFromApi &&
+      options.optionsFromApi &&
       window.navigator.onLine
     ) {
       observables.push(
         this.optionsService
-          .getArcgisRestOptions(context, detailedContextUri)
+          .getArcgisRestOptions(options, detailedContextUri)
           .pipe(
             catchError((e) => {
               e.error.toDisplay = true;
@@ -404,7 +404,7 @@ export class DataSourceService {
           )
       );
     }
-    observables.push(of(context));
+    observables.push(of(options));
     return forkJoin(observables).pipe(
       map((options: ImageArcGISRestDataSource[]) => {
         const optionsMerged = options.reduce((a, b) =>
@@ -419,19 +419,19 @@ export class DataSourceService {
   }
 
   private createTileArcGISRestDataSource(
-    context: TileArcGISRestDataSourceOptions,
+    options: TileArcGISRestDataSourceOptions,
     detailedContextUri?: string
   ): Observable<TileArcGISRestDataSource> {
     const observables = [];
     if (window.navigator.onLine) {
       observables.push(
-        this.capabilitiesService.getImageArcgisOptions(context).pipe(
+        this.capabilitiesService.getImageArcgisOptions(options).pipe(
           catchError((e) => {
             this.messageService.error(
               'igo.geo.dataSource.unavailable',
               'igo.geo.dataSource.unavailableTitle',
               undefined,
-              { value: context.params.LAYERS }
+              { value: options.params.LAYERS }
             );
             throw e;
           })
@@ -440,12 +440,12 @@ export class DataSourceService {
     }
     if (
       this.optionsService &&
-      context.optionsFromApi &&
+      options.optionsFromApi &&
       window.navigator.onLine
     ) {
       observables.push(
         this.optionsService
-          .getArcgisRestOptions(context, detailedContextUri)
+          .getArcgisRestOptions(options, detailedContextUri)
           .pipe(
             catchError((e) => {
               e.error.toDisplay = true;
@@ -460,7 +460,7 @@ export class DataSourceService {
           )
       );
     }
-    observables.push(of(context));
+    observables.push(of(options));
     return forkJoin(observables).pipe(
       map((options: TileArcGISRestDataSource[]) => {
         const optionsMerged = options.reduce((a, b) =>
@@ -475,14 +475,14 @@ export class DataSourceService {
   }
 
   private createMVTDataSource(
-    context: MVTDataSourceOptions
+    options: MVTDataSourceOptions
   ): Observable<MVTDataSource> {
-    return new Observable((d) => d.next(new MVTDataSource(context)));
+    return new Observable((d) => d.next(new MVTDataSource(options)));
   }
 
   private createClusterDataSource(
-    context: ClusterDataSourceOptions
+    options: ClusterDataSourceOptions
   ): Observable<ClusterDataSource> {
-    return new Observable((d) => d.next(new ClusterDataSource(context)));
+    return new Observable((d) => d.next(new ClusterDataSource(options)));
   }
 }

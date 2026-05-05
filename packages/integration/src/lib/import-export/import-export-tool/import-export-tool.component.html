@@ -1,4 +1,4 @@
-@if (importExportShowBothType) {
+@if (importExportShowBothType()) {
   <mat-tab-group>
     <mat-tab
       [label]="'igo.integration.importExportTool.importExportData' | translate"
@@ -6,27 +6,26 @@
       <igo-import-export
         [contextUri]="(contextState.context$ | async).uri"
         [map]="map"
-        [selectFirstProj]="selectFirstProj"
-        [projectionsLimitations]="projectionsLimitations"
+        [selectFirstProj]="selectFirstProj()"
+        [projectionsLimitations]="projectionsLimitations()"
         [store]="workspaceStore"
         [selectedMode]="importExportState.selectedMode$ | async"
         (selectMode)="modeChanged($any($event))"
         [exportOptions$]="importExportState.exportOptions$"
         (exportOptionsChange)="exportOptionsChange($event)"
-      >
-      </igo-import-export>
+      />
     </mat-tab>
     <mat-tab
       [label]="
         'igo.integration.importExportTool.importExportContext' | translate
       "
     >
-      <igo-context-import-export [map]="map"></igo-context-import-export>
+      <igo-context-import-export [map]="map" />
     </mat-tab>
   </mat-tab-group>
 }
 
-@if (!importExportShowBothType && importExportType === 'layer') {
+@if (!importExportShowBothType() && importExportType() === 'layer') {
   <igo-import-export
     [contextUri]="(contextState.context$ | async).uri"
     [map]="map"
@@ -35,10 +34,9 @@
     (selectMode)="modeChanged($any($event))"
     [exportOptions$]="importExportState.exportOptions$"
     (exportOptionsChange)="exportOptionsChange($event)"
-  >
-  </igo-import-export>
+  />
 }
 
-@if (!importExportShowBothType && importExportType === 'context') {
-  <igo-context-import-export [map]="map"> </igo-context-import-export>
+@if (!importExportShowBothType() && importExportType() === 'context') {
+  <igo-context-import-export [map]="map" />
 }

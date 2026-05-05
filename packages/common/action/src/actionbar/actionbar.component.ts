@@ -10,7 +10,8 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,7 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStoreWatcher } from '@igo2/common/entity';
 import { IgoLanguageModule } from '@igo2/core/language';
-import { Media, MediaService } from '@igo2/core/media';
+import { MediaService } from '@igo2/core/media';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -94,86 +95,82 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Height Condition for scroll button
    */
-  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
+  heightCondition$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Position Condition for top scroll button
    */
-  positionConditionTop$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  positionConditionTop$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Position Condition for low scroll button
    */
-  positionConditionLow$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  positionConditionLow$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Action store
    */
-  @Input() store: ActionStore;
+  readonly store = input<ActionStore>(undefined);
 
   /**
    * Actionbar mode
    */
-  @Input() mode: ActionbarMode = ActionbarMode.Dock;
+  readonly mode = input<ActionbarMode>(ActionbarMode.Dock);
 
   /**
    * Whether a toggle button should be displayed (Dock mode)
    */
-  @Input() withToggleButton = false;
+  readonly withToggleButton = input(false);
 
   /**
    * Whether a the actionbar should display buttons horizontally
    */
-  @Input() horizontal = false;
+  readonly horizontal = input(false);
 
   /**
    * Color
    */
-  @Input() color = 'default';
+  readonly color = input('default');
 
   /**
    * Color of the button if action mode === overlay
    */
-  @Input() iconColor = 'default';
+  readonly iconColor = input('default');
 
   /**
    * Whether action titles are displayed
    */
-  @Input() withTitle = true;
+  readonly withTitle = input(true);
 
   /**
    * Whether action tooltips are displayed
    */
-  @Input() withTooltip = true;
+  readonly withTooltip = input(true);
 
   /**
    * Whether action titles are displayed (condition for scroll button)
    */
-  @Input() scrollActive = true;
+  readonly scrollActive = input(true);
 
   /**
    * Whether action icons are displayed
    */
-  @Input() withIcon = true;
+  readonly withIcon = input(true);
 
   /**
    * Which icon want to be shown
    */
-  @Input() icon = 'more_horiz';
+  readonly icon = input('more_horiz');
 
   /**
    * Overlay X position
    */
-  @Input() xPosition: MenuPositionX = 'before';
+  readonly xPosition = input<MenuPositionX>('before');
 
   /**
    * Overlay Y position
    */
-  @Input() yPosition: MenuPositionY = 'above';
+  readonly yPosition = input<MenuPositionY>('above');
 
   /**
    * Class to add to the actionbar overlay
@@ -194,7 +191,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.with-title')
   get withTitleClass() {
-    return this.withTitle;
+    return this.withTitle();
   }
 
   /**
@@ -202,7 +199,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.with-icon')
   get withIconClass() {
-    return this.withIcon;
+    return this.withIcon();
   }
 
   /**
@@ -210,36 +207,27 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   @HostBinding('class.horizontal')
   get horizontalClass() {
-    return this.horizontal;
+    return this.horizontal();
   }
 
   get heightCondition(): boolean {
     const el = this.elRef.nativeElement;
-    if (this.scrollActive === false) {
-      if (el.clientHeight < el.scrollHeight) {
-        return true;
-      }
-    }
-    return false;
+    return !this.scrollActive() && el.clientHeight < el.scrollHeight
+      ? true
+      : false;
   }
 
   get positionConditionTop(): boolean {
-    if (this.elRef.nativeElement.scrollTop === 0) {
-      return false;
-    }
-    return true;
+    return this.elRef.nativeElement.scrollTop === 0 ? false : true;
   }
 
   get positionConditionLow(): boolean {
     const el = this.elRef.nativeElement;
-    if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
-      return false;
-    }
-    return true;
+    return el.scrollTop >= el.scrollHeight - el.clientHeight ? false : true;
   }
 
   get isDesktop(): boolean {
-    return this.mediaService.getMedia() === Media.Desktop;
+    return this.mediaService.isDesktop() || this.mediaService.isTablet();
   }
 
   /**
@@ -251,7 +239,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
       if (this.watcher !== undefined) {
         this.watcher.destroy();
       }
-      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+      this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
     }
   }
 

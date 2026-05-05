@@ -2,12 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ import { MessageService } from '@igo2/core/message';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
-import { Observable, Subscription, catchError } from 'rxjs';
+import { EMPTY, Observable, Subscription, catchError } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
 import { TypeCapabilitiesStrings } from '../../datasource/shared/capabilities.interface';
@@ -60,27 +60,27 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   /**
    * Store holding the catalogs
    */
-  @Input() store: EntityStore<Catalog>;
+  readonly store = input<EntityStore<Catalog>>(undefined);
 
   /**
    * Map to add the catalog items to
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() addCatalogAllowed = false;
+  readonly addCatalogAllowed = input(false);
 
   /**
    * Determine if the form to add a catalog is allowed
    */
-  @Input() predefinedCatalogs: Catalog[] = [];
+  readonly predefinedCatalogs = model<Catalog[]>([]);
 
   /**
    * Event emitted a catalog is selected or unselected
    */
-  @Output() catalogSelectChange = new EventEmitter<{
+  readonly catalogSelectChange = output<{
     selected: boolean;
     catalog: Catalog;
   }>();
@@ -107,25 +107,30 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.store.state.clear();
+    this.store().state.clear();
 
     if (this.selectedCatalogId) {
-      const selectedCatalog = this.store
+      const selectedCatalog = this.store()
         .all()
         .find((item) => item.id === this.selectedCatalogId);
       if (selectedCatalog) {
         this.onCatalogSelect(selectedCatalog);
       }
     }
-    this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
-      c.id = c.id ?? Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url));
-      c.title = c.title === '' || !c.title ? c.url : c.title;
-      return c;
+    this.predefinedCatalogs.update((catalogs) => {
+      return catalogs.map((catalog) => {
+        catalog.type = catalog.type ?? 'wms';
+        catalog.id =
+          catalog.id ?? Md5.hashStr(catalog.type + standardizeUrl(catalog.url));
+        catalog.title =
+          catalog.title === '' || !catalog.title ? catalog.url : catalog.title;
+        return catalog;
+      });
     });
   }
 
   getCatalogs(): Observable<Catalog[]> {
-    return this.store.view.all$();
+    return this.store().view.all$();
   }
 
   /**
@@ -134,7 +139,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
    * @internal
    */
   onCatalogSelect(catalog: Catalog) {
-    this.store.state.update(catalog, { selected: true, focused: true }, true);
+    this.store().state.update(catalog, { selected: true, focused: true }, true);
     this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
@@ -153,11 +158,11 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
       addedCatalog.id ??
       Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url));
 
-    const predefinedCatalog = this.predefinedCatalogs.find(
+    const predefinedCatalog = this.predefinedCatalogs().find(
       (c) => c.id === addedCatalog.id
     );
 
-    if (this.store.get(id)) {
+    if (this.store().get(id)) {
       this.messageService.alert(
         'igo.geo.catalog.library.inlist.message',
         'igo.geo.catalog.library.inlist.title'
@@ -165,50 +170,51 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
       return;
     }
     this.unsubscribeAddingCatalog();
+
     if (predefinedCatalog) {
-      predefinedCatalog.removable ??= true;
-      this.handleAddCatalogToStore(predefinedCatalog);
-    } else {
-      this.addingCatalog$$ = this.capabilitiesService
-        .getCapabilities(
-          addedCatalog.type as TypeCapabilitiesStrings,
-          addedCatalog.url
-        )
-        .pipe(
-          catchError((e) => {
-            if (e.error) {
-              this.addCatalogDialog(true, addedCatalog);
-              e.error.caught = true;
-              return e;
-            }
-            this.messageService.error(
-              'igo.geo.catalog.unavailable',
-              'igo.geo.catalog.unavailableTitle',
-              undefined,
-              { value: addedCatalog.url }
-            );
-            throw e;
-          })
-        )
-        .subscribe((capabilities) => {
-          const catalogToAdd: Catalog = ObjectUtils.removeUndefined(
-            Object.assign(
-              {},
-              {
-                id,
-                title: addedCatalog.title,
-                url: addedCatalog.url,
-                type: addedCatalog.type || 'wms',
-                externalProvider: true,
-                removable: true,
-                version:
-                  addedCatalog.type === 'wms' ? capabilities.version : '1.3.0'
-              }
-            )
-          );
-          this.handleAddCatalogToStore(catalogToAdd);
-        });
+      addedCatalog.removable ??= true;
     }
+
+    this.addingCatalog$$ = this.capabilitiesService
+      .getCapabilities(
+        addedCatalog.type as TypeCapabilitiesStrings,
+        addedCatalog.url,
+        addedCatalog.version
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.error) {
+            this.addCatalogDialog(true, addedCatalog, !!predefinedCatalog);
+            e.error.caught = true;
+            return EMPTY;
+          }
+          this.messageService.error(
+            'igo.geo.catalog.unavailable',
+            'igo.geo.catalog.unavailableTitle',
+            undefined,
+            { value: addedCatalog.url }
+          );
+          throw e;
+        })
+      )
+      .subscribe((capabilities) => {
+        const catalogToAdd = ObjectUtils.removeUndefined(
+          Object.assign(
+            {},
+            {
+              id,
+              title: addedCatalog.title,
+              url: addedCatalog.url,
+              type: addedCatalog.type || 'wms',
+              externalProvider: true,
+              removable: true,
+              version:
+                addedCatalog.type === 'wms' ? capabilities.version : '1.3.0'
+            }
+          )
+        ) as Catalog;
+        this.handleAddCatalogToStore(catalogToAdd);
+      });
   }
 
   ngOnDestroy() {
@@ -216,30 +222,35 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   }
 
   private handleAddCatalogToStore(catalogToAdd: Catalog) {
-    this.store.insert(catalogToAdd);
+    this.store().insert(catalogToAdd);
     this.addedCatalogs = [...this.addedCatalogs, catalogToAdd];
     this.unsubscribeAddingCatalog();
   }
 
   onCatalogRemove(catalog) {
-    this.store.delete(catalog);
+    this.store().delete(catalog);
     this.addedCatalogs = this.addedCatalogs
       .slice(0)
       .filter((c) => c.id !== catalog.id);
   }
 
-  addCatalogDialog(error?, addedCatalog?: Catalog) {
+  addCatalogDialog(
+    error?,
+    addedCatalog?: Catalog,
+    isPredefinedCatalog?: boolean
+  ) {
     const dialogRef = this.dialog.open(AddCatalogDialogComponent, {
       width: '700px',
       data: {
-        predefinedCatalogs: this.predefinedCatalogs,
-        store: this.store,
+        predefinedCatalogs: this.predefinedCatalogs(),
+        store: this.store(),
         error,
-        addedCatalog
+        addedCatalog,
+        isPredefinedCatalog
       }
     });
 
-    dialogRef.afterClosed().subscribe((catalog) => {
+    dialogRef.afterClosed().subscribe((catalog: Catalog) => {
       this.addCatalog(catalog);
     });
   }

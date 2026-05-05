@@ -1,12 +1,11 @@
 import {
   Directive,
   ElementRef,
-  EventEmitter,
   HostListener,
   Input,
-  Output,
   Renderer2,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 @Directive({
@@ -37,7 +36,7 @@ export class CollapseDirective {
   }
   private _collapsed = false;
 
-  @Output() toggle = new EventEmitter<boolean>();
+  readonly toggle = output<boolean>();
 
   @HostListener('click')
   click() {

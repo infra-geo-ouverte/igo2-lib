@@ -15,6 +15,7 @@ export abstract class Catalog implements ICatalog {
   abstract?: string;
   forcedProperties?: any[];
   items?: CatalogItem[];
+  /** Default to wms */
   type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;

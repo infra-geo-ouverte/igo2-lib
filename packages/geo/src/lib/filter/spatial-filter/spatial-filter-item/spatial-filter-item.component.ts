@@ -102,7 +102,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
 
-  @Input() map: IgoMap;
+  @Input({ required: true }) map: IgoMap;
 
   @Input()
   get type(): SpatialFilterType {
@@ -205,11 +205,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Input() queryType: SpatialFilterQueryType;
 
-  @Input() zone: Feature;
+  @Input() zones: Feature[];
 
   @Input() loading;
 
-  @Input()
+  @Input({ required: true })
   get store(): EntityStore<Feature> {
     return this._store;
   }
@@ -251,7 +251,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
   @Output() bufferEvent = new EventEmitter<number>();
-  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
+  @Output() zonesWithBufferChange = new EventEmitter<Feature[]>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   @Output() radiusEvent = new EventEmitter<number>();
@@ -267,12 +267,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() openWorkspace = new EventEmitter();
   @Output() entityChange = new EventEmitter<any>();
 
-  public itemType: SpatialFilterItemType[] = [
-    SpatialFilterItemType.Address,
-    SpatialFilterItemType.Thematics
-  ];
   public selectedItemType: SpatialFilterItemType =
-    SpatialFilterItemType.Address;
+    SpatialFilterItemType.Thematics;
   public selectedSourceAddress;
 
   treeControl: NestedTreeControl<SpatialFilterThematic> =
@@ -317,7 +313,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
   public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
-  public drawZone;
+  public drawZone: Feature;
   public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
@@ -371,6 +367,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
                 this.languageService.translate.instant('igo.geo.terrapi.Mun') ||
               child.name ===
                 this.languageService.translate.instant(
+                  'igo.geo.terrapi.aggloMun'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant(
                   'igo.geo.terrapi.Arrond'
                 ) ||
               child.name ===
@@ -390,7 +390,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
               child.name ===
                 this.languageService.translate.instant(
                   'igo.geo.terrapi.RegTour'
-                )
+                ) ||
+              child.name ===
+                this.languageService.translate.instant('igo.geo.terrapi.RSS') ||
+              child.name ===
+                this.languageService.translate.instant('igo.geo.terrapi.RLS') ||
+              child.name ===
+                this.languageService.translate.instant('igo.geo.terrapi.CLSC')
             ) {
               child.group = limits.name;
             } else if (
@@ -399,6 +405,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             ) {
               child.group = this.languageService.translate.instant(
                 'igo.geo.spatialFilter.group.transport'
+              );
+            } else if (
+              child.name ===
+              this.languageService.translate.instant('igo.geo.terrapi.unites')
+            ) {
+              child.group = this.languageService.translate.instant(
+                'igo.geo.spatialFilter.group.addresses'
               );
             } else {
               const thematic: SpatialFilterThematic = {
@@ -420,6 +433,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             }
           }
         });
+        this.dataSource.data = this.thematics;
       });
 
     this.dataSource.data = this.thematics;
@@ -468,7 +482,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             .loadBufferGeometry(this.drawZone, SpatialFilterType.Polygon, value)
             .subscribe((featureGeom: Feature) => {
               this.zoneWithBuffer = featureGeom;
-              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+              this.zonesWithBufferChange.emit(this.zoneWithBuffer);
             });
         } else if (
           this.measureUnit === MeasureLengthUnit.Kilometers &&
@@ -485,7 +499,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             )
             .subscribe((featureGeom: Feature) => {
               this.zoneWithBuffer = featureGeom;
-              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+              this.zonesWithBufferChange.emit(this.zoneWithBuffer);
             });
         } else if (value === 0) {
           this.buffer = value;
@@ -857,14 +871,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   disableSearchButton(): boolean {
     if (this.type === SpatialFilterType.Predefined) {
       if (this.selectedItemType === SpatialFilterItemType.Address) {
-        if (this.queryType !== undefined && this.zone !== undefined) {
+        if (this.queryType !== undefined && this.zones.length > 0) {
           return this.loading;
         }
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
           this.queryType !== undefined &&
-          this.zone !== undefined &&
+          this.zones.length > 0 &&
           this.selectedThematics.selected.length > 0
         ) {
           return this.loading;

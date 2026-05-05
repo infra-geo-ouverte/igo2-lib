@@ -21,7 +21,7 @@ export async function copyExternalAssets(): Promise<void> {
 export async function copyAssets(): Promise<void> {
   const startTime = performance.now();
   const input = join(resolvePackage('core'), 'src/assets');
-  const output = join(distPath, 'assets');
+  const output = join(distPath);
 
   await cp(input, output, { recursive: true });
 

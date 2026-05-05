@@ -5,6 +5,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Optional,
+  Self,
   inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
@@ -64,8 +66,6 @@ export class GeometryFormFieldInputComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
   private cdRef = inject(ChangeDetectorRef);
-  ngControl = inject(NgControl, { optional: true, self: true });
-
   private olOverlayLayer: OlVectorLayer<OlVectorSource>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
@@ -116,7 +116,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure = false;
+  @Input() measure: boolean = false;
 
   /**
    * Whether draw control should be active or not
@@ -137,7 +137,7 @@ export class GeometryFormFieldInputComponent
       this.toggleControl();
     }
   }
-  private _drawControlIsActive = true;
+  private _drawControlIsActive: boolean = true;
 
   /**
    * Whether freehand draw control should be active or not
@@ -182,7 +182,7 @@ export class GeometryFormFieldInputComponent
   /**
    * Control options
    */
-  @Input() controlOptions: Record<string, any> = {};
+  @Input() controlOptions: { [key: string]: any } = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -285,7 +285,10 @@ export class GeometryFormFieldInputComponent
     }
   }
 
-  constructor() {
+  constructor(
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    @Optional() @Self() public ngControl: NgControl
+  ) {
     if (this.ngControl !== undefined) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
@@ -341,7 +344,7 @@ export class GeometryFormFieldInputComponent
   registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
-  private onChange: any = () => void 1;
+  private onChange: any = () => {};
 
   /**
    * Implemented as part of ControlValueAccessor.
@@ -349,7 +352,7 @@ export class GeometryFormFieldInputComponent
   registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  private onTouched: any = () => void 1;
+  private onTouched: any = () => {};
 
   /**
    * Implemented as part of ControlValueAccessor.

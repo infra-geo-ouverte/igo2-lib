@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -51,19 +50,19 @@ import { LayerListToolService } from './layer-list-tool.service';
 export class LayerListToolComponent {
   private layerListToolService = inject(LayerListToolService);
 
-  @Input({ required: true }) mode: LayerToolMode;
-  @Input() viewerOptions: LayerViewerOptions;
-  @Input() floatLabel: FloatLabelType = 'auto';
-  @Input() onlyVisible: boolean;
-  @Input() term: string;
+  readonly mode = input.required<LayerToolMode>();
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly floatLabel = input<FloatLabelType>('auto');
+  readonly onlyVisible = input<boolean>(undefined);
+  readonly term = input<string>(undefined);
 
-  @Output() searchChange = new EventEmitter<string>();
-  @Output() visibilityOnlyChange = new EventEmitter<boolean>();
-  @Output() modeChange = new EventEmitter<boolean>();
-  @Output() addedLayer = new EventEmitter<LayerGroup>();
+  readonly searchChange = output<string>();
+  readonly visibilityOnlyChange = output<boolean>();
+  readonly modeChange = output<boolean>();
+  readonly addedLayer = output<LayerGroup>();
 
   get selectionActive(): boolean {
-    return this.mode === 'selection';
+    return this.mode() === 'selection';
   }
 
   handleTermChange(value: string | undefined): void {

@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { DataSourceOptions } from '../../datasource/shared/datasources';
 import { Layer, VectorLayer } from '../../layer/shared';
 
 @Component({
@@ -16,27 +20,21 @@ import { Layer, VectorLayer } from '../../layer/shared';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class ExportButtonComponent {
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() color = 'primary';
+  readonly color = input('primary');
 
-  get options(): DataSourceOptions {
-    if (!this.layer) {
-      return;
-    }
-    return this.layer.dataSource.options;
-  }
-
-  layerIsExportable(): boolean {
+  readonly isExportable = computed<boolean>(() => {
+    const layer = this.layer();
+    const download = layer?.dataSource.options.download;
+    const workspace = layer?.options.workspace;
     if (
-      (this.layer instanceof VectorLayer && this.layer.exportable === true) ||
-      (this.layer.dataSource.options.download &&
-        this.layer.dataSource.options.download.url) ||
-      (this.layer.options.workspace?.enabled &&
-        this.layer.options.workspace?.workspaceId !== this.layer.id)
+      (layer instanceof VectorLayer && layer?.exportable === true) ||
+      download?.url ||
+      (workspace?.enabled && workspace?.workspaceId !== layer?.id)
     ) {
       return true;
     }
     return false;
-  }
+  });
 }

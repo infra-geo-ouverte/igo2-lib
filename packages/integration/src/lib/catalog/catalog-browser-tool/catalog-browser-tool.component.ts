@@ -2,10 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -64,7 +64,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   /**
    * Whether a group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsedGroup = true;
+  readonly toggleCollapsedGroup = input(true);
 
   /**
    * Map to add layers to

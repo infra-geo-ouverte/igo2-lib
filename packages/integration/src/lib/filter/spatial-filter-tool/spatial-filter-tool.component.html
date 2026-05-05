@@ -1,22 +1,22 @@
 <igo-spatial-filter-type
   [store]="spatialListStore"
   [selectedQueryType]="queryType"
-  [zone]="zone"
   [layers]="activeLayers"
   (eventType)="getOutputType($event)"
   (eventQueryType)="getOutputQueryType($event)"
-  (zoneChange)="onZoneChange($event)"
-  (zoneWithBufferChange)="onZoneChange($event, true)"
+  (zonesWithBufferChange)="onAddZoneWithBuffer($event)"
   (bufferChange)="buffer = $event"
   (measureUnitChange)="measureUnit = $event"
->
-</igo-spatial-filter-type>
+  [zones]="zones"
+  (addZone)="onAddZone($event)"
+  (removeZone)="onRemovedZone($event)"
+/>
 
 <igo-spatial-filter-item
-  [type]="type"
+  [type]="type()"
   [queryType]="queryType"
   [map]="map"
-  [zone]="zone"
+  [zones]="zones"
   [loading]="loading"
   [store]="store"
   [layers]="activeLayers"
@@ -25,10 +25,10 @@
   (radiusEvent)="buffer = $event"
   (bufferEvent)="buffer = $event"
   (measureUnitChange)="measureUnit = $event"
-  (freehandControl)="freehandDrawIsActive = $event"
-  (drawZoneEvent)="zone = $event"
-  (zoneWithBufferChange)="onZoneChange($event, true)"
-  (itemTypeChange)="itemType = $event"
+  (freehandControl)="freehandDrawIsActive.set($event)"
+  (drawZoneEvent)="this.zones = [$event]"
+  (zonesWithBufferChange)="onAddZoneWithBuffer($event)"
+  (itemTypeChange)="itemType.set($event)"
   (thematicChange)="thematics = $event"
   (toggleSearch)="getOutputToggleSearch()"
   (clearButtonEvent)="clearMap()"
@@ -36,8 +36,7 @@
   (export)="activateExportTool()"
   (openWorkspace)="activateWorkspace()"
   (entityChange)="activateWorkspace($event)"
->
-</igo-spatial-filter-item>
+/>
 @if (selectedFeature$ | async; as feature) {
-  <igo-feature-details [feature]="feature"></igo-feature-details>
+  <igo-feature-details [feature]="feature" />
 }

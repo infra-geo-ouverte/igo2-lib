@@ -26,25 +26,24 @@
             "index": "projects/demo/src/index.html",
             "tsConfig": "projects/demo/tsconfig.app.json",
             "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets",
-              "projects/demo/src/config",
-              "projects/demo/src/contexts",
-              "projects/demo/src/locale",
+              {
+                "glob": "**/*",
+                "input": "projects/demo/public"
+              },
               {
                 "glob": "**/*",
                 "input": "./packages/common/src/assets/",
-                "output": "./assets/igo2/common/"
+                "output": "igo2/common/"
               },
               {
                 "glob": "**/*",
                 "input": "./packages/geo/src/assets/",
-                "output": "./assets/igo2/geo/"
+                "output": "igo2/geo/"
               },
               {
                 "glob": "**/*",
                 "input": "./dist/core/assets/",
-                "output": "./assets/igo2/core/"
+                "output": "igo2/core/"
               },
               {
                 "glob": "**/*",
@@ -55,7 +54,7 @@
               {
                 "glob": "**/*",
                 "input": "./dist/core/theming/prebuilt-themes",
-                "output": "./assets/igo2/core/theming/prebuilt-themes"
+                "output": "igo2/core/theming/prebuilt-themes"
               }
             ],
             "styles": ["projects/demo/src/styles.scss"],
@@ -197,8 +196,11 @@
             },
             "scripts": [],
             "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
+              {
+                "glob": "**/*",
+                "input": "projects/demo/public",
+                "output": ""
+              }
             ],
             "codeCoverage": true
           }

@@ -33,12 +33,6 @@
   }
 }
 
-.sort-alpha {
-  &.--active mat-icon {
-    color: red;
-  }
-}
-
 .context-filter-min-width {
   width: calc(100% - 135px);
   margin: 5px;

@@ -165,7 +165,7 @@ export function pointerPositionSummaryMarkerStyle(
 ): olStyle.Style {
   return new olStyle.Style({
     image: new olStyle.Icon({
-      src: './assets/igo2/geo/icons/cross_black_18px.svg'
+      src: './igo2/geo/icons/cross_black_18px.svg'
     }),
 
     text: new olStyle.Text({

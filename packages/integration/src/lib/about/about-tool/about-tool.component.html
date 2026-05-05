@@ -1,6 +1,4 @@
-@if (
-  auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1
-) {
+@if (auth.authenticated && trainingGuideURLs()?.length === 1) {
   <button
     class="training-guide-button"
     matButton="elevated"
@@ -10,12 +8,12 @@
     [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
     (click)="openGuide()"
   >
-    <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
+    {{ 'igo.integration.aboutTool.trainingGuide' | translate }}
     <mat-icon>description</mat-icon>
   </button>
 }
 
-@if (auth.authenticated && trainingGuideURLs && trainingGuideURLs.length > 1) {
+@if (auth.authenticated && (trainingGuideURLs()?.length ?? 0) > 1) {
   <button
     class="training-guide-button"
     matButton="elevated"
@@ -25,13 +23,13 @@
     [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
     [matMenuTriggerFor]="menu"
   >
-    <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
+    {{ 'igo.integration.aboutTool.trainingGuide' | translate }}
     <mat-icon>description</mat-icon>
   </button>
 }
 
 <mat-menu #menu="matMenu">
-  @for (guide of trainingGuideURLs; track guide) {
+  @for (guide of trainingGuideURLs(); track guide) {
     <button mat-menu-item (click)="openGuide(guide)">
       {{ formatFileName(guide) }}
     </button>
@@ -39,8 +37,7 @@
 </mat-menu>
 
 @if (headerHtml !== '') {
-  <igo-custom-html [html]="headerHtml | translate"> </igo-custom-html>
+  <igo-custom-html [html]="headerHtml | translate" />
 }
 
-<igo-custom-html [html]="html | translate: { version: effectiveVersion }">
-</igo-custom-html>
+<igo-custom-html [html]="html | translate: { version: effectiveVersion }" />

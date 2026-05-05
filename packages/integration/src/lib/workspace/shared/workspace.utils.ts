@@ -13,6 +13,7 @@ import {
   FeatureStoreSelectionStrategy,
   FeatureWorkspace,
   OgcFilterableDataSource,
+  OgcFilterableDataSourceOptions,
   WfsWorkspace,
   mapExtentStrategyActiveToolTip,
   noElementSelected
@@ -21,7 +22,7 @@ import {
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
 import moment from 'moment';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, of } from 'rxjs';
 
 import { ToolState } from '../../tool';
 
@@ -141,7 +142,15 @@ export function getWorkspaceActions(
           layer: ws.layer
         });
       },
-      args: [ogcFilterWidget, workspace]
+      args: [ogcFilterWidget, workspace],
+      availability: (
+        widget: Widget,
+        ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace
+      ) =>
+        of(
+          (ws.layer.options.sourceOptions as OgcFilterableDataSourceOptions)
+            ?.ogcFilters?.enabled
+        )
     },
     {
       id: 'interactiveSelect',

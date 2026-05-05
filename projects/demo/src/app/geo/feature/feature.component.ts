@@ -188,7 +188,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         },
         igoStyle: {
           mapboxStyle: {
-            url: 'assets/mapboxStyleExample-feature.json',
+            url: 'mapboxStyleExample-feature.json',
             source: 'source_nameX'
           }
         }

@@ -1,17 +1,11 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { mergeTestConfig } from 'packages/geo/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { CapabilitiesService } from './capabilities.service';
 
 describe('CapabilitiesService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [],
-        providers: [CapabilitiesService]
-      })
-    );
+    TestBed.configureTestingModule(mergeTestConfig({}));
   });
 
   it('should ...', inject(

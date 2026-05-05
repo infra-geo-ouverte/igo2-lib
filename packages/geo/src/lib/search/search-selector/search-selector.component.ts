@@ -1,13 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,9 +14,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
-
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
@@ -42,49 +37,25 @@ import { SEARCH_TYPES } from '../shared/search.enums';
     MatMenuModule,
     MatIconModule,
     MatRadioModule,
-    AsyncPipe,
     IgoLanguageModule
   ]
 })
-export class SearchSelectorComponent implements OnInit, OnDestroy {
+export class SearchSelectorComponent implements OnInit {
   private searchSourceService = inject(SearchSourceService);
-
-  readonly searchType$ = new BehaviorSubject<string>(undefined);
-
-  /**
-   * Subscription to the search type
-   */
-  private searchType$$: Subscription;
 
   /**
    * List of available search types
    */
-  @Input() searchTypes: string[] = SEARCH_TYPES;
-
-  /**
-   * The search type enabled
-   */
-  @Input()
-  set searchType(value: string) {
-    this.setSearchType(value);
-  }
-  get searchType(): string {
-    return this.searchType$.value;
-  }
+  readonly searchTypes = input<string[]>(SEARCH_TYPES);
+  readonly searchType = model<string>(undefined);
 
   /**
    * Event emitted when the enabled search type changes
    */
-  @Output() searchTypeChange = new EventEmitter<string>();
+  readonly searchTypeChange = output<string>();
 
   ngOnInit() {
-    this.searchType$$ = this.searchType$
-      .pipe(distinctUntilChanged())
-      .subscribe((searchType: string) => this.onSetSearchType(searchType));
-  }
-
-  ngOnDestroy() {
-    this.searchType$$.unsubscribe();
+    this.onSetSearchType(this.searchType());
   }
 
   /**
@@ -93,7 +64,9 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    * @internal
    */
   onSearchTypeChange(searchType: string) {
-    this.setSearchType(searchType);
+    this.searchType.set(searchType);
+
+    this.onSetSearchType(searchType);
   }
 
   /**
@@ -105,14 +78,6 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    */
   getSearchTypeTitle(searchType: string) {
     return `igo.geo.search.${searchType.toLowerCase()}.title`;
-  }
-
-  /**
-   * Emit an event and enable the search sources of the given type.
-   * @param searchType Search type
-   */
-  private setSearchType(searchType: string | undefined) {
-    this.searchType$.next(searchType);
   }
 
   private onSetSearchType(searchType: string) {

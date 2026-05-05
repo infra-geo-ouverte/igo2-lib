@@ -3,30 +3,34 @@
   (mouseleave)="onMouseEvent($event)"
 >
   @if (icon) {
-    <mat-icon matListItemIcon>{{ showIcons ? icon : 'blank' }}</mat-icon>
+    <mat-icon matListItemIcon>{{ showIcons() ? icon : 'blank' }}</mat-icon>
   }
 
   @if (titleHtml) {
     <span
       matListItemTitle
+      class="igo-list-item-with-text-overflow-ellipsis"
       [innerHtml]="titleHtml"
       matTooltipShowDelay="500"
       [matTooltip]="tooltipHtml"
       matTooltipClass="search-result-tooltip"
     ></span>
   } @else {
-    @if (!titleHtml) {
-      <span matTooltipShowDelay="500" [matTooltip]="title">{{ title }}</span>
-    }
+    <span
+      class="igo-list-item-with-text-overflow-ellipsis"
+      matTooltipShowDelay="500"
+      [matTooltip]="title"
+      >{{ title }}</span
+    >
   }
 
   <div matListItemMeta>
-    @if (withZoomButton) {
+    @if (withZoomButton()) {
       <button igoStopPropagation mat-icon-button (click)="onZoomHandler()">
         <mat-icon>search</mat-icon>
       </button>
     }
 
-    <ng-content select="[igoSearchItemToolbar]"> </ng-content>
+    <ng-content select="[igoSearchItemToolbar]" />
   </div>
 </mat-list-item>

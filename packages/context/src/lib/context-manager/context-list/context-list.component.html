@@ -1,7 +1,7 @@
 <igo-list [navigation]="true">
   <div class="context-filter-container">
     @if (showFilter()) {
-      <mat-form-field floatLabel="always">
+      <mat-form-field>
         <mat-label>{{
           'igo.context.contextManager.filterPlaceHolder' | translate
         }}</mat-label>
@@ -30,16 +30,19 @@
 
     <div class="actions-container">
       <button
-        class="sort-alpha"
-        [class.--active]="sortedAlpha"
         mat-icon-button
         [matTooltip]="
-          'igo.context.contextManager.sortAlphabetically' | translate
+          sortedAlpha
+            ? ('igo.context.contextManager.sortDefault' | translate)
+            : ('igo.context.contextManager.sortAlphabetically' | translate)
         "
         matTooltipShowDelay="500"
         (click)="toggleSort()"
       >
-        <mat-icon color="primary">sort_by_alpha</mat-icon>
+        <igo-icon
+          color="primary"
+          [icon]="sortedAlpha ? sortAlphaOnIcon : sortAlphaOffIcon"
+        />
       </button>
 
       @if (auth.authenticated && contextConfigs) {
@@ -52,11 +55,8 @@
           [withTitle]="actionbarMode === 'overlay'"
           [horizontal]="false"
           [mode]="actionbarMode"
-        >
-        </igo-actionbar>
-      }
+        />
 
-      @if (auth.authenticated && contextConfigs) {
         <button
           class="users-filter"
           mat-icon-button
@@ -68,7 +68,7 @@
         </button>
       }
       <mat-menu #accountMenu="matMenu">
-        @for (user of users; track user) {
+        @for (user of users; track user.name) {
           @if (!user.childs) {
             <button mat-menu-item class="profil-menu">
               <mat-checkbox
@@ -76,8 +76,7 @@
                 [indeterminate]="getPermission(user).indeterminate"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
-              >
-              </mat-checkbox>
+              />
               <span>{{ user.title }}</span>
             </button>
           } @else {
@@ -91,12 +90,11 @@
                 [indeterminate]="getPermission(user).indeterminate"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
-              >
-              </mat-checkbox>
+              />
               <span>{{ user.title }}</span>
             </button>
             <mat-menu #subAccountMenu="matMenu">
-              @for (child of user.childs; track child) {
+              @for (child of user.childs; track child.name) {
                 <button mat-menu-item class="profil-menu">
                   <mat-checkbox
                     [checked]="getPermission(child).checked"
@@ -115,9 +113,8 @@
           <mat-checkbox
             [checked]="showHidden"
             (click)="$event.stopPropagation()"
-            (change)="showHiddenContexts.emit()"
-          >
-          </mat-checkbox>
+            (change)="onShowHiddenContexts()"
+          />
           <span>
             {{ 'igo.context.contextManager.showHidden' | translate }}
           </span>
@@ -127,64 +124,80 @@
   </div>
 
   @for (
-    groupContexts of $any(contexts$ | async) | keyvalue;
+    groupContexts of $any(contexts$ | async) | keyvalue: sortByKeyPriority;
     track groupContexts
   ) {
-    @if ($any(groupContexts).value.length && auth.authenticated) {
-      <igo-collapsible
-        [title]="titleMapping[$any(groupContexts).key] | translate"
-        [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
-        (toggle)="
-          collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
-        "
-      >
-        @for (context of $any(groupContexts).value; track context) {
+    @if ($any(groupContexts).value.length) {
+      @if (auth.authenticated) {
+        <igo-collapsible
+          [title]="titleMapping[$any(groupContexts).key] | translate"
+          [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
+          (toggle)="
+            collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
+          "
+        >
+          @for (
+            context of $any(groupContexts).value;
+            track context.id ?? context.uri
+          ) {
+            <igo-context-item
+              igoListItem
+              color="accent"
+              [selected]="
+                selectedContext() && selectedContext().uri === context.uri
+              "
+              [context]="context"
+              [default]="
+                context.id &&
+                this.defaultContextId &&
+                this.defaultContextId === context.id
+              "
+              [isDesktop]="isDesktop"
+              (edit)="onEdit(context)"
+              (delete)="onDelete(context)"
+              (clone)="onClone(context)"
+              (save)="onSave(context)"
+              (hide)="onHideContext(context)"
+              (show)="showContext(context)"
+              (favorite)="onFavorite(context)"
+              (manageTools)="onManageTools(context)"
+              (managePermissions)="onManagePermissions(context)"
+              (select)="onSelect(context)"
+              (unselect)="unselect.emit(context)"
+              (share)="onShareContext(context)"
+            />
+          }
+        </igo-collapsible>
+      } @else {
+        @for (
+          context of $any(groupContexts).value;
+          track context.id ?? context.uri
+        ) {
           <igo-context-item
             igoListItem
             color="accent"
-            [selected]="selectedContext && selectedContext.uri === context.uri"
+            [showFavorite]="
+              configService.getConfig('favoriteContext4NonAuthenticated')
+            "
+            [selected]="isContextSelected(context)"
             [context]="context"
             [default]="
-              context.id &&
-              this.defaultContextId &&
-              this.defaultContextId === context.id
+              contextConfigs
+                ? defaultContextId === context.id
+                : defaultContextId === context.uri
             "
-            (edit)="edit.emit(context)"
-            (delete)="delete.emit(context)"
-            (clone)="clone.emit(context)"
-            (save)="save.emit(context)"
-            (hide)="hideContext(context)"
+            [isDesktop]="isDesktop"
+            (edit)="onEdit(context)"
+            (delete)="onDelete(context)"
+            (clone)="onClone(context)"
+            (save)="onSave(context)"
+            (hide)="onHideContext(context)"
             (show)="showContext(context)"
-            (favorite)="favorite.emit(context)"
-            (manageTools)="manageTools.emit(context)"
-            (managePermissions)="managePermissions.emit(context)"
+            (favorite)="onFavorite(context)"
             (select)="onSelect(context)"
             (unselect)="unselect.emit(context)"
-          >
-          </igo-context-item>
+          />
         }
-      </igo-collapsible>
-    }
-    @if ($any(groupContexts).value.length && !auth.authenticated; as context) {
-      @for (context of $any(groupContexts).value; track context) {
-        <igo-context-item
-          igoListItem
-          color="accent"
-          [showFavorite]="
-            configService.getConfig('favoriteContext4NonAuthenticated')
-          "
-          [selected]="selectedContext && selectedContext.uri === context.uri"
-          [context]="context"
-          [default]="
-            contextConfigs
-              ? defaultContextId === context.id
-              : defaultContextId === context.uri
-          "
-          (favorite)="favorite.emit(context)"
-          (select)="select.emit(context)"
-          (unselect)="unselect.emit(context)"
-        >
-        </igo-context-item>
       }
     }
   }

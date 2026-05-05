@@ -5,7 +5,7 @@
     <div class="resize-item" [ngClass]="[alignement]"></div>
   </div>
 
-  <button mat-mini-fab class="expand-btn" [ngClass]="[alignement, anchor]">
+  <button mat-mini-fab class="expand-btn" [ngClass]="[alignement, anchor()]">
     <mat-icon [style.transform]="iconRotation">drag_handle</mat-icon>
   </button>
 </div>

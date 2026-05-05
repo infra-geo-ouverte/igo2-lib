@@ -26,8 +26,7 @@
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
 >
   <div class="picker">
-    <color-chrome (onChange)="handleChange($event)" [color]="colorPicker">
-    </color-chrome>
+    <color-chrome (onChange)="handleChange($event)" [color]="colorPicker" />
     <div class="buttons">
       <button matButton="filled" color="primary" (click)="handleClick($event)">
         {{ 'igo.common.confirmDialog.applyBtn' | translate }}

@@ -3,20 +3,13 @@ import { Injectable, inject } from '@angular/core';
 
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 
-import { Type } from 'ol/format/Feature';
-
 import { Observable } from 'rxjs';
 
 import { GeoDB } from '../geoDB';
 
-export enum ResponseType {
-  Arraybuffer = 'arraybuffer',
-  Blob = 'blob',
-  Text = 'text',
-  Json = 'json'
-}
+export type ResponseType = 'arraybuffer' | 'json' | 'text' | 'xml' | 'blob';
 export interface SimpleGetOptions {
-  responseType: Type;
+  responseType: ResponseType;
   withCredentials?: boolean;
 }
 @Injectable()

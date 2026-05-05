@@ -2,11 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -75,28 +75,28 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Catalog
    */
-  @Input() catalog: Catalog;
+  readonly catalog = input<Catalog>(undefined);
 
   /**
    * Catalog group
    */
-  @Input() group: CatalogItemGroup;
+  readonly group = input<CatalogItemGroup>(undefined);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Whether the group is collapsed
    */
-  @Input() collapsed = true;
+  readonly collapsed = model(true);
 
-  @Input() resolution: number;
+  readonly resolution = input<number>(undefined);
 
-  @Input() catalogAllowLegend = false;
+  readonly catalogAllowLegend = input(false);
 
   /**
    * Whether the group can be toggled when it's collapsed
    */
-  @Input() toggleCollapsed = true;
+  readonly toggleCollapsed = input(true);
 
   /**
    * Parent catalog's items store state. Groups share a unique
@@ -105,35 +105,37 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * the selection of a layer while unselecting any layer already selected in another group.
    * This could be useful to display some layer info before adding it, for example.
    */
-  @Input() state: EntityStateManager<CatalogItem, CatalogItemState>;
+  readonly state =
+    input<EntityStateManager<CatalogItem, CatalogItemState>>(undefined);
 
   /**
    * Event emitted when the add/remove button of the group is clicked
    */
-  @Output() addedChange = new EventEmitter<AddedChangeGroupEmitter>();
+  readonly addedChange = output<AddedChangeGroupEmitter>();
 
   /**
    * Event emitted when the add/remove button of a layer is clicked
    */
-  @Output() layerAddedChange = new EventEmitter<AddedChangeEmitter>();
+  readonly layerAddedChange = output<AddedChangeEmitter>();
 
   /**
    * @internal
    */
   get title(): string {
-    return this.group.title;
+    return this.group().title;
   }
 
   /**
    * @internal
    */
   ngOnInit() {
-    this.store.load(this.group.items);
+    const group = this.group();
+    this.store.load(group.items);
     this.evaluateAdded();
-    this.evaluateDisabled(this.collapsed);
-    if (this.group.sortDirection !== undefined) {
+    this.evaluateDisabled(this.collapsed());
+    if (group.sortDirection !== undefined) {
       this.store.view.sort({
-        direction: this.group.sortDirection,
+        direction: group.sortDirection,
         valueAccessor: (item: CatalogItem) => item.title
       });
     }
@@ -192,7 +194,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     this.added$.next(true);
     this.addedChange.emit({
       added: true,
-      group: this.group,
+      group: this.group(),
       event
     });
   }
@@ -204,7 +206,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     this.added$.next(false);
     this.addedChange.emit({
       added: false,
-      group: this.group,
+      group: this.group(),
       event
     });
   }
@@ -224,7 +226,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     const layersAdded = this.store.view
       .all()
       .filter((item: CatalogItem) => item.id !== layer.id)
-      .map((item: CatalogItem) => this.state.get(item).added || false);
+      .map((item: CatalogItem) => this.state().get(item).added || false);
 
     if (layersAdded.every((value) => value === added)) {
       added ? this.add(event.event) : this.remove(event.event);
@@ -235,20 +237,20 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
 
   private evaluateAdded() {
     const added = this.store.all().every((item: CatalogItem) => {
-      return (this.state.get(item).added || false) === true;
+      return (this.state().get(item).added || false) === true;
     });
     this.added$.next(added);
   }
 
   private evaluateDisabled(collapsed: boolean) {
     let disabled = false;
-    if (this.toggleCollapsed === false) {
+    if (this.toggleCollapsed() === false) {
       disabled = collapsed;
     }
     this.disabled$.next(disabled);
   }
 
   onTitleClick() {
-    this.collapsed = !this.collapsed;
+    this.collapsed.set(!this.collapsed());
   }
 }

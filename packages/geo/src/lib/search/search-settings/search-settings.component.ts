@@ -1,12 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   HostListener,
-  Input,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -88,36 +88,36 @@ export class SearchSettingsComponent implements OnInit {
     return this.mediaService.isTouchScreen();
   }
 
-  @Input() pointerSummaryEnabled = false;
-  @Input() searchResultsGeometryEnabled = false;
-  @Input() reverseSearchCoordsFormatEnabled = false;
-  @Input() allowResetSearchSourcesOptions = true;
+  pointerSummaryEnabled = model<boolean>(false);
+  searchResultsGeometryEnabled = model<boolean>(false);
+  reverseSearchCoordsFormatEnabled = model<boolean>(false);
+  readonly allowResetSearchSourcesOptions = input(true);
 
   /**
    * Event emitted when the enabled search source changes
    */
-  @Output() searchSourceChange = new EventEmitter<SearchSource>();
+  readonly searchSourceChange = output<SearchSource>();
 
   /**
    * Event emitted when the pointer summary is activated
    */
-  @Output() pointerSummaryStatus = new EventEmitter<boolean>();
+  readonly pointerSummaryStatus = output<boolean>();
 
   /**
    * Event emitted when the show geometry summary is changed
    */
-  @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+  readonly searchResultsGeometryStatus = output<boolean>();
 
   /**
    * Event emitted when the coords format is changed
    */
-  @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+  readonly reverseSearchCoordsFormatStatus = output<boolean>();
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'F2') {
-      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
-      this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
+      this.pointerSummaryEnabled.set(!this.pointerSummaryEnabled());
+      this.pointerSummaryStatus.emit(this.pointerSummaryEnabled());
     }
   }
 
@@ -331,19 +331,19 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   changePointerReverseSearch(event) {
-    this.pointerSummaryEnabled = event.checked;
-    this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
+    this.pointerSummaryEnabled.set(event.checked);
+    this.pointerSummaryStatus.emit(this.pointerSummaryEnabled());
   }
 
   changeSearchResultsGeometry(event) {
-    this.searchResultsGeometryEnabled = event.checked;
-    this.searchResultsGeometryStatus.emit(this.searchResultsGeometryEnabled);
+    this.searchResultsGeometryEnabled.set(event.checked);
+    this.searchResultsGeometryStatus.emit(this.searchResultsGeometryEnabled());
   }
 
   reverseSearchCoordsFormat(event) {
-    this.reverseSearchCoordsFormatEnabled = event.checked;
+    this.reverseSearchCoordsFormatEnabled.set(event.checked);
     this.reverseSearchCoordsFormatStatus.emit(
-      this.reverseSearchCoordsFormatEnabled
+      this.reverseSearchCoordsFormatEnabled()
     );
   }
 }

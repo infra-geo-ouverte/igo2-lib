@@ -10,7 +10,8 @@
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git",
+    "directory": "packages/geo"
   },
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
@@ -42,8 +43,8 @@
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/forms": "^20.0.0",
-    "@angular/material-moment-adapter": "^20.0.0",
     "@angular/material": "^20.0.0",
+    "@angular/material-moment-adapter": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@igo2/auth": "*",
     "@igo2/common": "*",
@@ -56,19 +57,17 @@
     "@turf/intersect": "^7.2.0",
     "@turf/line-intersect": "^7.2.0",
     "@turf/point-on-feature": "^7.2.0",
-    "canvg": "^4.0.0",
-    "dompurify": "^3.0.0",
     "file-saver": "^2.0.2",
     "flexsearch": "0.7.21",
     "html2canvas": "^1.4.1",
     "idb": "^8.0.3",
+    "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.0",
-    "jspdf": "^3.0.0",
     "jszip": "^3.10.1",
     "moment": "^2.30.0",
     "nosleep.js": "^0.12.0",
     "ol-mapbox-style": "^13.1.0",
-    "ol": "10.6.0",
+    "ol": "^10.0.0",
     "proj4": "^2.15.0",
     "rxjs": "^7.8.0",
     "striptags": "^3.2.0",

@@ -3,9 +3,12 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  Input,
-  inject
+  effect,
+  inject,
+  input
 } from '@angular/core';
+
+import View from 'ol/View';
 
 import {
   AnyLayerOptions,
@@ -30,44 +33,45 @@ export class MiniBaseMapComponent implements AfterViewInit {
   private layerService = inject(LayerService);
   private appRef = inject(ApplicationRef);
 
-  @Input() map: IgoMap;
-  @Input() disabled: boolean;
-  @Input() title: string;
-
-  @Input()
-  get display(): boolean {
-    return this._display;
-  }
-  set display(value: boolean) {
-    this._display = value;
-    this.basemap.ol.getView().changed();
-  }
-  private _display: boolean;
-
-  @Input()
-  get baseLayer(): Layer {
-    return this._baseLayer;
-  }
-  set baseLayer(value: Layer) {
-    this._baseLayer = value;
-    this.handleBaseLayerChanged(value);
-  }
-  private _baseLayer: Layer;
+  readonly map = input<IgoMap>(undefined);
+  readonly disabled = input<boolean>(undefined);
+  readonly title = input<string>(undefined);
+  readonly display = input<boolean>(undefined);
+  readonly baseLayer = input<Layer>(undefined);
 
   public basemap = new IgoMap({
     controls: {},
     interactions: false
   });
 
+  constructor() {
+    effect(() => {
+      this.handleBaseLayerChanged(this.baseLayer());
+    });
+  }
+
   ngAfterViewInit() {
-    this.basemap.ol.setView(this.map.ol.getView());
+    const mainView = this.map().ol.getView();
+    const basemapView = new View({
+      center: mainView.getCenter(),
+      zoom: mainView.getZoom(),
+      projection: mainView.getProjection(),
+      minZoom: mainView.getMinZoom(),
+      maxZoom: mainView.getMaxZoom()
+    });
+    this.basemap.ol.setView(basemapView);
+
+    mainView.on(['change:center', 'change:resolution'], () => {
+      this.basemap.ol.getView().setCenter(mainView.getCenter());
+      this.basemap.ol.getView().setZoom(mainView.getZoom());
+    });
   }
 
   changeBaseLayer(baseLayer: Layer) {
-    if (this.disabled) {
+    if (this.disabled()) {
       return;
     }
-    this.map.layerController.selectBaseLayer(baseLayer);
+    this.map().layerController.selectBaseLayer(baseLayer);
     this.appRef.tick();
   }
 
@@ -99,7 +103,7 @@ export class MiniBaseMapComponent implements AfterViewInit {
       // search for child layers
       links.map((link: LayersLinkProperties) => {
         link.linkedIds.map((linkedId: string) => {
-          const layerToApply = this.map.layerController.all.find(
+          const layerToApply = this.map().layerController.all.find(
             (layer) =>
               isLayerItem(layer) &&
               layer.options.linkedLayers?.linkId === linkedId

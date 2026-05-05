@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 
 import {
   RoutesFeatureStore,
@@ -6,8 +6,6 @@ import {
   StopsFeatureStore,
   StopsStore
 } from '@igo2/geo';
-
-import { Subject } from 'rxjs';
 
 import { MapState } from '../map/map.state';
 
@@ -20,7 +18,7 @@ import { MapState } from '../map/map.state';
 export class DirectionState {
   private mapState = inject(MapState);
 
-  public zoomToActiveRoute$ = new Subject<void>();
+  public zoomToActiveRoute = signal(false);
 
   /**
    * Store that holds the stop

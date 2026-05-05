@@ -1,11 +1,10 @@
 <igo-catalog-library
-  [predefinedCatalogs]="predefinedCatalogs"
-  [addCatalogAllowed]="addCatalogAllowed"
+  [predefinedCatalogs]="predefinedCatalogs()"
+  [addCatalogAllowed]="addCatalogAllowed()"
   [store]="store"
   (catalogSelectChange)="onCatalogSelectChange($event)"
->
-</igo-catalog-library>
-@if (exportButton) {
+/>
+@if (exportButton()) {
   <div class="get-catalog-list-button">
     <button
       matButton="elevated"

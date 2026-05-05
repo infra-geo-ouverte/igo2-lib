@@ -5,8 +5,8 @@ import {
 import { TestBed, inject } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { mergeTestConfig } from 'packages/core/test-config';
 
+import { mergeTestConfig } from '../../../test-config';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {

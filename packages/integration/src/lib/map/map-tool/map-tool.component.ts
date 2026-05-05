@@ -2,17 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common/tool';
-import {
-  ContextListBindingDirective,
-  ContextListComponent
-} from '@igo2/context';
+import { ContextListComponent } from '@igo2/context';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { Media, MediaService } from '@igo2/core/media';
@@ -62,7 +59,6 @@ import { MapState } from './../map.state';
     MetadataButtonComponent,
     LayerViewerComponent,
     ContextListComponent,
-    ContextListBindingDirective,
     IgoLanguageModule
   ]
 })
@@ -76,26 +72,26 @@ export class MapToolComponent implements OnInit {
 
   isDesktop: boolean;
 
-  @Input() toggleLegendOnVisibilityChange = false;
+  readonly toggleLegendOnVisibilityChange = input(false);
 
-  @Input() expandLegendOfVisibleLayers = false;
+  readonly expandLegendOfVisibleLayers = input(false);
 
-  @Input() updateLegendOnResolutionChange = false;
+  readonly updateLegendOnResolutionChange = input(false);
 
-  @Input() ogcButton = true;
+  readonly ogcButton = input(true);
 
-  @Input() timeButton = true;
+  readonly timeButton = input(true);
 
-  @Input() layerListControls: LayerListControlsOptions = {};
+  readonly layerListControls = input<LayerListControlsOptions>({});
 
-  @Input() queryBadge = false;
+  readonly queryBadge = input(false);
 
   get map(): IgoMap {
     return this.mapState.map;
   }
 
   get excludeBaseLayers(): boolean {
-    return this.layerListControls.excludeBaseLayers || false;
+    return this.layerListControls().excludeBaseLayers || false;
   }
 
   get layerFilterAndSortOptions(): any {
@@ -103,10 +99,10 @@ export class MapToolComponent implements OnInit {
       {
         showToolbar: LayerListControlsEnum.default
       },
-      this.layerListControls
+      this.layerListControls()
     );
 
-    switch (this.layerListControls.showToolbar) {
+    switch (this.layerListControls().showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
         break;
@@ -124,11 +120,11 @@ export class MapToolComponent implements OnInit {
     return {
       filterAndSortOptions: this.layerFilterAndSortOptions,
       legend: {
-        showForVisibleLayers: this.expandLegendOfVisibleLayers,
-        showOnVisibilityChange: this.toggleLegendOnVisibilityChange,
-        updateOnResolutionChange: this.updateLegendOnResolutionChange
+        showForVisibleLayers: this.expandLegendOfVisibleLayers(),
+        showOnVisibilityChange: this.toggleLegendOnVisibilityChange(),
+        updateOnResolutionChange: this.updateLegendOnResolutionChange()
       },
-      queryBadge: this.queryBadge,
+      queryBadge: this.queryBadge(),
       ...this._layerViewerOptions
     };
   }

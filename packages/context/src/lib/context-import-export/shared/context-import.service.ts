@@ -84,9 +84,12 @@ export class ContextImportService {
   private importFile(file: File, observer: Observer<DetailedContext>) {
     const reader = new FileReader();
 
-    reader.onload = (event: any) => {
+    reader.onload = (event) => {
       try {
-        const context = this.parseContextFromFile(file, event.target.result);
+        const context = this.parseContextFromFile(
+          file,
+          event.target.result as string
+        );
         observer.next(context);
       } catch {
         observer.error(new ImportUnreadableFileError());

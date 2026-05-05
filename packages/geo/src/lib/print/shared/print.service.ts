@@ -12,8 +12,8 @@ import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { default as JSZip } from 'jszip';
-import { Observable, Subject, forkJoin } from 'rxjs';
-import { map as rxMap } from 'rxjs/operators';
+import { Observable, Subject, forkJoin, fromEvent } from 'rxjs';
+import { catchError, first, map as rxMap, timeout } from 'rxjs/operators';
 
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { IgoMap } from '../../map/shared/map';
@@ -26,11 +26,7 @@ import {
   PrintResolution
 } from './print.type';
 
-declare global {
-  interface Navigator {
-    msSaveBlob?: (blob: any, defaultName?: string) => boolean;
-  }
-}
+const PRINT_TIMEOUT = 30000; // 30 secondes
 
 @Injectable({
   providedIn: 'root'
@@ -197,11 +193,11 @@ export class PrintService {
           } else {
             await this.saveDoc(doc);
           }
-        }
 
-        if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
-          this.activityService.unregister(this.activityId);
-          status$.next(SubjectStatus.Done);
+          if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
+            this.activityService.unregister(this.activityId);
+            status$.next(SubjectStatus.Done);
+          }
         }
       }
     );
@@ -243,7 +239,8 @@ export class PrintService {
   ) {
     if (
       map.layerController.all.find(
-        (layer) => layer.visible && layer.id.startsWith('igo-measures-')
+        (layer) =>
+          layer.visible && layer.id.toString().startsWith('igo-measures-')
       )
     ) {
       let canvasOverlayHTMLMeasures;
@@ -723,10 +720,15 @@ export class PrintService {
       resolution,
       viewResolution
     );
-    const status$ = new Subject();
+    const status$ = new Subject<SubjectStatus>();
 
-    let timeout;
-    map.ol.once('rendercomplete', async (event: any) => {
+    this.mapRenderCompleteEvent$(
+      map,
+      mapSize,
+      viewResolution,
+      status$
+    ).subscribe(async (event: any) => {
+      let timeout = undefined;
       const mapCanvas = event.target
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
@@ -780,7 +782,6 @@ export class PrintService {
         status$.next(status);
       }, 200);
     });
-
     return status$;
   }
 
@@ -965,7 +966,7 @@ export class PrintService {
     div.style.textAlign = 'center';
 
     const img = this.document.createElement('img');
-    img.src = './assets/igo2/geo/images/north-direction.png';
+    img.src = './igo2/geo/images/north-direction.png';
     img.style.maxWidth = '50mm';
     img.style.maxHeight = '50mm';
     img.style.transform = 'rotate(' + rotation + 'rad)';
@@ -1005,7 +1006,7 @@ export class PrintService {
     legendPosition: PrintLegendPosition,
     showNorthArrow: boolean
   ) {
-    const status$ = new Subject();
+    const status$ = new Subject<SubjectStatus>();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
@@ -1013,7 +1014,12 @@ export class PrintService {
     const initialMapSize = map.ol.getSize() as [number, number];
     const viewResolution = map.ol.getView().getResolution();
 
-    map.ol.once('rendercomplete', async (event: any) => {
+    this.mapRenderCompleteEvent$(
+      map,
+      initialMapSize,
+      viewResolution,
+      status$
+    ).subscribe(async (event: any) => {
       const size = map.ol.getSize();
       const mapCanvas = event.target
         .getViewport()
@@ -1423,13 +1429,9 @@ export class PrintService {
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      if (navigator.msSaveBlob) {
-        this.addFileToZip(name, canvas.msToBlob());
-      } else {
-        canvas.toBlob((blob) => {
-          this.addFileToZip(name, blob);
-        }, blobFormat);
-      }
+      canvas.toBlob((blob) => {
+        this.addFileToZip(name, blob);
+      }, blobFormat);
     } catch {
       this.messageService.error(
         'igo.geo.printForm.corsErrorMessageBody',
@@ -1515,5 +1517,29 @@ export class PrintService {
     }
 
     return n * k;
+  }
+
+  private mapRenderCompleteEvent$(
+    map: IgoMap,
+    mapSize: number[],
+    viewResolution: number,
+    status$: Subject<SubjectStatus>
+  ): Observable<unknown> {
+    return fromEvent(map.ol, 'rendercomplete').pipe(
+      timeout(PRINT_TIMEOUT),
+      first(),
+      catchError((error) => {
+        const translate = this.languageService.translate;
+        const message = translate.instant('igo.geo.printForm.timeout', {
+          value: PRINT_TIMEOUT / 1000
+        });
+        error.message += ` - ${message}`;
+        this.messageService.error(message);
+        status$.next(SubjectStatus.Error);
+
+        this.resetOriginalMapSize(map, mapSize, viewResolution);
+        throw error;
+      })
+    );
   }
 }

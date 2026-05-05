@@ -1,11 +1,10 @@
 import {
   Directive,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -20,7 +19,7 @@ import {
   mergeLayersOptions,
   sortLayersByZindex
 } from '@igo2/geo';
-import type { AnyLayer, AnyLayerOptions, IgoMap } from '@igo2/geo';
+import type { AnyLayer, AnyLayerOptions, IgoMap, LayerId } from '@igo2/geo';
 import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
@@ -31,10 +30,6 @@ import {
   addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
-import {
-  hasLegacyParams,
-  hasModernShareParams
-} from '../../share-map/shared/share-map.utils';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
@@ -55,12 +50,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private contextLayers: AnyLayer[] = [];
 
-  @Input() removeLayersOnContextChange: boolean = true;
+  readonly removeLayersOnContextChange = input<boolean>(true);
 
-  @Output() contextLayersLoaded: EventEmitter<boolean> = new EventEmitter();
+  readonly contextLayersLoaded = output<boolean>();
 
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   ngOnInit() {
@@ -97,7 +92,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       ObjectUtils.copyDeep(context)
     );
 
-    if (this.removeLayersOnContextChange === true) {
+    if (this.removeLayersOnContextChange() === true) {
       this.map.layerController.reset();
     } else {
       this.map.layerController.remove(...this.contextLayers);
@@ -153,7 +148,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {
     const params = this.queryParams;
     const currentContext = this.contextService.context$.value.uri;
-    const currentLayerid: string = layer.id;
+    const currentLayerid = layer.id;
 
     let visible = layer.visible;
     if (!params || !currentLayerid) {
@@ -164,8 +159,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
-      let visiblelayers: string[] = [];
-      let invisiblelayers: string[] = [];
+      let visiblelayers: LayerId[] = [];
+      let invisiblelayers: LayerId[] = [];
       const visibleOnLayers =
         params[this.shareMapService.routeService.options.visibleOnLayersKey];
 
@@ -211,14 +206,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private handleContextWithSharedUrl(
     context: DetailedContext
   ): AnyLayerOptions[] {
-    if (
-      !this.queryParams ||
-      (!hasLegacyParams(this.queryParams, this.shareMapService.optionsLegacy) &&
-        !hasModernShareParams(
-          this.queryParams,
-          this.shareMapService.keysDefinitions
-        ))
-    ) {
+    if (!this.queryParams) {
       return context.layers;
     }
 
@@ -226,9 +214,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     const contextValue = this.shareMapService.getContext(this.queryParams);
 
     if (!contextValue || contextValue === uri) {
-      const layersOptions = this.shareMapService.parser.parseLayers(
-        this.queryParams
-      );
+      const layersOptions = this.shareMapService.parseLayers(this.queryParams);
       if (layersOptions.length) {
         return mergeLayersOptions([...layers], layersOptions);
       }

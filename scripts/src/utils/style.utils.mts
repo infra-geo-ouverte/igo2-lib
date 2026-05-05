@@ -10,7 +10,12 @@ export async function compileStyle(
 ) {
   const result = compile(input, {
     loadPaths: [PATHS.nodeModules],
-    silenceDeprecations: ['color-functions', 'global-builtin', 'import']
+    silenceDeprecations: [
+      'color-functions',
+      'global-builtin',
+      'import',
+      'if-function'
+    ]
   });
   await createFile(outputFileName, destination, result.css);
 }

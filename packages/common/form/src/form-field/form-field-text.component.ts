@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
@@ -53,44 +53,44 @@ export class FormFieldTextComponent implements OnInit {
   /**
    * The field's form control
    */
-  @Input() formControl: UntypedFormControl;
+  readonly formControl = input<UntypedFormControl>(undefined);
 
   /**
    * Field placeholder
    */
-  @Input() placeholder: string;
+  readonly placeholder = input<string>(undefined);
 
   /**
    * if the input is a password
    */
-  @Input() isPassword: boolean;
+  readonly isPassword = input<boolean>(undefined);
 
   /**
    * Field placeholder
    */
-  @Input() errors: Record<string, string>;
+  readonly errors = input<Record<string, string>>(undefined);
 
   /**
    * Wheter a disable switch should be available
    */
-  @Input() disableSwitch = false;
+  readonly disableSwitch = input(false);
 
   /**
    * Whether the field is required
    */
   get required(): boolean {
-    return formControlIsRequired(this.formControl);
+    return formControlIsRequired(this.formControl());
   }
 
   ngOnInit() {
-    this.disabled$.next(this.formControl.disabled);
+    this.disabled$.next(this.formControl().disabled);
   }
 
   /**
    * Get error message
    */
   getErrorMessage(): string {
-    return getControlErrorMessage(this.formControl, this.errors);
+    return getControlErrorMessage(this.formControl(), this.errors());
   }
 
   onDisableSwitchClick() {
@@ -100,9 +100,9 @@ export class FormFieldTextComponent implements OnInit {
   private toggleDisabled() {
     const disabled = !this.disabled$.value;
     if (disabled === true) {
-      this.formControl.disable();
+      this.formControl().disable();
     } else {
-      this.formControl.enable();
+      this.formControl().enable();
     }
     this.disabled$.next(disabled);
   }
@@ -112,7 +112,7 @@ export class FormFieldTextComponent implements OnInit {
     this.delayedHide();
   }
   delayedHide(delayMS = 10000) {
-    if (this.isPassword && !this.hide) {
+    if (this.isPassword() && !this.hide) {
       if (this.lastTimeoutRequest) {
         clearTimeout(this.lastTimeoutRequest);
       }

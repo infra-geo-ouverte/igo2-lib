@@ -1,14 +1,14 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
+  DestroyRef,
   OnInit,
-  Output,
-  inject
+  computed,
+  inject,
+  model,
+  signal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -29,151 +29,207 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '@igo2/auth';
 import { CollapsibleComponent } from '@igo2/common/collapsible';
 import { ListComponent } from '@igo2/common/list';
-import { StopPropagationDirective } from '@igo2/common/stop-propagation';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
+import { MessageService } from '@igo2/core/message';
 
-import { Subscription } from 'rxjs';
+import { Subscription, map, of, switchMap, tap } from 'rxjs';
 
-import { TypePermission } from '../shared/context.enum';
+import { ContextService } from '../shared';
+import { Context } from '../shared/context.interface';
+import { ContextPermissionItemComponent } from './context-permission-item/context-permission-item.component';
 import {
-  Context,
-  ContextPermission,
-  ContextPermissionsList,
-  ContextProfils
-} from '../shared/context.interface';
+  ContextUserOrProfils,
+  IAnyContextPermission
+} from './context-permission.interface';
+import { ContextPermissionService } from './context-permission.service';
 
 @Component({
   selector: 'igo-context-permissions',
   templateUrl: './context-permissions.component.html',
   styleUrls: ['./context-permissions.component.scss'],
   imports: [
-    MatRadioModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatOptionModule,
-    MatButtonModule,
-    ListComponent,
     CollapsibleComponent,
-    MatListModule,
+    FormsModule,
+    IgoLanguageModule,
+    ListComponent,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatFormFieldModule,
     MatIconModule,
-    StopPropagationDirective,
+    MatInputModule,
+    MatListModule,
+    MatOptionModule,
+    MatRadioModule,
     MatTooltipModule,
-    KeyValuePipe,
-    IgoLanguageModule
+    ReactiveFormsModule,
+    ContextPermissionItemComponent
   ]
 })
 export class ContextPermissionsComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
-  private cd = inject(ChangeDetectorRef);
   private http = inject(HttpClient);
   authService = inject(AuthService);
   private config = inject(ConfigService);
-
+  private contextService = inject(ContextService);
+  private contextPermissionService = inject(ContextPermissionService);
+  private messageService = inject(MessageService);
+  private destroyRef = inject(DestroyRef); // Modern way to handle cleanup
   public form: UntypedFormGroup;
 
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.cd.detectChanges();
-  }
-  private _context: Context;
+  readonly context = model<Context>();
+  readonly permissions = model<IAnyContextPermission[]>();
+  readonly permissionsRead = computed(() =>
+    this.permissions().filter(
+      (permission) => permission.typePermission === 'read'
+    )
+  );
+  readonly permissionsWrite = computed(() =>
+    this.permissions().filter(
+      (permission) => permission.typePermission === 'write'
+    )
+  );
 
-  @Input()
-  get permissions(): ContextPermissionsList {
-    return this._permissions;
-  }
-  set permissions(value: ContextPermissionsList) {
-    this._permissions = value;
-    this.cd.detectChanges();
-  }
-  private _permissions: ContextPermissionsList;
+  profils = signal<ContextUserOrProfils[]>([]);
 
-  get profils(): ContextProfils[] {
-    return this._profils;
-  }
-  set profils(value: ContextProfils[]) {
-    this._profils = value;
-    this.cd.detectChanges();
-  }
-  private _profils: ContextProfils[] = [];
-
-  get canWrite(): boolean {
-    return this.context.permission === TypePermission[TypePermission.write];
-  }
+  canWrite = computed(() => this.context().permission === 'write');
 
   private baseUrlProfils;
 
   public formControl = new UntypedFormControl();
   formValueChanges$$: Subscription;
 
-  @Output() addPermission = new EventEmitter<ContextPermission>();
-  @Output() removePermission = new EventEmitter<ContextPermission>();
-  @Output() scopeChanged = new EventEmitter<Context>();
-
   ngOnInit(): void {
     this.buildForm();
 
     this.baseUrlProfils =
-      this.config.getConfig('context.url') + '/profils-users?';
+      this.config.getConfig('context.url') + '/profils/users?';
 
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
       (value) => {
         if (value.length) {
-          this.http
-            .get(this.baseUrlProfils + 'q=' + value)
-            .subscribe((profils) => {
-              this.profils = profils as ContextProfils[];
-            });
-          this.profils.filter((profil) => {
-            const filterNormalized = value
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            const profilTitleNormalized = profil.title
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            const profilNameNormalized = profil.name
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-            const profilNormalized =
-              profilNameNormalized + profilTitleNormalized;
-            return profilNormalized.includes(filterNormalized);
-          });
+          this.getProfils(value).subscribe((profils) =>
+            this.profils.set(profils)
+          );
         } else {
-          this.profils = [];
+          this.profils.set([]);
         }
       }
     );
+
+    this.handleEditedContextChange();
   }
 
-  displayFn(profil?: ContextProfils): string | undefined {
+  displayFn(profil?: ContextUserOrProfils): string | undefined {
     return profil ? profil.title : undefined;
   }
 
-  public handleFormSubmit(value) {
-    this.addPermission.emit(value);
+  handleFormSubmit(value: IAnyContextPermission) {
+    const contextId = this.context().id;
+    this.contextPermissionService
+      .add(contextId, value)
+      .subscribe((permission) => {
+        this.permissions.update((permissions) => {
+          permissions.push(permission);
+          return [...permissions];
+        });
+        this.messageService.success(
+          'igo.context.permission.dialog.addMsg',
+          'igo.context.permission.dialog.addTitle',
+          undefined,
+          { value: permission.title }
+        );
+      });
   }
 
   private buildForm(): void {
     this.form = this.formBuilder.group({
-      profil: [],
+      id: null,
+      userExternalId: null,
+      profilId: null,
       typePermission: ['read']
     });
   }
 
-  onProfilSelected(value) {
+  onProfilSelected(value: ContextUserOrProfils) {
     this.form.setValue({
-      profil: value.name,
+      id: value.id,
+      userExternalId: value.type === 'user' ? value.id : null,
+      profilId: value.type === 'profil' ? value.id : null,
       typePermission: this.form.value.typePermission
     });
   }
+
+  onRemovePermission(permission: IAnyContextPermission) {
+    const contextId = this.context().id;
+    this.contextPermissionService
+      .delete(contextId, permission.id)
+      .subscribe(() => {
+        this.permissions.update((permissions) => {
+          const index = permissions.findIndex((p) => {
+            return p.id === permission.id;
+          });
+          permissions.splice(index, 1);
+          return [...permissions];
+        });
+
+        this.messageService.success(
+          'igo.context.permission.dialog.deleteMsg',
+          'igo.context.permission.dialog.deleteTitle',
+          undefined,
+          { value: permission.title }
+        );
+      });
+  }
+
+  onScopeChanged(context: Context) {
+    const scope = context.scope;
+    this.contextService.update(context.id, { scope }).subscribe(() => {
+      this.messageService.success(
+        'igo.context.permission.dialog.scopeChangedMsg',
+        'igo.context.permission.dialog.scopeChangedTitle',
+        undefined,
+        { value: 'igo.context.permission.scope.' + scope }
+      );
+    });
+  }
+
+  private handleEditedContextChange() {
+    this.contextService.editedContext$
+      .pipe(
+        // 1. Cleanly handle the context update
+        tap((context) => this.context.set(context)),
+
+        // 2. Switch to the permissions call, or return an empty array if context is null
+        switchMap((context) => {
+          if (!context) return of([]);
+          return this.contextPermissionService.getAll(context.id);
+        }),
+
+        // 3. Automatically unsubscribe when component is destroyed
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((permissions) => {
+        this.permissions.set(permissions);
+      });
+  }
+
+  private getProfils(value: string) {
+    return this.http
+      .get<ContextUserOrProfils[]>(this.baseUrlProfils + 'q=' + value)
+      .pipe(
+        map((profils) => {
+          const search = normalizeStr(value);
+          return profils.filter((p) =>
+            normalizeStr(p.name + p.title).includes(search)
+          );
+        })
+      );
+  }
 }
+
+const normalizeStr = (str: string): string =>
+  str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');

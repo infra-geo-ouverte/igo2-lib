@@ -2,8 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { mergeTestConfig } from 'projects/demo/src/test-config';
-
+import { mergeTestConfig } from '../../../../test-config';
 import { ExampleViewerComponent } from './example-viewer.component';
 
 describe('ExampleViewerComponent', () => {

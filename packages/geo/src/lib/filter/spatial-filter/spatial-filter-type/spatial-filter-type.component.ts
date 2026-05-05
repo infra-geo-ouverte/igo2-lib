@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output
+  input,
+  model,
+  output
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -48,8 +48,6 @@ import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filte
   ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
-  @Input() store: EntityStore<Feature>;
-
   public queryType: string[] = [
     'Arrond',
     'CircFed',
@@ -58,7 +56,10 @@ export class SpatialFilterTypeComponent implements OnInit {
     'Mun',
     'MRC',
     'AdmRegion',
-    'RegTour'
+    'RegTour',
+    'RSS',
+    'RLS',
+    'CLSC'
   ];
   public selectedTypeIndex = new UntypedFormControl(0);
 
@@ -70,23 +71,25 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   public activeDrawType: SpatialFilterType = this.spatialType.Polygon;
 
-  @Input() selectedQueryType: SpatialFilterQueryType;
+  readonly store = input<EntityStore<Feature>>(undefined);
+  selectedQueryType = model<SpatialFilterQueryType>(undefined);
 
-  @Input() zone: Feature;
+  readonly zones = input<Feature[]>(undefined);
 
-  @Input() layers: AnyLayer[] = [];
+  readonly layers = input<AnyLayer[]>([]);
 
   public type: SpatialFilterType;
 
-  @Output() eventType = new EventEmitter<SpatialFilterType>();
+  readonly eventType = output<SpatialFilterType>();
 
-  @Output() eventQueryType = new EventEmitter<SpatialFilterQueryType>();
+  readonly eventQueryType = output<SpatialFilterQueryType>();
 
-  @Output() zoneChange = new EventEmitter<Feature>();
-  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
+  readonly bufferChange = output<number>();
+  readonly measureUnitChange = output<MeasureLengthUnit>();
 
-  @Output() bufferChange = new EventEmitter<number>();
-  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
+  readonly addZone = output<Feature>();
+  readonly removeZone = output<Feature>();
+  readonly zonesWithBufferChange = output<Feature[]>();
 
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
@@ -106,6 +109,7 @@ export class SpatialFilterTypeComponent implements OnInit {
       this.type = this.activeDrawType;
     }
     this.eventType.emit(this.type);
+    this.bufferChange.emit(0);
   }
 
   onDrawTypeChange(spatialType: SpatialFilterType) {
@@ -114,7 +118,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
 
   onSelectionChange() {
-    this.eventQueryType.emit(this.selectedQueryType);
-    this.zoneChange.emit(undefined);
+    this.eventQueryType.emit(this.selectedQueryType());
+    this.addZone.emit(undefined);
   }
 }

@@ -10,7 +10,8 @@
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git",
+    "directory": "packages/integration"
   },
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
@@ -39,8 +40,8 @@
     "@igo2/context": "*",
     "@igo2/geo": "*",
     "@turf/point-on-feature": "^7.2.0",
+    "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.0",
-    "jspdf": "^3.0.0",
     "rxjs": "^7.8.0"
   },
   "engines": {

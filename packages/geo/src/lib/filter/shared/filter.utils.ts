@@ -1,14 +1,14 @@
+import { TimeFrame } from '@igo2/utils';
+
 import moment from 'moment';
 
 import {
   AnyBaseOgcFilterOptions,
   IgoLogicalArrayOptions,
   OgcFilterConditionsArrayOptions,
+  OgcFilterDuringOptions,
   OgcFilterSpatialOptions
 } from './ogc-filter.interface';
-
-export const TimeFrame = ['now', 'today'] as const;
-export type TimeFrame = (typeof TimeFrame)[number];
 
 export const TimeUnit = [
   'years',
@@ -33,9 +33,9 @@ export function parseDateOperation(dateOperation: string): string {
   const normalizedOp = dateOperation.replace(/\s+/g, '');
 
   if (normalizedOp === TimeFrame[0]) {
-    return moment().format();
+    return moment().utc().toISOString();
   } else if (normalizedOp === TimeFrame[1]) {
-    return moment().endOf('day').format();
+    return moment().endOf('day').utc().toISOString();
   }
 
   const regex = new RegExp(
@@ -47,7 +47,7 @@ export function parseDateOperation(dateOperation: string): string {
 
   if (!match) {
     console.warn('Invalid format. example: today or today + 1 year...');
-    return moment().toString();
+    return moment().utc().toString();
   }
 
   let date = match[1] === TimeFrame[0] ? moment() : moment().endOf('day');
@@ -56,7 +56,7 @@ export function parseDateOperation(dateOperation: string): string {
     console.warn(
       `Invalid arithmetic symbol or value. Expected one of: ${ArithmeticSymbol.join(', ')}`
     );
-    return date.format();
+    return date.utc().toString();
   }
 
   const operator = match[2][0] as ArithmeticSymbol;
@@ -65,7 +65,7 @@ export function parseDateOperation(dateOperation: string): string {
 
   if (!match[3] && !TimeUnit.includes(unit)) {
     console.warn(`Invalid time unit. Expected one of: ${TimeUnit.join(', ')}`);
-    return date.format();
+    return date.utc().toString();
   }
 
   if (operator === ArithmeticSymbol['0']) {
@@ -74,7 +74,7 @@ export function parseDateOperation(dateOperation: string): string {
     date = date.subtract(value, unit);
   }
 
-  return date.format();
+  return date.utc().toString();
 }
 
 export function isIgoLogicalArray(
@@ -92,6 +92,12 @@ export function isFilterAttributeOptions(
   OgcFilterConditionsArrayOptions | OgcFilterSpatialOptions
 > {
   return 'propertyName' in filters;
+}
+
+export function isOgcFilterDuringOptions(
+  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions
+): filters is OgcFilterDuringOptions {
+  return 'begin' in filters && 'end' in filters;
 }
 
 /**
@@ -119,10 +125,4 @@ export function searchFilter(
     }
   }
   return undefined;
-}
-
-export function isTimeFrame(value: string): boolean {
-  return TimeFrame.some((timeFrame) =>
-    value.toLocaleLowerCase().includes(timeFrame)
-  );
 }

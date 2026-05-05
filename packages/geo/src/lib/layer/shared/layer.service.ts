@@ -12,7 +12,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, concatMap, map } from 'rxjs/operators';
+import { concatMap, map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
@@ -406,13 +406,7 @@ export class LayerService {
   }
 
   private getStuff(url: string) {
-    return this.http.get(url).pipe(
-      map((res: any) => res),
-      catchError((err) => {
-        console.log('No style was found');
-        return of(err);
-      })
-    );
+    return this.http.get<any>(url);
   }
 
   private getAbsoluteUrl(source, url) {

@@ -12,8 +12,7 @@ import {
 } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
-import type { AnyLayer } from '../../layer/shared/layers/any-layer';
-import type { Layer } from '../../layer/shared/layers/layer';
+import type { AnyLayer, Layer, LayerId } from '../../layer/shared';
 import { LinkedProperties } from '../../layer/shared/layers/linked/linked-layer.interface';
 
 export interface LayerWatcherChange {
@@ -30,7 +29,7 @@ export class LayerWatcher extends Watcher {
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];
-  private subscriptionsByLayerId = new Map<string, Subscription[]>();
+  private subscriptionsByLayerId = new Map<LayerId, Subscription[]>();
   private subscriptions: Subscription[] = [];
 
   constructor() {

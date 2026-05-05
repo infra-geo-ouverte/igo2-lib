@@ -6,7 +6,10 @@ export enum SpatialFilterQueryType {
   CircProv = 'CircProv',
   DirReg = 'DirReg',
   MRC = 'MRC',
-  RegTour = 'RegTour'
+  RegTour = 'RegTour',
+  RSS = 'RSS',
+  RLS = 'RLS',
+  CLSC = 'CLSC'
 }
 
 export enum SpatialFilterType {

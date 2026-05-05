@@ -24,7 +24,9 @@ export class MeasureState {
     });
 
     this.mapState.map.layerController.all$.subscribe((layers) => {
-      const hasMeasure = layers.some((l) => l.id?.startsWith('igo-measures-'));
+      const hasMeasure = layers.some((l) =>
+        String(l.id)?.startsWith('igo-measures-')
+      );
       if (!hasMeasure) {
         this.store.deleteMany(this.store.all());
         this.mapState.map.ol

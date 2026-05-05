@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import * as olextent from 'ol/extent';
 
 import type { MapBase } from '../../map/shared/map.abstract';
+import { isIdbLayer } from '../../offline/offline.utils';
 import { LayerListToolService } from '../layer-list-tool';
 import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerController } from '../shared/layer-controller';
@@ -45,23 +46,23 @@ export class LayerViewerBottomActionsComponent {
 
   orderable = true;
 
-  @Input({ required: true }) map: MapBase;
-  @Input({ required: true }) controller: LayerController;
-  @Input({ required: true }) searchTerm: string;
-  @Input() viewerOptions: LayerViewerOptions;
+  readonly map = input.required<MapBase>();
+  readonly controller = input.required<LayerController>();
+  readonly searchTerm = input.required<string>();
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
 
-  @Output() layerChange = new EventEmitter();
+  readonly layerChange = output();
 
   get layersFlattened() {
-    return this.controller.layersFlattened;
+    return this.controller().layersFlattened;
   }
 
   get hasMultipleSelection() {
-    return this.controller.selected.length > 1;
+    return this.controller().selected.length > 1;
   }
 
   get selected() {
-    return this.controller.selected;
+    return this.controller().selected;
   }
 
   get opacity() {
@@ -72,18 +73,18 @@ export class LayerViewerBottomActionsComponent {
   }
 
   get allSelectionVisibilityHidden(): boolean {
-    return this.controller.selected.every((layer) => !layer.visible);
+    return this.controller().selected.every((layer) => !layer.visible);
   }
 
   get isSelectionRaisable(): boolean {
-    return this.controller.selected.every((layer) => this.isRaisable(layer));
+    return this.controller().selected.every((layer) => this.isRaisable(layer));
   }
   get isSelectionLowerable(): boolean {
-    return this.controller.selected.every((layer) => this.isLowerable(layer));
+    return this.controller().selected.every((layer) => this.isLowerable(layer));
   }
 
   get canRename(): boolean {
-    if (!this.viewerOptions.group?.canRename || this.selected.length > 1) {
+    if (!this.viewerOptions().group?.canRename || this.selected.length > 1) {
       return false;
     }
 
@@ -92,6 +93,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   isLayerItem = isLayerItem;
+  isLayerGroup = isLayerGroup;
 
   handleRename(): void {
     const layer = this.selected[0] as LayerGroup;
@@ -112,14 +114,19 @@ export class LayerViewerBottomActionsComponent {
   }
 
   removeLayers(): void {
-    this.controller.remove(...this.selected);
-    this.controller.clearSelection();
+    this.selected
+      .filter((layer) => isIdbLayer(layer))
+      .forEach((layer) => {
+        layer.options.idbInfo._deleteFromIdb = true;
+      });
+    this.controller().remove(...this.selected);
+    this.controller().clearSelection();
   }
 
   isExtentsValid(): boolean {
     let valid = false;
     const layersExtent = olextent.createEmpty();
-    const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
+    const maxLayerZoomExtent = this.map().viewController.maxLayerZoomExtent;
     if (
       this.selected.some(
         (layer) =>
@@ -156,17 +163,17 @@ export class LayerViewerBottomActionsComponent {
         olextent.extend(layersExtent, layerExtent);
       }
     }
-    this.map.viewController.zoomToExtent(
+    this.map().viewController.zoomToExtent(
       layersExtent as [number, number, number, number]
     );
   }
 
   raiseSelection(): void {
-    this.map.layerController.raise(...this.selected);
+    this.map().layerController.raise(...this.selected);
   }
 
   lowerSelection(): void {
-    this.map.layerController.lower(...this.selected);
+    this.map().layerController.lower(...this.selected);
   }
 
   changeOpacity(event: MatSliderChange): void {
@@ -201,7 +208,7 @@ export class LayerViewerBottomActionsComponent {
       return !isLayerLinkedTogether(
         layer,
         layerBelow,
-        this.controller.layersFlattened,
+        this.controller().layersFlattened,
         LinkedProperties.ZINDEX
       );
     }
@@ -224,7 +231,7 @@ export class LayerViewerBottomActionsComponent {
       return !isLayerLinkedTogether(
         layer,
         layerAbove,
-        this.controller.layersFlattened,
+        this.controller().layersFlattened,
         LinkedProperties.ZINDEX
       );
     }
@@ -233,7 +240,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   private getRecipientOfVisibleLayer(layer: AnyLayer): AnyLayer[] {
-    return [...this.controller.getLayerRecipient(layer)].filter(
+    return [...this.controller().getLayerRecipient(layer)].filter(
       (layer) => layer.showInLayerList
     );
   }

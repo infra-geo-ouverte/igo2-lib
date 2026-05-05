@@ -144,7 +144,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const types = this.options.params?.type
       ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-      : IChercheSearchSource.defaultIchercheTypes;
+      : [
+          'adresses',
+          'codes-postaux',
+          'routes',
+          'intersections',
+          'municipalites',
+          'agglomeration',
+          'mrc',
+          'regadmin',
+          'lieux'
+        ];
 
     const showAdvancedParams = this.options.showAdvancedSettings;
 
@@ -168,6 +178,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'anciennes-adresses',
               enabled: types.indexOf('anciennes-adresses') !== -1,
               hashtags: ['anciennes-adresses']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.aggloMun',
+              value: 'agglomeration',
+              enabled: types.indexOf('agglomeration') !== -1,
+              hashtags: ['agglo']
             },
             {
               title: 'igo.geo.search.icherche.type.oldCity',
@@ -200,6 +216,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['code-postal']
             },
             {
+              title: 'igo.geo.search.icherche.type.cultpatri',
+              value: 'culture',
+              enabled: types.indexOf('culture') !== -1,
+              hashtags: ['grille', 'culture']
+            },
+            {
               title: 'igo.geo.search.icherche.type.entreprise',
               value: 'entreprises',
               enabled: types.indexOf('entreprises') !== -1,
@@ -208,15 +230,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             },
             {
               title: 'igo.geo.search.icherche.type.cycleStop',
-              value: 'haltes_cyclables',
-              enabled: types.indexOf('haltes_cyclables') !== -1,
-              hashtags: ['haltevelo', 'haltes_cyclables']
+              value: 'haltes-cyclables',
+              enabled: types.indexOf('haltes-cyclables') !== -1,
+              hashtags: ['haltevelo']
             },
             {
               title: 'igo.geo.search.icherche.type.restArea',
-              value: 'haltes_routieres',
-              enabled: types.indexOf('haltes_routieres') !== -1,
-              hashtags: ['halteroute', 'haltes_routieres']
+              value: 'haltes-routieres',
+              enabled: types.indexOf('haltes-routieres') !== -1,
+              hashtags: ['halteroute']
             },
             {
               title: 'igo.geo.search.icherche.type.hq',
@@ -267,6 +289,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['borne', 'bornes', 'repère', 'km']
             },
             {
+              title: 'igo.geo.search.icherche.type.matricule',
+              value: 'matricules-fonciers',
+              enabled: types.indexOf('matricules-fonciers') !== -1,
+              hashtags: ['matricule', 'matricules-fonciers']
+            },
+            {
               title: 'igo.geo.search.icherche.type.road',
               value: 'routes',
               enabled: types.indexOf('routes') !== -1,
@@ -279,10 +307,16 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['sortie', 'sorties', 'exit']
             },
             {
-              title: 'igo.geo.search.icherche.type.cultpatri',
-              value: 'culture',
-              enabled: types.indexOf('culture') !== -1,
-              hashtags: ['grille', 'culture']
+              title: 'igo.geo.search.icherche.type.stations-partenaires',
+              value: 'stations-hydro-partenaires',
+              enabled: types.indexOf('stations-hydro-partenaires') !== -1,
+              hashtags: ['station', 'hydrometrique', 'partenaires', 'vigilance']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.stations-publique',
+              value: 'stations-hydro-publique',
+              enabled: types.indexOf('stations-hydro-publique') !== -1,
+              hashtags: ['station', 'hydrometrique', 'publique', 'vigilance']
             },
             {
               title: 'igo.geo.search.icherche.type.unites',
@@ -448,7 +482,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         geometry: true,
         bbox: true,
         icon: true,
-        type: 'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
+        type: 'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi,matricules-fonciers,agglomeration'
       },
       this.params,
       this.computeOptionsParam(term, options || {}).params,
@@ -760,10 +794,9 @@ export class IChercheReverseSearchSource
               enabled: types.indexOf('adresses') !== -1
             },
             {
-              title: 'igo.geo.search.icherche.type.road',
-              value: 'routes',
-              enabled: types.indexOf('routes') !== -1,
-              available: false
+              title: 'igo.geo.search.icherche.type.aggloMun',
+              value: 'agglomeration',
+              enabled: types.indexOf('agglomeration') !== -1
             },
             {
               title: 'igo.geo.search.icherche.type.district',
@@ -771,9 +804,9 @@ export class IChercheReverseSearchSource
               enabled: types.indexOf('arrondissements') !== -1
             },
             {
-              title: 'igo.geo.search.icherche.type.city',
-              value: 'municipalites',
-              enabled: types.indexOf('municipalites') !== -1
+              title: 'igo.geo.search.icherche.type.dessertes',
+              value: 'dessertes-csau',
+              enabled: types.indexOf('dessertes-csau') !== -1
             },
             {
               title: 'igo.geo.search.icherche.type.mrc',
@@ -781,9 +814,25 @@ export class IChercheReverseSearchSource
               enabled: types.indexOf('mrc') !== -1
             },
             {
+              title: 'igo.geo.search.icherche.type.city',
+              value: 'municipalites',
+              enabled: types.indexOf('municipalites') !== -1
+            },
+            {
               title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
               enabled: types.indexOf('regadmin') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.matricule',
+              value: 'matricules-fonciers',
+              enabled: types.indexOf('matricules-fonciers') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.road',
+              value: 'routes',
+              enabled: types.indexOf('routes') !== -1,
+              available: false
             },
             {
               title: 'igo.geo.search.icherche.type.unites',
@@ -909,8 +958,8 @@ export class IChercheReverseSearchSource
           geometry: true,
           icon: true
         },
-        options.params || {},
-        this.params
+        this.params,
+        options.params || {}
       )
     });
   }

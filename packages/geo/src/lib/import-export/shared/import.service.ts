@@ -12,6 +12,11 @@ import { Observable, Observer } from 'rxjs';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
+  InputProjections,
+  ProjectionsLimitationsOptions,
+  computeProjectionsConstraints
+} from '../../map';
+import {
   ImportInvalidFileError,
   ImportOgreServerError,
   ImportSRSError,
@@ -293,5 +298,91 @@ export class ImportService {
     });
 
     return features as Feature[];
+  }
+
+  computeProjections(
+    limitations: ProjectionsLimitationsOptions
+  ): InputProjections[] {
+    const projectionsConstraints = computeProjectionsConstraints(
+      limitations ?? {}
+    );
+    const projections: InputProjections[] = [];
+
+    if (projectionsConstraints.nad83) {
+      projections.push({
+        translateKey: 'nad83',
+        alias: 'NAD83',
+        code: 'EPSG:4269',
+        zone: '',
+        extent: undefined,
+        def: undefined
+      });
+    }
+    if (projectionsConstraints.wgs84) {
+      projections.push({
+        translateKey: 'wgs84',
+        alias: 'WGS84',
+        code: 'EPSG:4326',
+        zone: '',
+        extent: undefined,
+        def: undefined
+      });
+    }
+    if (projectionsConstraints.webMercator) {
+      projections.push({
+        translateKey: 'webMercator',
+        alias: 'Web Mercator',
+        code: 'EPSG:3857',
+        zone: '',
+        extent: undefined,
+        def: undefined
+      });
+    }
+
+    if (projectionsConstraints.mtm) {
+      // all mtm zones
+      const minZone = projectionsConstraints.mtmZone.minZone;
+      const maxZone = projectionsConstraints.mtmZone.maxZone;
+
+      for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
+        const code =
+          mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+        projections.push({
+          translateKey: 'mtm',
+          alias: `MTM ${mtmZone}`,
+          code,
+          zone: `${mtmZone}`,
+          extent: undefined,
+          def: undefined
+        });
+      }
+    }
+
+    if (projectionsConstraints.utm) {
+      // all utm zones
+      const minZone = projectionsConstraints.utmZone.minZone;
+      const maxZone = projectionsConstraints.utmZone.maxZone;
+
+      for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
+        const code =
+          utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
+        projections.push({
+          translateKey: 'utm',
+          alias: `UTM ${utmZone}`,
+          code,
+          zone: `${utmZone}`,
+          extent: undefined,
+          def: undefined
+        });
+      }
+    }
+
+    let configProjection: InputProjections[] = [];
+    if (projectionsConstraints.projFromConfig) {
+      configProjection = (this.config.getConfig('projections') ||
+        []) as InputProjections[];
+    }
+
+    return configProjection.concat(projections);
   }
 }

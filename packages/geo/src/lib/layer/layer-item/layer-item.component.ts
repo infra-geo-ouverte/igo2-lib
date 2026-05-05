@@ -2,13 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   HostBinding,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output,
+  signal
 } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { ConnectionState, NetworkService } from '@igo2/core/network';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
@@ -52,50 +52,47 @@ import { TooltipType } from '../shared/layers/layer.interface';
 export class LayerItemComponent implements OnInit, OnDestroy {
   private networkService = inject(NetworkService);
 
-  showLegend$ = new BehaviorSubject(true);
-  inResolutionRange$ = new BehaviorSubject(true);
-  queryBadgeHidden$ = new BehaviorSubject(true);
+  showLegend = signal(true);
+  inResolutionRange = true;
+  queryBadgeHidden = signal(true);
   tooltipText: string;
   state: ConnectionState;
 
   private resolution$$: Subscription;
   private network$$: Subscription;
 
-  @Input({ required: true }) layer: Layer;
+  readonly layer = input.required<Layer>();
 
   /** Pass the visibility to trigger change detection */
-  @Input({ required: true }) visible: boolean;
+  readonly visible = input.required<boolean>();
 
-  @Input() selected: boolean;
-  @Input() selectionDisabled: boolean;
+  readonly selected = input<boolean>(undefined);
+  readonly selectionDisabled = input<boolean>(undefined);
 
-  @Input() viewerOptions: LayerViewerOptions;
+  readonly viewerOptions = input<LayerViewerOptions>(undefined);
 
-  @Output() action = new EventEmitter<Layer>();
-  @Output() selectChange = new EventEmitter<boolean>();
-  @Output() visibilityChange = new EventEmitter<Event>(undefined);
+  readonly action = output<Layer>();
+  readonly selectChange = output<boolean>();
+  readonly visibilityChange = output<Event>();
 
   @HostBinding('class.disabled') isDisabled: boolean;
 
   get opacity() {
-    return this.layer.opacity * 100;
+    return this.layer().opacity * 100;
   }
   set opacity(opacity: number) {
-    this.layer.opacity = opacity / 100;
+    this.layer().opacity = opacity / 100;
   }
 
   get visibilityTooltip() {
-    if (
-      this.viewerOptions.mode !== 'selection' &&
-      !this.inResolutionRange$.getValue()
-    ) {
-      return this.layer.visible
+    if (this.viewerOptions().mode !== 'selection' && !this.inResolutionRange) {
+      return this.layer().visible
         ? this.isDisabled
           ? 'igo.geo.layer.notInResolution'
           : 'igo.geo.layer.group.hideChildren'
         : 'igo.geo.layer.showLayer';
     }
-    return this.layer.visible
+    return this.layer().visible
       ? this.isDisabled
         ? 'igo.geo.layer.group.hideChildren'
         : 'igo.geo.layer.hideLayer'
@@ -103,22 +100,23 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.layer.displayed$.subscribe((displayed) => {
+    this.layer().displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
     });
+    const layer = this.layer();
     if (
-      this.layer.visible &&
-      this.viewerOptions?.legend?.showForVisibleLayers &&
-      this.layer.firstLoadComponent === true
+      layer.visible &&
+      this.viewerOptions()?.legend?.showForVisibleLayers &&
+      layer.firstLoadComponent === true
     ) {
-      this.layer.firstLoadComponent = false;
-      this.layer.legendCollapsed = false;
+      layer.firstLoadComponent = false;
+      layer.legendCollapsed = false;
     }
 
-    this.toggleLegend(this.layer.legendCollapsed);
+    this.toggleLegend(layer.legendCollapsed);
     this.updateQueryBadge();
 
-    const resolution$ = this.layer.map.viewController.resolution$;
+    const resolution$ = layer.map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
       this.onResolutionChange();
     });
@@ -138,19 +136,19 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   toggleLegend(collapsed: boolean) {
-    this.layer.legendCollapsed = collapsed;
-    this.showLegend$.next(!collapsed);
+    this.layer().legendCollapsed = collapsed;
+    this.showLegend.set(!collapsed);
   }
 
   toggleLegendOnClick() {
-    this.toggleLegend(this.showLegend$.value);
+    this.toggleLegend(this.showLegend());
   }
 
   handleVisibilityChange(event: Event) {
     event.stopPropagation();
 
-    if (this.viewerOptions.legend?.showOnVisibilityChange) {
-      this.toggleLegend(!this.layer.visible);
+    if (this.viewerOptions().legend?.showOnVisibilityChange) {
+      this.toggleLegend(!this.layer().visible);
     }
     this.updateQueryBadge();
 
@@ -158,53 +156,54 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   computeTooltip(): string {
-    const layerOptions = this.layer.options;
+    const layerOptions = this.layer().options;
     if (!layerOptions.tooltip) {
-      return this.layer.title;
+      return this.layer().title;
     }
     const layerTooltip = layerOptions.tooltip;
     const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
     switch (layerOptions.tooltip.type) {
       case TooltipType.TITLE:
-        return this.layer.title;
+        return this.layer().title;
       case TooltipType.ABSTRACT:
         if (layerMetadata && layerMetadata.abstract) {
           return layerMetadata.abstract;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       case TooltipType.CUSTOM:
         if (layerTooltip && layerTooltip.text) {
           return layerTooltip.text;
         } else {
-          return this.layer.title;
+          return this.layer().title;
         }
       default:
-        return this.layer.title;
+        return this.layer().title;
     }
   }
 
   private onResolutionChange() {
-    const inResolutionRange = this.layer.isInResolutionsRange;
+    const inResolutionRange = this.layer().isInResolutionsRange;
     if (
       inResolutionRange === false &&
-      this.viewerOptions.legend.updateOnResolutionChange === true
+      this.viewerOptions().legend.updateOnResolutionChange === true
     ) {
       this.toggleLegend(true);
     }
-    this.inResolutionRange$.next(inResolutionRange);
+    this.inResolutionRange = inResolutionRange;
   }
 
   private updateQueryBadge() {
+    const layer = this.layer();
     const hidden =
-      this.viewerOptions.queryBadge === false ||
-      this.layer.visible === false ||
-      !layerIsQueryable(this.layer);
-    this.queryBadgeHidden$.next(hidden);
+      this.viewerOptions().queryBadge === false ||
+      layer.visible === false ||
+      !layerIsQueryable(layer);
+    this.queryBadgeHidden.set(hidden);
   }
 
   toggleLayerTool() {
-    this.action.emit(this.layer);
+    this.action.emit(this.layer());
   }
 
   handleSelect(event: MatCheckboxChange): void {

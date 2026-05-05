@@ -22,7 +22,7 @@
       (menuPosition)="onContextMenuOpen($event)"
     >
       <div class="map-actions --vertical --bottom --right">
-        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        <igo-zoom-button [map]="map" color="primary" />
       </div>
     </igo-map-browser>
 
@@ -41,8 +41,7 @@
         (reverseSearchCoordsFormatStatus)="
           onReverseCoordsFormatStatusChange($event)
         "
-      >
-      </igo-search-bar>
+      />
 
       <igo-search-results
         [store]="searchStore"
@@ -55,15 +54,14 @@
         (moreResults)="onSearch($event)"
       >
         <ng-template #igoSearchItemToolbar let-result="result">
-          <igo-search-add-button [map]="map" [layer]="result">
-          </igo-search-add-button>
+          <igo-search-add-button [map]="map" [layer]="result" />
         </ng-template>
       </igo-search-results>
     </igo-panel>
 
     @if (selectedFeature) {
       <igo-panel title="Details">
-        <igo-feature-details [feature]="selectedFeature"></igo-feature-details>
+        <igo-feature-details [feature]="selectedFeature" />
       </igo-panel>
     }
 
@@ -73,8 +71,7 @@
         [withIcon]="false"
         [horizontal]="true"
         [mode]="actionBarMode"
-      >
-      </igo-actionbar>
+      />
     </ng-template>
   </app-example-viewer>
 </app-doc-viewer>

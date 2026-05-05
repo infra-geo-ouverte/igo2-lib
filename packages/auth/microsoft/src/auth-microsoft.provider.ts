@@ -1,4 +1,4 @@
-import { AuthFeature, AuthFeatureKind } from '@igo2/auth';
+import { AuthFeature, AuthFeatureKind, AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core/config';
 
 import {
@@ -6,7 +6,14 @@ import {
   MSAL_INSTANCE,
   MsalService
 } from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import {
+  BrowserCacheLocation,
+  ILoggerCallback,
+  IPublicClientApplication,
+  InteractionType,
+  LogLevel,
+  PublicClientApplication
+} from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
 import { AuthMicrosoftComponent } from './auth-microsoft/auth-microsoft.component';
@@ -14,8 +21,9 @@ import { AuthMicrosoftb2cComponent } from './auth-microsoftb2c/auth-microsoftb2c
 import { MsalServiceb2c } from './auth-microsoftb2c/auth-msalServiceb2c.service';
 import {
   AuthMicrosoftOptions,
-  MSPMsalGuardConfiguration
+  MsalGuardConfigurationWithType
 } from './shared/auth-microsoft.interface';
+import { AuthMsalService } from './shared/auth-msal.service';
 
 export const AUTH_MICROSOFT_DIRECTIVES = [
   AuthMicrosoftComponent,
@@ -24,7 +32,7 @@ export const AUTH_MICROSOFT_DIRECTIVES = [
 
 export function MSALConfigFactory(
   config: ConfigService
-): PublicClientApplication {
+): IPublicClientApplication {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
   if (!msConf) {
     return;
@@ -34,15 +42,46 @@ export function MSALConfigFactory(
   msConf.authority =
     msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
-  const myMsalObj = new PublicClientApplication({
+  const msalInstance = new PublicClientApplication({
     auth: msConf,
     cache: {
-      cacheLocation: 'sessionStorage'
+      cacheLocation: BrowserCacheLocation.LocalStorage
+    },
+    system: {
+      loggerOptions: {
+        loggerCallback,
+        piiLoggingEnabled: false,
+        logLevel: LogLevel.Warning
+      }
     }
   });
 
-  return myMsalObj;
+  return msalInstance;
 }
+
+const loggerCallback: ILoggerCallback = (
+  level: LogLevel,
+  message: string,
+  containsPii: boolean
+) => {
+  if (containsPii) {
+    return;
+  }
+  switch (level) {
+    case LogLevel.Error:
+      console.error(message);
+      break;
+    case LogLevel.Info:
+      console.info(message);
+      break;
+    case LogLevel.Verbose:
+      console.debug(message);
+      break;
+    case LogLevel.Warning:
+      console.warn(message);
+      break;
+  }
+};
 
 export function MSALConfigFactoryb2c(
   config: ConfigService
@@ -67,12 +106,16 @@ export function MSALConfigFactoryb2c(
   return myMsalObj;
 }
 
-export function MSALAngularConfigFactory(): MSPMsalGuardConfiguration {
+export function MSALAngularConfigFactory(
+  config: ConfigService
+): MsalGuardConfigurationWithType {
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
+
   return {
     interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read'],
-      loginHint: 'todo'
+      domainHint: msConf?.domainHint || ''
     },
     type: 'add'
   };
@@ -80,7 +123,7 @@ export function MSALAngularConfigFactory(): MSPMsalGuardConfiguration {
 
 export function MSALAngularConfigFactoryb2c(
   config: ConfigService
-): MSPMsalGuardConfiguration {
+): MsalGuardConfigurationWithType {
   const msConf = config.getConfig(
     'auth.microsoftb2c.browserAuthOptions'
   ) as BrowserAuthOptions;
@@ -95,7 +138,8 @@ export function MSALAngularConfigFactoryb2c(
 }
 
 export function withMicrosoftSupport(
-  type?: string
+  type?: string,
+  serviceFactory: IMsalServiceFactory = msalServiceFactory
 ): AuthFeature<AuthFeatureKind.Microsoft> {
   if (type === 'b2c') {
     return {
@@ -130,8 +174,25 @@ export function withMicrosoftSupport(
           deps: [ConfigService],
           multi: true
         },
-        MsalService
+        MsalService,
+        {
+          provide: AuthService,
+          useFactory: serviceFactory,
+          deps: [ConfigService]
+        }
       ]
     };
   }
 }
+
+export type IMsalServiceFactory = (config: ConfigService) => AuthService;
+
+const msalServiceFactory: IMsalServiceFactory = (config: ConfigService) => {
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
+
+  if (!msConf) {
+    return new AuthService();
+  }
+
+  return new AuthMsalService();
+};

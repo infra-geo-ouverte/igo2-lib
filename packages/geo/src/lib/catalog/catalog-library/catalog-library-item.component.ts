@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,20 +35,17 @@ export class CatalogLibraryItemComponent {
   /**
    * Catalog
    */
-  @Input() catalog: Catalog;
+  readonly catalog = input<Catalog>(undefined);
 
   /**
    * Map to add the catalog items to
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Output() catalogRemove = new EventEmitter();
+  readonly catalogRemove = output();
 
-  /**
-   * @internal
-   */
   get title(): string {
-    return getEntityTitle(this.catalog);
+    return getEntityTitle(this.catalog());
   }
 
   removeCatalogFromLibrary(event) {

@@ -28,6 +28,7 @@ export interface ISearchSourceParams {
   ecmax?: string;
   page?: string;
   type?: string;
+  source?: string;
 }
 
 export interface SettingOptions {

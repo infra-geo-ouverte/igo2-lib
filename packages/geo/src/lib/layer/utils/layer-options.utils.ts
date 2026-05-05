@@ -12,6 +12,7 @@ import {
   AnyLayerOptions,
   ID_GROUP_PREFIX,
   LayerGroupOptions,
+  LayerId,
   LayerOptions
 } from '../shared';
 import { isLayerGroupOptions, isLayerItemOptions } from './layer.utils';
@@ -29,7 +30,7 @@ export function mergeLayersOptions(
     const currentNode =
       _getNodeById(identifier, tree) ?? _getNodeByTitle(options.title, tree);
     if (currentNode) {
-      // if we get layer options by title, we update the id of current layer.
+      // if the currentNode is find by title (See below), we update the id of current layer.
       if (
         isLayerGroupOptions(currentNode) &&
         currentNode.id.toString().includes(ID_GROUP_PREFIX)
@@ -82,12 +83,9 @@ function handleExternalDataSource(options: AnyLayerItemOptions): void {
 export function getLayerOptionIdentifier(
   layerOptions: AnyLayerOptions
 ): string | undefined {
-  return isLayerGroupOptions(layerOptions)
+  return layerOptions.id
     ? String(layerOptions.id)
-    : (getLayerParam(layerOptions) ??
-        (layerOptions.id !== undefined
-          ? layerOptions.id.toString()
-          : undefined));
+    : getLayerParam(layerOptions);
 }
 
 function moveOptions(
@@ -116,7 +114,7 @@ function insertOptions(
 }
 
 /** Recursive */
-function _getNodeById(id: string, data: AnyLayerOptions[]): AnyLayerOptions {
+function _getNodeById(id: LayerId, data: AnyLayerOptions[]): AnyLayerOptions {
   let node: AnyLayerOptions;
   data.some((item) => {
     const identifier = getLayerOptionIdentifier(item);

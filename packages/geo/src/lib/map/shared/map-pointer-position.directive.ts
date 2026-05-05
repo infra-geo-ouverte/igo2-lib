@@ -1,11 +1,10 @@
 import {
   Directive,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 
 import { MediaService } from '@igo2/core/media';
@@ -45,23 +44,23 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   /**
    * Delay before emitting an event
    */
-  @Input() pointerPositionDelay = 1000;
+  readonly pointerPositionDelay = input(1000);
 
   /**
    * Event emitted when the pointer move, delayed by pointerMoveDelay
    */
-  @Output() pointerPositionCoord = new EventEmitter<[number, number]>();
+  readonly pointerPositionCoord = output<[number, number]>();
 
   /**
    * IGO map
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   get mapProjection(): string {
-    return (this.component.map as IgoMap).projection;
+    return (this.component.map() as IgoMap).projection;
   }
 
   /**
@@ -89,7 +88,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
       (event: MapBrowserPointerEvent<any>) =>
-        this.onPointerEvent(event, this.pointerPositionDelay)
+        this.onPointerEvent(event, this.pointerPositionDelay())
     );
   }
 

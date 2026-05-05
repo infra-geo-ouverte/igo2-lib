@@ -1,5 +1,11 @@
 /* eslint-disable no-prototype-builtins */
-import { ObjectUtils, uuid } from '@igo2/utils';
+import {
+  ObjectUtils,
+  TimeFrame,
+  isTimeFrame,
+  resolveDate,
+  uuid
+} from '@igo2/utils';
 
 import { Extent } from 'ol/extent';
 import olFormatWFS, { WriteGetFeatureOptions } from 'ol/format/WFS';
@@ -21,7 +27,6 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions,
   OgcInterfaceFilterOptions,
-  OgcSelectorBundle,
   SelectorGroup
 } from './ogc-filter.interface';
 
@@ -232,10 +237,12 @@ export class OgcFilterWriter {
 
     const wfsBegin = this.parseFilterOptionDate(
       filterOptions.begin,
+      'begin',
       options ? options.minDate : undefined
     );
     const wfsEnd = this.parseFilterOptionDate(
       filterOptions.end,
+      'end',
       options ? options.maxDate : undefined
     );
 
@@ -702,9 +709,7 @@ export class OgcFilterWriter {
           {
             title: 'group1',
             name: 'group1',
-            computedSelectors: ObjectUtils.copyDeep(
-              selectors
-            ) as OgcSelectorBundle[]
+            computedSelectors: ObjectUtils.copyDeep(selectors) as any
           } as SelectorGroup
         ],
         selectorType: selector.selectorType
@@ -793,10 +798,13 @@ export class OgcFilterWriter {
         'operator' in ogcFilters.filters &&
         ogcFilters.filters.operator.toLowerCase() ===
           OgcFilterOperator.During.toLowerCase() &&
-        ogcFilters.filters.active &&
         ogcFilters.interfaceOgcFilters?.length > 0
       ) {
-        conditions.push(ogcFilters.interfaceOgcFilters[0]);
+        const duringFilters = ogcFilters.interfaceOgcFilters.filter(
+          (filter) =>
+            filter.active && filter.operator === OgcFilterOperator.During
+        );
+        conditions.push(...duringFilters);
       }
 
       if (conditions.length >= 1) {
@@ -927,18 +935,34 @@ export class OgcFilterWriter {
     return filterValue;
   }
 
-  public parseFilterOptionDate(value: string, defaultValue?: string): string {
-    if (!value) {
-      return defaultValue;
-    } else if (
-      value.toLowerCase().includes('now') ||
-      value.toLowerCase().includes('today')
-    ) {
-      return parseDateOperation(value);
-    } else if (moment(value).isValid()) {
-      return value;
-    } else {
-      return undefined;
+  private parseFilterOptionDate(
+    value: string,
+    position: 'begin' | 'end',
+    defaultValue?: string
+  ): string | undefined {
+    if (!value) return defaultValue;
+    const lowerValue = value.toLowerCase();
+    // Handle TimeFrame or "today + 1 days", etc.
+    if (lowerValue.includes('now') || lowerValue.includes('today')) {
+      if (isTimeFrame(lowerValue)) {
+        if (lowerValue === 'now') return parseDateOperation(lowerValue);
+        return this.handleBeginEnd(lowerValue, position);
+      }
+      return parseDateOperation(lowerValue);
     }
+    // Handle standard date strings
+    return this.handleBeginEnd(lowerValue, position);
+  }
+
+  private handleBeginEnd(
+    value: string | TimeFrame,
+    position: 'begin' | 'end'
+  ): string | undefined {
+    const date = moment(isTimeFrame(value) ? resolveDate(value) : value);
+    if (!date.isValid()) return undefined;
+    const utc = date.utc();
+    return (
+      position === 'begin' ? utc.startOf('day') : utc.endOf('day')
+    ).toISOString();
   }
 }

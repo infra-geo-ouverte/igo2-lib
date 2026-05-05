@@ -5,8 +5,7 @@ import { MediaService } from '@igo2/core/media';
 import {
   MapBrowserComponent,
   MapControlsOptions,
-  MapScaleLineOptions,
-  MapViewOptions
+  MapScaleLineOptions
 } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
@@ -29,7 +28,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
 
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   private queryParams: Params;
@@ -64,7 +63,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
 
     const viewContext: ContextMapView = context.map.view;
     const shouldOverrideView =
-      !this.component.view ||
+      !this.component.view() ||
       viewContext.keepCurrentView !== true ||
       context.map.view.projection !== this.map.projection;
 
@@ -72,18 +71,15 @@ export class MapContextDirective implements OnInit, OnDestroy {
       this.shareMapService.hasPositionParams(this.queryParams) &&
       shouldOverrideView
     ) {
-      const positions = this.shareMapService.parser.parsePosition(
-        this.queryParams
-      );
-      this.component.view = { ...viewContext, ...positions };
+      const positions = this.shareMapService.parsePosition(this.queryParams);
+      this.component.setView({ ...viewContext, ...positions });
     } else if (shouldOverrideView) {
-      this.component.view = viewContext as MapViewOptions;
+      this.component.setView(viewContext);
     }
 
-    if (this.component.map.geolocationController) {
-      this.component.map.geolocationController.updateGeolocationOptions(
-        viewContext
-      );
+    const map = this.component.map();
+    if (map.geolocationController) {
+      map.geolocationController.updateGeolocationOptions(viewContext);
     }
 
     const controlsContext: MapControlsOptions = context.map.controls;

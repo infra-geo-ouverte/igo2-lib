@@ -27,7 +27,7 @@
       [matTooltip]="'igo.geo.layer.deleteLayer' | translate"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      (click)="handleRemove(layerOptions)"
+      (click)="handleRemove(layerOptions())"
     >
       <mat-icon aria-hidden="false">delete</mat-icon>
     </button>

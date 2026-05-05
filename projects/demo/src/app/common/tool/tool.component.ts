@@ -3,10 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,14 +34,14 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 @Component({
   selector: 'app-salutation-tool',
-  template: ` <p>Hello, my name is {{ name }}.</p> `,
+  template: ` <p>Hello, my name is {{ name() }}.</p> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
 
-  @Input() name: string;
+  readonly name = input<string>(undefined);
 
   onUpdateInputs() {
     this.cdRef.detectChanges();

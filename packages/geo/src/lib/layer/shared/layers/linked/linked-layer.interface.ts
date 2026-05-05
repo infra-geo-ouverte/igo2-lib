@@ -1,5 +1,6 @@
 import type { AnyLayer } from '../any-layer';
 import type { Layer } from '../layer';
+import { LayerId } from '../layer.interface';
 
 export type AnyPropertyOptions = ZindexPropertyOptions | BasePropertyOptions;
 
@@ -12,14 +13,14 @@ interface BasePropertyOptions {
 }
 
 export interface LayersLink {
-  linkId: string;
+  linkId: LayerId;
   /** Default value is true */
   showInMiniBaseMap?: boolean;
   links?: LayersLinkProperties[];
 }
 export interface LayersLinkProperties {
   bidirectionnal?: boolean;
-  linkedIds: string[];
+  linkedIds: LayerId[];
   syncedDelete: boolean;
   properties: LinkedProperties[];
 }

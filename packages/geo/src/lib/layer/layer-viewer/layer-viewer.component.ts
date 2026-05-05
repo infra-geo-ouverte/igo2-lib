@@ -3,13 +3,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ContentChild,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
   TemplateRef,
-  inject
+  contentChild,
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -73,25 +72,26 @@ export class LayerViewerComponent implements OnInit {
   mode: LayerToolMode;
   isDragDropDisabled: boolean;
 
-  @Input({ required: true }) map: MapBase;
-  @Input() options: LayerViewerOptions;
-  @Input() isDesktop: boolean;
-  @Input() excludeBaseLayers: boolean;
+  readonly map = input.required<MapBase>();
+  readonly options = input<LayerViewerOptions>(undefined);
+  readonly isDesktop = input<boolean>(undefined);
+  readonly excludeBaseLayers = input<boolean>(undefined);
 
-  @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
+  readonly appliedFilterAndSort = output<LayerListControlsOptions>();
 
-  @ContentChild('customBottomActions', { read: TemplateRef })
-  customBottomActions: TemplateRef<unknown> | undefined;
+  readonly customBottomActions = contentChild('customBottomActions', {
+    read: TemplateRef
+  });
 
   get layerViewerOptions(): LayerViewerOptions {
     return {
-      ...this.options,
+      ...this.options(),
       mode: this.mode
     };
   }
 
   get layerController() {
-    return this.map.layerController as LayerController;
+    return this.map().layerController as LayerController;
   }
 
   get unavailableLayers(): LayerOptionsBase[] {
@@ -111,7 +111,7 @@ export class LayerViewerComponent implements OnInit {
     ];
 
     const otherObs$: Observable<AnyLayer[]>[] = [];
-    if (!this.excludeBaseLayers) {
+    if (!this.excludeBaseLayers()) {
       otherObs$.push(this.layerController.baseLayers$);
     }
 
@@ -202,7 +202,7 @@ export class LayerViewerComponent implements OnInit {
   }
 
   createGroup(group: LayerGroup): void {
-    this.map.layerController.add(group);
+    this.map().layerController.add(group);
     this.cdr.markForCheck();
   }
 
@@ -213,7 +213,7 @@ export class LayerViewerComponent implements OnInit {
 
   private filterLayers(layers: AnyLayer[], keyword: string): AnyLayer[] {
     if (
-      this.options?.filterAndSortOptions?.showToolbar ===
+      this.options()?.filterAndSortOptions?.showToolbar ===
       LayerListControlsEnum.never
     ) {
       return layers;

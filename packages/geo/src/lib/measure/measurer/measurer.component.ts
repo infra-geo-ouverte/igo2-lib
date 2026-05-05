@@ -6,8 +6,9 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild,
-  inject
+  inject,
+  input,
+  viewChild
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -279,12 +280,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * The map to measure on
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * The measures store
    */
-  @Input() store: FeatureStore<FeatureWithMeasure>;
+  readonly store = input<FeatureStore<FeatureWithMeasure>>(undefined);
 
   /**
    * Measure type
@@ -303,9 +304,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * The minimum length a segment must have to display a tooltip.
    * It also applies to area tooltips.
    */
-  @Input() minSegmentLength = 10;
+  readonly minSegmentLength = input(10);
 
-  @ViewChild('table', { static: true }) table: EntityTableComponent;
+  readonly table = viewChild<EntityTableComponent>('table');
 
   /**
    * Wheter one of the draw control is active
@@ -316,7 +317,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   get projection(): string {
-    return this.map.ol.getView().getProjection().getCode();
+    return this.map().ol.getView().getProjection().getCode();
   }
 
   constructor() {
@@ -381,7 +382,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.createDrawPolygonControl();
     this.createModifyControl();
     this.toggleDrawControl();
-    this.updateTooltipsOfOlSource(this.store.source.ol);
+    this.updateTooltipsOfOlSource(this.store().source.ol);
     this.checkDistanceAreaToggle();
     this.setActiveMeasureType(MeasureType.Length);
   }
@@ -391,8 +392,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    if (this.store.count === 0) {
-      this.store.map.layerController.remove(this.store.layer);
+    const store = this.store();
+    if (store.count === 0) {
+      store.map.layerController.remove(store.layer);
     }
 
     this.setActiveMeasureType(undefined);
@@ -556,9 +558,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   private refreshTableAndTooltip(): void {
-    this.store.stateView.clear();
+    this.store().stateView.clear();
 
-    this.updateTooltipsOfOlSource(this.store.source.ol);
+    this.updateTooltipsOfOlSource(this.store().source.ol);
     if (this.activeOlGeometry !== undefined) {
       this.updateTooltipsOfOlGeometry(this.activeOlGeometry);
     }
@@ -599,7 +601,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   onDeleteClick() {
-    this.store.deleteMany(this.selectedFeatures$.value);
+    this.store().deleteMany(this.selectedFeatures$.value);
     this.selectedFeatures$.value.forEach((selectedFeature) => {
       this.olDrawSource.getFeatures().forEach((drawingLayerFeature) => {
         const geometry = drawingLayerFeature.getGeometry() as any;
@@ -620,7 +622,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.toggleDrawControl();
     } else {
       const localFeature = this.selectedFeatures$.value[0];
-      const olFeatures = this.store.layer.ol.getSource().getFeatures();
+      const olFeatures = this.store().layer.ol.getSource().getFeatures();
       const olFeature = olFeatures.find((_olFeature: OlFeature) => {
         return _olFeature.get('id') === localFeature.properties.id;
       });
@@ -645,7 +647,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   private initStore() {
-    const store = this.store;
+    const store = this.store();
 
     let layer = new VectorLayer({
       title: this.languageService.translate.instant(
@@ -684,7 +686,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     tryAddSelectionStrategy(
       store,
       new FeatureStoreSelectionStrategy({
-        map: this.map,
+        map: this.map(),
         many: true
       })
     );
@@ -724,7 +726,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       });
 
     this.subscriptions$$.push(
-      this.store.entities$.subscribe((objectsExists) => {
+      this.store().entities$.subscribe((objectsExists) => {
         if (
           objectsExists.find(
             (objectExist) => objectExist.geometry.type === 'Polygon'
@@ -754,7 +756,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   private freezeStore() {
-    const store = this.store;
+    const store = this.store();
     this.selectedFeatures$$.unsubscribe();
     unByKey(this.onFeatureAddedKey);
     unByKey(this.onFeatureRemovedKey);
@@ -832,7 +834,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         this.clearMeasures();
       }
     );
-    drawControl.setOlMap(this.map.ol, false);
+    drawControl.setOlMap(this.map().ol, false);
   }
 
   /**
@@ -909,7 +911,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param modifyControl Modify control
    */
   private activateModifyControl() {
-    const selection = this.store.getStrategyOfType(
+    const selection = this.store().getStrategyOfType(
       FeatureStoreSelectionStrategy
     ) as FeatureStoreSelectionStrategy;
     selection.deactivate();
@@ -924,7 +926,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.modifyChanges$$ = this.modifyControl.changes$.subscribe(
       (olGeometry: OlLineString | OlPolygon) => this.onModifyChanges(olGeometry)
     );
-    this.modifyControl.setOlMap(this.map.ol);
+    this.modifyControl.setOlMap(this.map().ol);
   }
 
   /**
@@ -951,7 +953,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     this.olDrawSource.clear();
 
-    this.store.activateStrategyOfType(FeatureStoreSelectionStrategy);
+    this.store().activateStrategyOfType(FeatureStoreSelectionStrategy);
 
     this.activeOlGeometry = undefined;
     this.modifyControl.setOlMap(undefined);
@@ -1015,12 +1017,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     const featureId = localFeature
       ? localFeature.properties.id
       : olGeometry.ol_uid;
-    const projection = this.map.ol.getView().getProjection();
+    const projection = this.map().ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: projection
     }) as any;
-    this.store.update({
+    this.store().update({
       type: FEATURE,
       geometry,
       projection: projection.getCode(),
@@ -1078,7 +1080,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     getTooltipsOfOlGeometry(olGeometry).forEach(
       (olTooltip: OlOverlay | undefined) => {
         if (olTooltip !== undefined && olTooltip.getMap() !== undefined) {
-          this.map.ol.removeOverlay(olTooltip);
+          this.map().ol.removeOverlay(olTooltip);
         }
       }
     );
@@ -1124,7 +1126,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     );
     olTooltip.getElement().innerHTML = this.computeTooltipInnerHTML(olTooltip);
     if (this.shouldShowTooltip(olTooltip)) {
-      this.map.ol.addOverlay(olTooltip);
+      this.map().ol.addOverlay(olTooltip);
     }
   }
 
@@ -1166,7 +1168,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     if (properties._unit === MeasureType.Length) {
       const minSegmentLength =
-        metersToUnit(this.minSegmentLength, properties._unit) || 0;
+        metersToUnit(this.minSegmentLength(), properties._unit) || 0;
       return measure > Math.max(minSegmentLength, 0);
     }
 

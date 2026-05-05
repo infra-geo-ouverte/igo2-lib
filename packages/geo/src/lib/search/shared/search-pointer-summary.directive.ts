@@ -2,10 +2,10 @@ import {
   AfterContentChecked,
   Directive,
   HostListener,
-  Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common/entity';
@@ -72,12 +72,12 @@ export class SearchPointerSummaryDirective
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() igoSearchPointerSummaryDelay = 1000;
+  readonly igoSearchPointerSummaryDelay = input(1000);
 
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoSearchPointerSummaryEnabled = false;
+  readonly igoSearchPointerSummaryEnabled = input(false);
 
   @HostListener('mouseleave')
   mouseleave() {
@@ -90,11 +90,11 @@ export class SearchPointerSummaryDirective
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   get mapProjection(): string {
-    return (this.component.map as IgoMap).projection;
+    return (this.component.map() as IgoMap).projection;
   }
 
   /**
@@ -280,7 +280,7 @@ export class SearchPointerSummaryDirective
   private onMapEvent(event: MapBrowserPointerEvent<any>) {
     if (
       event.dragging ||
-      !this.igoSearchPointerSummaryEnabled ||
+      !this.igoSearchPointerSummaryEnabled() ||
       !this.hasPointerReverseSearchSource ||
       this.mediaService.isTouchScreen()
     ) {
@@ -302,7 +302,7 @@ export class SearchPointerSummaryDirective
 
     this.lastTimeoutRequest = setTimeout(() => {
       this.onSearchCoordinate();
-    }, this.igoSearchPointerSummaryDelay);
+    }, this.igoSearchPointerSummaryDelay());
   }
 
   /**

@@ -43,11 +43,7 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
     return value;
   }
 
-  set(
-    key: string,
-    value: string | object | boolean | number,
-    scope: StorageScope = StorageScope.LOCAL
-  ) {
+  set(key: string, value: unknown, scope: StorageScope = StorageScope.LOCAL) {
     const previousValue = this.get(key, scope);
     if (scope === StorageScope.SESSION) {
       sessionStorage.setItem(

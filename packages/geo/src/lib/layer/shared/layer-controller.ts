@@ -11,13 +11,11 @@ import {
 import { type MapBase } from '../../map/shared/map.abstract';
 import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 import { LayerSelectionModel } from './layer-selection';
+import { LayerId } from './layers';
 import type { AnyLayer } from './layers/any-layer';
 import type { Layer } from './layers/layer';
 import type { LayerGroup } from './layers/layer-group';
 import { isLayerLinked } from './layers/linked/linked-layer.utils';
-
-// Below 10 is reserved for BaseLayer
-const ZINDEX_MIN = 10;
 
 /**
  * We got four kind of layers
@@ -112,7 +110,8 @@ export class LayerController extends LayerSelectionModel {
     this.layersFlattened = [...this.tree.flattened];
     addedLayers.forEach((layer) => layer.add());
 
-    this.recalculateZindex();
+    const baseLayerZindex = this.baseLayer ? 1 : 0;
+    this.recalculateZindex(baseLayerZindex);
     this.notify();
   }
 
@@ -126,6 +125,7 @@ export class LayerController extends LayerSelectionModel {
     }
 
     layer.visible = true;
+    layer.zIndex = 0;
     this.baseLayerSelection = layer;
 
     this._map.viewController.olView.setMinZoom(
@@ -209,11 +209,15 @@ export class LayerController extends LayerSelectionModel {
     this.notify();
   }
 
-  getById(id: string): AnyLayer {
+  getById(id: LayerId): AnyLayer {
     return this.all.find((layer) => layer.id && layer.id === id);
   }
 
-  getBySourceId(id: string): AnyLayer {
+  getByTitle(title: string): AnyLayer {
+    return this.all.find((layer) => layer.title && layer.title === title);
+  }
+
+  getBySourceId(id: LayerId): AnyLayer {
     return this.all.find(
       (layer) => layer.dataSource?.id && layer.dataSource.id === id
     );
@@ -273,17 +277,8 @@ export class LayerController extends LayerSelectionModel {
     this.notify();
   }
 
-  private getBefore(layer: AnyLayer): AnyLayer {
-    return this.treeLayers.find(
-      (layerTree) => layerTree.zIndex <= layer.zIndex
-    );
-  }
-
   /** Recursive */
-  private recalculateZindex(
-    minIndex = this.baseLayers.length,
-    layers = this.treeLayers
-  ) {
+  private recalculateZindex(minIndex = 0, layers = this.treeLayers) {
     return [...layers].reverse().reduce((previousZindex, layer) => {
       let zIndex = ++previousZindex;
       layer.zIndex = zIndex;
@@ -323,7 +318,9 @@ export class LayerController extends LayerSelectionModel {
     }
 
     const parent: LayerGroup | undefined = layer.parentId
-      ? (this.getById(layer.parentId.split(TREE_SEPERATOR).pop()) as LayerGroup)
+      ? (this.getById(
+          layer.parentId.toString().split(TREE_SEPERATOR).pop()
+        ) as LayerGroup)
       : undefined;
     layer.add(parent);
 
@@ -381,11 +378,6 @@ export class LayerController extends LayerSelectionModel {
     this.tree.clear();
   }
 
-  private clearSystems(): void {
-    this._systemLayers.forEach((layer) => this._remove(layer));
-    this._systemLayers = [];
-  }
-
   private clearOther(): void {
     this._otherLayers.forEach((layer) => this._remove(layer));
     this._otherLayers = [];
@@ -397,22 +389,12 @@ export class LayerController extends LayerSelectionModel {
 
   private setZindex(layer: AnyLayer, offset?: number): void {
     if (isBaseLayer(layer)) {
-      return this.handleBaselayerZIndex(layer, offset);
+      return;
     }
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const maxZIndex = Math.max(
-        ZINDEX_MIN,
-        ...this.treeLayers.map((l) => l.zIndex)
-      );
+      const maxZIndex = Math.max(...this.treeLayers.map((l) => l.zIndex), 0);
       layer.zIndex = maxZIndex + 1 + (offset ?? 0);
     }
-  }
-
-  private handleBaselayerZIndex(layer: Layer, offset?: number) {
-    const maxZIndex = Math.max(0, ...this.baseLayers.map((l) => l.zIndex));
-
-    const zIndex = maxZIndex + 1 + (offset ?? 0);
-    layer.zIndex = zIndex > ZINDEX_MIN ? ZINDEX_MIN : zIndex;
   }
 
   private notify(): void {

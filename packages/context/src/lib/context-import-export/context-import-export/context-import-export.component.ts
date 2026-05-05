@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -74,7 +74,7 @@ export class ContextImportExportComponent implements OnInit {
   public fileSizeMb: number;
   public activeImportExport = 'import';
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   constructor() {
     this.buildForm();
@@ -88,8 +88,8 @@ export class ContextImportExportComponent implements OnInit {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
-    this.layerList = this.map.layerController.all;
-    this.userControlledLayerList = this.map.layerController.treeLayers;
+    this.layerList = this.map().layerController.all;
+    this.userControlledLayerList = this.map().layerController.treeLayers;
   }
 
   importFiles(files: File[]) {
@@ -111,7 +111,7 @@ export class ContextImportExportComponent implements OnInit {
   handleExportFormSubmit(contextOptions) {
     this.loading$.next(true);
     this.res = this.contextService.getContextFromLayers(
-      this.map,
+      this.map(),
       contextOptions.layers,
       contextOptions.name,
       false

@@ -3,7 +3,7 @@
   class="table-compact"
   [store]="mapProximityState.proximityFeatureStore"
   [template]="tableTemplate"
-></igo-entity-table>
+/>
 <br />
 @if (mapProximityState.currentPositionCoordinate$ | async; as coord) {
   <mat-form-field class="coordinates">

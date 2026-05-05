@@ -32,7 +32,7 @@ export class DynamicComponent<C> {
   /**
    * Component inputs
    */
-  private inputs: Record<string, any> = {};
+  private inputs: Record<string, unknown> = {};
 
   /**
    * Subscriptions to the component's async inputs
@@ -42,7 +42,7 @@ export class DynamicComponent<C> {
   /**
    * Subscribers to the component's outputs
    */
-  private subscribers: Record<string, (event: any) => void> = {};
+  private subscribers: Record<string, (event: unknown) => void> = {};
 
   constructor(private componentFactory: ComponentFactory<C>) {}
 
@@ -78,7 +78,7 @@ export class DynamicComponent<C> {
    * Update the component inputs. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateInputs(inputs: Record<string, any>) {
+  updateInputs(inputs: Record<string, unknown>) {
     this.inputs = inputs;
     if (this.componentRef === undefined) {
       return;
@@ -97,14 +97,15 @@ export class DynamicComponent<C> {
           if (inputValue instanceof Observable) {
             this.observeInput(key, inputValue);
           } else {
-            this.setInputValue(instance, key, inputValue);
+            this.setInputValue(key, inputValue);
           }
         }
       }
     );
 
-    if (typeof (instance as any).onUpdateInputs === 'function') {
-      (instance as any).onUpdateInputs();
+    const instWithHook = instance as { onUpdateInputs?: unknown };
+    if (typeof instWithHook.onUpdateInputs === 'function') {
+      (instWithHook.onUpdateInputs as () => void)();
     }
   }
 
@@ -114,26 +115,15 @@ export class DynamicComponent<C> {
    * @param key Input key
    * @param value Input value
    */
-  private setInputValue(instance: C, key: string, value: any) {
-    const currentValue = instance[key];
-    if (value === currentValue) {
-      return;
-    }
-
-    const prototype = Object.getPrototypeOf(instance);
-    const descriptor = Object.getOwnPropertyDescriptor(prototype, key);
-    if (descriptor !== undefined && descriptor.set !== undefined) {
-      descriptor.set.call(instance, value);
-    } else {
-      instance[key] = value;
-    }
+  private setInputValue(key: string, value: unknown) {
+    this.componentRef.setInput(key, value);
   }
 
   /**
    * Update the component subscribers. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateSubscribers(subscribers: Record<string, (event: any) => void>) {
+  updateSubscribers(subscribers: Record<string, (event: unknown) => void>) {
     this.subscribers = subscribers;
     if (this.componentRef === undefined) {
       return;
@@ -165,13 +155,14 @@ export class DynamicComponent<C> {
    * @param key Input key
    * @param observable Observable
    */
-  private observeInput(key: string, observable: Observable<any>) {
-    this.inputs$$[key] = observable.subscribe((value: any) => {
+  private observeInput(key: string, observable: Observable<unknown>) {
+    this.inputs$$[key] = observable.subscribe((value: unknown) => {
       const instance = this.componentRef.instance;
-      this.setInputValue(instance, key, value);
+      this.setInputValue(key, value);
 
-      if (typeof (instance as any).onUpdateInputs === 'function') {
-        (instance as any).onUpdateInputs();
+      const instWithHook = instance as { onUpdateInputs?: unknown };
+      if (typeof instWithHook.onUpdateInputs === 'function') {
+        (instWithHook.onUpdateInputs as () => void)();
       }
     });
   }

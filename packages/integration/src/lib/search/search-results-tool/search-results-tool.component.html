@@ -1,6 +1,6 @@
-@if ((!store || store.stateView.empty) && (debouncedEmpty$ | async)) {
-  <div>
-    <section>
+@if (debouncedEmpty()) {
+  @if (!store || store.stateView.empty) {
+    <section class="search-results-tool-empty">
       <h4>
         <strong>{{
           'igo.integration.searchResultsTool.noResults' | translate
@@ -19,24 +19,23 @@
         "
       ></div>
     </section>
-  </div>
-}
-
-@if ((debouncedEmpty$ | async) === false) {
+  }
+} @else {
+  @let feature = this.feature();
   <igo-flexible
     #topPanel
     initial="100%"
     initialMobile="100%"
-    collapsed="calc(100% - 58px)"
-    collapsedMobile="calc(100% - 58px)"
+    collapsed="calc(100% - 48px)"
+    collapsedMobile="calc(100% - 48px)"
     expanded="60%"
     expandedMobile="60%"
-    [state]="(feature$ | async) ? topPanelState : 'initial'"
+    [state]="feature ? topPanelState : 'initial'"
   >
     <div class="igo-content">
       <igo-search-results
         [store]="store"
-        [showIcons]="showIcons"
+        [showIcons]="showIcons()"
         [term]="term"
         [termSplitter]="termSplitter"
         [settingsChange$]="settingsChange$"
@@ -56,13 +55,12 @@
             [stores]="stores"
             [layer]="result"
             [saveSearchResultInLayer]="saveSearchResultInLayer"
-          >
-          </igo-search-add-button>
+          />
         </ng-template>
       </igo-search-results>
     </div>
     <div igoFlexibleFill class="igo-content">
-      @if (feature$ | async) {
+      @if (feature) {
         <igo-panel
           [title]="featureTitle"
           (click)="toggleTopPanel($event)"
@@ -108,12 +106,11 @@
           }
           <igo-feature-details
             igoFeatureDetailsDirective
-            [feature]="feature$ | async"
+            [feature]="feature"
             [map]="map"
             [toolbox]="toolState.toolbox"
             (routingEvent)="getRoute()"
-          >
-          </igo-feature-details>
+          />
         </igo-panel>
       }
     </div>

@@ -3,8 +3,8 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild,
-  inject
+  inject,
+  viewChild
 } from '@angular/core';
 
 import {
@@ -99,8 +99,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     zoom: 7
   };
 
-  @ViewChild('mapBrowser', { read: ElementRef, static: true })
-  mapBrowser: ElementRef;
+  readonly mapBrowser = viewChild('mapBrowser', { read: ElementRef });
 
   public lonlat: Coordinate;
   public mapProjection: string;
@@ -254,11 +253,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     const contextmenuPoint: { x: number; y: number } = event;
     contextmenuPoint.y =
       contextmenuPoint.y -
-      this.mapBrowser.nativeElement.getBoundingClientRect().top +
+      this.mapBrowser().nativeElement.getBoundingClientRect().top +
       window.scrollY;
     contextmenuPoint.x =
       contextmenuPoint.x -
-      this.mapBrowser.nativeElement.getBoundingClientRect().left +
+      this.mapBrowser().nativeElement.getBoundingClientRect().left +
       window.scrollX;
     const position: Pixel = [contextmenuPoint.x, contextmenuPoint.y];
     return position;

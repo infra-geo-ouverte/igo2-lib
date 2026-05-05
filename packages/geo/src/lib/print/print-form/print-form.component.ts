@@ -1,12 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, Input, OnInit, inject, input, output } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -70,7 +63,7 @@ export class PrintFormComponent implements OnInit {
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
 
-  @Input() disabled$: BehaviorSubject<boolean>;
+  readonly disabled$ = input<BehaviorSubject<boolean>>(undefined);
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
@@ -247,7 +240,7 @@ export class PrintFormComponent implements OnInit {
     return (this.form.controls as any).legendPosition as UntypedFormControl;
   }
 
-  @Output() submit = new EventEmitter<PrintOptions>();
+  readonly submit = output<PrintOptions>();
 
   maxLength = 180;
 

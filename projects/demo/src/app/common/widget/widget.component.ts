@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -25,11 +24,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 @Component({
   selector: 'app-salutation-widget',
   template: `
-    <p>Hello, my name is {{ name }}.</p>
-    <button mat-flat-button (click)="complete.emit(name)">
+    <p>Hello, my name is {{ name() }}.</p>
+    <button mat-flat-button (click)="complete.emit(name())">
       Nice to meet you
     </button>
-    <button mat-flat-button (click)="cancel.emit(name)">Dismiss</button>
+    <button mat-flat-button (click)="cancel.emit(name())">Dismiss</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule]
@@ -39,11 +38,9 @@ export class AppSalutationWidgetComponent
 {
   private cdRef = inject(ChangeDetectorRef);
 
-  @Input() name: string;
-
-  @Output() complete = new EventEmitter<string>();
-
-  @Output() cancel = new EventEmitter<string>();
+  readonly name = input<string>(undefined);
+  readonly complete = output<string>();
+  readonly cancel = output<string>();
 
   onUpdateInputs() {
     this.cdRef.detectChanges();

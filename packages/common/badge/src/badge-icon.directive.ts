@@ -59,7 +59,7 @@ export class IgoBadgeIconDirective implements OnInit {
   private color;
 
   @Input()
-  set igoMatBadgeBackgroundColor(value: string) {
+  set igoMatBadgeBackgroundColor(value: string | null) {
     this.backgroundColor = value;
     this.updateColor();
   }

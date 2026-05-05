@@ -7,24 +7,12 @@
     [isDesktop]="isDesktop"
   >
     <ng-template #customBottomActions let-layer="layer">
-      <igo-workspace-button [layer]="layer"></igo-workspace-button>
-      <igo-export-button
-        [layer]="layer"
-        (click)="activateExport(layer)"
-      ></igo-export-button>
-      <igo-ogc-filter-button
-        [header]="ogcButton"
-        [layer]="layer"
-      ></igo-ogc-filter-button>
-      <igo-time-filter-button
-        [header]="timeButton"
-        [layer]="layer"
-      ></igo-time-filter-button>
-      <igo-track-feature-button
-        [trackFeature]="true"
-        [layer]="layer"
-      ></igo-track-feature-button>
-      <igo-metadata-button [layer]="layer"></igo-metadata-button>
+      <igo-workspace-button [layer]="layer" />
+      <igo-export-button [layer]="layer" (click)="activateExport(layer)" />
+      <igo-ogc-filter-button [header]="ogcButton()" [layer]="layer" />
+      <igo-time-filter-button [header]="timeButton()" [layer]="layer" />
+      <igo-track-feature-button [trackFeature]="true" [layer]="layer" />
+      <igo-metadata-button [layer]="layer" />
     </ng-template>
   </igo-layer-viewer>
 } @else {
@@ -34,14 +22,14 @@
         {{ 'igo.integration.mapTool.empty' | translate }}
       </p>
       @if (
-        layerAdditionAllowed &&
+        layerAdditionAllowed() &&
         (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
       ) {
         <p class="map-empty">
           {{ 'igo.integration.mapTool.customize' | translate }}
         </p>
       }
-      @if (layerAdditionAllowed && searchToolInToolbar) {
+      @if (layerAdditionAllowed() && searchToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>search</mat-icon>
           <span matListItemTitle class="search-tool" (click)="searchEmit()">
@@ -49,7 +37,7 @@
           </span>
         </mat-list-item>
       }
-      @if (layerAdditionAllowed && catalogToolInToolbar) {
+      @if (layerAdditionAllowed() && catalogToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>library_add</mat-icon>
           <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
@@ -57,7 +45,7 @@
           </span>
         </mat-list-item>
       }
-      @if (layerAdditionAllowed && contextToolInToolbar) {
+      @if (layerAdditionAllowed() && contextToolInToolbar) {
         <mat-list-item>
           <mat-icon matListItemIcon>star</mat-icon>
           <span matListItemTitle class="context-tool" (click)="contextEmit()">

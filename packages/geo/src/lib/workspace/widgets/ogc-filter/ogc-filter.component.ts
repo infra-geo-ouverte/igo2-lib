@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 
 import { OnUpdateInputs } from '@igo2/common/dynamic-component';
@@ -25,19 +24,19 @@ import { IgoMap } from '../../../map/shared/map';
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   private cdRef = inject(ChangeDetectorRef);
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * Event emitted on complete
    */
-  @Output() complete = new EventEmitter<void>();
+  readonly complete = output<void>();
 
   /**
    * Event emitted on cancel
    */
-  @Output() cancel = new EventEmitter<void>();
+  readonly cancel = output<void>();
 
   /**
    * Implemented as part of OnUpdateInputs
@@ -50,6 +49,7 @@ export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
    * On close, emit the cancel event
    */
   onClose() {
+    // TODO: The 'emit' function requires a mandatory void argument
     this.cancel.emit();
   }
 }

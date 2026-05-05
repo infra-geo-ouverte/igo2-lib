@@ -1,15 +1,15 @@
 <igo-list [navigation]="false" [selection]="false">
-  @if ((layers | filterableDataSource: 'ogc').length === 0) {
+  @if ((layers() | filterableDataSource: 'ogc').length === 0) {
     <div id="no-layer-message">
       {{ 'igo.geo.filter.noFilterableLayer' | translate }}
     </div>
   }
-  @for (layer of layers | filterableDataSource: 'ogc'; track layer) {
+  @for (layer of layers() | filterableDataSource: 'ogc'; track layer) {
     <igo-ogc-filterable-item
       igoListItem
       [header]="true"
       [layer]="layer"
       [map]="layer.map"
-    ></igo-ogc-filterable-item>
+    />
   }
 </igo-list>

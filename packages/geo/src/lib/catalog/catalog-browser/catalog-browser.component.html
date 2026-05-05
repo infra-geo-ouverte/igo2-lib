@@ -1,31 +1,29 @@
 <igo-list [navigation]="false" [selection]="false">
-  @for (item of store.view.all$() | async; track item) {
+  @for (item of store().view.all$() | async; track item) {
     @if (isGroup(item)) {
       <igo-catalog-browser-group
-        [catalog]="catalog"
+        [catalog]="catalog()"
         [group]="item"
-        [map]="map"
-        [state]="store.state"
+        [map]="map()"
+        [state]="store().state"
         [resolution]="resolution$ | async"
-        [catalogAllowLegend]="catalogAllowLegend"
-        [collapsed]="store.count === 1 ? false : true"
-        [toggleCollapsed]="toggleCollapsedGroup"
+        [catalogAllowLegend]="catalogAllowLegend()"
+        [collapsed]="store().count === 1 ? false : true"
+        [toggleCollapsed]="toggleCollapsedGroup()"
         (addedChange)="onGroupAddedChange($event)"
         (layerAddedChange)="onLayerAddedChange($event)"
-      >
-      </igo-catalog-browser-group>
+      />
     }
     @if (isLayer(item)) {
       <igo-catalog-browser-layer
         igoListItem
         [layer]="$any(item)"
-        [map]="map"
+        [map]="map()"
         [resolution]="resolution$ | async"
-        [catalogAllowLegend]="catalogAllowLegend"
-        [added]="store.state.get(item).added"
+        [catalogAllowLegend]="catalogAllowLegend()"
+        [added]="store().state.get(item).added"
         (addedChange)="onLayerAddedChange($event)"
-      >
-      </igo-catalog-browser-layer>
+      />
     }
   }
 </igo-list>

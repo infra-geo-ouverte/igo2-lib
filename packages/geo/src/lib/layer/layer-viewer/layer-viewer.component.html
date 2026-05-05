@@ -1,17 +1,16 @@
 <igo-layer-list-tool
   floatLabel="auto"
   [viewerOptions]="layerViewerOptions"
-  [term]="options?.filterAndSortOptions?.keyword"
+  [term]="options()?.filterAndSortOptions?.keyword"
   [mode]="mode"
   (addedLayer)="createGroup($event)"
   (modeChange)="toggleSelectionMode($event)"
   (searchChange)="onSearchChange($event)"
   (visibilityOnlyChange)="onVisibilityOnlyChange()"
->
-</igo-layer-list-tool>
+/>
 
 @if (mode === 'selection') {
-  <mat-divider></mat-divider>
+  <mat-divider />
   <div class="header-item active-background">
     <mat-checkbox
       class="select-all-checkbox"
@@ -31,7 +30,7 @@
     </button>
   </div>
 }
-<mat-divider></mat-divider>
+<mat-divider />
 
 <div class="layer-view">
   @if (
@@ -41,38 +40,36 @@
   ) {
     <div class="layer-list-container">
       @if (unavailableLayers?.length) {
-        <igo-layer-unavailable-list
-          [layersOptions]="unavailableLayers"
-        ></igo-layer-unavailable-list>
+        <igo-layer-unavailable-list [layersOptions]="unavailableLayers" />
       }
       <igo-layer-list
-        [controller]="map.layerController"
+        [controller]="map().layerController"
         [layers]="layers"
         [viewerOptions]="layerViewerOptions"
         [isDragDropDisabled]="isDragDropDisabled"
-        [isDesktop]="isDesktop"
-      ></igo-layer-list>
-      @if (!excludeBaseLayers && baselayers?.length) {
+        [isDesktop]="isDesktop()"
+      />
+      @if (!excludeBaseLayers() && baselayers?.length) {
         <div>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <igo-layer-list
-            [controller]="map.layerController"
+            [controller]="map().layerController"
             [layers]="baselayers"
             [viewerOptions]="layerViewerOptions"
             [isDragDropDisabled]="true"
-            [isDesktop]="isDesktop"
-          ></igo-layer-list>
+            [isDesktop]="isDesktop()"
+          />
         </div>
       }
     </div>
   } @else {
-    <ng-content select="[emptyList]"></ng-content>
+    <ng-content select="[emptyList]" />
   }
 </div>
 
 @if (layerController.hasSelection) {
   <igo-layer-viewer-bottom-actions
-    [map]="map"
+    [map]="map()"
     [viewerOptions]="layerViewerOptions"
     [controller]="layerController"
     [searchTerm]="keyword$.value"
@@ -83,11 +80,11 @@
       isLayerItem(layerController.selected[0])
     ) {
       <ng-container
-        [ngTemplateOutlet]="customBottomActions"
+        [ngTemplateOutlet]="customBottomActions()"
         [ngTemplateOutletContext]="{ layer: layerController.selected[0] }"
-      ></ng-container>
+      />
     }
   </igo-layer-viewer-bottom-actions>
 }
 
-<ng-content></ng-content>
+<ng-content />

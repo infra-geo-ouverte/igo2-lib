@@ -6,7 +6,7 @@
   <app-example-viewer codeFolder="geo/catalog">
     <igo-map-browser [map]="map" [view]="view">
       <div class="map-actions --vertical --bottom --right">
-        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        <igo-zoom-button [map]="map" color="primary" />
       </div>
     </igo-map-browser>
 
@@ -15,8 +15,7 @@
         [addCatalogAllowed]="true"
         [store]="$any(catalogStore)"
         (catalogSelectChange)="onCatalogSelectChange($event)"
-      >
-      </igo-catalog-library>
+      />
     </igo-panel>
 
     <igo-panel title="Catalog Browser">
@@ -24,8 +23,7 @@
         [catalog]="catalog"
         [store]="$any(catalogItemStore)"
         [map]="map"
-      >
-      </igo-catalog-browser>
+      />
     </igo-panel>
   </app-example-viewer>
 </app-doc-viewer>

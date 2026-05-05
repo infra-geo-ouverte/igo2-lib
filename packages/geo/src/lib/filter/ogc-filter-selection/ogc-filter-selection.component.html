@@ -3,7 +3,7 @@
     <div>
       @if (selector.selectorType === 'pushButton') {
         <div class="pushButtonGroups">
-          <mat-divider></mat-divider>
+          <mat-divider />
           @if (getPushButtonsGroups().length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
@@ -58,7 +58,7 @@
       }
       @if (selector.selectorType === 'checkbox') {
         <div class="checkboxGroups">
-          <mat-divider></mat-divider>
+          <mat-divider />
           @if (getCheckboxesGroups().length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
@@ -128,7 +128,7 @@
       }
       @if (selector.selectorType === 'radioButton') {
         <div class="radioButtonGroups">
-          <mat-divider></mat-divider>
+          <mat-divider />
           @if (getRadioButtonsGroups().length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
@@ -203,7 +203,7 @@
       }
       @if (selector.selectorType === 'select') {
         <div class="selectGroups">
-          <mat-divider></mat-divider>
+          <mat-divider />
           @if (getSelectGroups().length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
@@ -309,7 +309,7 @@
       }
       @if (selector.selectorType === 'autocomplete') {
         <div class="autocompleteGroups">
-          <mat-divider></mat-divider>
+          <mat-divider />
           @if (getAutocompleteGroups().length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
@@ -421,8 +421,7 @@
                                 ogcAutocomplete.value
                               )
                             "
-                          >
-                          </mat-checkbox>
+                          />
                           {{ ogcAutocomplete.value }}
                         </div>
                       </mat-option>
@@ -440,7 +439,7 @@
 
 @if (isTemporalOperator()) {
   <div>
-    <mat-divider></mat-divider>
+    <mat-divider />
     @if (!currentFilter.title) {
       <h4>
         {{ 'igo.geo.filter.reportingDate' | translate }}
@@ -450,10 +449,9 @@
       <h4>{{ currentFilter.title }}</h4>
     }
     <igo-ogc-filter-time
-      [datasource]="datasource"
+      [datasource]="datasource()"
       [currentFilter]="currentFilter"
       (changeProperty)="changeProperty($event.value, $event.pos)"
-    >
-    </igo-ogc-filter-time>
+    />
   </div>
 }

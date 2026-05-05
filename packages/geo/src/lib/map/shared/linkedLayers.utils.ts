@@ -11,8 +11,7 @@ import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared/ogc-filter.interface';
-import type { AnyLayer } from '../../layer/shared/layers/any-layer';
-import type { Layer } from '../../layer/shared/layers/layer';
+import type { AnyLayer, Layer, LayerId } from '../../layer/shared';
 import {
   LayersLinkProperties,
   LinkedProperties
@@ -181,7 +180,7 @@ export function getLinkedLayersOptions(layer: Layer) {
   return layer.options.linkedLayers;
 }
 
-export function findLayerByLinkId(layers: Layer[], id: string) {
+export function findLayerByLinkId(layers: Layer[], id: LayerId) {
   return layers.find((l) => l.options.linkedLayers?.linkId === id);
 }
 

@@ -19,10 +19,10 @@
   >
     <mat-radio-group
       class="igo-search-selector-radio-group"
-      [value]="searchType$ | async"
+      [value]="searchType()"
       (change)="onSearchTypeChange($event.value)"
     >
-      @for (searchType of searchTypes; track searchType) {
+      @for (searchType of searchTypes(); track searchType) {
         <mat-radio-button [value]="searchType">
           {{ getSearchTypeTitle(searchType) | translate }}
         </mat-radio-button>

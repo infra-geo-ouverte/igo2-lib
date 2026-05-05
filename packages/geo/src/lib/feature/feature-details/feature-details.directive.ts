@@ -1,11 +1,10 @@
 import {
   Directive,
   ElementRef,
-  EventEmitter,
   HostListener,
   OnInit,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
@@ -27,7 +26,7 @@ export class FeatureDetailsDirective implements OnInit {
   }
   feature$ = new BehaviorSubject(undefined);
 
-  @Output() routingEvent = new EventEmitter<void>();
+  readonly routingEvent = output();
 
   @HostListener('selectFeature')
   setFeature() {
@@ -42,7 +41,7 @@ export class FeatureDetailsDirective implements OnInit {
 
   ngOnInit() {
     this.feature$.subscribe(() => {
-      if (this.feature.geometry) {
+      if (this.feature().geometry) {
         this.bindClicking();
       }
     });
@@ -53,6 +52,7 @@ export class FeatureDetailsDirective implements OnInit {
       const routeElement = this.el.nativeElement.querySelector('span.routing');
       if (routeElement) {
         routeElement.addEventListener('click', () => {
+          // TODO: The 'emit' function requires a mandatory void argument
           this.routingEvent.emit();
         });
       }

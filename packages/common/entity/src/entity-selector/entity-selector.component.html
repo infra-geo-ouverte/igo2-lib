@@ -1,22 +1,22 @@
 <mat-form-field class="igo-entity-selector" subscriptSizing="dynamic">
   <mat-select
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [value]="selected$ | async"
-    [multiple]="multi"
-    [placeholder]="placeholder"
+    [multiple]="multi()"
+    [placeholder]="placeholder()"
     (selectionChange)="onSelectionChange($event)"
   >
-    @if (emptyText !== undefined && multi === false) {
-      <mat-option [value]="emptyValue">{{ emptyText }}</mat-option>
+    @if (emptyText() !== undefined && multi() === false) {
+      <mat-option [value]="emptyValue">{{ emptyText() }}</mat-option>
     }
-    @if (multi === true) {
+    @if (multi() === true) {
       <mat-option [value]="multiSelectValue">{{
         multiText$ | async
       }}</mat-option>
     }
-    @for (record of store.stateView.all$() | async; track record) {
+    @for (record of store().stateView.all$() | async; track record) {
       <mat-option [value]="record.entity">
-        {{ titleAccessor(record.entity) }}
+        {{ titleAccessor()(record.entity) }}
       </mat-option>
     }
   </mat-select>

@@ -1,15 +1,15 @@
 <div class="layer-content">
-  @if (viewerOptions.mode === 'selection') {
+  <ng-content />
+
+  @if (viewerOptions().mode === 'selection') {
     <mat-checkbox
-      [checked]="selected"
-      [disabled]="selectionDisabled"
+      [checked]="selected()"
+      [disabled]="selectionDisabled()"
       (change)="handleSelect($event)"
-    >
-    </mat-checkbox>
+    />
   }
-  <ng-content></ng-content>
   <span class="igo-layer-title" (click)="handleExpand()">{{
-    layer.title
+    layer().title
   }}</span>
 </div>
 
@@ -19,7 +19,7 @@
       class="actions-button"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.moreOptions' | translate"
+      [matTooltip]="'igo.geo.layer.group.moreOptions' | translate"
       mat-icon-button
       color="primary"
       (click)="toggleLayerGroupTool($event)"
@@ -29,10 +29,10 @@
   </div>
 
   <igo-layer-visibility-button
-    [layer]="layer"
+    [layer]="layer()"
     [disabled]="isDisabled"
     [tooltip]="tooltipMessage"
-    [inResolutionsRange]="layer.isInResolutionsRange$ | async"
+    [inResolutionsRange]="layer().isInResolutionsRange$ | async"
     (visibilityChange)="toggleVisibility($event)"
-  ></igo-layer-visibility-button>
+  />
 </div>

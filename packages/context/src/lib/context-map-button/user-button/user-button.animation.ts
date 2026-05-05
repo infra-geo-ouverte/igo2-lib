@@ -13,15 +13,13 @@ export function userButtonSlideInOut(): AnimationTriggerMetadata {
       'collapse',
       style({
         width: '0',
-        overflow: 'hidden',
-        display: 'none'
+        overflow: 'hidden'
       })
     ),
     state(
       'expand',
       style({
-        overflow: 'hidden',
-        display: 'display'
+        overflow: 'hidden'
       })
     ),
     transition('collapse => expand', animate('200ms')),

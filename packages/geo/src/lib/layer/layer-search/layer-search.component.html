@@ -1,9 +1,9 @@
-<mat-form-field [floatLabel]="floatLabel" subscriptSizing="dynamic">
+<mat-form-field [floatLabel]="floatLabel()" subscriptSizing="dynamic">
   <input
     matInput
-    [placeholder]="placeholder | translate"
-    [matTooltip]="tooltip | translate"
-    [matTooltipDisabled]="!tooltip"
+    [placeholder]="placeholder() | translate"
+    [matTooltip]="tooltip() | translate"
+    [matTooltipDisabled]="!tooltip()"
     matTooltipShowDelay="500"
     type="text"
     [formControl]="control"

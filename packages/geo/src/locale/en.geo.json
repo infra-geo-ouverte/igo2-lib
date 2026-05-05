@@ -21,6 +21,7 @@
         },
         "library.predefined.select": "Select a catalog",
         "library.custom.title": "Title",
+        "library.cancel": "Cancel",
         "library.add": "Add this catalog to the list",
         "library.predefined": "Predefined list",
         "library.custom": "Advanced configuration",
@@ -70,6 +71,11 @@
         "ogreServer": {
           "title": "Ogre server error 500",
           "text": "Error in convert to geojson. Maybe file is too big, try to import that file in geojson format"
+        },
+        "epsgUndefined": {
+          "text": "The projection for the file <strong> {{fileName}} </strong> could not be detected automatically. Please select a projection to continue the upload.",
+          "title": "Coordinate System (Projection)",
+          "note": "If your file's projection is not in the list, you must convert your file to a compatible coordinate system."
         }
       },
       "export": {
@@ -147,7 +153,7 @@
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Shapefiles must be zipped AND geometries stored in Latitude Longitude coordinate (EPSG:4326/WGS:84)",
+        "importShpZip": "Shapefiles must be zipped",
         "importHtmlClarifications": "",
         "exportHtmlClarifications": "",
         "other": "other",
@@ -232,8 +238,10 @@
           "name": "Group name",
           "create": "Create group",
           "rename": "Rename group",
+          "moreOptions": "Group tools",
+          "remove": "Remove this group from the map",
           "hide": "Hide group",
-          "hideChildren": "Hided by a group",
+          "hideChildren": "Layer hidden by a group",
           "show": "Show group"
         },
         "type": {
@@ -250,6 +258,7 @@
         "unavailableLayer": "Unavailable layer",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
+        "filterAppliedOnLayer": "Filter applied on layer",
         "activateSelectionMode": "Activate multiple selection mode",
         "deactivateSelectionMode": "Deactivate multiple selection mode",
         "tools": "Tools",
@@ -373,7 +382,8 @@
           "newpage": "On a new page",
           "newimage": "On a new image"
         },
-        "showNorthArrow": "Show north arrow"
+        "showNorthArrow": "Show north arrow",
+        "timeout": "Print - Some requests reach the maximum time of {{value}} seconds"
       },
       "directions": {
         "buttons": {
@@ -521,6 +531,7 @@
           "type": {
             "address": "Address",
             "oldAddress": "Old address",
+            "aggloMun": "Agglomerations",
             "district": "District",
             "postalCode": "Postal Code",
             "city": "City",
@@ -542,10 +553,17 @@
             "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
+            "dessertes": "Police service (CSAU)",
+            "matricule": "Property assessment role",
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
             "cultpatri": "Culture and heritage",
-            "unites": "Units (apartments, offices, etc.)"
+            "unites": "Units (apartments, offices, etc.)",
+            "stations-partenaires": "Hydrometric station (partenaire)",
+            "stations-publique": "Hydrometric station",
+            "niveau-eau-partenaires": "Water levels during a flood (with photos)",
+            "niveau-eau-publique": "Water levels during a flood (with reports)",
+            "reperes-crue": "Flood markers"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -627,7 +645,10 @@
         "hour": "Hour",
         "minute": "Minute",
         "endYear": "End Year",
-        "startYear": "Start Year"
+        "startYear": "Start Year",
+        "today": "Today",
+        "now": "Now",
+        "clear": "Clear"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
@@ -662,6 +683,8 @@
         "warning": "Warning",
         "freehandControl": "Freehand",
         "group": {
+          "addresses": "Addresses",
+          "aleas": "Hazards",
           "toponyme": "Toponym",
           "culture": "Culture",
           "education": "Education",
@@ -674,17 +697,24 @@
       "terrapi": {
         "AdmRegion": "Administratives region",
         "Mun": "Municipalities",
+        "aggloMun": "Agglomerations",
         "Arrond": "Boroughs",
         "CircFed": "Federals districts",
         "CircProv": "Provincials districts",
         "DirReg": "Regionals directorates",
         "MRC": "RCM",
+        "RSS": "Social and health regions (RSS)",
+        "RLS": "Local health networks (RLS)",
+        "CLSC": "Local community service centers (CLSC)",
+        "tours": "Cooling towers",
         "RegTour": "Touristics regions",
         "limites": "Administrative boundaries",
         "bornes": "Landmarks",
+        "matricule": "Property assessment role",
         "hydro": "Hydrography",
         "routes": "Roads",
         "bati": "Buildings",
+        "localite": "Localities",
         "batiment": "Buildings",
         "camping": "Camping",
         "equipement": "Equipment",
@@ -720,7 +750,11 @@
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
         "polices": "Police station",
-        "unites": "Unit number"
+        "unites": "Units (Building numbers, offices, etc.)",
+        "address": "Addresses without units",
+        "stations-hydro-partenaires": "Hydrometric station (partner)",
+        "stations-hydro-publique": "Hydrometric station",
+        "depanneurs-reservoirs": "Convenience stores and gas stations - Fuel tank"
       },
       "measure": {
         "dialog": {

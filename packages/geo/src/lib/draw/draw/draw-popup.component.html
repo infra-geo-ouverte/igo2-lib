@@ -2,7 +2,7 @@
   {{ 'igo.geo.draw.popupTitle' | translate }}
 </h2>
 
-@if (labelFlag !== labelType.Custom) {
+@if (labelFlag() !== labelType.Custom) {
   <div mat-dialog-content class="geometry-type-toggle">
     <div class="button-toggle-container">
       <mat-button-toggle-group
@@ -49,7 +49,7 @@
           </mat-checkbox>
         }
       }
-      @if (labelFlag === labelType.Coordinates) {
+      @if (labelFlag() === labelType.Coordinates) {
         <div class="fields-container">
           <mat-form-field class="readOnly-Input">
             <mat-label>(Latitude, Longitude)</mat-label>
@@ -63,7 +63,7 @@
           </mat-form-field>
           <mat-form-field class="unit-field">
             <mat-select
-              [value]="coordinatesMeasureUnit"
+              [value]="coordinatesMeasureUnit()"
               (selectionChange)="onChangeCoordinateUnit($event.value)"
             >
               @for (unit of allCoordinatesUnits; track unit) {
@@ -75,7 +75,7 @@
           </mat-form-field>
         </div>
       }
-      @if (labelFlag === labelType.Length || polygonCheck === 2) {
+      @if (labelFlag() === labelType.Length || polygonCheck === 2) {
         <div class="fields-container">
           <mat-form-field class="readOnly-Input">
             <mat-label>{{ lengthLabelT }}</mat-label>
@@ -89,7 +89,7 @@
           </mat-form-field>
           <mat-form-field class="unit-field">
             <mat-select
-              [value]="lengthMeasureUnit"
+              [value]="lengthMeasureUnit()"
               (selectionChange)="onChangeLengthUnit($event.value)"
             >
               @for (unit of allLengthUnits; track unit) {
@@ -101,7 +101,7 @@
           </mat-form-field>
         </div>
       }
-      @if (labelFlag === labelType.Area || polygonCheck === 2) {
+      @if (labelFlag() === labelType.Area || polygonCheck === 2) {
         <div class="fields-container">
           <mat-form-field class="readOnly-Input">
             <mat-label>{{
@@ -117,7 +117,7 @@
           </mat-form-field>
           <mat-form-field class="unit-field">
             <mat-select
-              [value]="areaMeasureUnit"
+              [value]="areaMeasureUnit()"
               (selectionChange)="onChangeAreaUnit($event.value)"
             >
               @for (unit of allAreaUnits; track unit) {
@@ -141,7 +141,7 @@
   </div>
 }
 
-@if (labelFlag === labelType.Custom) {
+@if (labelFlag() === labelType.Custom) {
   <div mat-dialog-content class="geometry-type-toggle">
     <div class="button-toggle-container">
       <mat-button-toggle-group

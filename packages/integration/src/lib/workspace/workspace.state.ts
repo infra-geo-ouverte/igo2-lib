@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
+import { Injectable, OnDestroy, inject, signal } from '@angular/core';
 
 import {
   EntityRecord,
@@ -9,9 +9,15 @@ import {
 import { Widget } from '@igo2/common/widget';
 import { Workspace, WorkspaceStore } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
-import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
+import {
+  EditionWorkspace,
+  FeatureWorkspace,
+  LayerId,
+  WfsWorkspace
+} from '@igo2/geo';
 
-import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { EditionActionsService } from './shared/edition-actions.service';
 import { FeatureActionsService } from './shared/feature-actions.service';
@@ -29,7 +35,7 @@ export class WorkspaceState implements OnDestroy {
   private editionActionsService = inject(EditionActionsService);
   private storageService = inject(StorageService);
 
-  public workspacePanelExpanded = false;
+  expanded = signal(false);
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
@@ -139,21 +145,15 @@ export class WorkspaceState implements OnDestroy {
       });
 
     this.actionMaximize$$.push(
-      this.featureActionsService.maximize$.subscribe((maximized) => {
-        this.setWorkspaceIsMaximized(maximized);
-      })
-    );
-
-    this.actionMaximize$$.push(
-      this.wfsActionsService.maximize$.subscribe((maximized) => {
-        this.setWorkspaceIsMaximized(maximized);
-      })
-    );
-
-    this.actionMaximize$$.push(
-      this.editionActionsService.maximize$.subscribe((maximized) => {
-        this.setWorkspaceIsMaximized(maximized);
-      })
+      merge(
+        this.featureActionsService.maximize$,
+        this.wfsActionsService.maximize$,
+        this.editionActionsService.maximize$
+      )
+        .pipe(distinctUntilChanged())
+        .subscribe((maximized) => {
+          this.setWorkspaceIsMaximized(maximized);
+        })
     );
 
     this.activeWorkspace$$ = this.workspace$.subscribe(
@@ -214,7 +214,7 @@ export class WorkspaceState implements OnDestroy {
     this.workspaceMaximize$.next(maximized);
   }
 
-  public setActiveWorkspaceById(id: string) {
+  public setActiveWorkspaceById(id: LayerId) {
     const wksFromId = this.store.all().find((workspace) => workspace.id === id);
     if (wksFromId) {
       this.store.activateWorkspace(wksFromId);

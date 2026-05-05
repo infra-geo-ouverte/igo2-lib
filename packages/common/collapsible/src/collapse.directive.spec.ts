@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { mergeTestConfig } from 'packages/auth/test-config';
-
+import { mergeTestConfig } from '../../test-config';
 import { CollapseDirective } from './collapse.directive';
 
 @Component({

@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,7 +25,7 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
 export class StyleModalLayerButtonComponent {
   private dialog = inject(MatDialog);
 
-  @Input() layer: VectorLayer;
+  readonly layer = input<VectorLayer>(undefined);
 
   /**
    * Open the style modal dialog box
@@ -33,7 +33,7 @@ export class StyleModalLayerButtonComponent {
   openStyleModalDialog() {
     setTimeout(() => {
       // open the dialog box used to style features
-      const data: LayerMatDialogData = { layer: this.layer };
+      const data: LayerMatDialogData = { layer: this.layer() };
       this.dialog.open(StyleModalLayerComponent, {
         disableClose: false,
         data,

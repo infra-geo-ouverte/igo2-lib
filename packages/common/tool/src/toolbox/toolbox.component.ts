@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostBinding,
-  Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  input
 } from '@angular/core';
 
 import { Action, ActionStore, ActionbarComponent } from '@igo2/common/action';
@@ -84,24 +84,24 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Toolbox
    */
-  @Input() toolbox: Toolbox;
+  readonly toolbox = input<Toolbox>(undefined);
 
   /**
    * Whether the toolbox should animate the first tool entering
    */
-  @Input() animate = false;
+  readonly animate = input(false);
 
   /**
    * Color of Toolbox
    */
-  @Input() color: ToolboxColor = 'white';
+  readonly color = input<ToolboxColor>('white');
 
   /**
    * @ignore
    */
   @HostBinding('class.color-grey')
   get classColorGrey() {
-    return this.color === 'grey';
+    return this.color() === 'grey';
   }
 
   /**
@@ -109,7 +109,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   @HostBinding('class.color-primary')
   get classColorPrimary() {
-    return this.color === 'primary';
+    return this.color() === 'primary';
   }
 
   /**
@@ -117,10 +117,10 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.toolbar$$ = this.toolbox.toolbar$.subscribe((toolbar: string[]) =>
+    this.toolbar$$ = this.toolbox().toolbar$.subscribe((toolbar: string[]) =>
       this.onToolbarChange(toolbar)
     );
-    this.activeTool$$ = this.toolbox.activeTool$.subscribe((tool: Tool) =>
+    this.activeTool$$ = this.toolbox().activeTool$.subscribe((tool: Tool) =>
       this.onActiveToolChange(tool)
     );
   }
@@ -174,7 +174,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @param tool Tool to activate
    */
   private onActiveToolChange(tool: Tool) {
-    if (!this.animate) {
+    if (!this.animate()) {
       this.setActiveTool(tool);
       return;
     }
@@ -196,7 +196,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
     }
 
     this.activeTool$.next(tool);
-    if (this.animate) {
+    if (this.animate()) {
       this.animation$.next('enter');
     }
   }
@@ -206,7 +206,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   private setToolbar(toolbar: string[]) {
     const actions = toolbar.reduce((acc: Action[], toolName: string) => {
-      const tool = this.toolbox.getTool(toolName);
+      const tool = this.toolbox().getTool(toolName);
       if (tool === undefined) {
         return acc;
       }
@@ -216,12 +216,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         title: tool.title,
         icon: tool.icon,
         tooltip: tool.tooltip,
-        args: [tool, this.toolbox],
+        args: [tool, this.toolbox()],
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
         },
         ngClass: (_tool: Tool) => {
-          return this.toolbox.activeTool$.pipe(
+          return this.toolbox().activeTool$.pipe(
             map((activeTool: Tool) => {
               let toolActivated = false;
               if (activeTool !== undefined && _tool.name === activeTool.name) {

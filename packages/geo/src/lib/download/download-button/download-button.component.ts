@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  inject
+  computed,
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,18 +25,14 @@ import { DownloadService } from '../shared/download.service';
 export class DownloadButtonComponent {
   private downloadService = inject(DownloadService);
 
-  @Input() layer: Layer;
+  readonly layer = input<Layer>(undefined);
 
-  @Input() color = 'primary';
+  readonly color = input('primary');
+  readonly options = computed<DownloadDataSourceOptions>(
+    () => this.layer()?.dataSource.options
+  );
 
   openDownload() {
-    this.downloadService.open(this.layer);
-  }
-
-  get options(): DownloadDataSourceOptions {
-    if (!this.layer) {
-      return;
-    }
-    return this.layer.dataSource.options;
+    this.downloadService.open(this.layer());
   }
 }

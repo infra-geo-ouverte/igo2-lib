@@ -23,12 +23,12 @@ export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Override input layers
-    this.component.layers = [];
+    this.component.setLayers([]);
 
     this.layers$$ = this.mapService
       .getMap()
       .layerController.layersFlattened$.subscribe((layers) => {
-        this.component.layers = layers;
+        this.component.setLayers(layers);
       });
   }
 

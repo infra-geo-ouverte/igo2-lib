@@ -1,3 +1,4 @@
+@let form = this.form();
 <form
   class="igo-form"
   [formGroup]="form"
@@ -48,7 +49,7 @@
     <button
       matButton="elevated"
       type="submit"
-      [disabled]="!form.valid || disabled"
+      [disabled]="form.invalid || disabled()"
     >
       {{ 'igo.context.contextManager.form.edit' | translate }}
     </button>

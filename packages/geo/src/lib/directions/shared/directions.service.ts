@@ -270,7 +270,7 @@ export class DirectionsService {
 
     const logo: string = this.configService.getConfig('directionsSources.logo')
       ? this.configService.getConfig('directionsSources.logo')
-      : 'assets/logo.png';
+      : 'logo.png';
 
     for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
       doc.setPage(pageIndex);

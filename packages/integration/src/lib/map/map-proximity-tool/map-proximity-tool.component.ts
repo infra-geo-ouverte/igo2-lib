@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -53,7 +53,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
 
   private subs$$: Subscription[] = [];
-  @ViewChild('table', { static: true }) table: EntityTableComponent;
+  readonly table = viewChild<EntityTableComponent>('table');
 
   get maxDistance() {
     return this.mapProximityState.proximityRadiusValue$.value;

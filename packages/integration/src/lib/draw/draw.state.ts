@@ -4,6 +4,7 @@ import {
   DrawControl,
   FeatureStore,
   FeatureWithDraw,
+  LayerId,
   VectorLayer
 } from '@igo2/geo';
 
@@ -19,8 +20,8 @@ export class DrawState {
   private mapState = inject(MapState);
 
   public stores: FeatureStore<FeatureWithDraw>[] = [];
-  public layersID: string[] = [];
-  public drawControls: [string, DrawControl][] = [];
+  public layersID: LayerId[] = [];
+  public drawControls: [LayerId, DrawControl][] = [];
   public activeDrawingLayer: VectorLayer;
 
   constructor() {
@@ -30,8 +31,10 @@ export class DrawState {
           const deletedStore = this.stores.find(
             (store) => store.layer.id === layerId
           );
-          deletedStore.deleteMany(deletedStore.all());
-          this.stores.splice(this.stores.indexOf(deletedStore, 0), 1);
+          if (deletedStore) {
+            deletedStore.deleteMany(deletedStore.all());
+            this.stores.splice(this.stores.indexOf(deletedStore, 0), 1);
+          }
           this.layersID.splice(this.layersID.indexOf(layerId, 0), 1);
           const drawControlIndex = this.drawControls.findIndex(
             (dc) => dc[0] === layerId

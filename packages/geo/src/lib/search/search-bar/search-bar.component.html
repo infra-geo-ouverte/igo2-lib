@@ -1,7 +1,7 @@
 <div class="igo-search-bar-container" [ngClass]="{ empty: empty$ | async }">
-  <mat-form-field [floatLabel]="floatLabel" [appearance]="appearance">
-    @if (label) {
-      <mat-label>{{ label }}</mat-label>
+  <mat-form-field [floatLabel]="floatLabel()" [appearance]="appearance()">
+    @if (label()) {
+      <mat-label>{{ label() }}</mat-label>
     }
     <input
       #input
@@ -10,8 +10,8 @@
       [ngClass]="{ hasSearchIcon: showSearchButton }"
       [disabled]="disabled$ | async"
       [placeholder]="
-        placeholder
-          ? placeholder
+        placeholder()
+          ? placeholder()
           : (placeholder$ | async)
             ? (placeholder$.value | translate)
             : undefined
@@ -23,7 +23,7 @@
       <button
         mat-icon-button
         matSuffix
-        [color]="color"
+        [color]="color()"
         (click)="onClearButtonClick()"
         [matTooltip]="'igo.geo.search.clearSearch' | translate"
       >
@@ -32,40 +32,38 @@
     }
   </mat-form-field>
 
-  @if (withDivider) {
-    <mat-divider [vertical]="true"></mat-divider>
+  @if (withDivider()) {
+    <mat-divider [vertical]="true" />
   }
 
   <div class="search-bar-buttons">
     @if (showSearchButton) {
-      <button mat-icon-button [color]="color" (click)="handleSearch()">
+      <button mat-icon-button [color]="color()" (click)="handleSearch()">
         <mat-icon>search</mat-icon>
       </button>
     }
 
-    @if (searchSelector) {
+    @if (searchSelector()) {
       <igo-search-selector
-        [searchTypes]="searchTypes"
+        [searchTypes]="searchTypes()"
         [searchType]="searchType$ | async"
         (searchTypeChange)="onSearchTypeChange($event)"
-      >
-      </igo-search-selector>
+      />
     }
 
-    @if (searchSettings) {
+    @if (searchSettings()) {
       <igo-search-settings
-        [pointerSummaryEnabled]="pointerSummaryEnabled"
-        [allowResetSearchSourcesOptions]="allowResetSearchSourcesOptions"
+        [pointerSummaryEnabled]="pointerSummaryEnabled()"
+        [allowResetSearchSourcesOptions]="allowResetSearchSourcesOptions()"
         (pointerSummaryStatus)="pointerSummaryStatus.emit($event)"
-        [searchResultsGeometryEnabled]="searchResultsGeometryEnabled"
+        [searchResultsGeometryEnabled]="searchResultsGeometryEnabled()"
         (searchResultsGeometryStatus)="searchResultsGeometryStatus.emit($event)"
         [reverseSearchCoordsFormatEnabled]="reverseSearchCoordsFormatEnabled"
         (reverseSearchCoordsFormatStatus)="
           reverseSearchCoordsFormatStatus.emit($event)
         "
         (searchSourceChange)="onSearchSettingsChange()"
-      >
-      </igo-search-settings>
+      />
     }
   </div>
 </div>

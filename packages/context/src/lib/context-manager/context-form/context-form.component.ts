@@ -1,17 +1,10 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { Component, computed, inject, input, output } from '@angular/core';
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject
-} from '@angular/core';
-import {
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup
+  UntypedFormBuilder
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,50 +33,28 @@ import { Context } from '../shared/context.interface';
     IgoLanguageModule
   ]
 })
-export class ContextFormComponent implements OnInit {
+export class ContextFormComponent {
   private clipboard = inject(Clipboard);
   private formBuilder = inject(UntypedFormBuilder);
   private messageService = inject(MessageService);
 
-  public form: UntypedFormGroup;
   public prefix: string;
 
-  @Input()
-  get btnSubmitText(): string {
-    return this._btnSubmitText;
-  }
-  set btnSubmitText(value: string) {
-    this._btnSubmitText = value;
-  }
-  private _btnSubmitText: string;
+  readonly btnSubmitText = input<string>();
+  readonly context = input<Context>();
+  readonly disabled = input(false);
 
-  @Input()
-  get context(): Context {
-    return this._context;
-  }
-  set context(value: Context) {
-    this._context = value;
-    this.buildForm();
-  }
-  private _context: Context;
+  readonly submitForm = output<unknown>();
+  readonly clone = output<unknown>();
+  readonly delete = output<unknown>();
 
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
-  }
-  set disabled(value: boolean) {
-    this._disabled = value;
-  }
-  private _disabled = false;
-
-  // TODO: replace any by ContextOptions or Context
-  @Output() submitForm = new EventEmitter<any>();
-  @Output() clone = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<any>();
-
-  ngOnInit(): void {
-    this.buildForm();
-  }
+  // WORKAROUND, the context-form is shown before the editedContext emit and we got change detection problem
+  readonly form = computed<FormGroup | undefined>(() => {
+    const context = this.context();
+    if (context) {
+      return this.buildForm(context);
+    }
+  });
 
   public handleFormSubmit(value) {
     let inputs = Object.assign({}, value);
@@ -98,7 +69,7 @@ export class ContextFormComponent implements OnInit {
   }
 
   public copyTextToClipboard() {
-    const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
+    const text = this.prefix + '-' + this.form().value.uri.replace(' ', '');
     const successful = this.clipboard.copy(text);
     if (successful) {
       this.messageService.success(
@@ -108,14 +79,12 @@ export class ContextFormComponent implements OnInit {
     }
   }
 
-  private buildForm(): void {
-    const context: any = this.context || {};
-
+  private buildForm(context: Context): FormGroup {
     const uriSplit = context.uri.split('-');
     this.prefix = uriSplit.shift();
     const uri = uriSplit.join('-');
 
-    this.form = this.formBuilder.group({
+    return this.formBuilder.group({
       title: [context.title],
       uri: [uri || ' ']
     });

@@ -1,25 +1,30 @@
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject
+  computed,
+  inject,
+  input,
+  output
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DomSanitizer } from '@angular/platform-browser';
 
+import { IgoBadgeIconDirective } from '@igo2/common/badge';
 import { IconSvg, IgoIconComponent } from '@igo2/common/icon';
-import { IgoLanguageModule } from '@igo2/core/language';
+import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 
+import { of, switchMap } from 'rxjs';
+
+import { getFilterBadge } from '../../datasource/shared/datasources/wms-wfs.utils';
 import { AnyLayer } from '../shared/layers/any-layer';
+import { isLayerItem } from '../utils';
 
-const EYE_CLOSE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>eye-closed</title><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
+const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.5C8.2 17.5 4.8 15.4 3.2 12H1C2.7 16.4 7 19.5 12 19.5S21.3 16.4 23 12H20.8C19.2 15.4 15.8 17.5 12 17.5Z" /></svg>`;
 
 @Component({
   selector: 'igo-layer-visibility-button',
@@ -33,51 +38,85 @@ const EYE_CLOSE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 2
     MatIconModule,
     MatTooltipModule,
     IgoLanguageModule,
-    IgoIconComponent
+    IgoIconComponent,
+    IgoBadgeIconDirective
   ]
 })
-export class LayerVisibilityButtonComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
+export class LayerVisibilityButtonComponent {
+  private iconRegistry = inject(MatIconRegistry);
+  private sanitizer = inject(DomSanitizer);
+  private languageService = inject(LanguageService);
 
-  eyeClosedSvg: IconSvg = {
+  eyeClosedByGroupSvg: IconSvg = {
     name: 'eye-closed',
-    svg: EYE_CLOSE_SVG
+    svg: EYE_CLOSE_BY_GROUP_SVG
   };
-  hiddenByParent?: boolean;
-  visible: boolean;
+  readonly layer = input.required<AnyLayer>();
+  readonly tooltip = input<string>(undefined);
+  readonly disabled = input<boolean>(undefined);
+  readonly showQueryBadge = input<boolean>(undefined);
+  readonly inResolutionsRange = input<boolean>(undefined);
 
-  @Input({ required: true }) layer: AnyLayer;
-  @Input() tooltip: string;
-  @Input() disabled: boolean;
-  @Input() showQueryBadge: boolean;
-  @Input() inResolutionsRange: boolean;
+  readonly parentDisplayed = toSignal(
+    toObservable(this.layer).pipe(
+      switchMap((layer) => layer.parent$),
+      switchMap((parent) => (parent ? parent.displayed$ : of(undefined)))
+    ),
+    { initialValue: false }
+  );
 
-  get defaultTooltip(): string {
-    return !this.layer.isInResolutionsRange
-      ? 'igo.geo.layer.notInResolution'
-      : this.layer.visible && this.disabled
-        ? 'igo.geo.layer.group.hideChildren'
-        : this.layer.visible
-          ? 'igo.geo.layer.hideLayer'
-          : 'igo.geo.layer.showLayer';
-  }
+  readonly visible = toSignal(
+    toObservable(this.layer).pipe(switchMap((layer) => layer.visible$))
+  );
 
-  @Output() visibilityChange = new EventEmitter<Event>();
+  readonly badge = computed(() => this.getBadge(this.layer()));
 
-  ngOnInit(): void {
-    this.layer.parent?.displayed$.subscribe((displayed) => {
-      this.hiddenByParent = !displayed;
-      this.cdr.markForCheck();
-    });
+  defaultTooltipText = computed(() => {
+    return this.languageService.translate.instant(
+      this.tooltip() ?? this.getDefaultTooltip()
+    );
+  });
 
-    this.layer.visible$.subscribe((visible) => {
-      this.visible = visible;
-      this.cdr.markForCheck();
-    });
+  readonly tooltipText = computed(() => {
+    const tooltip = this.defaultTooltipText();
+    if (this.badge()) {
+      return (
+        `${tooltip}. ` +
+        this.languageService.translate.instant(
+          'igo.geo.layer.filterAppliedOnLayer'
+        )
+      );
+    }
+    return tooltip;
+  });
+
+  readonly visibilityChange = output<Event>();
+
+  constructor() {
+    this.iconRegistry.addSvgIconLiteral(
+      'eye-closed-by-group',
+      this.sanitizer.bypassSecurityTrustHtml(EYE_CLOSE_BY_GROUP_SVG)
+    );
   }
 
   toggle(event: Event) {
-    this.layer.visible = !this.layer.visible;
+    this.layer().visible = !this.layer().visible;
     this.visibilityChange.emit(event);
+  }
+
+  private getBadge(layer: AnyLayer): number | undefined {
+    return isLayerItem(layer)
+      ? getFilterBadge(layer.dataSource.options)
+      : undefined;
+  }
+
+  private getDefaultTooltip(): string {
+    return !this.inResolutionsRange()
+      ? 'igo.geo.layer.notInResolution'
+      : this.visible() && this.disabled()
+        ? 'igo.geo.layer.group.hideChildren'
+        : this.visible()
+          ? 'igo.geo.layer.hideLayer'
+          : 'igo.geo.layer.showLayer';
   }
 }

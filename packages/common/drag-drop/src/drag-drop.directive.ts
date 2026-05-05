@@ -1,10 +1,9 @@
 import {
   Directive,
-  EventEmitter,
   HostBinding,
   HostListener,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 
 @Directive({
@@ -12,11 +11,11 @@ import {
   standalone: true
 })
 export class DragAndDropDirective {
-  @Input() allowedExtensions: string[] = [];
+  readonly allowedExtensions = input<string[]>([]);
 
-  @Output() protected filesDropped = new EventEmitter<File[]>();
+  protected readonly filesDropped = output<File[]>();
 
-  @Output() protected filesInvalid = new EventEmitter<File[]>();
+  protected readonly filesInvalid = output<File[]>();
 
   @HostBinding('style.background') private background = 'inherit';
 
@@ -62,9 +61,10 @@ export class DragAndDropDirective {
     if (files.length > 0) {
       for (const file of files) {
         const ext = file.name.split('.')[file.name.split('.').length - 1];
+        const allowedExtensions = this.allowedExtensions();
         if (
-          this.allowedExtensions.length === 0 ||
-          (this.allowedExtensions.lastIndexOf(ext) !== -1 && file.size !== 0)
+          allowedExtensions.length === 0 ||
+          (allowedExtensions.lastIndexOf(ext) !== -1 && file.size !== 0)
         ) {
           filesObj.valid.push(file);
         } else {

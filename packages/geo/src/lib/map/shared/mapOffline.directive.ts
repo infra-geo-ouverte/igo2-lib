@@ -26,7 +26,7 @@ export class MapOfflineDirective implements AfterViewInit {
   private component: MapBrowserComponent;
 
   get map(): IgoMap {
-    return this.component.map;
+    return this.component.map();
   }
 
   private previousMessageId;

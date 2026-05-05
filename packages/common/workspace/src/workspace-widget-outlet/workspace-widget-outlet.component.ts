@@ -2,9 +2,8 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output
+  input,
+  output
 } from '@angular/core';
 
 import { Widget, WidgetOutletComponent } from '@igo2/common/widget';
@@ -29,20 +28,20 @@ export class WorkspaceWidgetOutletComponent {
   /**
    * Workspace
    */
-  @Input() workspace: Workspace;
+  readonly workspace = input<Workspace>(undefined);
 
   /**
    * Event emitted when a widget is deactivate which happens
    * when the widget's component emits the 'cancel' or 'complete' event.
    */
-  @Output() deactivateWidget = new EventEmitter<Widget>();
+  readonly deactivateWidget = output<Widget>();
 
   /**
    * Observable of the workspace's active widget
    * @internal
    */
   get widget$(): BehaviorSubject<Widget> {
-    return this.workspace.widget$;
+    return this.workspace().widget$;
   }
 
   /**
@@ -50,7 +49,7 @@ export class WorkspaceWidgetOutletComponent {
    * @internal
    */
   get widgetInputs$(): BehaviorSubject<Record<string, any>> {
-    return this.workspace.widgetInputs$;
+    return this.workspace().widgetInputs$;
   }
 
   /**
@@ -60,7 +59,7 @@ export class WorkspaceWidgetOutletComponent {
   get widgetSubscribers$(): BehaviorSubject<
     Record<string, (event: any) => void>
   > {
-    return this.workspace.widgetSubscribers$;
+    return this.workspace().widgetSubscribers$;
   }
 
   /**
@@ -70,7 +69,7 @@ export class WorkspaceWidgetOutletComponent {
    * @internal
    */
   onWidgetCancel(widget: Widget) {
-    this.workspace.deactivateWidget();
+    this.workspace().deactivateWidget();
     this.deactivateWidget.emit(widget);
   }
 
@@ -81,7 +80,7 @@ export class WorkspaceWidgetOutletComponent {
    * @internal
    */
   onWidgetComplete(widget: Widget) {
-    this.workspace.deactivateWidget();
+    this.workspace().deactivateWidget();
     this.deactivateWidget.emit(widget);
   }
 }

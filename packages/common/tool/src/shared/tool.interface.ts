@@ -2,7 +2,7 @@ import { IconSvg } from '@igo2/common/icon';
 
 export interface Tool {
   name: string;
-  component: any;
+  component?: any;
   title?: string;
   icon?: string | IconSvg;
   tooltip?: string;

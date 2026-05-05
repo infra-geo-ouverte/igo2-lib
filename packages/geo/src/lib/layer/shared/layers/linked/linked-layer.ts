@@ -12,6 +12,7 @@ import type { LayerController } from '../../layer-controller';
 import type { AnyLayer } from '../any-layer';
 import type { Layer } from '../layer';
 import type { LayerGroup } from '../layer-group';
+import { LayerId } from '../layer.interface';
 import {
   AnyPropertyOptions,
   LayersLinkProperties,
@@ -20,7 +21,7 @@ import {
 } from './linked-layer.interface';
 
 export class Linked {
-  private children: Layer[] = [];
+  readonly children: Layer[] = [];
   private watcher = new LayerWatcher();
   private bidirectionnalChildren: Layer[] = [];
   private childrenByProperty = new Map<LinkedProperties, AnyPropertyOptions>();
@@ -218,6 +219,15 @@ export class Linked {
     this.enable(LinkedProperties.ZINDEX);
   }
 
+  display(): void {
+    // Some child doesn't have a z-index and may be hidden by the main layer.
+    this.children.forEach((link) => {
+      if (link.options.zIndex == null) {
+        link.zIndex = (this.layer.zIndex ?? 1) + 1;
+      }
+    });
+  }
+
   private disable(...properties: LinkedProperties[]): void {
     properties.forEach((property) => {
       if (this.disabledProperties.includes(property)) {
@@ -259,7 +269,7 @@ export class Linked {
     return this.links.filter((link) => link.linkedIds.includes(linkId));
   }
 
-  private removeArrayItem<T extends { id: string }>(
+  private removeArrayItem<T extends { id: LayerId }>(
     item: T,
     array: T[],
     key: keyof T = 'id'
@@ -270,7 +280,7 @@ export class Linked {
     }
   }
 
-  private getLinkedLayersOnZindex(id: string): Layer[] {
+  private getLinkedLayersOnZindex(id: LayerId): Layer[] {
     return [...this.getByProperty(LinkedProperties.ZINDEX).layers]
       ?.concat(this.layer)
       .filter((layer) => layer.id !== id);

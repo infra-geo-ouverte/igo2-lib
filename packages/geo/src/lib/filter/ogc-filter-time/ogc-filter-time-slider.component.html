@@ -4,11 +4,11 @@
     [step]="1"
     [min]="1"
     [max]="calculatedStep"
-    [(ngModel)]="sliderValue"
     [displayWith]="sliderDisplayWith"
     thumbLabel
     #ngSlider
     ><input
+      [(ngModel)]="sliderValue"
       matSliderThumb
       (input)="
         handleSliderInput({

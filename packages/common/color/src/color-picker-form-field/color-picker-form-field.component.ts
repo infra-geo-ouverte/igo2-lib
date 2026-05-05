@@ -1,11 +1,5 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  forwardRef
-} from '@angular/core';
+import { Component, forwardRef, input, output } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -55,13 +49,13 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   }
   private _value: string;
 
-  @Input() outputFormat: ColorFormat = 'rgba';
+  readonly outputFormat = input<ColorFormat>('rgba');
 
   /**
    * The emitted value represent the current chosen color in the picker
    * The value is emitted by default in RGBA, or based on the input 'outputFormat' value.
    */
-  @Output() colorChange: EventEmitter<string> = new EventEmitter<string>();
+  readonly colorChange = output<string>();
 
   colorPicker: string;
 
@@ -94,7 +88,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   private formatColor(
     color: ColorInput,
-    format: ColorFormat = this.outputFormat
+    format: ColorFormat = this.outputFormat()
   ): string {
     switch (format) {
       case 'hex':

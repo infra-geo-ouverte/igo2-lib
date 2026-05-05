@@ -5,8 +5,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ViewChild,
-  inject
+  inject,
+  viewChild
 } from '@angular/core';
 
 import { MediaService } from '@igo2/core/media';
@@ -28,7 +28,7 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
   static transitionTime = 250;
 
-  @ViewChild('flexibleMain', { static: true }) main;
+  readonly main = viewChild<ElementRef>('flexibleMain');
 
   @Input()
   get initial(): string {
@@ -144,9 +144,9 @@ export class FlexibleComponent implements OnInit, OnDestroy {
     this._state = 'transition';
 
     if (this.direction === 'column') {
-      this.main.nativeElement.style.height = size;
+      this.main().nativeElement.style.height = size;
     } else if (this.direction === 'row') {
-      this.main.nativeElement.style.width = size;
+      this.main().nativeElement.style.width = size;
     }
   }
 }

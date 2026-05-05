@@ -1,12 +1,12 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import {
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
-  inject
+  inject,
+  input,
+  model,
+  output
 } from '@angular/core';
 import {
   FormControl,
@@ -50,17 +50,20 @@ import { skipWhile } from 'rxjs/operators';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { DownloadService } from '../../download/shared/download.service';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { isLayerGroup, isLayerItem } from '../../layer';
+import { LayerId, isLayerGroup, isLayerItem } from '../../layer';
 import { LayerService } from '../../layer/shared/layer.service';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
-import { computeProjectionsConstraints } from '../../map/shared';
 import { IgoMap } from '../../map/shared/map';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { StyleService } from '../../style/style-service/style.service';
-import { ExportOptions, GeometryCollection } from '../shared/export.interface';
+import {
+  ExportOptions,
+  GeometryCollection,
+  RADIUS_NAME
+} from '../shared/export.interface';
 import { ExportService } from '../shared/export.service';
 import {
   AnyExportFormat,
@@ -142,49 +145,43 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$ = new BehaviorSubject<InputProjections[]>([]);
-  private projectionsConstraints: ProjectionsLimitationsOptions;
+  public projections$: BehaviorSubject<InputProjections[]> =
+    new BehaviorSubject([]);
 
   public popupChecked = false;
   private configFormats: AnyExportFormat[];
 
   private previousLayerSpecs$ = new BehaviorSubject<
     {
-      id: string;
+      id: LayerId;
       visible: boolean;
       opacity: number;
       queryable: boolean;
     }[]
   >(undefined);
 
-  @Input() selectFirstProj = false;
+  readonly selectFirstProj = input(false);
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
-  @Input() contextUri: string;
-
-  private _projectionsLimitations: ProjectionsLimitationsOptions = {};
-  @Input()
-  set projectionsLimitations(value: ProjectionsLimitationsOptions) {
-    this._projectionsLimitations = value;
-    this.computeProjections();
-  }
-  get projectionsLimitations(): ProjectionsLimitationsOptions {
-    return this._projectionsLimitations || {};
-  }
+  readonly contextUri = input<string>(undefined);
+  readonly projectionsLimitations =
+    input<ProjectionsLimitationsOptions>(undefined);
 
   /**
    * Store that holds the available workspaces.
    */
-  @Input() store: WorkspaceStore;
+  readonly store = input<WorkspaceStore>(undefined);
 
-  @Input() selectedMode: SelectMode = 'import';
+  readonly selectedMode = model<SelectMode>('import');
 
-  @Output() selectMode = new EventEmitter<SelectMode>();
+  readonly selectMode = output<SelectMode>();
 
-  @Input() exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
+  readonly exportOptions$ = input(
+    new BehaviorSubject<ExportOptions>(undefined)
+  );
 
-  @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
+  readonly exportOptionsChange = output<ExportOptions>();
 
   get layers() {
     return this.form.get('layers').value;
@@ -213,7 +210,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   constructor() {
     this.loadConfig();
     this.buildForm();
-    this.computeProjections();
     this.importHtmlClarifications = this.languageService.translate.instant(
       'igo.geo.importExportForm.importHtmlClarifications'
     );
@@ -223,16 +219,26 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.layers$$ = this.map.layerController.all$.subscribe((layers) => {
+    const projections = this.importService.computeProjections(
+      this.projectionsLimitations() ?? {}
+    );
+    this.projections$.next(projections);
+
+    this.layers$$ = this.map().layerController.all$.subscribe((layers) => {
       const exportableLayers = layers.filter((layer) => {
         if (isLayerGroup(layer)) {
           return false;
         }
-        return (
-          (layer instanceof VectorLayer && layer.exportable === true) ||
-          (layer.dataSource.options.download &&
-            layer.dataSource.options.download.url)
-        );
+
+        if (layer.dataSource.options.download?.url) {
+          return true;
+        }
+
+        if (layer instanceof VectorLayer) {
+          return layer.exportable || layer.dataSource.options.download?.url;
+        }
+
+        return false;
       });
       this.exportableLayers$.next(exportableLayers as Layer[]);
     });
@@ -243,13 +249,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
-    this.exportOptions$$ = this.exportOptions$
+    this.exportOptions$$ = this.exportOptions$()
       .pipe(skipWhile((exportOptions) => !exportOptions))
       .subscribe((exportOptions) => {
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layers) {
           this.computeFormats(
-            exportOptions.layers.map((l) => this.map.layerController.getById(l))
+            exportOptions.layers.map((l) =>
+              this.map().layerController.getById(l)
+            )
           );
         }
       });
@@ -275,7 +283,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           layersId instanceof Array ? layersId : [layersId];
         this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
         const layers = selectedLayers.map((l) =>
-          this.map.layerController.getById(l)
+          this.map().layerController.getById(l)
         );
         this.computeFormats(layers);
 
@@ -285,7 +293,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
         this.loading$.next(true);
         const previousSpecs: {
-          id: string;
+          id: LayerId;
           visible: boolean;
           opacity: number;
           queryable: boolean;
@@ -328,7 +336,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       });
 
-    if (this.selectFirstProj) {
+    if (this.selectFirstProj()) {
       if (this.projections$.value.length === 0) {
         this.importForm.patchValue({
           inputProj: {
@@ -346,98 +354,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  private computeProjections() {
-    this.projectionsConstraints = computeProjectionsConstraints(
-      this.projectionsLimitations
-    );
-    const projections: InputProjections[] = [];
-
-    if (this.projectionsConstraints.nad83) {
-      projections.push({
-        translateKey: 'nad83',
-        alias: 'NAD83',
-        code: 'EPSG:4269',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-    if (this.projectionsConstraints.wgs84) {
-      projections.push({
-        translateKey: 'wgs84',
-        alias: 'WGS84',
-        code: 'EPSG:4326',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-    if (this.projectionsConstraints.webMercator) {
-      projections.push({
-        translateKey: 'webMercator',
-        alias: 'Web Mercator',
-        code: 'EPSG:3857',
-        zone: '',
-        extent: undefined,
-        def: undefined
-      });
-    }
-
-    if (this.projectionsConstraints.mtm) {
-      // all mtm zones
-      const minZone = this.projectionsConstraints.mtmZone.minZone;
-      const maxZone = this.projectionsConstraints.mtmZone.maxZone;
-
-      for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
-        const code =
-          mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-        projections.push({
-          translateKey: 'mtm',
-          alias: `MTM ${mtmZone}`,
-          code,
-          zone: `${mtmZone}`,
-          extent: undefined,
-          def: undefined
-        });
-      }
-    }
-
-    if (this.projectionsConstraints.utm) {
-      // all utm zones
-      const minZone = this.projectionsConstraints.utmZone.minZone;
-      const maxZone = this.projectionsConstraints.utmZone.maxZone;
-
-      for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
-        const code =
-          utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
-        projections.push({
-          translateKey: 'utm',
-          alias: `UTM ${utmZone}`,
-          code,
-          zone: `${utmZone}`,
-          extent: undefined,
-          def: undefined
-        });
-      }
-    }
-
-    let configProjection: InputProjections[] = [];
-    if (this.projectionsConstraints.projFromConfig) {
-      configProjection = (this.config.getConfig('projections') ||
-        []) as InputProjections[];
-    }
-
-    this.projections$.next(configProjection.concat(projections));
-  }
-
   public getLayerTitleById(id): string {
-    return this.map.layerController.getById(id)?.title;
+    return this.map().layerController.getById(id)?.title;
   }
 
   layerHasSelectedFeatures(layer: Layer): boolean {
     const wksFromLayer = this.exportService.getWorkspaceByLayerId(
       layer.id,
-      this.store
+      this.store()
     );
     if (wksFromLayer) {
       const recs = wksFromLayer.entityStore.stateView.firstBy(
@@ -449,7 +373,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  public onlySelected(event: MatSlideToggleChange, id: string) {
+  public onlySelected(event: MatSlideToggleChange, id: LayerId) {
     let layersWithSelection = this.form.value.layersWithSelection;
     if (event.checked) {
       layersWithSelection.push(id);
@@ -461,7 +385,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.form.patchValue({ layersWithSelection });
   }
 
-  public onlySelectedClick(event, id: string) {
+  public onlySelectedClick(event, id: LayerId) {
     if (this.form.value.layers.find((layerId) => layerId === id)) {
       event.stopPropagation();
     }
@@ -491,7 +415,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const previousSpecs = this.previousLayerSpecs$.value;
     if (previousSpecs && previousSpecs.length) {
       previousSpecs.forEach((specs) => {
-        const previousLayer = this.map.layerController.getById(specs.id);
+        const previousLayer = this.map().layerController.getById(specs.id);
         previousLayer.visible = specs.visible;
         previousLayer.opacity = specs.opacity;
         (previousLayer as any).queryable = specs.queryable;
@@ -554,7 +478,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     if (data.format === 'Excel') {
       try {
-        await this.exportService.exportExcel(this.map, this.store, data);
+        await this.exportService.exportExcel(this.map(), this.store(), data);
         this.loading$.next(false);
         return this.onFileExportSuccess();
       } catch (error) {
@@ -567,17 +491,26 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const layerId of data.layers) {
       this.loading$.next(true);
-      const layer = this.map.layerController.getById(layerId);
+      const layer = this.map().layerController.getById(layerId);
       if (isLayerGroup(layer)) {
         continue;
       }
       const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map, layer, data, this.store)
+        this.exportService.getFeatures(this.map(), layer, data, this.store())
       ).catch((error) => {
         this.onFileExportError(error);
         throw error;
       });
-      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      const transformedFeatures =
+        await this.exportService.transformFeaturesToExportFormat(
+          features,
+          layer
+        );
+
+      const geomTypes = this.exportService.getGeomTypes(
+        transformedFeatures,
+        data.format
+      );
       if (!isCSV || !data.combineLayers || data.layers.length === 1) {
         fileName = layer.title;
         if (data.name) {
@@ -590,7 +523,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
 
       if (data.format === 'URL' && isLayerItem(layer)) {
-        this.handleUrlExport(layer);
+        return this.handleUrlExport(layer);
       }
 
       if (data.format === 'GPX') {
@@ -696,7 +629,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     fileName: string
   ) {
     this.exportService
-      .export(features, options, fileName, this.map.projectionCode)
+      .export(features, options, fileName, this.map().projectionCode)
       .subscribe({
         error: (error: Error) => this.onFileExportError(error),
         complete: () => {
@@ -716,17 +649,25 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ): Promise<GeometryCollection[]> {
     return data.layers.reduce(async (typesPromise, layerId) => {
       const types = await typesPromise;
-      const layer = this.map.layerController.getById(layerId);
+      const layer = this.map().layerController.getById(layerId);
       if (isLayerGroup(layer)) {
         return typesPromise;
       }
       const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map, layer, data, this.store)
+        this.exportService.getFeatures(this.map(), layer, data, this.store())
       ).catch((error) => {
         this.onFileExportError(error);
         throw error;
       });
-      const geomTypes = this.exportService.getGeomTypes(features, data.format);
+      const transformedFeatures =
+        await this.exportService.transformFeaturesToExportFormat(
+          features,
+          layer
+        );
+      const geomTypes = this.exportService.getGeomTypes(
+        transformedFeatures,
+        data.format
+      );
       return types.concat(geomTypes);
     }, Promise.resolve([]));
   }
@@ -816,7 +757,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private circleToPoint(feature: OlFeature) {
-    const radius: number = feature.get('rad');
+    const radius: number = feature.get(RADIUS_NAME);
 
     if (radius) {
       const point = new olPoint([
@@ -875,8 +816,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       handleFileImportSuccess(
         file,
         features,
-        this.map,
-        this.contextUri,
+        this.map(),
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService
@@ -885,8 +826,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       handleFileImportSuccess(
         file,
         features,
-        this.map,
-        this.contextUri,
+        this.map(),
+        this.contextUri(),
         this.messageService,
         this.layerService,
         confirmDialogService,
@@ -916,6 +857,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileExportError(error: Error) {
     this.loading$.next(false);
+    if (error.name === 'maxFieldsSize') {
+      this.messageService.error(
+        'igo.geo.export.failed.tip',
+        'igo.geo.export.failed.title'
+      );
+      return;
+    }
     handleFileExportError(error, this.messageService);
   }
 
@@ -1094,6 +1042,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   onImportExportChange(event) {
-    this.selectedMode = event.value;
+    this.selectedMode.set(event.value);
   }
 }

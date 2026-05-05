@@ -1,39 +1,23 @@
-@use 'sass:color';
-
 :host {
   .disabled,
   .visibility-hidden {
     &.out-of-range {
-      opacity: 0.44;
+      opacity: 0.54;
     }
   }
 
-  $color-disabled: var(--mat-sys-on-secondary-fixed);
+  ::ng-deep .mat-badge-content {
+    height: 16px;
+    width: 16px;
+    z-index: 2;
+    margin: -9px !important;
+    background-color: transparent !important;
 
-  ::ng-deep {
-    button {
-      &.mat-default {
-        mat-icon {
-          color: $color-disabled;
-          fill: $color-disabled;
-          opacity: 0.64;
-        }
-      }
-
-      &.out-of-range,
-      &.disabled {
-        mat-icon {
-          color: $color-disabled;
-          fill: $color-disabled;
-          opacity: 0.64;
-        }
-      }
+    mat-icon {
+      color: var(--mat-sys-on-primary-container);
+      width: 12px !important;
+      height: 12px !important;
+      font-size: 12px !important;
     }
-  }
-}
-
-mat-icon {
-  &[matBadge] ::ng-deep .mat-badge-content {
-    font-size: 12px;
   }
 }

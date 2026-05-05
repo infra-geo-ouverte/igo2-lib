@@ -1,7 +1,7 @@
-@if (tabsMode === false) {
+@if (tabsMode() === false) {
   <igo-list [navigation]="true">
     @for (group of results$ | async; track group) {
-      @if (mode === searchResultMode.Grouped) {
+      @if (mode() === searchResultMode.Grouped) {
         <igo-collapsible
           [class]="group.source.getId()"
           [title]="computeGroupTitle(group)"
@@ -13,7 +13,7 @@
               storeItemTemplate;
               context: { results: group.results }
             "
-          ></ng-container>
+          />
         </igo-collapsible>
       } @else {
         <ng-container
@@ -21,7 +21,7 @@
             storeItemTemplate;
             context: { results: group.results }
           "
-        ></ng-container>
+        />
       }
 
       <ng-template #storeItemTemplate let-results="results">
@@ -29,12 +29,12 @@
           <igo-search-results-item
             igoListItem
             color="accent"
-            [map]="map"
+            [map]="map()"
             [result]="result"
-            [showIcons]="showIcons"
-            [withZoomButton]="withZoomButton"
-            [focused]="store.state.get(result).focused"
-            [selected]="store.state.get(result).selected"
+            [showIcons]="showIcons()"
+            [withZoomButton]="withZoomButton()"
+            [focused]="store().state.get(result).focused"
+            [selected]="store().state.get(result).selected"
             (focus)="resultFocus.emit(result)"
             (unfocus)="resultUnfocus.emit(result)"
             (select)="onResultSelect(result)"
@@ -43,10 +43,9 @@
           >
             <ng-container
               igoSearchItemToolbar
-              [ngTemplateOutlet]="templateSearchToolbar"
+              [ngTemplateOutlet]="templateSearchToolbar()"
               [ngTemplateOutletContext]="{ result: result }"
-            >
-            </ng-container>
+            />
           </igo-search-results-item>
         }
         @if (isMoreResults(group)) {
@@ -59,15 +58,15 @@
   </igo-list>
 }
 
-@if (tabsMode) {
+@if (tabsMode()) {
   <igo-list [navigation]="true">
-    @if (mode === searchResultMode.Grouped) {
+    @if (mode() === searchResultMode.Grouped) {
       <mat-tab-group class="custom-tabs-view" dynamicHeight>
         @for (group of results$ | async; track group) {
           <mat-tab [label]="computeGroupTitle(group)">
             <ng-container
               *ngTemplateOutlet="storeItemTemplate; context: { group: group }"
-            ></ng-container>
+            />
           </mat-tab>
         }
       </mat-tab-group>
@@ -75,7 +74,7 @@
       @for (group of results$ | async; track group) {
         <ng-container
           *ngTemplateOutlet="storeItemTemplate; context: { group: group }"
-        ></ng-container>
+        />
       }
     }
 
@@ -84,12 +83,12 @@
         <igo-search-results-item
           igoListItem
           color="accent"
-          [map]="map"
+          [map]="map()"
           [result]="result"
-          [showIcons]="showIcons"
-          [withZoomButton]="withZoomButton"
-          [focused]="store.state.get(result).focused"
-          [selected]="store.state.get(result).selected"
+          [showIcons]="showIcons()"
+          [withZoomButton]="withZoomButton()"
+          [focused]="store().state.get(result).focused"
+          [selected]="store().state.get(result).selected"
           (focus)="resultFocus.emit(result)"
           (unfocus)="resultUnfocus.emit(result)"
           (select)="onResultSelect(result)"
@@ -98,10 +97,9 @@
         >
           <ng-container
             igoSearchItemToolbar
-            [ngTemplateOutlet]="templateSearchToolbar"
+            [ngTemplateOutlet]="templateSearchToolbar()"
             [ngTemplateOutletContext]="{ result: result }"
-          >
-          </ng-container>
+          />
         </igo-search-results-item>
       }
 

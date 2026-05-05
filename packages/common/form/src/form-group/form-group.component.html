@@ -1,15 +1,15 @@
-@if (group && group.fields.length > 0) {
+@if (group() && group().fields.length > 0) {
   <div class="igo-form-group-fields">
-    @for (field of group.fields; track field) {
+    @for (field of group().fields; track field) {
       <div class="igo-form-field-wrapper" [ngClass]="getFieldNgClass(field)">
-        <igo-form-field [field]="field"></igo-form-field>
+        <igo-form-field [field]="field" />
       </div>
     }
   </div>
 }
 
 <div class="igo-form-group-extra-content">
-  <ng-content></ng-content>
+  <ng-content />
 </div>
 
 @if (formControl.errors) {

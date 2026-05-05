@@ -4,24 +4,10 @@ import { IconSvg } from './icon.interface';
  * Source: https://pictogrammers.com/library/mdi/
  */
 
-export const MICROSOFT_ICON: IconSvg = {
-  name: 'microsoft',
-  svg: `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>microsoft</title><path d="M2,3H11V12H2V3M11,22H2V13H11V22M21,3V12H12V3H21M21,22H12V13H21V22Z" /></svg>
-`
-};
-
 export const KEYBOARD_ESC_ICON: IconSvg = {
   name: 'keyboard-esc',
   svg: `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>keyboard-esc</title><path d="M1 7H7V9H3V11H7V13H3V15H7V17H1V7M11 7H15V9H11V11H13C14.11 11 15 11.9 15 13V15C15 16.11 14.11 17 13 17H9V15H13V13H11C9.9 13 9 12.11 9 11V9C9 7.9 9.9 7 11 7M19 7H21C22.11 7 23 7.9 23 9V10H21V9H19V15H21V14H23V15C23 16.11 22.11 17 21 17H19C17.9 17 17 16.11 17 15V9C17 7.9 17.9 7 19 7Z" /></svg>
-`
-};
-
-export const ENGINE_ICON: IconSvg = {
-  name: 'engine',
-  svg: `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>engine</title><path d="M7,4V6H10V8H7L5,10V13H3V10H1V18H3V15H5V18H8L10,20H18V16H20V19H23V9H20V12H18V8H12V6H15V4H7Z" /></svg>
 `
 };
 
@@ -45,4 +31,14 @@ export const CIRCLE_SMALL_ICON: IconSvg = {
 export const VECTOR_SQUARE_ICON: IconSvg = {
   name: 'presentation-play',
   svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>vector-square</title><path d="M2,2H8V4H16V2H22V8H20V16H22V22H16V20H8V22H2V16H4V8H2V2M16,8V6H8V8H6V16H8V18H16V16H18V8H16M4,4V6H6V4H4M18,4V6H20V4H18M4,18V20H6V18H4M18,18V20H20V18H18Z" /></svg>`
+};
+
+export const SORT_ALPHA_ON_ICON: IconSvg = {
+  name: 'sort-alpha-on',
+  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 7A2 2 0 0 0 1 9V17H3V13H5V17H7V9A2 2 0 0 0 5 7H3M3 9H5V11H3M15 10.5V9A2 2 0 0 0 13 7H9V17H13A2 2 0 0 0 15 15V13.5A1.54 1.54 0 0 0 13.5 12A1.54 1.54 0 0 0 15 10.5M13 15H11V13H13V15M13 11H11V9H13M19 7A2 2 0 0 0 17 9V15A2 2 0 0 0 19 17H21A2 2 0 0 0 23 15V14H21V15H19V9H21V10H23V9A2 2 0 0 0 21 7Z" /></svg>`
+};
+
+export const SORT_ALPHA_OFF_ICON: IconSvg = {
+  name: 'sort-alpha-off',
+  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.2 9L10.2 7H13A2 2 0 0 1 15 9V10.5A1.47 1.47 0 0 1 14.64 11.44L13 9.8V9M23 10V9A2 2 0 0 0 21 7H19A2 2 0 0 0 17 9V13.8L20.2 17H21A2 2 0 0 0 23 15V14H21V15H19V9H21V10M15 14.35L22.11 21.46L20.84 22.73L14.46 16.35A2 2 0 0 1 13 17H9V10.89L7 8.89V17H5V13H3V17H1V9A2 2 0 0 1 3 7H5.12L1.12 3L2.39 1.73L9 8.34L11 10.34L11.66 11L15 14.34M5 9H3V11H5M13 14.89L11.11 13H11V15H13Z" /></svg>`
 };

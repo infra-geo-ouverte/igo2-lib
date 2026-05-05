@@ -1,27 +1,26 @@
 <div class="igo-layer-list-item">
   <div class="layer-content">
-    @if (viewerOptions.mode === 'selection') {
+    @if (viewerOptions().mode === 'selection') {
       <mat-checkbox
-        [checked]="selected"
-        [disabled]="selectionDisabled"
+        [checked]="selected()"
+        [disabled]="selectionDisabled()"
         (change)="handleSelect($event)"
-      >
-      </mat-checkbox>
+      />
     }
-    <ng-content></ng-content>
+    <ng-content />
     <span
       class="igo-layer-title"
       [matTooltip]="tooltipText"
       matTooltipShowDelay="500"
       (click)="toggleLegendOnClick()"
     >
-      {{ layer.title }}
+      {{ layer().title }}
     </span>
   </div>
 
   <div class="list-actions">
     <div class="list-secondary-actions">
-      @if (viewerOptions.mode !== 'selection') {
+      @if (viewerOptions().mode !== 'selection') {
         <button
           class="actions-button"
           tooltip-position="below"
@@ -37,24 +36,23 @@
     </div>
 
     <igo-layer-visibility-button
-      [layer]="layer"
+      [layer]="layer()"
       [tooltip]="visibilityTooltip"
       [disabled]="isDisabled"
-      [inResolutionsRange]="layer.isInResolutionsRange$ | async"
-      [showQueryBadge]="(queryBadgeHidden$ | async) === false"
+      [inResolutionsRange]="layer().isInResolutionsRange$ | async"
+      [showQueryBadge]="queryBadgeHidden() === false"
       (visibilityChange)="handleVisibilityChange($event)"
-    ></igo-layer-visibility-button>
+    />
   </div>
 </div>
 
-@if (showLegend$ | async) {
+@if (showLegend()) {
   <div class="igo-layer-legend-container">
     <igo-layer-legend
-      [layer]="layer"
+      [layer]="layer()"
       [updateLegendOnResolutionChange]="
-        viewerOptions.legend.updateOnResolutionChange
+        viewerOptions().legend.updateOnResolutionChange
       "
-    >
-    </igo-layer-legend>
+    />
   </div>
 }

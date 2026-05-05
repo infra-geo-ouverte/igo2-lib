@@ -19,6 +19,7 @@ const EXPECTED_POSITION: PositionParams = {
   zoom: 5,
   rotation: (90 * Math.PI) / 180 // convert 90 degree to radians
 };
+
 const EXPECTED_LAYERS_OPTIONS: LayerOptions[] = [
   {
     sourceOptions: {
@@ -84,6 +85,16 @@ const MOCK_PARAMS: Params = {
   groups: '1id,test2t,1z,1v,0e;2id,test1t,2z,1pid,1v,0e'
 };
 
+const MOCK_LAYER_ON_THE_FLY_LEGACY: Params = {
+  wmsUrl: 'https:%2F%2Ftestgeoegl.msp.gouv.qc.ca%2Fapis%2Fwss%2Fcomplet.fcgi',
+  layers: 'MSP_DIRECTION_REG_COG_P_V'
+};
+
+const MOCK_LAYER_ON_THE_FLY: Params = {
+  urls: 'https:%2F%2Fgeoegl.msp.gouv.qc.ca%2Fapis%2Fwss%2Fcomplet.fcgi%3F',
+  layers: '0,%5Bmsp_v_couverture_cellulaire_s%5Dn,0t,1v'
+};
+
 describe('ShareMapParseUrl', () => {
   let shareMapParseUrl: ShareMapParser;
   let SHARE_MAP_DEFS: ShareMapKeysDefinitions;
@@ -106,10 +117,13 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should correctly parse valid URL layers parameters into expected result', () => {
-    const { groups, ...rest } = MOCK_PARAMS;
+    const { ...rest } = MOCK_PARAMS;
     const result = shareMapParseUrl.parseLayers({ ...rest });
     expect(result).toBeDefined();
-    expect(result).toEqual(EXPECTED_LAYERS_OPTIONS);
+    expect(result).toEqual([
+      ...EXPECTED_GROUPS_OPTIONS,
+      ...EXPECTED_LAYERS_OPTIONS
+    ]);
   });
 
   it('should return undefined for layersOptions when parameters are missing', () => {
@@ -142,6 +156,46 @@ describe('ShareMapParseUrl', () => {
         zIndex: 10
       }
     ]);
+  });
+
+  it('should correctly parse layers including those with an ID', () => {
+    const params: Params = {
+      urls: 'https://testgeoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi',
+      layers: '0,[bgr_v_centr_servc_geomt_act]n,0t,1v,10z;1id,1v,1z',
+      pos: '@-71.83131,46.86842,11z'
+    };
+    const result = shareMapParseUrl.parseLayers(params);
+
+    expect(result).toEqual([
+      {
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://testgeoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi',
+          params: { LAYERS: 'bgr_v_centr_servc_geomt_act' }
+        } as AnyDataSourceOptions,
+        visible: true,
+        zIndex: 10
+      },
+      { id: '1', visible: true, zIndex: 1 }
+    ]);
+  });
+
+  it('should use parser for on the fly layer params without legacy', () => {
+    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+
+    shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY);
+
+    expect(shareMapParseUrl.legacy.parseUrl).not.toHaveBeenCalled();
+  });
+
+  it('should use legacy parser for on the fly layer params', () => {
+    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+
+    shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY_LEGACY);
+
+    expect(shareMapParseUrl.legacy.parseUrl).toHaveBeenCalledWith(
+      MOCK_LAYER_ON_THE_FLY_LEGACY
+    );
   });
 
   describe('parse position', () => {

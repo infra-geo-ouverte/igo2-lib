@@ -44,9 +44,9 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(
-    originalReq: HttpRequest<any>,
+    originalReq: HttpRequest<unknown>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<unknown>> {
     const withCredentials = this.handleHostsWithCredentials(originalReq.url);
     let req = originalReq.clone();
     const hostWithKey = this.handleHostsAuthByKey(originalReq.url);
@@ -173,6 +173,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
       const url = this.authOptions?.url;
       return this.http.post(`${url}/refresh`, {}).subscribe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (data: any) => {
           this.tokenService.set(data.token);
           this.refreshInProgress = false;

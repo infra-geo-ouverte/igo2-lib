@@ -4,7 +4,7 @@
     igoCollapse
     class="igo-chevron catalog-browser-group-carret"
     [target]="items"
-    [collapsed]="collapsed"
+    [collapsed]="collapsed()"
     (toggle)="onToggleCollapsed($event)"
   >
     expand_less
@@ -20,21 +20,16 @@
   >
 
   <div matListItemMeta>
-    @if (group.externalProvider) {
-      <button disabled="true" mat-icon-button>
-        @if (group.externalProvider) {
-          <mat-icon
-            class="igo-cataloggroup-external-icon"
-            tooltip-position="below"
-            matTooltipShowDelay="500"
-            [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
-            color="primary"
-            (click)="$event.stopPropagation()"
-          >
-            public
-          </mat-icon>
-        }
-      </button>
+    @if (group().externalProvider) {
+      <mat-icon
+        class="igo-cataloggroup-external-icon"
+        color="primary"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.catalog.externalProvider.group' | translate"
+      >
+        public
+      </mat-icon>
     }
 
     @if ((added$ | async) && (preview$ | async) === false) {
@@ -73,14 +68,13 @@
       <igo-catalog-browser-layer
         igoListItem
         [layer]="$any(item)"
-        [resolution]="resolution"
-        [map]="map"
-        [catalogAllowLegend]="catalogAllowLegend"
-        [added]="state.get(item).added"
+        [resolution]="resolution()"
+        [map]="map()"
+        [catalogAllowLegend]="catalogAllowLegend()"
+        [added]="state().get(item).added"
         (addedLayerIsPreview)="onLayerPreview($event)"
         (addedChange)="onLayerAddedChange($event)"
-      >
-      </igo-catalog-browser-layer>
+      />
     }
   }
 </div>

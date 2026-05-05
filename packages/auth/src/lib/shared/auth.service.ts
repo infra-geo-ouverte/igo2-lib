@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core/config';
@@ -8,19 +8,28 @@ import { MessageService } from '@igo2/core/message';
 import { Base64 } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AuthOptions, IInfosUser, User } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
+import { IUser } from './user/user.interface';
+import { UserService } from './user/user.service';
+
+interface IToken {
+  token: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService<T extends AuthOptions = AuthOptions> {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
+  private userService = inject(UserService, {
+    optional: true
+  });
   private config = inject(ConfigService);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
@@ -30,8 +39,11 @@ export class AuthService {
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   public languageForce = false;
+  public authOptions: T;
+
   private anonymous = false;
-  private authOptions: AuthOptions;
+
+  isLogging = signal(false);
 
   get hasAuthService() {
     return this.authOptions?.url !== undefined;
@@ -44,14 +56,17 @@ export class AuthService {
 
   constructor() {
     this.authOptions = this.config.getConfig('auth');
-    this.authenticate$.next(this.authenticated);
+
+    this.initializeAuthentication(this.authenticated).subscribe();
+
     this.authenticate$.subscribe((authenticated) => {
       this.logged$.next(authenticated);
       globalCacheBusterNotifier.next();
     });
   }
 
-  login(username: string, password: string): Observable<void> {
+  login(username: string, password: string): Observable<IUser> {
+    this.isLogging.set(true);
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
@@ -59,20 +74,24 @@ export class AuthService {
       password: this.encodePassword(password)
     };
 
-    return this.loginCall(body, myHeader);
+    return this.loginCall(body, myHeader).pipe(
+      finalize(() => this.isLogging.set(false))
+    );
   }
 
   loginWithToken(
     token: string,
     type: string,
-    infosUser?: IInfosUser
-  ): Observable<void> {
+    infosUser?: IInfosUser,
+    applicationId?: string
+  ): Observable<IUser> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
       token,
       typeConnection: type,
-      infosUser
+      infosUser,
+      applicationId
     };
 
     return this.loginCall(body, myHeader);
@@ -84,9 +103,9 @@ export class AuthService {
     return of(true);
   }
 
-  refresh(): Observable<void> {
+  refresh(): Observable<IToken> {
     return this.http.post(`${this.authOptions?.url}/refresh`, {}).pipe(
-      tap((data: any) => {
+      tap((data: IToken) => {
         this.tokenService.set(data.token);
       }),
       catchError((err) => {
@@ -96,11 +115,17 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<boolean> {
+  logout(): void {
+    this.logoutInternal();
+    if (this.authOptions.logoutRedirectRoute) {
+      this.router.navigate([this.authOptions.logoutRedirectRoute]);
+    }
+  }
+
+  private logoutInternal(): void {
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
-    return of(true);
   }
 
   isAuthenticated(): boolean {
@@ -122,14 +147,9 @@ export class AuthService {
     if (!this.router) {
       return;
     }
-    const redirectUrl = this.redirectUrl || this.router.url;
+    const redirectUrl = this.redirectUrl ?? this.authOptions.homeRoute ?? '/';
 
-    if (redirectUrl === this.authOptions.loginRoute) {
-      const homeRoute = this.authOptions.homeRoute || '/';
-      this.router.navigateByUrl(homeRoute);
-    } else if (redirectUrl) {
-      this.router.navigateByUrl(redirectUrl);
-    }
+    this.router.navigateByUrl(redirectUrl);
   }
 
   getUserInfo(): Observable<User> {
@@ -145,6 +165,23 @@ export class AuthService {
 
   updateUser(user: User): Observable<User> {
     return this.http.patch<User>(this.authOptions?.url, user);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  translateError(prefix: string, error: any): Observable<string> {
+    return new Observable((observer) => {
+      try {
+        this.languageService.translate
+          .get(prefix + error.error.message)
+          .subscribe((errorMsg) => {
+            observer.next(errorMsg);
+            observer.complete();
+          });
+      } catch {
+        if (error.error) observer.next(error.error.message);
+        observer.complete();
+      }
+    });
   }
 
   private encodePassword(password: string) {
@@ -172,11 +209,11 @@ export class AuthService {
     return false;
   }
 
-  private loginCall(body, headers) {
+  protected loginCall(body, headers) {
     return this.http
-      .post(`${this.authOptions?.url}/login`, body, { headers })
+      .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
       .pipe(
-        tap((data: any) => {
+        tap((data) => {
           this.tokenService.set(data.token);
           const tokenDecoded = this.decodeToken();
           if (tokenDecoded?.user) {
@@ -184,15 +221,33 @@ export class AuthService {
               this.languageService.setLanguage(tokenDecoded.user.locale);
             }
             if (tokenDecoded.user.isExpired) {
-              this.messageService.alert('igo.auth.error.Password expired');
+              this.messageService.alert(
+                'igo.auth.error.intern.Password expired'
+              );
             }
           }
-          this.authenticate$.next(true);
         }),
-        catchError((err) => {
-          err.error.caught = true;
-          throw err;
-        })
+        switchMap(() => this.initializeAuthentication(true))
       );
+  }
+
+  private initializeAuthentication(
+    isAuthenticated: boolean
+  ): Observable<IUser> {
+    if (!isAuthenticated) {
+      this.authenticate$.next(false);
+      return of(null);
+    }
+
+    if (this.userService) {
+      const obs$ = this.authOptions.user.withSync
+        ? this.userService.sync()
+        : this.userService.getUser();
+
+      return obs$.pipe(tap(() => this.authenticate$.next(true)));
+    }
+
+    this.authenticate$.next(true);
+    return of(null);
   }
 }

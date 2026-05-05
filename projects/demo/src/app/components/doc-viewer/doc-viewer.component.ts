@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-doc-viewer',
@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
   imports: []
 })
 export class DocViewerComponent {
-  @Input() title: string;
-  @Input() subtitle: string;
-  @Input() dependencies: string[];
+  readonly title = input<string>(undefined);
+  readonly subtitle = input<string>(undefined);
+  readonly dependencies = input<string[]>(undefined);
 }

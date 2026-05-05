@@ -4,14 +4,15 @@ import {
   Component,
   Input,
   OnInit,
-  inject
+  inject,
+  model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { AuthService } from '@igo2/auth';
+import { AuthService, UserService } from '@igo2/auth';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
@@ -47,6 +48,9 @@ export class AboutToolComponent implements OnInit {
   private http = inject(HttpClient);
   private cdRef = inject(ChangeDetectorRef);
   private languageService = inject(LanguageService);
+  private userService = inject(UserService, {
+    optional: true
+  });
 
   private configOptions: AllEnvironmentOptions;
   @Input()
@@ -78,13 +82,12 @@ export class AboutToolComponent implements OnInit {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  @Input() trainingGuideURLs;
+  readonly trainingGuideURLs = model<string[] | undefined>(undefined);
 
   public effectiveVersion: string;
   private _html = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
-  private baseUrlProfil;
   private baseUrlGuide;
 
   public loading = false;
@@ -95,44 +98,50 @@ export class AboutToolComponent implements OnInit {
     );
     this.configOptions = this.configService.getConfigs();
     const configVersion = this.configOptions.version;
-    this.effectiveVersion =
-      configVersion?.app || configVersion?.lib || version.lib;
-    this.baseUrlProfil = this.configOptions.storage?.url;
+    this.effectiveVersion = configVersion?.app ?? version.app;
     this.baseUrlGuide =
       this.configOptions.depot?.url +
       // todo validate this property
       (this.configOptions.depot as any)?.guideUrl;
   }
 
-  ngOnInit() {
-    if (this.auth.authenticated && this.configOptions.context?.url) {
-      this.http.get(this.baseUrlProfil).subscribe((profil) => {
-        const recast = profil as any;
-        this.trainingGuideURLs = recast.guides;
-        this.cdRef.detectChanges();
-      });
-    } else if (
-      this.auth.authenticated &&
-      !this.configOptions.context?.url &&
-      this.configOptions.depot?.trainingGuides
-    ) {
-      this.trainingGuideURLs = this.configOptions.depot?.trainingGuides;
+  ngOnInit(): void {
+    if (this.auth.authenticated) {
+      if (this.configOptions.context?.url) {
+        this.userService?.getUser().subscribe((user) => {
+          this.trainingGuideURLs.set(user['guides']);
+        });
+      } else {
+        const trainingGuides = this.configOptions.depot?.trainingGuides;
+        if (trainingGuides) {
+          this.trainingGuideURLs.set(trainingGuides);
+        }
+      }
     }
   }
 
   openGuide(guide?) {
-    this.loading = true;
     const url = guide
-      ? this.baseUrlGuide + guide + '?'
-      : this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+      ? this.baseUrlGuide + guide
+      : this.baseUrlGuide + this.trainingGuideURLs()[0];
+
+    this.loading = true;
     this.http
       .get(url, {
         responseType: 'blob'
       })
-      .subscribe(() => {
-        this.loading = false;
-        window.open(url, '_blank');
-        this.cdRef.detectChanges();
+      .subscribe({
+        next: (blob) => {
+          this.loading = false;
+
+          const blobUrl = URL.createObjectURL(blob);
+          window.open(blobUrl, '_blank');
+          // To avoid memory leak we need to revoke the object, 60 seconds to handle larger object like video
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+          this.cdRef.markForCheck();
+        },
+        error: () => (this.loading = false)
       });
   }
 

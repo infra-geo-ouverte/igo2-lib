@@ -1,8 +1,15 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  OnDestroy,
+  inject,
+  input,
+  signal
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { getRenderPixel } from 'ol/render';
-
-import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer';
 import { IgoMap } from '../shared/map';
@@ -17,10 +24,12 @@ import { IgoMap } from '../shared/map';
   standalone: true
 })
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
+  private destroyRef = inject(DestroyRef);
+
   /**
    * Get an active map
    */
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   /**
    * The list of layers for swipe
@@ -43,14 +52,11 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   private inDragAction = false;
 
   /**
-   * Listener of toggle from advanced-map-tool
-   */
-  private swipeEnabled$$: Subscription;
-
-  /**
    * Binder of prerender on the same element
    */
   private boundPrerender = this.prerender.bind(this);
+
+  activated = signal(false);
 
   /**
    * Get the list of layers for swipe and activate of deactivate the swipe
@@ -58,10 +64,11 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     this.getListOfLayers();
-    this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe((value) => {
-      value ? this.displaySwipe() : this.displaySwipeOff();
-    });
-    this.letZoom();
+    this.map()
+      .swipeEnabled$?.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        value ? this.displaySwipe() : this.displaySwipeOff();
+      });
   }
 
   /**
@@ -69,8 +76,6 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * @internal
    */
   ngOnDestroy(): void {
-    this.swipeEnabled$$.unsubscribe();
-    this.map.swipeEnabled$.unsubscribe();
     this.displaySwipeOff();
   }
 
@@ -78,25 +83,32 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Display a swipe-element and render the layers
    */
   displaySwipe() {
+    this.activated.set(true);
+
     if (this.swipeId) {
       this.swipeId.style.visibility = 'visible';
     }
+
     this.layers.map((layer) => layer.ol.on('prerender', this.boundPrerender));
     this.layers.map((layer) => layer.ol.on('postrender', this.postrender));
-    this.map.ol.render();
+    this.map().ol.render();
   }
 
   /**
    * Clear a swipe-element and render the layers on the initial state
    */
   displaySwipeOff() {
+    if (!this.activated()) {
+      return;
+    }
     if (this.swipeId) {
       this.swipeId.style.visibility = 'hidden';
     }
     this.layers.map((layer) => layer.ol.un('prerender', this.boundPrerender));
     this.layers.map((layer) => layer.ol.un('postrender', this.postrender));
-    this.map.ol.render();
+    this.map().ol.render();
     this.layers = [];
+    this.activated.set(false);
   }
 
   /**
@@ -110,7 +122,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Get the list of layers for swipe
    */
   getListOfLayers() {
-    this.map.selectedFeatures$.subscribe((layers) => {
+    this.map().selectedFeatures$.subscribe((layers) => {
       this.layers = [];
       if (layers !== null) {
         for (const layer of layers) {
@@ -151,7 +163,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
         this.pos3 = event.clientX;
         this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
       }
-      this.map.ol.render();
+      this.map().ol.render();
     });
   }
 
@@ -167,7 +179,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
         this.pos3 = event.changedTouches[0].clientX;
         this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
       }
-      this.map.ol.render();
+      this.map().ol.render();
     });
   }
 
@@ -195,7 +207,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    */
   prerender(event) {
     const ctx = event.context;
-    const mapSize = this.map.ol.getSize();
+    const mapSize = this.map().ol.getSize();
     const width = this.swipeId.offsetLeft;
     const tl = getRenderPixel(event, [width, 0]);
     const tr = getRenderPixel(event, [0, 0]);
@@ -217,20 +229,5 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   postrender(event) {
     event.context.restore();
     event.context.save();
-  }
-
-  /**
-   * Zoom on div
-   */
-  private letZoom() {
-    document.getElementById('igo-layer-swipe').addEventListener(
-      'wheel',
-      (event) => {
-        event.deltaY > 0
-          ? this.map.viewController.zoomOut()
-          : this.map.viewController.zoomIn();
-      },
-      true
-    );
   }
 }

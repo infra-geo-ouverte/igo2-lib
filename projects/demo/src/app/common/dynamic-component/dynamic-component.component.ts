@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -17,14 +17,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 
 @Component({
   selector: 'app-salutation-component',
-  template: '<p>Hello, my name is {{name}}.</p>',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  template: '<p>Hello, my name is {{name()}}.</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSalutationComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
 
-  @Input() name: string;
+  name = input<string>(undefined);
 
   onUpdateInputs() {
     this.cdRef.detectChanges();

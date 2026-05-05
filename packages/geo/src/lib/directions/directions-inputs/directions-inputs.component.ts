@@ -6,14 +6,7 @@ import {
   moveItemInArray
 } from '@angular/cdk/drag-drop';
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, OnDestroy, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   MatAutocomplete,
@@ -75,14 +68,13 @@ import { DirectionRelativePositionType } from './../shared/directions.enum';
 export class DirectionsInputsComponent implements OnDestroy {
   private languageService = inject(LanguageService);
 
-  @Input({ required: true }) stopsStore: StopsStore;
-  @Input({ required: true }) stopsFeatureStore: StopsFeatureStore;
-  @Input({ required: true }) projection: string;
-  @Input() coordRoundedDecimals = 6;
-  @Input() debounce = 200;
-  @Input() length = 2;
-  @Output() stopInputHasFocus: EventEmitter<boolean> =
-    new EventEmitter<boolean>(false);
+  readonly stopsStore = input.required<StopsStore>();
+  readonly stopsFeatureStore = input.required<StopsFeatureStore>();
+  readonly projection = input.required<string>();
+  readonly coordRoundedDecimals = input(6);
+  readonly debounce = input(200);
+  readonly length = input(2);
+  readonly stopInputHasFocus = output<boolean>();
 
   private readonly invalidKeys: string[] = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
@@ -96,10 +88,10 @@ export class DirectionsInputsComponent implements OnDestroy {
    * the geolocationController.
    */
   get currentPosition(): boolean {
+    const stopsFeatureStore = this.stopsFeatureStore();
     return (
-      this.stopsFeatureStore?.map?.geolocationController?.position$?.value
-        ?.position &&
-      this.stopsFeatureStore?.map?.geolocationController?.tracking
+      stopsFeatureStore?.map?.geolocationController?.position$?.value
+        ?.position && stopsFeatureStore?.map?.geolocationController?.tracking
     );
   }
 
@@ -127,7 +119,7 @@ export class DirectionsInputsComponent implements OnDestroy {
    *
    */
   addStop(): void {
-    addStopToStore(this.stopsStore);
+    addStopToStore(this.stopsStore());
   }
 
   /**
@@ -172,7 +164,7 @@ export class DirectionsInputsComponent implements OnDestroy {
       if (coords) {
         stop.coordinates = coords;
         stop.text = feature.meta.title;
-        this.stopsStore.update(stop);
+        this.stopsStore().update(stop);
       }
     }
   }
@@ -190,7 +182,7 @@ export class DirectionsInputsComponent implements OnDestroy {
       this.clearStopInput(stop);
     } else if (this.validateSearchTerm(searchTerm)) {
       stop.text = searchTerm;
-      this.stopsStore.update(stop);
+      this.stopsStore().update(stop);
     }
   }
 
@@ -204,7 +196,7 @@ export class DirectionsInputsComponent implements OnDestroy {
     const charactersAreValid: boolean =
       this.invalidKeys.indexOf(searchTerm) === -1;
     const lengthIsValid: boolean =
-      searchTerm.length >= this.length || searchTerm.length === 0;
+      searchTerm.length >= this.length() || searchTerm.length === 0;
     return charactersAreValid && lengthIsValid;
   }
 
@@ -232,7 +224,7 @@ export class DirectionsInputsComponent implements OnDestroy {
    * @param {Stop} stop - The stop object to be removed.
    */
   removeStop(stop: Stop): void {
-    removeStopFromStore(this.stopsStore, stop);
+    removeStopFromStore(this.stopsStore(), stop);
   }
 
   /**
@@ -241,7 +233,7 @@ export class DirectionsInputsComponent implements OnDestroy {
    * @param {Stop} stop - The stop to be cleared.
    */
   clearStopInput(stop: Stop): void {
-    this.stopsStore.update({
+    this.stopsStore().update({
       id: stop.id,
       relativePosition: stop.relativePosition,
       position: stop.position
@@ -255,7 +247,8 @@ export class DirectionsInputsComponent implements OnDestroy {
    */
   useCurrentPosition(stop: Stop): void {
     this.useCoordinatesAsStop(
-      this.stopsFeatureStore.map.geolocationController.position$.value.position,
+      this.stopsFeatureStore().map.geolocationController.position$.value
+        .position,
       stop
     );
   }
@@ -277,7 +270,7 @@ export class DirectionsInputsComponent implements OnDestroy {
    */
   private moveStops(fromIndex: number, toIndex: number): void {
     if (fromIndex !== toIndex) {
-      const stops: Stop[] = [...this.stopsStore.view.all()];
+      const stops: Stop[] = [...this.stopsStore().view.all()];
       moveItemInArray(stops, fromIndex, toIndex);
       stops.map((stop, stopIndex) => {
         stop.relativePosition = computeRelativePosition(
@@ -286,8 +279,8 @@ export class DirectionsInputsComponent implements OnDestroy {
         );
         stop.position = stopIndex;
       });
-      this.stopsStore.updateMany(stops);
-      updateStoreSorting(this.stopsStore);
+      this.stopsStore().updateMany(stops);
+      updateStoreSorting(this.stopsStore());
     }
   }
 
@@ -309,7 +302,7 @@ export class DirectionsInputsComponent implements OnDestroy {
    * @param {Stop} stop - The stop to update with the clicked coordinates.
    */
   private listenMapSingleClick(stop: Stop): void {
-    const key: EventsKey = this.stopsFeatureStore.layer.map.ol.once(
+    const key: EventsKey = this.stopsFeatureStore().layer.map.ol.once(
       'singleclick',
       (event) => {
         this.useCoordinatesAsStop(event.coordinate, stop);
@@ -337,20 +330,20 @@ export class DirectionsInputsComponent implements OnDestroy {
   private useCoordinatesAsStop(coordinates: Coordinate, stop: Stop): void {
     const projectedCoordinates: Coordinate = olProj.transform(
       coordinates,
-      this.stopsFeatureStore.layer.map.projection,
-      this.projection
+      this.stopsFeatureStore().layer.map.projection,
+      this.projection()
     );
     const roundedCoordinates: Coordinate = roundCoordTo(
       projectedCoordinates,
-      this.coordRoundedDecimals
+      this.coordRoundedDecimals()
     );
 
     stop.text = roundCoordToString(
       projectedCoordinates,
-      this.coordRoundedDecimals
+      this.coordRoundedDecimals()
     ).join(', ');
     stop.coordinates = roundedCoordinates;
-    this.stopsStore.update(stop);
+    this.stopsStore().update(stop);
     setTimeout(() => {
       this.stopInputHasFocus.emit(false);
     }, 500);

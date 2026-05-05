@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
   OnInit,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
@@ -105,7 +104,7 @@ export class AuthFormComponent implements OnInit {
     }
   }
 
-  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  readonly login = output<boolean>();
 
   public options?: AuthOptions & AuthFormOptions;
   public user;
@@ -131,16 +130,15 @@ export class AuthFormComponent implements OnInit {
   }
 
   public logout() {
-    this.auth.logout().subscribe(() => {
-      this.user = undefined;
-      if (this.router) {
-        if (this.options?.logoutRoute) {
-          this.router.navigate([this.options?.logoutRoute]);
-        } else if (this.options?.homeRoute) {
-          this.router.navigate([this.options?.homeRoute]);
-        }
+    this.auth.logout();
+    this.user = undefined;
+    if (this.router) {
+      if (this.options?.logoutRoute) {
+        this.router.navigate([this.options?.logoutRoute]);
+      } else if (this.options?.homeRoute) {
+        this.router.navigate([this.options?.homeRoute]);
       }
-    });
+    }
   }
 
   public home() {

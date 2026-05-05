@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -48,11 +48,11 @@ export class ShareMapApiComponent implements OnInit {
 
   public form: UntypedFormGroup;
 
-  @Input() map: IgoMap;
+  readonly map = input<IgoMap>(undefined);
 
   public url: string;
   public userId: string;
-  public idContextShared: string;
+  public idContextShared: number;
 
   ngOnInit(): void {
     this.auth.authenticate$.subscribe(() => {
@@ -66,7 +66,7 @@ export class ShareMapApiComponent implements OnInit {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrlWithApi(inputs);
-    this.createContextShared(this.map, inputs).subscribe(
+    this.createContextShared(this.map(), inputs).subscribe(
       (rep) => {
         this.idContextShared = rep.id;
         this.messageService.success(
@@ -88,7 +88,11 @@ export class ShareMapApiComponent implements OnInit {
   updateContextShared(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
-    this._updateContextShared(this.map, inputs, this.idContextShared).subscribe(
+    this._updateContextShared(
+      this.map(),
+      inputs,
+      this.idContextShared
+    ).subscribe(
       () => {
         this.messageService.success(
           'igo.context.contextManager.dialog.saveMsg',
@@ -135,7 +139,7 @@ export class ShareMapApiComponent implements OnInit {
     return this.contextService.create(context);
   }
 
-  private _updateContextShared(map: IgoMap, formValues, id: string) {
+  private _updateContextShared(map: IgoMap, formValues, id: number) {
     const context = this.contextService.getContextFromMap(map);
     return this.contextService.update(id, {
       title: formValues.title,

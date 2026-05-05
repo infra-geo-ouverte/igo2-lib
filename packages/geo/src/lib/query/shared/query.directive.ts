@@ -1,11 +1,10 @@
 import {
   AfterViewInit,
   Directive,
-  EventEmitter,
-  Input,
   OnDestroy,
-  Output,
-  inject
+  inject,
+  input,
+  output
 } from '@angular/core';
 
 import OlFeature from 'ol/Feature';
@@ -68,27 +67,28 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whter to query features or not
    */
-  @Input() queryFeatures = false;
+  readonly queryFeatures = input(false);
 
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesHitTolerance = 0;
+  readonly queryFeaturesHitTolerance = input(0);
 
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesCondition: (olLayer: OlLayer<OlSource>) => boolean;
+  readonly queryFeaturesCondition =
+    input<(olLayer: OlLayer<OlSource>) => boolean>(undefined);
 
   /**
    * Whether all query should complete before emitting an event
    */
-  @Input() waitForAllQueries = true;
+  readonly waitForAllQueries = input(true);
 
   /**
    * Event emitted when a query (or all queries) complete
    */
-  @Output() query = new EventEmitter<{
+  readonly query = output<{
     features: Feature[] | Feature[][];
     event: MapBrowserPointerEvent<any>;
   }>();
@@ -98,7 +98,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map as any as IgoMap;
+    return this.component.map() as any as IgoMap;
   }
 
   /**
@@ -149,7 +149,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
 
     const queries$ = [];
-    if (this.queryFeatures) {
+    if (this.queryFeatures()) {
       queries$.push(this.doQueryFeatures(event));
     }
 
@@ -169,7 +169,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.waitForAllQueries) {
+    if (this.waitForAllQueries()) {
       this.queries$$.push(
         zip(...queries$).subscribe((results: Feature[][]) => {
           const features = [].concat(...results);
@@ -195,6 +195,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     const clickedFeatures = [];
 
     if (event.type === 'singleclick') {
+      const queryFeaturesCondition = this.queryFeaturesCondition();
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
         (featureOL: OlFeature, layerOL: any) => {
@@ -258,9 +259,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           }
         },
         {
-          hitTolerance: this.queryFeaturesHitTolerance || 0,
-          layerFilter: this.queryFeaturesCondition
-            ? this.queryFeaturesCondition
+          hitTolerance: this.queryFeaturesHitTolerance() || 0,
+          layerFilter: queryFeaturesCondition
+            ? queryFeaturesCondition
             : olLayerFeatureIsQueryable
         }
       );

@@ -18,10 +18,6 @@ export enum ServiceTypeEnum {
   tilearcgisrest = 4
 }
 
-export interface ShareOption {
-  layerlistControls: { querystring: string };
-}
-
 const BaseLayerParamsKeys = [
   'visible',
   'opacity',
@@ -30,6 +26,7 @@ const BaseLayerParamsKeys = [
 ] as const;
 
 export const LayerParamsKeys = [
+  'id',
   'index',
   'names',
   'type',
@@ -102,9 +99,8 @@ export interface UrlParsedParam {
 
 export type LayerParams = BaseLayerParams & {
   index: number;
-  names: string;
-  type: string;
-  queryString?: string;
+  names?: string;
+  type?: string;
 };
 
 export type GroupParams = BaseLayerParams &
@@ -112,7 +108,7 @@ export type GroupParams = BaseLayerParams &
 
 type BaseLayerParams = Pick<
   LayerOptions,
-  'visible' | 'opacity' | 'zIndex' | 'parentId'
+  'visible' | 'opacity' | 'zIndex' | 'parentId' | 'id'
 >;
 
 export interface ShareMapRouteKeysOptions extends RouteServiceOptions {

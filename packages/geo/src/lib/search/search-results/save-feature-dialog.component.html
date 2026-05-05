@@ -10,8 +10,7 @@
         color="accent"
         [result]="feature"
         [showIcons]="true"
-      >
-      </igo-search-results-item>
+      />
     </igo-list>
 
     <div class="igo-input-container">
@@ -26,7 +25,7 @@
         <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
           @for (layer of filteredLayers$ | async; track layer) {
             <mat-option [value]="layer">
-              <p matListItemTitle>{{ layer.title }}</p>
+              {{ layer.title }}
             </mat-option>
           }
         </mat-autocomplete>

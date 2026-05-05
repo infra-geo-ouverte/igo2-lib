@@ -79,12 +79,14 @@ export class MediaService {
   }
 
   isMobile(): boolean {
-    const media = this.getMedia();
-    return media === 'mobile';
+    return this.getMedia() === Media.Mobile;
+  }
+
+  isTablet(): boolean {
+    return this.getMedia() === Media.Tablet;
   }
 
   isDesktop(): boolean {
-    const media = this.getMedia();
-    return media === 'desktop';
+    return this.getMedia() === Media.Desktop;
   }
 }

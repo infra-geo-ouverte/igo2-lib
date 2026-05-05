@@ -8,16 +8,14 @@
       <mat-grid-tile>
         <igo-map-browser [map]="map" [view]="view">
           <div class="map-actions --vertical --bottom --right">
-            <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+            <igo-zoom-button [map]="map" color="primary" />
           </div>
         </igo-map-browser>
       </mat-grid-tile>
       <mat-grid-tile>
         <div class="flex align-start h-100 w-100">
           <igo-panel title="Layers" class="w-100">
-            <igo-time-filter-list
-              [layers]="map.layerController.all"
-            ></igo-time-filter-list>
+            <igo-time-filter-list [layers]="map.layerController.all" />
           </igo-panel>
         </div>
       </mat-grid-tile>

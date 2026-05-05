@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
-  Output,
-  inject
+  inject,
+  output
 } from '@angular/core';
 import {
   FormsModule,
@@ -54,7 +53,7 @@ export class AuthInternComponent {
   public form: UntypedFormGroup;
   public loading = false;
 
-  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  readonly login = output<boolean>();
 
   constructor() {
     const fb = inject(UntypedFormBuilder);

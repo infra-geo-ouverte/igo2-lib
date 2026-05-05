@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -35,7 +35,7 @@ import { BehaviorSubject } from 'rxjs';
 export class WakeLockButtonComponent {
   private storageService = inject(StorageService);
 
-  @Input() color = 'primary';
+  readonly color = input('primary');
   @Input()
   get enabled(): boolean {
     return this.storageService.get('wakeLockEnabled') as boolean;

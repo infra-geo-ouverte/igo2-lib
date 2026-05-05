@@ -1,10 +1,10 @@
 <igo-layer-search
-  [initialValue]="term"
-  [floatLabel]="floatLabel"
+  [initialValue]="term()"
+  [floatLabel]="floatLabel()"
   placeholder="igo.geo.layer.filterPlaceholder"
   tooltip="igo.geo.layer.subsetLayersListKeyword"
   (searchChange)="handleTermChange($event)"
-></igo-layer-search>
+/>
 
 <div class="actions-container">
   <button
@@ -23,10 +23,10 @@
     }}</mat-icon>
   </button>
 
-  @if (viewerOptions?.group?.canCreate) {
+  @if (viewerOptions()?.group?.canCreate) {
     <button
       mat-icon-button
-      [disabled]="!viewerOptions.group.enable"
+      [disabled]="!viewerOptions().group.enable"
       [matTooltip]="'igo.geo.layer.group.create' | translate"
       matTooltipShowDelay="500"
       type="button"

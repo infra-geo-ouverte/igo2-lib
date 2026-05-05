@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-example-see-code',
@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   standalone: true
 })
 export class ExampleSeeCodeComponent {
-  @Input() href: string;
+  readonly href = input<string>(undefined);
 }

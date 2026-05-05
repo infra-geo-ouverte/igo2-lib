@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -47,7 +47,8 @@ import { Catalog } from '../shared/catalog.abstract';
     AsyncPipe,
     IgoLanguageModule,
     FormComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    NgTemplateOutlet
   ]
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
@@ -60,7 +61,8 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     store: EntityStore<Catalog>;
     error: boolean;
     addedCatalog: Catalog;
-  }>(MAT_DIALOG_DATA, { optional: true });
+    isPredefinedCatalog: boolean;
+  }>(MAT_DIALOG_DATA);
 
   predefinedForm$ = new BehaviorSubject<Form>(undefined);
   customForm$ = new BehaviorSubject<Form>(undefined);
@@ -77,14 +79,14 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
       return { value: t, title: t };
     });
     this.storeViewAll$$ = this.data.store.view.all$().subscribe(() => {
-      const predefinedChoices = this.data.predefinedCatalogs
-        .filter((c) => !this.data.store.get(c.id))
-        .map((predefinedCatalog) => {
+      const predefinedChoices = this.data.predefinedCatalogs.map(
+        (predefinedCatalog) => {
           return {
             value: predefinedCatalog.id,
             title: predefinedCatalog.title
           };
-        });
+        }
+      );
 
       const predefinedFieldConfigs = [
         {

@@ -1,11 +1,7 @@
-export interface TreeFlatNode<T = any> {
-  id: string;
-  isGroup: boolean;
-  disabled: boolean;
-  level: number;
-  // Give the number of level inside a group;
-  descendantLevels?: number;
-  data: T;
+export interface TreeDropEvent<T> {
+  node: T;
+  ref: T;
+  position: DropPositionType;
 }
 
 export interface DropPosition {
@@ -16,3 +12,9 @@ export interface DropPosition {
 }
 
 export type DropPositionType = 'above' | 'below' | 'inside';
+
+export interface DropPermission {
+  canDrop: boolean;
+  message?: string;
+  params?: Record<string, unknown>;
+}

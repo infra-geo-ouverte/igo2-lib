@@ -7,23 +7,22 @@
       <div class="login center-block">
         <h3>{{ 'igo.auth.connection' | translate }}</h3>
         @if (options.google && options.google.enabled !== false) {
-          <igo-auth-google (login)="onLogin()"> </igo-auth-google>
+          <igo-auth-google (login)="onLogin()" />
         }
         @if (options.microsoft && options.microsoft.enabled !== false) {
-          <igo-auth-microsoft (login)="onLogin()"> </igo-auth-microsoft>
+          <igo-auth-microsoft (login)="onLogin()" />
         }
         @if (options.microsoftb2c && options.microsoftb2c.enabled !== false) {
-          <igo-auth-microsoftb2c (login)="onLogin()"> </igo-auth-microsoftb2c>
+          <igo-auth-microsoftb2c (login)="onLogin()" />
         }
         @if (options.facebook && options.facebook.enabled !== false) {
-          <igo-auth-facebook (login)="onLogin()"> </igo-auth-facebook>
+          <igo-auth-facebook (login)="onLogin()" />
         }
         @if (!options.intern || options.intern.enabled !== false) {
           <igo-auth-intern
             [allowAnonymous]="options.allowAnonymous"
             (login)="onLogin()"
-          >
-          </igo-auth-intern>
+          />
         }
       </div>
     }
