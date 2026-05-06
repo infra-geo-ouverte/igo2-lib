@@ -35,9 +35,9 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   private messageService = inject(MessageService);
   private router = inject(Router, { optional: true });
 
-  public authenticate$ = new BehaviorSubject<boolean>(undefined);
-  public logged$ = new BehaviorSubject<boolean>(undefined);
-  public redirectUrl: string;
+  public authenticate$ = new BehaviorSubject<boolean>(false);
+  public logged$ = new BehaviorSubject<boolean>(false);
+  public redirectUrl?: string;
   public languageForce = false;
   public authOptions: T;
 
@@ -65,7 +65,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     });
   }
 
-  login(username: string, password: string): Observable<IUser> {
+  login(username: string, password: string): Observable<IUser | null> {
     this.isLogging.set(true);
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
@@ -84,7 +84,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     type: string,
     infosUser?: IInfosUser,
     applicationId?: string
-  ): Observable<IUser> {
+  ): Observable<IUser | null> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
@@ -104,8 +104,8 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   refresh(): Observable<IToken> {
-    return this.http.post(`${this.authOptions?.url}/refresh`, {}).pipe(
-      tap((data: IToken) => {
+    return this.http.post<IToken>(`${this.authOptions?.url}/refresh`, {}).pipe(
+      tap((data) => {
         this.tokenService.set(data.token);
       }),
       catchError((err) => {
@@ -118,7 +118,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   logout(): void {
     this.logoutInternal();
     if (this.authOptions.logoutRedirectRoute) {
-      this.router.navigate([this.authOptions.logoutRedirectRoute]);
+      this.router?.navigate([this.authOptions.logoutRedirectRoute]);
     }
   }
 
@@ -132,11 +132,11 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     return !this.tokenService.isExpired();
   }
 
-  getToken(): string {
+  getToken(): string | undefined {
     return this.tokenService.get();
   }
 
-  decodeToken(): IgoJwtPayload | null {
+  decodeToken(): IgoJwtPayload | undefined {
     if (this.isAuthenticated()) {
       return this.tokenService.decode();
     }
@@ -209,7 +209,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     return false;
   }
 
-  protected loginCall(body, headers) {
+  protected loginCall(body: unknown, headers: HttpHeaders) {
     return this.http
       .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
       .pipe(
@@ -233,14 +233,14 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   private initializeAuthentication(
     isAuthenticated: boolean
-  ): Observable<IUser> {
+  ): Observable<IUser | null> {
     if (!isAuthenticated) {
       this.authenticate$.next(false);
       return of(null);
     }
 
     if (this.userService) {
-      const obs$ = this.authOptions.user.withSync
+      const obs$ = this.authOptions.user?.withSync
         ? this.userService.sync()
         : this.userService.getUser();
 

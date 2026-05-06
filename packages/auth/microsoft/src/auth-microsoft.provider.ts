@@ -32,7 +32,7 @@ export const AUTH_MICROSOFT_DIRECTIVES = [
 
 export function MSALConfigFactory(
   config: ConfigService
-): IPublicClientApplication {
+): IPublicClientApplication | undefined {
   const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
   if (!msConf) {
     return;
@@ -85,7 +85,7 @@ const loggerCallback: ILoggerCallback = (
 
 export function MSALConfigFactoryb2c(
   config: ConfigService
-): PublicClientApplication {
+): PublicClientApplication | undefined {
   const msConf = config.getConfig(
     'auth.microsoftb2c.browserAuthOptions'
   ) as BrowserAuthOptions;

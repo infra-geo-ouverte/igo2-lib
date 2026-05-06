@@ -53,7 +53,7 @@ export class AuthMicrosoftb2cComponent {
   private broadcastService: MsalBroadcastServiceb2c;
 
   constructor() {
-    this.options = this.config.getConfig('auth.microsoftb2c') || {};
+    this.options = this.config.getConfig('auth.microsoftb2c');
 
     this.msalService.instance = new PublicClientApplication({
       auth: this.options.browserAuthOptions,

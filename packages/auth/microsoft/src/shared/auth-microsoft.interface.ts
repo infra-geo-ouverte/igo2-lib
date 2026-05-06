@@ -13,7 +13,7 @@ export interface AuthMicrosoftOptions extends BrowserAuthOptions {
 
 export interface AuthMicrosoftb2cOptions {
   enabled?: boolean;
-  browserAuthOptions?: BrowserAuthOptions;
+  browserAuthOptions: BrowserAuthOptions;
   options?: AuthMicrosoftb2cOptionsOptions;
   scopes?: string[];
 }

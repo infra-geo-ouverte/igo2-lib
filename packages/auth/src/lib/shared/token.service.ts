@@ -19,7 +19,7 @@ export class TokenService {
   constructor() {
     const config = this.injector.get<ConfigService>(ConfigService);
     this.options = config.getConfig('auth');
-    this.tokenKey = this.options?.tokenKey;
+    this.tokenKey = this.options?.tokenKey ?? '';
   }
 
   set(token: string) {
@@ -30,11 +30,11 @@ export class TokenService {
     localStorage.removeItem(this.tokenKey);
   }
 
-  get(): string {
-    return localStorage.getItem(this.tokenKey);
+  get(): string | undefined {
+    return localStorage.getItem(this.tokenKey) ?? undefined;
   }
 
-  decode(): IgoJwtPayload | null {
+  decode(): IgoJwtPayload | undefined {
     const token = this.get();
     if (!token) {
       return;
@@ -45,7 +45,7 @@ export class TokenService {
   isExpired() {
     const jwt = this.decode();
     const currentTime = new Date().getTime() / 1000;
-    if (jwt && currentTime < jwt.exp) {
+    if (jwt?.exp && currentTime < jwt.exp) {
       return false;
     }
     return true;

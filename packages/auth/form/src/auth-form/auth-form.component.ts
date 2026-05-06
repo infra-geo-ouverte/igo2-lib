@@ -10,8 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
 import { AuthOptions, AuthService } from '@igo2/auth';
-import { AuthFacebookComponent } from '@igo2/auth/facebook';
-import { AuthGoogleComponent } from '@igo2/auth/google';
 import { AuthInternComponent } from '@igo2/auth/internal';
 import {
   AuthMicrosoftComponent,
@@ -30,10 +28,8 @@ import { AuthFormOptions } from '../shared';
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
-    AuthGoogleComponent,
     AuthMicrosoftComponent,
     AuthMicrosoftb2cComponent,
-    AuthFacebookComponent,
     AuthInternComponent,
     MatButtonModule,
     IgoLanguageModule
@@ -99,19 +95,18 @@ export class AuthFormComponent implements OnInit {
   private _showLogoutDiv = false;
 
   get showLoginDiv(): boolean {
-    if (!this.isLogoutRoute) {
-      return true;
-    }
+    return !this.isLogoutRoute ? true : false;
   }
 
   readonly login = output<boolean>();
 
   public options?: AuthOptions & AuthFormOptions;
-  public user;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public user: any;
 
   public visible = true;
 
-  private isLogoutRoute: boolean;
+  private isLogoutRoute?: boolean;
 
   constructor() {
     this.options = this.config.getConfig('auth');
