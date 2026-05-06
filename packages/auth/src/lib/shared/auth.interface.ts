@@ -6,27 +6,6 @@ export interface AuthInternOptions {
   enabled?: boolean;
 }
 
-export interface AuthFacebookOptions {
-  enabled?: boolean;
-  appId: string;
-}
-
-export interface AuthGoogleOptions {
-  enabled?: boolean;
-  apiKey: string;
-  clientId: string;
-}
-
-export interface AuthByKeyOptions {
-  domainRegFilters?: string;
-  keyProperty?: string;
-  keyValue?: string;
-}
-export interface WithCredentialsOptions {
-  withCredentials?: boolean;
-  domainRegFilters?: string;
-}
-
 export interface User extends BaseUser {
   source?: string;
   sourceId?: string;
@@ -65,8 +44,8 @@ export interface IAuthUserIgoOptions {
 
 export interface AuthByKeyOptions {
   domainRegFilters?: string;
-  keyProperty?: string;
-  keyValue?: string;
+  keyProperty: string;
+  keyValue: string;
 }
 export interface WithCredentialsOptions {
   withCredentials?: boolean;

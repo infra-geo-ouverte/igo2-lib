@@ -33,7 +33,7 @@ export class AuthMsalService extends AuthService<IAuthMsalOptions> {
     this._isInitialized$ = this.msalService.initialize();
   }
 
-  login(): Observable<IUser> {
+  login(): Observable<IUser | null> {
     this.isLogging.set(true);
     return this._isInitialized$.pipe(
       switchMap(() =>
