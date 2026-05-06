@@ -54,6 +54,13 @@ export class AppVectorDataStylingComponent {
         },
         baseLayer: true,
         visible: true
+      },
+      {
+        title: 'Structures',
+        sourceOptions: {
+          type: 'vector',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:gsq_v_desc_strct_tri&outfile=Structure&srsname=EPSG:4326&outputformat=geojson'
+        }
       }
     ];
 
