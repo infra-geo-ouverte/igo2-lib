@@ -67,7 +67,7 @@ export class TableDataSource extends DataSource<any> {
     });
   }
 
-  getSortedData(data): any[] {
+  getSortedData(data: any[]): any[] {
     if (!this._sort.active || this._sort.direction === '') {
       return data;
     }
@@ -76,11 +76,11 @@ export class TableDataSource extends DataSource<any> {
       const propertyA: number | string = ObjectUtils.resolve(
         a,
         this._sort.active
-      );
+      ) as number | string;
       const propertyB: number | string = ObjectUtils.resolve(
         b,
         this._sort.active
-      );
+      ) as number | string;
 
       return ObjectUtils.naturalCompare(
         propertyB,

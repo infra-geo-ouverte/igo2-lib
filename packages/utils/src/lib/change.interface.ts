@@ -6,11 +6,13 @@ export enum ChangeType {
 
 export interface Change {
   type: ChangeType;
-  keysChanged?: {
-    key: string;
-    newValue: any;
-    oldValue: any;
-  }[];
+  keysChanged?: KeyChange[];
+}
+
+export interface KeyChange {
+  key: string;
+  oldValue: unknown;
+  newValue: unknown;
 }
 
 export interface GroupingChanges {

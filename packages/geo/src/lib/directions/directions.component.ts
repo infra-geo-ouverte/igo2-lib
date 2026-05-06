@@ -343,7 +343,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private handleStopDiff(stops: Stop[]) {
     const simplifiedStops = stops.map((stop) => {
       return ObjectUtils.removeUndefined({
-        ...{ id: stop.id, text: stop.text, coordinates: stop.coordinates }
+        ...({
+          id: stop.id,
+          text: stop.text,
+          coordinates: stop.coordinates
+        } as Stop)
       });
     });
     const diff = ChangeUtils.findChanges(this.previousStops, simplifiedStops, [

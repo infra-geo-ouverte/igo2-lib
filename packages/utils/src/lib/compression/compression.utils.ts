@@ -1,4 +1,4 @@
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 
 import { CompressedData } from './compressedData.interface';
 
@@ -39,16 +39,16 @@ export class Compression {
     this.indexBase64.set(63, '/');
   }
 
-  compressBlob(blob: Blob): Observable<CompressedData> {
+  compressBlob(blob: Blob): Observable<CompressedData | null> {
     if (!blob) {
-      return;
+      return of(null);
     }
 
     const observable = new Observable((observer: Observer<CompressedData>) => {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onload = () => {
-        const base64 = reader.result.valueOf() as string;
+        const base64 = reader.result?.valueOf() as string;
         const text64 = base64.substr(base64.indexOf(',') + 1);
         const compressed = this.compressStringBase64(text64);
         const compressedData: CompressedData = {
@@ -83,6 +83,9 @@ export class Compression {
     let rem: number;
     for (const c of s) {
       const value = this.base64Index.get(c);
+      if (value === undefined) {
+        continue;
+      }
       if (bits > 6) {
         bits -= 6;
         chr += value << bits;
@@ -101,10 +104,6 @@ export class Compression {
   }
 
   private decompressStringBase64(c: string, length: number): string {
-    if (!c) {
-      return;
-    }
-
     if (c.charCodeAt(0) !== 9731) {
       return c;
     }

@@ -1,21 +1,26 @@
 /* eslint-disable no-prototype-builtins */
 export class ObjectUtils {
-  static resolve(obj: object, key: string): any {
-    const keysArray = key.replace(/\[/g, '.').replace(/\]/g, '').split('.');
-    let current = obj;
+  static resolve<T, K extends keyof T>(obj: T, key: K | string): unknown {
+    const keysArray = String(key)
+      .replace(/\[/g, '.')
+      .replace(/\]/g, '')
+      .split('.');
+    let current: unknown = obj;
+    let value: unknown = undefined;
     while (keysArray.length) {
-      if (typeof current !== 'object') {
+      if (typeof current !== 'object' || current === null) {
         return undefined;
       }
-      current = current[keysArray.shift()];
+      const k = keysArray.shift() as string;
+      value = current = (current as Record<string, unknown>)[k];
     }
 
-    return current;
+    return value;
   }
 
-  static isObject(item: object) {
+  static isObject(item: unknown): item is Record<string, unknown> {
     return (
-      item &&
+      !!item &&
       typeof item === 'object' &&
       !Array.isArray(item) &&
       item !== null &&
@@ -23,11 +28,13 @@ export class ObjectUtils {
     );
   }
 
-  static mergeDeep(
-    target: object,
-    source: object,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static mergeDeep<T = any>(
+    target: T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    source: any,
     ignoreUndefined = false
-  ): any {
+  ): T {
     const output = Object.assign({}, target);
     if (ObjectUtils.isObject(target) && ObjectUtils.isObject(source)) {
       Object.keys(source)
@@ -37,9 +44,9 @@ export class ObjectUtils {
             if (!(key in target)) {
               Object.assign(output, { [key]: source[key] });
             } else {
-              output[key] = ObjectUtils.mergeDeep(
-                target[key],
-                source[key],
+              (output as Record<string, unknown>)[key] = ObjectUtils.mergeDeep(
+                target[key] as Record<string, unknown>,
+                source[key] as Record<string, unknown>,
                 ignoreUndefined
               );
             }
@@ -51,25 +58,36 @@ export class ObjectUtils {
     return output;
   }
 
-  static copyDeep(src): any {
-    const target = Array.isArray(src) ? [] : {};
-    for (const prop in src) {
-      if (src.hasOwnProperty(prop)) {
-        const value = src[prop];
-        if (value && typeof value === 'object') {
-          target[prop] = this.copyDeep(value);
-        } else {
-          target[prop] = value;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static copyDeep<T = any>(src: T): T {
+    if (Array.isArray(src)) {
+      return src.map((item) =>
+        typeof item === 'object' && item !== null
+          ? this.copyDeep(item as Record<string, unknown>)
+          : item
+      ) as T;
+    } else if (this.isObject(src)) {
+      const target = {} as T;
+      for (const prop in src) {
+        if (src.hasOwnProperty(prop)) {
+          const value = (src as Record<string, unknown>)[prop];
+          (target as Record<string, unknown>)[prop] =
+            value && typeof value === 'object' && value !== null
+              ? this.copyDeep(value as Record<string, unknown>)
+              : value;
         }
       }
+      return target;
     }
-    return target;
+    return src;
   }
 
-  static removeDuplicateCaseInsensitive(obj: object) {
-    const summaryCapitalizeObject = {};
-    const capitalizeObject = {};
-    const upperCaseCount = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static removeDuplicateCaseInsensitive(obj: any) {
+    const summaryCapitalizeObject: Record<string, { [k: string]: unknown }[]> =
+      {};
+    const capitalizeObject: Record<string, unknown> = {};
+    const upperCaseCount: { key: string; count: number }[] = [];
 
     for (const property in obj) {
       if (obj.hasOwnProperty(property)) {
@@ -83,7 +101,7 @@ export class ObjectUtils {
             [property]: obj[property]
           });
         }
-        // counting the number of uppercase lettersMna
+        // counting the number of uppercase letters
         upperCaseCount.push({
           key: property,
           count: property.replace(/[^A-Z]/g, '').length
@@ -92,26 +110,24 @@ export class ObjectUtils {
     }
     for (const capitalizedProperty in summaryCapitalizeObject) {
       if (summaryCapitalizeObject.hasOwnProperty(capitalizedProperty)) {
-        if (summaryCapitalizeObject.hasOwnProperty(capitalizedProperty)) {
-          const capitalizedPropertyObject =
-            summaryCapitalizeObject[capitalizedProperty];
-          if (capitalizedPropertyObject.length === 1) {
-            // for single params (no duplicates)
-            const singlePossibility = capitalizedPropertyObject[0];
-            capitalizeObject[capitalizedProperty] =
-              singlePossibility[Object.keys(singlePossibility)[0]];
-          } else if (capitalizedPropertyObject.length > 1) {
-            // defining the closest to lowercase property
-            const paramClosestToLowercase = upperCaseCount
-              .filter(
-                (f) => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
-              )
-              .reduce((prev, current) => {
-                return prev.y < current.y ? prev : current;
-              });
-            capitalizeObject[paramClosestToLowercase.key.toUpperCase()] =
-              obj[paramClosestToLowercase.key];
-          }
+        const capitalizedPropertyObject =
+          summaryCapitalizeObject[capitalizedProperty];
+        if (capitalizedPropertyObject.length === 1) {
+          // for single params (no duplicates)
+          const singlePossibility = capitalizedPropertyObject[0];
+          capitalizeObject[capitalizedProperty] =
+            singlePossibility[Object.keys(singlePossibility)[0]];
+        } else if (capitalizedPropertyObject.length > 1) {
+          // defining the closest to lowercase property
+          const paramClosestToLowercase = upperCaseCount
+            .filter(
+              (f) => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
+            )
+            .reduce((prev, current) => {
+              return prev.count < current.count ? prev : current;
+            });
+          capitalizeObject[paramClosestToLowercase.key.toUpperCase()] =
+            obj[paramClosestToLowercase.key];
         }
       }
     }
@@ -128,55 +144,74 @@ export class ObjectUtils {
     }
   }
 
-  static removeUndefined(obj: object): any {
-    const output = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static removeUndefined<T = any>(obj: T): T {
+    if (Array.isArray(obj)) {
+      return obj
+        .filter((item) => item !== undefined)
+        .map((item) =>
+          typeof item === 'object'
+            ? ObjectUtils.removeUndefined(item as Record<string, unknown>)
+            : item
+        ) as T;
+    }
+
     if (ObjectUtils.isObject(obj)) {
+      const output: Record<string, unknown> = {};
       Object.keys(obj)
         .filter((key) => obj[key] !== undefined)
         .forEach((key) => {
-          if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
-            output[key] = ObjectUtils.removeUndefined(obj[key]);
-          } else {
-            output[key] = obj[key];
-          }
+          output[key] =
+            typeof obj[key] === 'object'
+              ? ObjectUtils.removeUndefined(obj[key] as Record<string, unknown>)
+              : obj[key];
         });
-
-      return output;
-    }
-
-    if (Array.isArray(obj)) {
-      return obj.map((o) => ObjectUtils.removeUndefined(o));
+      return output as T;
     }
 
     return obj;
   }
 
-  static removeNull(obj: object): any {
-    const output = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static removeNull<T = any>(obj: T): T {
+    if (Array.isArray(obj)) {
+      return obj
+        .filter((item) => item !== null)
+        .map((item) =>
+          typeof item === 'object'
+            ? ObjectUtils.removeNull(item as Record<string, unknown>)
+            : item
+        ) as T;
+    }
+
     if (ObjectUtils.isObject(obj)) {
+      const output: Record<string, unknown> = {};
       Object.keys(obj)
         .filter((key) => obj[key] !== null)
         .forEach((key) => {
           if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
-            output[key] = ObjectUtils.removeNull(obj[key]);
+            output[key] = ObjectUtils.removeNull(
+              obj[key] as Record<string, unknown>
+            );
           } else {
             output[key] = obj[key];
           }
         });
 
-      return output;
-    }
-
-    if (Array.isArray(obj)) {
-      return obj.map((o) => ObjectUtils.removeNull(o));
+      return output as T;
     }
 
     return obj;
   }
 
-  static naturalCompare(a, b, direction = 'asc', nullsFirst?: boolean) {
+  static naturalCompare(
+    a: unknown,
+    b: unknown,
+    direction = 'asc',
+    nullsFirst?: boolean
+  ): number {
     if (direction === 'desc') {
-      b = [a, (a = b)][0];
+      [a, b] = [b, a];
     }
 
     // nullsFirst = undefined : end if direction = 'asc', first if direction = 'desc'
@@ -210,22 +245,24 @@ export class ObjectUtils {
       return nullsFirst === true ? nullScore * -1 : nullScore;
     }
 
-    const ax = [];
-    const bx = [];
-    a = '' + a;
-    b = '' + b;
+    const ax: [number, string][] = [];
+    const bx: [number, string][] = [];
+    const aStr = '' + a;
+    const bStr = '' + b;
 
-    a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
-      ax.push([$1 || Infinity, $2 || '']);
+    aStr.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+      ax.push([$1 ? Number($1) : Infinity, $2 ?? '']);
+      return '';
     });
 
-    b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
-      bx.push([$1 || Infinity, $2 || '']);
+    bStr.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+      bx.push([$1 ? Number($1) : Infinity, $2 ?? '']);
+      return '';
     });
 
     while (ax.length && bx.length) {
-      const an = ax.shift();
-      const bn = bx.shift();
+      const an = ax.shift()!;
+      const bn = bx.shift()!;
       const nn = an[0] - bn[0] || an[1].localeCompare(bn[1]);
       if (nn) {
         return nn;
@@ -241,9 +278,12 @@ export class ObjectUtils {
    * if all of their properties (first-level only) share the same value.
    * @param obj1 First object
    * @param obj2 Second object
-   * @returns Whether two objects arer equivalent
+   * @returns Whether two objects are equivalent
    */
-  static objectsAreEquivalent(obj1: object, obj2: object): boolean {
+  static objectsAreEquivalent(
+    obj1: Record<string, unknown>,
+    obj2: Record<string, unknown>
+  ): boolean {
     if (obj1 === obj2) {
       return true;
     }
@@ -269,18 +309,22 @@ export class ObjectUtils {
    * @param keys Keys to remove
    * @returns A new object
    */
-  static removeKeys(obj: object, keys: string[]): object {
-    const newObj = Object.keys(obj)
+  static removeKeys(
+    obj: Record<string, unknown>,
+    keys: string[]
+  ): Record<string, unknown> {
+    return Object.keys(obj)
       .filter((key) => keys.indexOf(key) < 0)
-      .reduce((_obj, key) => {
-        _obj[key] = obj[key];
-        return _obj;
-      }, {});
-
-    return newObj;
+      .reduce(
+        (_obj, key) => {
+          _obj[key] = obj[key];
+          return _obj;
+        },
+        {} as Record<string, unknown>
+      );
   }
 
-  static isEmpty(obj: object): boolean {
+  static isEmpty(obj: Record<string, unknown>): boolean {
     return Object.keys(obj).length === 0;
   }
 }

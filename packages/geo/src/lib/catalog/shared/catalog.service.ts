@@ -584,13 +584,12 @@ export class CatalogService {
             return items;
           }
 
-          const layerItem: CatalogItemLayer<ImageLayerOptions> =
-            this.prepareCatalogItemLayer(
-              layer,
-              idGroup,
-              layersQueryFormat,
-              catalog
-            );
+          const layerItem = this.prepareCatalogItemLayer(
+            layer,
+            idGroup,
+            layersQueryFormat,
+            catalog
+          ) as CatalogItemLayer<ImageLayerOptions>;
 
           items.push(layerItem);
         }
@@ -784,7 +783,7 @@ export class CatalogService {
     );
 
     const items: CatalogItemLayer[] = layers
-      .map((layer: ArcGISRestCapabilitiesLayer) => {
+      .map((layer) => {
         const propertiesToForce = this.computeForcedProperties(
           layer.name,
           catalog.forcedProperties
@@ -851,7 +850,7 @@ export class CatalogService {
           }
         } as CatalogItem);
       })
-      .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+      .filter((item) => item !== undefined) as CatalogItemLayer[];
     const groupHandledLayersIds: string[] = [];
     const groupedItems: CatalogItemLayer[] = groups
       .map((group) => {

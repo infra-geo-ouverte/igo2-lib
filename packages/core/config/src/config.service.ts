@@ -56,7 +56,7 @@ export class ConfigService<T extends object = Record<string, any>> {
       value = this.handleDeprecationPossibility(key);
     }
 
-    return value ?? defaultValue;
+    return (value ?? defaultValue) as T;
   }
 
   private handleDeprecatedConfig(key: string): void {
@@ -104,11 +104,11 @@ export class ConfigService<T extends object = Record<string, any>> {
             return throwError(error.error || 'Server error');
           })
         )
-        .subscribe((configResponse: object) => {
+        .subscribe((configResponse) => {
           this.config = ObjectUtils.mergeDeep(
-            ObjectUtils.mergeDeep({ version }, baseConfig),
+            ObjectUtils.mergeDeep({ version }, baseConfig ?? {}),
             configResponse
-          );
+          ) as T;
           this._isLoaded$.next(true);
           resolve(true);
         });

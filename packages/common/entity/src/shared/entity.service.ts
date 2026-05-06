@@ -117,13 +117,15 @@ export class EntityService {
     const path = relation.choiceList?.path;
 
     const items = path?.list
-      ? ObjectUtils.resolve(options, path.list)
+      ? (ObjectUtils.resolve(options, path.list) as SelectOption[])
       : options;
 
     return items.map((item) => {
-      const id = path?.id ? ObjectUtils.resolve(item, path.id) : item.id;
+      const id = path?.id
+        ? (ObjectUtils.resolve(item, path.id) as SelectOption['id'])
+        : item.id;
       const value = path?.value
-        ? ObjectUtils.resolve(item, path.value)
+        ? (ObjectUtils.resolve(item, path.value) as SelectOption['value'])
         : item.value;
       return { id, value } satisfies SelectOption;
     });

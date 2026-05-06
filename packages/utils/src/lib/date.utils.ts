@@ -25,9 +25,9 @@ export function isTimeFrame(
   );
 }
 
-export function resolveDate(input?: Date | TimeFrame): Date | undefined {
+export function resolveDate(input: Date | TimeFrame): Date | null {
   if (isTimeFrame(input)) {
     return new Date();
   }
-  return input instanceof Date ? input : undefined;
+  return input instanceof Date ? input : null;
 }

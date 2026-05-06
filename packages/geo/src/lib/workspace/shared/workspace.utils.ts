@@ -22,7 +22,11 @@ import {
   SourceFieldsOptionsParams
 } from '../../datasource/shared/datasources/datasource.interface';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { LayerService, VectorLayer } from '../../layer/shared';
+import {
+  AnyLayerItemOptions,
+  LayerService,
+  VectorLayer
+} from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { FeatureWorkspace } from './feature-workspace';
@@ -88,9 +92,9 @@ export function addOrRemoveLayer(
   layerName: string,
   layerService: LayerService
 ) {
-  const so = ObjectUtils.removeUndefined({
+  const so = ObjectUtils.removeUndefined<AnyLayerItemOptions>({
     sourceOptions: {
-      type: type,
+      type: type as any,
       url,
       optionsFromCapabilities: true,
       optionsFromApi: true,
