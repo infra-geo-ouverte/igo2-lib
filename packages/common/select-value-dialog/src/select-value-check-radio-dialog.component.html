@@ -1,18 +1,18 @@
-<h1 mat-dialog-title>{{ data.title | translate }}</h1>
+<h1 mat-dialog-title>{{ data?.title | translate }}</h1>
 
 <form class="igo-form" [formGroup]="formGroup">
   <section class="choices-section">
-    @for (choice of data.choices; track choice; let i = $index) {
-      @if (data.type === 'checkbox') {
+    @for (choice of data?.choices; track choice; let i = $index) {
+      @if (data?.type === 'checkbox') {
         <mat-checkbox formControlName="{{ choice.value }}">{{
           choice.title || choice.value
         }}</mat-checkbox>
       }
     }
 
-    @if (data.type === 'radio') {
+    @if (data?.type === 'radio') {
       <mat-radio-group (change)="onChange($event)">
-        @for (choice of data.choices; track choice) {
+        @for (choice of data?.choices; track choice) {
           <mat-radio-button [value]="choice.value">
             {{ choice.title || choice.value }}
           </mat-radio-button>
@@ -23,7 +23,7 @@
   <div mat-dialog-actions>
     <div class="button-group">
       <button matButton="elevated" type="button" (click)="cancel()">
-        {{ data.cancelButtonText | translate }}
+        {{ data?.cancelButtonText | translate }}
       </button>
       <button
         [disabled]="isDisabled$ | async"
@@ -33,7 +33,7 @@
         color="primary"
         (click)="save()"
       >
-        {{ data.processButtonText | translate }}
+        {{ data?.processButtonText | translate }}
       </button>
     </div>
   </div>

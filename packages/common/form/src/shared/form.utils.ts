@@ -1,6 +1,6 @@
 import { AbstractControl } from '@angular/forms';
 
-import { Form, FormField, FormFieldGroup } from './form.interfaces';
+import { Form, FormField } from './form.interfaces';
 
 export function formControlIsRequired(control: AbstractControl): boolean {
   if (control.validator) {
@@ -42,12 +42,14 @@ export function getControlErrorMessage(
 }
 
 export function getAllFormFields(form: Form): FormField[] {
-  return form.groups.reduce((acc: FormField[], group: FormFieldGroup) => {
-    return acc.concat(group.fields);
-  }, [].concat(form.fields));
+  const fields = form.fields ? [...form.fields] : [];
+  return form.groups.reduce((acc, group) => acc.concat(group.fields), fields);
 }
 
-export function getFormFieldByName(form: Form, name: string): FormField {
+export function getFormFieldByName(
+  form: Form,
+  name: string
+): FormField | undefined {
   const fields = getAllFormFields(form);
   return fields.find((field: FormField) => {
     return field.name === name;

@@ -1,6 +1,7 @@
 import { CdkTree } from '@angular/cdk/tree';
 import {
   Directive,
+  EffectRef,
   ElementRef,
   OnDestroy,
   Renderer2,
@@ -55,11 +56,11 @@ export class TreeDragDropDirective<
   private elementRef = inject(ElementRef);
   private renderer = inject(Renderer2);
 
-  draggedNode: T;
+  draggedNode?: T;
   dropNodeTarget = signal<T | null>(null);
-  expandTimeout: number;
-  nodesListeners: DragNodeListeners[] | undefined;
-  private nodesEffect = effect(() => {
+  expandTimeout?: number;
+  nodesListeners?: DragNodeListeners[];
+  private nodesEffect?: EffectRef = effect(() => {
     this.nodes();
     this.addAllListener();
   });
@@ -69,7 +70,7 @@ export class TreeDragDropDirective<
   dragging = signal(false);
   // Use a Set or just manage classes manually since SelectionModel was providing simple toggle
   // But we can stick to simple class logic
-  highlightedNode: T | undefined;
+  highlightedNode?: T;
 
   readonly tree = input.required<CdkTree<T, K>>();
   readonly childrenAccessor = input.required<(node: T) => T[]>();
@@ -190,7 +191,7 @@ export class TreeDragDropDirective<
 
     if (this.draggedNode) {
       this.removeNodeClass(this.draggedNode.id, '--dragged');
-      this.draggedNode = null;
+      this.draggedNode = undefined;
     }
 
     this.dragLeave();
@@ -208,8 +209,8 @@ export class TreeDragDropDirective<
   }
 
   dragLeave(): void {
-    clearTimeout(this.expandTimeout);
-    this.expandTimeout = null;
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
+    this.expandTimeout = undefined;
     if (this.highlightedNode) {
       this.removeNodeClass(this.highlightedNode.id, '--drag-hover');
       this.highlightedNode = undefined;
@@ -238,9 +239,11 @@ export class TreeDragDropDirective<
       dropPosition.level !== targetNodeLevel
     ) {
       const ancestor = this.getNodeAncestors(nodeTarget.id, dropPosition.level);
-      this.dropNodeTarget.set(ancestor);
-      nodeTarget = ancestor;
-      targetNodeLevel = this.getNodeLevel(nodeTarget);
+      if (ancestor) {
+        this.dropNodeTarget.set(ancestor);
+        nodeTarget = ancestor;
+        targetNodeLevel = this.getNodeLevel(nodeTarget);
+      }
     }
 
     if (this.isGroup(nodeTarget)) {
@@ -248,17 +251,20 @@ export class TreeDragDropDirective<
         const isExpanded = this.tree().isExpanded(nodeTarget);
         if (isExpanded) {
           const children = this.getDirectDescendants(nodeTarget);
-          if (children[0]?.id === this.draggedNode.id) {
+          if (this.draggedNode && children[0]?.id === this.draggedNode.id) {
             return;
           }
         }
 
         this.tree().expand(nodeTarget);
-        return this.dropped.emit({
-          node: this.draggedNode,
-          ref: nodeTarget,
-          position: dropPosition.type
-        });
+        if (this.draggedNode) {
+          return this.dropped.emit({
+            node: this.draggedNode,
+            ref: nodeTarget,
+            position: dropPosition.type
+          });
+        }
+        return;
       }
     }
 
@@ -267,18 +273,23 @@ export class TreeDragDropDirective<
       dropPosition.level !== targetNodeLevel
     ) {
       const ancestor = this.getNodeAncestors(nodeTarget.id);
-      return this.dropped.emit({
+      if (this.draggedNode && ancestor) {
+        return this.dropped.emit({
+          node: this.draggedNode,
+          ref: ancestor,
+          position: dropPosition.type
+        });
+      }
+      return;
+    }
+
+    if (this.draggedNode && nodeTarget) {
+      this.dropped.emit({
         node: this.draggedNode,
-        ref: ancestor,
+        ref: nodeTarget,
         position: dropPosition.type
       });
     }
-
-    this.dropped.emit({
-      node: this.draggedNode,
-      ref: nodeTarget,
-      position: dropPosition.type
-    });
   }
 
   private addNodeClass(id: string | number, className: string): void {
@@ -312,7 +323,10 @@ export class TreeDragDropDirective<
     const listeners: [string, EventListenerOrEventListenerObject][] = [
       ['dragstart', () => this.onDragStart(node.data)],
       ['dragend', () => this.dragEnd()],
-      ['dragover', (event: DragEvent) => this.dragOver(node.data, event)],
+      [
+        'dragover',
+        (event: Event) => this.dragOver(node.data, event as DragEvent)
+      ],
       ['dragleave', () => this.dragLeave()]
     ];
     element.setAttribute('draggable', 'true');
@@ -330,7 +344,7 @@ export class TreeDragDropDirective<
         element.removeEventListener(type, listener);
       });
     });
-    this.nodesListeners = null;
+    this.nodesListeners = undefined;
   }
 
   private setHighlightedNode(node: T): void {
@@ -420,6 +434,9 @@ export class TreeDragDropDirective<
   }
 
   private canDropNode(hoveredNode: T, position: DropPosition): DropPermission {
+    if (!this.draggedNode) {
+      return { canDrop: false };
+    }
     if (this.isGroup(this.draggedNode)) {
       return this.canDropGroup(hoveredNode, position);
     }
@@ -440,7 +457,9 @@ export class TreeDragDropDirective<
     message?: string;
     params?: { [key: string]: unknown };
   } {
-    // On ne veut pas permettre le Drop pour un groupe qui s'auto référence
+    if (!this.draggedNode) {
+      return { canDrop: false };
+    }
     if (hoveredNode.id === this.draggedNode.id) {
       return {
         canDrop: false,
@@ -469,10 +488,16 @@ export class TreeDragDropDirective<
     };
   }
 
-  private validateMaxHierarchyLevel(position: DropPosition): DropPermission {
+  private validateMaxHierarchyLevel(
+    position: DropPosition
+  ): DropPermission | undefined {
+    if (!this.draggedNode) {
+      return { canDrop: false };
+    }
+
     const maxLevel = this.maxLevel();
     if (!maxLevel) {
-      return;
+      return undefined;
     }
 
     let level =
@@ -490,6 +515,8 @@ export class TreeDragDropDirective<
         params: { value: maxLevel }
       };
     }
+
+    return undefined;
   }
 
   private getDescendants(node: T): T[] {
@@ -502,13 +529,14 @@ export class TreeDragDropDirective<
   }
 
   private isHoverDescendant(id: string | number, _hoveredNode: T): boolean {
+    if (!this.draggedNode) return false;
     return this.getDescendants(this.draggedNode).some(
       (child) => child.id === id
     );
   }
 
   private getPosition(event: DragEvent, hoveredNode: T): DropPosition {
-    if (this.isGroup(this.draggedNode)) {
+    if (this.draggedNode && this.isGroup(this.draggedNode)) {
       if (this.isHoverDescendant(hoveredNode.id, hoveredNode)) {
         hoveredNode = this.draggedNode;
       }
@@ -534,6 +562,7 @@ export class TreeDragDropDirective<
 
   private getPositionY(node: T, type: DropPositionType): number {
     const element = this.getNodeElement(node);
+    if (!element) return 0;
     const rect = element.getBoundingClientRect();
 
     return type === 'below'
@@ -543,11 +572,13 @@ export class TreeDragDropDirective<
 
   private getPositionType(event: DragEvent, hoveredNode: T): DropPositionType {
     const target = this.getNodeElement(hoveredNode);
+    if (!target) return 'above';
     const rect = target.getBoundingClientRect();
     const middle = rect.top + rect.height / 2;
     const y = event.y;
 
-    const selfReferencing = this.draggedNode.id === hoveredNode.id;
+    const selfReferencing =
+      this.draggedNode && this.draggedNode.id === hoveredNode.id;
     if (this.isGroup(hoveredNode) && !selfReferencing) {
       const tolerence = 5;
       if (y <= middle + tolerence && y >= middle - tolerence) {
@@ -577,6 +608,7 @@ export class TreeDragDropDirective<
 
     if (type === 'below' && lastChild?.id === hoveredNode.id) {
       const target = this.getNodeElement(hoveredNode);
+      if (!target) return hoveredNodeLevel;
       const rect = target.getBoundingClientRect();
 
       const indentation = 24;

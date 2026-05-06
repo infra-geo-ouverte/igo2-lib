@@ -1,11 +1,11 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NgClass } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
   ElementRef,
-  OnChanges,
-  OnInit,
+  afterNextRender,
+  computed,
+  effect,
   input,
   output,
   viewChild
@@ -45,13 +45,11 @@ import { TableModel } from './table-model.interface';
     IgoLanguageModule
   ]
 })
-export class TableComponent implements OnChanges, OnInit, AfterViewInit {
-  readonly database = input<TableDatabase>(undefined);
-  readonly model = input<TableModel>(undefined);
+export class TableComponent {
+  readonly database = input.required<TableDatabase>();
+  readonly model = input.required<TableModel>();
   readonly hasFilterInput = input(true);
 
-  public displayedColumns;
-  public dataSource: TableDataSource | null;
   public selection = new SelectionModel<any>(true, []);
 
   readonly select = output<{
@@ -63,74 +61,71 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   readonly filter = viewChild<ElementRef>('filter');
   readonly sort = viewChild(MatSort);
 
-  ngOnInit() {
+  readonly displayedColumns = computed(() => {
     const model = this.model();
-    this.dataSource = new TableDataSource(this.database(), model, this.sort());
-
-    if (model) {
-      this.displayedColumns = model.columns
-        .filter((c) => c.displayed !== false)
-        .map((c) => c.name);
-
-      if (model.selectionCheckbox) {
-        this.displayedColumns.unshift('selectionCheckbox');
-      }
-      if (model.actions && model.actions.length) {
-        this.displayedColumns.push('action');
-      }
+    const cols = model.columns
+      .filter((c) => c.displayed !== false)
+      .map((c) => c.name);
+    if (model.selectionCheckbox) {
+      cols.unshift('selectionCheckbox');
     }
+    if (model.actions?.length) {
+      cols.push('action');
+    }
+    return cols;
+  });
+
+  readonly dataSource = computed(
+    () => new TableDataSource(this.database(), this.model())
+  );
+
+  constructor() {
+    effect(() => {
+      this.dataSource().sort = this.sort();
+    });
 
     this.selection.changed.subscribe((e) => this.select.emit(e));
-  }
 
-  ngAfterViewInit() {
-    const filter = this.filter();
-    if (filter) {
-      fromEvent(filter.nativeElement, 'keyup')
-        .pipe(debounceTime(150), distinctUntilChanged())
-        .subscribe(() => {
-          if (!this.dataSource) {
-            return;
-          }
-          this.dataSource.filter = this.filter().nativeElement.value;
-        });
-    }
-  }
-
-  ngOnChanges(change) {
-    if (change.database) {
-      this.dataSource = new TableDataSource(
-        this.database(),
-        this.model(),
-        this.sort()
-      );
-      this.selection.clear();
-    }
+    afterNextRender(() => {
+      const filter = this.filter();
+      if (filter) {
+        fromEvent(filter.nativeElement, 'keyup')
+          .pipe(debounceTime(150), distinctUntilChanged())
+          .subscribe(() => {
+            this.dataSource().filter = filter.nativeElement.value;
+          });
+      }
+    });
   }
 
   getActionColor(colorId: number): string {
     return TableActionColor[colorId];
   }
 
-  getValue(row, key) {
+  getValue(row: any, key: string): any {
     return ObjectUtils.resolve(row, key);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selection.selected.length;
-    const numRows = this.database().data.length;
+    const database = this.database();
+    const numRows = database ? database.data.length : 0;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    const database = this.database();
+    if (!database) {
+      return;
+    }
     this.isAllSelected()
       ? this.selection.clear()
-      : this.database().data.forEach((row) => this.selection.select(row));
+      : database.data.forEach((row) => this.selection.select(row));
   }
 
-  handleClickAction(event, action, row) {
+  handleClickAction(event: MouseEvent, action: any, row: any) {
     event.stopPropagation();
     action.click(row);
   }

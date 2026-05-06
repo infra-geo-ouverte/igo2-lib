@@ -71,7 +71,7 @@ export class EntityTableRowDirective {
   /**
    * Scroll behavior on selection
    */
-  readonly scrollBehavior = input<EntityTableScrollBehavior>(
+  readonly scrollBehavior = input<EntityTableScrollBehavior | undefined>(
     EntityTableScrollBehavior.Auto
   );
 

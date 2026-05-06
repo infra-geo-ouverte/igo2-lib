@@ -3,8 +3,8 @@ import { MatSort } from '@angular/material/sort';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, merge } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { TableDatabase } from './table-database';
 import { TableModel } from './table-model.interface';
@@ -18,10 +18,15 @@ export class TableDataSource extends DataSource<any> {
   }
   private _filterChange = new BehaviorSubject('');
 
+  private _sort$ = new BehaviorSubject<MatSort | undefined>(undefined);
+
+  set sort(sort: MatSort | undefined) {
+    this._sort$.next(sort);
+  }
+
   constructor(
     private _database: TableDatabase,
-    private _model: TableModel,
-    private _sort: MatSort
+    private _model: TableModel
   ) {
     super();
   }
@@ -32,19 +37,17 @@ export class TableDataSource extends DataSource<any> {
     if (!this._database) {
       return merge([]);
     }
-    const displayDataChanges = [
+    const sortChange$ = this._sort$.pipe(
+      switchMap((sort) => (sort ? sort.sortChange : EMPTY))
+    );
+
+    return merge(
       this._database.dataChange,
       this._filterChange,
-      this._sort.sortChange
-    ];
-
-    return merge(...displayDataChanges).pipe(
-      map(() => {
-        return this.getFilteredData(this._database.data);
-      }),
-      map((data) => {
-        return this.getSortedData(data);
-      })
+      sortChange$
+    ).pipe(
+      map(() => this.getFilteredData(this._database.data)),
+      map((data) => this.getSortedData(data))
     );
   }
 
@@ -52,7 +55,7 @@ export class TableDataSource extends DataSource<any> {
     // empty
   }
 
-  getFilteredData(data): any[] {
+  getFilteredData(data: any[]): any[] {
     if (!this.filter) {
       return data;
     }
@@ -68,25 +71,20 @@ export class TableDataSource extends DataSource<any> {
   }
 
   getSortedData(data: any[]): any[] {
-    if (!this._sort.active || this._sort.direction === '') {
+    const sort = this._sort$.value;
+    if (!sort || !sort.active || sort.direction === '') {
       return data;
     }
 
     return data.sort((a, b) => {
-      const propertyA: number | string = ObjectUtils.resolve(
-        a,
-        this._sort.active
-      ) as number | string;
-      const propertyB: number | string = ObjectUtils.resolve(
-        b,
-        this._sort.active
-      ) as number | string;
+      const propertyA: number | string = ObjectUtils.resolve(a, sort.active) as
+        | number
+        | string;
+      const propertyB: number | string = ObjectUtils.resolve(b, sort.active) as
+        | number
+        | string;
 
-      return ObjectUtils.naturalCompare(
-        propertyB,
-        propertyA,
-        this._sort.direction
-      );
+      return ObjectUtils.naturalCompare(propertyB, propertyA, sort.direction);
     });
   }
 }

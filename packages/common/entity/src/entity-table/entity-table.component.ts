@@ -25,16 +25,25 @@ import {
   UntypedFormGroup
 } from '@angular/forms';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule
+} from '@angular/material/checkbox';
 import {
   DateAdapter,
   ErrorStateMatcher,
   MatNativeDateModule,
   MatOptionModule
 } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  MatDatepickerInputEvent,
+  MatDatepickerModule
+} from '@angular/material/datepicker';
 import {
   MatFormFieldControl,
   MatFormFieldModule
@@ -42,7 +51,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -158,31 +167,31 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Observable of the selection,s state
    * @internal
    */
-  readonly selectionState$ = new BehaviorSubject<EntityTableSelectionState>(
-    undefined
-  );
+  readonly selectionState$ = new BehaviorSubject<
+    EntityTableSelectionState | undefined
+  >(undefined);
 
   /**
    * Subscription to the store's selection
    */
-  private selection$$: Subscription;
+  private selection$$?: Subscription;
 
   /**
    * Subscription to the dataSource
    */
-  private dataSource$$: Subscription;
+  private dataSource$$?: Subscription;
 
   /**
    * The last record checked. Useful for selecting
    * multiple records by holding the shift key and checking
    * checkboxes.
    */
-  private lastRecordCheckedKey: EntityKey;
+  private lastRecordCheckedKey?: EntityKey;
 
   /**
    * Entity store
    */
-  readonly store = input<EntityStore<object>>(undefined);
+  readonly store = input<EntityStore<object>>();
 
   /**
    * Table paginator
@@ -192,20 +201,20 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.dataSource.paginator = value;
   }
 
-  get paginator(): MatPaginator {
+  get paginator(): MatPaginator | undefined {
     return this._paginator;
   }
-  private _paginator: MatPaginator;
+  private _paginator?: MatPaginator;
 
   /**
    * Table template
    */
-  readonly template = input<EntityTableTemplate>(undefined);
+  readonly template = input<EntityTableTemplate>();
 
   /**
    * Scroll behavior on selection
    */
-  readonly scrollBehavior = input<EntityTableScrollBehavior>(
+  readonly scrollBehavior = input<EntityTableScrollBehavior | undefined>(
     EntityTableScrollBehavior.Auto
   );
 
@@ -222,7 +231,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Paginator options
    */
-  readonly paginatorOptions = input<EntityTablePaginatorOptions>(undefined);
+  readonly paginatorOptions = input<EntityTablePaginatorOptions>();
 
   /**
    * Event emitted when an entity (row) is clicked
@@ -249,9 +258,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get headers(): string[] {
-    let columns = this.template()
-      .columns.filter((column: EntityTableColumn) => column.visible !== false)
-      .map((column: EntityTableColumn) => column.name);
+    let columns =
+      this.template()
+        ?.columns.filter((column) => column.visible !== false)
+        .map((column) => column.name) ?? [];
 
     if (this.selectionCheckbox === true) {
       columns = ['selectionCheckbox'].concat(columns);
@@ -271,7 +281,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selection(): boolean {
-    return this.template().selection || false;
+    return this.template()?.selection || false;
   }
 
   /**
@@ -279,7 +289,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selectionCheckbox(): boolean {
-    return this.template().selectionCheckbox || false;
+    return this.template()?.selectionCheckbox || false;
   }
 
   /**
@@ -287,7 +297,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   get selectMany(): boolean {
-    return this.template().selectMany || false;
+    return this.template()?.selectMany || false;
   }
 
   /**
@@ -296,12 +306,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   get fixedHeader(): boolean {
     const template = this.template();
-    return template.fixedHeader === undefined ? true : template.fixedHeader;
+    return template?.fixedHeader === undefined ? true : template.fixedHeader;
   }
 
   get tableHeight(): string {
     const template = this.template();
-    return template.tableHeight ? template.tableHeight : 'auto';
+    return template?.tableHeight ? template.tableHeight : 'auto';
   }
 
   constructor() {
@@ -316,7 +326,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
     this.store()
-      .state.change$.pipe(debounceTime(100))
+      ?.state.change$.pipe(debounceTime(100))
       .subscribe(() => {
         this.handleDatasource();
         this.refresh();
@@ -336,15 +346,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process text or number value change (edition)
    */
-  onValueChange(column: string, record: EntityRecord<any>, event) {
+  onValueChange(column: string, record: EntityRecord<any>, event: Event) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = event.target.value;
+    record.entity.properties[key] = (event.target as HTMLInputElement)?.value;
   }
 
   /**
    * Process boolean value change (edition)
    */
-  onBooleanValueChange(column: string, record: EntityRecord<any>, event) {
+  onBooleanValueChange(
+    column: string,
+    record: EntityRecord<any>,
+    event: MatCheckboxChange
+  ) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = event.checked;
   }
@@ -352,7 +366,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process select value change (edition)
    */
-  onSelectValueChange(column: string, record: EntityRecord<any>, event) {
+  onSelectValueChange(
+    column: string,
+    record: EntityRecord<any>,
+    event: MatSelectChange
+  ) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = event.value;
   }
@@ -363,7 +381,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   onAutocompleteValueChange(
     column: EntityTableColumn,
     record: EntityRecord<any>,
-    event
+    event: MatAutocompleteSelectedEvent
   ) {
     this.formGroup.controls[column.name].setValue(event.option.viewValue);
     const key = this.getColumnKeyWithoutPropertiesTag(column.name);
@@ -373,7 +391,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process date value change (edition)
    */
-  onDateChange(column: string, record: EntityRecord<any>, event) {
+  onDateChange(
+    column: string,
+    record: EntityRecord<any>,
+    event: MatDatepickerInputEvent<Date>
+  ) {
     const format = 'YYYY-MM-DD';
     const value = moment(event.value).format(format);
     const key = this.getColumnKeyWithoutPropertiesTag(column);
@@ -386,7 +408,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   private enableEdit(record: EntityRecord<any>) {
     const item = record.entity.properties || record.entity;
-    this.template().columns.forEach((column) => {
+    this.template()?.columns.forEach((column) => {
       column.title =
         column.validation?.mandatory && !column.title.includes('*')
           ? column.title + ' *'
@@ -431,25 +453,28 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         ].valueChanges.pipe(
           map((value) => {
             if (value?.length) {
-              return column.domainValues?.filter((option) => {
-                const filterNormalized = value
-                  ? value
-                      .toLowerCase()
-                      .normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                  : '';
-                const featureNameNormalized = option.value
-                  .toLowerCase()
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '');
-                return featureNameNormalized.includes(filterNormalized);
-              });
+              return (
+                column.domainValues?.filter((option) => {
+                  const filterNormalized = value
+                    ? value
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                    : '';
+                  const featureNameNormalized = option.value
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '');
+                  return featureNameNormalized.includes(filterNormalized);
+                }) ?? []
+              );
             }
+            return [];
           })
         );
 
         let formControlValue = item[key];
-        column.domainValues.forEach((option) => {
+        column.domainValues?.forEach((option) => {
           if (
             typeof formControlValue === 'string' &&
             StringUtils.isValidNumber(formControlValue) &&
@@ -511,13 +536,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   private handleDatasource() {
     this.unsubscribeStore();
     this.selection$$ = this.store()
-      .stateView.manyBy$(
+      ?.stateView.manyBy$(
         (record: EntityRecord<object>) => record.state.selected === true
       )
       .subscribe((records: EntityRecord<object>[]) => {
         const firstSelected = records[0];
         const firstSelectedStateviewPosition = this.store()
-          .stateView.all()
+          ?.stateView.all()
           .indexOf(firstSelected);
         const pageMax = this.paginator
           ? this.paginator.pageSize * (this.paginator.pageIndex + 1)
@@ -526,18 +551,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         if (
           this.paginator &&
+          firstSelectedStateviewPosition !== undefined &&
           (firstSelectedStateviewPosition < pageMin ||
             firstSelectedStateviewPosition >= pageMax)
         ) {
           const pageToReach = Math.floor(
             firstSelectedStateviewPosition / this.paginator.pageSize
           );
-          this.dataSource.paginator.pageIndex = pageToReach;
+          this.dataSource.paginator!.pageIndex = pageToReach;
         }
         this.selectionState$.next(this.computeSelectionState(records));
       });
     this.dataSource$$ = this.store()
-      .stateView.all$()
+      ?.stateView.all$()
       .subscribe((all) => {
         if (all[0]) {
           this.enableEdit(all[0]);
@@ -545,7 +571,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         this.dataSource.data = all.map((record) => {
           return {
             record,
-            cellData: this.template().columns.reduce(
+            cellData: (this.template()?.columns.reduce(
               (cellData: CellData, column) => {
                 const value = this.getValue(record, column);
                 cellData[column.name] = {
@@ -556,8 +582,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
                 };
                 return cellData;
               },
-              {}
-            )
+              {} as CellData
+            ) ?? {}) as CellData
           };
         });
       });
@@ -610,12 +636,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   onSort(event: { active: string; direction: string }) {
     const direction = event.direction;
-    const column = this.template().columns.find(
+    const column = this.template()?.columns.find(
       (c: EntityTableColumn) => c.name === event.active
     );
 
-    if (direction === 'asc' || direction === 'desc') {
-      this.store().stateView.sort({
+    if (column && (direction === 'asc' || direction === 'desc')) {
+      this.store()?.stateView.sort({
         valueAccessor: (record: EntityRecord<object>) =>
           this.getValue(record, column),
         direction,
@@ -624,7 +650,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       this.entitySortChange.emit({ column, direction });
       this.entitySortChange$.next(true);
     } else {
-      this.store().stateView.sort(undefined);
+      this.store()?.stateView.sort(undefined);
     }
   }
 
@@ -634,7 +660,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onRowClick(record: EntityRecord<object>) {
-    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store()?.stateView.getKey(record);
     this.entityClick.emit(record.entity);
   }
 
@@ -651,7 +677,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     const entity = record.entity;
-    this.store().state.update(entity, { selected: true }, true);
+    this.store()?.state.update(entity, { selected: true }, true);
     this.entitySelectChange.emit({ added: [entity] });
   }
 
@@ -665,9 +691,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    const entities = this.store().view.all();
+    const entities = this.store()?.view.all();
+    if (entities === undefined) return;
     this.entitySelectChange.emit({ added: [entities] });
-    this.store().state.updateMany(entities, { selected: toggle });
+    this.store()?.state.updateMany(entities, { selected: toggle });
   }
 
   /**
@@ -684,11 +711,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     const entity = record.entity;
     const exclusive = toggle === true && !this.selectMany;
-    this.store().state.update(entity, { selected: toggle }, exclusive);
+    this.store()?.state.update(entity, { selected: toggle }, exclusive);
     if (toggle === true) {
       this.entitySelectChange.emit({ added: [entity] });
     }
-    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store()?.stateView.getKey(record);
   }
 
   /**
@@ -717,16 +744,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     // See https://github.com/angular/components/issues/6232
     const range = window.document.createRange();
     range.selectNode(event.target as HTMLElement);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
+    window.getSelection()?.removeAllRanges();
+    window.getSelection()?.addRange(range);
     event.stopImmediatePropagation();
 
-    const records = this.store().stateView.all();
+    const records = this.store()?.stateView.all();
+    if (!records) return;
     const recordIndex = records.indexOf(record);
-    const lastRecordChecked = this.store().stateView.get(
+    const lastRecordChecked = this.store()?.stateView.get(
       this.lastRecordCheckedKey
     );
-    const lastRecordIndex = records.indexOf(lastRecordChecked);
+    const lastRecordIndex = lastRecordChecked
+      ? records.indexOf(lastRecordChecked)
+      : -1;
     const indexes = [recordIndex, lastRecordIndex];
     const selectRecords = records.slice(
       Math.min(...indexes),
@@ -736,11 +766,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const entities = selectRecords.map(
       (_record: EntityRecord<object>) => _record.entity
     );
-    this.store().state.updateMany(entities, { selected: toggle });
+    this.store()?.state.updateMany(entities, { selected: toggle });
     if (toggle === true) {
       this.entitySelectChange.emit({ added: entities });
     }
-    this.lastRecordCheckedKey = this.store().stateView.getKey(record);
+    this.lastRecordCheckedKey = this.store()?.stateView.getKey(record);
   }
 
   /**
@@ -755,7 +785,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const selectionCount = selectedRecords.length;
     return selectionCount === 0
       ? states.None
-      : selectionCount === this.store().stateView.count
+      : selectionCount === this.store()?.stateView.count
         ? states.All
         : states.Some;
   }
@@ -770,7 +800,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     let sortable = column.sort;
     if (sortable === undefined) {
       const template = this.template();
-      sortable = template.sort === undefined ? false : template.sort;
+      sortable = template?.sort === undefined ? false : template.sort;
     }
     return sortable;
   }
@@ -786,25 +816,24 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return state.selected ? state.selected : false;
   }
 
-  isImg(value) {
+  isImg(value: unknown): boolean {
     if (this.isUrl(value)) {
       return (
-        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !==
-        -1
+        ['jpg', 'png', 'gif'].indexOf(
+          value.split('.').pop()?.toLowerCase() ?? ''
+        ) !== -1
       );
-    } else {
-      return false;
     }
+    return false;
   }
 
-  isUrl(value) {
+  isUrl(value: unknown): value is string {
     if (typeof value === 'string') {
       return (
         value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
       );
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -816,15 +845,15 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getValue(record: EntityRecord<object>, column: EntityTableColumn): any {
     const entity = record.entity;
-    let value;
+    let value: any;
     if (column.valueAccessor !== undefined) {
       return column.valueAccessor(entity, record);
     }
     const template = this.template();
-    if (template.valueAccessor !== undefined) {
+    if (template?.valueAccessor !== undefined) {
       return template.valueAccessor(entity, column.name, record);
     }
-    value = this.store().getProperty(entity, column.name);
+    value = this.store()?.getProperty(entity, column.name);
 
     if (column.type === 'boolean') {
       if (value === undefined || value === null || value === '') {
@@ -849,10 +878,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (column.multiple) {
         let list_id;
         typeof value === 'string'
-          ? (list_id = value.match(/[\w.-]+/g).map(Number))
+          ? (list_id = (value.match(/[\w.-]+/g) ?? []).map(Number))
           : (list_id = value);
-        const list_option = [];
-
+        const list_option: any[] = [];
         column.domainValues.forEach((option) => {
           if (list_id.includes(option.id)) {
             if (record.edition) {
@@ -943,18 +971,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     column: EntityTableColumn,
     validationType: string
   ): any {
+    const validation = column.validation as Record<string, unknown>;
     if (
       column.validation !== undefined &&
-      column.validation[validationType] !== undefined
+      validation[validationType] !== undefined
     ) {
-      return column.validation[validationType];
+      return validation[validationType];
     } else {
       return false;
     }
   }
 
-  public isEdition(record) {
-    return record.entity.edition ? true : false;
+  public isEdition(record: EntityRecord<object>): boolean {
+    return (record.entity as any).edition ? true : false;
   }
 
   /**
@@ -987,7 +1016,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   getHeaderClass(): Record<string, boolean> {
-    const func = this.template().headerClassFunc;
+    const func = this.template()?.headerClassFunc;
     if (func instanceof Function) {
       return func();
     }
@@ -1002,7 +1031,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getRowClass(record: EntityRecord<object>): Record<string, boolean> {
     const entity = record.entity;
-    const func = this.template().rowClassFunc;
+    const func = this.template()?.rowClassFunc;
     if (func instanceof Function) {
       return func(entity, record);
     }
@@ -1023,7 +1052,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const entity = record.entity;
     const cls = {};
 
-    const tableFunc = this.template().cellClassFunc;
+    const tableFunc = this.template()?.cellClassFunc;
     if (tableFunc instanceof Function) {
       Object.assign(cls, tableFunc(entity, column, record));
     }
