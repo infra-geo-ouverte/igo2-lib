@@ -4,7 +4,6 @@ import { Injectable, inject } from '@angular/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import { BehaviorSubject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 
 import {
   ALTERNATE_CONFIG_FROM_DEPRECATION,
@@ -17,11 +16,11 @@ import { version } from './version';
   providedIn: 'root'
 })
 export class ConfigService<T extends object = Record<string, any>> {
-  private config: T | null;
+  private config!: T | undefined;
   private httpClient: HttpClient;
   private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
-  private _isLoaded$ = new BehaviorSubject<boolean>(null);
+  private _isLoaded$ = new BehaviorSubject(false);
   isLoaded$ = this._isLoaded$.asObservable();
 
   constructor() {
@@ -35,7 +34,10 @@ export class ConfigService<T extends object = Record<string, any>> {
    */
   public getConfigs(): any {
     Array.from(this.configDeprecated.keys()).map((deprecatedKey) => {
-      const deprecatedValue = ObjectUtils.resolve(this.config, deprecatedKey);
+      const deprecatedValue = ObjectUtils.resolve(
+        this.config ?? {},
+        deprecatedKey
+      );
       if (deprecatedValue !== undefined) {
         this.handleDeprecatedConfig(deprecatedKey);
       }
@@ -47,7 +49,7 @@ export class ConfigService<T extends object = Record<string, any>> {
    * Use to get the data found in config file
    */
   public getConfig<T = any>(key: string, defaultValue?: unknown): T {
-    let value = ObjectUtils.resolve(this.config, key);
+    let value = ObjectUtils.resolve(this.config ?? {}, key);
 
     const isDeprecated = this.configDeprecated.get(key);
     if (isDeprecated && value !== undefined) {
@@ -63,12 +65,12 @@ export class ConfigService<T extends object = Record<string, any>> {
     const options = this.configDeprecated.get(key);
 
     let message = `This config (${key}) is deprecated and will be removed shortly`;
-    if (options.alternativeKey) {
+    if (options?.alternativeKey) {
       message += ` You should use this key (${options.alternativeKey}) as an alternate solution`;
     }
 
     const currentDate = new Date();
-    currentDate >= options.mayBeRemoveIn
+    options?.mayBeRemoveIn && currentDate >= options.mayBeRemoveIn
       ? console.error(message)
       : console.warn(message);
   }
@@ -87,31 +89,30 @@ export class ConfigService<T extends object = Record<string, any>> {
    */
   public load(options: ConfigOptions<T>): void | Promise<unknown> {
     const baseConfig = options.default;
-    if (!options.path) {
+    const path = options.path;
+    if (!path) {
       this.config = baseConfig;
       this._isLoaded$.next(true);
       return;
     }
 
     return new Promise((resolve) => {
-      this.httpClient
-        .get(options.path)
-        .pipe(
-          catchError((error: any): any => {
-            console.log(`Configuration file ${options.path} could not be read`);
-            this._isLoaded$.next(false);
-            resolve(true);
-            return throwError(error.error || 'Server error');
-          })
-        )
-        .subscribe((configResponse) => {
+      this.httpClient.get<Record<string, unknown>>(path).subscribe({
+        next: (configResponse) => {
           this.config = ObjectUtils.mergeDeep(
             ObjectUtils.mergeDeep({ version }, baseConfig ?? {}),
             configResponse
           ) as T;
           this._isLoaded$.next(true);
           resolve(true);
-        });
+        },
+        error: (error) => {
+          console.log(`Configuration file ${path} could not be read`);
+          this._isLoaded$.next(false);
+          resolve(true);
+          return throwError(() => error.error || 'Server error');
+        }
+      });
     });
   }
 }

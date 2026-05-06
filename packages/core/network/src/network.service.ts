@@ -1,10 +1,4 @@
-import {
-  EventEmitter,
-  Injectable,
-  Injector,
-  OnDestroy,
-  inject
-} from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 
 import { MessageService } from '@igo2/core/message';
 
@@ -18,12 +12,11 @@ import { ConnectionState } from './network.interfaces';
 })
 export class NetworkService implements OnDestroy {
   private messageService = inject(MessageService);
-  private injector = inject(Injector);
 
   private stateChangeEventEmitter = new EventEmitter<ConnectionState>();
-  private onlineSubscription: Subscription;
-  private offlineSubscription: Subscription;
-  private previousMessageId;
+  private onlineSubscription?: Subscription;
+  private offlineSubscription?: Subscription;
+  private previousMessageId?: number;
 
   private state: ConnectionState = {
     connection: window.navigator.onLine
@@ -66,12 +59,8 @@ export class NetworkService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    try {
-      this.offlineSubscription.unsubscribe();
-      this.onlineSubscription.unsubscribe();
-    } catch {
-      // empty
-    }
+    this.offlineSubscription?.unsubscribe();
+    this.onlineSubscription?.unsubscribe();
   }
 
   currentState(reportState = true): Observable<ConnectionState> {
