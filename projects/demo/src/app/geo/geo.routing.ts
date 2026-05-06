@@ -18,6 +18,7 @@ import { AppSearchComponent } from './search/search.component';
 import { AppSimpleMapComponent } from './simple-map/simple-map.component';
 import { AppSpatialFilterComponent } from './spatial-filter/spatial-filter.component';
 import { AppTimeFilterComponent } from './time-filter/time-filter.component';
+import { AppVectorDataStylingComponent } from './vector-data-styling/vector-data-styling.component';
 import { AppWorkspaceComponent } from './workspace/workspace.component';
 
 export const routes: Routes = [
@@ -116,5 +117,10 @@ export const routes: Routes = [
     title: 'Workspace',
     path: 'workspace',
     component: AppWorkspaceComponent
+  },
+  {
+    title: 'Vector Data Styling',
+    path: 'vector-data-styling',
+    component: AppVectorDataStylingComponent
   }
 ];
