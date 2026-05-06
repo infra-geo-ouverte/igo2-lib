@@ -23,7 +23,7 @@ export class SpinnerActivityDirective implements OnInit, OnDestroy {
   /**
    * Subscription to the activity service counter
    */
-  private counter$$: Subscription;
+  private counter$$?: Subscription;
 
   /**
    * Subscribe to the activity service counter and display the spinner
@@ -43,6 +43,6 @@ export class SpinnerActivityDirective implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    this.counter$$.unsubscribe();
+    this.counter$$?.unsubscribe();
   }
 }

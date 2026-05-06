@@ -20,12 +20,12 @@ import { startWith } from 'rxjs/operators';
   ]
 })
 export class TimepickerComponent implements OnInit {
-  readonly value = input<Date | TimeFrame>(undefined);
+  readonly value = input<Date | TimeFrame>();
   readonly hourInputLabel = input<string>('Hour');
   readonly minuteInputLabel = input<string>('Minute');
 
-  readonly minHour = input<number | undefined>(undefined);
-  readonly maxHour = input<number | undefined>(undefined);
+  readonly minHour = input<number>();
+  readonly maxHour = input<number>();
 
   @Input()
   set disabled(value: boolean) {
@@ -44,8 +44,8 @@ export class TimepickerComponent implements OnInit {
     minute: number;
   }>();
 
-  hourFormControl: FormControl<number>;
-  minuteFormControl: FormControl<number>;
+  hourFormControl!: FormControl<number>;
+  minuteFormControl!: FormControl<number>;
 
   get hours(): number[] {
     const step = this.interval() >= 60 ? this.interval() / 60 : 1;
@@ -74,17 +74,16 @@ export class TimepickerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const date = resolveDate(this.value() ?? new Date());
+    const date = resolveDate(this.value() ?? new Date())!;
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    this.hourFormControl = new FormControl({
-      value: hours,
-      disabled: this.disabled || isTimeFrame(this.value())
+    this.hourFormControl = new FormControl(hours, {
+      nonNullable: true
     });
-    this.minuteFormControl = new FormControl({
-      value: minutes,
-      disabled: this.disabled || isTimeFrame(this.value())
+    this.minuteFormControl = new FormControl(minutes, {
+      nonNullable: true
     });
+    this.setDisabledState();
 
     combineLatest([
       this.hourFormControl.valueChanges.pipe(startWith(hours)),
@@ -93,14 +92,14 @@ export class TimepickerComponent implements OnInit {
   }
 
   reset(value: Date | TimeFrame): void {
-    const date = resolveDate(value);
+    const date = resolveDate(value)!;
     this.hourFormControl.setValue(date.getHours(), { emitEvent: false });
     this.minuteFormControl.setValue(date.getMinutes(), { emitEvent: false });
   }
 
   private setDisabledState(): void {
     if (!this.hourFormControl || !this.minuteFormControl) return;
-    const disabled = this.disabled || isTimeFrame(this.value());
+    const disabled = this.disabled || isTimeFrame(this.value() as any);
     this.toggleDisabled(this.hourFormControl, disabled);
     this.toggleDisabled(this.minuteFormControl, disabled);
   }

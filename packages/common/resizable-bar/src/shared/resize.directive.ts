@@ -6,8 +6,8 @@ import { Subscription, fromEvent } from 'rxjs';
   selector: '[igoResize]'
 })
 export class ResizeDirective {
-  mouseMove$$: Subscription;
-  mouseUp$$: Subscription;
+  private mouseMove$$?: Subscription;
+  private mouseUp$$?: Subscription;
 
   readonly change = output<MouseEvent>();
 
@@ -17,8 +17,8 @@ export class ResizeDirective {
       this._unsubscribe();
     });
 
-    this.mouseMove$$ = fromEvent(document, 'mousemove').subscribe(
-      (moveEvent: MouseEvent) => {
+    this.mouseMove$$ = fromEvent<MouseEvent>(document, 'mousemove').subscribe(
+      (moveEvent) => {
         this.change.emit(moveEvent);
       }
     );
@@ -27,10 +27,7 @@ export class ResizeDirective {
   }
 
   private _unsubscribe(): void {
-    this.mouseUp$$.unsubscribe();
-    this.mouseUp$$ = null;
-
-    this.mouseMove$$.unsubscribe();
-    this.mouseMove$$ = null;
+    this.mouseUp$$?.unsubscribe();
+    this.mouseMove$$?.unsubscribe();
   }
 }

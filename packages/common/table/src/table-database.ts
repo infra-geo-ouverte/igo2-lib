@@ -7,23 +7,23 @@ export class TableDatabase {
     return this.dataChange.value;
   }
 
-  constructor(data?) {
+  constructor(data?: any[]) {
     if (data) {
       this.dataChange.next(data);
     }
   }
 
-  set(data) {
+  set(data: any[]) {
     this.dataChange.next(data);
   }
 
-  add(item) {
+  add(item: any) {
     const copiedData = this.data.slice();
     copiedData.push(item);
     this.set(copiedData);
   }
 
-  remove(item) {
+  remove(item: any) {
     const copiedData = this.data.slice();
     const index = copiedData.indexOf(item);
     copiedData.splice(index, 1);

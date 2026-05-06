@@ -1,7 +1,7 @@
 <igo-form
   #igoForm
   [form]="form()"
-  [formData]="feature()"
+  [formData]="$any(feature())"
   (submitForm)="onSubmit($event)"
 >
   <ng-content />

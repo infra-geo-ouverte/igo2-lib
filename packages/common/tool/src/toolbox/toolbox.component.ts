@@ -31,7 +31,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Observable of the active tool
    */
-  activeTool$ = new BehaviorSubject<Tool>(undefined);
+  activeTool$ = new BehaviorSubject<Tool | undefined>(undefined);
 
   get isActive(): boolean {
     return !!this.activeTool$.value;
@@ -62,12 +62,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the active tool
    */
-  private activeTool$$: Subscription;
+  private activeTool$$?: Subscription;
 
   /**
    * Subscription to the toolbar
    */
-  private toolbar$$: Subscription;
+  private toolbar$$?: Subscription;
 
   /**
    * Observable of the ongoing animation. This is useful when
@@ -79,12 +79,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the ongoing animation
    */
-  private animating$$: Subscription;
+  private animating$$?: Subscription;
 
   /**
    * Toolbox
    */
-  readonly toolbox = input<Toolbox>(undefined);
+  readonly toolbox = input.required<Toolbox>();
 
   /**
    * Whether the toolbox should animate the first tool entering
@@ -117,10 +117,11 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.toolbar$$ = this.toolbox().toolbar$.subscribe((toolbar: string[]) =>
+    const toolbox = this.toolbox();
+    this.toolbar$$ = toolbox.toolbar$.subscribe((toolbar) =>
       this.onToolbarChange(toolbar)
     );
-    this.activeTool$$ = this.toolbox().activeTool$.subscribe((tool: Tool) =>
+    this.activeTool$$ = toolbox.activeTool$.subscribe((tool) =>
       this.onActiveToolChange(tool)
     );
   }
@@ -130,8 +131,8 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    this.toolbar$$.unsubscribe();
-    this.activeTool$$.unsubscribe();
+    this.toolbar$$?.unsubscribe();
+    this.activeTool$$?.unsubscribe();
     this.actionStore.destroy();
   }
 
@@ -173,7 +174,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Activate a tool and trigger an animation or not
    * @param tool Tool to activate
    */
-  private onActiveToolChange(tool: Tool) {
+  private onActiveToolChange(tool: Tool | undefined) {
     if (!this.animate()) {
       this.setActiveTool(tool);
       return;
@@ -206,7 +207,11 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   private setToolbar(toolbar: string[]) {
     const actions = toolbar.reduce((acc: Action[], toolName: string) => {
-      const tool = this.toolbox().getTool(toolName);
+      const toolbox = this.toolbox();
+      if (!toolbox) {
+        return acc;
+      }
+      const tool = toolbox.getTool(toolName);
       if (tool === undefined) {
         return acc;
       }
@@ -216,13 +221,13 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         title: tool.title,
         icon: tool.icon,
         tooltip: tool.tooltip,
-        args: [tool, this.toolbox()],
+        args: [tool, toolbox],
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
         },
         ngClass: (_tool: Tool) => {
-          return this.toolbox().activeTool$.pipe(
-            map((activeTool: Tool) => {
+          return toolbox.activeTool$.pipe(
+            map((activeTool: Tool | undefined) => {
               let toolActivated = false;
               if (activeTool !== undefined && _tool.name === activeTool.name) {
                 toolActivated = true;

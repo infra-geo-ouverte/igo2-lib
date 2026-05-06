@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   }
 })
 export class PanelComponent {
-  readonly title = input<string>(undefined);
+  readonly title = input<string>();
   readonly withHeader = input(true);
   readonly cursorPointer = input(false);
 }

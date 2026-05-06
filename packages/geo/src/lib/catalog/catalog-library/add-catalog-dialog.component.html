@@ -6,7 +6,7 @@
   @if (form) {
     <igo-form
       [form]="form"
-      [formData]="customData$ | async"
+      [formData]="$any(customData$ | async)"
       (submitForm)="onCustomSubmit($any($event))"
     >
       @if (form.fields.length) {
@@ -48,7 +48,7 @@
       @if (form) {
         <igo-form
           [form]="form"
-          [formData]="data$ | async"
+          [formData]="$any(data$ | async)"
           (submitForm)="onPredefinedSubmit($any($event))"
         >
           @if (form.fields.length) {

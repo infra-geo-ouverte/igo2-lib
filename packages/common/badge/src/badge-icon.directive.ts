@@ -20,7 +20,7 @@ export class IgoBadgeIconDirective implements OnInit {
     `;
     this.updateHtml();
   }
-  private html: string;
+  private html?: string;
 
   @Input()
   set matBadgeHidden(value: boolean) {
@@ -55,20 +55,20 @@ export class IgoBadgeIconDirective implements OnInit {
     this.color = value;
     this.updateColor();
   }
-  private color;
+  private color?: string;
 
   @Input()
   set igoMatBadgeBackgroundColor(value: string | null) {
     this.backgroundColor = value;
     this.updateColor();
   }
-  private backgroundColor;
+  private backgroundColor?: string | null;
 
   get badge() {
     return this.el.nativeElement.querySelector('.mat-badge-content');
   }
 
-  private originalColor: string;
+  private originalColor?: string;
 
   ngOnInit() {
     this.badge.style.alignItems = 'center';

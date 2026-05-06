@@ -51,6 +51,7 @@ export class SelectValueCheckRadioDialogComponent implements OnInit {
   public isDisabled$ = new BehaviorSubject<boolean>(true);
 
   constructor() {
+    this.data = this.data || ({} as SelectValueData);
     this.formGroup = this.formBuilder.group(this.getFg());
     this.data.selectFieldText =
       this.data.selectFieldText ??
@@ -73,12 +74,17 @@ export class SelectValueCheckRadioDialogComponent implements OnInit {
   }
 
   getFg() {
-    const a = {};
-    this.data.choices.map((l) => (a[l.value] = false));
+    const a: Record<string, boolean> = {};
+    if (this.data && this.data.choices) {
+      this.data.choices.map((l) => (a[l.value] = false));
+    }
     return a;
   }
 
   canProcess() {
+    if (!this.data || !this.data.choices) {
+      return;
+    }
     const choices = this.data.choices.map((l) => l.value);
     const selectedIds = [];
     choices.map((l) =>
@@ -90,9 +96,13 @@ export class SelectValueCheckRadioDialogComponent implements OnInit {
   }
 
   save() {
+    if (!this.data || !this.data.choices) {
+      this.dialogRef.close();
+      return;
+    }
     const choices = this.data.choices.map((l) => l.value);
 
-    const selectedChoices = [];
+    const selectedChoices: string[] = [];
     choices.map((l) =>
       this.formGroup.value[l] ? selectedChoices.push(l) : undefined
     );
@@ -104,8 +114,8 @@ export class SelectValueCheckRadioDialogComponent implements OnInit {
   }
 
   onChange(e: MatRadioChange) {
-    const choices = {};
-    this.data.choices.map((l) => (choices[l.value] = false));
+    const choices: Record<string, boolean> = {};
+    this.data?.choices.forEach((l) => (choices[l.value] = false));
     choices[e.value] = true;
     this.formGroup.setValue(choices);
   }
