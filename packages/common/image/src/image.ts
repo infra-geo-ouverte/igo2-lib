@@ -15,7 +15,7 @@ export function fetchImageFromDepotUrl(
 
   const regexDepot = new RegExp(depotUrl + '.*?(?="|$)');
   if (regexDepot.test(url)) {
-    url = url.match(regexDepot)[0];
+    url = url.match(regexDepot)![0];
   }
 
   return http

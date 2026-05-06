@@ -29,12 +29,12 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**
    * The dynamic component base class or the dynamic component itself
    */
-  readonly component = input<DynamicComponent<any> | any>(undefined);
+  readonly component = input<DynamicComponent<any> | any>();
 
   /**
    * The dynamic component inputs
    */
-  readonly inputs = input<Record<string, any>>({});
+  readonly inputs = input<Record<string, any> | undefined>({});
 
   /**
    * The subscribers to the dynamic component outputs
@@ -44,7 +44,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**
    * The dynamic component
    */
-  private dynamicComponent: DynamicComponent<any>;
+  private dynamicComponent!: DynamicComponent<any>;
 
   /**
    * The view element to render the component to
@@ -120,7 +120,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   private renderComponent() {
     this.updateInputs();
     this.updateSubscribers();
-    this.dynamicComponent.setTarget(this.target());
+    this.dynamicComponent.setTarget(this.target()!);
   }
 
   /**
@@ -129,7 +129,11 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * @internal
    */
   private updateInputs() {
-    this.dynamicComponent.updateInputs(this.inputs());
+    const inputs = this.inputs();
+    if (!inputs) {
+      return;
+    }
+    this.dynamicComponent.updateInputs(inputs);
   }
 
   /**

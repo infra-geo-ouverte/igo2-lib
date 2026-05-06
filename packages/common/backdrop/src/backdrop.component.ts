@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'igo-backdrop',
@@ -6,12 +6,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./backdrop.component.scss']
 })
 export class BackdropComponent {
-  @Input()
-  get shown(): boolean {
-    return this._shown;
-  }
-  set shown(value: boolean) {
-    this._shown = value;
-  }
-  private _shown: boolean;
+  shown = input(false);
 }

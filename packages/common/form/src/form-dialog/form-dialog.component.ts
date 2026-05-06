@@ -48,15 +48,15 @@ export class FormDialogComponent {
   private formService = inject(FormService);
   data = inject<FormDialogData>(MAT_DIALOG_DATA);
 
-  form$ = new BehaviorSubject<Form>(undefined);
-  data$ = new BehaviorSubject<Record<string, any>>(undefined);
+  form$ = new BehaviorSubject<Form | undefined>(undefined);
+  data$: BehaviorSubject<Record<string, any>>;
   constructor() {
     this.data.processButtonText =
       this.data.processButtonText ?? 'igo.common.formDialog.processButtonText';
     this.data.cancelButtonText =
       this.data.cancelButtonText ?? 'igo.common.formDialog.cancelButtonText';
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
-    this.data$ = this.data.data$;
+    this.data$ = this.data.data$ ?? new BehaviorSubject({});
 
     const fields: FormField<FormFieldInputs>[] = [];
     const groups: FormFieldGroup[] = [];
@@ -77,8 +77,9 @@ export class FormDialogComponent {
     this.form$.next(form);
   }
 
-  onSubmit(data: Record<string, any>) {
+  onSubmit(data: Record<string, unknown>) {
     const form = this.form$.getValue();
+    if (!form) return;
     if (form.control.valid) {
       this.dialogRef.close(data);
     } else {

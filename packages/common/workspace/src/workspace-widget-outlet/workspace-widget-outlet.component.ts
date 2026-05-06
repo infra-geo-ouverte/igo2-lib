@@ -28,7 +28,7 @@ export class WorkspaceWidgetOutletComponent {
   /**
    * Workspace
    */
-  readonly workspace = input<Workspace>(undefined);
+  readonly workspace = input.required<Workspace>();
 
   /**
    * Event emitted when a widget is deactivate which happens
@@ -40,7 +40,7 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's active widget
    * @internal
    */
-  get widget$(): BehaviorSubject<Widget> {
+  get widget$(): BehaviorSubject<Widget | undefined> {
     return this.workspace().widget$;
   }
 
@@ -48,7 +48,7 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetInputs$(): BehaviorSubject<Record<string, any>> {
+  get widgetInputs$(): BehaviorSubject<Record<string, unknown>> {
     return this.workspace().widgetInputs$;
   }
 
@@ -56,10 +56,10 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetSubscribers$(): BehaviorSubject<
-    Record<string, (event: any) => void>
-  > {
-    return this.workspace().widgetSubscribers$;
+  get widgetSubscribers$():
+    | BehaviorSubject<Record<string, (event: unknown) => void>>
+    | undefined {
+    return this.workspace()?.widgetSubscribers$;
   }
 
   /**

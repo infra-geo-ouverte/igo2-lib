@@ -23,7 +23,8 @@ export class ConfirmDialogService {
       disableClose: false
     });
     dialogRef.componentInstance.confirmMessage = message;
-    dialogRef.componentInstance.titleKey = _options.title;
+    dialogRef.componentInstance.titleKey =
+      _options.title ?? 'igo.common.confirmDialog.title';
     if (_options.modeYesNo) {
       dialogRef.componentInstance.proccessKey = 'igo.common.confirmDialog.yes';
       dialogRef.componentInstance.cancelKey = 'igo.common.confirmDialog.no';

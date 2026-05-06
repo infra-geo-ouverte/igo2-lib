@@ -59,14 +59,14 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   private _disabled = false;
 
-  readonly placeholder = input<string>(undefined);
-  readonly minDate = input<Date | TimeFrame>(undefined);
-  readonly maxDate = input<Date | TimeFrame>(undefined);
+  readonly placeholder = input<string>('');
+  readonly minDate = input<Date | TimeFrame>();
+  readonly maxDate = input<Date | TimeFrame>();
   readonly calendarType = input<'year' | 'month' | 'date' | 'datetime'>('date');
-  readonly startView = model<'multi-year' | 'year' | 'month'>(undefined);
-  readonly startAt = input<Date | TimeFrame>(undefined);
-  readonly datepickerFilter = input<(date: Date | null) => boolean>(undefined);
-  readonly value = input<Date | TimeFrame>(undefined);
+  readonly startView = model<'multi-year' | 'year' | 'month'>();
+  readonly startAt = input<Date | TimeFrame>();
+  readonly datepickerFilter = input<(date: Date | null) => boolean>();
+  readonly value = input<Date | TimeFrame>();
   readonly todayButtonLabel = input<string>('Today');
   readonly clearButtonLabel = input<string>('Clear');
 
@@ -79,12 +79,12 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resolveDate = resolveDate;
-  dateFormControl!: FormControl<Date>;
-  dateLabelFormControl!: FormControl<string>;
+  dateFormControl!: FormControl<Date | null | undefined>;
+  dateLabelFormControl!: FormControl<string | null | undefined>;
   showActions = false;
   todaySelected = false;
-  previousTodaySelected: boolean;
-  previousValue: Date | TimeFrame;
+  previousTodaySelected!: boolean;
+  previousValue!: Date | TimeFrame | null | undefined;
 
   private destroy$ = new Subject<void>();
 
@@ -92,10 +92,10 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initStartView();
     this.initFormControls();
 
-    this.todaySelected = isTimeFrame(this.value());
+    this.todaySelected = this.value() ? isTimeFrame(this.value()!) : false;
 
     this.dateFormControl.valueChanges.subscribe((value) => {
-      this.picker().startAt = value;
+      this.picker().startAt = value ? value : null;
       if (!this.todaySelected) {
         this.dateLabelFormControl.setValue(this.getFormattedLabel(value));
       }
@@ -104,8 +104,8 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
         ? this.calendarType() === 'datetime'
           ? TimeFrame[0]
           : TimeFrame[1]
-        : value;
-      this.valueChange.emit(emittedValue);
+        : (value ?? undefined);
+      this.valueChange.emit(emittedValue as any);
     });
   }
 
@@ -125,7 +125,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         if (this.previousValue === this.dateFormControl.value) {
           this.todaySelected = this.previousTodaySelected;
-        } else if (isTimeFrame(this.value())) {
+        } else if (this.value() && isTimeFrame(this.value()!)) {
           this.todaySelected = true;
         }
       });
@@ -139,8 +139,11 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   setToday(): void {
     const keyword =
       this.calendarType() === 'datetime' ? TimeFrame[0] : TimeFrame[1];
+    const date = resolveDate(keyword);
+    if (!date) return;
+
     const picker = this.picker();
-    const date = (picker.startAt = resolveDate(keyword));
+    picker.startAt = date;
     this.dateLabelFormControl.setValue(this.getFormattedLabel(keyword));
     this.todaySelected = true;
     this.updateDateControl(date);
@@ -155,7 +158,8 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private registerAutoCloseEvents(): void {
-    const resolvedMaxDate = resolveDate(this.maxDate());
+    const maxDate = this.maxDate();
+    const resolvedMaxDate = maxDate ? resolveDate(maxDate) : undefined;
 
     this.showActions =
       (!resolvedMaxDate || resolvedMaxDate >= new Date()) &&
@@ -188,7 +192,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateFormControl.setValue(parsedDate);
   }
 
-  private parseInput(value: string): Date | undefined {
+  private parseInput(value: string | null | undefined): Date | undefined {
     if (!value) return undefined;
     switch (this.calendarType()) {
       case 'year':
@@ -275,11 +279,14 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private updateDateControl(date: Date) {
+  private updateDateControl(date: Date | null | undefined) {
     this.dateFormControl.setValue(date);
   }
 
-  private getFormattedLabel(date: Date | TimeFrame): string {
+  private getFormattedLabel(
+    date: Date | TimeFrame | null | undefined
+  ): string | null {
+    if (!date) return null;
     if (isTimeFrame(date)) return this.todayButtonLabel();
     const calendarType = this.calendarType();
     if (calendarType === 'year') {

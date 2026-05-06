@@ -17,8 +17,8 @@
         [disabled]="disabled$ | async"
         [disableRipple]="true"
       >
-        @let icon = action().icon;
-        <igo-icon [icon]="isObservable(icon) ? (icon | async) : icon" />
+        @let icon = action().icon!;
+        <igo-icon [icon]="(isObservable(icon) ? (icon | async) : icon)!" />
       </button>
     }
     @if (withTitle()) {

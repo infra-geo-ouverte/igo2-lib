@@ -19,7 +19,7 @@ import { IconService } from '../shared/icon.service';
 export class IgoIconComponent {
   private iconService = inject(IconService);
 
-  readonly color = input<string | null | undefined>(undefined);
+  readonly color = input<string | null>();
 
   readonly icon = input.required<string | IconSvg>();
 

@@ -16,7 +16,7 @@ export class DynamicComponent<C> {
   /**
    * Component reference
    */
-  private componentRef: ComponentRef<C>;
+  private componentRef?: ComponentRef<C>;
 
   /**
    * Subscriptions to the component's outputs. Those need
@@ -27,7 +27,7 @@ export class DynamicComponent<C> {
   /**
    * Component target element
    */
-  private target: ViewContainerRef;
+  private target?: ViewContainerRef;
 
   /**
    * Component inputs
@@ -37,7 +37,7 @@ export class DynamicComponent<C> {
   /**
    * Subscriptions to the component's async inputs
    */
-  private inputs$$: Record<string, Subscription> = {};
+  private inputs$$: Record<string, Subscription | undefined> = {};
 
   /**
    * Subscribers to the component's outputs
@@ -116,7 +116,7 @@ export class DynamicComponent<C> {
    * @param value Input value
    */
   private setInputValue(key: string, value: unknown) {
-    this.componentRef.setInput(key, value);
+    this.componentRef?.setInput(key, value);
   }
 
   /**
@@ -135,7 +135,7 @@ export class DynamicComponent<C> {
       (value: { propName: string; templateName: string }) => {
         const key = value.propName;
         if (Object.prototype.hasOwnProperty.call(subscribers, key)) {
-          const emitter = instance[key];
+          const emitter = (instance as any)[key];
           const subscriber = subscribers[key];
           if (Array.isArray(subscriber)) {
             subscriber.forEach((_subscriber) => {
@@ -157,6 +157,7 @@ export class DynamicComponent<C> {
    */
   private observeInput(key: string, observable: Observable<unknown>) {
     this.inputs$$[key] = observable.subscribe((value: unknown) => {
+      if (!this.componentRef) return;
       const instance = this.componentRef.instance;
       this.setInputValue(key, value);
 

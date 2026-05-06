@@ -1,10 +1,11 @@
-@if ((toolbar$ | async).length > 0) {
+@let toolbar = toolbar$ | async;
+@if (toolbar !== null && toolbar.length > 0) {
   <igo-actionbar
     [store]="actionStore"
     [withIcon]="true"
-    [withTitle]="toolbarWithTitle$ | async"
+    [withTitle]="(toolbarWithTitle$ | async)!"
     [withTooltip]="(toolbarWithTitle$ | async) === false"
-    [scrollActive]="toolbarWithTitle$ | async"
+    [scrollActive]="(toolbarWithTitle$ | async)!"
     [horizontal]="false"
   />
 }
