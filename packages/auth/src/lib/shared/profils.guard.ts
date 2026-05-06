@@ -27,7 +27,9 @@ export class ProfilsGuard {
         if (
           profils &&
           profils.profils &&
-          profils.profils.some((v) => authConfig.profilsGuard.indexOf(v) !== -1)
+          profils.profils.some(
+            (v) => authConfig.profilsGuard?.indexOf(v) !== -1
+          )
         ) {
           return true;
         }

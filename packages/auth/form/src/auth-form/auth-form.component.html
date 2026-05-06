@@ -6,21 +6,17 @@
     @if (!auth.logged && showLoginDiv) {
       <div class="login center-block">
         <h3>{{ 'igo.auth.connection' | translate }}</h3>
-        @if (options.google && options.google.enabled !== false) {
-          <igo-auth-google (login)="onLogin()" />
-        }
-        @if (options.microsoft && options.microsoft.enabled !== false) {
+        @if (options?.microsoft && options?.microsoft?.enabled !== false) {
           <igo-auth-microsoft (login)="onLogin()" />
         }
-        @if (options.microsoftb2c && options.microsoftb2c.enabled !== false) {
+        @if (
+          options?.microsoftb2c && options?.microsoftb2c?.enabled !== false
+        ) {
           <igo-auth-microsoftb2c (login)="onLogin()" />
         }
-        @if (options.facebook && options.facebook.enabled !== false) {
-          <igo-auth-facebook (login)="onLogin()" />
-        }
-        @if (!options.intern || options.intern.enabled !== false) {
+        @if (!options?.intern || options?.intern?.enabled !== false) {
           <igo-auth-intern
-            [allowAnonymous]="options.allowAnonymous"
+            [allowAnonymous]="!!options?.allowAnonymous"
             (login)="onLogin()"
           />
         }
@@ -37,7 +33,7 @@
     @if (showLogoutDiv) {
       <div class="login center-block">
         <p>{{ 'igo.auth.deconnection' | translate }}</p>
-        @if (options.homeRoute) {
+        @if (options?.homeRoute) {
           <button matButton="elevated" type="button" (click)="home()">
             {{ 'igo.auth.home' | translate }}
           </button>

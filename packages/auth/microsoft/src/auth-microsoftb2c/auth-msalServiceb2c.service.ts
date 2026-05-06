@@ -27,8 +27,8 @@ export class MsalServiceb2c implements IMsalService {
   instance = inject<IPublicClientApplication>(MSAL_INSTANCE);
   private location = inject(Location);
 
-  private redirectHash: string;
-  private logger: Logger;
+  private redirectHash?: string;
+  private logger?: Logger;
   private name = '@azure/msal-angular';
   private version = '2.0.0-beta.2';
   constructor() {
@@ -70,6 +70,7 @@ export class MsalServiceb2c implements IMsalService {
 
     return from(this.instance.handleRedirectPromise(finalOptions));
   }
+
   loginPopup(request?: PopupRequest): Observable<AuthenticationResult> {
     return from(this.instance.loginPopup(request));
   }

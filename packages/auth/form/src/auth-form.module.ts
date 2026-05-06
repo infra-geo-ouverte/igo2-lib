@@ -7,8 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { AuthFacebookComponent } from '@igo2/auth/facebook';
-import { AuthGoogleComponent } from '@igo2/auth/google';
 import { AuthInternComponent } from '@igo2/auth/internal';
 import {
   AuthMicrosoftComponent,
@@ -32,9 +30,7 @@ import { AuthFormComponent } from './auth-form/auth-form.component';
     IgoLanguageModule,
     MsalModule,
     AuthFormComponent,
-    AuthGoogleComponent,
     AuthInternComponent,
-    AuthFacebookComponent,
     AuthMicrosoftComponent,
     AuthMicrosoftb2cComponent
   ],

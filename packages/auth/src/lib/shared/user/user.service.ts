@@ -17,7 +17,7 @@ export class UserService {
 
   private baseUrl: string;
 
-  private _user$ = new BehaviorSubject<IUser>(undefined);
+  private _user$ = new BehaviorSubject<IUser | undefined>(undefined);
   user$ = this._user$.asObservable();
 
   constructor() {

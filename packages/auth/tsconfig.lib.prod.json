@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
-    "declarationMap": false
+    "declarationMap": false,
+    "paths": {
+      "@igo2/*": ["dist/*"]
+    }
   }
 }
