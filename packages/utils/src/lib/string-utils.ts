@@ -1,3 +1,19 @@
+interface ChangeData {
+  fis: number;
+  fil: number;
+  sbs: string;
+  mtc: string;
+  del: string;
+  ins: string;
+}
+
+interface SubData {
+  fis: number;
+  fil?: number;
+  sbs: string;
+  mtc: string;
+}
+
 export class StringUtils {
   static diff(s1: string, s2: string, p = 4): string {
     if (!s1 && !s2) {
@@ -33,7 +49,7 @@ export class StringUtils {
     return result;
   }
 
-  private static getMatchingSubstring(s, l, m) {
+  private static getMatchingSubstring(s: string, l: string[], m: string) {
     // returns the first matching substring in-between the two strings
     let i = 0;
     let match = false;
@@ -55,32 +71,40 @@ export class StringUtils {
     return o;
   }
 
-  private static getChanges(s1, s2, m, p) {
+  private static getChanges(
+    s1: string,
+    s2: string,
+    m: string,
+    p: number
+  ): ChangeData {
     const isThisLonger = s1.length >= s1.length ? true : false;
-    let [longer, shorter] = isThisLonger ? [s1, s2] : [s2, s1]; // assignment of longer and shorter by es6 destructuring
+    const [longer, shorter_init] = isThisLonger ? [s1, s2] : [s2, s1]; // assignment of longer and shorter by es6 destructuring
+    let shorter = shorter_init;
     let bi = 0; // base index designating the index of first mismacthing character in both strings
 
     while (shorter[bi] === longer[bi] && bi < shorter.length) {
       ++bi;
     } // make bi the index of first mismatching character
-    longer = longer.split('').slice(bi); // as the longer string will be rotated it is converted into array
+    const longerArr = longer.split('').slice(bi); // as the longer string will be rotated it is converted into array
     shorter = shorter.slice(bi); // shorter and longer now starts from the first mismatching character
 
-    const len = longer.length; // length of the longer string
-    let cd: any = {
+    const len = longerArr.length; // length of the longer string
+    let cd: ChangeData = {
       fis: shorter.length, // the index of matching string in the shorter string
       fil: len, // the index of matching string in the longer string
       sbs: '', // the matching substring itself
-      mtc: m + s2.slice(0, bi)
+      mtc: m + s2.slice(0, bi),
+      del: '',
+      ins: ''
     }; // if exists mtc holds the matching string at the front
-    let sub: any = { sbs: '' }; // returned substring per 1 character rotation of the longer string
+    let sub: SubData = { fis: cd.fis, fil: cd.fil, sbs: '', mtc: cd.mtc }; // returned substring per 1 character rotation of the longer string
 
     if (shorter !== '') {
       for (let rc = 0; rc < len && sub.sbs.length < p; rc++) {
         // rc -> rotate count, p -> precision factor
         sub = StringUtils.getMatchingSubstring(
           shorter,
-          StringUtils.rotateArray(longer, rc),
+          StringUtils.rotateArray(longerArr, rc),
           cd.mtc
         ); // rotate longer string 1 char and get substring
         sub.fil =
@@ -88,14 +112,14 @@ export class StringUtils {
             ? sub.fis + rc // mismatch is longer than the mismatch in short
             : sub.fis - len + rc; // mismatch is shorter than the mismatch in short
         if (sub.sbs.length > cd.sbs.length) {
-          cd = sub; // only keep the one with the longest substring.
+          cd = { ...cd, ...sub }; // only keep the one with the longest substring.
         }
       }
     }
     // insert the mismatching delete subsrt and insert substr to the cd object and attach the previous substring
     [cd.del, cd.ins] = isThisLonger
-      ? [longer.slice(0, cd.fil).join(''), shorter.slice(0, cd.fis)]
-      : [shorter.slice(0, cd.fis), longer.slice(0, cd.fil).join('')];
+      ? [longerArr.slice(0, cd.fil).join(''), shorter.slice(0, cd.fis)]
+      : [shorter.slice(0, cd.fis), longerArr.slice(0, cd.fil).join('')];
     return cd.del.indexOf(' ') === -1 ||
       cd.ins.indexOf(' ') === -1 ||
       cd.del === '' ||
@@ -105,7 +129,7 @@ export class StringUtils {
       : StringUtils.getChanges(cd.del, cd.ins, cd.mtc, p);
   }
 
-  private static rotateArray(array, n) {
+  private static rotateArray(array: string[], n: number) {
     const len = array.length;
     const res = new Array(array.length);
     if (n % len === 0) {

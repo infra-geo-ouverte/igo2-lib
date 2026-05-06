@@ -322,7 +322,7 @@ export class CapabilitiesService {
       }
     }
 
-    const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
+    const options = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
@@ -343,9 +343,9 @@ export class CapabilitiesService {
       minDate: timeFilterable ? timeFilter.min : undefined,
       maxDate: timeFilterable ? timeFilter.max : undefined,
       stepDate: timeFilterable ? timeFilter.step : undefined
-    });
+    }) as unknown as WMSDataSourceOptions;
 
-    return ObjectUtils.mergeDeep(options, baseOptions);
+    return ObjectUtils.mergeDeep<WMSDataSourceOptions>(options, baseOptions);
   }
 
   private parseWMTSOptions(
@@ -364,9 +364,12 @@ export class CapabilitiesService {
       _layerOptionsFromSource: {
         title: layer.Title
       }
-    });
+    }) as unknown as WMTSDataSourceOptions;
 
-    return ObjectUtils.mergeDeep(sourceOptions, ouputOptions);
+    return ObjectUtils.mergeDeep<WMTSDataSourceOptions>(
+      sourceOptions,
+      ouputOptions
+    );
   }
 
   private parseCartoOptions(
@@ -387,7 +390,7 @@ export class CapabilitiesService {
         version: params.version,
         layers
       }
-    });
+    }) as CartoDataSourceOptions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
@@ -439,7 +442,7 @@ export class CapabilitiesService {
         time: timeExtent
       }
     );
-    const options = ObjectUtils.removeUndefined({
+    const options = ObjectUtils.removeUndefined<Record<string, unknown>>({
       params,
       _layerOptionsFromSource: {
         title,
@@ -456,8 +459,11 @@ export class CapabilitiesService {
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
-    options.attributions = attributions;
-    return ObjectUtils.mergeDeep(options, baseOptions);
+    options['attributions'] = attributions;
+    return ObjectUtils.mergeDeep(
+      options,
+      baseOptions
+    ) as unknown as ArcGISRestDataSourceOptions;
   }
 
   private parseTileOrImageArcgisOptions(
@@ -499,7 +505,7 @@ export class CapabilitiesService {
         time: timeExtent
       }
     );
-    const options = ObjectUtils.removeUndefined({
+    const options = ObjectUtils.removeUndefined<Record<string, unknown>>({
       params,
       _layerOptionsFromSource: {
         title,
@@ -516,7 +522,7 @@ export class CapabilitiesService {
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
-    options.attributions = attributions;
+    options['attributions'] = attributions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 

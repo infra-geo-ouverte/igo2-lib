@@ -292,7 +292,7 @@ export class VectorLayer extends Layer {
 
   private maintainOptionsInIdb() {
     this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
-    const layerData: LayerDBData = ObjectUtils.removeUndefined({
+    const layerData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo?.contextUri,
       sourceOptions: {
@@ -315,7 +315,7 @@ export class VectorLayer extends Layer {
         })
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
-    });
+    }) as LayerDBData;
     const layerDB = new LayerDB();
     layerDB.update(layerData).pipe(first()).subscribe();
   }
