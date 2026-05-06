@@ -12,7 +12,9 @@ import {
 export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
   protected options?: T;
 
-  public storageChange$ = new BehaviorSubject<StorageServiceEvent>(undefined);
+  public storageChange$ = new BehaviorSubject<StorageServiceEvent | undefined>(
+    undefined
+  );
 
   constructor(config: ConfigService) {
     this.options = config.getConfig<T>('storage') || ({ key: 'igo' } as T);
@@ -25,11 +27,11 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
     let value: any;
 
     if (!scope || scope === StorageScope.SESSION) {
-      value = sessionStorage.getItem(`${this.options.key}.${key}`);
+      value = sessionStorage.getItem(`${this.options?.key}.${key}`);
     }
 
     if (scope === StorageScope.LOCAL || (!value && !scope)) {
-      value = localStorage.getItem(`${this.options.key}.${key}`);
+      value = localStorage.getItem(`${this.options?.key}.${key}`);
     }
 
     if (value) {
@@ -47,11 +49,14 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
     const previousValue = this.get(key, scope);
     if (scope === StorageScope.SESSION) {
       sessionStorage.setItem(
-        `${this.options.key}.${key}`,
+        `${this.options?.key}.${key}`,
         JSON.stringify(value)
       );
     } else {
-      localStorage.setItem(`${this.options.key}.${key}`, JSON.stringify(value));
+      localStorage.setItem(
+        `${this.options?.key}.${key}`,
+        JSON.stringify(value)
+      );
     }
     const currentValue = this.get(key, scope);
 
@@ -72,9 +77,9 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
   remove(key: string, scope: StorageScope = StorageScope.LOCAL) {
     const previousValue = this.get(key, scope);
     if (scope === StorageScope.SESSION) {
-      sessionStorage.removeItem(`${this.options.key}.${key}`);
+      sessionStorage.removeItem(`${this.options?.key}.${key}`);
     } else {
-      localStorage.removeItem(`${this.options.key}.${key}`);
+      localStorage.removeItem(`${this.options?.key}.${key}`);
     }
     this.storageChange$.next({
       key,

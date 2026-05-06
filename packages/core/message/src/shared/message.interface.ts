@@ -6,13 +6,13 @@ import { MessageType } from './message.enum';
 
 export interface Message {
   title?: string;
-  text?: string;
-  html?: string | TemplateRef<any>;
-  type?: MessageType;
+  text: string;
+  html?: string | TemplateRef<unknown>;
+  type: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
-  textInterpolateParams?: object;
-  titleInterpolateParams?: object;
+  textInterpolateParams?: Record<string, unknown>;
+  titleInterpolateParams?: Record<string, unknown>;
   showIcon?: boolean;
 }
 

@@ -23,6 +23,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit",
     "test": "ng test core --watch=false",
     "test.watch": "ng test core",
     "watch": "ng build core --watch && npm run postbuild"

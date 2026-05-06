@@ -162,7 +162,7 @@ function languageLoaderWithStatic(
   http: HttpBackend,
   options?: LanguageOptions
 ) {
-  return new LanguageLoader(http, options);
+  return new LanguageLoader(http, options ?? {});
 }
 
 export const LANGUAGE_LOADER: Provider = {
@@ -171,7 +171,7 @@ export const LANGUAGE_LOADER: Provider = {
   deps: [HttpBackend, ConfigService]
 };
 
-function languageLoaderWithAsync(http: HttpBackend, config?: ConfigService) {
+function languageLoaderWithAsync(http: HttpBackend, config: ConfigService) {
   return new LanguageLoaderWithAsyncConfig(http, config, undefined, undefined);
 }
 
