@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   inject,
+  input,
   viewChild
 } from '@angular/core';
 
@@ -29,75 +30,20 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
   readonly main = viewChild<ElementRef>('flexibleMain');
 
-  @Input()
-  get initial(): string {
-    return this._initial;
-  }
-  set initial(value: string) {
-    this._initial = value;
-  }
-  private _initial = '0';
-
-  @Input()
-  get collapsed(): string {
-    return this._collapsed;
-  }
-  set collapsed(value: string) {
-    this._collapsed = value;
-  }
-  private _collapsed = '0';
-
-  @Input()
-  get expanded(): string {
-    return this._expanded;
-  }
-  set expanded(value: string) {
-    this._expanded = value;
-  }
-  private _expanded = '100%';
-
-  @Input()
-  get initialMobile(): string {
-    return this._initialMobile;
-  }
-  set initialMobile(value: string) {
-    this._initialMobile = value;
-  }
-  private _initialMobile: string = this.expanded;
-
-  @Input()
-  get collapsedMobile(): string {
-    return this._collapsedMobile;
-  }
-  set collapsedMobile(value: string) {
-    this._collapsedMobile = value;
-  }
-  private _collapsedMobile: string = this.collapsed;
-
-  @Input()
-  get expandedMobile(): string {
-    return this._expandedMobile;
-  }
-  set expandedMobile(value: string) {
-    this._expandedMobile = value;
-  }
-  private _expandedMobile: string = this.expanded;
-
-  @Input()
-  get direction(): FlexibleDirection {
-    return this._direction;
-  }
-  set direction(value: FlexibleDirection) {
-    this._direction = value;
-  }
-  private _direction: FlexibleDirection = 'column';
+  readonly initial = input('0');
+  readonly collapsed = input('0');
+  readonly expanded = input('100%');
+  readonly initialMobile = input('100%');
+  readonly collapsedMobile = input('0');
+  readonly expandedMobile = input('100%');
+  readonly direction = input<FlexibleDirection>('column');
 
   @Input()
   get state(): FlexibleState {
     return this._state;
   }
   set state(value: FlexibleState) {
-    const sizes = {
+    const sizes: Record<string, unknown> = {
       initial: this.initial,
       collapsed: this.collapsed,
       expanded: this.expanded
@@ -113,7 +59,7 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
     const size = sizes[value];
     if (size !== undefined) {
-      this.setSize(size);
+      this.setSize(size as string);
       setTimeout(() => {
         this._state = value;
       }, FlexibleComponent.transitionTime);
@@ -121,7 +67,7 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   }
   private _state: FlexibleState = 'initial';
 
-  private mediaService$$: Subscription;
+  private mediaService$$!: Subscription;
 
   ngOnInit() {
     this.el.nativeElement.className += this.direction;
@@ -142,10 +88,14 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   private setSize(size: string) {
     this._state = 'transition';
 
-    if (this.direction === 'column') {
-      this.main().nativeElement.style.height = size;
-    } else if (this.direction === 'row') {
-      this.main().nativeElement.style.width = size;
+    const el = this.main()?.nativeElement;
+    if (!el) {
+      return;
+    }
+    if (this.direction() === 'column') {
+      el.style.height = size;
+    } else if (this.direction() === 'row') {
+      el.style.width = size;
     }
   }
 }

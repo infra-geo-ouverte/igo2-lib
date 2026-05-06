@@ -47,7 +47,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   get value(): string {
     return this._value;
   }
-  private _value: string;
+  private _value!: string;
 
   readonly outputFormat = input<ColorFormat>('rgba');
 
@@ -57,7 +57,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
    */
   readonly colorChange = output<string>();
 
-  colorPicker: string;
+  colorPicker!: string;
 
   onChange: any = () => void 1;
   onTouch: any = () => void 1;

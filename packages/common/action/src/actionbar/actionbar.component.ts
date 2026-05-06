@@ -90,7 +90,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * Action store watcher
    * @internal
    */
-  private watcher: EntityStoreWatcher<Action>;
+  private watcher?: EntityStoreWatcher<Action>;
 
   /**
    * Height Condition for scroll button
@@ -110,7 +110,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Action store
    */
-  readonly store = input<ActionStore>(undefined);
+  readonly store = input.required<ActionStore>();
 
   /**
    * Actionbar mode
@@ -239,15 +239,15 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
       if (this.watcher !== undefined) {
         this.watcher.destroy();
       }
-      this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
+      const storeValue = this.store();
+      if (storeValue) {
+        this.watcher = new EntityStoreWatcher(storeValue, this.cdRef);
+      }
     }
   }
 
-  /**
-   * @internal
-   */
   ngOnDestroy() {
-    this.watcher.destroy();
+    this.watcher?.destroy();
   }
 
   /**

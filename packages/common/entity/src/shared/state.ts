@@ -4,7 +4,7 @@ import { EntityKey, EntityState } from './entity.interfaces';
 import { getEntityId } from './entity.utils';
 
 interface EntityStateManagerOptions<E extends object> {
-  getKey?: (entity: object) => EntityKey;
+  getKey?: (entity: E) => EntityKey;
   index?: Map<EntityKey, E>;
 }
 
@@ -28,7 +28,7 @@ export class EntityStateManager<
   /**
    * Method to get an entity's id
    */
-  readonly getKey: (E) => EntityKey;
+  readonly getKey: (arg0: E) => EntityKey;
 
   constructor(private options: EntityStateManagerOptions<E> = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
@@ -207,11 +207,11 @@ export class EntityStateManager<
       (reverseChanges: Partial<S>, bunch: [string, any]) => {
         const [changeKey, value] = bunch;
         if (typeof value === typeof true) {
-          (reverseChanges as object)[changeKey] = !value;
+          (reverseChanges as Record<string, any>)[changeKey] = !value;
         }
         return reverseChanges;
       },
-      {}
+      {} as Partial<S>
     );
   }
 

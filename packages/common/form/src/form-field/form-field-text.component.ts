@@ -48,27 +48,27 @@ export class FormFieldTextComponent implements OnInit {
 
   disabled$ = new BehaviorSubject<boolean>(false);
   hide = true;
-  private lastTimeoutRequest;
+  private lastTimeoutRequest?: number;
 
   /**
    * The field's form control
    */
-  readonly formControl = input<UntypedFormControl>(undefined);
+  readonly formControl = input.required<UntypedFormControl>();
 
   /**
    * Field placeholder
    */
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
   /**
    * if the input is a password
    */
-  readonly isPassword = input<boolean>(undefined);
+  readonly isPassword = input<boolean>();
 
   /**
    * Field placeholder
    */
-  readonly errors = input<Record<string, string>>(undefined);
+  readonly errors = input<Record<string, string>>();
 
   /**
    * Wheter a disable switch should be available
@@ -90,7 +90,7 @@ export class FormFieldTextComponent implements OnInit {
    * Get error message
    */
   getErrorMessage(): string {
-    return getControlErrorMessage(this.formControl(), this.errors());
+    return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
   onDisableSwitchClick() {
@@ -116,7 +116,7 @@ export class FormFieldTextComponent implements OnInit {
       if (this.lastTimeoutRequest) {
         clearTimeout(this.lastTimeoutRequest);
       }
-      this.lastTimeoutRequest = setTimeout(() => {
+      this.lastTimeoutRequest = window.setTimeout(() => {
         this.hide = true;
         this.cdRef.detectChanges();
       }, delayMS);

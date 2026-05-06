@@ -24,7 +24,7 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Subscription to the source (and joined sources) values
    */
-  private values$$: Subscription;
+  private values$$?: Subscription;
 
   /**
    * Whether this view has been lifted
@@ -39,30 +39,37 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Observable of a filter clause
    */
-  private filter$ = new BehaviorSubject(undefined);
+  private filter$ = new BehaviorSubject<EntityFilterClause<V> | undefined>(
+    undefined
+  );
 
   /**
    * Observable of filter clauses
    */
-  private filters$ = new BehaviorSubject<EntityFilterClause[]>([]);
+  private filters$ = new BehaviorSubject<EntityFilterClause<V>[]>([]);
 
   /**
    * Filters index
    */
-  private filterIndex = new Map<string, EntityFilterClause>();
+  private filterIndex = new Map<string, EntityFilterClause<V>>();
 
   /**
    * Observable of a sort clause
    */
-  private sort$ = new BehaviorSubject(undefined);
+  private sort$ = new BehaviorSubject<EntitySortClause<V> | undefined>(
+    undefined
+  );
 
   /**
    * Method for indexing
    */
-  get getKey(): (V) => EntityKey {
-    return this.getKey$.value;
+  get getKey(): (arg0: V) => EntityKey {
+    return this.getKey$.value!;
   }
-  private getKey$ = new BehaviorSubject<(V) => EntityKey>(undefined);
+
+  private getKey$ = new BehaviorSubject<((arg0: V) => EntityKey) | undefined>(
+    undefined
+  );
 
   /**
    * Number of entities
@@ -86,7 +93,7 @@ export class EntityView<E extends object, V extends object = E> {
   get index(): Map<EntityKey, V> {
     return this._index;
   }
-  private _index: Map<EntityKey, V>;
+  private _index!: Map<EntityKey, V>;
 
   constructor(private source$: BehaviorSubject<E[]>) {}
 
@@ -101,7 +108,7 @@ export class EntityView<E extends object, V extends object = E> {
         'This view has no index, therefore, this method is unavailable.'
       );
     }
-    return this.index.get(key);
+    return this.index.get(key) as V;
   }
 
   /**
@@ -124,7 +131,7 @@ export class EntityView<E extends object, V extends object = E> {
    * Get the first value that respects a criteria
    * @returns A value
    */
-  firstBy(clause: EntityFilterClause<V>): V {
+  firstBy(clause: EntityFilterClause<V>): V | undefined {
     return this.values$.value.find(clause);
   }
 
@@ -132,7 +139,7 @@ export class EntityView<E extends object, V extends object = E> {
    * Observe the first value that respects a criteria
    * @returns Observable of a value
    */
-  firstBy$(clause: EntityFilterClause<V>): Observable<V> {
+  firstBy$(clause: EntityFilterClause<V>): Observable<V | undefined> {
     return this.values$.pipe(map((values: V[]) => values.find(clause)));
   }
 
@@ -172,7 +179,7 @@ export class EntityView<E extends object, V extends object = E> {
    * @param getKey Method to get a value's id
    * @returns The view
    */
-  createIndex(getKey: (E) => EntityKey): EntityView<E, V> {
+  createIndex(getKey: (arg0: V) => EntityKey): EntityView<E, V> {
     this._index = new Map();
     this.getKey$.next(getKey);
     return this;
@@ -198,7 +205,7 @@ export class EntityView<E extends object, V extends object = E> {
    * @param clause Filter clause
    * @returns The view
    */
-  filter(clause: EntityFilterClause<V>): EntityView<E, V> {
+  filter(clause: EntityFilterClause<V> | undefined): EntityView<E, V> {
     this.filter$.next(clause);
     return this;
   }
@@ -228,7 +235,7 @@ export class EntityView<E extends object, V extends object = E> {
    * @param clauseSort clause
    * @returns The view
    */
-  sort(clause: EntitySortClause<V>): EntityView<E, V> {
+  sort(clause: EntitySortClause<V> | undefined): EntityView<E, V> {
     this.sort$.next(clause);
     return this;
   }
@@ -278,9 +285,9 @@ export class EntityView<E extends object, V extends object = E> {
     ];
 
     return combineLatest(sources$).pipe(
-      map((bunch: [E[], any[]]) => {
+      map((bunch) => {
         const [entities, joinData] = bunch;
-        return entities.reduce((values: V[], entity: E) => {
+        return entities.reduce((values, entity) => {
           const value = this.computeJoinedValue(entity, joinData);
           if (value !== undefined) {
             values.push(value);
@@ -315,12 +322,12 @@ export class EntityView<E extends object, V extends object = E> {
    */
   private processValues(
     values: V[],
-    filters: EntityFilterClause[],
-    filter: EntityFilterClause,
-    sort: EntitySortClause
+    filters: EntityFilterClause<V>[],
+    filter: EntityFilterClause<V> | undefined,
+    sort: EntitySortClause<V> | undefined
   ): V[] {
     values = values.slice(0);
-    values = this.filterValues(values, filters.concat([filter]));
+    values = this.filterValues(values, filters.concat([filter!]));
     values = this.sortValues(values, sort);
     return values;
   }
@@ -331,15 +338,17 @@ export class EntityView<E extends object, V extends object = E> {
    * @param filters Filter clauses
    * @returns Filtered values
    */
-  private filterValues(values: V[], clauses: EntityFilterClause[]): V[] {
+  private filterValues(values: V[], clauses: EntityFilterClause<V>[]): V[] {
     if (clauses.length === 0) {
       return values;
     }
 
     return values.filter((value: V) => {
       return clauses
-        .filter((clause: EntityFilterClause) => clause !== undefined)
-        .every((clause: EntityFilterClause) => clause(value));
+        .filter(
+          (clause: EntityFilterClause<V> | undefined) => clause !== undefined
+        )
+        .every((clause: EntityFilterClause<V> | undefined) => clause!(value));
     });
   }
 
@@ -349,7 +358,10 @@ export class EntityView<E extends object, V extends object = E> {
    * @param sort Sort clause
    * @returns Sorted values
    */
-  private sortValues(values: V[], clause: EntitySortClause): V[] {
+  private sortValues(
+    values: V[],
+    clause: EntitySortClause<V> | undefined
+  ): V[] {
     if (clause === undefined) {
       return values;
     }

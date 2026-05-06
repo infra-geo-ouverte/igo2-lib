@@ -17,8 +17,8 @@ import { Directive, Renderer2, inject } from '@angular/core';
 export class SidenavShimDirective {
   private renderer = inject(Renderer2);
 
-  private focusedElement: HTMLElement;
-  private blurElement: HTMLElement;
+  private focusedElement?: HTMLElement;
+  private blurElement?: HTMLElement;
 
   onOpen() {
     this.focusedElement = document.activeElement as HTMLElement;
