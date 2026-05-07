@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, inject } from '@angular/core';
 
 import {
   AnyLayerOptions,
@@ -12,9 +12,11 @@ import {
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+import './hello-world-element';
 
 @Component({
   selector: 'app-vector-data-styling',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     ExampleViewerComponent,
     DocViewerComponent,
