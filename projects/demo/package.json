@@ -13,5 +13,9 @@
     "test": "ng test demo --watch=false",
     "test.watch": "ng test demo",
     "circular-deps": "madge --circular --extensions ts ./src"
+  },
+  "dependencies": {
+    "@r2wc/react-to-web-component": "^2.1.1",
+    "geostyler": "^18.5.1"
   }
 }
