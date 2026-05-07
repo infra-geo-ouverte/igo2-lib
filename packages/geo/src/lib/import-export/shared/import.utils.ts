@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
@@ -66,7 +67,7 @@ export function addLayerAndFeaturesToMap(
     source,
     igoStyle: { editable },
     idbInfo: { storeToIdb, contextUri: contextUri },
-    style: randomStyle
+    style: randomStyle as any
   }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
   map.layerController.add(layer);
@@ -80,17 +81,17 @@ export function addLayerAndFeaturesStyledToMap(
   map: IgoMap,
   layerTitle: string,
   styleListService: StyleListService,
-  styleService: StyleService,
+  styleService: StyleService | undefined,
   layerId?: string,
-  imposedSourceOptions?,
-  imposedLayerOptions?,
+  imposedSourceOptions?: any,
+  imposedLayerOptions?: any,
   zoomTo = true
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
   );
   let style;
-  let distance: number;
+  let distance: number | undefined;
 
   if (
     styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')
@@ -99,8 +100,8 @@ export function addLayerAndFeaturesStyledToMap(
       layerTitle.toString() + '.styleByAttribute'
     );
 
-    style = (feature, resolution) => {
-      return styleService.createStyleByAttribute(
+    style = (feature: any, resolution: any) => {
+      return styleService!.createStyleByAttribute(
         feature,
         styleByAttribute,
         resolution
@@ -116,13 +117,13 @@ export function addLayerAndFeaturesStyledToMap(
       layerTitle.toString() + '.distance'
     );
 
-    style = (feature, resolution) => {
-      const baseStyle = styleService.createStyle(
+    style = (feature: any, resolution: any) => {
+      const baseStyle = styleService!.createStyle(
         styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'),
         feature,
         resolution
       );
-      return styleService.createClusterStyle(
+      return styleService!.createClusterStyle(
         feature,
         resolution,
         clusterParam,
@@ -130,28 +131,28 @@ export function addLayerAndFeaturesStyledToMap(
       );
     };
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    style = (feature, resolution) =>
-      styleService.createStyle(
+    style = (feature: any, resolution: any) =>
+      styleService!.createStyle(
         styleListService.getStyleList(layerTitle.toString() + '.style'),
         feature,
         resolution
       );
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
-    features[0].geometry.type === 'Point'
+    features[0]?.geometry?.type === 'Point'
   ) {
     const clusterParam: ClusterParam = styleListService.getStyleList(
       'default.clusterParam'
     );
     distance = styleListService.getStyleList('default.distance');
 
-    style = (feature, resolution) => {
-      const baseStyle = styleService.createStyle(
+    style = (feature: any, resolution: any) => {
+      const baseStyle = styleService!.createStyle(
         styleListService.getStyleList('default.clusterStyle'),
         feature,
         resolution
       );
-      return styleService.createClusterStyle(
+      return styleService!.createClusterStyle(
         feature,
         resolution,
         clusterParam,
@@ -159,8 +160,8 @@ export function addLayerAndFeaturesStyledToMap(
       );
     };
   } else {
-    style = (feature, resolution) =>
-      styleService.createStyle(
+    style = (feature: any, resolution: any) =>
+      styleService!.createStyle(
         styleListService.getStyleList('default.style'),
         feature,
         resolution
@@ -178,7 +179,7 @@ export function addLayerAndFeaturesStyledToMap(
     source = new ClusterDataSource(
       Object.assign(sourceOptions, imposedSourceOptions)
     );
-    source.ol.source.addFeatures(olFeatures);
+    (source.ol as any).source.addFeatures(olFeatures);
   } else if (styleListService.getStyleList(layerTitle.toString())) {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
       {
@@ -191,7 +192,7 @@ export function addLayerAndFeaturesStyledToMap(
     source.ol.addFeatures(olFeatures);
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
-    features[0].geometry.type === 'Point'
+    features[0]?.geometry?.type === 'Point'
   ) {
     const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
       {
@@ -202,7 +203,7 @@ export function addLayerAndFeaturesStyledToMap(
     source = new ClusterDataSource(
       Object.assign(sourceOptions, imposedSourceOptions)
     );
-    source.ol.source.addFeatures(olFeatures);
+    (source.ol as any).source.addFeatures(olFeatures);
   } else {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
       {
@@ -234,7 +235,7 @@ export function addLayerAndFeaturesStyledToMap(
   return layer;
 }
 
-function padTo2Digits(num) {
+function padTo2Digits(num: any) {
   return num.toString().padStart(2, '0');
 }
 
@@ -314,7 +315,7 @@ export function handleFileImportError(
     'Invalid SRS definition': handleSRSImportError,
     'Error 500 with OGRE': handleOgreServerImportError
   };
-  errMapping[error.message](file, error, messageService, sizeMb);
+  (errMapping as any)[error.message](file, error, messageService, sizeMb);
 }
 
 export function handleInvalidFileImportError(
@@ -405,7 +406,7 @@ export function handleOgreServerImportError(
 }
 
 export function getFileExtension(file: File): string {
-  return file.name.split('.').pop().toLowerCase();
+  return (file.name.split('.').pop() ?? '').toLowerCase();
 }
 
 export function computeLayerTitleFromFile(file: File): string {

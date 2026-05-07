@@ -33,6 +33,7 @@ import {
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
+  SearchResultsComponent,
   ZoomButtonComponent,
   provideSearch,
   withIChercheSource,
@@ -43,8 +44,6 @@ import { SearchState } from '@igo2/integration';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import * as proj from 'ol/proj';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -105,9 +104,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public mapProjection: string;
   public term: string;
 
-  public settingsChange$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(undefined);
-
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
   }
@@ -118,6 +114,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public selectedFeature: Feature;
   public igoReverseSearchCoordsFormatEnabled: boolean;
+
+  private searchResult = viewChild(SearchResultsComponent);
 
   constructor() {
     this.mapService.setMap(this.map);
@@ -167,7 +165,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearchSettingsChange(): void {
-    this.settingsChange$.next(true);
+    this.searchResult()?.resetPage();
   }
 
   /**

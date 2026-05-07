@@ -19,13 +19,13 @@
       />
       <mat-autocomplete
         #auto="matAutocomplete"
-        [displayWith]="displayFn"
+        [displayWith]="$any(displayFn)"
         (optionSelected)="select($event)"
       >
         @for (entity of filteredEntities$ | async; track entity) {
           <mat-option
             [value]="entity"
-            [disabled]="isSelected(entity) || inFlightIds.has(entity.meta.id)"
+            [disabled]="isSelected(entity) || inFlightIds.has(entity.meta!.id!)"
           >
             {{ entity.properties.nom }}
           </mat-option>

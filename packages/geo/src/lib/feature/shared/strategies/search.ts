@@ -1,8 +1,9 @@
 import { EntityStoreStrategy } from '@igo2/common/entity';
 
-import { DocumentOptions, Document as FlexSearchDocument } from 'flexsearch';
+import FlexSearch, { DocumentOptions } from 'flexsearch';
 import { skipWhile } from 'rxjs/operators';
 
+import { SearchIndexOptions } from '../../../datasource';
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
 
@@ -24,7 +25,8 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for entities changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bindStore(store: any) {
     super.bindStore(store);
     if (this.active === true) {
       this.watchStore(store);
@@ -35,7 +37,8 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    * Unbind this strategy from a store and stop watching for entities changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  unbindStore(store: any) {
     super.unbindStore(store);
     if (this.active === true) {
       this.unwatchStore(store);
@@ -47,7 +50,9 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    (this.stores as FeatureStore[]).forEach((store: FeatureStore) =>
+      this.watchStore(store)
+    );
   }
 
   /**
@@ -58,22 +63,25 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     this.unwatchAll();
   }
 
-  private initStoreSearchIndex(store) {
-    store.searchDocument = new FlexSearchDocument({ tokenize: 'full' });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private initStoreSearchIndex(store: any) {
+    store.searchDocument = new FlexSearch.Document({ tokenize: 'full' });
   }
 
   /**
    * Watch for a store's entities changes
    * @param store Feature store
    */
-  private watchStore(store: FeatureStore) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private watchStore(store: any) {
     if (this.stores$$.has(store)) {
       return;
     }
     this.initStoreSearchIndex(store);
 
     store.entities$
-      .pipe(skipWhile((e) => !e.length))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .pipe(skipWhile((e: any) => !e.length))
       .subscribe(() => this.onEntitiesChanges(store));
   }
 
@@ -102,15 +110,17 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    */
   private onEntitiesChanges(store: FeatureStore) {
     const ratio = this.options.percentDistinctValueRatio || 2;
-    const featuresProperties = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const featuresProperties: any[] = [];
     store.index.forEach((value, key) => {
       const fp = value.properties;
       fp.igoSearchID = key;
       featuresProperties.push(fp);
     });
-    const toIndex = [];
-    let columnsToNotIndex = [];
-    let contentToIndex = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const toIndex: any[] = [];
+    let columnsToNotIndex: any[] = [];
+    let contentToIndex: SearchIndexOptions[] = [];
     if (this.options.sourceFields) {
       columnsToNotIndex = this.options.sourceFields.filter(
         (sf) => !sf.searchIndex?.enabled
@@ -128,7 +138,8 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
       if (featuresProperties.length) {
         // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
         const columns = Object.keys(featuresProperties[0]);
-        const columnsToIndex = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const columnsToIndex: any[] = [];
         columnsToNotIndex = columns
           .map((column) => {
             const distinctValues = [
@@ -163,11 +174,11 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     if (toIndex.length === 0) {
       this.initStoreSearchIndex(store);
     } else {
-      store.searchDocument = new FlexSearchDocument({
+      store.searchDocument = new FlexSearch.Document({
         document: {
           id: 'igoSearchID',
           index: contentToIndex
-        } as DocumentOptions<any>
+        } as DocumentOptions
       });
       toIndex.map((i) => {
         store.searchDocument.add(i.igoSearchID, i);

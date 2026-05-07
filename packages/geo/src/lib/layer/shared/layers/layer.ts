@@ -26,12 +26,12 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   declare dataSource: DataSource;
 
   ol: OlLayer<Source>;
-  hasBeenVisible$ = new BehaviorSubject<boolean>(undefined);
-  legend: Legend[];
+  hasBeenVisible$ = new BehaviorSubject(false);
+  legend!: Legend[];
   legendCollapsed = true;
   link?: Linked;
   linkMaster?: Linked;
-  private resolution$$: Subscription;
+  private resolution$$?: Subscription;
 
   get visible() {
     return super.visible;
@@ -69,9 +69,9 @@ export abstract class Layer extends LayerBase<LayerGroup> {
     this.updateInResolutionsRange();
   }
 
-  get saveableOptions(): Partial<LayerOptions> | undefined {
+  get saveableOptions(): Partial<LayerOptions> {
     if (!isSaveableLayer(this)) {
-      return undefined;
+      return {};
     }
 
     return {
@@ -91,7 +91,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
       options.id = uuid();
     }
 
-    this.dataSource = options.source;
+    this.dataSource = options.source!;
 
     this.legendCollapsed = options.legendOptions
       ? options.legendOptions.collapsed
@@ -147,10 +147,12 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
     this.unobserveResolution();
 
-    this.map.layerWatcher.unwatchLayer(this);
+    this.map?.layerWatcher.unwatchLayer(this);
 
     if (isLinkMaster(this)) {
-      this.link?.deleteChildren(this.map.layerController);
+      if (this.map?.layerController) {
+        this.link?.deleteChildren(this.map.layerController);
+      }
       this.link?.destroy();
     }
 
@@ -164,7 +166,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
       this.linkMaster.remove(this);
 
       if (hasSync && masterLayer) {
-        this.map.layerController.remove(masterLayer);
+        this.map?.layerController?.remove(masterLayer);
       }
     }
   }
@@ -174,7 +176,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
     if (isLayerLinked(this)) {
       if (isLinkMaster(this)) {
-        this.link.init();
+        this.link!.init();
       }
 
       this.createLinkWithParent();
@@ -192,12 +194,12 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
   private createLinkWithParent() {
     const masterLayer = this.findParentByLinkId(
-      this.map.layerController.all,
-      this.options.linkedLayers.linkId
+      this.map!.layerController!.all,
+      this.options.linkedLayers!.linkId!
     );
     if (masterLayer) {
       this.linkMaster = masterLayer.link;
-      masterLayer?.link.add(this);
+      masterLayer?.link?.add(this);
     }
   }
 
@@ -220,7 +222,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   }
 
   private observeResolution() {
-    this.resolution$$ = this.map.viewController.resolution$.subscribe(() =>
+    this.resolution$$ = this.map!.viewController.resolution$.subscribe(() =>
       this.updateInResolutionsRange()
     );
   }

@@ -9,6 +9,7 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
+import { Feature } from '../shared/feature.interfaces';
 import { FeatureDetailsComponent } from './feature-details.component';
 
 @Directive({
@@ -23,13 +24,13 @@ export class FeatureDetailsDirective implements OnInit {
   get feature() {
     return this.component.feature;
   }
-  feature$ = new BehaviorSubject(undefined);
+  feature$ = new BehaviorSubject<Feature | undefined>(undefined);
 
   readonly routingEvent = output();
 
   @HostListener('selectFeature')
   setFeature() {
-    this.feature$.next(this.feature);
+    this.feature$.next(this.feature());
   }
 
   constructor() {
@@ -40,7 +41,7 @@ export class FeatureDetailsDirective implements OnInit {
 
   ngOnInit() {
     this.feature$.subscribe(() => {
-      if (this.feature().geometry) {
+      if (this.feature()?.geometry) {
         this.bindClicking();
       }
     });

@@ -17,9 +17,9 @@ export class VectorWatcher extends Watcher {
   }
 
   protected watch() {
-    let olSource = this.layer.options.source.ol;
+    let olSource = this.layer.options.source!.ol;
     if (this.layer.dataSource instanceof ClusterDataSource) {
-      olSource = (this.layer.options.source.options as any).source;
+      olSource = (this.layer.options.source!.options as any).source;
     }
 
     if (olSource.getUrl()) {
@@ -30,9 +30,9 @@ export class VectorWatcher extends Watcher {
   }
 
   protected unwatch() {
-    let olSource = this.layer.options.source.ol;
+    let olSource = this.layer.options.source!.ol;
     if (this.layer.dataSource instanceof ClusterDataSource) {
-      olSource = (this.layer.options.source.options as any).source;
+      olSource = (this.layer.options.source!.options as any).source;
     }
     if (olSource.getUrl()) {
       olSource.un(`featuresloadstart`, () => this.handleLoadStart());

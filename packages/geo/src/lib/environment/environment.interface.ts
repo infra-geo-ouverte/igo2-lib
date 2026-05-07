@@ -55,7 +55,8 @@ export interface EnvironmentOptions {
       | SearchSourceOptions
       | StoredQueriesSearchSourceOptions
       | StoredQueriesReverseSearchSourceOptions
-      | boolean;
+      | boolean
+      | undefined;
   };
   searchBar?: {
     showSearchButton?: boolean;

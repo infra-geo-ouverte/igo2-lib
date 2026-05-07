@@ -1,8 +1,12 @@
+import { Extent } from 'ol/extent';
 import olFormatEsriJSON from 'ol/format/EsriJSON';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import olSourceVector from 'ol/source/Vector';
 
-import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
+import {
+  ArcGISRestDataSourceOptions,
+  ArcGISSymbol
+} from './arcgisrest-datasource.interface';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 
@@ -22,10 +26,10 @@ export class ArcGISRestDataSource extends DataSource {
   protected createOlSource(): olSourceVector {
     const esrijsonFormat = new olFormatEsriJSON();
     return new olSourceVector({
-      attributions: this.options.params.attributions,
+      attributions: this.options.params?.attributions,
       overlaps: false,
       format: esrijsonFormat,
-      url: function (extent) {
+      url: (extent: Extent) => {
         const baseUrl = this.options.url + '/' + this.options.layer + '/query/';
         const geometry = encodeURIComponent(
           '{"xmin":' +
@@ -48,17 +52,17 @@ export class ArcGISRestDataSource extends DataSource {
           'returnGeometry=true',
           'outSR=102100'
         ];
-        if (this.options.params.time) {
+        if (this.options.params?.time) {
           const time = `time=${this.options.params.time}`;
           params.push(time);
         }
-        if (this.options.params.customParams) {
+        if (this.options.params?.customParams) {
           this.options.params.customParams.forEach((element) => {
             params.push(element);
           });
         }
         return `${baseUrl}?${params.join('&')}`;
-      }.bind(this),
+      },
       strategy: olloadingstrategy.bbox
     });
   }
@@ -70,7 +74,7 @@ export class ArcGISRestDataSource extends DataSource {
       return legend;
     }
     if (!legendInfo) {
-      return;
+      return [];
     }
     let htmlString = '<table>';
     let src: string;
@@ -142,7 +146,7 @@ export class ArcGISRestDataSource extends DataSource {
     return `data:${contentType};base64,${imageData}`;
   }
 
-  createSVG(symbol): string {
+  createSVG(symbol: ArcGISSymbol): string {
     let svg = '';
 
     const color: number[] = symbol.color ? symbol.color : [0, 0, 0, 0];
@@ -184,9 +188,9 @@ export class ArcGISRestDataSource extends DataSource {
       symbol.style === 'esriSMSCircle' ||
       symbol.style === 'esriSFSSolid'
     ) {
-      const outlineColor = symbol.outline.color;
-      const outlineWidth = symbol.outline.width;
-      const size = symbol.size;
+      const outlineColor = symbol.outline?.color ?? [0, 0, 0, 0];
+      const outlineWidth = symbol.outline?.width ?? 0;
+      const size = symbol.size ? symbol.size : 0;
 
       const stroke =
         `stroke:rgba(` +

@@ -9,7 +9,8 @@ import {
   OnInit,
   inject,
   input,
-  signal
+  signal,
+  viewChild
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -135,6 +136,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   public debouncedEmpty = signal(true);
 
+  private searchResult = viewChild(SearchResultsComponent);
+
   /**
    * Store holding the search results
    * @internal
@@ -159,8 +162,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   public term = '';
   private searchTerm$$: Subscription;
-
-  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
   private topPanelState$$: Subscription;
@@ -217,7 +218,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
 
     this.searchState.searchSettingsChange$.subscribe(() => {
-      this.settingsChange$.next(true);
+      this.searchResult()?.resetPage();
     });
 
     this.topPanelState$$ = this.topPanelState$.subscribe(() => {

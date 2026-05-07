@@ -8,7 +8,7 @@ import {
   EntityTableTemplate
 } from '@igo2/common/entity';
 import { Workspace } from '@igo2/common/workspace';
-import { StorageScope } from '@igo2/core/storage';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
@@ -32,14 +32,21 @@ import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { FeatureWorkspace } from './feature-workspace';
 import { WfsWorkspace } from './wfs-workspace';
 
-export function getRowsInMapExtent(layerId, storageService): boolean {
+export function getRowsInMapExtent(
+  layerId: string,
+  storageService: StorageService
+): boolean {
   return (
     (storageService.get(`workspace.rowsInMapExtent.${layerId}`) as boolean) ||
     true
   );
 }
 
-export function setRowsInMapExtent(value, layerId, storageService) {
+export function setRowsInMapExtent(
+  value: any,
+  layerId: string,
+  storageService: StorageService
+) {
   storageService.set(
     `workspace.rowsInMapExtent.${layerId}`,
     value,
@@ -47,14 +54,21 @@ export function setRowsInMapExtent(value, layerId, storageService) {
   );
 }
 
-export function getSelectedOnly(layerId, storageService): boolean {
+export function getSelectedOnly(
+  layerId: string,
+  storageService: StorageService
+): boolean {
   return (
     (storageService.get(`workspace.selectedOnly.${layerId}`) as boolean) ||
     false
   );
 }
 
-export function setSelectedOnly(value, layerId, storageService) {
+export function setSelectedOnly(
+  value: any,
+  layerId: string,
+  storageService: StorageService
+) {
   storageService.set(
     `workspace.selectedOnly.${layerId}`,
     value,
@@ -65,10 +79,10 @@ export function setSelectedOnly(value, layerId, storageService) {
 export function mapExtentStrategyActiveToolTip(
   ws: Workspace
 ): Observable<string> {
-  return ws.entityStore
-    .getStrategyOfType(EntityStoreFilterCustomFuncStrategy)
+  return ws
+    .entityStore!.getStrategyOfType(EntityStoreFilterCustomFuncStrategy)!
     .active$.pipe(
-      map((active: boolean) =>
+      map((active) =>
         active
           ? 'igo.geo.workspace.inMapExtent.active.tooltip'
           : 'igo.geo.workspace.inMapExtent.inactive.tooltip'
@@ -77,11 +91,11 @@ export function mapExtentStrategyActiveToolTip(
 }
 
 export function noElementSelected(ws: Workspace): Observable<boolean> {
-  return ws.entityStore.stateView
-    .manyBy$((record: EntityRecord<Feature>) => {
+  return ws
+    .entityStore!.stateView.manyBy$((record) => {
       return record.state.selected === true;
     })
-    .pipe(map((entities: EntityRecord<Feature>[]) => entities.length >= 1));
+    .pipe(map((entities) => entities.length >= 1));
 }
 
 export function addOrRemoveLayer(
@@ -113,10 +127,9 @@ export function addOrRemoveLayer(
       map.layerController.add(layer);
     });
   } else if (action === 'remove') {
-    const addedLayerId = generateIdFromSourceOptions(so.sourceOptions);
-    map.layerController.remove(
-      map.layerController.all.find((l) => l.id === addedLayerId)
-    );
+    const addedLayerId = generateIdFromSourceOptions(so.sourceOptions!);
+    const toRemove = map.layerController.all.find((l) => l.id === addedLayerId);
+    if (toRemove) map.layerController.remove(toRemove);
   }
 }
 
@@ -127,7 +140,7 @@ export function getGeoServiceAction(
   const geoServiceAction = [
     {
       name: 'geoServiceAction',
-      title: undefined,
+      title: '',
       tooltip: '',
       renderer: EntityTableColumnRenderer.ButtonGroup,
       valueAccessor: (entity: Feature, record: EntityRecord<Feature>) => {
@@ -143,7 +156,7 @@ export function getGeoServiceAction(
               {
                 icon: 'delete',
                 color: 'warn',
-                click: (row, record) => {
+                click: (record) => {
                   addOrRemoveLayer(
                     'remove',
                     workspace.map,
@@ -154,14 +167,14 @@ export function getGeoServiceAction(
                   );
                   geoServiceProperties.added = false;
                 }
-              }
-            ] as EntityTableButton[];
+              } satisfies EntityTableButton<object>
+            ];
           } else {
             return [
               {
                 icon: 'add',
                 color: 'primary',
-                click: (row, record) => {
+                click: (record) => {
                   addOrRemoveLayer(
                     'add',
                     workspace.map,
@@ -172,8 +185,8 @@ export function getGeoServiceAction(
                   );
                   geoServiceProperties.added = true;
                 }
-              }
-            ] as EntityTableButton[];
+              } satisfies EntityTableButton<object>
+            ];
           }
         } else {
           return [];
@@ -188,7 +201,8 @@ export function createTableTemplate(
   workspace: FeatureWorkspace | WfsWorkspace,
   layer: VectorLayer,
   layerService: LayerService,
-  ws$
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ws$: any
 ) {
   const geoServiceAction = getGeoServiceAction(workspace, layerService);
   const fields = layer.dataSource.options.sourceFields || [];
@@ -196,8 +210,8 @@ export function createTableTemplate(
   const relations = layer.dataSource.options.relations || [];
 
   if (fields.length === 0) {
-    workspace.entityStore.entities$
-      .pipe(
+    workspace
+      .entityStore!.entities$.pipe(
         skipWhile((val) => val.length === 0),
         take(1)
       )
@@ -239,7 +253,7 @@ export function createTableTemplate(
       cellClassFunc: () => {
         const cellClass = {};
         if (field.type) {
-          cellClass[`class_${field.type}`] = true;
+          (cellClass as Record<string, boolean>)[`class_${field.type}`] = true;
           return cellClass;
         }
       }
@@ -265,7 +279,8 @@ export function createTableTemplate(
   });
 
   columns.push(...relationsColumn);
-  columns.unshift(...geoServiceAction);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns.unshift(...(geoServiceAction as any[]));
   workspace.meta.tableTemplate = {
     selection: true,
     sort: true,

@@ -38,7 +38,7 @@ import {
  * Controller to handle map view interactions
  */
 export class MapGeolocationController extends MapController {
-  private arrowRotation: number;
+  private arrowRotation!: number;
   private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
   private positionFeatureStyle: olstyle.Style | olstyle.Style[] =
@@ -102,7 +102,7 @@ export class MapGeolocationController extends MapController {
     });
   }
 
-  private geolocation: olGeolocation;
+  private geolocation!: olGeolocation;
 
   /**
    * Observable of the current emission interval of the position. In seconds
@@ -112,19 +112,21 @@ export class MapGeolocationController extends MapController {
   /**
    * Observable of the current position
    */
-  public readonly position$ = new BehaviorSubject<MapGeolocationState>(
-    undefined
-  );
+  public readonly position$ = new BehaviorSubject<
+    MapGeolocationState | undefined
+  >(undefined);
+
   /**
    * Observable of the tracking state
    */
-  public readonly tracking$ = new BehaviorSubject<boolean>(undefined);
+  public readonly tracking$ = new BehaviorSubject(false);
+
   /**
    * Observable of the follow position state
    */
-  public readonly followPosition$ = new BehaviorSubject<boolean>(undefined);
+  public readonly followPosition$ = new BehaviorSubject(false);
 
-  private lastPosition: { coordinates: number[]; dateTime: Date };
+  private lastPosition!: { coordinates: number[]; dateTime: Date };
 
   /**
    * Whether the geolocate should show a buffer around the current position
@@ -183,7 +185,7 @@ export class MapGeolocationController extends MapController {
       this._followPosition = false;
       this.followPosition$.next(false);
     }
-    this.handleFeatureCreation(this.position$.value);
+    this.handleFeatureCreation(this.position$.value as MapGeolocationState);
     if (this.storageService && value !== undefined) {
       this.storageService.set('geolocation.followPosition', value);
     }
@@ -208,12 +210,12 @@ export class MapGeolocationController extends MapController {
         ? this.options.followPosition
         : false;
 
-    this._buffer =
-      this.options && this.options.buffer ? this.options.buffer : undefined;
-    this._accuracyThreshold =
-      this.options && this.options.accuracyThreshold
-        ? this.options.accuracyThreshold
-        : 5000;
+    this._buffer = this.options?.buffer
+      ? this.options.buffer
+      : (undefined as unknown as GeolocationBuffer);
+    this._accuracyThreshold = this.options?.accuracyThreshold
+      ? this.options.accuracyThreshold
+      : 5000;
   }
 
   /**
@@ -248,7 +250,7 @@ export class MapGeolocationController extends MapController {
         maximumAge: 10000,
         timeout: 600000
       },
-      projection: this.options.projection
+      projection: this.options?.projection
     });
     let tracking = false;
     this.subscriptions$$.push(
@@ -348,9 +350,9 @@ export class MapGeolocationController extends MapController {
         followPosition = storedFollowPosition;
       }
     }
-    this.tracking = tracking;
-    this.followPosition = followPosition;
-    this.buffer = options.buffer;
+    this.tracking = tracking ?? false;
+    this.followPosition = followPosition ?? false;
+    this.buffer = options.buffer as GeolocationBuffer;
   }
 
   /**
@@ -381,7 +383,7 @@ export class MapGeolocationController extends MapController {
 
     const position: MapGeolocationState = {
       position: geolocateProperties.position,
-      projection: this.geolocation.getProjection().getCode(),
+      projection: this.geolocation.getProjection()?.getCode() ?? '',
       accuracy: geolocateProperties.accuracy,
       altitude: geolocateProperties.altitude,
       altitudeAccuracy: geolocateProperties.altitudeAccuracy,
@@ -400,7 +402,9 @@ export class MapGeolocationController extends MapController {
     }
   }
 
-  private getFeatureByType(type: GeolocationOverlayType): olFeature<Geometry> {
+  private getFeatureByType(
+    type: GeolocationOverlayType
+  ): olFeature<Geometry> | null {
     return this.geolocationOverlay.dataSource.ol.getFeatureById(type);
   }
 
@@ -412,7 +416,7 @@ export class MapGeolocationController extends MapController {
     }
   }
 
-  private handleFeatureCreation(position: MapGeolocationState) {
+  private handleFeatureCreation(position: MapGeolocationState | undefined) {
     if (!position || !position.position) {
       return;
     }
@@ -452,22 +456,22 @@ export class MapGeolocationController extends MapController {
 
     if (positionGeometry) {
       positionFeatureExists
-        ? positionFeature.setGeometry(positionGeometry)
+        ? positionFeature?.setGeometry(positionGeometry)
         : this.geolocationOverlay.addOlFeature(
-            positionFeature,
+            positionFeature!,
             FeatureMotion.None
           );
       positionFeatureArrowExists
-        ? positionFeatureArrow.setGeometry(positionGeometry)
+        ? positionFeatureArrow?.setGeometry(positionGeometry)
         : this.geolocationOverlay.addOlFeature(
-            positionFeatureArrow,
+            positionFeatureArrow!,
             FeatureMotion.None
           );
       this.updateArrowFeatureOrientation(position);
       accuracyFeatureExists
-        ? accuracyFeature.setGeometry(accuracyGeometry)
+        ? accuracyFeature?.setGeometry(accuracyGeometry)
         : this.geolocationOverlay.addOlFeature(
-            accuracyFeature,
+            accuracyFeature!,
             FeatureMotion.None
           );
 
@@ -485,11 +489,11 @@ export class MapGeolocationController extends MapController {
           bufferFeature.setId(GeolocationOverlayType.Buffer);
           bufferFeature.setStyle(this.positionFeatureStyle);
         }
-        bufferFeature.setStyle(this.bufferStyle);
+        bufferFeature?.setStyle(this.bufferStyle);
         bufferFeatureExists
-          ? bufferFeature.setGeometry(bufferGeometry)
+          ? bufferFeature?.setGeometry(bufferGeometry)
           : this.geolocationOverlay.addOlFeature(
-              bufferFeature,
+              bufferFeature!,
               FeatureMotion.None
             );
       }
@@ -511,7 +515,7 @@ export class MapGeolocationController extends MapController {
       positionFeatureArrow,
       accuracyFeature,
       bufferFeature
-    ].filter((f) => f);
+    ].filter((f) => f) as olFeature<Geometry>[];
     if (features.length > 0) {
       const featuresExtent = computeOlFeaturesExtent(
         features,

@@ -45,7 +45,7 @@ export class Linked {
   }
 
   get links() {
-    return this.layer.options.linkedLayers.links!;
+    return this.layer.options.linkedLayers!.links!;
   }
 
   get map() {
@@ -54,7 +54,7 @@ export class Linked {
 
   init(): void {
     const children = this.findChildren(
-      this.map.layerController.all,
+      this.map!.layerController!.all,
       this.links
     );
 
@@ -139,12 +139,14 @@ export class Linked {
         options.layers.push(layer);
         this.childrenByProperty.set(property, options);
 
-        if (layer[property] !== this.layer[property]) {
+        if ((layer as any)[property] !== (this.layer as any)[property]) {
           this.handleChange({
             event: {
               key: property,
-              oldValue: layer[property],
-              value: this.layer[property]
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              oldValue: (layer as any)[property],
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              value: (this.layer as any)[property]
             },
             layer: this.layer
           });
@@ -159,7 +161,7 @@ export class Linked {
 
   remove(layer: Layer): void {
     layer.linkMaster = undefined;
-    this.removeArrayItem(layer, this.children, 'id');
+    this.removeArrayItem(layer, this.children, 'id' as const);
 
     this.getLayerLinks(layer).forEach((link) => {
       if (link.bidirectionnal) {
@@ -168,7 +170,7 @@ export class Linked {
 
       link.properties.forEach((property) => {
         const options = this.getByProperty(property);
-        this.removeArrayItem(layer, options.layers, 'id');
+        this.removeArrayItem(layer, options.layers, 'id' as const);
         this.childrenByProperty.set(property, options);
       });
     });
@@ -194,14 +196,14 @@ export class Linked {
       return;
     }
 
-    const linkedLayers = this.getLinkedLayersOnZindex(layer.id);
+    const linkedLayers = this.getLinkedLayersOnZindex(layer.id!);
 
     this.disable(LinkedProperties.ZINDEX);
 
     const index = options.initialOrder.findIndex((l) => l.id === layer.id);
     linkedLayers?.forEach((linkLayer) => {
       if (!linkLayer.showInLayerList) {
-        linkLayer.zIndex = layer.zIndex;
+        linkLayer.zIndex = layer.zIndex ?? 0;
         if (parent !== linkLayer.parent) {
           linkLayer.reset(parent);
         }
@@ -212,8 +214,8 @@ export class Linked {
         (l) => l.id === linkLayer.id
       );
       linkedIndex < index
-        ? this.map.layerController.moveAbove(layer, linkLayer)
-        : this.map.layerController.moveBelow(layer, linkLayer);
+        ? this.map!.layerController!.moveAbove(layer, linkLayer)
+        : this.map!.layerController!.moveBelow(layer, linkLayer);
     });
 
     this.enable(LinkedProperties.ZINDEX);
@@ -269,7 +271,7 @@ export class Linked {
     return this.links.filter((link) => link.linkedIds.includes(linkId));
   }
 
-  private removeArrayItem<T extends { id: LayerId }>(
+  private removeArrayItem<T extends { id: LayerId | undefined }>(
     item: T,
     array: T[],
     key: keyof T = 'id'
@@ -317,7 +319,7 @@ export class Linked {
       this.handleRefreshChanges(layers);
     }
 
-    handleLayerPropertyChange(layers, change, this.map.viewController);
+    handleLayerPropertyChange(layers, change, this.map!.viewController);
   };
 
   private handleDisplayChange(change: LayerWatcherChange, children: Layer[]) {
@@ -347,7 +349,7 @@ export class Linked {
         })
         .filter(Boolean);
 
-      return linked.concat(layerFromLink);
+      return linked.concat(layerFromLink as Layer[]);
     }, []);
   }
 

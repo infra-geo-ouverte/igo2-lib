@@ -31,25 +31,25 @@ export class SliceControl {
   /**
    * Slice error, if any
    */
-  public error$ = new Subject<GeometrySliceError>();
+  public error$ = new Subject<GeometrySliceError | undefined>();
 
-  private olMap: OlMap;
+  private olMap!: OlMap;
   private olOverlayLayer: OlVectorLayer<OlVectorSource>;
 
   /**
    * Draw line control
    */
-  private drawLineControl: DrawControl;
+  private drawLineControl!: DrawControl;
 
   /**
    * Subscription to draw start
    */
-  private drawLineStart$$: Subscription;
+  private drawLineStart$$!: Subscription;
 
   /**
    * Subscription to draw end
    */
-  private drawLineEnd$$: Subscription;
+  private drawLineEnd$$!: Subscription;
 
   /**
    * Wheter the control is active
@@ -63,7 +63,7 @@ export class SliceControl {
    * @internal
    */
   get olOverlaySource(): OlVectorSource {
-    return this.olOverlayLayer.getSource();
+    return this.olOverlayLayer.getSource()!;
   }
 
   constructor(private options: SliceControlOptions) {
@@ -83,7 +83,7 @@ export class SliceControl {
       this.clearOlInnerOverlaySource();
       this.removeOlInnerOverlayLayer();
       this.removeDrawLineControl();
-      this.olMap = olMap;
+      this.olMap = olMap as unknown as OlMap;
       return;
     }
 
@@ -159,8 +159,8 @@ export class SliceControl {
     this.drawLineStart$$ = this.drawLineControl.start$.subscribe(() =>
       this.onDrawLineStart()
     );
-    this.drawLineEnd$$ = this.drawLineControl.end$.subscribe(
-      (olLine: OlLineString) => this.onDrawLineEnd(olLine)
+    this.drawLineEnd$$ = this.drawLineControl.end$.subscribe((olLine) =>
+      this.onDrawLineEnd(olLine as OlLineString)
     );
     this.drawLineControl.setOlMap(this.olMap);
   }
@@ -192,15 +192,17 @@ export class SliceControl {
    * @param olLine Ol linestring
    */
   private onDrawLineEnd(olLine: OlLineString) {
-    const olSlicedGeometries = [];
+    const olSlicedGeometries: OlGeometry[] = [];
     const lineExtent = olLine.getExtent();
-
-    const olFeaturesToRemove = [];
+    const olFeaturesToRemove: OlFeature<OlGeometry>[] = [];
     try {
       this.olOverlaySource.forEachFeatureInExtent(
         lineExtent,
         (olFeature: OlFeature<OlGeometry>) => {
-          const olGeometry = olFeature.getGeometry() as any;
+          const olGeometry = olFeature.getGeometry();
+          if (!olGeometry) {
+            return;
+          }
           const olParts = sliceOlGeometry(olGeometry, olLine);
           if (olParts.length > 0) {
             olSlicedGeometries.push(...olParts);

@@ -55,7 +55,8 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   private ogcFilterService = inject(OGCFilterService);
 
   public color = 'primary';
-  private lastRunOgcFilter;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private lastRunOgcFilter: any;
   private defaultLogicalParent = OgcFilterOperator.And;
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
@@ -63,12 +64,12 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public hasSelector = false;
   showLegend$ = new BehaviorSubject<boolean>(false);
   inResolutionRange$ = new BehaviorSubject<boolean>(true);
-  private resolution$$: Subscription;
+  private resolution$$!: Subscription;
   private ogcFilterWriter;
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input<Layer>();
 
-  readonly map = input<MapBase>(undefined);
+  readonly map = input<MapBase>();
 
   readonly header = input(true);
 
@@ -77,7 +78,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   get datasource(): OgcFilterableDataSource {
-    return this.layer().dataSource as OgcFilterableDataSource;
+    return this.layer()!.dataSource as OgcFilterableDataSource;
   }
 
   constructor() {
@@ -85,17 +86,17 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   toggleLayerVisibility() {
-    const layer = this.layer();
+    const layer = this.layer()!;
     layer.visible = !layer.visible;
   }
 
   ngOnInit() {
-    const layer = this.layer();
+    const layer = this.layer()!;
     if (layer.visible) {
       this.filtersCollapsed = false;
     }
 
-    const ogcFilters = this.datasource.options.ogcFilters;
+    const ogcFilters = this.datasource.options.ogcFilters!;
     if (
       (ogcFilters.pushButtons && ogcFilters.pushButtons.bundles.length > 0) ||
       (ogcFilters.checkboxes && ogcFilters.checkboxes.bundles.length > 0) ||
@@ -140,9 +141,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         : false;
     }
 
-    const resolution$ = layer.map.viewController.resolution$;
+    const resolution$ = layer.map!.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
-      this.inResolutionRange$.next(this.layer().isInResolutionsRange);
+      this.inResolutionRange$.next(this.layer()!.isInResolutionsRange);
     });
   }
 
@@ -153,14 +154,14 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   addFilterToSequence() {
     this.filtersCollapsed = false;
     const interfaceOgcFilters: OgcInterfaceFilterOptions[] =
-      this.datasource.options.ogcFilters.interfaceOgcFilters;
+      this.datasource.options.ogcFilters!.interfaceOgcFilters!;
     const arr = interfaceOgcFilters || [];
-    const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
+    const lastLevel = arr.length === 0 ? 0 : (arr[arr.length - 1].level ?? 0);
     let firstFieldName = '';
-    const includedFields = this.datasource.options.sourceFields.filter(
+    const includedFields = (this.datasource.options.sourceFields ?? []).filter(
       (f) => !f.excludeFromOgcFilters
     );
-    if (includedFields.length > 0) {
+    if (includedFields && includedFields.length > 0) {
       firstFieldName =
         includedFields[0].name === undefined ? '' : includedFields[0].name;
     }
@@ -179,7 +180,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
       this.datasource.options.sourceFields,
       firstFieldName,
-      this.datasource.options.ogcFilters.allowedOperatorsType
+      this.datasource.options.ogcFilters!.allowedOperatorsType
     );
     const firstOperatorName = Object.keys(allowedOperators)[0];
 
@@ -190,34 +191,35 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
           operator: firstOperatorName,
           active: true,
           igoSpatialSelector: 'fixedExtent',
-          srsName: this.map().projection
+          srsName: this.map()!.projection
         } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,
         this.defaultLogicalParent
       )
     );
-    this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
+    this.datasource.options.ogcFilters!.interfaceOgcFilters = arr;
   }
 
   refreshFilters(force?: boolean) {
     if (force === true) {
       this.lastRunOgcFilter = undefined;
     }
-    const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
+    const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters!;
     const activeFilters = ogcFilters.interfaceOgcFilters
       ? ogcFilters.interfaceOgcFilters.filter((f) => f.active === true)
       : [];
     if (activeFilters.length === 0) {
       ogcFilters.filters = undefined;
-      ogcFilters.filtered = false;
+      ogcFilters!.filtered = false;
     }
     if (activeFilters.length > 1) {
       activeFilters[0].parentLogical = activeFilters[1].parentLogical;
     }
     if (
       activeFilters.filter(
-        (af) => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
+        (af) =>
+          ['Contains', 'Intersects', 'Within'].indexOf(af.operator ?? '') !== -1
       ).length === 0
     ) {
       this.hasActiveSpatialFilter = false;
@@ -225,7 +227,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       this.hasActiveSpatialFilter = true;
     }
 
-    const layer = this.layer();
+    const layer = this.layer()!;
     if (
       !(JSON.stringify(this.lastRunOgcFilter) === JSON.stringify(activeFilters))
     ) {
@@ -255,13 +257,13 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
             undefined,
             (layer.dataSource.options as any).fieldNameGeometry,
             ogcDataSource.options
-          );
+          )!;
         }
         this.ogcFilterService.filterByOgc(
           this.datasource as WMSDataSource,
           rebuildFilter
         );
-        this.datasource.options.ogcFilters.filtered =
+        this.datasource.options.ogcFilters!.filtered =
           activeFilters.length === 0 ? false : true;
       }
 
@@ -276,11 +278,11 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   public setVisible() {
-    this.layer().visible = true;
+    this.layer()!.visible = true;
   }
 
   public isAdvancedOgcFilters(): boolean {
-    return this.datasource.options.ogcFilters.advancedOgcFilters;
+    return this.datasource.options.ogcFilters!.advancedOgcFilters ?? false;
   }
 
   public addFilterDisabled(): boolean {
@@ -291,10 +293,11 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   private changeOgcFiltersAdvancedOgcFilters(value: boolean) {
-    this.datasource.options.ogcFilters.advancedOgcFilters = value;
+    this.datasource.options.ogcFilters!.advancedOgcFilters = value;
   }
 
-  changeOgcFilterType(isAdvancedOgcFilters) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changeOgcFilterType(isAdvancedOgcFilters: any) {
     this.changeOgcFiltersAdvancedOgcFilters(isAdvancedOgcFilters.checked);
     if (isAdvancedOgcFilters.checked) {
       this.refreshFilters(true);
@@ -302,7 +305,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   private toggleLegend(collapsed: boolean) {
-    this.layer().legendCollapsed = collapsed;
+    this.layer()!.legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 

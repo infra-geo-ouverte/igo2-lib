@@ -29,11 +29,11 @@
               [todayButtonLabel]="'igo.geo.timeFilter.today' | translate"
               [clearButtonLabel]="'igo.geo.timeFilter.clear' | translate"
               [datepickerFilter]="filterBeginFunction"
-              [minDate]="handleDate(datasource().options.minDate)"
+              [minDate]="handleDate(datasource()?.options?.minDate)"
               [maxDate]="
                 endValue && !restrictedToStep()
                   ? endValue
-                  : handleDate(datasource().options.maxDate)
+                  : handleDate(datasource()?.options?.maxDate)
               "
               [disabled]="filterStateDisable"
               [startView]="calendarView()"
@@ -41,7 +41,7 @@
               [value]="
                 beginValue
                   ? beginValue
-                  : handleDate(datasource().options.minDate)
+                  : handleDate(datasource()?.options?.minDate)
               "
               [calendarType]="calendarType()"
               (valueChange)="yearSelected($event, 'begin')"
@@ -58,14 +58,14 @@
               [minDate]="
                 beginValue
                   ? beginValue
-                  : handleDate(datasource().options.minDate)
+                  : handleDate(datasource()?.options?.minDate)
               "
-              [maxDate]="handleDate(datasource().options.maxDate)"
+              [maxDate]="handleDate(datasource()?.options?.maxDate)"
               [disabled]="filterStateDisable"
               [startView]="calendarView()"
               [startAt]="endValue"
               [value]="
-                endValue ? endValue : handleDate(datasource().options.maxDate)
+                endValue ? endValue : handleDate(datasource()?.options?.maxDate)
               "
               [calendarType]="calendarType()"
               (valueChange)="yearSelected($event, 'end')"
@@ -107,18 +107,18 @@
               "
               [clearButtonLabel]="'igo.geo.timeFilter.clear' | translate"
               [datepickerFilter]="filterBeginFunction"
-              [minDate]="handleDate(datasource().options.minDate)"
+              [minDate]="handleDate(datasource()?.options?.minDate)"
               [maxDate]="
                 endValue && !restrictedToStep()
                   ? endValue
-                  : handleDate(datasource().options.maxDate)
+                  : handleDate(datasource()?.options?.maxDate)
               "
               [disabled]="filterStateDisable"
               [startAt]="beginValue"
               [value]="
                 beginValue
                   ? beginValue
-                  : handleDate(datasource().options.minDate)
+                  : handleDate(datasource()?.options?.minDate)
               "
               [startView]="calendarView()"
               [calendarType]="calendarType()"
@@ -131,7 +131,7 @@
             />
             @if (
               calendarType() === 'datetime' &&
-              dateNotTimeFrame(beginValue, datasource().options.minDate)
+              dateNotTimeFrame(beginValue, datasource()?.options?.minDate)
             ) {
               <igo-timepicker
                 [hourInputLabel]="'igo.geo.timeFilter.hour' | translate"
@@ -140,7 +140,7 @@
                 [value]="
                   beginValue
                     ? beginValue
-                    : handleDate(datasource().options.minDate)
+                    : handleDate(datasource()?.options?.minDate)
                 "
                 (valueChange)="updateTime($event, 1)"
                 #beginTimepicker
@@ -166,13 +166,15 @@
                 [minDate]="
                   beginValue
                     ? beginValue
-                    : handleDate(datasource().options.minDate)
+                    : handleDate(datasource()?.options?.minDate)
                 "
-                [maxDate]="handleDate(datasource().options.maxDate)"
+                [maxDate]="handleDate(datasource()?.options?.maxDate)"
                 [disabled]="filterStateDisable"
                 [startAt]="endValue"
                 [value]="
-                  endValue ? endValue : handleDate(datasource().options.maxDate)
+                  endValue
+                    ? endValue
+                    : handleDate(datasource()?.options?.maxDate)
                 "
                 [startView]="calendarView()"
                 [calendarType]="calendarType()"
@@ -185,7 +187,7 @@
               />
               @if (
                 calendarType() === 'datetime' &&
-                dateNotTimeFrame(endValue, datasource().options.maxDate)
+                dateNotTimeFrame(endValue, datasource()?.options?.maxDate)
               ) {
                 <igo-timepicker
                   [hourInputLabel]="'igo.geo.timeFilter.hour' | translate"
@@ -194,7 +196,7 @@
                   [value]="
                     endValue
                       ? endValue
-                      : handleDate(datasource().options.maxDate)
+                      : handleDate(datasource()?.options?.maxDate)
                   "
                   (valueChange)="updateTime($event, 2)"
                   [interval]="stepMilliseconds / 60000"

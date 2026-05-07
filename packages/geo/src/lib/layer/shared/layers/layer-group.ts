@@ -14,17 +14,17 @@ export const ID_GROUP_PREFIX = 'local-group_';
 export class LayerGroup extends LayerGroupBase<LayerGroup> {
   declare ol: Group;
   expanded: boolean;
-  private isInResolutionsRange$$: Subscription;
+  private isInResolutionsRange$$!: Subscription;
   readonly isInResolutionsRange$ = new BehaviorSubject(true);
 
   get saveableOptions(): Partial<LayerGroupOptions> {
     return {
       ...super.saveableOptions,
       id: String(this.options.id).includes(ID_GROUP_PREFIX)
-        ? null
+        ? undefined
         : this.options.id,
       type: this.options.type,
-      children: [...this.children]
+      children: [...(this.children ?? [])]
         .map((layer) => layer.saveableOptions)
         .filter(Boolean),
       expanded: this.expanded
@@ -40,7 +40,7 @@ export class LayerGroup extends LayerGroupBase<LayerGroup> {
   }
 
   constructor(
-    public children: AnyLayer[] | null,
+    public children: AnyLayer[],
     public options: LayerGroupOptions
   ) {
     super(options);
@@ -98,8 +98,8 @@ export class LayerGroup extends LayerGroupBase<LayerGroup> {
     if (index >= 0) {
       this.children.splice(index, 1);
     }
-    layer.parent = null;
-    layer.options.parentId = null;
+    layer.parent = undefined;
+    layer.options.parentId = undefined;
 
     this.setChildrenObserver();
   }
@@ -134,10 +134,13 @@ export class LayerGroup extends LayerGroupBase<LayerGroup> {
   }
 
   /** recursive */
-  private _getDescendants(children = this.children): AnyLayer[] {
-    return children.reduce((list, child) => {
+  private _getDescendants(children = this.children ?? []): AnyLayer[] {
+    return children.reduce((list: AnyLayer[], child) => {
       if (child instanceof LayerGroup) {
-        return list.concat(child, ...this._getDescendants(child.children));
+        return list.concat(
+          child,
+          ...this._getDescendants(child.children ?? [])
+        );
       } else {
         return list.concat(child);
       }
@@ -145,11 +148,11 @@ export class LayerGroup extends LayerGroupBase<LayerGroup> {
   }
 
   /** recursive */
-  private _getDescendantsLevel(children = this.children): number {
+  private _getDescendantsLevel(children = this.children ?? []): number {
     return children.reduce((level, child) => {
       if (child instanceof LayerGroup) {
         level = level + 1;
-        const descendantLevel = this._getDescendantsLevel(child.children);
+        const descendantLevel = this._getDescendantsLevel(child.children ?? []);
         return level + descendantLevel;
       }
 

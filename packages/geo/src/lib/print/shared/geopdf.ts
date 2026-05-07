@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-export default function jsGeoPdfPlugin(jsPDFAPI) {
-  const setGeoArea = function (pdfExt, geoExt) {
+export default function jsGeoPdfPlugin(jsPDFAPI: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const setGeoArea = function (this: any, pdfExt: any, geoExt: any) {
     const bbox = pdfExt.join(' ');
     // the ordering may seem odd here but PDF
     //  flips the Y axis upside down and this accounts for that
@@ -65,8 +66,9 @@ export default function jsGeoPdfPlugin(jsPDFAPI) {
     return bbox_obj.objId;
   };
 
-  jsPDFAPI.setGeoArea = function (pdfExt, geoExt) {
-    this.internal.events.subscribe('putPage', function () {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsPDFAPI.setGeoArea = function (this: any, pdfExt: any, geoExt: any) {
+    this.internal.events.subscribe('putPage', function (this: any) {
       const bbox_id = setGeoArea.call(this, pdfExt, geoExt);
       this.internal.write('/VP [ ' + bbox_id + ' 0 R ]');
     });

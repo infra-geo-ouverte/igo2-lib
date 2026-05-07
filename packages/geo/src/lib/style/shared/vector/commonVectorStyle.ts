@@ -1,6 +1,6 @@
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+import type { default as OlGeometry, Type } from 'ol/geom/Geometry';
 import * as olStyle from 'ol/style';
 
 import { Feature } from '../../../feature/shared/feature.interfaces';
@@ -54,19 +54,18 @@ export function getCommonVectorStyle({
   strokeWidth = 2
 }: FeatureCommonVectorStyleOptions): olStyle.Style {
   const isOlFeature = feature instanceof olFeature;
-  let geometry;
+  let geometryType: GeoJSON.Geometry['type'] | Type | undefined;
   let text;
   if (isOlFeature) {
     feature = feature as olFeature<OlGeometry>;
-    geometry = feature.getGeometry();
+    geometryType = feature.getGeometry()?.getType();
   } else {
     feature = feature as Feature;
-    geometry = feature.geometry;
-    text = feature.meta.mapTitle;
+    geometryType = feature.geometry?.type;
+    text = feature.meta?.mapTitle;
   }
-  const geometryType = isOlFeature ? geometry.getType() : geometry.type;
 
-  if (!geometry || geometryType === 'Point') {
+  if (!geometryType || geometryType === 'Point') {
     const markerColorAsArray = ColorAsArray(markerColor).slice(0);
     const markerColorRGB = markerColorAsArray.slice(0, 3);
 

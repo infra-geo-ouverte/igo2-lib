@@ -31,7 +31,6 @@ import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionsType } from '../shared/directions.enum';
 import {
   Directions,
-  FeatureWithDirections,
   FeatureWithStep,
   FormattedStep,
   IgoStep
@@ -66,15 +65,15 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   readonly routesFeatureStore = input.required<RoutesFeatureStore>();
   readonly stepsFeatureStore = input.required<StepsFeatureStore>();
 
-  public activeRoute: Directions;
-  public routes: Directions[];
-  private entities$$: Subscription;
+  public activeRoute?: Directions;
+  public routes: Directions[] = [];
+  private entities$$!: Subscription;
 
   ngOnInit(): void {
     this.entities$$ = this.routesFeatureStore()
       .entities$.pipe(debounceTime(200))
       .subscribe((features) => {
-        const activeFeature: FeatureWithDirections = features.find(
+        const activeFeature = features.find(
           (entity) => entity.properties.active
         );
         this.routes = features.map((entity) => entity.properties.directions);
@@ -99,7 +98,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     );
     this.routesFeatureStore()
       .layer.ol.getSource()
-      .getFeatures()
+      ?.getFeatures()
       .map((feature) => feature.set('active', !feature.get('active')));
   }
 
@@ -109,7 +108,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
    * @param {number} distance - The distance in meters to be formatted.
    * @return {string} The formatted distance string.
    */
-  formatDistance(distance: number): string {
+  formatDistance(distance: number): string | undefined {
     return formatDistance(distance);
   }
 
@@ -129,14 +128,16 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
    * @return {string} The formatted string, or an empty string if either distance or duration is undefined.
    */
   getTitleDurationAndDistance(): string {
-    return this.formatDistance(this.activeRoute.distance) &&
-      this.formatDuration(this.activeRoute.duration)
-      ? ' (' +
-          this.formatDistance(this.activeRoute.distance) +
-          ' - ' +
-          this.formatDuration(this.activeRoute.duration) +
-          ')'
-      : '';
+    if (
+      !this.activeRoute ||
+      !this.activeRoute.distance ||
+      !this.activeRoute.duration
+    ) {
+      return '';
+    }
+    const distance = this.formatDistance(this.activeRoute.distance);
+    const duration = this.formatDuration(this.activeRoute.duration);
+    return distance && duration ? ` (${distance} - ${duration})` : '';
   }
 
   /**
@@ -150,7 +151,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     return formatStep(
       step,
       this.languageService,
-      stepIndex === this.activeRoute.steps.length - 1
+      stepIndex === this.activeRoute!.steps!.length - 1
     );
   }
 
@@ -172,12 +173,18 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   }
 
   private showRouteSegmentGeometry(step: IgoStep, zoomToExtent = false) {
-    const coordinates: Coordinate = step.geometry.coordinates;
+    const coordinates = step.geometry?.coordinates;
+    if (!coordinates) {
+      return;
+    }
+
+    const stepsFeatureStore = this.stepsFeatureStore();
+    const map = stepsFeatureStore.layer.map;
     const vertexId = 'vertex';
     const geometry4326: olGeom.LineString = new olGeom.LineString(coordinates);
     const geometryMapProjection: olGeom.Geometry = geometry4326.transform(
       'EPSG:4326',
-      this.stepsFeatureStore().layer.map.projection
+      map?.projection
     );
     const routeSegmentCoordinates: Coordinate[] = (
       geometryMapProjection as any
@@ -192,24 +199,24 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
         geometry: lastPointGeometry
       });
 
+    const projection = map?.projection;
     const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(
       lastPointGeometry,
       {
-        featureProjection: this.stepsFeatureStore().layer.map.projection,
-        dataProjection: this.stepsFeatureStore().layer.map.projection
+        featureProjection: projection,
+        dataProjection: projection
       }
     ) as FeatureGeometry;
 
-    const previousVertex: FeatureWithStep =
-      this.stepsFeatureStore().get(vertexId);
+    const previousVertex = stepsFeatureStore.get(vertexId);
     const previousVertexRevision: number = previousVertex
-      ? previousVertex.meta.revision
+      ? (previousVertex.meta?.revision ?? 0)
       : 0;
 
     const stepFeature: FeatureWithStep = {
       type: FEATURE,
       geometry: geojsonGeom,
-      projection: this.stepsFeatureStore().layer.map.projection,
+      projection,
       properties: {
         id: vertexId,
         step,
@@ -221,10 +228,10 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
       },
       ol: lastPointFeature
     };
-    this.stepsFeatureStore().update(stepFeature);
+    stepsFeatureStore.update(stepFeature);
     if (zoomToExtent) {
-      this.stepsFeatureStore().layer.map.viewController.zoomToExtent(
-        lastPointFeature.getGeometry().getExtent() as [
+      map?.viewController.zoomToExtent(
+        lastPointFeature.getGeometry()!.getExtent() as [
           number,
           number,
           number,

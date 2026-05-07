@@ -18,7 +18,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule
+} from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
@@ -209,7 +212,7 @@ export class SearchSettingsComponent implements OnInit {
       enabledSourcesCnt >= disabledSourcesCnt ? false : true;
   }
 
-  resetSourceOptions(event) {
+  resetSourceOptions(event: Event) {
     event.stopPropagation();
     const formFieldConfigs: FormFieldConfig[] = [
       {
@@ -246,7 +249,7 @@ export class SearchSettingsComponent implements OnInit {
       )
       .subscribe((data) => {
         if (data) {
-          data.sources.forEach((source) => {
+          data.sources.forEach((source: any) => {
             source.resetSourceOptions();
             this.searchSourceChange.emit(source);
           });
@@ -263,11 +266,15 @@ export class SearchSettingsComponent implements OnInit {
    * Triggered when the check all / uncheck all type is clicked,
    * @internal
    */
-  checkUncheckAll(event, source: SearchSource, setting: SearchSourceSettings) {
+  checkUncheckAll(
+    event: Event,
+    source: SearchSource,
+    setting: SearchSourceSettings
+  ) {
     event.stopPropagation();
     this.computeSettingCheckAllBehavior(setting);
     setting.values.forEach((settingValue) => {
-      settingValue.enabled = setting.allEnabled;
+      settingValue.enabled = setting.allEnabled ?? false;
     });
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
@@ -277,7 +284,7 @@ export class SearchSettingsComponent implements OnInit {
    * Triggered when the check all / uncheck all type is clicked,
    * @internal
    */
-  checkUncheckAllSources(event) {
+  checkUncheckAllSources(event: Event) {
     event.stopPropagation();
     this.getSearchSources().map((source) => {
       source.enabled = this.searchSourcesAllEnabled;
@@ -326,21 +333,21 @@ export class SearchSettingsComponent implements OnInit {
     return;
   }
 
-  stopPropagation(event) {
+  stopPropagation(event: Event) {
     event.stopPropagation();
   }
 
-  changePointerReverseSearch(event) {
+  changePointerReverseSearch(event: MatSlideToggleChange) {
     this.pointerSummaryEnabled.set(event.checked);
     this.pointerSummaryStatus.emit(this.pointerSummaryEnabled());
   }
 
-  changeSearchResultsGeometry(event) {
+  changeSearchResultsGeometry(event: MatSlideToggleChange) {
     this.searchResultsGeometryEnabled.set(event.checked);
     this.searchResultsGeometryStatus.emit(this.searchResultsGeometryEnabled());
   }
 
-  reverseSearchCoordsFormat(event) {
+  reverseSearchCoordsFormat(event: MatSlideToggleChange) {
     this.reverseSearchCoordsFormatEnabled.set(event.checked);
     this.reverseSearchCoordsFormatStatus.emit(
       this.reverseSearchCoordsFormatEnabled()

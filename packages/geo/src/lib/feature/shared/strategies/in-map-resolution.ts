@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common/entity';
+import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
 
 import { Subscription, debounceTime } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, string>();
   private resolution$$: Subscription[] = [];
-  private empty$$: Subscription;
+  private empty$$!: Subscription;
 
   constructor(protected options: FeatureStoreInMapResolutionStrategyOptions) {
     super(options);
@@ -25,15 +25,16 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for Ol source changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     super.bindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.watchStore(store);
+      this.watchStore(featureStore);
     }
-    this.empty$$ = store.empty$.subscribe(() =>
+    this.empty$$ = featureStore.empty$.subscribe(() =>
       this.updateEntitiesInResolution(
-        store,
-        store.layer.map.viewController.getResolution()
+        featureStore,
+        featureStore.layer.map!.viewController.getResolution()
       )
     );
   }
@@ -42,10 +43,11 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Unbind this strategy from a store and stop watching for Ol source changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     super.unbindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.unwatchStore(store);
+      this.unwatchStore(featureStore);
     }
   }
 
@@ -54,7 +56,9 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    this.stores.forEach((store) =>
+      this.watchStore(store as unknown as FeatureStore)
+    );
   }
 
   /**
@@ -76,21 +80,24 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesInResolution(
       store,
-      store.layer.map.viewController.getResolution()
+      store.layer.map!.viewController.getResolution()
     );
     this.resolution$$.push(
-      store.layer.map.viewController.resolution$
-        .pipe(debounceTime(250))
+      store.layer
+        .map!.viewController.resolution$.pipe(debounceTime(250))
         .subscribe((res) => {
           this.updateEntitiesInResolution(store, res);
         })
     );
   }
 
-  private updateEntitiesInResolution(store, mapResolution: number) {
+  private updateEntitiesInResolution(
+    store: FeatureStore,
+    mapResolution: number | undefined
+  ) {
     if (
-      mapResolution > store.layer.minResolution &&
-      mapResolution < store.layer.maxResolution
+      (mapResolution ?? 0) > store.layer.minResolution &&
+      (mapResolution ?? 0) < store.layer.maxResolution
     ) {
       store.state.updateAll({ inMapResolution: true });
     } else {

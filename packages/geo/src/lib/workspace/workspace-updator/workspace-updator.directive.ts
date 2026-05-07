@@ -1,5 +1,6 @@
 import { Directive, OnDestroy, OnInit, inject, input } from '@angular/core';
 
+import { EntityStoreStrategy } from '@igo2/common/entity';
 import { Workspace } from '@igo2/common/workspace';
 import type { WorkspaceStore } from '@igo2/common/workspace';
 
@@ -31,15 +32,15 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   private editionWorkspaceService = inject(EditionWorkspaceService);
   private featureWorkspaceService = inject(FeatureWorkspaceService);
 
-  private layers$$: Subscription;
+  private layers$$!: Subscription;
   private entities$$: Subscription[] = [];
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
-  readonly workspaceStore = input<WorkspaceStore>(undefined);
+  readonly workspaceStore = input<WorkspaceStore>();
 
   ngOnInit() {
-    this.layers$$ = this.map()
+    this.layers$$ = this.map()!
       .layerController.all$.pipe(debounceTime(50))
       .subscribe((layers) => this.onLayersChange(layers));
   }
@@ -56,10 +57,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     const editableLayersIds = editableLayers.map((layer) => layer.id);
 
     const workspacesToAdd = editableLayers
-      .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))
-      .filter((workspace: Workspace | undefined) => workspace !== undefined);
+      .map((layer) => this.getOrCreateWorkspace(layer as VectorLayer))
+      .filter((workspace): workspace is Workspace => workspace !== undefined);
 
-    const workspacesToRemove = this.workspaceStore()
+    const workspacesToRemove = this.workspaceStore()!
       .all()
       .filter((workspace: Workspace) => {
         return editableLayersIds.indexOf(workspace.id) < 0;
@@ -67,27 +68,27 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
 
     if (workspacesToRemove.length > 0) {
       workspacesToRemove.forEach((workspace: Workspace) => {
-        workspace.entityStore.deactivateStrategyOfType(
-          FeatureStoreInMapExtentStrategy
+        workspace.entityStore!.deactivateStrategyOfType(
+          FeatureStoreInMapExtentStrategy as unknown as typeof EntityStoreStrategy
         );
         workspace.deactivate();
       });
-      this.workspaceStore().state.updateMany(workspacesToRemove, {
+      this.workspaceStore()!.state.updateMany(workspacesToRemove, {
         active: false,
         selected: false
       });
-      this.workspaceStore().deleteMany(workspacesToRemove);
+      this.workspaceStore()!.deleteMany(workspacesToRemove);
     }
 
     if (workspacesToAdd.length > 0) {
-      this.workspaceStore().insertMany(workspacesToAdd);
+      this.workspaceStore()!.insertMany(workspacesToAdd);
     }
   }
 
   private getOrCreateWorkspace(
     layer: VectorLayer | ImageLayer
   ): Workspace | undefined {
-    const workspace = this.workspaceStore().get(layer.id);
+    const workspace = this.workspaceStore()!.get(layer.id!);
     if (workspace !== undefined) {
       return;
     }
@@ -97,7 +98,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map()
+        this.map()!
       );
       return wfsWks;
     } else if (
@@ -109,7 +110,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map()
+        this.map()!
       );
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
         if (
@@ -135,7 +136,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const featureWks = this.featureWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map()
+        this.map()!
       );
       return featureWks;
     } else if (
@@ -144,9 +145,9 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     ) {
       const editionWks = this.editionWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map()
+        this.map()!
       );
-      return editionWks;
+      return editionWks as unknown as Workspace | undefined;
     }
 
     return;

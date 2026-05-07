@@ -39,14 +39,21 @@ export class ImageLayer extends Layer {
 
   protected createOlLayer(): olLayerImage<olSourceImage> {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceImage
+      source: this.options.source!.ol as olSourceImage
     });
 
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
-      (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, this.authInterceptor, this.messageService);
-      });
+      (image.getSource()! as any).setImageLoadFunction(
+        (tile: any, src: string) => {
+          this.customLoader(
+            tile,
+            src,
+            this.authInterceptor,
+            this.messageService
+          );
+        }
+      );
     }
 
     return image;
@@ -58,7 +65,7 @@ export class ImageLayer extends Layer {
     } else {
       this.watcher.subscribe(() => void 1);
     }
-    super.init(map);
+    super.init(map as MapBase);
   }
 
   remove(): void {
@@ -67,7 +74,8 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(
-    tile,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tile: any,
     src: string,
     interceptor?: AuthInterceptor,
     messageService?: MessageService

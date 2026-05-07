@@ -122,9 +122,9 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface EntityTableButton {
+export interface EntityTableButton<T extends object> {
   icon: string;
-  click: (entity: object, record: EntityRecord<object>) => void;
+  click: (record: EntityRecord<T>) => void;
   color?: 'primary' | 'accent' | 'warn';
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';

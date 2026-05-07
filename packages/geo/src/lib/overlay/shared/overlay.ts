@@ -22,7 +22,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * The map to add the layer to
    */
-  private map: T;
+  private map!: T;
 
   /**
    * Overlay layer
@@ -36,9 +36,9 @@ export class Overlay<T extends MapBase = MapBase> {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map?: T) {
+  constructor(map: T) {
     this.layer = createOverlayLayer();
-    this.setMap(map);
+    this.setMap(map as T);
   }
 
   /**
@@ -97,7 +97,7 @@ export class Overlay<T extends MapBase = MapBase> {
     features: Feature[],
     motion: FeatureMotion = FeatureMotion.Default
   ) {
-    const olFeatures = [];
+    const olFeatures: OlFeature<OlGeometry>[] = [];
     features.forEach((feature: Feature) => {
       const olFeature = featureToOl(feature, this.map.projection);
       const olGeometry = olFeature.getGeometry();
@@ -150,10 +150,9 @@ export class Overlay<T extends MapBase = MapBase> {
   removeFeatures(features: Feature[]) {
     features.forEach((feature: Feature) => {
       if (feature.meta) {
-        if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
-          this.removeOlFeature(
-            this.dataSource.ol.getFeatureById(feature.meta.id)
-          );
+        const olFeature = this.dataSource.ol.getFeatureById(feature.meta.id);
+        if (olFeature) {
+          this.removeOlFeature(olFeature);
         }
       }
     });

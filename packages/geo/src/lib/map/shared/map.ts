@@ -33,26 +33,28 @@ import {
 } from './map.interface';
 
 export class IgoMap implements MapBase {
-  public ol: olMap;
+  public ol!: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
-  public layersAddedByClick$ = new BehaviorSubject<AnyLayer[]>(undefined);
+  public layersAddedByClick$ = new BehaviorSubject<AnyLayer[] | undefined>(
+    undefined
+  );
   public status$: Subject<SubjectStatus>;
-  public propertyChange$: Subject<LayerWatcherChange>;
-  public overlay: Overlay;
-  public queryResultsOverlay: Overlay;
-  public searchResultsOverlay: Overlay;
-  public viewController: MapViewController;
+  public propertyChange$: Subject<LayerWatcherChange | undefined>;
+  public overlay!: Overlay;
+  public queryResultsOverlay!: Overlay;
+  public searchResultsOverlay!: Overlay;
+  public viewController!: MapViewController;
   public layerController: LayerController;
-  public geolocationController: MapGeolocationController;
+  public geolocationController!: MapGeolocationController;
   public swipeEnabled$ = new BehaviorSubject<boolean>(false);
   public mapCenter$ = new BehaviorSubject<boolean>(false);
-  public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
+  public selectedFeatures$ = new BehaviorSubject<Layer[] | null>(null);
 
-  public bufferDataSource: FeatureDataSource;
+  public bufferDataSource!: FeatureDataSource;
 
   public layerWatcher: LayerWatcher;
   readonly options: MapOptions;
-  private mapViewOptions: MapViewOptions;
+  private mapViewOptions!: MapViewOptions;
   private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
@@ -150,7 +152,7 @@ export class IgoMap implements MapBase {
     });
   }
 
-  setTarget(id: string) {
+  setTarget(id: string | undefined) {
     this.ol.setTarget(id);
     if (id !== undefined) {
       this.layerWatcher.subscribe(() => void 1, null);
@@ -253,7 +255,7 @@ export class IgoMap implements MapBase {
   }
 
   /** @deprecated find a way to remove this method. For now we discourage to use it until we find the way to remove it */
-  getLayerByOlUId(olUId: string): AnyLayer {
+  getLayerByOlUId(olUId: string): AnyLayer | undefined {
     return this.layerController.all.find(
       (layer) => getUid(layer.ol) && getUid(layer.ol) === olUId
     );

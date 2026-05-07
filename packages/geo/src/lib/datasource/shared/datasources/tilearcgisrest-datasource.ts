@@ -54,7 +54,7 @@ export class TileArcGISRestDataSource extends DataSource {
     }
 
     if (!legendInfo) {
-      return;
+      return [];
     }
     let htmlString = '<table>';
 

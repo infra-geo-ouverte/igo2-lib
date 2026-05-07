@@ -48,9 +48,9 @@
         igoMatBadgeBackgroundColor="none"
         [igoMatBadgeInverseColor]="true"
         [matBadgeHidden]="
-          (isRange && isVisible) ||
-          (isRange && !added()) ||
-          (isRange && isPreview)
+          !!(isRange && isVisible) ||
+          !!(isRange && !added()) ||
+          !!(isRange && isPreview)
         "
         [matBadgeDisabled]="isRange === false"
         matBadgeSize="small"

@@ -37,24 +37,25 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   private timeFilterService = inject(TimeFilterService);
 
   public color = 'primary';
-  showLegend$ = new BehaviorSubject<boolean>(false);
-  inResolutionRange$ = new BehaviorSubject<boolean>(true);
-  private resolution$$: Subscription;
+  showLegend$ = new BehaviorSubject(false);
+  inResolutionRange$ = new BehaviorSubject(true);
+  private resolution$$!: Subscription;
 
   filtersCollapsed = false;
 
   readonly header = input(true);
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input<Layer>();
 
   get datasource(): TimeFilterableDataSource {
-    return this.layer().dataSource as TimeFilterableDataSource;
+    return this.layer()!.dataSource as TimeFilterableDataSource;
   }
 
   ngOnInit(): void {
-    const resolution$ = this.layer().map.viewController.resolution$;
+    const resolution$ = this.layer()!.map?.viewController.resolution$;
+    if (!resolution$) return;
     this.resolution$$ = resolution$.subscribe(() => {
-      this.inResolutionRange$.next(this.layer().isInResolutionsRange);
+      this.inResolutionRange$.next(this.layer()!.isInResolutionsRange);
     });
   }
 
@@ -63,13 +64,16 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   handleYearChange(year: string | [string, string] | undefined) {
-    this.timeFilterService.filterByYear(this.datasource, year);
-    this.datasource.options.timeFilter.value = year?.toString();
+    this.timeFilterService.filterByYear(this.datasource, year!);
+    this.datasource.options.timeFilter!.value = year?.toString();
   }
 
-  handleDateChange(date: Date | [Date, Date]) {
+  handleDateChange(date: Date | [Date, Date] | undefined) {
+    if (!date) {
+      return undefined;
+    }
     this.timeFilterService.filterByDate(this.datasource, date);
-    this.datasource.options.timeFilter.value = date
+    this.datasource.options.timeFilter!.value = date
       ? date instanceof Date
         ? this.reformDate(date)
         : [this.reformDate(date[0]), this.reformDate(date[1])]
@@ -81,7 +85,7 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   private toggleLegend(collapsed: boolean) {
-    this.layer().legendCollapsed = collapsed;
+    this.layer()!.legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 
@@ -92,11 +96,11 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
   }
 
   public setVisible() {
-    this.layer().visible = true;
+    this.layer()!.visible = true;
   }
 
   toggleLayerVisibility() {
-    const layer = this.layer();
+    const layer = this.layer()!;
     layer.visible = !layer.visible;
   }
 

@@ -61,7 +61,7 @@ export interface FeatureStoreStrategyOptions extends EntityStoreStrategyOptions 
 }
 
 export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
-  getFeatureId?: (Feature) => EntityKey;
+  getFeatureId?: (feature: Feature) => EntityKey;
   motion?: FeatureMotion;
 }
 
@@ -88,7 +88,7 @@ export interface FeatureStoreSearchIndexStrategyOptions extends EntityStoreStrat
 
 export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrategyOptions {
   map: IgoMap;
-  getFeatureId?: (Feature) => EntityKey;
+  getFeatureId?: (feature: Feature) => EntityKey;
   motion?: FeatureMotion;
   layer?: VectorLayer;
   many?: boolean;

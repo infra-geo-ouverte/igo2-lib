@@ -18,7 +18,8 @@ const MOCKED_MAP = {
 };
 
 @Component({
-  template: '<igo-ogc-filterable-list igoOgcFilterableListBinding />',
+  template:
+    '<igo-ogc-filterable-list igoOgcFilterableListBinding [layers]="[]"/>',
   standalone: true,
   imports: [OgcFilterableListComponent, OgcFilterableListBindingDirective]
 })

@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common/entity';
+import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
 
 import { Subscription } from 'rxjs';
 
@@ -23,21 +23,22 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, Subscription>();
 
-  private motion: FeatureMotion;
+  private motion!: FeatureMotion;
 
   constructor(protected options: FeatureStoreLoadingStrategyOptions) {
     super(options);
-    this.setMotion(options.motion);
+    this.setMotion(options.motion ?? FeatureMotion.Default);
   }
 
   /**
    * Bind this strategy to a store and start watching for entities changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     super.bindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.watchStore(store);
+      this.watchStore(featureStore);
     }
   }
 
@@ -45,10 +46,11 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    * Unbind this strategy from a store and stop watching for entities changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     super.unbindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.unwatchStore(store);
+      this.unwatchStore(featureStore);
     }
   }
 
@@ -65,7 +67,9 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    this.stores.forEach((store) =>
+      this.watchStore(store as unknown as FeatureStore)
+    );
   }
 
   /**

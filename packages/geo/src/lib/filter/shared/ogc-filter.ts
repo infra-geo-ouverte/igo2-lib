@@ -21,6 +21,7 @@ import { parseDateOperation } from './filter.utils';
 import { OgcFilterOperator, OgcFilterOperatorType } from './ogc-filter.enum';
 import {
   AnyBaseOgcFilterOptions,
+  IgoLogicalArrayOptions,
   IgoOgcFilterObject,
   IgoOgcSelector,
   OgcFilter,
@@ -119,7 +120,7 @@ export class OgcFilterWriter {
     proj?: olProjection,
     fieldNameGeometry?: string,
     options?: OgcFilterableDataSourceOptions
-  ): string {
+  ): string | undefined {
     let ourBboxFilter;
     let enableBbox: boolean;
     if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
@@ -134,18 +135,22 @@ export class OgcFilterWriter {
           : fieldNameGeometry;
     }
     if (extent && filters) {
-      ourBboxFilter = olfilter.bbox(fieldNameGeometry, extent, proj.getCode());
+      ourBboxFilter = olfilter.bbox(
+        fieldNameGeometry ?? '',
+        extent,
+        proj!.getCode()
+      );
     }
     let filterAssembly: OgcFilter;
     if (filters) {
       filters = this.checkIgoFiltersProperties(
         filters,
         fieldNameGeometry,
-        proj
-      );
+        proj!
+      ) as IgoOgcFilterObject;
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
-          ourBboxFilter,
+          ourBboxFilter as OgcFilter,
           this.bundleFilter(filters, options)
         );
       } else {
@@ -180,9 +185,10 @@ export class OgcFilterWriter {
   private bundleFilter(
     filterObject: any,
     options?: OgcFilterableDataSourceOptions
-  ) {
+  ): any {
     if (filterObject instanceof Array) {
-      const logicalArray = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const logicalArray: any[] = [];
       filterObject.forEach((element) => {
         logicalArray.push(this.bundleFilter(element, options));
       });
@@ -206,7 +212,7 @@ export class OgcFilterWriter {
   }
 
   private createFilter(
-    filterOptions,
+    filterOptions: any,
     options?: OgcFilterableDataSourceOptions
   ): OgcFilter {
     const operator = filterOptions.operator;
@@ -267,9 +273,9 @@ export class OgcFilterWriter {
           wfsUpperBoundary || 1e40
         );
       case OgcFilterOperator.Contains.toLowerCase():
-        return olfilter.contains(wfsGeometryName, geometry, wfsSrsName);
+        return olfilter.contains(wfsGeometryName, geometry!, wfsSrsName);
       case OgcFilterOperator.During.toLowerCase():
-        return olfilter.during(wfsPropertyName, wfsBegin, wfsEnd);
+        return olfilter.during(wfsPropertyName, wfsBegin!, wfsEnd!);
       case OgcFilterOperator.PropertyIsEqualTo.toLowerCase():
         return olfilter.equalTo(wfsPropertyName, wfsExpression, wfsMatchCase);
       case OgcFilterOperator.PropertyIsGreaterThan.toLowerCase():
@@ -277,7 +283,7 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsGreaterThanOrEqualTo.toLowerCase():
         return olfilter.greaterThanOrEqualTo(wfsPropertyName, wfsExpression);
       case OgcFilterOperator.Intersects.toLowerCase():
-        return olfilter.intersects(wfsGeometryName, geometry, wfsSrsName);
+        return olfilter.intersects(wfsGeometryName, geometry!, wfsSrsName);
       case OgcFilterOperator.PropertyIsNull.toLowerCase():
         return olfilter.isNull(wfsPropertyName);
       case OgcFilterOperator.PropertyIsLessThan.toLowerCase():
@@ -302,7 +308,7 @@ export class OgcFilterWriter {
           wfsMatchCase
         );
       case OgcFilterOperator.Within.toLowerCase():
-        return olfilter.within(wfsGeometryName, geometry, wfsSrsName);
+        return olfilter.within(wfsGeometryName, geometry!, wfsSrsName);
       // LOGICAL
       case OgcFilterOperator.And.toLowerCase():
         return olfilter.and.apply(null, logicalArray);
@@ -312,13 +318,14 @@ export class OgcFilterWriter {
         return olfilter.not.apply(null, logicalArray);
 
       default:
-        return undefined;
+        return undefined as unknown as OgcFilter;
     }
   }
 
   public defineInterfaceFilterSequence(
     filterObject: any,
-    geometryName,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    geometryName: any,
     logical = '',
     level = -1
   ): OgcInterfaceFilterOptions[] {
@@ -359,8 +366,8 @@ export class OgcFilterWriter {
     defaultOperatorsType?: OgcFilterOperatorType
   ) {
     let allowedOperators;
-    let fieldsHasSpatialOperator: boolean;
-    let includeContains: boolean;
+    let fieldsHasSpatialOperator = false;
+    let includeContains = false;
 
     if (fields && propertyName) {
       const srcField = fields.find((field) => field.name === propertyName);
@@ -500,8 +507,10 @@ export class OgcFilterWriter {
   }
 
   public addInterfaceFilter(
-    igoOgcFilterObject?,
-    geometryName?,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    igoOgcFilterObject?: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    geometryName?: any,
     level = 0,
     parentLogical = 'Or'
   ): OgcInterfaceFilterOptions {
@@ -549,11 +558,13 @@ export class OgcFilterWriter {
 
   public checkIgoFiltersProperties(
     filterObject: any,
-    fieldNameGeometry,
-    proj: olProjection,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fieldNameGeometry: any,
+    proj: olProjection | undefined,
     active = false
-  ) {
-    const filterArray = [];
+  ): IgoOgcFilterObject | IgoOgcFilterObject[] | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filterArray: any[] = [];
     if (filterObject instanceof Array) {
       filterObject.forEach((element) => {
         filterArray.push(
@@ -579,22 +590,24 @@ export class OgcFilterWriter {
               active
             )
           }
-        );
+        ) as IgoLogicalArrayOptions;
       } else if (filterObject.hasOwnProperty('operator')) {
         return this.addFilterProperties(
           filterObject as OgcInterfaceFilterOptions,
           fieldNameGeometry,
           proj,
           active
-        );
+        ) as AnyBaseOgcFilterOptions;
       }
+      return undefined;
     }
   }
 
   private addFilterProperties(
     igoOgcFilterObject: OgcInterfaceFilterOptions,
-    fieldNameGeometry,
-    proj: olProjection,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fieldNameGeometry: any,
+    proj: olProjection | undefined,
     active = false
   ) {
     const filterid = igoOgcFilterObject.hasOwnProperty('filterid')
@@ -625,13 +638,13 @@ export class OgcFilterWriter {
 
   public rebuiltIgoOgcFilterObjectFromSequence(
     sequence: OgcInterfaceFilterOptions[]
-  ): IgoOgcFilterObject {
+  ): IgoOgcFilterObject | undefined {
     if (sequence instanceof Array) {
       if (sequence.length >= 1) {
+        let lastProcessedFilter: IgoOgcFilterObject;
         let lastParentLogical = sequence[0].parentLogical;
         let nextElement: any;
-        let logicalArray = [];
-        let lastProcessedFilter;
+        let logicalArray: any[] = [];
         sequence.forEach((uiFilter) => {
           const element = Object.assign({}, uiFilter);
           const index = sequence.indexOf(uiFilter);
@@ -646,7 +659,7 @@ export class OgcFilterWriter {
           logicalArray.push(element);
 
           if (sequence.length === 1) {
-            lastProcessedFilter = element;
+            lastProcessedFilter = element as IgoOgcFilterObject;
           } else if (lastParentLogical !== nextElement.parentLogical) {
             if (logicalArray.length === 1) {
               console.log(
@@ -659,19 +672,16 @@ export class OgcFilterWriter {
               lastProcessedFilter = Object.assign(
                 {},
                 { logical: lastParentLogical, filters: logicalArray }
-              );
+              ) as IgoOgcFilterObject;
               logicalArray = [lastProcessedFilter];
               lastParentLogical = nextElement.parentLogical;
             }
           }
         });
-        return lastProcessedFilter;
-      } else {
-        return undefined;
+        return lastProcessedFilter!;
       }
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   private computeIgoSelector(selectors: IgoOgcSelector): IgoOgcSelector {
@@ -690,7 +700,7 @@ export class OgcFilterWriter {
         group.title = group.title ? group.title : group.name;
         group.enabled = group.enabled ? group.enabled : false;
         group.computedSelectors = ObjectUtils.copyDeep(
-          selector.bundles.filter((b) => group.ids.includes(b.id))
+          selector.bundles.filter((b) => group.ids!.includes(b.id))
         );
       });
     } else if (!selectors.groups && selectors.bundles) {
@@ -712,7 +722,7 @@ export class OgcFilterWriter {
             computedSelectors: ObjectUtils.copyDeep(selectors) as any
           } as SelectorGroup
         ],
-        selectorType: selector.selectorType
+        selectorType: selector!.selectorType
       };
     }
     if (!selector.groups.find((selectorGroup) => selectorGroup.enabled)) {
@@ -726,14 +736,14 @@ export class OgcFilterWriter {
     fieldNameGeometry: string,
     extent?: Extent,
     proj?: olProjection
-  ): string {
+  ): string | undefined {
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
-      return;
+      return undefined;
     }
     const conditions = [];
-    let filterQueryStringSelector = '';
-    let filterQueryStringAdvancedFilters = '';
+    let filterQueryStringSelector: string | undefined = '';
+    let filterQueryStringAdvancedFilters: string | undefined = '';
     if (
       ogcFilters.enabled &&
       (ogcFilters.pushButtons ||
@@ -798,9 +808,9 @@ export class OgcFilterWriter {
         'operator' in ogcFilters.filters &&
         ogcFilters.filters.operator.toLowerCase() ===
           OgcFilterOperator.During.toLowerCase() &&
-        ogcFilters.interfaceOgcFilters?.length > 0
+        (ogcFilters.interfaceOgcFilters?.length ?? 0) > 0
       ) {
-        const duringFilters = ogcFilters.interfaceOgcFilters.filter(
+        const duringFilters = ogcFilters.interfaceOgcFilters!.filter(
           (filter) =>
             filter.active && filter.operator === OgcFilterOperator.During
         );
@@ -810,8 +820,11 @@ export class OgcFilterWriter {
       if (conditions.length >= 1) {
         filterQueryStringSelector = this.buildFilter(
           conditions.length === 1
-            ? conditions[0]
-            : { logical: 'And', filters: conditions },
+            ? (conditions[0] as IgoOgcFilterObject)
+            : ({
+                logical: 'And',
+                filters: conditions
+              } as IgoLogicalArrayOptions),
           extent,
           proj,
           ogcFilters.geometryName
@@ -833,6 +846,9 @@ export class OgcFilterWriter {
     let filterQueryString = ogcFilters.advancedOgcFilters
       ? filterQueryStringAdvancedFilters
       : filterQueryStringSelector;
+    if (!filterQueryString) {
+      return undefined;
+    }
     if (options.type === 'wms') {
       filterQueryString = this.formatProcessedOgcFilter(
         filterQueryString,
@@ -849,17 +865,23 @@ export class OgcFilterWriter {
     return filterQueryString;
   }
 
-  public verifyMultipleEnableds(selectors) {
+  public verifyMultipleEnableds(selectors: IgoOgcSelector): IgoOgcSelector {
     selectors.bundles.forEach((bundle) => {
       if (!bundle.multiple && bundle.selectors) {
-        const enableds = bundle.selectors.reduce(
-          (list, filter, index) =>
-            filter.enabled === true ? list.concat(index) : list,
-          []
-        );
+        // WORKAROUND, strict toggle from false to true change the behavior and raise error.
+        const selectors: any[] = bundle.selectors;
+        const enableds = selectors.reduce<number[]>((list, filter, index) => {
+          if (filter.enabled === true) {
+            list.push(index);
+          }
+          return list;
+        }, []);
         if (enableds.length > 1) {
           enableds.splice(0, 1);
           enableds.forEach((index) => {
+            if (!bundle.selectors) {
+              return;
+            }
             bundle.selectors[index].enabled = false;
           });
         }
@@ -868,15 +890,18 @@ export class OgcFilterWriter {
     return selectors;
   }
 
-  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, selectors) {
+  public formatGroupAndFilter(
+    ogcFilters: OgcFiltersOptions,
+    selectors: IgoOgcSelector
+  ) {
     selectors = this.computeIgoSelector(selectors);
     const selectorBundle = selectors.groups.find(
       (g) => g.enabled
-    ).computedSelectors;
-    const conditions = [];
-    selectorBundle.map((bundle) => {
-      const bundleCondition = [];
-      const selectorsType = bundle.selectors as any;
+    )?.computedSelectors;
+    const conditions: (IgoOgcFilterObject | IgoLogicalArrayOptions)[] = [];
+    selectorBundle?.map((bundle) => {
+      const bundleCondition: IgoOgcFilterObject[] = [];
+      const selectorsType = bundle.selectors;
       if (!selectorsType) {
         return;
       }
@@ -889,8 +914,8 @@ export class OgcFilterWriter {
         conditions.push(bundleCondition[0]);
       } else if (bundleCondition.length > 1) {
         conditions.push({
-          logical: bundle.logical,
-          filters: bundleCondition
+          logical: bundle.logical!,
+          filters: bundleCondition as AnyBaseOgcFilterOptions[]
         });
       }
     });
@@ -914,7 +939,7 @@ export class OgcFilterWriter {
     layersOrTypenames: string
   ): string {
     if (!processedFilter) {
-      return undefined;
+      return undefined as unknown as string;
     }
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
@@ -932,7 +957,7 @@ export class OgcFilterWriter {
       appliedFilter.length > 0
         ? appliedFilter.replace('filter=', '')
         : undefined;
-    return filterValue;
+    return filterValue ?? '';
   }
 
   private parseFilterOptionDate(

@@ -91,7 +91,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     'lieux'
   ];
 
-  private hashtagsLieuxToKeep = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private hashtagsLieuxToKeep: any[] = [];
 
   get title(): string {
     return this.title$.getValue();
@@ -119,7 +120,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     this.languageService.language$.subscribe(() => {
       this.title$.next(
-        this.languageService.translate.instant(this.options.title)
+        this.languageService.translate.instant(this.options.title ?? '')
       );
     });
   }
@@ -408,7 +409,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         } satisfies SearchSourceSettings
-      ].filter(Boolean)
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 
@@ -422,10 +423,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term, options || {});
-    if (!params.get('type').length) {
+    if (!(params.get('type') ?? '').length) {
       return of([]);
     }
-    this.options.params.page = params.get('page') || '1';
+    this.options.params!.page = params.get('page') || '1';
 
     return this.getSearch(term, params);
   }
@@ -438,38 +439,40 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
-    return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
-      map((response: IChercheResponse) => this.extractResults(response, term)),
-      catchError((err) => {
-        err.error.toDisplay = true;
-        err.error.title = this.languageService.translate.instant(
-          this.defaultOptions.title
-        );
-        throw err;
-      })
-    );
+    return this.http
+      .get<IChercheResponse>(`${this.searchUrl}/geocode`, { params })
+      .pipe(
+        map((response) => this.extractResults(response, term)),
+        catchError((err) => {
+          err.error.toDisplay = true;
+          err.error.title = this.languageService.translate.instant(
+            this.defaultOptions.title ?? ''
+          );
+          throw err;
+        })
+      );
   }
   private getAllowedTypes() {
     return this.http
-      .get(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`)
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        typeSetting.values.forEach((v) => {
+        typeSetting!.values.forEach((v) => {
           const regex = new RegExp(`^${v.value}(\\.|$)`);
           const typesMatched = types.filter((value) => regex.test(value));
           v.available = typesMatched.length > 0;
           if (v.value === 'lieux') {
             this.hashtagsLieuxToKeep = [
-              ...(new Set(
+              ...new Set(
                 typesMatched
                   .map((t) => t.split('.'))
                   .reduce((a, b) => a.concat(b))
                   .filter((t) => t !== 'lieux')
-              ) as any)
+              )
             ];
           }
         });
-        this.setParamFromSetting(typeSetting, false);
+        if (typeSetting) this.setParamFromSetting(typeSetting!, false);
       });
   }
 
@@ -477,7 +480,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     options: TextSearchOptions
   ): HttpParams {
-    const queryParams: any = Object.assign(
+    const queryParams = Object.assign(
       {
         geometry: true,
         bbox: true,
@@ -493,7 +496,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     );
 
     if (queryParams.loc === 'true') {
-      const [xMin, yMin, xMax, yMax] = options.extent;
+      const [xMin, yMin, xMax, yMax] = options.extent!;
       queryParams.loc = `${xMin},${yMin};${xMax},${yMin};${xMax},${yMax};${xMin},${yMax};${xMin},${yMin}`;
     } else if (queryParams.loc === 'false') {
       delete queryParams.loc;
@@ -536,7 +539,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       ? '<br><small> ' + data.highlight.title3 + '</small>'
       : '';
 
-    let icon: string | IconSvg = data.icon;
+    let icon: string | IconSvg | undefined = data.icon;
     if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
       icon = ICHERCHE_ICONS[icon];
     }
@@ -563,13 +566,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         score:
           data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
-          response.features.length % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          (response?.features?.length ?? 0) %
+            +(this.options.params?.limit ?? 1) ===
+            0 && +(this.options.params?.page ?? 0) < 10
       }
     };
   }
 
-  private computeProperties(data: IChercheData): Record<string, any> {
+  private computeProperties(data: IChercheData): Record<string, unknown> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -748,7 +752,7 @@ export class IChercheReverseSearchSource
 
     this.languageService.language$.subscribe(() => {
       this.title$.next(
-        this.languageService.translate.instant(this.options.title)
+        this.languageService.translate.instant(this.options.title ?? '')
       );
     });
 
@@ -907,7 +911,7 @@ export class IChercheReverseSearchSource
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
-    if (!params.get('type').length) {
+    if (!(params.get('type') ?? '').length) {
       return of([]);
     }
     return this.getReverseSearch(params);
@@ -920,22 +924,24 @@ export class IChercheReverseSearchSource
   private getReverseSearch(
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
-    return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
-      map((response: IChercheReverseResponse) => {
-        return this.extractResults(response);
-      })
-    );
+    return this.http
+      .get<IChercheReverseResponse>(`${this.searchUrl}/locate`, { params })
+      .pipe(
+        map((response) => {
+          return this.extractResults(response);
+        })
+      );
   }
 
   private getAllowedTypes() {
     return this.http
-      .get(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`)
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        typeSetting.values.forEach((v) => {
+        typeSetting!.values.forEach((v) => {
           v.available = types.indexOf(v.value as string) > -1;
         });
-        this.setParamFromSetting(typeSetting, false);
+        if (typeSetting) this.setParamFromSetting(typeSetting!, false);
       });
   }
 
@@ -943,10 +949,11 @@ export class IChercheReverseSearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    if (options.distance || this.options.distance) {
-      options.params = Object.assign(options.params || {}, {
-        bufferInput: options.distance || this.options.distance
-      });
+    if (options?.distance || this.options.distance) {
+      if (options)
+        options.params = Object.assign(options.params || {}, {
+          bufferInput: options.distance || this.options.distance
+        });
     }
 
     return new HttpParams({
@@ -958,7 +965,7 @@ export class IChercheReverseSearchSource
           icon: true
         },
         this.params,
-        options.params || {}
+        options?.params || {}
       )
     });
   }
@@ -982,7 +989,7 @@ export class IChercheReverseSearchSource
         break;
       default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        const type = typeSetting.values.find(
+        const type = typeSetting?.values.find(
           (t) => t.value === data.properties.type
         );
         if (type) {
@@ -1001,7 +1008,7 @@ export class IChercheReverseSearchSource
     const titleHtml = data.properties.nom;
     const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
 
-    let icon: string | IconSvg = data.icon;
+    let icon: string | IconSvg | undefined = data.icon;
     if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
       icon = ICHERCHE_ICONS[icon];
     }
