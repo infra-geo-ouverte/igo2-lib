@@ -7,7 +7,6 @@ import {
   output
 } from '@angular/core';
 
-import OlFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import { EventsKey } from 'ol/events';
@@ -51,17 +50,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Listener to the map click event
    */
-  private mapClickListener;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapClickListener: any;
 
   /**
    * OL drag box interaction
    */
-  private olDragSelectInteraction: OlDragSelectInteraction;
+  private olDragSelectInteraction?: OlDragSelectInteraction;
 
   /**
    * Ol drag box "end" event key
    */
-  private olDragSelectInteractionEndKey: EventsKey | EventsKey[];
+  private olDragSelectInteractionEndKey!: EventsKey | EventsKey[];
 
   /**
    * Whter to query features or not
@@ -77,7 +77,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * Feature query hit tolerance
    */
   readonly queryFeaturesCondition =
-    input<(olLayer: OlLayer<OlSource>) => boolean>(undefined);
+    input<(olLayer: OlLayer<OlSource>) => boolean>();
 
   /**
    * Whether all query should complete before emitting an event
@@ -171,7 +171,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     if (this.waitForAllQueries()) {
       this.queries$$.push(
         zip(...queries$).subscribe((results: Feature[][]) => {
-          const features = [].concat(...results);
+          const features = ([] as Feature[]).concat(...results);
           this.query.emit({ features, event });
         })
       );
@@ -191,17 +191,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private doQueryFeatures(
     event: MapBrowserPointerEvent<any>
   ): Observable<Feature[]> {
-    const clickedFeatures = [];
+    const clickedFeatures: Feature[] = [];
 
     if (event.type === 'singleclick') {
       const queryFeaturesCondition = this.queryFeaturesCondition();
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: OlFeature, layerOL: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (featureOL: any, layerOL: any) => {
           const layer = this.map.layerController.getById(
             layerOL.values_._layer.id
           );
-          if (isLayerGroup(layer) || !layer.displayed) {
+          if (!layer || isLayerGroup(layer) || !layer.displayed) {
             return;
           }
           if (
@@ -216,7 +217,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 const newFeature = featureFromOl(feature, this.map.projection);
                 newFeature.meta = {
                   title: feature.values_.nom,
-                  id: layerOL.values_._layer.id + '.' + feature.id_,
+                  id: layerOL.values_._layer.id + '.' + feature.id_!,
                   icon: feature.values_._icon,
                   sourceTitle: layerOL.values_.title,
                   alias: this.queryService.getAllowedFieldsAndAlias(layer)
@@ -231,12 +232,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 layerOL
               );
               newFeature.meta = {
-                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                id: layerOL.values_._layer.id + '.' + newFeature.meta!.id,
                 sourceTitle: layerOL.values_.title,
-                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                alias: this.queryService.getAllowedFieldsAndAlias(layer as any),
                 title:
-                  this.queryService.getQueryTitle(newFeature, layer) ||
-                  newFeature.meta.title
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  this.queryService.getQueryTitle(newFeature, layer as any) ||
+                  newFeature.meta!.title
               };
               clickedFeatures.push(newFeature);
             } else {
@@ -246,12 +249,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 layerOL
               );
               newFeature.meta = {
-                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                id: layerOL.values_._layer.id + '.' + newFeature.meta!.id,
                 sourceTitle: layerOL.values_.title,
-                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                alias: this.queryService.getAllowedFieldsAndAlias(layer as any),
                 title:
-                  this.queryService.getQueryTitle(newFeature, layer) ||
-                  newFeature.meta.title
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  this.queryService.getQueryTitle(newFeature, layer as any) ||
+                  newFeature.meta!.title
               };
               clickedFeatures.push(newFeature);
             }
@@ -259,9 +264,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         },
         {
           hitTolerance: this.queryFeaturesHitTolerance() || 0,
-          layerFilter: queryFeaturesCondition
-            ? queryFeaturesCondition
-            : olLayerFeatureIsQueryable
+          layerFilter: queryFeaturesCondition ?? olLayerFeatureIsQueryable
         }
       );
     } else if (event.type === 'boxend') {
@@ -273,7 +276,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           (layer) =>
             isLayerItem(layer) && layer instanceof VectorLayer && layer.visible
         )
-        .map((layer: Layer) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((layer: any) => {
           const featuresOL = layer.dataSource.ol as olVectorSource;
           featuresOL.forEachFeatureIntersectingExtent(
             dragExtent,
@@ -290,7 +294,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
                 title:
                   this.queryService.getQueryTitle(newFeature, layer) ||
-                  newFeature.meta.title
+                  newFeature.meta!.title
               };
               clickedFeatures.push(newFeature);
             }
@@ -336,7 +340,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
     this.olDragSelectInteractionEndKey = olDragSelectInteractionOnQuery.on(
       'boxend',
-      (event: MapBrowserPointerEvent<any>) => this.onMapEvent(event)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (event: any) => this.onMapEvent(event)
     );
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 
@@ -17,23 +18,23 @@ export class EsriStyleGenerator {
     this._renderers.simple = this._renderSimple;
     this._renderers.classBreaks = this._renderClassBreaks;
   }
-  static _convertPointToPixel(point) {
+  static _convertPointToPixel(point: any) {
     return point / 0.75;
   }
-  static _transformColor(color): [number, number, number, number] {
+  static _transformColor(color: any): [number, number, number, number] {
     // alpha channel is different, runs from 0-255 but in ol3 from 0-1
     return [color[0], color[1], color[2], color[3] / 255];
   }
 
-  static _getResolutionForScale(scale, units) {
+  static _getResolutionForScale(scale: any, units: any) {
     const dpi = 96;
-    const mpu = olproj.METERS_PER_UNIT[units];
+    const mpu = (olproj.METERS_PER_UNIT as any)[units];
     const inchesPerMeter = 39.3701;
     return parseFloat(scale) / (mpu * inchesPerMeter * dpi);
   }
 
   /* convert an Esri Text Symbol */
-  static _convertEsriTS(symbol) {
+  static _convertEsriTS(symbol: any) {
     const rotation = EsriStyleGenerator._transformAngle(symbol.angle);
     const text = symbol.text !== undefined ? symbol.text : undefined;
     return new olstyle.Style({
@@ -59,7 +60,7 @@ export class EsriStyleGenerator {
     });
   }
   /* convert an Esri Picture Marker Symbol */
-  static _convertEsriPMS(symbol) {
+  static _convertEsriPMS(symbol: any) {
     const src = 'data:' + symbol.contentType + ';base64, ' + symbol.imageData;
     const rotation = EsriStyleGenerator._transformAngle(symbol.angle);
 
@@ -71,7 +72,7 @@ export class EsriStyleGenerator {
     });
   }
   /* convert an Esri Simple Fill Symbol */
-  static _convertEsriSFS(symbol) {
+  static _convertEsriSFS(symbol: any) {
     // there is no support in openlayers currently for fill patterns, so style is not interpreted
     const fill = new olstyle.Fill({
       color: EsriStyleGenerator._transformColor(symbol.color)
@@ -84,7 +85,7 @@ export class EsriStyleGenerator {
       stroke
     });
   }
-  static _convertOutline(outline) {
+  static _convertOutline(outline: any) {
     let lineDash;
     const color = EsriStyleGenerator._transformColor(outline.color);
     if (outline.style === 'esriSLSDash') {
@@ -106,12 +107,12 @@ export class EsriStyleGenerator {
     });
   }
   /* convert an Esri Simple Line Symbol */
-  static _convertEsriSLS(symbol) {
+  static _convertEsriSLS(symbol: any) {
     return new olstyle.Style({
       stroke: EsriStyleGenerator._convertOutline(symbol)
     });
   }
-  static _transformAngle(angle) {
+  static _transformAngle(angle: any) {
     if (angle === 0 || angle === undefined) {
       return undefined;
     }
@@ -124,7 +125,7 @@ export class EsriStyleGenerator {
     }
   }
   /* convert an Esri Simple Marker Symbol */
-  static _convertEsriSMS(symbol) {
+  static _convertEsriSMS(symbol: any) {
     const fill = new olstyle.Fill({
       color: EsriStyleGenerator._transformColor(symbol.color)
     });
@@ -200,8 +201,8 @@ export class EsriStyleGenerator {
     }
   }
 
-  _convertLabelingInfo(labelingInfo, mapUnits) {
-    const styles = [];
+  _convertLabelingInfo(labelingInfo: any, mapUnits: any) {
+    const styles: any[] = [];
     for (let i = 0, ii = labelingInfo.length; i < ii; ++i) {
       const labelExpression = labelingInfo[i].labelExpression;
       // only limited support for label expressions
@@ -229,7 +230,7 @@ export class EsriStyleGenerator {
       const style = this._converters[symbol.type].call(this, symbol);
       styles.push(
         (() => {
-          return function (feature, resolution) {
+          return function (this: any, feature: any, resolution: any) {
             let visible = true;
             if (this.minResolution !== null && this.maxResolution !== null) {
               visible =
@@ -257,7 +258,7 @@ export class EsriStyleGenerator {
     return styles;
   }
 
-  _renderSimple(renderer) {
+  _renderSimple(renderer: any) {
     const style = this._converters[renderer.symbol.type].call(
       this,
       renderer.symbol
@@ -268,14 +269,14 @@ export class EsriStyleGenerator {
       };
     })();
   }
-  _renderClassBreaks(renderer) {
+  _renderClassBreaks(renderer: any) {
     const defaultSymbol = renderer.defaultSymbol;
     const defaultStyle = this._converters[defaultSymbol.type].call(
       this,
       defaultSymbol
     );
     const field = renderer.field;
-    const classes = [];
+    const classes: any[] = [];
     for (let i = 0, ii = renderer.classBreakInfos.length; i < ii; ++i) {
       const classBreakInfo = renderer.classBreakInfos[i];
       let min;
@@ -297,7 +298,7 @@ export class EsriStyleGenerator {
       classes.push({ min, max, style });
     }
     return (() => {
-      return (feature) => {
+      return (feature: any) => {
         const value = feature.get(field);
         for (let i = 0, ii = classes.length; i < ii; ++i) {
           let condition;
@@ -314,9 +315,9 @@ export class EsriStyleGenerator {
       };
     })();
   }
-  _renderUniqueValue(renderer) {
+  _renderUniqueValue(renderer: any) {
     const defaultSymbol = renderer.defaultSymbol;
-    let defaultStyle = [];
+    let defaultStyle: any[] = [];
     if (defaultSymbol) {
       defaultStyle = [
         this._converters[defaultSymbol.type].call(this, defaultSymbol)
@@ -327,20 +328,20 @@ export class EsriStyleGenerator {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const me = this;
     return (() => {
-      const hash = {};
+      const hash: any = {};
       for (let i = 0, ii = infos.length; i < ii; ++i) {
         const info = infos[i];
         const symbol = info.symbol;
         hash[info.value] = [me._converters[symbol.type].call(me, symbol)];
       }
 
-      return (feature) => {
+      return (feature: any) => {
         const style = hash[feature.get(field)];
         return style ? style : defaultStyle;
       };
     })();
   }
-  generateStyle(layerInfo, mapUnits) {
+  generateStyle(layerInfo: any, mapUnits: any) {
     const drawingInfo = layerInfo.drawingInfo;
     let styleFunctions = [];
     const drawingInfoStyle = this._renderers[drawingInfo.renderer.type].call(
@@ -361,8 +362,8 @@ export class EsriStyleGenerator {
       return styleFunctions[0];
     } else {
       return (() => {
-        return (feature, resolution) => {
-          let styles = [];
+        return (feature: any, resolution: any) => {
+          let styles: any[] = [];
           for (let i = 0, ii = styleFunctions.length; i < ii; ++i) {
             const result = styleFunctions[i].call(null, feature, resolution);
             if (result) {

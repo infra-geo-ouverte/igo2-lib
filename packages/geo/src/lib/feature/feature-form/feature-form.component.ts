@@ -31,8 +31,8 @@ export class FeatureFormComponent {
   /**
    * Form
    */
-  readonly form = input<Form>(undefined);
-  readonly feature = input<Feature | undefined>(undefined);
+  readonly form = input.required<Form>();
+  readonly feature = input<Feature>();
 
   /**
    * Event emitted when the form is submitted
@@ -52,7 +52,7 @@ export class FeatureFormComponent {
   }
 
   getData(): Feature {
-    return this.formDataToFeature(this.igoForm().getData());
+    return this.formDataToFeature(this.igoForm()!.getData());
   }
 
   /**
@@ -78,7 +78,7 @@ export class FeatureFormComponent {
       const [key, value] = entry;
       if (key.startsWith(propertyPrefix)) {
         const property = key.substr(propertyPrefix.length);
-        properties[property] = value;
+        (properties as Record<string, unknown>)[property] = value;
       }
     });
 

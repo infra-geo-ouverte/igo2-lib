@@ -77,8 +77,8 @@ export class DirectionsInputsComponent implements OnDestroy {
   readonly stopInputHasFocus = output<boolean>();
 
   private readonly invalidKeys: string[] = ['Control', 'Shift', 'Alt'];
-  private onMapClickEventKeys = [];
-  public stopWithHover: Stop;
+  private onMapClickEventKeys: EventsKey[] = [];
+  public stopWithHover?: Stop;
   public stopIsDragged = false;
 
   /**
@@ -90,8 +90,10 @@ export class DirectionsInputsComponent implements OnDestroy {
   get currentPosition(): boolean {
     const stopsFeatureStore = this.stopsFeatureStore();
     return (
-      stopsFeatureStore?.map?.geolocationController?.position$?.value
-        ?.position && stopsFeatureStore?.map?.geolocationController?.tracking
+      (stopsFeatureStore?.map?.geolocationController?.position$?.value
+        ?.position &&
+        stopsFeatureStore?.map?.geolocationController?.tracking) ??
+      false
     );
   }
 
@@ -154,16 +156,16 @@ export class DirectionsInputsComponent implements OnDestroy {
     const feature: Feature = event.option.value;
     if (feature) {
       let coords: Coordinate;
-      const geometry: FeatureGeometry = feature.geometry;
+      const geometry: FeatureGeometry = feature.geometry!;
       if (geometry.type === 'Point') {
         coords = geometry.coordinates as Position;
       } else {
-        const point = pointOnFeature(feature.geometry);
+        const point = pointOnFeature(feature.geometry!);
         coords = [point.geometry.coordinates[0], point.geometry.coordinates[1]];
       }
       if (coords) {
         stop.coordinates = coords;
-        stop.text = feature.meta.title;
+        stop.text = feature.meta!.title;
         this.stopsStore().update(stop);
       }
     }
@@ -246,11 +248,12 @@ export class DirectionsInputsComponent implements OnDestroy {
    * @param {Stop} stop - The stop to update with the current position.
    */
   useCurrentPosition(stop: Stop): void {
-    this.useCoordinatesAsStop(
+    const position =
       this.stopsFeatureStore().map.geolocationController.position$.value
-        .position,
-      stop
-    );
+        ?.position;
+    if (position) {
+      this.useCoordinatesAsStop(position, stop);
+    }
   }
 
   /**
@@ -302,13 +305,15 @@ export class DirectionsInputsComponent implements OnDestroy {
    * @param {Stop} stop - The stop to update with the clicked coordinates.
    */
   private listenMapSingleClick(stop: Stop): void {
-    const key: EventsKey = this.stopsFeatureStore().layer.map.ol.once(
+    const key = this.stopsFeatureStore().layer.map?.ol.once(
       'singleclick',
       (event) => {
         this.useCoordinatesAsStop(event.coordinate, stop);
       }
     );
-    this.onMapClickEventKeys.push(key);
+    if (key) {
+      this.onMapClickEventKeys.push(key);
+    }
   }
 
   /**
@@ -330,7 +335,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   private useCoordinatesAsStop(coordinates: Coordinate, stop: Stop): void {
     const projectedCoordinates: Coordinate = olProj.transform(
       coordinates,
-      this.stopsFeatureStore().layer.map.projection,
+      this.stopsFeatureStore().layer.map?.projection,
       this.projection()
     );
     const roundedCoordinates: Coordinate = roundCoordTo(

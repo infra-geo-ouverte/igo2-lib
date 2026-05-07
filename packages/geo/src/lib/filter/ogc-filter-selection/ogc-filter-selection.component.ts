@@ -23,7 +23,7 @@ import {
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,8 +44,12 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import {
   IgoOgcFilterObject,
   OgcAutocomplete,
+  OgcCheckbox,
   OgcFilterableDataSource,
+  OgcInterfaceFilterOptions,
   OgcPushButton,
+  OgcRadioButton,
+  OgcSelect,
   OgcSelectorBundle,
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
@@ -53,6 +57,13 @@ import { MapBase } from '../../map';
 import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
+
+type OgcSelectorItem =
+  | OgcPushButton
+  | OgcCheckbox
+  | OgcRadioButton
+  | OgcSelect
+  | OgcAutocomplete;
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -91,11 +102,11 @@ export class OgcFilterSelectionComponent implements OnInit {
     read: MatAutocompleteTrigger
   });
 
-  readonly refreshFilters = input<() => void>(undefined);
+  readonly refreshFilters = input<() => void>();
 
-  readonly datasource = input<OgcFilterableDataSource>(undefined);
+  readonly datasource = input<OgcFilterableDataSource>();
 
-  readonly map = input<MapBase>(undefined);
+  readonly map = input<MapBase>();
 
   checkboxesIndex = model<number>(5);
   radioButtonsIndex = model<number>(5);
@@ -116,16 +127,19 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   public ogcFilterOperator = OgcFilterOperator;
 
-  public form: UntypedFormGroup;
-  private ogcFilterWriter: OgcFilterWriter;
+  public form!: UntypedFormGroup;
+  private ogcFilterWriter!: OgcFilterWriter;
   public color = 'primary';
   public selectAllSelected = false;
-  public selectEnabled$ = new BehaviorSubject(undefined);
-  public selectEnableds$ = new BehaviorSubject([]);
+  public selectEnabled$ = new BehaviorSubject<OgcSelectorItem | undefined>(
+    undefined
+  );
+  public selectEnableds$ = new BehaviorSubject<OgcSelectorItem[]>([]);
   public autocompleteEnableds$ = new BehaviorSubject<string[]>([]);
   public filteredOgcAutocomplete: Record<string, Observable<any[]>> = {};
 
-  public applyFiltersTimeout;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public applyFiltersTimeout: any;
 
   get ogcFiltersSelectors() {
     const ogcSelector = [];
@@ -146,10 +160,10 @@ export class OgcFilterSelectionComponent implements OnInit {
       ogcSelector.push(datasource?.options?.ogcFilters?.autocomplete);
     }
     ogcSelector.sort((a, b) => {
-      if (a.order < b.order) {
+      if ((a.order ?? 0) < (b.order ?? 0)) {
         return -1;
       }
-      if (a.order > b.order) {
+      if ((a.order ?? 0) > (b.order ?? 0)) {
         return 1;
       }
       return 0;
@@ -157,39 +171,39 @@ export class OgcFilterSelectionComponent implements OnInit {
     return ogcSelector;
   }
 
-  get currentPushButtonsGroup() {
-    return this.form.get('pushButtonsGroup').value;
+  get currentPushButtonsGroup(): SelectorGroup {
+    return this.form.get('pushButtonsGroup')!.value;
   }
-  set currentPushButtonsGroup(value) {
+  set currentPushButtonsGroup(value: SelectorGroup) {
     this.form.patchValue({ pushButtonsGroup: value });
   }
 
-  get currentCheckboxesGroup() {
-    return this.form.get('checkboxesGroup').value;
+  get currentCheckboxesGroup(): SelectorGroup {
+    return this.form.get('checkboxesGroup')!.value;
   }
-  set currentCheckboxesGroup(value) {
+  set currentCheckboxesGroup(value: SelectorGroup) {
     this.form.patchValue({ checkboxesGroup: value });
   }
 
-  get currentRadioButtonsGroup() {
-    return this.form.get('radioButtonsGroup').value;
+  get currentRadioButtonsGroup(): SelectorGroup {
+    return this.form.get('radioButtonsGroup')!.value;
   }
-  set currentRadioButtonsGroup(value) {
+  set currentRadioButtonsGroup(value: SelectorGroup) {
     this.form.patchValue({ radioButtonsGroup: value });
   }
 
-  get currentSelectGroup() {
-    return this.form.get('selectGroup').value;
+  get currentSelectGroup(): SelectorGroup {
+    return this.form.get('selectGroup')!.value;
   }
-  set currentSelectGroup(value) {
+  set currentSelectGroup(value: SelectorGroup) {
     this.form.patchValue({ selectGroup: value });
     this.cdRef.detectChanges();
   }
 
-  get currentAutocompleteGroup() {
-    return this.form.get('autocompleteGroup').value;
+  get currentAutocompleteGroup(): SelectorGroup {
+    return this.form.get('autocompleteGroup')!.value;
   }
-  set currentAutocompleteGroup(value) {
+  set currentAutocompleteGroup(value: SelectorGroup) {
     this.form.patchValue({ autocompleteGroup: value });
     this.cdRef.detectChanges();
   }
@@ -201,7 +215,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   set selectEnabled(value) {
     this.selectEnabled$.next(value);
     clearTimeout(this.applyFiltersTimeout);
-    this.currentSelectGroup.computedSelectors.forEach((compSelect) => {
+    this.currentSelectGroup.computedSelectors?.forEach((compSelect) => {
       compSelect.selectors?.forEach((selector) => {
         value === selector
           ? (selector.enabled = true)
@@ -221,7 +235,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   set selectEnableds(value) {
     this.selectEnableds$.next(value);
     clearTimeout(this.applyFiltersTimeout);
-    this.currentSelectGroup.computedSelectors.forEach((compSelect) => {
+    this.currentSelectGroup.computedSelectors?.forEach((compSelect) => {
       compSelect.selectors?.forEach((selector) => {
         value.includes(selector)
           ? (selector.enabled = true)
@@ -242,11 +256,11 @@ export class OgcFilterSelectionComponent implements OnInit {
   set autocompleteEnableds(filterList) {
     this.autocompleteEnableds$.next(filterList);
     clearTimeout(this.applyFiltersTimeout);
-    this.currentAutocompleteGroup.computedSelectors.forEach((compSelect) => {
+    this.currentAutocompleteGroup.computedSelectors?.forEach((compSelect) => {
       compSelect.selectors?.forEach((selector) => {
         selector.enabled = false;
         for (const filter of filterList) {
-          if (filter === selector.title) {
+          if (filter === (selector.filters as any).expression) {
             selector.enabled = true;
           }
         }
@@ -283,35 +297,35 @@ export class OgcFilterSelectionComponent implements OnInit {
     });
   }
 
-  getPushButtonsGroups(): SelectorGroup[] {
+  getPushButtonsGroups(): SelectorGroup[] | undefined {
     const datasource = this.datasource();
     if (datasource?.options?.ogcFilters?.pushButtons) {
       return datasource.options.ogcFilters.pushButtons.groups;
     }
   }
 
-  getCheckboxesGroups(): SelectorGroup[] {
+  getCheckboxesGroups(): SelectorGroup[] | undefined {
     const datasource = this.datasource();
     if (datasource?.options?.ogcFilters?.checkboxes) {
       return datasource.options.ogcFilters.checkboxes.groups;
     }
   }
 
-  getRadioButtonsGroups(): SelectorGroup[] {
+  getRadioButtonsGroups(): SelectorGroup[] | undefined {
     const datasource = this.datasource();
     if (datasource?.options?.ogcFilters?.radioButtons) {
       return datasource.options.ogcFilters.radioButtons.groups;
     }
   }
 
-  getSelectGroups(): SelectorGroup[] {
+  getSelectGroups(): SelectorGroup[] | undefined {
     const datasource = this.datasource();
     if (datasource?.options?.ogcFilters?.select) {
       return datasource.options.ogcFilters.select.groups;
     }
   }
 
-  getAutocompleteGroups(): SelectorGroup[] {
+  getAutocompleteGroups(): SelectorGroup[] | undefined {
     const datasource = this.datasource();
     if (datasource?.options?.ogcFilters?.autocomplete) {
       return datasource.options.ogcFilters.autocomplete.groups;
@@ -320,7 +334,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   async ngOnInit() {
     const datasource = this.datasource();
-    if (datasource.options.ogcFilters) {
+    if (datasource?.options?.ogcFilters) {
       if (datasource.options.ogcFilters.pushButtons) {
         this.currentPushButtonsGroup =
           datasource.options.ogcFilters.pushButtons.groups.find(
@@ -359,48 +373,48 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
 
     this.form
-      .get('pushButtonsGroup')
+      .get('pushButtonsGroup')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.onPushButtonsChangeGroup();
         this.applyFilters();
       });
     this.form
-      .get('checkboxesGroup')
+      .get('checkboxesGroup')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.onCheckboxesChangeGroup();
         this.applyFilters();
       });
     this.form
-      .get('radioButtonsGroup')
+      .get('radioButtonsGroup')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.onRadioButtonsChangeGroup();
         this.applyFilters();
       });
     this.form
-      .get('selectGroup')
+      .get('selectGroup')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.onSelectChangeGroup();
         this.applyFilters();
       });
     this.form
-      .get('autocompleteGroup')
+      .get('autocompleteGroup')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.onAutocompleteChangeGroup();
         this.applyFilters();
       });
     this.form
-      .get('pushButtons')
+      .get('pushButtons')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.applyFilters();
       });
     this.form
-      .get('radioButtons')
+      .get('radioButtons')!
       .valueChanges.pipe(debounceTime(750))
       .subscribe(() => {
         this.applyFilters();
@@ -413,9 +427,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private initSelectEnabled() {
-    const enableds = [];
-    let enabled;
-    this.currentSelectGroup.computedSelectors.forEach((compSelect) => {
+    const enableds: OgcSelectorItem[] = [];
+    let enabled: OgcSelectorItem | undefined;
+    this.currentSelectGroup.computedSelectors?.forEach((compSelect) => {
       if (compSelect.multiple) {
         compSelect.selectors?.forEach((selector) => {
           if (selector.enabled) {
@@ -442,12 +456,13 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private initAutocompleteEnableds() {
-    const enabled = [];
-    this.currentAutocompleteGroup.computedSelectors.forEach((compSelect) => {
+    const enabled: string[] = [];
+    this.currentAutocompleteGroup.computedSelectors?.forEach((compSelect) => {
       compSelect.selectors?.forEach((selector) => {
         if (selector.enabled) {
+          const expression = (selector.filters as any).expression;
           const dom = {
-            id: selector.filters.expression,
+            id: expression,
             value: selector.title
           };
           enabled.push(selector.title);
@@ -458,7 +473,8 @@ export class OgcFilterSelectionComponent implements OnInit {
     });
   }
 
-  getToolTip(selector): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getToolTip(selector: any): string {
     let toolTip;
     if (selector.tooltip) {
       if (Array.isArray(selector.tooltip)) {
@@ -471,11 +487,12 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   async getSelectDomValues() {
-    for (const bundle of this.datasource().options.ogcFilters.select.bundles) {
+    for (const bundle of this.datasource()?.options?.ogcFilters?.select
+      ?.bundles ?? []) {
       if (bundle.domSelectors) {
-        let domValues;
+        let domValues: DOMValue[] | undefined;
         for (const domSelector of bundle.domSelectors) {
-          let filterDOM;
+          let filterDOM: DOMOptions | undefined;
           for (const domOptions of this.configService.getConfig<DOMOptions[]>(
             'dom'
           )) {
@@ -491,11 +508,12 @@ export class OgcFilterSelectionComponent implements OnInit {
               };
             }
           }
-          filterDOM.url
-            ? (domValues = (await this.domService.getDomValuesFromURL(
-                filterDOM
-              )) as DOMValue[])
-            : (domValues = filterDOM.values);
+          if (filterDOM) {
+            filterDOM.url
+              ? (domValues =
+                  await this.domService.getDomValuesFromURL(filterDOM))
+              : (domValues = filterDOM.values);
+          }
 
           if (domValues) {
             const newBundle = bundle;
@@ -530,11 +548,15 @@ export class OgcFilterSelectionComponent implements OnInit {
               }
               newBundle.selectors.push(selector);
             }
-            this.getSelectGroups()
-              .find((group) => group.ids.includes(newBundle.id))
-              .computedSelectors.find(
-                (comp) => comp.title === newBundle.title
-              ).selectors = newBundle.selectors;
+            const group = this.getSelectGroups()?.find((g) =>
+              g.ids?.includes(newBundle.id)
+            );
+            const comp = group?.computedSelectors?.find(
+              (c) => c.title === newBundle.title
+            );
+            if (comp) {
+              comp.selectors = newBundle.selectors;
+            }
           }
         }
         this.initSelectEnabled();
@@ -548,12 +570,12 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   async getAutocompleteDomValues() {
-    for (const bundle of this.datasource().options.ogcFilters.autocomplete
-      .bundles) {
+    for (const bundle of this.datasource()?.options?.ogcFilters?.autocomplete
+      ?.bundles ?? []) {
       if (bundle.domSelectors) {
-        let domValues: DOMValue[];
+        let domValues: DOMValue[] | undefined;
         for (const domSelector of bundle.domSelectors) {
-          let filterDOM: DOMOptions;
+          let filterDOM: DOMOptions | undefined;
           for (const configDom of this.configService.getConfig<DOMOptions[]>(
             'dom'
           )) {
@@ -569,11 +591,12 @@ export class OgcFilterSelectionComponent implements OnInit {
               };
             }
           }
-          filterDOM.url
-            ? (domValues = (await this.domService.getDomValuesFromURL(
-                filterDOM
-              )) as DOMValue[])
-            : (domValues = filterDOM.values);
+          if (filterDOM) {
+            filterDOM.url
+              ? (domValues =
+                  await this.domService.getDomValuesFromURL(filterDOM))
+              : (domValues = filterDOM.values ?? []);
+          }
 
           if (domValues) {
             const newBundle: OgcSelectorBundle = bundle;
@@ -593,17 +616,21 @@ export class OgcFilterSelectionComponent implements OnInit {
               };
               newBundle.selectors.push(selector);
             }
-            this.getAutocompleteGroups()
-              .find((group: SelectorGroup) => group.ids.includes(newBundle.id))
-              .computedSelectors.find(
-                (computedSelector) => computedSelector.title === newBundle.title
-              ).selectors = newBundle.selectors;
+            const autoGroup = this.getAutocompleteGroups()?.find((g) =>
+              g.ids?.includes(newBundle.id)
+            );
+            const autoComp = autoGroup?.computedSelectors?.find(
+              (c) => c.title === newBundle.title
+            );
+            if (autoComp) {
+              autoComp.selectors = newBundle.selectors;
+            }
           }
         }
 
         this.filteredOgcAutocomplete[bundle.id] = new Observable<any[]>();
         this.cdRef.detectChanges();
-        this.filteredOgcAutocomplete[bundle.id] = of(domValues);
+        this.filteredOgcAutocomplete[bundle.id] = of(domValues ?? []);
       }
     }
   }
@@ -623,41 +650,47 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private onPushButtonsChangeGroup() {
-    this.getPushButtonsGroups().map((group) => (group.enabled = false));
-    this.getPushButtonsGroups().find(
+    this.getPushButtonsGroups()?.map((group) => (group.enabled = false));
+    const found = this.getPushButtonsGroups()?.find(
       (group) => group === this.currentPushButtonsGroup
-    ).enabled = true;
+    );
+    if (found) found.enabled = true;
   }
 
   private onCheckboxesChangeGroup() {
-    this.getCheckboxesGroups().map((group) => (group.enabled = false));
-    this.getCheckboxesGroups().find(
+    this.getCheckboxesGroups()?.map((group) => (group.enabled = false));
+    const found = this.getCheckboxesGroups()?.find(
       (group) => group === this.currentCheckboxesGroup
-    ).enabled = true;
+    );
+    if (found) found.enabled = true;
   }
 
   private onRadioButtonsChangeGroup() {
-    this.getRadioButtonsGroups().map((group) => (group.enabled = false));
-    this.getRadioButtonsGroups().find(
+    this.getRadioButtonsGroups()?.map((group) => (group.enabled = false));
+    const found = this.getRadioButtonsGroups()?.find(
       (group) => group === this.currentRadioButtonsGroup
-    ).enabled = true;
+    );
+    if (found) found.enabled = true;
   }
 
   private onSelectChangeGroup() {
-    this.getSelectGroups().map((group) => (group.enabled = false));
-    this.getSelectGroups().find(
+    this.getSelectGroups()?.map((group) => (group.enabled = false));
+    const found = this.getSelectGroups()?.find(
       (group) => group === this.currentSelectGroup
-    ).enabled = true;
+    );
+    if (found) found.enabled = true;
   }
 
   private onAutocompleteChangeGroup() {
-    this.getAutocompleteGroups().map((group) => (group.enabled = false));
-    this.getAutocompleteGroups().find(
+    this.getAutocompleteGroups()?.map((group) => (group.enabled = false));
+    const found = this.getAutocompleteGroups()?.find(
       (group) => group === this.currentAutocompleteGroup
-    ).enabled = true;
+    );
+    if (found) found.enabled = true;
   }
 
-  onSelectionChange(currentOgcSelection?, selectorType?) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSelectionChange(currentOgcSelection?: any, selectorType?: string) {
     clearTimeout(this.applyFiltersTimeout);
     if (selectorType === 'radioButton') {
       this.emptyRadioButtons();
@@ -672,8 +705,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   emptyRadioButtons() {
-    this.currentRadioButtonsGroup.computedSelectors.forEach((compSelect) => {
-      compSelect.selectors.map((selector) => (selector.enabled = false));
+    this.currentRadioButtonsGroup.computedSelectors?.forEach((compSelect) => {
+      compSelect.selectors?.forEach((selector) => (selector.enabled = false));
 
       this.applyFiltersTimeout = setTimeout(() => {
         this.applyFilters();
@@ -693,25 +726,29 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   toggleAllSelection() {
     if (this.selectAllSelected) {
-      const enableds = [];
-      this.currentSelectGroup.computedSelectors.forEach((compSelect) => {
+      const enableds: OgcSelectorItem[] = [];
+      this.currentSelectGroup.computedSelectors?.forEach((compSelect) => {
         compSelect.selectors?.forEach((selector) => {
           enableds.push(selector);
         });
       });
-      this.sel().options.forEach((item: MatOption) => item.select());
+      this.sel()?.options.forEach((item) => item.select());
       this.selectEnableds = enableds;
     } else {
-      this.sel().options.forEach((item: MatOption) => item.deselect());
+      this.sel()?.options.forEach((item) => item.deselect());
       this.selectEnableds = [];
     }
   }
 
-  selectOptionClick(value, bundle, event?) {
+  selectOptionClick(
+    value: OgcSelectorItem,
+    bundle: OgcSelectorBundle,
+    event?: any
+  ) {
     if (bundle.multiple) {
       const enableds = this.selectEnableds;
       let newStatus = true;
-      this.sel().options.forEach((item: MatOption) => {
+      this.sel()?.options.forEach((item) => {
         if (!item.selected) {
           newStatus = false;
         }
@@ -765,7 +802,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   // Applies filters based on the current group of all filter selection types
   private applyFilters() {
     let filterQueryString = '';
-    const conditions = [];
+    const conditions: (IgoOgcFilterObject | OgcInterfaceFilterOptions)[] = [];
     const currentGroups = [
       this.currentPushButtonsGroup,
       this.currentCheckboxesGroup,
@@ -775,8 +812,8 @@ export class OgcFilterSelectionComponent implements OnInit {
     ];
     for (const currentGroup of currentGroups) {
       if (currentGroup.computedSelectors) {
-        currentGroup.computedSelectors.map((selectorBundle) => {
-          const bundleCondition = [];
+        currentGroup.computedSelectors.forEach((selectorBundle) => {
+          const bundleCondition: any[] = [];
           selectorBundle.selectors
             ?.filter((ogcSelector) => ogcSelector.enabled === true)
             .forEach((enabledSelector) =>
@@ -787,9 +824,9 @@ export class OgcFilterSelectionComponent implements OnInit {
               conditions.push(bundleCondition[0]);
             } else {
               conditions.push({
-                logical: selectorBundle.logical,
+                logical: selectorBundle.logical!,
                 filters: bundleCondition
-              });
+              } satisfies IgoOgcFilterObject);
             }
           }
         });
@@ -797,36 +834,42 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
     const datasource = this.datasource();
     if (this.isTemporalOperator() && this._currentFilter.active) {
-      conditions.push(datasource.options.ogcFilters.interfaceOgcFilters[0]);
+      const filter = datasource?.options?.ogcFilters?.interfaceOgcFilters?.[0];
+      if (filter) {
+        conditions.push(filter);
+      }
     }
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter.buildFilter(
         conditions.length === 1
-          ? conditions[0]
+          ? (conditions[0] as any)
           : ({ logical: 'And', filters: conditions } as IgoOgcFilterObject)
-      );
+      )!;
     }
-    if (datasource.options.type === 'wms') {
+    if (datasource?.options?.type === 'wms') {
       this.ogcFilterService.filterByOgc(
         datasource as WMSDataSource,
         filterQueryString
       );
     }
-    if (datasource.options.type === 'wfs') {
+    if (datasource?.options?.type === 'wfs') {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
       datasource.ol.refresh();
     }
-    datasource.setOgcFilters(datasource.options.ogcFilters, true);
+    if (datasource) {
+      datasource.setOgcFilters(datasource.options.ogcFilters!, true);
+    }
   }
 
-  isMoreResults(bundle, type) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isMoreResults(bundle: any, type: string) {
     const selectorsLength = bundle.selectors.length;
     const index =
       type === 'radio' ? this.radioButtonsIndex() : this.checkboxesIndex();
     return selectorsLength > index;
   }
 
-  displayMoreResults(type) {
+  displayMoreResults(type: string) {
     if (type === 'radio') {
       this.radioButtonsIndex.set(this.radioButtonsIndex() + 5);
     } else {
@@ -835,7 +878,8 @@ export class OgcFilterSelectionComponent implements OnInit {
     return;
   }
 
-  isLessResults(bundle, type) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isLessResults(bundle: any, type: string) {
     const selectorsLength = bundle.selectors.length;
     const index =
       type === 'radio' ? this.radioButtonsIndex() : this.checkboxesIndex();
@@ -843,7 +887,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     return baseIndex !== index && selectorsLength > baseIndex;
   }
 
-  displayLessResults(type) {
+  displayLessResults(type: string) {
     if (type === 'radio') {
       this.radioButtonsIndex.set(this.baseIndex());
     } else {
@@ -862,8 +906,10 @@ export class OgcFilterSelectionComponent implements OnInit {
   changeProperty(value: any, pos?: number, refreshFilter = true) {
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
-      this.datasource().options.ogcFilters.interfaceOgcFilters.find(
-        (filter) => filter.filterid === this.currentFilter.filterid
+      (
+        this.datasource()?.options?.ogcFilters?.interfaceOgcFilters?.find(
+          (filter) => filter.filterid === this.currentFilter.filterid
+        ) as any
       )[detectedProperty] = value;
 
       if (refreshFilter) {
@@ -872,7 +918,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  detectProperty(pos?: number): string {
+  detectProperty(pos?: number): string | undefined {
     switch (this.currentFilter.operator) {
       case OgcFilterOperator.PropertyIsNotEqualTo:
       case OgcFilterOperator.PropertyIsEqualTo:

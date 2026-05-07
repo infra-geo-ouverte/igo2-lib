@@ -14,7 +14,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { Layer } from '../../layer';
-import { IgoMap } from '../../map/shared/map';
 import { TimeFilterItemComponent } from '../time-filter-item';
 
 @Component({
@@ -33,11 +32,10 @@ import { TimeFilterItemComponent } from '../time-filter-item';
   ]
 })
 export class TimeFilterButtonComponent {
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input.required<Layer>();
   readonly options = computed<TimeFilterableDataSourceOptions>(
     () => this.layer()?.dataSource.options as TimeFilterableDataSourceOptions
   );
-  readonly map = input<IgoMap>(undefined);
 
   readonly color = input('primary');
 

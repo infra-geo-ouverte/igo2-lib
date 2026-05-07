@@ -24,7 +24,7 @@ export class GeoDB {
   private compression = new Compression();
   public collisionsMap = new Map<number | string, string[]>();
   public _newData = 0;
-  private revertObservablesSubscription: Subscription;
+  private revertObservablesSubscription!: Subscription;
 
   constructor() {
     this.db$ = createIndexedDb();
@@ -46,10 +46,11 @@ export class GeoDB {
     insertSource: InsertSourceInsertDBEnum,
     insertEvent: string
   ): Observable<GeoDBData> {
-    const object$ =
+    const object$ = (
       object instanceof Blob
         ? this.compression.compressBlob(object)
-        : of(object);
+        : of(object)
+    ) as Observable<object | CompressedData>;
     const compress = object instanceof Blob ? true : false;
 
     let geoDBData: GeoDBData;
@@ -68,7 +69,8 @@ export class GeoDB {
             } satisfies GeoDBData;
             return this.getGeoDBData(url);
           }),
-          concatMap((dbObject: GeoDBData) => {
+          concatMap((res: GeoDBData | undefined) => {
+            const dbObject = res;
             if (!dbObject) {
               this._newData++;
               return from(db.add('geoData', geoDBData)).pipe(
@@ -117,7 +119,7 @@ export class GeoDB {
     );
   }
 
-  getGeoDBData(url: string): Observable<GeoDBData> {
+  getGeoDBData(url: string): Observable<GeoDBData | undefined> {
     return this.db$.pipe(switchMap((db) => from(db?.get('geoData', url))));
   }
 
@@ -158,7 +160,7 @@ export class GeoDB {
 
   getRegionByID(id: number): Observable<GeoDBData[]> {
     if (!id) {
-      return;
+      return of([]);
     }
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     return this.db$.pipe(
@@ -170,7 +172,7 @@ export class GeoDB {
 
   deleteByRegionID(id: number): Observable<void[]> {
     if (!id) {
-      return;
+      return of([]);
     }
     return this.db$.pipe(
       switchMap((db) => {
@@ -208,8 +210,8 @@ export class GeoDB {
         revertObservables.push(
           this.getGeoDBData(url).pipe(
             first(),
-            concatMap((dbObject: GeoDBData) => {
-              const updatedObject = dbObject;
+            concatMap((dbObject: GeoDBData | undefined) => {
+              const updatedObject = dbObject!;
               updatedObject.regionID = regionID;
               return this.customUpdate(updatedObject);
             })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import { getUid } from 'ol/util';
 
@@ -24,17 +25,17 @@ export function getRootParentByProperty(
   layers: AnyLayer[],
   layer: Layer,
   property: LinkedProperties
-): Layer {
-  let layerToUse = layer;
-  let parentLayer = layerToUse;
+): Layer | undefined {
+  let layerToUse: Layer | undefined = layer;
+  let parentLayer: Layer | undefined = layerToUse;
   let hasParentLayer = true;
   while (hasParentLayer) {
     layerToUse = parentLayer;
-    parentLayer = getDirectParentLayerByProperty(layers, layerToUse, property);
+    parentLayer = getDirectParentLayerByProperty(layers, layerToUse!, property);
     hasParentLayer = parentLayer ? true : false;
   }
   if (!hasParentLayer) {
-    if (!layerHasLinkWithProperty(layerToUse, property)) {
+    if (!layerHasLinkWithProperty(layerToUse!, property)) {
       layerToUse = undefined;
     }
   }
@@ -65,17 +66,17 @@ export function getAllChildLayersByProperty(
 export function getRootParentByDeletion(
   layer: Layer,
   layers: AnyLayer[]
-): Layer {
-  let layerToUse = layer;
-  let parentLayer = layerToUse;
+): Layer | undefined {
+  let layerToUse: Layer | undefined = layer;
+  let parentLayer: Layer | undefined = layerToUse;
   let hasParentLayer = true;
   while (hasParentLayer) {
     layerToUse = parentLayer;
-    parentLayer = getDirectParentLayerByDeletion(layerToUse, layers);
+    parentLayer = getDirectParentLayerByDeletion(layerToUse!, layers);
     hasParentLayer = parentLayer ? true : false;
   }
   if (!hasParentLayer) {
-    if (!hasLinkDeletion(layerToUse)) {
+    if (!hasLinkDeletion(layerToUse!)) {
       layerToUse = undefined;
     }
   }
@@ -89,13 +90,13 @@ export function getAllChildLayersByDeletion(
 ): Layer[] {
   const childLayers = getLayersByDeletion(
     layers,
-    layer.options.linkedLayers.links
+    layer.options.linkedLayers?.links ?? []
   );
   childLayers.map((cl) => {
     knownChildLayers.push(cl);
     const directChildLayers = getLayersByDeletion(
       layers,
-      cl.options.linkedLayers.links
+      cl.options.linkedLayers?.links ?? []
     );
     if (directChildLayers) {
       getAllChildLayersByDeletion(layers, cl, knownChildLayers);
@@ -108,9 +109,9 @@ function getDirectParentLayerByProperty(
   layers: AnyLayer[],
   layer: Layer,
   property: LinkedProperties
-): Layer {
+): Layer | undefined {
   if (layer?.options.linkedLayers?.linkId) {
-    const currentLinkId = layer.options.linkedLayers.linkId;
+    const currentLinkId = layer.options.linkedLayers!.linkId;
     const parents = layers.filter((pl) => {
       if (isLayerGroup(pl)) {
         return false;
@@ -142,16 +143,18 @@ function getDirectChildLayersByProperty(
   layer: Layer,
   property: LinkedProperties
 ): Layer[] {
-  let linkedIds = [];
+  let linkedIds: LayerId[] = [];
   if (layer?.options.linkedLayers?.links) {
-    layer.options.linkedLayers.links
-      .filter((l) => l.properties.includes(property))
+    layer.options
+      .linkedLayers!.links.filter((l) => l.properties.includes(property))
       .map((link) => {
-        linkedIds = linkedIds.concat(link.linkedIds);
+        linkedIds = [...linkedIds, ...link.linkedIds];
       });
   }
   const layerItems = layers.filter((layer) => isLayerItem(layer)) as Layer[];
-  return linkedIds.map((lid) => findLayerByLinkId(layerItems, lid));
+  return linkedIds
+    .map((lid) => findLayerByLinkId(layerItems, lid))
+    .filter(Boolean) as Layer[];
 }
 
 function layerHasLinkWithProperty(
@@ -177,7 +180,7 @@ function hasLinkDeletion(layer: Layer): boolean {
 }
 
 export function getLinkedLayersOptions(layer: Layer) {
-  return layer.options.linkedLayers;
+  return layer.options.linkedLayers!;
 }
 
 export function findLayerByLinkId(layers: Layer[], id: LayerId) {
@@ -187,9 +190,9 @@ export function findLayerByLinkId(layers: Layer[], id: LayerId) {
 function getDirectParentLayerByDeletion(
   layer: Layer,
   layers: AnyLayer[]
-): Layer {
+): Layer | undefined {
   if (layer.options.linkedLayers?.linkId) {
-    const currentLinkId = layer.options.linkedLayers.linkId;
+    const currentLinkId = layer.options.linkedLayers!.linkId;
     const parents = layers.filter((parent) => {
       if (isLayerGroup(parent)) {
         return false;
@@ -219,15 +222,15 @@ export function getLayersByDeletion(
   links: LayersLinkProperties[]
 ): Layer[] {
   return links
-    ?.filter((l) => l.syncedDelete)
-    .reduce((layerAcc, link) => {
+    .filter((l) => l.syncedDelete)
+    .reduce((layerAcc: Layer[], link) => {
       const linkedLayers = getLayersByLink(link, layers);
-      return layerAcc.concat(linkedLayers);
+      return [...layerAcc, ...linkedLayers];
     }, []);
 }
 
 function getLayersByLink(link: LayersLinkProperties, layers: Layer[]): Layer[] {
-  return link.linkedIds.reduce((linkedLayers, id) => {
+  return link.linkedIds.reduce((linkedLayers: Layer[], id) => {
     const linkedLayer = findLayerByLinkId(layers, id);
     if (linkedLayer) {
       linkedLayers.push(linkedLayer);
@@ -248,7 +251,8 @@ export function handleLayerPropertyChange(
   let isLayerProperty = true;
   let isDatasourceProperty = true;
   const key = change.event.key;
-  let newValue;
+
+  let newValue: any;
   if (key === 'ogcFilters') {
     isLayerProperty = false;
     isDatasourceProperty = true;
@@ -288,12 +292,12 @@ export function handleLayerPropertyChange(
 
     let resolutionPropertyHasChanged = false;
     const initiatorIgoLayerSourceType =
-      change.layer.options.source.options.type;
+      change.layer.options.source!.options.type;
     const initiatorIgoLayerOgcFilterableDataSourceOptions = change.layer
       .dataSource.options as OgcFilterableDataSourceOptions;
     clbp.map((l) => {
       if (change.layer && l && getUid(change.layer.ol) !== getUid(l?.ol)) {
-        const lLayerType = l.options.source.options.type;
+        const lLayerType = l.options.source!.options.type;
         if (isLayerProperty) {
           if (key === 'visible') {
             // Exception for layer not in list when the changed layer have a group not displayed
@@ -318,7 +322,7 @@ export function handleLayerPropertyChange(
               false
             );
             if (lLayerType === 'wfs') {
-              l.ol.getSource().refresh();
+              l.ol.getSource()?.refresh();
             }
             if (lLayerType === 'wms') {
               let appliedOgcFilter;

@@ -5,15 +5,18 @@ import {
   Component,
   OnInit,
   TemplateRef,
+  computed,
   contentChild,
   inject,
   input,
-  output
+  output,
+  signal
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
@@ -48,34 +51,37 @@ import { LayerToolMode, LayerViewerOptions } from './layer-viewer.interface';
   selector: 'igo-layer-viewer',
   templateUrl: './layer-viewer.component.html',
   styleUrls: ['./layer-viewer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgTemplateOutlet,
     MatButtonModule,
     MatCheckboxModule,
     MatDividerModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     LayerListComponent,
     LayerUnavailableListComponent,
     LayerViewerBottomActionsComponent,
     IgoLanguageModule,
     LayerListToolComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerViewerComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private layerService = inject(LayerService);
 
-  layers: AnyLayer[];
-  baselayers: AnyLayer[];
-  keyword$ = new BehaviorSubject<string>(undefined);
-  mode: LayerToolMode;
-  isDragDropDisabled: boolean;
+  layers!: AnyLayer[];
+  baselayers?: AnyLayer[];
+  keyword$ = new BehaviorSubject<string | undefined>(undefined);
+  mode?: LayerToolMode;
+  isDragDropDisabled!: boolean;
+  isLoading = signal(true);
+  hasLayers = signal(false);
 
   readonly map = input.required<MapBase>();
-  readonly options = input<LayerViewerOptions>(undefined);
-  readonly isDesktop = input<boolean>(undefined);
-  readonly excludeBaseLayers = input<boolean>(undefined);
+  readonly options = input<LayerViewerOptions>();
+  readonly isDesktop = input<boolean>();
+  readonly excludeBaseLayers = input<boolean>();
 
   readonly appliedFilterAndSort = output<LayerListControlsOptions>();
 
@@ -83,12 +89,10 @@ export class LayerViewerComponent implements OnInit {
     read: TemplateRef
   });
 
-  get layerViewerOptions(): LayerViewerOptions {
-    return {
-      ...this.options(),
-      mode: this.mode
-    };
-  }
+  readonly layerViewerOptions = computed(() => ({
+    ...(this.options() ?? {}),
+    mode: this.mode
+  }));
 
   get layerController() {
     return this.map().layerController as LayerController;
@@ -105,7 +109,7 @@ export class LayerViewerComponent implements OnInit {
    * @internal
    */
   ngOnInit(): void {
-    const baseObs$: [Observable<AnyLayer[]>, Observable<string>] = [
+    const baseObs$: [Observable<AnyLayer[]>, Observable<string | undefined>] = [
       this.layerController.layers$,
       this.keyword$
     ];
@@ -129,6 +133,12 @@ export class LayerViewerComponent implements OnInit {
           this.baselayers = this.computeLayers(baselayersInViewer, keyword);
         }
 
+        this.hasLayers.set(
+          layers?.length > 0 ||
+            this.unavailableLayers?.length > 0 ||
+            baselayers?.length > 0
+        );
+        this.isLoading.set(false);
         this.cdr.markForCheck();
       });
     this.keyword$
@@ -152,7 +162,7 @@ export class LayerViewerComponent implements OnInit {
   onVisibilityOnlyChange(): void {
     this.layers = this.computeLayers(
       [...this.layerController.treeLayers],
-      this.keyword$.value
+      this.keyword$.value ?? ''
     );
   }
 
@@ -192,7 +202,7 @@ export class LayerViewerComponent implements OnInit {
     );
   }
 
-  isScrolledIntoView(elemSource, elem) {
+  isScrolledIntoView(elemSource: any, elem: any) {
     const docViewTop = elemSource.scrollTop;
     const docViewBottom = docViewTop + elemSource.clientHeight;
 
@@ -206,12 +216,18 @@ export class LayerViewerComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private computeLayers(layers: AnyLayer[], keyword: string): AnyLayer[] {
+  private computeLayers(
+    layers: AnyLayer[],
+    keyword: string | undefined
+  ): AnyLayer[] {
     const layersOut = this.filterLayers([...layers], keyword);
     return sortLayersByZindex(layersOut, 'desc');
   }
 
-  private filterLayers(layers: AnyLayer[], keyword: string): AnyLayer[] {
+  private filterLayers(
+    layers: AnyLayer[],
+    keyword: string | undefined
+  ): AnyLayer[] {
     if (
       this.options()?.filterAndSortOptions?.showToolbar ===
       LayerListControlsEnum.never
@@ -262,10 +278,10 @@ export class LayerViewerComponent implements OnInit {
     });
 
     const localKeyword = this.normalizeString(term);
-    const layerTitle = this.normalizeString(layer.title);
+    const layerTitle = this.normalizeString(layer.title ?? '');
     const dataSourceType = isLayerGroup(layer)
       ? ''
-      : layer.dataSource.options.type || '';
+      : layer.dataSource.options?.type || '';
     const keywordRegex = new RegExp(localKeyword, 'gi');
     const keywordInList =
       layerKeywords.find((kw: string) => keywordRegex.test(kw)) !== undefined;

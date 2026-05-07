@@ -38,32 +38,32 @@ import type { LayerGroup } from '../shared/layers/layer-group';
   ]
 })
 export class LayerGroupComponent implements OnInit {
-  readonly layer = input<LayerGroup>(undefined);
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly layer = input<LayerGroup>();
+  readonly viewerOptions = input<LayerViewerOptions>();
 
-  readonly selected = input<boolean>(undefined);
-  readonly selectionDisabled = input<boolean>(undefined);
+  readonly selected = input<boolean>();
+  readonly selectionDisabled = input<boolean>();
 
   readonly action = output<AnyLayer>();
   readonly visibilityChange = output<Event>();
   readonly expand = output();
   readonly selectChange = output<boolean>();
 
-  @HostBinding('class.disabled') isDisabled: boolean;
+  @HostBinding('class.disabled') isDisabled!: boolean;
 
   get title(): string {
-    return this.layer().title;
+    return this.layer()!.title ?? '';
   }
 
   get collapsed(): boolean {
-    return this.layer().collapsed;
+    return this.layer()!.collapsed;
   }
   set collapsed(value: boolean) {
-    this.layer().collapsed = value;
+    this.layer()!.collapsed = value;
   }
 
   get tooltipMessage(): string {
-    const layer = this.layer();
+    const layer = this.layer()!;
     return !layer.isInResolutionsRange
       ? 'igo.geo.layer.notInResolution'
       : layer.visible && this.isDisabled
@@ -74,7 +74,7 @@ export class LayerGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.layer().displayed$.subscribe((displayed) => {
+    this.layer()!.displayed$.subscribe((displayed) => {
       this.isDisabled = !displayed;
     });
   }
@@ -90,7 +90,7 @@ export class LayerGroupComponent implements OnInit {
 
   toggleLayerGroupTool(event: Event): void {
     event.stopPropagation();
-    this.action.emit(this.layer());
+    this.action.emit(this.layer()!);
   }
 
   toggleLayerTool(layer: AnyLayer): void {

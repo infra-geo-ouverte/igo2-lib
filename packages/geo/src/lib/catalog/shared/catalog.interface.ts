@@ -91,3 +91,42 @@ export interface CatalogServiceOptions {
   /** @deprecated Use url instead */
   sourcesUrl?: string;
 }
+
+export interface WmtsCapabilities {
+  Contents: {
+    Layer: WmtsCapabilityLayer[];
+  };
+  ServiceIdentification?: {
+    Abstract?: string;
+  };
+}
+
+export interface WmtsCapabilityLayer {
+  Identifier: string;
+  Title?: string;
+}
+
+export interface WmsCapabilityLayer {
+  Name?: string;
+  Title: string;
+  Abstract?: string;
+  Layer?: WmsCapabilityLayer[];
+  DataURL?: { OnlineResource: string }[];
+  MinScaleDenominator?: number;
+  MaxScaleDenominator?: number;
+  EX_GeographicBoundingBox?: number[];
+  Style?: WmsStyle[];
+  Dimension?: WmsDimension[];
+  queryable?: boolean;
+  KeywordList?: string[];
+}
+
+export interface WmsStyle {
+  Name: string;
+  Title: string;
+}
+
+export interface WmsDimension {
+  values?: string;
+  default?: string;
+}

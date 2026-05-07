@@ -39,6 +39,6 @@ export class MeasureFormatPipe implements PipeTransform {
           unitAbbr,
           locale: 'fr'
         })
-      : out;
+      : (out ?? '');
   }
 }

@@ -2,6 +2,7 @@ import { LanguageService } from '@igo2/core/language';
 
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';
+import { Geometry } from 'ol/geom';
 import OlCircle from 'ol/geom/Circle';
 import OlLineString from 'ol/geom/LineString';
 import OlPoint from 'ol/geom/Point';
@@ -149,6 +150,9 @@ export function formatMeasure(
   },
   languageService?: LanguageService
 ): string {
+  if (!options) {
+    return measure.toString();
+  }
   let decimal = options.decimal;
   if (decimal === undefined || decimal < 0) {
     decimal = 1;
@@ -169,18 +173,20 @@ export function formatMeasure(
   if (options.unit !== undefined && options.unitAbbr === true) {
     if (languageService) {
       parts.push(
-        MeasureLengthUnitAbbreviation[options.unit]
+        (MeasureLengthUnitAbbreviation as any)[options.unit]
           ? languageService.translate.instant(
-              'igo.geo.measure.' + MeasureLengthUnitAbbreviation[options.unit]
+              'igo.geo.measure.' +
+                (MeasureLengthUnitAbbreviation as any)[options.unit]
             )
           : languageService.translate.instant(
-              'igo.geo.measure.' + MeasureAreaUnitAbbreviation[options.unit]
+              'igo.geo.measure.' +
+                (MeasureAreaUnitAbbreviation as any)[options.unit]
             )
       );
     } else {
       parts.push(
-        MeasureLengthUnitAbbreviation[options.unit] ||
-          MeasureAreaUnitAbbreviation[options.unit]
+        (MeasureLengthUnitAbbreviation as any)[options.unit] ||
+          (MeasureAreaUnitAbbreviation as any)[options.unit]
       );
     }
   }
@@ -198,8 +204,8 @@ export function computeBestLengthUnit(value: number): MeasureLengthUnit {
   let converted = value;
   const possibleUnits = [MeasureLengthUnit.Kilometers];
   while (converted > 1000 && possibleUnits.length > 0) {
-    unit = possibleUnits.pop();
-    converted = metersToUnit(value, unit);
+    unit = possibleUnits.pop()!;
+    converted = metersToUnit(value, unit) ?? 0;
   }
   return unit;
 }
@@ -214,8 +220,8 @@ export function computeBestAreaUnit(value: number): MeasureAreaUnit {
   let converted = value;
   const possibleUnits = [MeasureAreaUnit.SquareKilometers];
   while (converted > 1000000 && possibleUnits.length > 0) {
-    unit = possibleUnits.pop();
-    converted = squareMetersToUnit(value, unit);
+    unit = possibleUnits.pop()!;
+    converted = squareMetersToUnit(value, unit) ?? 0;
   }
   return unit;
 }
@@ -314,7 +320,7 @@ export function measureOlGeometry(
   const length = measureOlGeometryLength(olGeometry, projection);
   const area = measureOlGeometryArea(olGeometry, projection);
 
-  const lengths = [];
+  const lengths: number[] = [];
   const coordinates = olGeometry.getFlatCoordinates();
   const coordinatesLength = coordinates.length;
   for (let i = 0; i <= coordinatesLength - 4; i += 2) {
@@ -323,7 +329,7 @@ export function measureOlGeometry(
       [coordinates[i + 2], coordinates[i + 3]]
     ]);
 
-    lengths.push(measureOlGeometryLength(olSegment, projection));
+    lengths!.push(measureOlGeometryLength(olSegment, projection) ?? 0);
   }
 
   return {
@@ -398,13 +404,15 @@ export function clearOlGeometryMidpoints(
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-function getOlGeometryMidpoints(
-  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
-): OlPoint[] {
-  let expectedNumber;
+function getOlGeometryMidpoints(olGeometry: Geometry): OlPoint[] {
+  let expectedNumber = 0;
   if (olGeometry instanceof OlCircle) {
     expectedNumber = 0;
-  } else {
+  } else if (
+    olGeometry instanceof OlLineString ||
+    olGeometry instanceof OlPolygon ||
+    olGeometry instanceof OlPoint
+  ) {
     expectedNumber = Math.max(
       olGeometry.getFlatCoordinates().length / 2 - 1,
       0
@@ -478,13 +486,14 @@ export function updateOlTooltipsAtMidpoints(
     typeGeom = 'polygone-';
   }
   const olTooltips = olMidpoints.map((olMidpoint: OlPoint) => {
-    let olTooltip = olMidpoint.get('_tooltip');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let olTooltip: any = olMidpoint.get('_tooltip');
     if (olTooltip === undefined) {
       olTooltip = createOlTooltipAtPoint(olMidpoint, false, typeGeom);
     } else {
       olTooltip.setPosition(olMidpoint.getFlatCoordinates());
     }
-    return olTooltip;
+    return olTooltip as OlOverlay;
   });
   return olTooltips;
 }
@@ -494,9 +503,7 @@ export function updateOlTooltipsAtMidpoints(
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getOlTooltipsAtMidpoints(
-  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
-): OlOverlay[] {
+export function getOlTooltipsAtMidpoints(olGeometry: Geometry): OlOverlay[] {
   const olMidpoints = getOlGeometryMidpoints(olGeometry);
   return olMidpoints.map((olMidpoint: OlPoint) => {
     return olMidpoint ? olMidpoint.get('_tooltip') : undefined;
@@ -547,8 +554,8 @@ export function updateOlTooltipAtCenter(
  * @returns OL overlays
  */
 export function getOlTooltipAtCenter(
-  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
-): OlOverlay {
+  olGeometry: Geometry
+): OlOverlay | undefined {
   const olCenter = olGeometry.get('_center');
   return olCenter ? olCenter.get('_tooltip') : undefined;
 }
@@ -558,15 +565,14 @@ export function getOlTooltipAtCenter(
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getTooltipsOfOlGeometry(
-  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
-): OlOverlay[] {
-  const olTooltips = [].concat(getOlTooltipsAtMidpoints(olGeometry) || []);
+export function getTooltipsOfOlGeometry(olGeometry: Geometry): OlOverlay[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const olTooltips: any[] = [...(getOlTooltipsAtMidpoints(olGeometry) || [])];
   const olCenterTooltip = getOlTooltipAtCenter(olGeometry);
   if (olCenterTooltip !== undefined) {
     olTooltips.push(olCenterTooltip);
   }
-  return olTooltips;
+  return olTooltips as OlOverlay[];
 }
 
 /**

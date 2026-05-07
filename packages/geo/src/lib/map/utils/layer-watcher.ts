@@ -25,7 +25,9 @@ type LayerWatcherEvent = Pick<ObjectEvent, 'key' | 'oldValue'> & {
 };
 
 export class LayerWatcher extends Watcher {
-  public propertyChange$ = new BehaviorSubject<LayerWatcherChange>(undefined);
+  public propertyChange$ = new BehaviorSubject<LayerWatcherChange | undefined>(
+    undefined
+  );
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];
@@ -116,7 +118,7 @@ export class LayerWatcher extends Watcher {
     ).subscribe((change) => this.setPropertyChange(change));
 
     this.layers.push(layer);
-    this.subscriptionsByLayerId.set(layer.id, [subscription]);
+    this.subscriptionsByLayerId.set(layer.id!, [subscription]);
   }
 
   private createOlEventObservable(
@@ -142,9 +144,9 @@ export class LayerWatcher extends Watcher {
   private _unwatchLayer(layer: Layer) {
     layer.status$.next(SubjectStatus.Done);
 
-    this.subscriptionsByLayerId.get(layer.id)?.forEach((sub$) => {
+    this.subscriptionsByLayerId.get(layer.id!)?.forEach((sub$) => {
       sub$.unsubscribe();
-      this.subscriptionsByLayerId.delete(layer.id);
+      this.subscriptionsByLayerId.delete(layer.id!);
     });
 
     const index = this.layers.indexOf(layer);

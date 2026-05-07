@@ -19,6 +19,9 @@ export class LayerLegendListBindingDirective implements OnInit {
 
   ngOnInit() {
     const mapInstance = this.mapService.getMap();
+    if (!mapInstance) {
+      return;
+    }
     combineLatest([
       mapInstance.layerController.all$,
       mapInstance.viewController.resolution$

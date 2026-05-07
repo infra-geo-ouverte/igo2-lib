@@ -2,16 +2,16 @@
   #tree
   [class.--not-desktop]="!isDesktop()"
   igoTreeDragDrop
-  [tree]="tree"
-  [config]="treeConfig"
+  [tree]="$any(tree)"
+  [config]="$any(treeConfig)"
   [treeDragDropIsDisabled]="isDragDropDisabled()"
-  [maxLevel]="viewerOptions()?.group?.maxHierarchyLevel"
+  [maxLevel]="viewerOptions()?.group?.maxHierarchyLevel ?? 5"
   [dataSource]="layers()"
-  [childrenAccessor]="childrenAccessor"
+  [childrenAccessor]="$any(childrenAccessor)"
   [trackBy]="trackByFn"
   [expansionKey]="expansionKey"
   (dragStart)="dragStart()"
-  (dropped)="dropNode($event)"
+  (dropped)="dropNode($any($event))"
   (droppedError)="dropNodeError($event)"
 >
   <!-- This is the tree node template for leaf nodes -->

@@ -24,6 +24,7 @@
     "lint.fix": "ng lint geo --fix",
     "test": "ng test geo --watch=false",
     "test.watch": "ng test geo",
+    "types": "tsc --project ./tsconfig.lib.json --noEmit",
     "watch": "ng build geo --watch"
   },
   "exports": {
@@ -58,7 +59,7 @@
     "@turf/line-intersect": "^7.3.0",
     "@turf/point-on-feature": "^7.3.0",
     "file-saver": "^2.0.0",
-    "flexsearch": "0.7.21",
+    "flexsearch": "^0.8.0",
     "html2canvas": "^1.4.0",
     "idb": "^8.0.0",
     "jspdf": "^4.2.0",

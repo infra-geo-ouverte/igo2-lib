@@ -11,10 +11,10 @@ export function olStyleToBasicIgoStyle(layer: olLayerVector<olSourceVector>) {
   if (layerOlStyle instanceof Style) {
     return {
       fill: {
-        color: layerOlStyle.getFill().getColor()
+        color: layerOlStyle.getFill()!.getColor()
       },
       stroke: {
-        color: layerOlStyle.getStroke().getColor(),
+        color: layerOlStyle.getStroke()!.getColor(),
         width: 2
       },
       circle: {

@@ -15,11 +15,11 @@
       <span
         matListItemTitle
         [style.cursor]="filtersCollapsed ? 'default' : 'pointer'"
-        [matTooltip]="layer().title"
+        [matTooltip]="layer()?.title ?? ''"
         matTooltipShowDelay="500"
         (click)="toggleLegendOnClick()"
       >
-        {{ layer().title }}
+        {{ layer()?.title }}
       </span>
     }
     <div matListItemMeta>
@@ -39,19 +39,19 @@
       @if (header()) {
         <button
           mat-icon-button
-          [color]="layer().visible ? 'primary' : 'default'"
+          [color]="layer()?.visible ? 'primary' : 'default'"
           collapsibleButton
           tooltip-position="below"
           matTooltipShowDelay="500"
           [matTooltip]="
-            layer().visible
+            layer()?.visible
               ? ('igo.geo.layer.hideLayer' | translate)
               : ('igo.geo.layer.showLayer' | translate)
           "
           (click)="toggleLayerVisibility()"
         >
           <mat-icon [class.disabled]="(inResolutionRange$ | async) === false"
-            >{{ layer().visible ? 'visibility' : 'visibility_off' }}
+            >{{ layer()?.visible ? 'visibility' : 'visibility_off' }}
           </mat-icon>
         </button>
       }
@@ -77,7 +77,7 @@
         <mat-divider />
         <mat-checkbox
           (change)="changeOgcFilterType($event)"
-          [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters"
+          [(ngModel)]="datasource.options.ogcFilters!.advancedOgcFilters"
         >
           {{ 'igo.geo.filter.advancedOgcFilters' | translate }}
         </mat-checkbox>

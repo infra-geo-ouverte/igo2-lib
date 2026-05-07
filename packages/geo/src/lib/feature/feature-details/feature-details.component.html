@@ -5,7 +5,7 @@
   <table class="igo-striped">
     <tbody>
       @for (
-        property of filterFeatureProperties(feature()) | keyvalue;
+        property of filterFeatureProperties(feature()!) | keyvalue;
         track property
       ) {
         <tr>

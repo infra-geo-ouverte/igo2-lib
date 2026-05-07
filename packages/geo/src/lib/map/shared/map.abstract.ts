@@ -23,28 +23,28 @@ import {
 import { LayerWatcher, LayerWatcherChange } from '../utils';
 
 export abstract class MapBase {
-  ol: Map;
-  forcedOffline$: BehaviorSubject<boolean>;
-  layersAddedByClick$: BehaviorSubject<AnyLayer[]>;
-  status$: Subject<SubjectStatus>;
-  propertyChange$: Subject<LayerWatcherChange>;
-  overlay: Overlay;
-  queryResultsOverlay: Overlay;
-  searchResultsOverlay: Overlay;
-  viewController: MapViewController;
-  geolocationController: MapGeolocationController;
-  swipeEnabled$: BehaviorSubject<boolean>;
-  mapCenter$: BehaviorSubject<boolean>;
-  selectedFeatures$: BehaviorSubject<Layer[]>;
-  bufferDataSource: FeatureDataSource;
-  layerWatcher: LayerWatcher;
-  readonly options: MapOptions;
+  ol!: Map;
+  forcedOffline$!: BehaviorSubject<boolean>;
+  layersAddedByClick$!: BehaviorSubject<AnyLayer[] | undefined>;
+  status$!: Subject<SubjectStatus>;
+  propertyChange$!: Subject<LayerWatcherChange | undefined>;
+  overlay!: Overlay;
+  queryResultsOverlay!: Overlay;
+  searchResultsOverlay!: Overlay;
+  viewController!: MapViewController;
+  geolocationController!: MapGeolocationController;
+  swipeEnabled$!: BehaviorSubject<boolean>;
+  mapCenter$!: BehaviorSubject<boolean>;
+  selectedFeatures$!: BehaviorSubject<Layer[] | null>;
+  bufferDataSource!: FeatureDataSource;
+  layerWatcher!: LayerWatcher;
+  readonly options!: MapOptions;
 
   // Getter
-  layerController: LayerController;
-  projection: string;
-  viewProjection: Projection;
-  projectionCode: string;
+  layerController!: LayerController;
+  projection!: string;
+  viewProjection!: Projection;
+  projectionCode!: string;
 
   abstract setTarget(id: string): void;
   abstract updateView(options: MapViewOptions): void;
@@ -54,5 +54,5 @@ export abstract class MapBase {
   abstract getExtent(projection?: string | Projection): MapExtent;
   abstract getZoom(): number;
   /** @deprecated find a way to remove this method. For now we discourage to use it until we find the way to remove it */
-  abstract getLayerByOlUId(olUId: string): AnyLayer;
+  abstract getLayerByOlUId(olUId: string): AnyLayer | undefined;
 }

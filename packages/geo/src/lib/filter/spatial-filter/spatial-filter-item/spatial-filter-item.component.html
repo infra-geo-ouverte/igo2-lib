@@ -6,8 +6,8 @@
   [measure]="measure"
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
-  [drawStyle]="drawStyle$ | async"
-  [overlayStyle]="overlayStyle$ | async"
+  [drawStyle]="$any(drawStyle$ | async)"
+  [overlayStyle]="$any(overlayStyle$ | async)"
   [radius]="radius"
   [predefinedRadius]="$any(predefinedRadius)"
 />
@@ -237,7 +237,7 @@
     <igo-entity-table
       class="results-list"
       [template]="tableTemplate"
-      [store]="store"
+      [store]="$any(store)"
       (entitySelectChange)="entityChange.emit($event)"
     />
   </div>

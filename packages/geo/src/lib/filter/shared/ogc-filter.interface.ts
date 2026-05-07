@@ -45,7 +45,7 @@ export type IgoOgcFilterObject =
 export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
-  filters?: (IgoLogicalArrayOptions | AnyBaseOgcFilterOptions) & {
+  filters?: IgoOgcFilterObject & {
     filterid?: string;
   };
   pushButtons?: IgoOgcSelector;
@@ -84,7 +84,7 @@ export interface SelectorGroup {
   enabled?: boolean;
   title?: string;
   name: string;
-  ids?;
+  ids?: string[];
   computedSelectors?: OgcSelectorBundle[];
 }
 
@@ -147,12 +147,12 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
-  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean);
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean): void;
 }
 
 export interface IgoLogicalArrayOptions {
   logical: string;
-  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions[];
+  filters: IgoOgcFilterObject[];
 }
 
 export interface IgoDomSelector {

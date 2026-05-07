@@ -1,6 +1,5 @@
 import OlFeature from 'ol/Feature';
 import OlMap from 'ol/Map';
-import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import BasicEvent from 'ol/events/Event';
 import OlCircle from 'ol/geom/Circle';
@@ -57,35 +56,35 @@ export class ModifyControl {
    */
   public changes$ = new Subject<OlGeometry>();
 
-  private olMap: OlMap;
+  private olMap?: OlMap;
   private olOverlayLayer: OlVectorLayer<any>;
-  public olModifyInteraction: OlModify;
+  public olModifyInteraction?: OlModify;
   private onModifyStartKey: any;
   private onModifyEndKey: any;
   private onModifyKey: any;
   private olModifyInteractionIsActive = false;
-  private olTranslateInteraction: OlTranslate;
+  private olTranslateInteraction?: OlTranslate;
   private onTranslateStartKey: any;
   private onTranslateEndKey: any;
   private onTranslateKey: any;
   private olTranslateInteractionIsActive = false;
-  private olDrawInteraction: OlDraw;
+  private olDrawInteraction?: OlDraw;
   private onDrawStartKey: any;
   private onDrawEndKey: any;
   private onDrawKey: any;
   private olDrawInteractionIsActive = false;
 
-  private mousePosition: [number, number];
+  private mousePosition!: [number, number];
 
-  private keyDown$$: Subscription;
-  private drawKeyUp$$: Subscription;
-  private drawKeyDown$$: Subscription;
+  private keyDown$$!: Subscription;
+  private drawKeyUp$$!: Subscription;
+  private drawKeyDown$$!: Subscription;
 
   private removedOlInteractions: OlInteraction[] = [];
   private olLinearRingsLayer: OlVectorLayer<any>;
 
   // This is the geometry to test against when drawing holes
-  private olOuterGeometry: OlGeometry;
+  private olOuterGeometry?: OlGeometry;
 
   /**
    * Wheter the control is active
@@ -204,7 +203,7 @@ export class ModifyControl {
    */
   private addOlInnerOverlayLayer() {
     if (this.options.layer === undefined) {
-      this.olMap.addLayer(this.olOverlayLayer);
+      this.olMap?.addLayer(this.olOverlayLayer);
     }
   }
 
@@ -238,14 +237,14 @@ export class ModifyControl {
    * Add the linear rings layer
    */
   private addOlLinearRingsLayer() {
-    this.olMap.addLayer(this.olLinearRingsLayer);
+    this.olMap?.addLayer(this.olLinearRingsLayer);
   }
 
   /**
    * Clear the linear rings layer
    */
   private removeOlLinearRingsLayer() {
-    this.olMap.removeLayer(this.olLinearRingsLayer);
+    this.olMap?.removeLayer(this.olLinearRingsLayer);
   }
 
   /**
@@ -284,15 +283,16 @@ export class ModifyControl {
     }
 
     this.olModifyInteractionIsActive = true;
-    this.onModifyStartKey = this.olModifyInteraction.on(
+    this.onModifyStartKey = this.olModifyInteraction?.on(
       'modifystart',
-      (event: OlModifyEvent) => this.onModifyStart(event)
+      (event) => this.onModifyStart(event)
     );
-    this.onModifyEndKey = this.olModifyInteraction.on(
-      'modifyend',
-      (event: OlModifyEvent) => this.onModifyEnd(event)
+    this.onModifyEndKey = this.olModifyInteraction?.on('modifyend', (event) =>
+      this.onModifyEnd(event)
     );
-    this.olMap.addInteraction(this.olModifyInteraction);
+    if (this.olModifyInteraction) {
+      this.olMap?.addInteraction(this.olModifyInteraction);
+    }
   }
 
   private deactivateModifyInteraction() {
@@ -303,7 +303,7 @@ export class ModifyControl {
     this.olModifyInteractionIsActive = false;
 
     unByKey([this.onModifyStartKey, this.onModifyEndKey, this.onModifyKey]);
-    if (this.olMap !== undefined) {
+    if (this.olMap !== undefined && this.olModifyInteraction !== undefined) {
       this.olMap.removeInteraction(this.olModifyInteraction);
     }
   }
@@ -342,11 +342,11 @@ export class ModifyControl {
    * Subscribe to space key down to pan the map
    */
   private subscribeToKeyDown() {
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
-      (event: KeyboardEvent) => {
+    this.keyDown$$ = fromEvent<KeyboardEvent>(document, 'keydown').subscribe(
+      (event) => {
         if (event.key === ' ') {
           // On space bar, pan to the current mouse position
-          this.olMap.getView().animate({
+          this.olMap?.getView().animate({
             center: this.mousePosition,
             duration: 0
           });
@@ -393,15 +393,17 @@ export class ModifyControl {
     }
 
     this.olTranslateInteractionIsActive = true;
-    this.onTranslateStartKey = this.olTranslateInteraction.on(
+    this.onTranslateStartKey = this.olTranslateInteraction?.on(
       'translatestart',
       (event: OlTranslateEvent) => this.onTranslateStart(event)
     );
-    this.onTranslateEndKey = this.olTranslateInteraction.on(
+    this.onTranslateEndKey = this.olTranslateInteraction?.on(
       'translateend',
       (event: OlTranslateEvent) => this.onTranslateEnd(event)
     );
-    this.olMap.addInteraction(this.olTranslateInteraction);
+    if (this.olTranslateInteraction) {
+      this.olMap?.addInteraction(this.olTranslateInteraction);
+    }
   }
 
   private deactivateTranslateInteraction() {
@@ -415,7 +417,7 @@ export class ModifyControl {
       this.onTranslateEndKey,
       this.onTranslateKey
     ]);
-    if (this.olMap !== undefined) {
+    if (this.olMap !== undefined && this.olTranslateInteraction !== undefined) {
       this.olMap.removeInteraction(this.olTranslateInteraction);
     }
   }
@@ -447,12 +449,12 @@ export class ModifyControl {
       source: this.olLinearRingsSource,
       stopClick: true,
       style: createDrawHoleInteractionStyle(),
-      condition: (event: MapBrowserEvent<any>) => {
+      condition: (event) => {
         const olOuterGeometry = this.olOuterGeometry || this.getOlGeometry();
-        const intersects = olOuterGeometry.intersectsCoordinate(
+        const intersects = olOuterGeometry?.intersectsCoordinate(
           event.coordinate
         );
-        return intersects;
+        return intersects ?? false;
       }
     });
 
@@ -464,34 +466,35 @@ export class ModifyControl {
    * Subscribe to CTRL key down to activate the draw control
    */
   private subscribeToDrawKeyDown() {
-    this.drawKeyDown$$ = fromEvent(document, 'keydown').subscribe(
-      (event: KeyboardEvent) => {
-        if (event.key !== 'Control') {
-          return;
-        }
-
-        this.unsubscribeToDrawKeyDown();
-
-        const olGeometry = this.getOlGeometry();
-        if (!olGeometry || !(olGeometry instanceof OlPolygon)) {
-          return;
-        }
-
-        this.subscribeToDrawKeyUp();
-
-        this.deactivateModifyInteraction();
-        this.deactivateTranslateInteraction();
-        this.activateDrawInteraction();
+    this.drawKeyDown$$ = fromEvent<KeyboardEvent>(
+      document,
+      'keydown'
+    ).subscribe((event) => {
+      if (event.key !== 'Control') {
+        return;
       }
-    );
+
+      this.unsubscribeToDrawKeyDown();
+
+      const olGeometry = this.getOlGeometry();
+      if (!olGeometry || !(olGeometry instanceof OlPolygon)) {
+        return;
+      }
+
+      this.subscribeToDrawKeyUp();
+
+      this.deactivateModifyInteraction();
+      this.deactivateTranslateInteraction();
+      this.activateDrawInteraction();
+    });
   }
 
   /**
    * Subscribe to CTRL key up to deactivate the draw control
    */
   private subscribeToDrawKeyUp() {
-    this.drawKeyUp$$ = fromEvent(document, 'keyup').subscribe(
-      (event: KeyboardEvent) => {
+    this.drawKeyUp$$ = fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
+      (event) => {
         if (event.key !== 'Control') {
           return;
         }
@@ -508,7 +511,7 @@ export class ModifyControl {
 
         this.olOuterGeometry = undefined;
         this.clearOlLinearRingsSource();
-        this.end$.next(this.getOlGeometry());
+        this.end$.next(this.getOlGeometry()!);
       }
     );
   }
@@ -544,7 +547,7 @@ export class ModifyControl {
     this.unsubscribeToDrawKeyDown();
     this.deactivateDrawInteraction();
     this.clearOlLinearRingsSource();
-    this.olDrawInteraction = undefined;
+    this.olDrawInteraction = undefined as unknown as OlDraw;
   }
 
   /**
@@ -558,23 +561,25 @@ export class ModifyControl {
     this.clearOlLinearRingsSource();
     this.addOlLinearRingsLayer();
 
-    this.olMap.getInteractions().forEach((olInteraction: OlInteraction) => {
+    this.olMap?.getInteractions().forEach((olInteraction: OlInteraction) => {
       if (olInteraction instanceof OlDragBoxInteraction) {
-        this.olMap.removeInteraction(olInteraction);
+        this.olMap?.removeInteraction(olInteraction);
         this.removedOlInteractions.push(olInteraction);
       }
     });
 
     this.olDrawInteractionIsActive = true;
-    this.onDrawStartKey = this.olDrawInteraction.on(
+    this.onDrawStartKey = this.olDrawInteraction?.on(
       'drawstart',
       (event: OlDrawEvent) => this.onDrawStart(event)
     );
-    this.onDrawEndKey = this.olDrawInteraction.on(
+    this.onDrawEndKey = this.olDrawInteraction?.on(
       'drawend',
       (event: OlDrawEvent) => this.onDrawEnd(event)
     );
-    this.olMap.addInteraction(this.olDrawInteraction);
+    if (this.olDrawInteraction) {
+      this.olMap?.addInteraction(this.olDrawInteraction);
+    }
   }
 
   /**
@@ -588,13 +593,13 @@ export class ModifyControl {
     this.removeOlLinearRingsLayer();
 
     this.removedOlInteractions.forEach((olInteraction: OlInteraction) => {
-      this.olMap.addInteraction(olInteraction);
+      this.olMap?.addInteraction(olInteraction);
     });
     this.removedOlInteractions = [];
 
     this.olDrawInteractionIsActive = false;
     unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey]);
-    if (this.olMap !== undefined) {
+    if (this.olMap !== undefined && this.olDrawInteraction !== undefined) {
       this.olMap.removeInteraction(this.olDrawInteraction);
     }
   }
@@ -605,22 +610,22 @@ export class ModifyControl {
    */
   private onDrawStart(event: OlDrawEvent) {
     const olGeometry = event.feature.getGeometry();
-    this.olOuterGeometry = this.getOlGeometry().clone();
+    this.olOuterGeometry = this.getOlGeometry()?.clone();
 
     const linearRingCoordinates = (
       (olGeometry as any).getLinearRing() as any
     ).getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
-    this.start$.next(this.getOlGeometry());
+    this.start$.next(this.getOlGeometry()!);
 
-    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
+    this.onDrawKey = olGeometry!.on('change', (olGeometryEvent: BasicEvent) => {
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       const olGeometryTarget = olGeometryEvent.target as OlPolygon;
       const _linearRingCoordinates = olGeometryTarget
-        .getLinearRing(0)
+        .getLinearRing(0)!
         .getCoordinates();
       this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
-      this.changes$.next(this.getOlGeometry());
+      this.changes$.next(this.getOlGeometry()!);
     });
     this.subscribeToKeyDown();
   }
@@ -633,12 +638,12 @@ export class ModifyControl {
     unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
-    const linearRingCoordinates = (
-      (event.feature.getGeometry() as any).getLinearRing() as any
-    ).getCoordinates();
+    const linearRingCoordinates = (event.feature.getGeometry() as any)
+      .getLinearRing()
+      .getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();
-    this.end$.next(this.getOlGeometry());
+    this.end$.next(this.getOlGeometry()!);
     this.unsubscribeToKeyDown();
   }
 
@@ -671,8 +676,8 @@ export class ModifyControl {
    * Get the geometry being modified
    * @returns OL Geometry
    */
-  private getOlGeometry(): OlGeometry {
+  private getOlGeometry(): OlGeometry | undefined {
     const olFeatures = this.olOverlaySource.getFeatures();
-    return olFeatures.length > 0 ? olFeatures[0].getGeometry() : undefined;
+    return olFeatures.length > 0 ? olFeatures[0].getGeometry()! : undefined;
   }
 }

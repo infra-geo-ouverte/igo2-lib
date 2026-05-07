@@ -32,7 +32,7 @@ import {
 } from './wms-wfs.utils';
 
 interface FetchFeatureOptions {
-  extent: Extent;
+  extent: Extent | undefined;
   projection: olProjection;
   httpClient: HttpClient;
 }
@@ -43,7 +43,7 @@ export class WFSDataSource extends DataSource {
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
-  get ogcFilters(): OgcFiltersOptions {
+  get ogcFilters(): OgcFiltersOptions | undefined {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
@@ -69,16 +69,16 @@ export class WFSDataSource extends DataSource {
     const ogcFilters = (this.options as OgcFilterableDataSourceOptions)
       .ogcFilters;
     const fieldNameGeometry =
-      this.options.paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
+      this.options.paramsWFS?.fieldNameGeometry || defaultFieldNameGeometry;
     const ogcFilterWriter = new OgcFilterWriter();
     (this.options as OgcFilterableDataSourceOptions).ogcFilters =
       ogcFilterWriter.defineOgcFiltersDefaultOptions(
-        ogcFilters,
+        ogcFilters!,
         fieldNameGeometry
       );
     if (
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled &&
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable &&
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters?.enabled &&
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters?.editable &&
       (options.sourceFields || []).filter((sf) => !sf.values).length > 0
     ) {
       this.wfsService.getSourceFieldsFromWFS(this.options);
@@ -105,7 +105,7 @@ export class WFSDataSource extends DataSource {
     }
 
     this.setOgcFilters(
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters,
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters!,
       true
     );
   }
@@ -139,7 +139,7 @@ export class WFSDataSource extends DataSource {
     projection,
     httpClient
   }: FetchFeatureOptions): Observable<OlFeature<OlGeometry>[]> {
-    const paramsWFS = this.options.paramsWFS;
+    const paramsWFS = this.options.paramsWFS!;
     const wfsProj = paramsWFS.srsName
       ? new olProjection({ code: paramsWFS.srsName })
       : projection;
@@ -164,12 +164,13 @@ export class WFSDataSource extends DataSource {
     let startIndex = 0;
     if (
       paramsWFS.version === '2.0.0' &&
+      paramsWFS.maxFeatures !== undefined &&
       paramsWFS.maxFeatures > defaultMaxFeatures
     ) {
       const nbOfFeature = 1000;
-      while (startIndex < paramsWFS.maxFeatures) {
+      while (startIndex < paramsWFS.maxFeatures!) {
         let alteredUrl = url.replace(
-          'count=' + paramsWFS.maxFeatures,
+          'count=' + paramsWFS.maxFeatures!,
           'count=' + nbOfFeature
         );
         alteredUrl = alteredUrl.replace('startIndex=0', '0');
@@ -187,13 +188,12 @@ export class WFSDataSource extends DataSource {
           })
         );
       }
-    } else {
-      return this._fetchFeatures(wfsProj, url, {
-        extent: currentExtent,
-        projection,
-        httpClient
-      });
     }
+    return this._fetchFeatures(wfsProj, url, {
+      extent: currentExtent,
+      projection,
+      httpClient
+    });
   }
 
   private _fetchFeatures(
@@ -217,7 +217,7 @@ export class WFSDataSource extends DataSource {
     dataProjection: olProjection,
     featureProjection: olProjection
   ): OlFeature<OlGeometry>[] {
-    const features = this.ol.getFormat().readFeatures(xml, {
+    const features = this.ol.getFormat()!.readFeatures(xml, {
       dataProjection,
       featureProjection
     }) as OlFeature<OlGeometry>[];

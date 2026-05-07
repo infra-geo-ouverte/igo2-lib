@@ -35,25 +35,25 @@ export function stringToLonLat(
   let coordStr: string;
   let negativeLon: string;
   let degreesLon: string;
-  let minutesLon: string;
-  let secondsLon: string;
-  let directionLon: string;
+  let minutesLon: string = '';
+  let secondsLon: string = '';
+  let directionLon: string = '';
   let decimalLon: string;
   let negativeLat: string;
   let degreesLat: string;
-  let minutesLat: string;
-  let secondsLat: string;
-  let directionLat: string;
+  let minutesLat: string = '';
+  let secondsLat: string = '';
+  let directionLat: string = '';
   let decimalLat: string;
   let zone: string;
-  let radius: string;
-  let conf: string;
+  let radius: string = '';
+  let conf: string = '';
   let lon: any;
   let lat: any;
 
   const projectionPattern = '(\\s*;\\s*[\\d]{4,6})';
   const toProjection = '4326';
-  let projectionStr: string;
+  let projectionStr: string = '';
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
   const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?°?';
@@ -96,13 +96,16 @@ export function stringToLonLat(
 
   // Extract projection
   if (projectionRegex.test(str)) {
-    [coordStr, projectionStr] = str.split(';').map((s) => s.trim());
+    [coordStr, projectionStr] = str.split(';').map((s) => s.trim()) as [
+      string,
+      string
+    ];
   } else {
     coordStr = str;
   }
   if (lonLatRegex.test(coordStr)) {
     [, negativeLon, lon, , decimalLon, negativeLat, lat, , decimalLat] =
-      coordStr.match(lonLatPattern);
+      coordStr.match(lonLatPattern)!;
 
     lon = parseFloat((negativeLon ? negativeLon : '') + lon + '.' + decimalLon);
     lat = parseFloat((negativeLat ? negativeLat : '') + lat + '.' + decimalLat);
@@ -117,7 +120,7 @@ export function stringToLonLat(
       minutesLat,
       secondsLat,
       directionLat
-    ] = coordStr.match(dmsCoordPattern);
+    ] = coordStr.match(dmsCoordPattern)!;
 
     if (directionLon === 'S' || directionLon === 'N') {
       degreesLon = [degreesLat, (degreesLat = degreesLon)][0];
@@ -140,7 +143,7 @@ export function stringToLonLat(
     );
   } else if (utmRegex.test(coordStr)) {
     isXYCoords = true;
-    [, , zone, lon, lat] = coordStr.match(patternUtm);
+    [, , zone, lon, lat] = coordStr.match(patternUtm)!;
     const epsgUtm = Number(zone) < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
     [lon, lat] = olproj.transform(
       [parseFloat(lon), parseFloat(lat)],
@@ -149,7 +152,7 @@ export function stringToLonLat(
     );
   } else if (mtmRegex.test(coordStr)) {
     isXYCoords = true;
-    [, , zone, lon, lat] = coordStr.match(patternMtm);
+    [, , zone, lon, lat] = coordStr.match(patternMtm)!;
     const epsgMtm =
       Number(zone) < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + Number(zone)}`;
     [lon, lat] = olproj.transform(
@@ -168,7 +171,7 @@ export function stringToLonLat(
       degreesLat,
       minutesLat,
       secondsLat
-    ] = coordStr.match(patternDmd);
+    ] = coordStr.match(patternDmd)!;
 
     lon = convertDMSToDD(
       parseFloat((negativeLon ? negativeLon : '') + degreesLon),
@@ -184,7 +187,7 @@ export function stringToLonLat(
     );
   } else if (ddRegex.test(coordStr)) {
     [, negativeLon, degreesLon, , negativeLat, degreesLat, ,] =
-      coordStr.match(patternDd);
+      coordStr.match(patternDd)!;
 
     lon = convertDMSToDD(
       parseFloat((negativeLon ? negativeLon : '') + degreesLon),
@@ -215,7 +218,7 @@ export function stringToLonLat(
       directionLon,
       radius,
       conf
-    ] = coordStr.match(patternBELL);
+    ] = coordStr.match(patternBELL)!;
 
     // Set default value for North America
     if (!directionLon) {
@@ -250,7 +253,7 @@ export function stringToLonLat(
     }
   } else if (mmRegex.test(coordStr)) {
     isXYCoords = true;
-    [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
+    [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern)!;
 
     if (decimalLon) {
       lon = parseFloat(lon + '.' + decimalLon);
@@ -357,7 +360,8 @@ function convertDMSToDD(
  * @returns longitude and latitude in dms
  */
 export function convertDDToDMS(lonLatDD: Coordinate, decimal = 3): string[] {
-  const lonLatDMS = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lonLatDMS: any[] = [];
 
   lonLatDD.forEach((dd) => {
     const degrees = dd < 0 ? Math.ceil(dd) : Math.floor(dd);
@@ -399,7 +403,7 @@ export function viewStatesAreEqual(
  * @param Scale of the map
  * @returns Human readable scale text
  */
-export function formatScale(scale) {
+export function formatScale(scale: number): string {
   scale = Math.round(scale);
   if (scale < 10000) {
     return scale + '';
@@ -436,7 +440,12 @@ export function getScaleFromResolution(
   dpi = 96
 ): number {
   const inchesPerMeter = 39.3701;
-  return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMeter * dpi;
+  return (
+    resolution *
+    (olproj.METERS_PER_UNIT as Record<string, number>)[unit] *
+    inchesPerMeter *
+    dpi
+  );
 }
 
 /**

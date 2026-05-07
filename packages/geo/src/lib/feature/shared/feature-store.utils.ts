@@ -14,7 +14,7 @@ export function tryBindStoreLayer(
   layer?: VectorLayer
 ): VectorLayer {
   if (store.layer !== undefined) {
-    if (!store.map.layerController.getById(store.layer.id)) {
+    if (!store.map.layerController.getById(store.layer.id!)) {
       store.map.layerController.add(store.layer);
     }
     return store.layer;
@@ -26,7 +26,7 @@ export function tryBindStoreLayer(
         source: new FeatureDataSource()
       });
   store.bindLayer(layer);
-  if (!store.map.layerController.getById(store.layer.id)) {
+  if (!store.map.layerController.getById(layer.id!)) {
     store.map.layerController.add(store.layer);
   }
 

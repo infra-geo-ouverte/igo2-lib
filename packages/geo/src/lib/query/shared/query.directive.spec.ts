@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { IgoMap, LayerController } from '@igo2/geo';
 import { SubjectStatus } from '@igo2/utils';
 
 import OlObservable from 'ol/Observable';
@@ -10,6 +9,8 @@ import OlObservable from 'ol/Observable';
 import { BehaviorSubject } from 'rxjs';
 import { vi } from 'vitest';
 
+import { LayerController } from '../../layer';
+import { IgoMap } from '../../map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { QueryDirective } from './query.directive';
 
@@ -26,7 +27,7 @@ function createMapMock(): IgoMap {
     updateView: vi.fn(),
     updateControls: vi.fn(),
     projection: 'EPSG:3857',
-    layerController: { all: [] } as LayerController
+    layerController: { all: [] } as unknown as LayerController
   } as unknown as IgoMap;
 }
 

@@ -9,6 +9,7 @@ import { OgcFilterWriter } from './ogc-filter';
 import {
   AnyBaseOgcFilterOptions,
   IgoLogicalArrayOptions,
+  IgoOgcFilterObject,
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions,
@@ -31,17 +32,21 @@ export class OGCFilterService {
     if (!options?.ogcFilters?.enabled) return;
 
     const ogcFilters = options.ogcFilters;
-    const geometryField = options.paramsWFS.fieldNameGeometry;
-    const projection = new olProjection({ code: options.paramsWFS.srsName });
+    const geometryField = options.paramsWFS!.fieldNameGeometry;
+    const projection = new olProjection({ code: options.paramsWFS!.srsName! });
     const ogcFilterWriter = new OgcFilterWriter();
 
     if (ogcFilters.filters) {
-      ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
-        ogcFilters.filters,
+      const filters = ogcFilterWriter.checkIgoFiltersProperties(
+        ogcFilters.filters!,
         geometryField,
         projection,
         true
       );
+
+      if (filters) {
+        ogcFilters.filters = filters as IgoOgcFilterObject;
+      }
     }
 
     if (!ogcFilters.interfaceOgcFilters) {
@@ -54,7 +59,7 @@ export class OGCFilterService {
       let interfaceFilters: OgcInterfaceFilterOptions[];
       if (!ogcFilters.advancedOgcFilters) {
         interfaceFilters = this.mergeInterfaceFilters(
-          ogcFilters.filters,
+          ogcFilters.filters!,
           ogcFilters.interfaceOgcFilters
         );
       } else {
@@ -104,7 +109,7 @@ export class OGCFilterService {
       const filter = searchFilter(
         filters,
         'propertyName',
-        interfaceOgc.propertyName
+        interfaceOgc.propertyName!
       );
 
       if (filter) {
@@ -121,26 +126,26 @@ export class OGCFilterService {
     const ogcFilters = options?.ogcFilters;
     if (!ogcFilters?.filters) return;
 
-    ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
-      ogcFilters.filters,
+    ogcFilters!.filters = ogcFilterWriter.checkIgoFiltersProperties(
+      ogcFilters!.filters!,
       options.fieldNameGeometry,
       undefined,
       true
-    );
+    ) as IgoOgcFilterObject;
 
-    if (!ogcFilters.interfaceOgcFilters) {
-      ogcFilters.interfaceOgcFilters =
+    if (!ogcFilters!.interfaceOgcFilters) {
+      ogcFilters!.interfaceOgcFilters =
         ogcFilterWriter.defineInterfaceFilterSequence(
           // With some wms server, this param must be set to make spatials call.
-          ogcFilters.filters,
+          ogcFilters!.filters!,
           options.fieldNameGeometry
         );
     } else {
       const mergedInterfaceOgcFilters = this.mergeInterfaceFilters(
-        ogcFilters.filters,
-        ogcFilters.interfaceOgcFilters
+        ogcFilters!.filters!,
+        ogcFilters!.interfaceOgcFilters
       );
-      ogcFilters.interfaceOgcFilters =
+      ogcFilters!.interfaceOgcFilters =
         ogcFilterWriter.defineInterfaceFilterSequence(
           mergedInterfaceOgcFilters,
           options.fieldNameGeometry
@@ -148,7 +153,7 @@ export class OGCFilterService {
     }
 
     return ogcFilterWriter.buildFilter(
-      ogcFilters.filters,
+      ogcFilters!.filters,
       undefined,
       undefined,
       undefined,
@@ -167,16 +172,16 @@ export class OGCFilterService {
     ogcFilterWriter: OgcFilterWriter
   ): string | undefined {
     const { ogcFilters, fieldNameGeometry } = options;
-    const currentFilters = ogcFilters.interfaceOgcFilters ?? [];
+    const currentFilters = ogcFilters!.interfaceOgcFilters ?? [];
 
     // Build the sequence using writer
     const newFilterSequence = ogcFilterWriter.defineInterfaceFilterSequence(
       currentFilters,
       fieldNameGeometry
     );
-    ogcFilters.interfaceOgcFilters = newFilterSequence;
+    ogcFilters!.interfaceOgcFilters = newFilterSequence;
     // Get only active filters
-    const activeFilters = ogcFilters.interfaceOgcFilters.filter(
+    const activeFilters = ogcFilters!.interfaceOgcFilters.filter(
       (f) => f.active === true
     );
     if (
@@ -185,11 +190,11 @@ export class OGCFilterService {
     ) {
       activeFilters[0].parentLogical = activeFilters[1].parentLogical;
     }
-    ogcFilters.filters =
+    ogcFilters!.filters =
       ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(activeFilters);
     // Build the final filter string
     return ogcFilterWriter.buildFilter(
-      ogcFilters.filters,
+      ogcFilters!.filters,
       undefined,
       undefined,
       undefined,

@@ -30,8 +30,11 @@ export function generateIdFromSourceOptions(
 
     tiledebug: () => 'tiledebug'
   };
-  const generator = generators[options.type] || generateId;
-  return generator(options);
+  const generator = options.type
+    ? (generators[options.type as keyof typeof generators] ?? generateId)
+    : generateId;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return generator(options as any);
 }
 
 /**
@@ -41,7 +44,7 @@ export function generateIdFromSourceOptions(
  */
 export function generateWMSIdFromSourceOptions(options: WMSDataSourceOptions) {
   const layers = options.params.LAYERS;
-  const url = standardizeUrl(options.url);
+  const url = standardizeUrl(options.url!);
   const chain = 'wms' + url + layers;
   return Md5.hashStr(chain) as string;
 }
@@ -54,8 +57,8 @@ export function generateWMSIdFromSourceOptions(options: WMSDataSourceOptions) {
 export function generateWMTSIdFromSourceOptions(
   options: WMTSDataSourceOptions
 ) {
-  const layer = options.layer;
-  const url = standardizeUrl(options.url);
+  const layer = options.layer!;
+  const url = standardizeUrl(options.url!);
   const chain = 'wmts' + url + layer;
   return Md5.hashStr(chain) as string;
 }
@@ -66,7 +69,7 @@ export function generateWMTSIdFromSourceOptions(
  * @returns A md5 hash of the the url and layer
  */
 export function generateXYZIdFromSourceOptions(options: WMTSDataSourceOptions) {
-  const url = standardizeUrl(options.url);
+  const url = standardizeUrl(options.url!);
   const chain = 'xyz' + url;
   return Md5.hashStr(chain) as string;
 }
@@ -82,7 +85,7 @@ export function generateFeatureIdFromSourceOptions(
   if (!options.url) {
     return generateId();
   }
-  const url = standardizeUrl(options.url);
+  const url = standardizeUrl(options.url!);
   const chain = 'feature' + url;
   return Md5.hashStr(chain) as string;
 }
@@ -96,8 +99,8 @@ export function generateWfsIdFromSourceOptions(options: WFSDataSourceOptions) {
   if (!options.url || !options.params) {
     return generateId();
   }
-  const url = standardizeUrl(options.url);
-  const chain = 'wfs' + url + options.params.featureTypes;
+  const url = standardizeUrl(options.url!);
+  const chain = 'wfs' + url + options.params!.featureTypes;
   return Md5.hashStr(chain) as string;
 }
 /**
@@ -109,7 +112,7 @@ export function generateArcgisRestIdFromSourceOptions(
   options: ArcGISRestDataSourceOptions
 ) {
   const layers = options.layer;
-  const url = standardizeUrl(options.url);
+  const url = standardizeUrl(options.url!);
   const chain = (options.type || 'arcgis') + url + layers;
   return Md5.hashStr(chain) as string;
 }
@@ -132,5 +135,5 @@ export function standardizeUrl(url: string): string {
   if (paramsToKeep.length) {
     urlStandardized += '?' + paramsToKeep.join('&');
   }
-  return urlStandardized;
+  return urlStandardized!;
 }

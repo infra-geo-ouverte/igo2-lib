@@ -40,7 +40,7 @@ export class StyleListService {
 
     return new Promise((resolve) => {
       this.httpClient
-        .get(options.path)
+        .get(options.path!)
         .pipe(
           catchError((error: any): any => {
             console.log(`StyleList file ${options.path} could not be read`);
@@ -48,7 +48,7 @@ export class StyleListService {
             return throwError(error.error || 'Server error');
           })
         )
-        .subscribe((styleListResponse: object) => {
+        .subscribe((styleListResponse) => {
           this.styleList = ObjectUtils.mergeDeep(
             baseStyleList,
             styleListResponse

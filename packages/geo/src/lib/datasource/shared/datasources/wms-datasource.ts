@@ -34,14 +34,6 @@ import {
   getSaveableOgcParams
 } from './wms-wfs.utils';
 
-export interface TimeFilterableDataSource extends WMSDataSource {
-  options: TimeFilterableDataSourceOptions;
-  timeFilter$: BehaviorSubject<TimeFilterOptions>;
-  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean);
-  filterByDate(date: Date | [Date, Date]);
-  filterByYear(year: string | [string, string]);
-}
-
 export class WMSDataSource extends DataSource {
   declare public ol: olSourceImageWMS;
 
@@ -73,24 +65,26 @@ export class WMSDataSource extends DataSource {
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
-  get ogcFilters(): OgcFiltersOptions {
+  get ogcFilters(): OgcFiltersOptions | undefined {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
   set timeFilter(value: TimeFilterOptions) {
     (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
   }
-  get timeFilter(): TimeFilterOptions {
+  get timeFilter(): TimeFilterOptions | undefined {
     return (this.options as TimeFilterableDataSourceOptions).timeFilter;
   }
-  readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions>(undefined);
+  readonly timeFilter$ = new BehaviorSubject<TimeFilterOptions | undefined>(
+    undefined
+  );
 
   get saveableOptions(): Partial<WMSDataSourceOptions> {
     const baseOptions = super.saveableOptions as WMSDataSourceOptions;
 
     if (
       this.timeFilter?.value &&
-      this.timeFilter?.value.toString() !== this.timeFilter?.default.toString()
+      this.timeFilter?.value.toString() !== this.timeFilter?.default?.toString()
     ) {
       baseOptions.timeFilter = {
         value: this.timeFilter.value
@@ -132,7 +126,7 @@ export class WMSDataSource extends DataSource {
     // ####   START if paramsWFS
     if (options.paramsWFS) {
       const wfsCheckup = checkWfsParams(options, 'wms');
-      ObjectUtils.mergeDeep(options.paramsWFS, wfsCheckup.paramsWFS);
+      ObjectUtils.mergeDeep(options.paramsWFS!, wfsCheckup.paramsWFS!);
 
       fieldNameGeometry =
         options.paramsWFS.fieldNameGeometry || fieldNameGeometry;
@@ -159,7 +153,7 @@ export class WMSDataSource extends DataSource {
     if (!initOgcFilters) {
       (options as OgcFilterableDataSourceOptions).ogcFilters =
         ogcFilterWriter.defineOgcFiltersDefaultOptions(
-          initOgcFilters,
+          {},
           fieldNameGeometry,
           'wms'
         );
@@ -229,7 +223,7 @@ export class WMSDataSource extends DataSource {
     );
     sourceParams.FILTER = filterQueryString;
     this.ol.updateParams({ FILTER: sourceParams.FILTER });
-    this.setOgcFilters(initOgcFilters, true);
+    this.setOgcFilters(initOgcFilters!, true);
 
     const timeFilterableDataSourceOptions =
       options as TimeFilterableDataSourceOptions;
@@ -251,21 +245,23 @@ export class WMSDataSource extends DataSource {
   }
 
   private dateFormat(timeFilterOptions: TimeFilterOptions): string {
-    const date = parseDateString(timeFilterOptions.value);
+    const date = parseDateString(timeFilterOptions.value!);
     const minMax = parseDateString([
-      timeFilterOptions.min,
-      timeFilterOptions.max
+      timeFilterOptions.min ?? '',
+      timeFilterOptions.max ?? ''
     ]) as [min: Date, max: Date];
-    const valueInRange = isDateOrRangeInRange(date, minMax);
+    const valueInRange = isDateOrRangeInRange(date!, minMax);
 
     if (date instanceof Date) {
       return valueInRange
         ? `${date.toISOString().split('.')[0]}Z`
         : `${minMax[0].toISOString().split('.')[0]}Z`;
-    } else {
+    } else if (date) {
       return valueInRange
         ? `${date[0].toISOString().split('.')[0]}Z/${date[1].toISOString().split('.')[0]}Z`
         : `${minMax[0].toISOString().split('.')[0]}Z/${minMax[1].toISOString().split('.')[0]}Z`;
+    } else {
+      return `${minMax[0].toISOString().split('.')[0]}Z`;
     }
   }
 
@@ -343,10 +339,10 @@ export class WMSDataSource extends DataSource {
       params.push(`SCALE=${view.scale}`);
     }
     if (contentDependent) {
-      params.push(`WIDTH=${view.size[0]}`);
-      params.push(`HEIGHT=${view.size[1]}`);
-      params.push(`BBOX=${view.extent.join(',')}`);
-      params.push(`${projParam}=${view.projection}`);
+      params.push(`WIDTH=${view!.size![0]}`);
+      params.push(`HEIGHT=${view!.size![1]}`);
+      params.push(`BBOX=${view!.extent!.join(',')}`);
+      params.push(`${projParam}=${view!.projection}`);
     }
 
     legend = layers.map((layer: string) => {
@@ -361,9 +357,7 @@ export class WMSDataSource extends DataSource {
     return legend;
   }
 
-  public onUnwatch() {
-    // empty
-  }
+  public onUnwatch() {}
 
   private addRefreshInterval(refreshInterval: number): Observable<number> {
     const intervalMs = refreshInterval * 1000; // secondes to MS
@@ -377,19 +371,21 @@ export class WMSDataSource extends DataSource {
     );
   }
 
-  private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
+  private buildDynamicDownloadUrlFromParamsWFS(
+    asWFSDataSourceOptions: WMSDataSourceOptions
+  ) {
     const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
     const downloadUrl = queryStringValues.find(
       (f) => f.name === 'getfeature'
-    ).value;
+    )!.value;
     return downloadUrl;
   }
 }
 
 export interface TimeFilterableDataSource extends WMSDataSource {
   options: TimeFilterableDataSourceOptions;
-  timeFilter$: BehaviorSubject<TimeFilterOptions>;
-  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean);
-  filterByDate(date: Date | [Date, Date]);
-  filterByYear(year: string | [string, string]);
+  timeFilter$: BehaviorSubject<TimeFilterOptions | undefined>;
+  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean): void;
+  filterByDate(date: Date | [Date, Date]): void;
+  filterByYear(year: string | [string, string]): void;
 }
