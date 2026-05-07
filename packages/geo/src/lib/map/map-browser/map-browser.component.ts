@@ -25,11 +25,11 @@ import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityService = inject(ActivityService);
 
-  private activityId: string;
-  private status$$: Subscription;
+  private activityId?: string;
+  private status$$!: Subscription;
 
-  readonly map = input<IgoMap>(undefined);
-  readonly view = model<MapViewOptions>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly view = model<MapViewOptions>();
 
   get controls(): MapControlsOptions {
     return this._controls;
@@ -42,7 +42,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
       map.updateControls(value);
     }
   }
-  private _controls: MapControlsOptions;
+  private _controls!: MapControlsOptions;
 
   public id = `igo-map-target-${uuid()}`;
 
@@ -67,7 +67,9 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.map().setTarget(undefined);
-    this.activityService.unregister(this.activityId);
+    if (this.activityId !== undefined) {
+      this.activityService.unregister(this.activityId);
+    }
     this.status$$.unsubscribe();
   }
 

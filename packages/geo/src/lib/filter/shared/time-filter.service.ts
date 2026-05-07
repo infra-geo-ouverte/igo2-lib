@@ -43,7 +43,7 @@ export class TimeFilterService {
     datasource.ol.updateParams(params);
     if (datasource instanceof WMSDataSource) {
       const wmsDataSource = datasource as WMSDataSource;
-      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
+      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter!, true);
     }
   }
 
@@ -84,7 +84,7 @@ export class TimeFilterService {
     datasource.ol.updateParams(params);
     if (datasource instanceof WMSDataSource) {
       const wmsDataSource = datasource as WMSDataSource;
-      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
+      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter!, true);
     }
   }
 

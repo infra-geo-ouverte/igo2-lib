@@ -14,25 +14,25 @@
       matListItemTitle
       (click)="toggleLegendOnClick()"
       [style.cursor]="filtersCollapsed ? 'default' : 'pointer'"
-      >{{ layer().title }}</span
+      >{{ layer()?.title }}</span
     >
     @if (header()) {
       <button
         mat-icon-button
         matListItemMeta
-        [color]="layer().visible ? 'primary' : 'default'"
+        [color]="layer()?.visible ? 'primary' : 'default'"
         collapsibleButton
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="
-          layer().visible
+          layer()?.visible
             ? ('igo.geo.layer.hideLayer' | translate)
             : ('igo.geo.layer.showLayer' | translate)
         "
         (click)="toggleLayerVisibility()"
       >
         <mat-icon [class.disabled]="(inResolutionRange$ | async) === false"
-          >{{ layer().visible ? 'visibility' : 'visibility_off' }}
+          >{{ layer()?.visible ? 'visibility' : 'visibility_off' }}
         </mat-icon>
       </button>
     }

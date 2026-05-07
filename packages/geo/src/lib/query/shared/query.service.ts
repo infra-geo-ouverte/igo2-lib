@@ -24,10 +24,7 @@ import {
   WMSDataSourceOptions
 } from '../../datasource/shared/datasources';
 import { FEATURE } from '../../feature/shared/feature.enums';
-import {
-  Feature,
-  FeatureGeometry
-} from '../../feature/shared/feature.interfaces';
+import { Feature } from '../../feature/shared/feature.interfaces';
 import { Layer } from '../../layer';
 import { MapExtent } from '../../map/shared/map.interface';
 import {
@@ -53,7 +50,7 @@ export class QueryService {
   public defaultFeatureCount = 20;
   public featureCount = 20;
 
-  private previousMessageIds = [];
+  private previousMessageIds: number[] = [];
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     if (this.previousMessageIds.length) {
@@ -68,8 +65,7 @@ export class QueryService {
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
-    // eslint-disable-next-line prefer-spread
-    const flattenedQueries$ = [].concat.apply([], queries$);
+    const flattenedQueries$: any[] = ([] as any[]).concat.apply([], queries$);
     return flattenedQueries$;
   }
 
@@ -81,14 +77,14 @@ export class QueryService {
       layer.dataSource as QueryableDataSource,
       options,
       false,
-      layer.map.viewController.getExtent()
+      layer.map!.viewController.getExtent()
     );
     if (!url) {
       return of([]);
     }
 
-    const resolution: number = layer.map.viewController.getResolution();
-    const scale: number = layer.map.viewController.getScale();
+    const resolution: number = layer.map!.viewController.getResolution();
+    const scale: number = layer.map!.viewController.getScale();
 
     if (
       (layer.dataSource as QueryableDataSource).options.queryFormat ===
@@ -195,8 +191,8 @@ export class QueryService {
     scale: number,
     element: QueryUrlData
   ): boolean {
-    let checkScale: boolean;
-    let checkResolution: boolean;
+    let checkScale = false;
+    let checkResolution = false;
 
     if (
       !element.minResolution &&
@@ -256,10 +252,10 @@ export class QueryService {
   }
 
   private mergeGML(
-    gmlRes,
-    url,
+    gmlRes: any,
+    url: any,
     layer: Layer
-  ): [FeatureGeometry, Record<string, any>] {
+  ): [any, Record<string, any>] {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
@@ -268,10 +264,10 @@ export class QueryService {
       features = wmsParser.readFeatures(gmlRes);
     }
     const olmline = new olgeom.MultiLineString([]);
-    let pts;
-    const ptsArray = [];
+    let pts: olgeom.Point | undefined;
+    const ptsArray: number[][][] = [];
     let olmpoly = new olgeom.MultiPolygon([]);
-    let firstFeatureType;
+    let firstFeatureType: string | undefined;
     const nbFeatures = features.length;
 
     // Check if geometry intersect bbox
@@ -282,8 +278,8 @@ export class QueryService {
     const bboxExtent = olextent.createEmpty();
     olextent.extend(bboxExtent, bbox);
     const outBboxExtent = false;
-    let titleContent;
-    let queryTileField;
+    let titleContent: string | undefined;
+    let queryTileField: string | undefined;
     if (layer.options?.source?.options) {
       const dataSourceOptions = layer.options.source
         .options as QueryableDataSourceOptions;
@@ -307,7 +303,7 @@ export class QueryService {
       const featureGeometryCoordinates = (
         feature.getGeometry() as any
       ).getCoordinates();
-      const featureGeometryType = feature.getGeometry().getType();
+      const featureGeometryType = feature.getGeometry()!.getType();
 
       if (!firstFeatureType && !outBboxExtent) {
         firstFeatureType = featureGeometryType;
@@ -353,7 +349,7 @@ export class QueryService {
       };
     }
 
-    let returnGeometry;
+    let returnGeometry: { type: string; coordinates: unknown } | undefined;
     switch (firstFeatureType) {
       case 'LineString':
         returnGeometry = {
@@ -377,7 +373,7 @@ export class QueryService {
         };
         break;
     }
-    const imposedProperties = {};
+    const imposedProperties: Record<string, string | undefined> = {};
 
     if (queryTileField) {
       imposedProperties[queryTileField] = titleContent;
@@ -386,7 +382,8 @@ export class QueryService {
     return [returnGeometry, imposedProperties];
   }
 
-  cross(a, b, o) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cross(a: any, b: any, o: any) {
     return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
   }
 
@@ -395,8 +392,9 @@ export class QueryService {
    * This method is use instead of turf.js convexHull because Turf needs at least 3 point to make a hull.
    * https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#JavaScript
    */
-  convexHull(points) {
-    points.sort((a, b) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  convexHull(points: any) {
+    points.sort((a: any, b: any) => {
       return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
     });
 
@@ -432,22 +430,22 @@ export class QueryService {
   }
 
   private extractData(
-    res,
+    res: any,
     layer: Layer,
     options: QueryOptions,
     url: string,
-    imposedGeometry?,
+    imposedGeometry?: any,
     imposedProperties?: Record<string, any>
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
     const allowedFieldsAndAlias = this.getAllowedFieldsAndAlias(layer);
-    let features = [];
+    let features: Feature[] = [];
     switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
         features = this.extractGML3Data(
           res,
-          layer.zIndex,
+          layer.zIndex!,
           allowedFieldsAndAlias
         );
         break;
@@ -456,14 +454,14 @@ export class QueryService {
       case QueryFormat.GEOJSON2:
         features = this.extractGeoJSONData(
           res,
-          layer.zIndex,
+          layer.zIndex!,
           allowedFieldsAndAlias
         );
         break;
       case QueryFormat.ESRIJSON:
         features = this.extractEsriJSONData(
           res,
-          layer.zIndex,
+          layer.zIndex!,
           allowedFieldsAndAlias
         );
         break;
@@ -472,14 +470,14 @@ export class QueryService {
       case QueryFormat.HTML:
         features = this.extractHtmlData(
           res,
-          queryDataSource.queryHtmlTarget,
+          queryDataSource.queryHtmlTarget!,
           url
         );
         break;
       case QueryFormat.HTMLGML2:
         features = this.extractHtmlData(
           res,
-          queryDataSource.queryHtmlTarget,
+          queryDataSource.queryHtmlTarget!,
           url,
           imposedGeometry,
           imposedProperties
@@ -487,7 +485,11 @@ export class QueryService {
         break;
       case QueryFormat.GML2:
       default:
-        features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
+        features = this.extractGML2Data(
+          res,
+          layer.zIndex!,
+          allowedFieldsAndAlias
+        );
         break;
     }
     if (
@@ -524,7 +526,9 @@ export class QueryService {
     }
 
     return features.map((feature: Feature, index: number) => {
-      const mapLabel = feature.properties[queryDataSource.mapLabel];
+      const mapLabel = queryDataSource.mapLabel
+        ? feature.properties[queryDataSource.mapLabel]
+        : undefined;
 
       let exclude;
       if (layer.options.sourceOptions?.type === 'wms') {
@@ -545,7 +549,7 @@ export class QueryService {
         title,
         mapTitle: mapLabel,
         sourceTitle: layer.title,
-        order: 1000 - layer.zIndex,
+        order: 1000 - (layer.zIndex ?? 0),
         excludeAttribute: exclude
       });
 
@@ -559,7 +563,7 @@ export class QueryService {
     });
   }
 
-  private createGeometryFromUrlClick(url) {
+  private createGeometryFromUrlClick(url: string) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
     const width = parseInt(searchParams.width, 10);
@@ -623,7 +627,11 @@ export class QueryService {
     return newGeom;
   }
 
-  private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
+  private extractGML2Data(
+    res: any,
+    zIndex: number,
+    allowedFieldsAndAlias?: any
+  ) {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(res);
     // Handle non standard GML output (MapServer)
@@ -643,9 +651,14 @@ export class QueryService {
     );
   }
 
-  private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
+  private extractGML3Data(
+    res: any,
+    zIndex: number,
+    allowedFieldsAndAlias?: any
+  ) {
     const parser = new olFormatGML3();
-    let features = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let features: any[] = [];
     try {
       features = parser.readFeatures(res);
     } catch {
@@ -656,8 +669,12 @@ export class QueryService {
     );
   }
 
-  private extractGeoJSONData(res, zIndex, allowedFieldsAndAlias?) {
-    let features = [];
+  private extractGeoJSONData(
+    res: any,
+    zIndex: number,
+    allowedFieldsAndAlias?: any
+  ) {
+    let features: Feature[] = [];
     try {
       features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
     } catch {
@@ -674,7 +691,11 @@ export class QueryService {
     return features;
   }
 
-  private extractEsriJSONData(res, zIndex, allowedFieldsAndAlias) {
+  private extractEsriJSONData(
+    res: any,
+    zIndex: number,
+    allowedFieldsAndAlias: any
+  ) {
     if (res) {
       try {
         if (JSON.parse(res).error) {
@@ -693,10 +714,10 @@ export class QueryService {
   }
 
   private extractHtmlData(
-    res,
+    res: any,
     htmlTarget: QueryHtmlTarget,
-    url,
-    imposedGeometry?,
+    url: any,
+    imposedGeometry?: any,
     imposedProperties?: Record<string, any>
   ) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
@@ -733,15 +754,16 @@ export class QueryService {
     ];
   }
 
-  private getQueryParams(url) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getQueryParams(url: any) {
     const queryString = url.split('?');
     if (!queryString[1]) {
       return;
     }
     const pairs = queryString[1].split('&');
 
-    const result = {};
-    pairs.forEach((pair) => {
+    const result: Record<string, string> = {};
+    pairs.forEach((pair: any) => {
       pair = pair.split('=');
       result[pair[0]] = decodeURIComponent(pair[1] || '');
     });
@@ -751,7 +773,7 @@ export class QueryService {
   public featureToResult(
     featureOL: olFeature<olgeom.Geometry>,
     zIndex: number,
-    allowedFieldsAndAlias?
+    allowedFieldsAndAlias?: any
   ): Feature {
     const featureGeometry = featureOL.getGeometry() as any;
     const properties: any = Object.assign({}, featureOL.getProperties());
@@ -807,7 +829,7 @@ export class QueryService {
         const WMSGetFeatureInfoOptions = {
           INFO_FORMAT:
             wmsDatasource.params.INFO_FORMAT ||
-            this.getMimeInfoFormat(datasource.options.queryFormat),
+            this.getMimeInfoFormat(datasource.options.queryFormat ?? ''),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
           FEATURE_COUNT:
             wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
@@ -825,7 +847,7 @@ export class QueryService {
 
         url = wmsDatasource.ol.getFeatureInfoUrl(
           options.coordinates,
-          options.resolution,
+          options.resolution!,
           options.projection,
           WMSGetFeatureInfoOptions
         );
@@ -867,8 +889,8 @@ export class QueryService {
       case ImageArcGISRestDataSource:
       case TileArcGISRestDataSource: {
         const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
-        const deltaX = Math.abs(mapExtent[0] - mapExtent[2]);
-        const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
+        const deltaX = Math.abs(mapExtent![0] - mapExtent![2]);
+        const deltaY = Math.abs(mapExtent![1] - mapExtent![3]);
         const maxDelta = deltaX > deltaY ? deltaX : deltaY;
         const clickBuffer = maxDelta * 0.005;
         const threshold = tileArcGISRestDatasource.options.queryPrecision
@@ -911,16 +933,18 @@ export class QueryService {
         break;
     }
 
-    return url;
+    return url ?? '';
   }
 
   private getMimeInfoFormat(queryFormat: string) {
     let mime = 'application/vnd.ogc.gml';
     const keyEnum = Object.keys(QueryFormat).find(
-      (key) => QueryFormat[key] === queryFormat
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (key) => (QueryFormat as any)[key] === queryFormat
     );
     if (keyEnum) {
-      mime = QueryFormatMimeType[keyEnum];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mime = (QueryFormatMimeType as any)[keyEnum];
     }
 
     return mime;
@@ -933,7 +957,7 @@ export class QueryService {
       layer.options.source.options.sourceFields.length >= 1
     ) {
       allowedFieldsAndAlias = {};
-      layer.options.source.options.sourceFields.forEach((sourceField) => {
+      layer.options.source.options.sourceFields.forEach((sourceField: any) => {
         const alias = sourceField.alias ? sourceField.alias : sourceField.name;
         allowedFieldsAndAlias[sourceField.name] = alias;
       });
@@ -941,7 +965,7 @@ export class QueryService {
     return allowedFieldsAndAlias;
   }
 
-  getQueryTitle(feature: Feature, layer: Layer): string {
+  getQueryTitle(feature: Feature, layer: Layer): string | undefined {
     let title;
     if (layer.options?.source?.options) {
       const dataSourceOptions = layer.options.source
@@ -954,11 +978,11 @@ export class QueryService {
     return title;
   }
 
-  getLabelMatch(feature: Feature, labelMatch): string {
+  getLabelMatch(feature: Feature, labelMatch: any): string {
     let label = labelMatch;
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
-    labelToGet.forEach((v) => {
+    labelToGet.forEach((v: any) => {
       label = label.replace(v[0], feature.properties[v[1]]);
     });
 
@@ -984,18 +1008,18 @@ export class QueryService {
   ): QueryUrlData[] {
     const extent = olextent.getForViewAndSize(
       options.coordinates,
-      options.resolution,
+      options.resolution!,
       0,
       [101, 101]
     );
 
-    return datasource.options.queryUrls.map((item) => {
+    return (datasource.options.queryUrls ?? []).map((item) => {
       const data: QueryUrlData = {
         url: item.url
           .replace(/\{bbox\}/g, extent.join(','))
           .replace(/\{x\}/g, options.coordinates[0].toString())
           .replace(/\{y\}/g, options.coordinates[1].toString())
-          .replace(/\{resolution\}/g, options.resolution.toString())
+          .replace(/\{resolution\}/g, options.resolution!.toString())
           .replace(/\{srid\}/g, options.projection.replace('EPSG:', ''))
       };
 

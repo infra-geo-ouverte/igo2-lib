@@ -4,8 +4,6 @@ import OlFeature from 'ol/Feature';
 import * as olextent from 'ol/extent';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import { Document } from 'flexsearch';
-
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap, MapExtent } from '../../map/shared';
@@ -19,6 +17,9 @@ import {
   moveToOlFeatures
 } from './feature.utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FlexIndex = any;
+
 /**
  * The class is a specialized version of an EntityStore that stores
  * features and the map layer to display them on. Synchronization
@@ -28,7 +29,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   /**
    * Vector layer to display the features on
    */
-  layer: VectorLayer;
+  layer!: VectorLayer;
 
   /**
    * The map the layer is bound to
@@ -41,20 +42,20 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   get source(): FeatureDataSource {
     return this.layer
       ? (this.layer.dataSource as FeatureDataSource)
-      : undefined;
+      : (undefined as unknown as FeatureDataSource);
   }
 
   /**
    * The searchable index of loaded feature. Computed if strategy is provided
    */
-  set searchDocument(v: Document<T>) {
+  set searchDocument(v: FlexIndex) {
     this._searchDocument = v;
   }
 
-  get searchDocument(): Document<T> {
+  get searchDocument(): FlexIndex {
     return this._searchDocument;
   }
-  private _searchDocument: Document<T>;
+  private _searchDocument!: FlexIndex;
 
   constructor(entities: T[], options: FeatureStoreOptions) {
     super(entities, options);
@@ -68,7 +69,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    */
   bindLayer(layer: VectorLayer): FeatureStore {
     this.layer = layer;
-    return this;
+    return this as unknown as FeatureStore;
   }
 
   /**
@@ -82,7 +83,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     motion: FeatureMotion = FeatureMotion.Default,
     viewScale?: [number, number, number, number],
     areaRatio?: number,
-    getId?: (Feature) => EntityKey
+    getId?: (arg0: Feature) => EntityKey
   ) {
     getId = getId ? getId : getEntityId;
     this.checkLayer();
@@ -102,7 +103,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     const features = olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       olFeature.set('_featureStore', this, true);
-      return featureFromOl(olFeature, this.layer.map.projection);
+      return featureFromOl(olFeature, this.layer.map!.projection);
     });
     this.load(features as T[]);
   }
@@ -136,7 +137,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     areaRatio?: number
   ) {
     const olSource = this.layer.ol.getSource();
-    const diff = computeOlFeaturesDiff(olSource.getFeatures(), olFeatures);
+    const diff = computeOlFeaturesDiff(olSource!.getFeatures(), olFeatures);
     if (diff.remove.length > 0) {
       this.removeOlFeaturesFromLayer(diff.remove);
     }
@@ -169,7 +170,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   setLayerExtent(): void {
     const features = this.entities$.getValue();
     const extent = olextent.createEmpty() as MapExtent;
-    const olFeatures = [];
+    const olFeatures: OlFeature<OlGeometry>[] = [];
 
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));

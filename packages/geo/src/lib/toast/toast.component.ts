@@ -39,7 +39,7 @@ export class ToastComponent {
   readonly opened = output<boolean>();
 
   public state = computed<FlexibleState>(() =>
-    this.expanded ? 'expanded' : 'collapsed'
+    this.expanded() ? 'expanded' : 'collapsed'
   );
 
   /**
@@ -51,13 +51,13 @@ export class ToastComponent {
 
   toggle() {
     this.expanded.update((previous) => !previous);
-    this.opened.emit(this.expanded());
+    this.opened.emit(this.expanded() ?? false);
   }
 
   zoomToFeatureExtent() {
     const feature = this.feature();
     const map = this.map();
-    if (feature?.geometry) {
+    if (feature?.geometry && map) {
       const olFeature = this.format.readFeature(this.feature, {
         dataProjection: feature?.projection,
         featureProjection: map?.projection
@@ -68,11 +68,11 @@ export class ToastComponent {
 
   swipe(action: string) {
     if (action === ToastComponent.SWIPE_ACTION.UP) {
-      if (!this.expanded) {
+      if (!this.expanded()) {
         this.toggle();
       }
     } else if (action === ToastComponent.SWIPE_ACTION.DOWN) {
-      if (this.expanded) {
+      if (this.expanded()) {
         this.toggle();
       }
     }

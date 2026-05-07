@@ -50,22 +50,26 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   private mediaService = inject(MediaService);
   private styleService = inject(StyleService);
 
-  public store: FeatureStore<Feature>;
+  public store!: FeatureStore<Feature>;
   private pointerHoverFeatureStore: EntityStore<OlFeature<OlGeometry>> =
     new EntityStore<OlFeature<OlGeometry>>([]);
-  private lastTimeoutRequest;
-  private store$$: Subscription;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private lastTimeoutRequest: any;
+  private store$$!: Subscription;
 
-  private selectionLayer: olLayerVectorTile;
-  private selectionMVT = {};
-  private mvtStyleOptions: StyleByAttribute;
+  private selectionLayer!: olLayerVectorTile;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private selectionMVT: Record<string | number, any> = {};
+  private mvtStyleOptions!: StyleByAttribute;
 
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private pointerMoveListener: any;
 
-  private singleClickMapListener;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private singleClickMapListener: any;
 
   private hoverFeatureId = 'hoverFeatureId';
   /**
@@ -89,7 +93,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map();
+    return this.component.map()!;
   }
 
   get mapProjection(): string {
@@ -128,7 +132,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: hoverFeatureMarkerStyle
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      style: hoverFeatureMarkerStyle as any
     });
     tryBindStoreLayer(store, layer);
 
@@ -138,7 +143,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       renderMode: 'vector',
       declutter: true,
       source: new olVectorTileSource({ projection: this.map.projection }),
-      style: (feature, resolution) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      style: (feature: any, resolution: number) => {
         if (this.mvtStyleOptions && feature.getId() in this.selectionMVT) {
           return this.createHoverStyle(
             feature,
@@ -146,6 +152,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             resolution
           );
         }
+        return undefined;
       }
     });
   }
@@ -182,7 +189,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       localHoverStyle.fill = fill;
     }
     if (!hasLabelStyle && label) {
-      localHoverStyle.label.style = {
+      localHoverStyle.label!.style = {
         textAlign: 'left',
         textBaseline: 'top',
         font: '12px Calibri,sans-serif',
@@ -296,7 +303,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       clearTimeout(this.lastTimeoutRequest);
     }
     let maximumZindex = -Infinity;
-    let topMostOlLayer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let topMostOlLayer: any;
     const pixel = this.map.ol.getPixelFromCoordinate(event.coordinate);
     this.lastTimeoutRequest = setTimeout(() => {
       // retrieve the topmost layer with feature to only apply the hover on this layer.
@@ -310,10 +318,10 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           if (!this.canProcessHover(igoLayer as any)) {
             return;
           }
-          if (igoLayer.zIndex <= maximumZindex) {
+          if ((igoLayer?.zIndex ?? 0) <= maximumZindex) {
             return;
           }
-          maximumZindex = igoLayer.zIndex;
+          maximumZindex = igoLayer?.zIndex ?? 0;
           topMostOlLayer = layerOL;
         },
         {
@@ -354,7 +362,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               const myLabelOlFeature = new OlFeature();
               myLabelOlFeature.setProperties(localOlFeature.getProperties());
               const labelGeom =
-                localOlFeature.getGeometry().getType() === 'Point'
+                localOlFeature.getGeometry()?.getType() === 'Point'
                   ? localOlFeature.getGeometry()
                   : new OlGeom.Point(event.coordinate);
               myLabelOlFeature.setGeometry(labelGeom);
@@ -405,7 +413,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                       localOlFeature.getProperties()
                     );
                     const labelGeom =
-                      localOlFeature.getGeometry().getType() === 'Point'
+                      localOlFeature.getGeometry()?.getType() === 'Point'
                         ? localOlFeature.getGeometry()
                         : new OlGeom.Point(event.coordinate);
                     myLabelOlFeature.setGeometry(labelGeom);
@@ -416,7 +424,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
                       myLabelOlFeature
                     );
                     this.pointerHoverFeatureStore.load([myLabelOlFeature]);
-                    this.selectionMVT[feature.getId()] = localOlFeature;
+                    this.selectionMVT[feature.getId()!] = localOlFeature;
                     this.selectionLayer.changed();
                   }
                 );
@@ -462,7 +470,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   handleRenderFeature(
     feature: RenderFeature | OlFeature<OlGeometry>
   ): OlFeature<OlGeometry> {
-    let localFeature: OlFeature<OlGeometry>;
+    let localFeature: OlFeature<OlGeometry> | undefined;
     if (feature instanceof RenderFeature) {
       localFeature = new OlFeature({
         geometry: this.getGeometry(feature)
@@ -471,8 +479,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     } else if (feature instanceof OlFeature) {
       localFeature = feature;
     }
-    localFeature.setProperties(feature.getProperties());
-    return localFeature;
+    localFeature!.setProperties(feature.getProperties());
+    return localFeature!;
   }
 
   /**
@@ -497,7 +505,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     igoLayer: VectorLayer | VectorTileLayer,
     feature: OlFeature<OlGeometry>
   ) {
-    const resolution = this.store.layer.map.viewController.getResolution();
+    const resolution =
+      this.store.layer.map?.viewController.getResolution() ?? 1;
     if (igoLayer?.options?.igoStyle?.styleByAttribute?.hoverStyle) {
       this.store.layer.ol.setStyle(
         this.createHoverStyle(
@@ -519,7 +528,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     }
   }
 
-  private getHoverSummary(properties): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getHoverSummary(properties: any): string {
     let summary = '';
     for (const [key, value] of Object.entries(properties)) {
       if (!key.startsWith('_') && key !== 'geometry') {
@@ -529,15 +539,18 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     return summary.length >= 2 ? summary.slice(0, -2) : summary;
   }
 
-  private getGeometry(feature): OlGeom.Geometry {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getGeometry(feature: any): OlGeom.Geometry {
     let geom;
     if (!feature.getOrientedFlatCoordinates) {
       geom = feature.getGeometry();
     } else {
       const coords = feature.getOrientedFlatCoordinates();
-      const flatCoords = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const flatCoords: any[] = [];
 
-      coords.forEach((c, idx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      coords.forEach((c: any, idx: any) => {
         if (idx % 2 === 0) {
           flatCoords.push([
             parseFloat(coords[idx]),

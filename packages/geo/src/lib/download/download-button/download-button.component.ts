@@ -25,11 +25,11 @@ import { DownloadService } from '../shared/download.service';
 export class DownloadButtonComponent {
   private downloadService = inject(DownloadService);
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input.required<Layer>();
 
   readonly color = input('primary');
   readonly options = computed<DownloadDataSourceOptions>(
-    () => this.layer()?.dataSource.options
+    () => this.layer().dataSource.options
   );
 
   openDownload() {

@@ -51,23 +51,23 @@ export class MeasurerItemComponent implements OnDestroy {
    * Measure observable
    * @internal
    */
-  public measure$ = new BehaviorSubject<number>(undefined);
+  public measure$ = new BehaviorSubject<number | undefined>(undefined);
 
   /**
    * Subscription to the measure observable when the auto mode is on
    * @internal
    */
-  public measure$$: Subscription;
+  public measure$$!: Subscription;
 
   /**
    * Measure type
    */
-  readonly measureType = input<MeasureType>(undefined);
+  readonly measureType = input.required<MeasureType>();
 
   /**
    * Measure unit
    */
-  readonly measureUnit = model<MeasureAreaUnit | MeasureLengthUnit>(undefined);
+  readonly measureUnit = model.required<MeasureAreaUnit | MeasureLengthUnit>();
   /**
    * Measure
    */
@@ -75,7 +75,7 @@ export class MeasurerItemComponent implements OnDestroy {
   set measure(value: number) {
     this.measure$.next(value);
   }
-  get measure(): number {
+  get measure(): number | undefined {
     return this.measure$.value;
   }
 
@@ -94,7 +94,7 @@ export class MeasurerItemComponent implements OnDestroy {
   /**
    * Placeholder
    */
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
   /**
    * Event emitted when the measure unit changes
@@ -134,9 +134,11 @@ export class MeasurerItemComponent implements OnDestroy {
       this.measure$$.unsubscribe();
     }
     if (toggle === true) {
-      this.measure$$ = this.measure$.subscribe((measure: number) => {
-        this.computeBestMeasureUnit(measure);
-      });
+      this.measure$$ = this.measure$.subscribe(
+        (measure: number | undefined) => {
+          this.computeBestMeasureUnit(measure ?? 0);
+        }
+      );
     }
     this._auto = toggle;
   }
@@ -150,7 +152,7 @@ export class MeasurerItemComponent implements OnDestroy {
       measureUnit = computeBestLengthUnit(measure);
     }
     if (measureUnit !== this.measureUnit()) {
-      this.onMeasureUnitChange(measureUnit);
+      this.onMeasureUnitChange(measureUnit!);
     }
   }
 }

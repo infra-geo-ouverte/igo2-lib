@@ -33,7 +33,7 @@ export function mergeLayersOptions(
       // if the currentNode is find by title (See below), we update the id of current layer.
       if (
         isLayerGroupOptions(currentNode) &&
-        currentNode.id.toString().includes(ID_GROUP_PREFIX)
+        currentNode.id!.toString().includes(ID_GROUP_PREFIX)
       ) {
         currentNode.id = identifier;
       }
@@ -42,12 +42,12 @@ export function mergeLayersOptions(
       const mergedOptions = ObjectUtils.mergeDeep(currentNode, options);
 
       if (currentNodeParentID === options.parentId) {
-        moveOptions(tree, identifier, mergedOptions);
+        moveOptions(tree, identifier!, mergedOptions);
       } else {
         // if we have no parent id it means that we are in the root of the tree.
         if (!options.parentId) mergedOptions.parentId = undefined;
         const initialIdentifier = getLayerOptionIdentifier(currentNode);
-        moveOptions(tree, initialIdentifier, mergedOptions);
+        moveOptions(tree, initialIdentifier!, mergedOptions);
       }
     } else {
       // Some layers in local context doesn't have an id, if this is the case we
@@ -114,8 +114,11 @@ function insertOptions(
 }
 
 /** Recursive */
-function _getNodeById(id: LayerId, data: AnyLayerOptions[]): AnyLayerOptions {
-  let node: AnyLayerOptions;
+function _getNodeById(
+  id: LayerId,
+  data: AnyLayerOptions[]
+): AnyLayerOptions | undefined {
+  let node: AnyLayerOptions | undefined;
   data.some((item) => {
     const identifier = getLayerOptionIdentifier(item);
 
@@ -139,9 +142,9 @@ function _getNodeById(id: LayerId, data: AnyLayerOptions[]): AnyLayerOptions {
 function _getNodeByTitle(
   title: string | undefined,
   data: AnyLayerOptions[]
-): AnyLayerOptions {
+): AnyLayerOptions | undefined {
   if (!title) return;
-  let node: AnyLayerOptions;
+  let node: AnyLayerOptions | undefined;
   data.some((item) => {
     const itemTitle = item.title;
 
@@ -194,10 +197,7 @@ function getLayerParam(layerOptions: LayerOptions): string | undefined {
 
   switch (type) {
     case 'wms':
-      return (
-        (sourceOptions as WMSDataSourceOptions).params.LAYERS ??
-        (sourceOptions as WMSDataSourceOptions).params['layers']
-      );
+      return (sourceOptions as WMSDataSourceOptions).params?.LAYERS;
 
     case 'wmts':
     case 'arcgisrest':

@@ -28,22 +28,22 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * Get an active map
    */
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   /**
    * The list of layers for swipe
    */
-  private layers: Layer[];
+  private layers!: Layer[];
 
   /**
    * Final position of the swiped element
    */
-  private pos1: number;
+  private pos1!: number;
 
   /**
    * Intermediate position of the swiped element
    */
-  private pos3: number;
+  private pos3!: number;
 
   /**
    * State of draggable action
@@ -136,7 +136,8 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * Get a position of click or touch
    */
-  dragDown(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dragDown(event: any) {
     this.inDragAction = true;
     event.preventDefault();
     if (event.type === 'mousedown') {
@@ -144,7 +145,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
       this.mouseSwipe();
       document.onmouseup = this.closeDragMouseElement;
     } else if (event.type === 'touchstart') {
-      document.getElementById('arrows').style.visibility = 'hidden';
+      document.getElementById('arrows')!.style.visibility = 'hidden';
       this.pos3 = event.touches[0].clientX;
       this.touchSwipe();
       document.ontouchend = this.closeDragTouchElement;
@@ -160,7 +161,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
         event.preventDefault();
         this.pos1 = this.pos3 - event.clientX;
         this.pos3 = event.clientX;
-        this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
+        this.swipeId!.style.left = this.swipeId!.offsetLeft - this.pos1 + 'px';
       }
       this.map().ol.render();
     });
@@ -173,10 +174,10 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
     document.addEventListener('touchmove', (event) => {
       if (this.inDragAction) {
         event.preventDefault();
-        document.getElementById('arrows').style.visibility = 'hidden';
+        document.getElementById('arrows')!.style.visibility = 'hidden';
         this.pos1 = this.pos3 - event.changedTouches[0].clientX;
         this.pos3 = event.changedTouches[0].clientX;
-        this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
+        this.swipeId!.style.left = this.swipeId!.offsetLeft - this.pos1 + 'px';
       }
       this.map().ol.render();
     });
@@ -197,21 +198,22 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   closeDragTouchElement() {
     document.ontouchend = null;
     document.ontouchmove = null;
-    document.getElementById('arrows').style.visibility = 'visible';
+    document.getElementById('arrows')!.style.visibility = 'visible';
     this.inDragAction = false;
   }
 
   /**
    * Cut the image of a layer by the position of swiped-element
    */
-  prerender(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prerender(event: any) {
     const ctx = event.context;
     const mapSize = this.map().ol.getSize();
-    const width = this.swipeId.offsetLeft;
+    const width = this.swipeId!.offsetLeft;
     const tl = getRenderPixel(event, [width, 0]);
     const tr = getRenderPixel(event, [0, 0]);
-    const bl = getRenderPixel(event, [width, mapSize[1]]);
-    const br = getRenderPixel(event, [0, mapSize[1]]);
+    const bl = getRenderPixel(event, [width, mapSize![1]]);
+    const br = getRenderPixel(event, [0, mapSize![1]]);
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(tl[0], tl[1]);
@@ -225,7 +227,8 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * Save a current state of the context
    */
-  postrender(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  postrender(event: any) {
     event.context.restore();
     event.context.save();
   }

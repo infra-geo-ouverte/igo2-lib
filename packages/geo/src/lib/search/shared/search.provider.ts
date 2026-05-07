@@ -26,7 +26,7 @@ export function provideSearch(
       useClass: SearchService
     },
     provideSearchSourceService()
-  ].filter(Boolean);
+  ].filter(Boolean) as Provider[];
 
   for (const source of sources) {
     providers.push(...source.providers);

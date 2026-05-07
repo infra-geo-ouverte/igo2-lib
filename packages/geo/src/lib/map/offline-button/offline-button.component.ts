@@ -23,8 +23,8 @@ import { IgoMap } from '../shared/map';
 export class OfflineButtonComponent implements OnInit {
   btnStyle = 'onlineStyle';
 
-  readonly map = input<IgoMap>(undefined);
-  readonly color = input<string>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly color = input<string>();
   enabled = model(false);
 
   ngOnInit(): void {

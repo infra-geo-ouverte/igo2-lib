@@ -1,8 +1,8 @@
 export interface Projection {
   alias?: string;
   code: string;
-  def: string;
-  extent: [number, number, number, number];
+  def?: string;
+  extent?: [number, number, number, number];
 }
 export interface InputProjections extends Projection {
   translateKey?: string;

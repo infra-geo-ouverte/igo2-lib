@@ -129,7 +129,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.draw.delete' | translate"
-        [disabled]="(selectedFeatures$ | async).length === 0"
+        [disabled]="(selectedFeatures$ | async)!.length === 0"
         (click)="deleteDrawings()"
       >
         <mat-icon>delete</mat-icon>
@@ -140,14 +140,14 @@
       <igo-entity-table
         #table
         class="table-compact"
-        [store]="activeStore"
+        [store]="$any(activeStore)"
         [template]="tableTemplate"
       />
     </div>
   </div>
 
   <div class="icon-options">
-    @if (icons.length >= 1) {
+    @if (icons && icons.length >= 1) {
       <mat-form-field>
         <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
         <mat-select>

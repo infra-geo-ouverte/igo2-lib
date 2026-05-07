@@ -14,7 +14,7 @@ export class TileWatcher extends Watcher {
 
   constructor(layer: TileLayer | VectorTileLayer) {
     super();
-    this.source = layer.options.source.ol;
+    this.source = layer.options.source!.ol;
     this.id = uuid();
   }
 
@@ -43,7 +43,7 @@ export class TileWatcher extends Watcher {
     this.status = SubjectStatus.Working;
   }
 
-  private handleLoadEnd(event) {
+  private handleLoadEnd(event: Record<string, any>) {
     if (!event.tile.__watchers__) {
       return;
     }

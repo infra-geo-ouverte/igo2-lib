@@ -12,6 +12,7 @@ export function createOverlayLayer(): VectorLayer {
     title: 'Overlay',
     zIndex: 300,
     source: overlayDataSource,
-    style: createOverlayLayerStyle()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    style: createOverlayLayerStyle() as any
   });
 }

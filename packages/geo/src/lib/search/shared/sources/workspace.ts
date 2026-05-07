@@ -42,7 +42,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     super(options, storageService);
 
     this.languageService.translate
-      .get(this.options.title)
+      .get(this.options.title!)
       .subscribe((title) => this.title$.next(title));
   }
 
@@ -94,24 +94,30 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
   ): Observable<SearchResult<Feature>[]> {
     const limitSetting = this.settings.find((s) => s.name === 'limit');
     const limitValue =
-      (limitSetting.values.find((v) => v.enabled).value as number) || 5;
-    this.options.params.limit = limitValue.toLocaleString();
+      (limitSetting?.values.find((v) => v.enabled)?.value as number) || 5;
     const results: WorkspaceData[] = [];
-    this.options.params.page = (options.page || 1).toLocaleString();
-    const page = options.page || 1;
-    const datasets = this.options.params.datasets.split(',');
+    if (this.options.params) {
+      this.options.params.limit = limitValue.toLocaleString();
+      this.options.params.page = (options?.page || 1).toLocaleString();
+    }
+    const page = options?.page || 1;
+    const datasets = (this.options.params?.datasets ?? '').split(',');
     this.featureStoresWithIndex
       .filter(
-        (fswi) => fswi.searchDocument && datasets.includes(fswi.layer.title)
+        (fswi) =>
+          fswi.searchDocument && datasets.includes(fswi.layer.title ?? '')
       )
       .map((fswi) => {
         const termToUse = term;
         fswi.searchDocument
           .search(termToUse, { limit: page * limitValue })
-          .map((foundIn) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((foundIn: any) => {
             const field = foundIn.field;
-            foundIn.result.map((index) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            foundIn.result.map((index: any) => {
               const feature = fswi.index.get(index);
+              if (!feature) return;
               const score = computeTermSimilarity(
                 termToUse.trim(),
                 feature.properties[field]
@@ -122,7 +128,8 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
       });
 
     results.sort((a, b) => (a.score > b.score ? -1 : 1));
-    const gettedIndex = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const gettedIndex: any[] = [];
     const sortedResultToProcess: WorkspaceData[] = [];
     results.map((r) => {
       if (!gettedIndex.includes(r.index)) {
@@ -170,13 +177,13 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
       meta: {
         dataType: FEATURE,
         id,
-        title: data.feature.meta.title,
+        title: data.feature.meta?.title,
         titleHtml: titleHtml + subtitleHtml2,
         icon: 'location_on',
         score: data.score,
         nextPage:
-          resultsCnt % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          resultsCnt % +(this.options.params?.limit ?? 10) === 0 &&
+          +(this.options.params?.page ?? 1) < 10
       }
     } as SearchResult<Feature>;
   }

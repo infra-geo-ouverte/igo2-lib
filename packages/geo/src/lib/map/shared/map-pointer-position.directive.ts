@@ -11,6 +11,7 @@ import { MediaService } from '@igo2/core/media';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
+import type { EventsKey } from 'ol/events';
 import { transform } from 'ol/proj';
 
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -28,17 +29,17 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   private component = inject(MapBrowserComponent, { self: true });
   private mediaService = inject(MediaService);
 
-  private lastTimeoutRequest;
+  private lastTimeoutRequest?: ReturnType<typeof setTimeout>;
 
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener;
+  private pointerMoveListener?: EventsKey;
 
   /**
    * Listener to the map click event
    */
-  private mapClickListener;
+  private mapClickListener?: EventsKey;
 
   /**
    * Delay before emitting an event
@@ -55,7 +56,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return this.component.map();
+    return this.component.map()!;
   }
 
   get mapProjection(): string {
@@ -105,7 +106,9 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
    * Stop listening for map pointermove
    */
   private unlistenToMapPointerMove() {
-    unByKey(this.pointerMoveListener);
+    if (this.pointerMoveListener) {
+      unByKey(this.pointerMoveListener);
+    }
     this.pointerMoveListener = undefined;
   }
 
@@ -113,6 +116,9 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
    * Stop listening for map clicks
    */
   private unlistenToMapClick() {
+    if (this.mapClickListener) {
+      unByKey(this.mapClickListener);
+    }
     this.mapClickListener = undefined;
   }
 

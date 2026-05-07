@@ -14,9 +14,9 @@ import { IgoMap } from '../shared/map';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class ZoomButtonComponent {
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
-  readonly color = input<string>(undefined);
+  readonly color = input<string>();
 
   get zoom(): number {
     return this.map().viewController.getZoom();

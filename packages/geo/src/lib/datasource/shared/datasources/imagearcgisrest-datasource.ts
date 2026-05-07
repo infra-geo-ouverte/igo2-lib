@@ -69,7 +69,7 @@ export class ImageArcGISRestDataSource extends DataSource {
     }
 
     if (!legendInfo) {
-      return;
+      return [];
     }
     let htmlString = '<table>';
 

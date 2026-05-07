@@ -35,7 +35,7 @@ export class LayerController extends LayerSelectionModel {
 
   layersFlattened: AnyLayer[] = [];
 
-  private _layers$ = new BehaviorSubject<AnyLayer[] | undefined>(undefined);
+  private _layers$ = new BehaviorSubject<AnyLayer[]>([]);
   layers$ = this._layers$.asObservable();
 
   layersFlattened$ = this._layers$
@@ -43,10 +43,10 @@ export class LayerController extends LayerSelectionModel {
     .pipe(map(() => this.layersFlattened));
 
   private _baseLayers: Layer[] = [];
-  private _baseLayers$ = new BehaviorSubject<Layer[] | undefined>(undefined);
+  private _baseLayers$ = new BehaviorSubject<Layer[]>([]);
   baseLayers$ = this._baseLayers$.asObservable();
 
-  baseLayerSelection: Layer;
+  baseLayerSelection!: Layer;
 
   /** All layers with the tree flattened */
   all$: Observable<AnyLayer[]>;
@@ -63,9 +63,9 @@ export class LayerController extends LayerSelectionModel {
     );
 
     this.tree = new Tree(layers, {
-      getChildren: (node) => isLayerGroup(node) && node.children,
-      getId: (node) => node.id,
-      getLevel: (node) => node.zIndex,
+      getChildren: (node) => (isLayerGroup(node) ? node.children : undefined),
+      getId: (node) => node.id ?? '',
+      getLevel: (node) => node.zIndex ?? 0,
       reverse: true
     });
   }
@@ -83,7 +83,7 @@ export class LayerController extends LayerSelectionModel {
     return this._baseLayers;
   }
 
-  get baseLayer(): Layer {
+  get baseLayer(): Layer | undefined {
     return this.baseLayers.find((layer) => layer.visible);
   }
 
@@ -96,7 +96,7 @@ export class LayerController extends LayerSelectionModel {
 
     const addedLayers = layers
       .map((layer) => this.handleAdd(layer, offset))
-      .filter(Boolean);
+      .filter(Boolean) as AnyLayer[];
 
     if (!addedLayers.length) {
       this.notify();
@@ -110,7 +110,7 @@ export class LayerController extends LayerSelectionModel {
     this.layersFlattened = [...this.tree.flattened];
     addedLayers.forEach((layer) => layer.add());
 
-    const baseLayerZindex = this.baseLayer ? 1 : 0;
+    const baseLayerZindex = this.baseLayer !== undefined ? 1 : 0;
     this.recalculateZindex(baseLayerZindex);
     this.notify();
   }
@@ -129,10 +129,14 @@ export class LayerController extends LayerSelectionModel {
     this.baseLayerSelection = layer;
 
     this._map.viewController.olView.setMinZoom(
-      layer.dataSource.options.minZoom || (this._map.options.view || {}).minZoom
+      layer.dataSource.options.minZoom ??
+        (this._map.options.view ?? {}).minZoom ??
+        0
     );
     this._map.viewController.olView.setMaxZoom(
-      layer.dataSource.options.maxZoom || (this._map.options.view || {}).maxZoom
+      layer.dataSource.options.maxZoom ??
+        (this._map.options.view ?? {}).maxZoom ??
+        28
     );
   }
 
@@ -144,7 +148,7 @@ export class LayerController extends LayerSelectionModel {
       const result = this._remove(layer);
       Array.isArray(result) ? list.push(...result) : list.push(result);
       return list;
-    }, []);
+    }, [] as AnyLayer[]);
     this.tree.remove(...list);
 
     this.notify();
@@ -158,24 +162,24 @@ export class LayerController extends LayerSelectionModel {
   moveTo(beforeTo: number[], ...layers: AnyLayer[]): AnyLayer[] {
     const movedLayers = this.tree.moveTo(beforeTo, ...layers);
     if (!movedLayers?.length) {
-      return;
+      return [];
     }
 
     return movedLayers;
   }
 
   moveBelow(layerRef: AnyLayer | undefined, ...layers: AnyLayer[]): void {
-    const position = this.getPosition(layerRef, 'below');
+    const position = this.getPosition(layerRef!);
 
     const movedLayers = this.moveTo(position, ...layers);
-    this.handleMove(movedLayers, layerRef.parent);
+    this.handleMove(movedLayers, layerRef?.parent);
   }
 
   moveAbove(layerRef: AnyLayer | undefined, ...layers: AnyLayer[]): void {
-    const position = this.getPosition(layerRef);
+    const position = this.getPosition(layerRef!);
 
     const movedLayers = this.moveTo(position, ...layers);
-    this.handleMove(movedLayers, layerRef.parent);
+    this.handleMove(movedLayers, layerRef?.parent);
   }
 
   moveInside(layerRef: LayerGroup, ...layers: AnyLayer[]): void {
@@ -189,14 +193,14 @@ export class LayerController extends LayerSelectionModel {
     const position = this.getPosition(layers[0]);
     const nextPosition = this.findLowestVisiblePostion(position, -1);
     this.moveTo(nextPosition, ...layers);
-    this.handleMove(layers, null, true);
+    this.handleMove(layers, undefined, true);
   }
 
   lower(...layers: AnyLayer[]): void {
     const position = this.getPosition(layers[layers.length - 1]);
     const nextPosition = this.findLowestVisiblePostion(position, 2); // +2 because we use moveBefore
     this.moveTo(nextPosition, ...layers);
-    this.handleMove(layers, null, true);
+    this.handleMove(layers, undefined, true);
   }
 
   /** Reset all except SystemLayer */
@@ -209,15 +213,15 @@ export class LayerController extends LayerSelectionModel {
     this.notify();
   }
 
-  getById(id: LayerId): AnyLayer {
+  getById(id: LayerId): AnyLayer | undefined {
     return this.all.find((layer) => layer.id && layer.id === id);
   }
 
-  getByTitle(title: string): AnyLayer {
+  getByTitle(title: string): AnyLayer | undefined {
     return this.all.find((layer) => layer.title && layer.title === title);
   }
 
-  getBySourceId(id: LayerId): AnyLayer {
+  getBySourceId(id: LayerId): AnyLayer | undefined {
     return this.all.find(
       (layer) => layer.dataSource?.id && layer.dataSource.id === id
     );
@@ -227,7 +231,7 @@ export class LayerController extends LayerSelectionModel {
     const position = this.tree.getPosition(layer);
 
     if (type === 'below') {
-      const index = position.pop();
+      const index = position.pop() ?? 0;
       return position.concat(index + 1);
     }
 
@@ -236,7 +240,7 @@ export class LayerController extends LayerSelectionModel {
 
   getLayerRecipient(layer: AnyLayer): AnyLayer[] {
     return layer.parent
-      ? this.tree.getChildren(layer.parent)
+      ? (this.tree.getChildren(layer.parent) ?? [])
       : [...this.treeLayers];
   }
 
@@ -247,7 +251,7 @@ export class LayerController extends LayerSelectionModel {
     position: number[],
     increment: number
   ): number[] {
-    const index = position.pop();
+    const index = position.pop() ?? 0;
     const nextPosition = position.concat(index + increment);
     const layer = this.tree.getNodeByPosition(nextPosition);
     if (layer && !layer.showInLayerList) {
@@ -258,7 +262,7 @@ export class LayerController extends LayerSelectionModel {
   }
 
   private handleMove(
-    layers: AnyLayer[],
+    layers: AnyLayer[] | undefined,
     parent?: LayerGroup,
     keepCurrentParent?: boolean
   ): void {
@@ -283,18 +287,18 @@ export class LayerController extends LayerSelectionModel {
       let zIndex = previousZindex + 1;
       layer.zIndex = zIndex;
       if (isLayerGroup(layer)) {
-        zIndex = this.recalculateZindex(zIndex, layer.children);
+        zIndex = this.recalculateZindex(zIndex, layer.children ?? []);
       }
 
       return zIndex;
     }, minIndex);
   }
 
-  private handleAdd(layer: AnyLayer, offset?: number): AnyLayer {
-    const existingLayer = this.getById(layer.id);
+  private handleAdd(layer: AnyLayer, offset?: number): AnyLayer | undefined {
+    const existingLayer = this.getById(layer.id!);
     if (existingLayer !== undefined) {
       existingLayer.visible = true;
-      return;
+      return undefined;
     }
 
     const zIndex = this.getZindexOffset(layer, offset);
@@ -319,12 +323,12 @@ export class LayerController extends LayerSelectionModel {
 
     const parent: LayerGroup | undefined = layer.parentId
       ? (this.getById(
-          layer.parentId.toString().split(TREE_SEPERATOR).pop()
+          layer.parentId.toString().split(TREE_SEPERATOR).pop()!
         ) as LayerGroup)
       : undefined;
     layer.add(parent);
 
-    return;
+    return undefined;
   }
 
   private _remove(layer: AnyLayer): AnyLayer | AnyLayer[] {
@@ -392,7 +396,10 @@ export class LayerController extends LayerSelectionModel {
       return;
     }
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const maxZIndex = Math.max(...this.treeLayers.map((l) => l.zIndex), 0);
+      const maxZIndex = Math.max(
+        ...this.treeLayers.map((l) => l.zIndex ?? 0),
+        0
+      );
       layer.zIndex = maxZIndex + 1 + (offset ?? 0);
     }
   }

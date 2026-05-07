@@ -14,7 +14,7 @@ export class DrawStyleService {
   private strokeColor = 'rgba(143,7,7,1)';
   private strokeWidth = 1;
   private labelsAreShown = true;
-  private icon: string;
+  private icon!: string;
   private fontSize = '15';
   private fontStyle: string = FontType.Arial.toString();
   private offsetX = 0;
@@ -90,8 +90,9 @@ export class DrawStyleService {
   }
 
   createIndividualElementStyle(
-    feature,
-    resolution,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    feature: any,
+    resolution: number,
     labelsAreShown: boolean,
     fontSizeAndStyle: string,
     fillColor: string,

@@ -39,11 +39,11 @@ export class PrintService {
   private languageService = inject(LanguageService);
   private document = inject<Document>(DOCUMENT);
 
-  zipFile: JSZip;
-  nbFileToProcess: number;
-  activityId: string;
-  mapPrintExtent: number[];
-  imgSizeAdded: number[];
+  zipFile?: JSZip;
+  nbFileToProcess!: number;
+  activityId!: string;
+  mapPrintExtent!: number[];
+  imgSizeAdded!: number[];
 
   TEXTPDFFONT = {
     titleFont: 'times',
@@ -76,8 +76,8 @@ export class PrintService {
     /** top | right | bottom | left */
     const baseMargins: [number, number, number, number] = [10, 10, 10, 10];
 
-    let titleSizes: TextPdfSizeAndMargin;
-    let subtitleSizes: TextPdfSizeAndMargin;
+    let titleSizes: TextPdfSizeAndMargin | undefined;
+    let subtitleSizes: TextPdfSizeAndMargin | undefined;
 
     // if paper format A1 or A0 add margin top
     if (
@@ -118,7 +118,9 @@ export class PrintService {
         options.subtitle,
         baseMargins,
         this.TEXTPDFFONT.subtitleFont,
-        options.title !== '' ? titleSizes.fontSize * 0.7 : fontSizeInPt * 0.7, // 70% size of title
+        options.title !== ''
+          ? (titleSizes?.fontSize ?? fontSizeInPt) * 0.7
+          : fontSizeInPt * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
         doc
       );
@@ -159,7 +161,7 @@ export class PrintService {
         if (status === SubjectStatus.Done) {
           const width = this.imgSizeAdded[0];
           const height = this.imgSizeAdded[1];
-          this.addGeoRef(doc, map, width, height, baseMargins);
+          this.addGeoRef(doc, width, height, baseMargins);
           await this.handleMeasureLayer(doc, map, baseMargins);
           if (options.showNorthArrow) {
             const northArrowCanvas = await this.createNorthDirectionArrow(
@@ -206,8 +208,8 @@ export class PrintService {
   }
   // ref GeoMoose https://github.com/geomoose/gm3/tree/main/src/gm3/components/print
   addGeoRef(
-    doc,
-    map: IgoMap,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    doc: any,
     width: number,
     height: number,
     baseMargins: [number, number, number, number]
@@ -240,7 +242,7 @@ export class PrintService {
     if (
       map.layerController.all.find(
         (layer) =>
-          layer.visible && layer.id.toString().startsWith('igo-measures-')
+          layer.visible && layer.id!.toString().startsWith('igo-measures-')
       )
     ) {
       let canvasOverlayHTMLMeasures;
@@ -251,7 +253,7 @@ export class PrintService {
       }).then((e) => {
         canvasOverlayHTMLMeasures = e;
       });
-      this.addCanvas(doc, canvasOverlayHTMLMeasures, baseMargins); // this adds measure overlays
+      this.addCanvas(doc, canvasOverlayHTMLMeasures!, baseMargins); // this adds measure overlays
     }
   }
 
@@ -322,11 +324,11 @@ export class PrintService {
    * * @param  format - Image format. default value to "png"
    * @return The image of the legend
    */
-  async getLayersLegendImage(map, format = 'png', doZipFile: boolean) {
+  async getLayersLegendImage(map: IgoMap, format = 'png', doZipFile: boolean) {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = await this.getLayersLegendHtml(map, width).toPromise();
+    let html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -368,12 +370,12 @@ export class PrintService {
   }
 
   private removeHtmlElement(element: HTMLElement) {
-    element.parentNode.removeChild(element);
+    element.parentNode?.removeChild(element);
   }
 
   getTextPdfObjectSizeAndMarg(
     text: string,
-    margins,
+    margins: [number, number, number, number],
     font: string,
     fontSizeInPt: number,
     fontStyle: string,
@@ -555,7 +557,7 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(map, width).toPromise();
+    const html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -605,7 +607,7 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(map, width).toPromise();
+    const html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -662,16 +664,20 @@ export class PrintService {
           baseMargins[3]
         ];
       }
-      this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
+      this.addCanvas(
+        doc,
+        canvas!,
+        marginsLegend! as [number, number, number, number]
+      ); // this adds the legend
       await this.saveDoc(doc);
     }
   }
 
-  defineNbFileToProcess(nbFileToProcess) {
+  defineNbFileToProcess(nbFileToProcess: number) {
     this.nbFileToProcess = nbFileToProcess;
   }
 
-  private timeout(ms) {
+  private timeout(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -712,8 +718,8 @@ export class PrintService {
     imageDimensions: [number, number],
     baseMargins: [number, number, number, number]
   ) {
-    const mapSize: number[] = map.ol.getSize();
-    const viewResolution: number = map.ol.getView().getResolution();
+    const mapSize: number[] = map.ol.getSize()!;
+    const viewResolution: number = map.ol.getView().getResolution()!;
     const dimensionPixels = this.setMapResolution(
       map,
       imageDimensions,
@@ -728,7 +734,7 @@ export class PrintService {
       viewResolution,
       status$
     ).subscribe(async (event: any) => {
-      let timeout = undefined;
+      let timeout: number | undefined = undefined;
       const mapCanvas = event.target
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
@@ -791,7 +797,7 @@ export class PrintService {
     resolution: number,
     viewResolution: number
   ): [number, number] {
-    const mapSize = map.ol.getSize();
+    const mapSize = map.ol.getSize()!;
     const widthPixels = Math.round((initialSize[0] * resolution) / 25.4);
     const heightPixels = Math.round((initialSize[1] * resolution) / 25.4);
 
@@ -840,14 +846,14 @@ export class PrintService {
     mapResultCanvas: HTMLCanvasElement
   ) {
     const mapContextResult = mapResultCanvas.getContext('2d');
-    const opacity = canvas.parentElement.style.opacity || canvas.style.opacity;
-    mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+    const opacity = canvas.parentElement!.style.opacity || canvas.style.opacity;
+    mapContextResult!.globalAlpha = opacity === '' ? 1 : Number(opacity);
     const transform = canvas.style.transform;
     let matrix: number[];
     if (transform) {
       // Get the transform parameters from the style's transform matrix
       matrix = transform
-        .match(/^matrix\(([^\(]*)\)$/)[1]
+        .match(/^matrix\(([^\(]*)\)$/)![1]
         .split(',')
         .map(Number);
     } else {
@@ -861,18 +867,18 @@ export class PrintService {
       ];
     }
     CanvasRenderingContext2D.prototype.setTransform.apply(
-      mapContextResult,
-      matrix
+      mapContextResult!,
+      matrix as unknown as [transform?: DOMMatrix2DInit]
     );
-    const backgroundColor = canvas.parentElement.style.backgroundColor;
+    const backgroundColor = canvas.parentElement!.style.backgroundColor;
     if (backgroundColor) {
-      mapContextResult.fillStyle = backgroundColor;
-      mapContextResult.fillRect(0, 0, canvas.width, canvas.height);
+      mapContextResult!.fillStyle = backgroundColor;
+      mapContextResult!.fillRect(0, 0, canvas.width, canvas.height);
     }
-    mapContextResult.drawImage(canvas, 0, 0);
-    mapContextResult.globalAlpha = 1;
+    mapContextResult!.drawImage(canvas, 0, 0);
+    mapContextResult!.globalAlpha = 1;
     // reset canvas transform to initial
-    mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+    mapContextResult!.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   async drawMapControls(map: IgoMap, canvas: HTMLCanvasElement): Promise<void> {
@@ -911,7 +917,7 @@ export class PrintService {
     });
 
     if (canvasOverlayHTML.width !== 0 && canvasOverlayHTML.height !== 0) {
-      context.drawImage(canvasOverlayHTML, 0, 0);
+      context!.drawImage(canvasOverlayHTML, 0, 0);
     }
 
     // remove 'mapOverlayHTML' after generating canvas
@@ -978,6 +984,7 @@ export class PrintService {
     if (canvas) {
       return canvas;
     }
+    return document.createElement('canvas');
   }
 
   /**
@@ -1012,7 +1019,7 @@ export class PrintService {
     format = format.toLowerCase();
     const resolution = +printResolution;
     const initialMapSize = map.ol.getSize() as [number, number];
-    const viewResolution = map.ol.getView().getResolution();
+    const viewResolution = map.ol.getView().getResolution()!;
 
     this.mapRenderCompleteEvent$(
       map,
@@ -1020,7 +1027,7 @@ export class PrintService {
       viewResolution,
       status$
     ).subscribe(async (event: any) => {
-      const size = map.ol.getSize();
+      const size = map.ol.getSize()!;
       const mapCanvas = event.target
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
@@ -1050,7 +1057,7 @@ export class PrintService {
       }
       // add other information to final canvas before exporting
       const newCanvas = document.createElement('canvas');
-      const newContext = newCanvas.getContext('2d');
+      const newContext = newCanvas.getContext('2d')!;
       // Postion in height to set the canvas in new canvas
       let positionHCanvas = 0;
       // Get height/width of map canvas
@@ -1186,7 +1193,7 @@ export class PrintService {
         await this.addNorthArrowInDoc(
           newContext,
           northArrowCanvas,
-          null,
+          null as unknown as [number, number, number, number],
           legendPosition,
           width,
           positionHCanvas
@@ -1279,10 +1286,11 @@ export class PrintService {
     format: string
   ) {
     const fileNameWithExt = 'map.' + format;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d')!;
 
     // Get html code for the legend
-    const html = await this.getLayersLegendHtml(map, canvas.width).toPromise();
+    const html =
+      (await this.getLayersLegendHtml(map, canvas.width).toPromise()) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);
@@ -1310,8 +1318,8 @@ export class PrintService {
       const legendWidth = canvasLegend.width;
       // Move the legend to the correct position on the page
       const offset = canvasHeight * 0.01;
-      let legendX: number;
-      let legendY: number;
+      let legendX: number = 0;
+      let legendY: number = 0;
 
       if (legendPosition === 'bottomright') {
         legendX = canvasWidth - legendWidth - offset;
@@ -1338,6 +1346,7 @@ export class PrintService {
       this.removeHtmlElement(div);
       return true;
     }
+    return false;
   }
 
   /**
@@ -1354,7 +1363,8 @@ export class PrintService {
    * @param canvas - Canvas of image
    * @param margins - Page margins
    */
-  getImageSizeToFitPdf(doc, canvas, margins) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getImageSizeToFitPdf(doc: any, canvas: any, margins: any) {
     // Define variable to calculate best size to fit in one page
     const pageHeight =
       doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
@@ -1375,7 +1385,8 @@ export class PrintService {
    * Get a world file information for tiff
    * @param  map - Map of the app
    */
-  private getWorldFileInformation(map) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getWorldFileInformation(map: any) {
     const currentResolution = map.viewController.getResolution();
     const currentExtent = map.viewController.getExtent(); // Return [minx, miny, maxx, maxy]
     return [
@@ -1394,12 +1405,13 @@ export class PrintService {
    * @param name - Name of the file
    * @param format - file format
    */
-  private saveCanvasImageAsFile(canvas, nameWithExt, format) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private saveCanvasImageAsFile(canvas: any, nameWithExt: any, format: any) {
     const blobFormat = 'image/' + format;
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      canvas.toBlob((blob) => {
+      canvas.toBlob((blob: any) => {
         // download image
         saveAs(blob, nameWithExt);
         this.saveFileProcessing();
@@ -1417,7 +1429,8 @@ export class PrintService {
    * @param canvas - File to add to the zip
    * @param  name -Name of the fileoverview
    */
-  private generateCanvaFileToZip(canvas, name) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private generateCanvaFileToZip(canvas: any, name: any) {
     const blobFormat = 'image/' + 'jpeg';
     if (
       // eslint-disable-next-line no-prototype-builtins
@@ -1429,7 +1442,7 @@ export class PrintService {
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      canvas.toBlob((blob) => {
+      canvas.toBlob((blob: any) => {
         this.addFileToZip(name, blob);
       }, blobFormat);
     } catch {
@@ -1445,9 +1458,10 @@ export class PrintService {
    * @param name - Name of the files
    * @param blob - Contain of file
    */
-  private addFileToZip(name, blob) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private addFileToZip(name: any, blob: any) {
     // add file to zip
-    this.zipFile.file(name, blob);
+    this.zipFile?.file(name, blob);
     this.nbFileToProcess--;
 
     // If all files are proccessed
@@ -1474,14 +1488,14 @@ export class PrintService {
    * @return Retun a zip file
    */
   private getZipFile() {
-    this.zipFile.generateAsync({ type: 'blob' }).then((blob) => {
+    this.zipFile?.generateAsync({ type: 'blob' }).then((blob) => {
       // 1) generate the zip file
       saveAs(blob, 'map.zip');
-      delete this.zipFile;
+      this.zipFile = undefined as unknown as JSZip;
     });
   }
 
-  private pdf_units2points(n, unit): number {
+  private pdf_units2points(n: number, unit: string): number {
     let k: number;
 
     // this code is borrowed from jsPDF

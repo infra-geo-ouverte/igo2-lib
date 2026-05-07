@@ -41,7 +41,7 @@ export class LayerLegendListComponent {
   layersLegend = signal<AnyLayer[]>([]);
   showAllLegend = false;
 
-  readonly layers = model<AnyLayer[]>(undefined);
+  readonly layers = model<AnyLayer[]>();
 
   readonly excludeBaseLayers = input(false);
 

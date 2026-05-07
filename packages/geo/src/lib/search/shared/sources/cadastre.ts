@@ -71,13 +71,14 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    if (!term) return of([]);
     term = term.replace(/ /g, '');
     term = term.replace(/,+/g, ',');
     term = term.endsWith(',') ? term.slice(0, -1) : term;
     term = term.startsWith(',') ? term.substr(1) : term;
 
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
+    if (!params.get('numero') || !params.get('numero')!.match(/^[0-9,]+$/g)) {
       return of([]);
     }
     return this.getCadastre(term, params);
@@ -165,7 +166,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       featureProjection: 'EPSG:4326'
     });
     return {
-      type: feature.getGeometry().getType() as Exclude<
+      type: feature.getGeometry()!.getType() as Exclude<
         GeoJsonGeometryTypes,
         'GeometryCollection'
       >,

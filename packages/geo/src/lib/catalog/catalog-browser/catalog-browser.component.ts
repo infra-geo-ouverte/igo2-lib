@@ -53,11 +53,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**
    * Catalog items store watcher
    */
-  private watcher: EntityStoreWatcher<CatalogItem>;
+  private watcher!: EntityStoreWatcher<CatalogItem>;
 
   // private resolution$$: Subscription;
 
-  get resolution$(): BehaviorSubject<number> {
+  get resolution$(): BehaviorSubject<number | undefined> {
     return this.map().viewController.resolution$;
   }
 
@@ -66,17 +66,17 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**
    * Catalog
    */
-  readonly catalog = input<Catalog>(undefined);
+  readonly catalog = input.required<Catalog>();
 
   /**
    * Store holding the catalog's items
    */
-  readonly store = input<EntityStore<CatalogItem, CatalogItemState>>(undefined);
+  readonly store = input.required<EntityStore<CatalogItem, CatalogItemState>>();
 
   /**
    * Map to add the catalog items to
    */
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   /**
    * Whether a group can be toggled when it's collapsed
@@ -93,8 +93,8 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       .layerController.all.filter((layer) => isLayerItem(layer))
       .map((layer: Layer) => {
         return {
-          id: layer.options.source.id,
-          title: layer.title,
+          id: String(layer.options.source?.id ?? layer.id),
+          title: layer.title ?? '',
           type: CatalogItemType.Layer
         };
       });
@@ -163,7 +163,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add layer to map
    * @param layer Catalog layer
    */
-  private addLayerToMap(layer: CatalogItemLayer, event?: AddedChangeEmitter) {
+  private addLayerToMap(
+    layer: CatalogItemLayer,
+    event: AddedChangeEmitter | undefined
+  ) {
     this.addLayersToMap([layer], event);
   }
 
@@ -181,26 +184,30 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private addLayersToMap(
     catalogLayers: CatalogItemLayer[],
-    event: AddedChangeEmitter | AddedChangeGroupEmitter
+    event: AddedChangeEmitter | AddedChangeGroupEmitter | undefined
   ) {
     this.isAddingLayers.next(true);
     const layers$ = catalogLayers.map((layer) => {
-      if (!layer.options.sourceOptions.optionsFromApi) {
+      if (
+        layer.options.sourceOptions &&
+        !layer.options.sourceOptions.optionsFromApi
+      ) {
         layer.options.sourceOptions.optionsFromApi = true;
       }
       const catalog = this.catalog();
-      if (catalog.profils?.length) {
+      if (catalog?.profils?.length) {
         layer.options.security = { profils: catalog.profils };
       }
       layer.options.id = layer.id;
       return this.layerService.createAsyncLayer(layer.options);
     });
     zip(...layers$).subscribe((layers) => {
-      if (event.event.type === 'click' && event.added) {
-        this.map().layersAddedByClick$.next(layers);
+      const validLayers = layers.filter((l): l is Layer => l !== undefined);
+      if (event?.event?.type === 'click' && event?.added) {
+        this.map().layersAddedByClick$.next(validLayers);
       }
       this.store().state.updateMany(catalogLayers, { added: true });
-      this.map().layerController.add(...layers.filter(Boolean));
+      this.map().layerController.add(...validLayers);
       this.isAddingLayers.next(false);
     });
   }
@@ -216,8 +223,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         .subscribe((_isReady) => {
           this._removeLayersFromMap(layers);
         });
-    } else;
-    {
+    } else {
       this._removeLayersFromMap(layers);
     }
   }
@@ -245,7 +251,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Sort the layers by title. asc or desc.
    * @internal
    */
-  private sortCatalogItemsByTitle(items: CatalogItem[], direction) {
+  private sortCatalogItemsByTitle(items: CatalogItem[], direction: string) {
     const returnItem = items.sort((a, b) => {
       const titleA = a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const titleB = b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -276,10 +282,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     group: CatalogItemGroup,
     event: AddedChangeGroupEmitter
   ) {
-    let layers = group.items.filter((item: CatalogItem) => {
-      const added = this.store().state.get(item).added || false;
-      return this.isLayer(item) && added === false;
-    });
+    let layers: CatalogItem[] = (group.items ?? []).filter((item) =>
+      this.isLayer(item)
+    );
     if (group.sortDirection !== undefined) {
       layers = this.sortCatalogItemsByTitle(layers, group.sortDirection);
     }
@@ -291,7 +296,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @param group Catalog group
    */
   private removeGroupFromMap(group: CatalogItemGroup) {
-    const layers = group.items.filter((item: CatalogItem) => {
+    const layers = (group.items ?? []).filter((item) => {
       const added = this.store().state.get(item).added || false;
       return this.isLayer(item) && added === true;
     });

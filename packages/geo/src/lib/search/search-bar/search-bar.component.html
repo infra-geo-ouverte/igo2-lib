@@ -46,8 +46,8 @@
     @if (searchSelector()) {
       <igo-search-selector
         [searchTypes]="searchTypes()"
-        [searchType]="searchType$ | async"
-        (searchTypeChange)="onSearchTypeChange($event)"
+        [searchType]="(searchType$ | async) ?? undefined"
+        (searchTypeChange)="onSearchTypeChange($event!)"
       />
     }
 

@@ -42,9 +42,9 @@ export class SearchResultsItemComponent {
   /**
    * Search result item
    */
-  readonly result = input<SearchResult>(undefined);
+  readonly result = input.required<SearchResult>();
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
   /**
    * Search result title
@@ -54,7 +54,7 @@ export class SearchResultsItemComponent {
   /**
    * to show hide results icons
    */
-  readonly showIcons = input<boolean>(undefined);
+  readonly showIcons = input<boolean>();
 
   /**
    * Whether there should be a zoom button
@@ -96,32 +96,32 @@ export class SearchResultsItemComponent {
   }
 
   onZoomHandler() {
+    const map = this.map();
+    if (!map) {
+      return;
+    }
     const olFeature = this.format.readFeature(this.result().data, {
       dataProjection: this.result().data.projection,
-      featureProjection: this.map().projection
+      featureProjection: map.projection
     });
-    moveToOlFeatures(
-      this.map().viewController,
-      olFeature,
-      FeatureMotion.Default
-    );
+    moveToOlFeatures(map.viewController, olFeature, FeatureMotion.Default);
   }
 
   /**
    * On mouse event, mouseenter /mouseleave
    * @internal
    */
-  onMouseEvent(event) {
-    const element = event.target;
+  onMouseEvent(event: MouseEvent) {
+    const element = event.target as HTMLElement | null;
     const type = event.type;
     switch (type) {
       case 'mouseenter': {
-        const hideBtn = element.querySelector('#hide-save-search-result-btn');
+        const hideBtn = element?.querySelector('#hide-save-search-result-btn');
         hideBtn?.setAttribute('id', 'show-save-search-result-btn');
         break;
       }
       case 'mouseleave': {
-        const showBtn = element.querySelector('#show-save-search-result-btn');
+        const showBtn = element?.querySelector('#show-save-search-result-btn');
         showBtn?.setAttribute('id', 'hide-save-search-result-btn');
         break;
       }
