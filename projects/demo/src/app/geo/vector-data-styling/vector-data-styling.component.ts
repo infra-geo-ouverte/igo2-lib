@@ -30,7 +30,7 @@ export class AppVectorDataStylingComponent {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
   public name: string = 'Hello WorDld';
-  public style = `{"name":"My Style","rules":[{"name":"My first rule","symbolizers":[{"kind":"Mark","wellKnownName":"x","color":"#0f16e7"}]}]}`;
+  public style = `{"name":"My Style","rules":[{"name":"Default","symbolizers":[{"kind":"Line","color":"#0f16e7","width":2,"opacity":1},{"kind":"Fill","color":"#0f16e7","opacity":0.25},{"kind":"Mark","wellKnownName":"circle","color":"#0f16e7","radius":6,"strokeColor":"#ffffff","strokeWidth":1}]}]}`;
 
   public map: IgoMap = new IgoMap({
     controls: {
@@ -49,6 +49,10 @@ export class AppVectorDataStylingComponent {
 
   constructor() {
     this.mapService.setMap(this.map);
+    const structuresStyle = {
+      type: 'Geostyler' as const,
+      style: JSON.parse(this.style)
+    };
 
     const layers: AnyLayerOptions[] = [
       {
@@ -61,6 +65,7 @@ export class AppVectorDataStylingComponent {
       },
       {
         title: 'Structures',
+        style: structuresStyle,
         sourceOptions: {
           type: 'vector',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:gsq_v_desc_strct_tri&outfile=Structure&srsname=EPSG:4326&outputformat=geojson'
