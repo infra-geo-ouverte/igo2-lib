@@ -10,6 +10,8 @@ import {
   ZoomButtonComponent
 } from '@igo2/geo';
 
+import { Style as GsStyle } from 'geostyler-style';
+
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 import './hello-world-element';
@@ -30,7 +32,26 @@ export class AppVectorDataStylingComponent {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
   public name: string = 'Hello WorDld';
-  public style = `{"name":"My Style","rules":[{"name":"Default","symbolizers":[{"kind":"Line","color":"#0f16e7","width":2,"opacity":1},{"kind":"Fill","color":"#0f16e7","opacity":0.25},{"kind":"Mark","wellKnownName":"circle","color":"#0f16e7","radius":6,"strokeColor":"#ffffff","strokeWidth":1}]}]}`;
+  public style: GsStyle = {
+    name: 'My Style',
+    rules: [
+      {
+        name: 'Default',
+        symbolizers: [
+          { kind: 'Line', color: '#0f16e7', width: 2, opacity: 1 },
+          { kind: 'Fill', color: '#0f16e7', opacity: 0.25 },
+          {
+            kind: 'Mark',
+            wellKnownName: 'circle',
+            color: '#0f16e7',
+            radius: 6,
+            strokeColor: '#ffffff',
+            strokeWidth: 1
+          }
+        ]
+      }
+    ]
+  };
 
   public map: IgoMap = new IgoMap({
     controls: {
@@ -51,7 +72,7 @@ export class AppVectorDataStylingComponent {
     this.mapService.setMap(this.map);
     const structuresStyle = {
       type: 'Geostyler' as const,
-      style: JSON.parse(this.style)
+      style: this.style
     };
 
     const layers: AnyLayerOptions[] = [
