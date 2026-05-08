@@ -4,12 +4,12 @@ import React from 'react';
 
 const GEOSTYLER_WEB_COMPONENT_TAG = 'geostyler-style-wc';
 
-const TestComponent: React.FC<{ styleR: any }> = ({ styleR }) => {
+const GeostylerStyleAdapter: React.FC<{ styleR: any }> = ({ styleR }) => {
   return <Style style={styleR}></Style>;
 };
 
 // const GeoWC = r2wc(Style, { props: { style: 'json', onStyleChange: 'function' } });
-const GeostylerWebComponent = r2wc(TestComponent, {
+const GeostylerWebComponent = r2wc(GeostylerStyleAdapter, {
   props: { styleR: 'json' }
 });
 
