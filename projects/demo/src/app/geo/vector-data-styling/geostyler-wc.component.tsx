@@ -4,13 +4,13 @@ import React from 'react';
 
 const GEOSTYLER_WEB_COMPONENT_TAG = 'geostyler-style-wc';
 
-const GeostylerStyleAdapter: React.FC<{ styleR: any }> = ({ styleR }) => {
-  return <Style style={styleR}></Style>;
+const GeostylerStyleAdapter: React.FC<{ geostylerStyle: any }> = ({ geostylerStyle }) => {
+  return <Style style={geostylerStyle}></Style>;
 };
 
 // const GeoWC = r2wc(Style, { props: { style: 'json', onStyleChange: 'function' } });
 const GeostylerWebComponent = r2wc(GeostylerStyleAdapter, {
-  props: { styleR: 'json' }
+  props: { geostylerStyle: 'json' }
 });
 
 if (!customElements.get(GEOSTYLER_WEB_COMPONENT_TAG)) {
