@@ -13,6 +13,7 @@
     "strict": false,
     "moduleResolution": "bundler",
     "module": "ES2022",
+    "jsx": "react",
     "target": "ES2022",
     "types": ["node", "vitest/globals"],
     "paths": {

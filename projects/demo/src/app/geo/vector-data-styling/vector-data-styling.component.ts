@@ -29,6 +29,8 @@ import './hello-world-element';
 export class AppVectorDataStylingComponent {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
+  public name: string = 'Hello WorDld';
+  public style = `{"name":"My Style","rules":[{"name":"My first rule","symbolizers":[{"kind":"Mark","wellKnownName":"x","color":"#0f16e7"}]}]}`;
 
   public map: IgoMap = new IgoMap({
     controls: {
