@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
+      "type": "msedge",
       "request": "launch",
       "name": "Launch Demo",
       "url": "http://127.0.0.1:4200/projects/demo",
