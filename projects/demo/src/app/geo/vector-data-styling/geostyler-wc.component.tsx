@@ -2,15 +2,15 @@ import r2wc from '@r2wc/react-to-web-component';
 import { Style } from 'geostyler';
 import React from 'react';
 
-const HELLO_WORLD_TAG = 'hello-world-element';
+const GEOSTYLER_WEB_COMPONENT_TAG = 'geostyler-wc';
 
-const TestComponent: React.FC<{ styleR: any}> = ({ styleR }) => {
+const TestComponent: React.FC<{ styleR: any }> = ({ styleR }) => {
   return <Style style={styleR}></Style>;
 };
 
 // const GeoWC = r2wc(Style, { props: { style: 'json', onStyleChange: 'function' } });
 const GeoWC = r2wc(TestComponent, { props: { styleR: 'json' } });
 
-if (!customElements.get(HELLO_WORLD_TAG)) {
-  customElements.define(HELLO_WORLD_TAG, GeoWC);
+if (!customElements.get(GEOSTYLER_WEB_COMPONENT_TAG)) {
+  customElements.define(GEOSTYLER_WEB_COMPONENT_TAG, GeoWC);
 }
