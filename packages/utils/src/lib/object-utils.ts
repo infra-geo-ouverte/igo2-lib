@@ -72,7 +72,7 @@ export class ObjectUtils {
         if (src.hasOwnProperty(prop)) {
           const value = (src as Record<string, unknown>)[prop];
           (target as Record<string, unknown>)[prop] =
-            value && typeof value === 'object' && value !== null
+            value && typeof value === 'object'
               ? this.copyDeep(value as Record<string, unknown>)
               : value;
         }
