@@ -14,7 +14,7 @@ import { Style as GsStyle } from 'geostyler-style';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
-import './hello-world-element';
+import './geostyler-wc.component';
 
 @Component({
   selector: 'app-vector-data-styling',
