@@ -47,10 +47,10 @@ export class ContextItemComponent {
   collapsed = true;
 
   readonly showFavorite = input(true);
-  readonly context = input<DetailedContext>(undefined);
-  readonly default = input<boolean>(undefined);
-  readonly selected = input<boolean>(undefined);
-  readonly isDesktop = input<boolean>(undefined);
+  readonly context = input.required<DetailedContext | undefined>();
+  readonly default = input<boolean>();
+  readonly selected = input<boolean>();
+  readonly isDesktop = input<boolean>();
 
   readonly edit = output<DetailedContext>();
   readonly delete = output<DetailedContext>();
@@ -64,7 +64,7 @@ export class ContextItemComponent {
   readonly share = output<DetailedContext>();
 
   get hidden(): boolean {
-    return this.context().hidden;
+    return this.context()?.hidden ?? false;
   }
 
   get canShare(): boolean {
