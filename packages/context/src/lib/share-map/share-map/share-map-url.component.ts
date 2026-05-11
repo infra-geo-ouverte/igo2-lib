@@ -42,11 +42,11 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   private contextService = inject(ContextService);
   private cdRef = inject(ChangeDetectorRef);
 
-  private mapState$$: Subscription;
+  private mapState$$!: Subscription;
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
-  public url: string;
+  public url!: string;
 
   ngOnInit(): void {
     this.generateUrl();
@@ -66,7 +66,7 @@ export class ShareMapUrlComponent implements OnInit, OnDestroy {
   generateUrl(): void {
     this.url = this.shareMapService.generateUrl(
       this.map(),
-      this.contextService.context$.value
+      this.contextService.context$.value!
     );
   }
 

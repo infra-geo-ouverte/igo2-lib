@@ -10,7 +10,7 @@ export function shareMapKeyDefs(
   return {
     contextKey: options.context,
     urlsKey: options.urls,
-    languageKey: options.languageKey,
+    languageKey: options.languageKey!,
     pos: {
       key: options.position,
       params: {
@@ -142,18 +142,18 @@ function stringifyType(value: keyof typeof ServiceTypeEnum): string {
 function parseLayerType(
   params: string,
   key: string
-): keyof typeof ServiceTypeEnum {
+): keyof typeof ServiceTypeEnum | undefined {
   const param = extractParam(params, key);
   if (!param) {
-    return;
+    return undefined;
   }
   const type = Number(param);
 
   return ServiceTypeEnum[type] as keyof typeof ServiceTypeEnum;
 }
 
-function stringifyCenter(values: [number, number]): string {
-  return values.map(formatNumber).join(',');
+function stringifyCenter(value: [number, number]): string {
+  return value.map(formatNumber).join(',');
 }
 
 function parseCenter(params: string | undefined): [number, number] | undefined {
@@ -168,35 +168,47 @@ function parseCenter(params: string | undefined): [number, number] | undefined {
   ];
 }
 
-function parseRotation(params: string | undefined, key: string): number {
+function parseRotation(
+  params: string | undefined,
+  key: string
+): number | undefined {
   const param = extractParam(params, key);
   if (!param) {
-    return;
+    return undefined;
   }
   const degree = parseInteger(param);
   return (degree * Math.PI) / 180;
 }
 
-function parseIntergerParam(params: string | undefined, key: string): number {
+function parseIntergerParam(
+  params: string | undefined,
+  key: string
+): number | undefined {
   const param = extractParam(params, key);
   if (!param) {
-    return;
+    return undefined;
   }
   return parseInteger(param);
 }
 
-function parseBooleanParam(params: string | undefined, key: string): boolean {
+function parseBooleanParam(
+  params: string | undefined,
+  key: string
+): boolean | undefined {
   const param = extractParam(params, key);
   if (!param) {
-    return;
+    return undefined;
   }
   return parseBoolean(param);
 }
 
-function parseFloatParam(params: string | undefined, key: string): number {
+function parseFloatParam(
+  params: string | undefined,
+  key: string
+): number | undefined {
   const param = extractParam(params, key);
   if (!param) {
-    return;
+    return undefined;
   }
   return parseFloat(param);
 }

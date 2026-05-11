@@ -62,7 +62,10 @@ export function handleFileImportError(
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError
   };
-  errMapping[error.message](file, error, messageService, sizeMb);
+  const handler = errMapping[error.message as keyof typeof errMapping];
+  if (handler) {
+    handler(file, error, messageService, sizeMb);
+  }
 }
 
 export function handleInvalidFileImportError(
@@ -135,11 +138,11 @@ export function addContextToContextList(
   contextService.contexts$.value.ours.unshift(context);
   contextService.contexts$.next(contextService.contexts$.value);
   contextService.importedContext.unshift(context);
-  contextService.loadContext(context.uri);
+  contextService.loadContext(context.uri!);
 }
 
 export function getFileExtension(file: File): string {
-  return file.name.split('.').pop().toLowerCase();
+  return file.name.split('.').pop()?.toLowerCase() ?? '';
 }
 
 export function computeLayerTitleFromFile(file: File): string {
@@ -173,7 +176,8 @@ export function addImportedFeaturesToMap(
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
-    style: randomStyle,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    style: randomStyle as any,
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
   });
@@ -188,17 +192,18 @@ export function addImportedFeaturesStyledToMap(
   styleListService: StyleListService,
   styleService: StyleService
 ): VectorLayer {
-  let style;
-  let distance: number;
+  let style: unknown;
+  let distance = 0;
 
   if (styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
       extraFeatures.name + '.styleByAttribute'
     );
 
-    style = (feature, resolution) => {
+    style = (feature: OlFeature<OlGeometry>, resolution: number) => {
       return styleService.createStyleByAttribute(
-        feature,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        feature as any,
         styleByAttribute,
         resolution
       );
@@ -211,31 +216,35 @@ export function addImportedFeaturesStyledToMap(
     );
     distance = styleListService.getStyleList(extraFeatures.name + '.distance');
 
-    style = (feature, resolution) => {
+    style = (feature: OlFeature<OlGeometry>, resolution: number) => {
       const baseStyle = styleService.createStyle(
         styleListService.getStyleList(extraFeatures.name + '.clusterStyle'),
-        feature,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        feature as any,
         resolution
       );
       return styleService.createClusterStyle(
-        feature,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        feature as any,
         resolution,
         clusterParam,
         baseStyle
       );
     };
   } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
-    style = (feature, resolution) =>
+    style = (feature: OlFeature<OlGeometry>, resolution: number) =>
       styleService.createStyle(
         styleListService.getStyleList(extraFeatures.name + '.style'),
-        feature,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        feature as any,
         resolution
       );
   } else {
-    style = (feature, resolution) =>
+    style = (feature: OlFeature<OlGeometry>, resolution: number) =>
       styleService.createStyle(
         styleListService.getStyleList('default.style'),
-        feature,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        feature as any,
         resolution
       );
   }
@@ -249,7 +258,7 @@ export function addImportedFeaturesStyledToMap(
         queryable: true
       };
     source = new ClusterDataSource(sourceOptions);
-    source.ol.source.addFeatures(olFeatures);
+    source.ol?.addFeatures(olFeatures);
   } else {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
       {
@@ -264,7 +273,8 @@ export function addImportedFeaturesStyledToMap(
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    style,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    style: style as any,
     opacity: extraFeatures.opacity,
     visible: extraFeatures.visible
   });

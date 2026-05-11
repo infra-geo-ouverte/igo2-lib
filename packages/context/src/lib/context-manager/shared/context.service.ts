@@ -56,10 +56,14 @@ export class ContextService {
   private shareMapService = inject(ShareMapService);
   private route = inject(RouteService, { optional: true });
 
-  public context$ = new BehaviorSubject<DetailedContext>(undefined);
+  public context$ = new BehaviorSubject<DetailedContext | undefined>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
-  public defaultContextId$ = new BehaviorSubject<number | string>(undefined);
-  public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
+  public defaultContextId$ = new BehaviorSubject<number | string | undefined>(
+    undefined
+  );
+  public editedContext$ = new BehaviorSubject<DetailedContext | undefined>(
+    undefined
+  );
   public importedContext: DetailedContext[] = [];
   public toolsChanged$ = new Subject<DetailedContext>();
   private mapViewFromRoute: ContextMapView = {};
@@ -68,20 +72,20 @@ export class ContextService {
 
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
-  private tools: Tool[];
-  private toolbar: string[];
+  private tools!: Tool[];
+  private toolbar!: string[];
 
-  get defaultContextUri(): string {
+  get defaultContextUri(): string | undefined {
     return (
       (this.storageService.get('favorite.context.uri') as string) ||
       this._defaultContextUri ||
       this.options.defaultContextUri
     );
   }
-  set defaultContextUri(uri: string) {
+  set defaultContextUri(uri: string | undefined) {
     this._defaultContextUri = uri;
   }
-  private _defaultContextUri: string;
+  private _defaultContextUri?: string;
 
   constructor() {
     this.options = Object.assign(
@@ -204,7 +208,10 @@ export class ContextService {
     const contexts: ContextsList = { ours: [] };
     Object.keys(this.contexts$.value).forEach(
       (key) =>
-        (contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id))
+        (contexts[key as keyof ContextsList] =
+          this.contexts$.value[key as keyof ContextsList]?.filter(
+            (c: Context) => c.id !== id
+          ) ?? [])
     );
 
     if (imported) {
@@ -216,7 +223,7 @@ export class ContextService {
     return this.http.delete<void>(url).pipe(
       tap(() => {
         this.contexts$.next(contexts);
-        this.loadContext(this.defaultContextUri);
+        this.loadContext(this.defaultContextUri!);
       })
     );
   }
@@ -278,7 +285,7 @@ export class ContextService {
   // ======================================================================
 
   getLocalContexts(): Observable<ContextsList> {
-    const url = this.getPath(this.options.contextListFile);
+    const url = this.getPath(this.options.contextListFile!);
     return this.http.get<Context[]>(url).pipe(
       map((res) => {
         return { ours: res } satisfies ContextsList;
@@ -354,11 +361,11 @@ export class ContextService {
           },
           error: () => {
             this.defaultContextId$.next(undefined);
-            this.loadContext(this.defaultContextUri);
+            this.loadContext(this.defaultContextUri!);
           }
         });
       } else {
-        this.loadContext(this.defaultContextUri);
+        this.loadContext(this.defaultContextUri!);
       }
     };
 
@@ -393,7 +400,7 @@ export class ContextService {
         },
         () => {
           if (uri !== this.options.defaultContextUri) {
-            this.loadContext(this.options.defaultContextUri);
+            this.loadContext(this.options.defaultContextUri!);
           }
         }
       );
@@ -403,8 +410,8 @@ export class ContextService {
     this.handleContextMessage(context);
     const currentContext = this.context$.value;
     if (currentContext && context && context.id === currentContext.id) {
-      if (context.map.view.keepCurrentView === undefined) {
-        context.map.view.keepCurrentView = true;
+      if (context.map!.view.keepCurrentView === undefined) {
+        context.map!.view.keepCurrentView = true;
       }
       this.context$.next(context);
       return;
@@ -425,14 +432,14 @@ export class ContextService {
     });
   }
 
-  setEditedContext(context: DetailedContext) {
+  setEditedContext(context: DetailedContext | undefined) {
     this.editedContext$.next(context);
   }
 
   getContextFromMap(igoMap: IgoMap, empty?: boolean): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
-    const center = new olPoint(view.getCenter()).transform(proj, 'EPSG:4326');
+    const center = new olPoint(view.getCenter()!).transform(proj, 'EPSG:4326');
 
     const context: DetailedContext = {
       uri: uuid(),
@@ -441,7 +448,7 @@ export class ContextService {
       map: {
         view: {
           center: center.getCoordinates() as [number, number],
-          zoom: view.getZoom(),
+          zoom: view.getZoom()!,
           projection: proj,
           maxZoomOnExtent: igoMap.viewController.maxZoomOnExtent
         }
@@ -483,7 +490,7 @@ export class ContextService {
   ): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
-    const center = new olPoint(view.getCenter()).transform(proj, 'EPSG:4326');
+    const center = new olPoint(view.getCenter()!).transform(proj, 'EPSG:4326');
 
     const context: DetailedContext = {
       uri: name,
@@ -491,7 +498,7 @@ export class ContextService {
       map: {
         view: {
           center: center.getCoordinates() as [number, number],
-          zoom: view.getZoom(),
+          zoom: view.getZoom()!,
           projection: proj,
           keepCurrentView
         }
@@ -513,7 +520,7 @@ export class ContextService {
 
     layers.forEach((layer) => {
       if (isLayerGroup(layer)) {
-        return context.layers.push(layer.options);
+        return context.layers!.push(layer.options);
       }
       if (!(layer.ol.getSource() instanceof olVectorSource)) {
         const layerOptions = layer.options;
@@ -521,13 +528,13 @@ export class ContextService {
         layerOptions.visible = layer.visible;
         layerOptions.opacity = layer.opacity;
         delete layerOptions.source;
-        context.layers.push(layerOptions);
+        context.layers!.push(layerOptions);
       } else {
         const extraFeatures = this.getExtraFeatures(layer);
-        extraFeatures.name = layer.options.title;
+        extraFeatures.name = layer.options.title!;
         extraFeatures.opacity = layer.opacity;
         extraFeatures.visible = layer.visible;
-        context.extraFeatures.push(extraFeatures);
+        context.extraFeatures!.push(extraFeatures);
       }
     });
 
@@ -578,7 +585,7 @@ export class ContextService {
     }
 
     context.messages = context.messages ? context.messages : [];
-    context.messages.push(context.message);
+    context.messages.push(context.message!);
     context.messages.map((message) => {
       if (message) {
         this.messageService.message(message as Message);
@@ -590,9 +597,9 @@ export class ContextService {
     if (this.baseUrl) {
       let contextToLoad;
       for (const key of Object.keys(this.contexts$.value)) {
-        contextToLoad = this.contexts$.value[key].find((c) => {
-          return c.uri === uri;
-        });
+        contextToLoad = this.contexts$.value[key as keyof ContextsList]?.find(
+          (c) => c.uri === uri
+        );
         if (contextToLoad) {
           break;
         }
@@ -603,7 +610,7 @@ export class ContextService {
       }
 
       return contextToLoad
-        ? this.getDetails(contextToLoad.id)
+        ? this.getDetails(contextToLoad.id!)
         : this.getDetailsByUri(uri);
     }
 
@@ -623,7 +630,7 @@ export class ContextService {
   }
 
   private getPath(file: string) {
-    const basePath = this.options.basePath.replace(/\/$/, '');
+    const basePath = this.options.basePath!.replace(/\/$/, '');
 
     return `${basePath}/${file}`;
   }
@@ -666,11 +673,11 @@ export class ContextService {
     if (!context || context.uri === this.options.defaultContextUri) {
       keepCurrentContext = false;
     }
-    if (!keepCurrentContext || !this.findContext(context)) {
+    if (!keepCurrentContext || !this.findContext(context!)) {
       this.defaultContextUri = undefined;
       this.loadDefaultContext();
     } else {
-      this.getContextByUri(context.uri)
+      this.getContextByUri(context!.uri!)
         .pipe(first())
         .subscribe((newContext) => {
           this.toolsChanged$.next(newContext);
@@ -680,7 +687,9 @@ export class ContextService {
         this.getDefault().subscribe();
       }
     }
-    const editedFound = this.findContext(editedContext);
+    const editedFound = editedContext
+      ? this.findContext(editedContext)
+      : undefined;
     if (!editedFound || editedFound.permission !== 'write') {
       this.setEditedContext(undefined);
     }
@@ -712,8 +721,7 @@ export class ContextService {
     const contexts = this.contexts$.value;
     let found;
     for (const key of Object.keys(contexts)) {
-      const value = contexts[key];
-      found = value.find(
+      found = contexts[key as keyof ContextsList]?.find(
         (c) =>
           (context.id && c.id === context.id) ||
           (context.uri && c.uri === context.uri)
