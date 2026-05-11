@@ -72,8 +72,8 @@
           @if (!user.childs) {
             <button mat-menu-item class="profil-menu">
               <mat-checkbox
-                [checked]="getPermission(user).checked"
-                [indeterminate]="getPermission(user).indeterminate"
+                [checked]="getPermission(user)?.checked ?? false"
+                [indeterminate]="getPermission(user)?.indeterminate ?? false"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
               />
@@ -86,8 +86,8 @@
               class="profil-menu"
             >
               <mat-checkbox
-                [checked]="getPermission(user).checked"
-                [indeterminate]="getPermission(user).indeterminate"
+                [checked]="getPermission(user)?.checked ?? false"
+                [indeterminate]="getPermission(user)?.indeterminate ?? false"
                 (click)="$event.stopPropagation()"
                 (change)="handleToggleCategory(user)"
               />
@@ -97,7 +97,7 @@
               @for (child of user.childs; track child.name) {
                 <button mat-menu-item class="profil-menu">
                   <mat-checkbox
-                    [checked]="getPermission(child).checked"
+                    [checked]="getPermission(child)?.checked ?? false"
                     (click)="$event.stopPropagation()"
                     (change)="handleToggleCategory(child, user)"
                   >
@@ -130,10 +130,13 @@
     @if ($any(groupContexts).value.length) {
       @if (auth.authenticated) {
         <igo-collapsible
-          [title]="titleMapping[$any(groupContexts).key] | translate"
-          [collapsed]="$any(collapsed[titleMapping[$any(groupContexts).key]])"
+          [title]="$any(titleMapping)[$any(groupContexts).key] | translate"
+          [collapsed]="
+            $any(collapsed[$any(titleMapping)[$any(groupContexts).key]])
+          "
           (toggle)="
-            collapsed[titleMapping[$any(groupContexts).key]] = $any($event)
+            collapsed[$any(titleMapping)[$any(groupContexts).key]] =
+              $any($event)
           "
         >
           @for (
@@ -143,9 +146,7 @@
             <igo-context-item
               igoListItem
               color="accent"
-              [selected]="
-                selectedContext() && selectedContext().uri === context.uri
-              "
+              [selected]="selectedContext()?.uri === context.uri"
               [context]="context"
               [default]="
                 context.id &&

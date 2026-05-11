@@ -140,7 +140,7 @@ function createImagearcgisrestLayer(options: ImageLayerOptions): ImageLayer {
 }
 
 function createGroup(
-  children: AnyLayer[] | null,
+  children: AnyLayer[],
   options: LayerGroupOptions
 ): LayerGroup {
   return new LayerGroup(children, options);
@@ -187,7 +187,7 @@ function createMapGroup(): IgoMap {
     zoom: 9
   };
 
-  const LAYER_GROUP_MOCK = createGroup(null, {
+  const LAYER_GROUP_MOCK = createGroup([], {
     title: 'test1',
     type: 'group'
   });

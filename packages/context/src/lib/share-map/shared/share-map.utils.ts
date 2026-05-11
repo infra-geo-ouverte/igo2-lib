@@ -15,7 +15,7 @@ export function buildDataSourceOptions(
   type: ServiceType,
   url: string,
   layers: string[],
-  version: string
+  version?: string
 ): AnyDataSourceOptions {
   const isLayerType = [
     'wmts',
@@ -28,7 +28,9 @@ export function buildDataSourceOptions(
     type === 'imagearcgisrest' ||
     type === 'tilearcgisrest';
   const params =
-    type === 'wms' ? { LAYERS: layers.join(','), VERSION: version } : undefined;
+    type === 'wms'
+      ? { LAYERS: layers.join(','), ...(version ? { VERSION: version } : {}) }
+      : undefined;
 
   const layer = isLayerType ? layers.join(',') : undefined;
   const baseParams = {
@@ -53,7 +55,7 @@ export function buildDataSourceOptions(
 export function getFlattenOptions(
   options: AnyLayerOptions[]
 ): AnyLayerOptions[] {
-  return options.reduce((accumulator, option) => {
+  return options.reduce<AnyLayerOptions[]>((accumulator, option) => {
     if (isLayerGroupOptions(option)) {
       const children = option.children
         ? getFlattenOptions(option.children)
@@ -89,7 +91,7 @@ export function hasLegacyParams(
   } = optionsLegacy;
 
   // Define valid legacy parameter pairs
-  const legacyPairs: [string | undefined, string | undefined][] = [
+  const legacyPairs: [string, string][] = [
     [layersKey, wmsUrlKey],
     [wmsLayersKey, wmsUrlKey],
     [wmtsLayersKey, wmtsUrlKey],

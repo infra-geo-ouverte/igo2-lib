@@ -16,19 +16,19 @@ interface SharedLayerConfig {
 export class ShareMapLegacyParser {
   constructor(private options: RouteServiceOptions) {}
 
-  parseUrl(params: Params): LayerOptions[] | undefined {
+  parseUrl(params: Params): LayerOptions[] {
     const layerOptions = ServiceType.flatMap((type) =>
       this.readLayersQueryParamsByType(params, type)
-    ).filter(Boolean);
+    ).filter((l): l is LayerOptions => !!l);
 
     return layerOptions;
   }
 
   parsePosition(params: Params): PositionParams {
-    const center = params[this.options.centerKey];
-    const projection = params[this.options.projectionKey];
-    const zoom = params[this.options.zoomKey];
-    const rotation = params[this.options.rotationKey];
+    const center = params[this.options.centerKey!];
+    const projection = params[this.options.projectionKey!];
+    const zoom = params[this.options.zoomKey!];
+    const rotation = params[this.options.rotationKey!];
 
     return ObjectUtils.removeUndefined({
       center: center?.split(',').map(Number),
@@ -64,7 +64,7 @@ export class ShareMapLegacyParser {
           layersConfig,
           url,
           type,
-          version,
+          version!,
           params
         );
       })
@@ -94,31 +94,34 @@ export class ShareMapLegacyParser {
 
     switch (type) {
       case 'wms':
-        if ((params[layersKey] || params[wmsLayersKey]) && params[wmsUrlKey]) {
+        if (
+          (params[layersKey!] || params[wmsLayersKey!]) &&
+          params[wmsUrlKey!]
+        ) {
           urlsKey = wmsUrlKey;
-          nameParamLayersKey = params[wmsLayersKey] ? wmsLayersKey : layersKey;
+          nameParamLayersKey = params[wmsLayersKey!] ? wmsLayersKey : layersKey;
         }
         break;
       case 'wmts':
-        if (params[wmtsLayersKey] && params[wmtsUrlKey]) {
+        if (params[wmtsLayersKey!] && params[wmtsUrlKey!]) {
           urlsKey = wmtsUrlKey;
           nameParamLayersKey = wmtsLayersKey;
         }
         break;
       case 'arcgisrest':
-        if (params[arcgisLayersKey] && params[arcgisUrlKey]) {
+        if (params[arcgisLayersKey!] && params[arcgisUrlKey!]) {
           urlsKey = arcgisUrlKey;
           nameParamLayersKey = arcgisLayersKey;
         }
         break;
       case 'imagearcgisrest':
-        if (params[iarcgisLayersKey] && params[iarcgisUrlKey]) {
+        if (params[iarcgisLayersKey!] && params[iarcgisUrlKey!]) {
           urlsKey = iarcgisUrlKey;
           nameParamLayersKey = iarcgisLayersKey;
         }
         break;
       case 'tilearcgisrest':
-        if (params[tarcgisLayersKey] && params[tarcgisUrlKey]) {
+        if (params[tarcgisLayersKey!] && params[tarcgisUrlKey!]) {
           urlsKey = tarcgisUrlKey;
           nameParamLayersKey = tarcgisLayersKey;
         }
@@ -133,7 +136,7 @@ export class ShareMapLegacyParser {
 
   private sanitizeUrl(url: string): [url: string, version: string | undefined] {
     const version =
-      this.getQueryParam('version', url.toLocaleLowerCase()) || undefined;
+      this.getQueryParam('version', url.toLocaleLowerCase()) ?? undefined;
 
     if (version) {
       const versionRegex = new RegExp(`[?&]version=${version}`, 'i');
@@ -147,12 +150,12 @@ export class ShareMapLegacyParser {
   }
 
   private getQueryParam(name: string, url: string): string | undefined {
-    let paramValue;
+    let paramValue: string | null | undefined;
     if (url.includes('?')) {
       const httpParams = new HttpParams({ fromString: url.split('?')[1] });
       paramValue = httpParams.get(name);
     }
-    return paramValue;
+    return paramValue ?? undefined;
   }
 
   private extractLayersByService(layersByService: string): SharedLayerConfig[] {
@@ -160,7 +163,7 @@ export class ShareMapLegacyParser {
       return [
         {
           layers: layersByService.split(','),
-          zIndex: null
+          zIndex: undefined
         }
       ];
     }
@@ -169,7 +172,7 @@ export class ShareMapLegacyParser {
       /([^(),:]+(?:,[^(),:]+)*(:[^(),:]+(?:[:][^(),:]+)*)?)/g
     );
 
-    return layers.map((layer) => {
+    return layers!.map((layer) => {
       const [names, zIndex] = layer.split(':igoz');
       return {
         layers: names.split(','),

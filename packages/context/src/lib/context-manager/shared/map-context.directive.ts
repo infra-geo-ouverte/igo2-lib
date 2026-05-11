@@ -2,11 +2,7 @@ import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 import { Params } from '@angular/router';
 
 import { MediaService } from '@igo2/core/media';
-import {
-  MapBrowserComponent,
-  MapControlsOptions,
-  MapScaleLineOptions
-} from '@igo2/geo';
+import { MapBrowserComponent } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { Subscription } from 'rxjs';
@@ -25,13 +21,13 @@ export class MapContextDirective implements OnInit, OnDestroy {
   private shareMapService = inject(ShareMapService);
 
   private component: MapBrowserComponent;
-  private context$$: Subscription;
+  private context$$!: Subscription;
 
   get map(): IgoMap {
     return this.component.map();
   }
 
-  private queryParams: Params;
+  private queryParams!: Params;
 
   constructor() {
     const component = inject(MapBrowserComponent);
@@ -82,13 +78,12 @@ export class MapContextDirective implements OnInit, OnDestroy {
       map.geolocationController.updateGeolocationOptions(viewContext);
     }
 
-    const controlsContext: MapControlsOptions = context.map.controls;
+    const controlsContext = context.map.controls;
     if (!this.component.controls && controlsContext) {
       if (this.mediaService.isMobile()) {
         if (typeof controlsContext.scaleLine !== 'boolean') {
-          const scaleLineOption =
-            controlsContext.scaleLine as MapScaleLineOptions;
-          if (!scaleLineOption.minWidth) {
+          const scaleLineOption = controlsContext.scaleLine;
+          if (scaleLineOption && scaleLineOption.minWidth != null) {
             scaleLineOption.minWidth = Math.min(64, scaleLineOption.minWidth);
             controlsContext.scaleLine = scaleLineOption;
           }

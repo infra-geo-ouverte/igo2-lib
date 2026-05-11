@@ -73,7 +73,8 @@ export type DefinitionParams<T extends string = string> = Record<
 export interface BaseKeyParams {
   key: string;
   parse?: (value: string) => unknown;
-  stringify?: (value: unknown) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stringify?: (value: any) => string;
 }
 
 export interface PositionParams {

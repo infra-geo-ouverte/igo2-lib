@@ -1,6 +1,7 @@
 @let user = authService.user;
-
-@if (context()) {
+@let context = this.context();
+@let permissions = this.permissions();
+@if (context) {
   <div>
     @if (!canWrite()) {
       <div class="scopeForm">
@@ -10,8 +11,8 @@
     } @else {
       <div class="scopeForm">
         <mat-radio-group
-          [(ngModel)]="context().scope"
-          (change)="onScopeChanged(context())"
+          [(ngModel)]="context.scope!"
+          (change)="onScopeChanged(context)"
         >
           <mat-radio-button value="private">
             {{ 'igo.context.permission.scope.private' | translate }}
@@ -27,7 +28,7 @@
         </mat-radio-group>
       </div>
     }
-    @if (context().scope !== 'private') {
+    @if (context.scope !== 'private') {
       @if (canWrite()) {
         <form [formGroup]="form" (ngSubmit)="handleFormSubmit(form.value)">
           <mat-form-field class="full-width">
@@ -69,9 +70,9 @@
           </div>
         </form>
       }
-      @if (permissions()) {
+      @if (permissions) {
         <igo-list>
-          @if (permissionsRead().length) {
+          @if (permissionsRead()?.length) {
             <igo-collapsible
               [title]="'igo.context.permission.' + 'read' | translate"
             >
@@ -79,13 +80,13 @@
                 <igo-context-permission-item
                   [permission]="permission"
                   [canWrite]="canWrite()"
-                  [user]="user"
+                  [user]="user ?? undefined"
                   (delete)="onRemovePermission($event)"
                 />
               }
             </igo-collapsible>
           }
-          @if (permissionsWrite().length) {
+          @if (permissionsWrite()?.length) {
             <igo-collapsible
               [title]="'igo.context.permission.' + 'write' | translate"
             >
@@ -93,7 +94,7 @@
                 <igo-context-permission-item
                   [permission]="permission"
                   [canWrite]="canWrite()"
-                  [user]="user"
+                  [user]="user ?? undefined"
                   (delete)="onRemovePermission($event)"
                 />
               }
