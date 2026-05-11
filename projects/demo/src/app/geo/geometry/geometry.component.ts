@@ -62,24 +62,24 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     zoom: 15
   };
 
-  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
+  form$ = new BehaviorSubject<Form | undefined>(undefined);
 
-  data$ = new BehaviorSubject<Record<string, any>>(undefined);
+  data$ = new BehaviorSubject<Record<string, unknown> | undefined>(undefined);
 
   submitDisabled = true;
 
-  private valueChanges$$: Subscription;
+  private valueChanges$$!: Subscription;
 
   ngOnInit(): void {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)
@@ -168,7 +168,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
   }
 
   clearForm(): void {
-    this.form$.value.control.reset();
+    this.form$.value?.control.reset();
   }
 
   onSubmit(data: Record<string, any>): void {

@@ -28,7 +28,7 @@
 
     <igo-panel title="Search">
       <igo-search-bar
-        [term]="term"
+        [term]="term!"
         (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
         [searchSettings]="true"
         [store]="searchStore"
@@ -45,7 +45,7 @@
 
       <igo-search-results
         [store]="searchStore"
-        [term]="term"
+        [term]="term!"
         [termSplitter]="termSplitter"
         [showIcons]="true"
         placeholder="false"

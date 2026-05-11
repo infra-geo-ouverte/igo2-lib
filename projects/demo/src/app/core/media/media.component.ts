@@ -14,11 +14,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppMediaComponent {
   private mediaService = inject(MediaService);
 
-  get media(): Media {
+  get media(): Media | undefined {
     return this.mediaService.getMedia();
   }
 
-  get orientation(): MediaOrientation {
+  get orientation(): MediaOrientation | undefined {
     return this.mediaService.getOrientation();
   }
 

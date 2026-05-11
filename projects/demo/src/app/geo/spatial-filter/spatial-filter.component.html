@@ -30,12 +30,12 @@
               (bufferChange)="buffer = $event"
               (measureUnitChange)="measureUnit = $event"
               [zones]="zones"
-              (addZone)="onAddZone($event)"
+              (addZone)="onAddZone($any($event))"
               (removeZone)="onRemovedZone($event)"
             />
 
             <igo-spatial-filter-item
-              [type]="type()"
+              [type]="type()!"
               [queryType]="queryType"
               [map]="map"
               [zones]="zones"

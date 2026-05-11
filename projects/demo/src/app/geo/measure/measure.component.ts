@@ -49,7 +49,7 @@ export class AppMeasureComponent {
     projection: 'EPSG:3857'
   };
 
-  public store: FeatureStore = new FeatureStore<FeatureWithMeasure>([], {
+  public store = new FeatureStore<FeatureWithMeasure>([], {
     map: this.map
   });
 
@@ -58,11 +58,11 @@ export class AppMeasureComponent {
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)

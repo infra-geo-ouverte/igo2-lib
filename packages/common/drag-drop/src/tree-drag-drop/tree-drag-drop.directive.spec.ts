@@ -43,7 +43,7 @@ class TestComponent {
 
 describe('DragDropTreeDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
-  let directive: TreeDragDropDirective;
+  let directive: TreeDragDropDirective<{ id: string | number }, unknown>;
   let treeNodesDebug: DebugElement[];
 
   beforeEach(() => {
@@ -140,7 +140,7 @@ describe('DragDropTreeDirective', () => {
   });
 
   it('should emit onDrop event with correct data', () => {
-    const draggedNode = fixture.componentInstance.dataSource[0].children[0];
+    const draggedNode = fixture.componentInstance.dataSource[0].children![0];
     const ref = fixture.componentInstance.dataSource[1];
     const position: DropPositionType = 'inside';
 

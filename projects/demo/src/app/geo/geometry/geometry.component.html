@@ -10,7 +10,7 @@
       @if (form$ | async; as form) {
         <igo-form
           [form]="form"
-          [formData]="data$ | async"
+          [formData]="(data$ | async)!"
           (submitForm)="onSubmit($event)"
         >
           <igo-form-group [group]="form.groups[0]" />

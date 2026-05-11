@@ -28,7 +28,7 @@ export class AppActivityComponent {
   }
 
   unregister() {
-    this.activityService.unregister(this.idsActivity.pop());
+    this.activityService.unregister(this.idsActivity.pop()!);
   }
 
   get counter(): number {

@@ -22,7 +22,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint utils",
     "lint.fix": "ng lint utils --fix",
-    "types": "tsc -p ./tsconfig.lib.json --noEmit",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit & tsc -p ./tsconfig.spec.json --noEmit",
     "test": "ng test utils --watch=false",
     "watch": "ng build utils --watch"
   },

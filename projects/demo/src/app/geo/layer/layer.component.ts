@@ -3,6 +3,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
 import {
+  AnyLayer,
   AnyLayerOptions,
   DownloadButtonComponent,
   FILTER_DIRECTIVES,
@@ -224,6 +225,10 @@ export class AppLayerComponent {
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 }

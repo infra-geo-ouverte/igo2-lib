@@ -23,14 +23,6 @@ export const environment: EnvironmentOptions = {
         extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
       }
     ],
-    auth: {
-      url: '',
-      tokenKey: 'testIgo2Lib',
-      intern: {
-        enabled: true
-      },
-      allowAnonymous: true
-    },
     interactiveTour: {
       tourInMobile: true,
       activateInteractiveTour: true
