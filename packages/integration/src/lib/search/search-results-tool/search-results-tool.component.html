@@ -30,7 +30,7 @@
     collapsedMobile="calc(100% - 48px)"
     expanded="60%"
     expandedMobile="60%"
-    [state]="feature ? topPanelState : 'initial'"
+    [state]="feature ? topPanelStateValue() : 'initial'"
   >
     <div class="igo-content">
       <igo-search-results
@@ -72,7 +72,7 @@
             (click)="toggleTopPanel()"
           >
             <mat-icon>{{
-              (topPanelState$ | async) === 'collapsed'
+              topPanelStateValue() === 'collapsed'
                 ? 'arrow_upward'
                 : 'arrow_downward'
             }}</mat-icon>

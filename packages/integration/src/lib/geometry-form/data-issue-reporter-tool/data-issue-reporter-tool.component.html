@@ -1,7 +1,7 @@
 @if (form$ | async; as form) {
   <igo-form
     [form]="form"
-    [formData]="data$ | async"
+    [formData]="(data$ | async)!"
     (submitForm)="onSubmit($any($event))"
   >
     @if (form.fields.length) {

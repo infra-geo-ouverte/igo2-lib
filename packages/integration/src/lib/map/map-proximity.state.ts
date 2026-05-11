@@ -51,9 +51,9 @@ export class MapProximityState {
     new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
-  public currentPositionCoordinate$ = new BehaviorSubject<Coordinate>(
-    undefined
-  );
+  public currentPositionCoordinate$ = new BehaviorSubject<
+    Coordinate | undefined
+  >(undefined);
 
   get map(): IgoMap {
     return this.mapState.map;
@@ -85,7 +85,15 @@ export class MapProximityState {
       ])
         .pipe(debounceTime(750))
         .subscribe(
-          (bunch: [boolean, string, number, number, MapGeolocationState]) => {
+          (
+            bunch: [
+              boolean,
+              string,
+              number,
+              number,
+              MapGeolocationState | undefined
+            ]
+          ) => {
             this.proximityFeatureStore.clear();
             const enabled = bunch[0];
             const layers = this.map.layerController.all;
@@ -170,6 +178,7 @@ export class MapProximityState {
                   layerSource.getClosestFeatureToCoordinate(coord);
                 if (closestOlFeature) {
                   const closestOlGeom = closestOlFeature.getGeometry();
+                  if (!closestOlGeom) return;
                   const closestFeature = featureFromOl(
                     closestOlFeature,
                     this.map.projection
@@ -184,7 +193,10 @@ export class MapProximityState {
                     linebetween,
                     'EPSG:3857'
                   );
-                  if (lineLength <= proximityRadiusValue) {
+                  if (
+                    lineLength !== undefined &&
+                    lineLength <= proximityRadiusValue
+                  ) {
                     const title = this.getQueryTitle(
                       closestFeature,
                       layerToMonitor
@@ -212,14 +224,14 @@ export class MapProximityState {
    */
   private addFeatureToStore(
     layer: Layer,
-    coordFromCalculatedDistance,
+    coordFromCalculatedDistance: number[],
     feature: Feature,
-    title,
-    distance
+    title: string | undefined,
+    distance: number
   ) {
     const featureId = uuid();
     const projection = this.map.ol.getView().getProjection();
-    const olGeometry = feature.ol.getGeometry() as Geometry;
+    const olGeometry = feature.ol!.getGeometry() as Geometry;
     const geometry = new GeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: projection
@@ -255,12 +267,12 @@ export class MapProximityState {
     }
   }
 
-  getLabelMatch(feature: Feature, labelMatch): string {
+  getLabelMatch(feature: Feature, labelMatch: string): string {
     let label = labelMatch;
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
-    labelToGet.forEach((v) => {
-      label = label.replace(v[0], feature.properties[v[1]]);
+    labelToGet.forEach((entry) => {
+      label = label.replace(entry[0], feature.properties[entry[1]]);
     });
 
     // Nothing done? check feature's attribute

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { ToolService } from '@igo2/common/tool';
+import { Tool, ToolService } from '@igo2/common/tool';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { ObjectUtils } from '@igo2/utils';
 
@@ -22,14 +22,16 @@ export class ContextState {
   /**
    * Observable of the active context
    */
-  context$ = new BehaviorSubject<DetailedContext>(undefined);
+  context$ = new BehaviorSubject<DetailedContext | undefined>(undefined);
 
   constructor() {
-    this.contextService.context$.subscribe((context: DetailedContext) => {
+    this.contextService.context$.subscribe((context) => {
       this.onContextChange(context);
     });
-    this.contextService.toolsChanged$.subscribe((context: DetailedContext) => {
-      this.updateTools(context);
+    this.contextService.toolsChanged$.subscribe((context) => {
+      if (context) {
+        this.updateTools(context);
+      }
     });
   }
 
@@ -49,7 +51,7 @@ export class ContextState {
   private updateTools(context: DetailedContext) {
     const toolbox = this.toolState.toolbox;
 
-    const tools = [];
+    const tools: Tool[] = [];
     const contextTools = context.tools || [];
     contextTools.forEach((contextTool) => {
       const contextToolFormated = ObjectUtils.removeNull(contextTool);
@@ -84,7 +86,7 @@ export class ContextState {
 
     // TODO: This is a patch so the context service can work without
     // injecting the ToolState or without being completely refactored
-    this.contextService.setTools([].concat(tools));
+    this.contextService.setTools([...tools]);
     this.contextService.setToolbar(context.toolbar || []);
   }
 
@@ -92,7 +94,7 @@ export class ContextState {
    * Set a new context and update the tool state
    * @param context Detailed context
    */
-  private onContextChange(context: DetailedContext) {
+  private onContextChange(context: DetailedContext | undefined) {
     if (context === undefined) {
       return;
     }

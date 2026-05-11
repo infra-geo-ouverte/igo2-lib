@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -69,36 +69,35 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
   public formattedScale$ = new BehaviorSubject<string>('');
   public projections$ = new BehaviorSubject<InputProjections[]>([]);
-  public form: UntypedFormGroup;
-  public coordinates: string[];
-  private currentCenterDefaultProj: [number, number];
+  public form!: UntypedFormGroup;
+  public coordinates!: string[];
+  private currentCenterDefaultProj!: [number, number];
   public center: boolean;
   private inMtmZone = true;
-  private inLambert2 = { 32198: true, 3798: true };
-  private mapState$$: Subscription;
-  private formStatus$$: Subscription;
-  private _projectionsLimitations: ProjectionsLimitationsOptions = {};
-  private projectionsConstraints: ProjectionsLimitationsOptions;
-  private defaultProj: InputProjections;
-  private currentZones = { utm: undefined, mtm: undefined };
+  private inLambert2: Record<string, boolean> = { 32198: true, 3798: true };
+  private mapState$$!: Subscription;
+  private formStatus$$!: Subscription;
+  readonly projectionsLimitations = input<
+    ProjectionsLimitationsOptions,
+    ProjectionsLimitationsOptions | undefined
+  >({}, { transform: (value) => value ?? {} });
+
+  private defaultProj!: InputProjections;
+  private currentZones: { utm: number | undefined; mtm: number | undefined } = {
+    utm: undefined,
+    mtm: undefined
+  };
+  private projectionsConstraints?: ProjectionsLimitationsOptions;
   public units = true;
   get map(): IgoMap {
     return this.mapState.map;
   }
 
   get inputProj(): InputProjections {
-    return this.form.get('inputProj').value;
+    return this.form.get('inputProj')!.value;
   }
   set inputProj(value: InputProjections) {
     this.form.patchValue({ inputProj: value });
-  }
-  get projectionsLimitations(): ProjectionsLimitationsOptions {
-    return this._projectionsLimitations || {};
-  }
-
-  @Input()
-  set projectionsLimitations(value: ProjectionsLimitationsOptions) {
-    this._projectionsLimitations = value;
   }
 
   constructor() {
@@ -294,7 +293,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    */
   private computeProjections(): void {
     this.projectionsConstraints = computeProjectionsConstraints(
-      this.projectionsLimitations
+      this.projectionsLimitations()
     );
     const projections: InputProjections[] = [];
 
@@ -402,7 +401,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * @param projections Array of the InputProjections
    */
   private pushMtm(projections: InputProjections[]): void {
-    if (this.projectionsConstraints.mtm) {
+    if (this.projectionsConstraints?.mtm) {
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
       projections.splice(3, 0, {
@@ -487,13 +486,15 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * @param coordinates An array of numbers, longitude and latitude
    */
   checkLambert(coordinates: [number, number]) {
-    const lambertProjections = this.config.getConfig('projections') || [];
+    const lambertProjections: InputProjections[] =
+      this.config.getConfig('projections') || [];
     lambertProjections.forEach((projection) => {
       let modifiedProj = this.projections$.value;
       const extent = projection.extent;
-      const code = projection.code.match(/\d+/);
+      const codeMatch = projection.code.match(/\d+/);
+      const code = codeMatch?.[0];
       const currentExtentWGS = olproj.transformExtent(
-        extent,
+        extent!,
         projection.code,
         this.defaultProj.code
       );
@@ -503,14 +504,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         coordinates[1] < currentExtentWGS[1] ||
         coordinates[1] > currentExtentWGS[3]
       ) {
-        this.inLambert2[code] = false;
+        if (code) this.inLambert2[code] = false;
         if (this.inputProj.alias === projection.alias) {
           this.inputProj = this.projections$.value[0];
         }
         modifiedProj = modifiedProj.filter((p) => p.alias !== projection.alias);
         this.projections$.next(modifiedProj);
       } else {
-        if (!this.inLambert2[code]) {
+        if (code && !this.inLambert2[code]) {
           this.projections$.next(modifiedProj.concat(projection));
           this.inLambert2[code] = true;
         }
