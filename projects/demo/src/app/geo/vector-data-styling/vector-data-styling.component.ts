@@ -97,5 +97,13 @@ export class AppVectorDataStylingComponent {
     this.layerService
       .createLayers(layers)
       .subscribe((layers) => this.map.layerController.add(...layers));
+
+    // console.log(
+    //   (this.map.layerController.getByTitle('Structures') as VectorLayer).style
+    // );    
+  }
+
+  handleStyleChange(newStyle: GsStyle) {
+    console.log('New style arrived!', newStyle);
   }
 }
