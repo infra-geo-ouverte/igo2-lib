@@ -37,9 +37,9 @@ export class QueryState {
     const queryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
     if (queryOverlayStyle) {
-      this.queryOverlayStyle = queryOverlayStyle.base;
-      this.queryOverlayStyleSelection = queryOverlayStyle.selection;
-      this.queryOverlayStyleFocus = queryOverlayStyle.focus;
+      this.queryOverlayStyle = queryOverlayStyle.base ?? {};
+      this.queryOverlayStyleSelection = queryOverlayStyle.selection ?? {};
+      this.queryOverlayStyleFocus = queryOverlayStyle.focus ?? {};
     }
     const geoPropertiesStrategy = new GeoPropertiesStrategy(
       { map: this.mapState.map },

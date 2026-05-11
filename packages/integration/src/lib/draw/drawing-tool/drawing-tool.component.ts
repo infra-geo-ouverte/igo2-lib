@@ -59,10 +59,10 @@ export class DrawingToolComponent {
     this.drawState.drawControls = dc;
   }
 
-  get activeDrawingLayer(): VectorLayer {
+  get activeDrawingLayer(): VectorLayer | undefined {
     return this.drawState.activeDrawingLayer;
   }
-  set activeDrawingLayer(value: VectorLayer) {
+  set activeDrawingLayer(value: VectorLayer | undefined) {
     this.drawState.activeDrawingLayer = value;
   }
 

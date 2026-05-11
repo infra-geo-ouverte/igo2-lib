@@ -27,7 +27,7 @@ export class CatalogState {
   constructor() {
     const authService = inject(AuthService);
 
-    this._catalogStore = new EntityStore([]);
+    this._catalogStore = new EntityStore<Catalog>([]);
 
     authService.authenticate$.subscribe(() => {
       this.clearCatalogItemsStores();
@@ -39,7 +39,7 @@ export class CatalogState {
    * @param catalog Catalog
    * @returns Store that contains the catalog items
    */
-  getCatalogItemsStore(catalog: Catalog): EntityStore<CatalogItem> {
+  getCatalogItemsStore(catalog: Catalog): EntityStore<CatalogItem> | undefined {
     return this.catalogItemsStores.get(catalog.id as string);
   }
 

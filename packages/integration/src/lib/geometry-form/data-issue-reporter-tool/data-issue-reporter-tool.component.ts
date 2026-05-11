@@ -44,7 +44,7 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
   /**
    * Url to report the data issue. Use the Post protocol to send the form.
    */
-  readonly url = input<string>(undefined);
+  readonly url = input<string>();
 
   /**
    * Map to link to the form
@@ -54,13 +54,13 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  form$ = new BehaviorSubject<Form>(undefined);
+  form$ = new BehaviorSubject<Form | undefined>(undefined);
 
-  data$ = new BehaviorSubject<Record<string, any>>(undefined);
+  data$ = new BehaviorSubject<Record<string, unknown> | undefined>(undefined);
 
   submitDisabled = true;
 
-  private valueChanges$$: Subscription;
+  private valueChanges$$?: Subscription;
 
   ngOnInit() {
     combineLatest([
@@ -174,11 +174,11 @@ export class DataIssueReporterToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.valueChanges$$.unsubscribe();
+    this.valueChanges$$?.unsubscribe();
   }
 
   clearForm() {
-    this.form$.value.control.reset();
+    this.form$.value?.control.reset();
   }
 
   onSubmit(data: DataIssueReporterData) {

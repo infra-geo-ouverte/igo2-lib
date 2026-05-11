@@ -73,7 +73,7 @@ export class MapDetailsToolComponent implements OnInit {
   mediaService = inject(MediaService);
   private cdr = inject(ChangeDetectorRef);
 
-  isDesktop: boolean;
+  isDesktop = false;
   public delayedShowEmptyMapContent = false;
 
   readonly toggleLegendOnVisibilityChange = input(false);
