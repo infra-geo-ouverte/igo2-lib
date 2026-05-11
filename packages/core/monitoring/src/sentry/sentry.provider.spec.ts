@@ -44,7 +44,7 @@ describe('Provide Sentry monitoring', () => {
       withTracingIntegration({})
     ]);
     const traceServiceProvider: ConstructorProvider = providers.find(
-      (p: ConstructorProvider) => p.provide === TraceService
+      (p) => (p as ConstructorProvider).provide === TraceService
     ) as ConstructorProvider;
     expect(traceServiceProvider).toBeDefined();
     expect(traceServiceProvider.deps).toContain(Router);

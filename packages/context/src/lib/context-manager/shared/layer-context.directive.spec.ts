@@ -122,7 +122,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to true if visibleOnLayersKey is "*"', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: '*'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: '*'
       } as Params;
       const result = directive['computeLayerVisibilityFromUrl'](mockWmsLayer);
       expect(result).toBe(true);
@@ -130,7 +130,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to false if visibleOffLayersKey is "*"', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: '*'
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: '*'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmsLayer);
       expect(result).toBe(false);
@@ -138,7 +138,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to true if layer id is in visibleOnLayersKey', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: 'carte_gouv_qc_ro'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmtsLayer);
       expect(result).toBe(true);
@@ -146,7 +146,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to false if layer id is in visibleOffLayersKey', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: 'carte_gouv_qc_ro'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmtsLayer);
       expect(result).toBe(false);
@@ -155,8 +155,8 @@ describe('LayerContextDirective', () => {
     it('should prioritize visibleOffLayersKey over visibleOnLayersKey', () => {
       const layers = [mockWmtsLayer, mockWmsLayer];
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: 'etablissement_mtq',
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: 'etablissement_mtq',
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: 'carte_gouv_qc_ro'
       };
 
       const result = layers
@@ -173,7 +173,7 @@ describe('LayerContextDirective', () => {
     it('the visibility of both layers must be true', () => {
       const layers = [mockWmtsLayer, mockWmsLayer];
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]:
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]:
           'etablissement_mtq,carte_gouv_qc_ro'
       };
 

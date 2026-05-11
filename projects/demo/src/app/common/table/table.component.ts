@@ -17,7 +17,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, TableComponent]
 })
 export class AppTableComponent implements OnInit {
-  public database: TableDatabase;
+  public database!: TableDatabase;
 
   public model: TableModel = {
     columns: [

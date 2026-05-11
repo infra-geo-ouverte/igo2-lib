@@ -21,7 +21,7 @@ export class AppSimpleMapComponent {
   private layerService = inject(LayerService);
   private mediaService = inject(MediaService);
 
-  public pointerCoord: [number, number];
+  public pointerCoord?: [number, number];
   public pointerCoordDelay = 0;
   public map: IgoMap = new IgoMap({
     controls: {
@@ -38,7 +38,7 @@ export class AppSimpleMapComponent {
     rotation: 0.75
   };
 
-  get media(): Media {
+  get media(): Media | undefined {
     return this.mediaService.getMedia();
   }
 
@@ -57,7 +57,7 @@ export class AppSimpleMapComponent {
         baseLayer: true
       })
       .subscribe((layer) => {
-        this.map.layerController.add(layer);
+        if (layer) this.map.layerController.add(layer);
       });
   }
 

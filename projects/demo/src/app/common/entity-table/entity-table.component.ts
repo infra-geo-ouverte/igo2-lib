@@ -23,8 +23,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, EntityTableComponent]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
-  public store: EntityStore = new EntityStore([]);
-  public paginator: MatPaginator;
+  public store = new EntityStore<object>([]);
+  public paginator?: MatPaginator;
   entitySortChange$ = new BehaviorSubject<boolean>(false);
 
   public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
@@ -42,7 +42,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'selected',
         title: 'Selected',
         valueAccessor: (entity: object) => {
-          return this.store.state.get(entity).selected
+          return this.store.state.get(entity)?.selected
             ? 'radio_button_checked'
             : 'radio_button_unchecked';
         },

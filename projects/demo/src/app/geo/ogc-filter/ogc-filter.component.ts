@@ -12,7 +12,6 @@ import {
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
-  OSMDataSource,
   OSMDataSourceOptions,
   OgcFilterAttributeOptions,
   OgcFilterDuringOptions,
@@ -66,7 +65,7 @@ export class AppOgcFilterComponent {
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
@@ -88,7 +87,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -132,11 +131,11 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (PropertyIsEqualTo OR Intersects polygon)',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -161,7 +160,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       ogcFilters: {
@@ -182,12 +181,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P2D)',
             id: '1',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -212,7 +211,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -240,12 +239,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTime)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: PT4H)',
             id: '2',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -270,7 +269,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -299,12 +298,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeMonth)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P1M)',
             id: '3',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -329,7 +328,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -358,12 +357,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeYear)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Step: P1Y)',
             id: '4',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -388,7 +387,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -416,12 +415,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeInterval)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, Interval from Now, Step: P1D)',
             id: '5',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -446,7 +445,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
@@ -474,12 +473,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeRestrictedToStep)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles (During, RestrictToStep, Step: P1M)',
             id: '6',
-            source: dataSource,
+            source: dataSource as WFSDataSource,
             style: new Style({
               image: new Circle({
                 radius: 5,
@@ -526,11 +525,11 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wmsOgcFilterOptions)
-      .subscribe((dataSource: WMSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Inondations (During)',
-            source: dataSource
+            source: dataSource as WMSDataSource
           } satisfies ImageLayerOptions)
         );
       });
@@ -679,12 +678,12 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
-      .subscribe((dataSource: WMSDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title:
               'Filterable WMS layers with predefined filters (push buttons)',
-            source: dataSource
+            source: dataSource as WMSDataSource
           } satisfies ImageLayerOptions)
         );
       });

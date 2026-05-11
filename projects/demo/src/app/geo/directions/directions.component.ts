@@ -3,6 +3,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AuthService } from '@igo2/auth';
 import {
+  AnyLayer,
   AnyLayerOptions,
   DirectionsComponent,
   IgoMap,
@@ -93,6 +94,10 @@ export class AppDirectionsComponent {
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 }
