@@ -65,8 +65,8 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {
     return this.mapState.map;
   }
-  public userDefinedMapCenter: boolean;
-  public userDefinedFollowPosition: boolean;
+  public userDefinedMapCenter = false;
+  public userDefinedFollowPosition = false;
   /**
    * Table template
    * @internal
@@ -85,8 +85,9 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
           title: this.languageService.translate.instant(
             'igo.integration.map-proximity-tool.feature'
           ),
-          valueAccessor: (localFeature: Feature) => {
-            return localFeature.properties.element;
+          valueAccessor: (localFeature: object) => {
+            const feature = localFeature as Feature;
+            return feature.properties.element;
           }
         },
         {
@@ -94,9 +95,10 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
           title: this.languageService.translate.instant(
             'igo.integration.map-proximity-tool.distance'
           ),
-          valueAccessor: (localFeature: Feature) => {
+          valueAccessor: (localFeature: object) => {
+            const feature = localFeature as Feature;
             return `${NumberUtils.roundToNDecimal(
-              localFeature.properties.distance,
+              feature.properties.distance,
               1
             )}m`;
           }
@@ -140,7 +142,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
    */
   copyTextToClipboard(): void {
     const successful = this.clipboard.copy(
-      this.mapProximityState.currentPositionCoordinate$?.value.toString()
+      this.mapProximityState.currentPositionCoordinate$?.value?.toString() ?? ''
     );
     if (successful) {
       this.messageService.success(

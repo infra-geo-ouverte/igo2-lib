@@ -35,7 +35,7 @@ export class DirectionsToolComponent implements OnInit {
   contextState = inject(ContextState);
   private authService = inject(AuthService);
 
-  public currentContextUri: string;
+  public currentContextUri?: string;
   /**
    * stops
    * @internal
@@ -101,7 +101,7 @@ export class DirectionsToolComponent implements OnInit {
       );
     }
     this.contextState.context$.subscribe((c) => {
-      if (!this.authService.authenticated) {
+      if (!this.authService.authenticated && c) {
         this.currentContextUri = c.uri;
       }
     });

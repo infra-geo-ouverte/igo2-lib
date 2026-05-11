@@ -6,7 +6,7 @@ import {
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,12 +44,12 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   private toolState = inject(ToolState);
 
   public swipe = false;
-  public layerList: AnyLayer[];
-  public userControlledLayerList: AnyLayer[];
-  public form: UntypedFormGroup;
-  public layers: VectorLayer[];
-  public res: DetailedContext;
-  public listForSwipe: Layer[];
+  public layerList!: AnyLayer[];
+  public userControlledLayerList!: AnyLayer[];
+  public form!: UntypedFormGroup;
+  public layers!: VectorLayer[];
+  public res!: DetailedContext;
+  public listForSwipe!: Layer[];
 
   /**
    * Get an active map state
@@ -113,26 +113,26 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   /**
    * Restart a swipe for a new layers-list
    */
-  applyNewLayers(e) {
+  applyNewLayers(e: MatOption) {
     this.startSwipe(false); // l'approche KISS
     this.startSwipe(true);
-    if (e._selected) {
-      e._selected = false;
+    if (e.selected) {
+      e.select(false);
     }
     const allLayers = this.userControlledLayerList?.length;
     const selectedLayers = this.form.controls.layers.value.length;
     if (selectedLayers === allLayers) {
-      e._selected = true;
+      e.select(true);
     }
   }
 
   /**
    * Select all list of layers and restart a tool
    */
-  selectAll(e) {
-    if (e._selected) {
+  selectAll(e: MatOption) {
+    if (e.selected) {
       this.form.controls.layers.setValue(this.userControlledLayerList);
-      e._selected = true;
+      e.select(true);
     } else {
       this.form.controls.layers.setValue([]);
     }

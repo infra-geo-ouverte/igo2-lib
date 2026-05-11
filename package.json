@@ -21,7 +21,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "postinstall": "git config core.hooksPath ./git-hooks",
+    "postinstall": "git config core.hooksPath .config/git-hooks",
     "prestart": "npm run prestart --workspace=packages --if-present",
     "start.demo": "npm run prestart && npm run start -w demo",
     "build": "ng build",

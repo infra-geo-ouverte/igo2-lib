@@ -4,11 +4,11 @@
     [excludeBaseLayers]="excludeBaseLayers"
     [allowShowAllLegends]="allowShowAllLegends()"
     [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
-    [showAllLegendsValue]="showAllLegendsValue$ | async"
+    [showAllLegendsValue]="(showAllLegendsValue$ | async)!"
     (allLegendsShown)="onShowAllLegends($event)"
   />
 }
-@if ((layers$ | async).length !== 0) {
+@if ((layers$ | async)?.length !== 0) {
 } @else {
   @if (delayedShowEmptyMapContent) {
     <mat-list>
@@ -53,12 +53,12 @@
 
 @if (
   !allowShowAllLegends() &&
-  (layers$ | async).length !== 0 &&
-  (visibleOrInRangeLayers$ | async).length === 0
+  (layers$ | async)?.length !== 0 &&
+  (visibleOrInRangeLayers$ | async)?.length === 0
 ) {
   <p class="map-empty">
     {{
-      (visibleLayers$ | async).length
+      (visibleLayers$ | async)?.length
         ? ('igo.integration.mapTool.noLayersInRange' | translate)
         : ('igo.integration.mapTool.noLayersVisible' | translate)
     }}

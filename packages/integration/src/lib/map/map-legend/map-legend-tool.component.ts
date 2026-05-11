@@ -65,8 +65,8 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   showAllLegendsValue$ = new BehaviorSubject(false);
   change$ = new ReplaySubject<void>(1);
 
-  private resolution$$: Subscription;
-  private visibleOrInRangeLayers$$: Subscription;
+  private resolution$$?: Subscription;
+  private visibleOrInRangeLayers$$?: Subscription;
 
   readonly updateLegendOnResolutionChange = input(false);
 
@@ -149,7 +149,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     }, 250);
   }
 
-  onShowAllLegends(event) {
+  onShowAllLegends(event: boolean) {
     this.mapState.showAllLegendsValue = event;
     this.showAllLegendsValue$.next(event);
   }
@@ -176,10 +176,8 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.resolution$$.unsubscribe();
-    if (this.visibleOrInRangeLayers$$) {
-      this.visibleOrInRangeLayers$$.unsubscribe();
-    }
+    this.resolution$$?.unsubscribe();
+    this.visibleOrInRangeLayers$$?.unsubscribe();
   }
 
   searchEmit() {

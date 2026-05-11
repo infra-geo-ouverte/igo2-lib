@@ -17,16 +17,16 @@ export class SearchBarBindingDirective implements OnInit, OnDestroy {
   private component = inject(SearchBarComponent, { self: true });
   private searchState = inject(SearchState);
 
-  get searchTerm(): string {
+  get searchTerm(): string | undefined {
     return this.searchState.searchTerm$.value;
   }
-  get searchType(): string {
+  get searchType(): string | undefined {
     return this.searchState.searchType$.value;
   }
 
-  private searchTerm$$: Subscription;
-  private searchType$$: Subscription;
-  private searchDisabled$$: Subscription;
+  private searchTerm$$!: Subscription;
+  private searchType$$!: Subscription;
+  private searchDisabled$$!: Subscription;
 
   ngOnInit() {
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm) => {

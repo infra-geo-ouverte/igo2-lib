@@ -55,10 +55,11 @@ export class AnalyticsListenerService {
   listenContext() {
     this.contextState.context$.subscribe((context) => {
       if (context) {
+        const eventName = context.id?.toString() ?? context.uri;
         this.analyticsService.trackEvent(
           'context',
           'activateContext',
-          context.id?.toString() || context.uri
+          eventName!
         );
       }
     });
@@ -82,9 +83,9 @@ export class AnalyticsListenerService {
       }
 
       layers.forEach((layer) => {
-        let wmsParams: string;
-        let wmtsParams: string;
-        let restParams: string;
+        let wmsParams: string | undefined;
+        let wmtsParams: string | undefined;
+        let restParams: string | undefined;
 
         if (isLayerGroup(layer)) {
           return;
@@ -96,7 +97,7 @@ export class AnalyticsListenerService {
               .options as WMSDataSourceOptions;
             const wmsLayerName: string = wmsDataSource.params.LAYERS;
             const wmsUrl: string = wmsDataSource.url;
-            const wmsType: string = wmsDataSource.type;
+            const wmsType = wmsDataSource.type;
             wmsParams = JSON.stringify({
               layer: wmsLayerName,
               type: wmsType,
@@ -108,9 +109,9 @@ export class AnalyticsListenerService {
             const wmtsDataSource = layer.dataSource
               .options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
-            const wmtsUrl: string = wmtsDataSource.url;
-            const matrixSet: string = wmtsDataSource.matrixSet;
-            const wmtsType: string = wmtsDataSource.type;
+            const wmtsUrl = wmtsDataSource.url;
+            const matrixSet = wmtsDataSource.matrixSet;
+            const wmtsType = wmtsDataSource.type;
             wmtsParams = JSON.stringify({
               layer: wmtsLayerName,
               type: wmtsType,
@@ -126,9 +127,9 @@ export class AnalyticsListenerService {
               | ArcGISRestDataSourceOptions
               | TileArcGISRestDataSourceOptions
               | ArcGISRestImageDataSourceOptions;
-            const restName: string = restDataSource.layer;
-            const restUrl: string = restDataSource.url;
-            const restType: string = restDataSource.type;
+            const restName = restDataSource.layer;
+            const restUrl = restDataSource.url;
+            const restType = restDataSource.type;
             restParams = JSON.stringify({
               layer: restName,
               type: restType,
@@ -137,11 +138,8 @@ export class AnalyticsListenerService {
             break;
           }
         }
-        this.analyticsService.trackLayer(
-          'layer',
-          'addLayer',
-          wmsParams || wmtsParams || restParams
-        );
+        const eventName = wmsParams || wmtsParams || restParams;
+        this.analyticsService.trackLayer('layer', 'addLayer', eventName!);
       });
     });
   }
