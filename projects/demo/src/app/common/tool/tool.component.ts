@@ -40,7 +40,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSalutationToolComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
 
-  readonly name = input<string>(undefined);
+  readonly name = input<string>();
 
   onUpdateInputs() {
     this.cdRef.detectChanges();
@@ -78,12 +78,12 @@ export class AppToolComponent implements OnInit, OnDestroy {
 
   toolbox: Toolbox = new Toolbox();
 
-  get activeTool$(): BehaviorSubject<Tool> {
+  get activeTool$(): BehaviorSubject<Tool | undefined> {
     return this.toolbox.activeTool$;
   }
 
   get panelTitle(): string {
-    return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
+    return this.activeTool$.value?.title ?? 'Toolbox';
   }
 
   ngOnInit(): void {

@@ -33,15 +33,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppFormComponent implements OnInit, OnDestroy {
   private formService = inject(FormService);
 
-  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
+  form$ = new BehaviorSubject<Form | undefined>(undefined);
 
-  data$: BehaviorSubject<object> = new BehaviorSubject<Record<string, any>>(
-    undefined
-  );
+  data$ = new BehaviorSubject<Record<string, unknown> | undefined>(undefined);
 
   submitDisabled = true;
 
-  private valueChanges$$: Subscription;
+  private valueChanges$$!: Subscription;
 
   ngOnInit() {
     const fieldConfigs: FormFieldConfig[] = [
@@ -105,7 +103,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
   }
 
   clearForm(): void {
-    this.form$.value.control.reset();
+    this.form$.value?.control.reset();
   }
 
   onSubmit(data: object): void {

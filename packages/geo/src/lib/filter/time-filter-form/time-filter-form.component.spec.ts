@@ -7,7 +7,7 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
 import { TimeFilterFormComponent } from './time-filter-form.component';
 
 describe('TimeFilterFormComponent', () => {
-  let component: TimeFilterFormComponent;
+  let component: TimeFilterFormComponent & { min: Date; max: Date };
   let fixture: ComponentFixture<TimeFilterFormComponent>;
 
   const min = '1980-01-01T05:00:00Z';
@@ -32,7 +32,10 @@ describe('TimeFilterFormComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(TimeFilterFormComponent);
-    component = fixture.componentInstance;
+    component = fixture.componentInstance as TimeFilterFormComponent & {
+      min: Date;
+      max: Date;
+    };
 
     // Set the required layer input before any tests that trigger ngOnInit
     TestBed.runInInjectionContext(() => {
@@ -51,7 +54,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -71,7 +74,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -93,7 +96,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null,
+      step: undefined,
       range: true
     };
 
@@ -117,7 +120,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null,
+      step: undefined,
       range: true
     };
 
@@ -141,7 +144,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -186,7 +189,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -285,7 +288,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -307,7 +310,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null,
+      step: undefined,
       range: true
     };
 
@@ -331,7 +334,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null,
+      step: undefined,
       range: true
     };
 
@@ -355,7 +358,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -422,7 +425,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {
@@ -444,7 +447,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null,
+      step: undefined,
       range: true
     };
 
@@ -542,7 +545,7 @@ describe('TimeFilterFormComponent', () => {
       timeInterval: 2000,
       min: min,
       max: max,
-      step: null
+      step: undefined
     };
 
     TestBed.runInInjectionContext(() => {

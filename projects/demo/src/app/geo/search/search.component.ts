@@ -100,9 +100,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   readonly mapBrowser = viewChild('mapBrowser', { read: ElementRef });
 
-  public lonlat: Coordinate;
-  public mapProjection: string;
-  public term: string;
+  public lonlat?: Coordinate;
+  public mapProjection?: string;
+  public term?: string;
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
@@ -112,7 +112,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.mediaService.isTouchScreen();
   }
 
-  public selectedFeature: Feature;
+  public selectedFeature?: Feature;
   public igoReverseSearchCoordsFormatEnabled: boolean;
 
   private searchResult = viewChild(SearchResultsComponent);
@@ -129,7 +129,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||
@@ -143,7 +145,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   onSearchTermChange(term?: string): void {
     this.term = term;
     this.searchState.setSearchTerm(term);
-    const termWithoutHashtag: string = term.replace(/(#[^\s]*)/g, '').trim();
+    const termWithoutHashtag = (term ?? '').replace(/(#[^\s]*)/g, '').trim();
     if (termWithoutHashtag.length < 2) {
       this.searchStore.clear();
       this.selectedFeature = undefined;
@@ -241,9 +243,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   onContextMenuOpen(event: { x: number; y: number }): void {
     const position: Pixel = this.mapPosition(event);
     const coord: Coordinate = this.mapService
-      .getMap()
+      .getMap()!
       .ol.getCoordinateFromPixel(position);
-    this.mapProjection = this.mapService.getMap().projectionCode;
+    this.mapProjection = this.mapService.getMap()!.projectionCode;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
 
@@ -251,31 +253,33 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     const contextmenuPoint: { x: number; y: number } = event;
     contextmenuPoint.y =
       contextmenuPoint.y -
-      this.mapBrowser().nativeElement.getBoundingClientRect().top +
+      this.mapBrowser()!.nativeElement.getBoundingClientRect().top +
       window.scrollY;
     contextmenuPoint.x =
       contextmenuPoint.x -
-      this.mapBrowser().nativeElement.getBoundingClientRect().left +
+      this.mapBrowser()!.nativeElement.getBoundingClientRect().left +
       window.scrollX;
     const position: Pixel = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
   }
 
-  searchCoordinate(lonlat: Coordinate): void {
+  searchCoordinate(lonlat: Coordinate | undefined): void {
     this.searchStore.clear();
     this.term = !this.igoReverseSearchCoordsFormatEnabled
-      ? lonlat.map((c: number) => c.toFixed(6)).join(', ')
+      ? lonlat?.map((c: number) => c.toFixed(6)).join(', ')
       : lonlat
-          .reverse()
+          ?.reverse()
           .map((c: number) => c.toFixed(6))
           .join(', ');
   }
 
-  openGoogleMaps(lonlat: Coordinate): void {
+  openGoogleMaps(lonlat: Coordinate | undefined): void {
+    if (!lonlat) return;
     window.open(GoogleLinks.getGoogleMapsCoordLink(lonlat[0], lonlat[1]));
   }
 
-  openGoogleStreetView(lonlat: Coordinate): void {
+  openGoogleStreetView(lonlat: Coordinate | undefined): void {
+    if (!lonlat) return;
     window.open(GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1]));
   }
 }

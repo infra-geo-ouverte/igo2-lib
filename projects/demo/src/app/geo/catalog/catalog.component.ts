@@ -4,6 +4,7 @@ import { EntityRecord, EntityStore } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
 import { StorageService } from '@igo2/core/storage';
 import {
+  AnyLayer,
   AnyLayerOptions,
   Catalog,
   CatalogBrowserComponent,
@@ -39,16 +40,16 @@ export class AppCatalogComponent implements OnInit {
   private storageService = inject(StorageService);
   private mapService = inject(MapService);
 
-  catalog: Catalog;
+  catalog!: Catalog;
   public map: IgoMap = new IgoMap({
     controls: { attribution: { collapsed: true } }
   });
 
   public view: MapViewOptions = { center: [-73, 47.2], zoom: 7 };
 
-  public catalogStore: EntityStore = new EntityStore<Catalog>([]);
+  public catalogStore = new EntityStore<Catalog>([]);
 
-  public catalogItemStore: EntityStore = new EntityStore<CatalogItem>([]);
+  public catalogItemStore = new EntityStore<CatalogItem>([]);
 
   /**
    * @internal
@@ -65,7 +66,11 @@ export class AppCatalogComponent implements OnInit {
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
 
     this.loadCatalogs();
 
@@ -74,7 +79,7 @@ export class AppCatalogComponent implements OnInit {
       .firstBy$(
         (record: EntityRecord<Catalog>) => record.state.selected === true
       )
-      .subscribe((record: EntityRecord<Catalog>) => {
+      .subscribe((record) => {
         if (record && record.entity) {
           const catalog: Catalog = record.entity;
           this.catalog = catalog;

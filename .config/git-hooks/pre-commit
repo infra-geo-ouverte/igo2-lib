@@ -2,5 +2,6 @@
 set -euo pipefail
 trap 'echo "pre-commit hook failed (exit code $?)" >&2' ERR
 
+npm run types
 npm run lint
 npm run format
