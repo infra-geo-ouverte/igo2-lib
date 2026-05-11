@@ -181,7 +181,9 @@ export class AppDialogComponent {
         title: 'Email',
         options: {
           cols: 2,
-          validator: Validators.compose([Validators.required, Validators.email])
+          validator:
+            Validators.compose([Validators.required, Validators.email]) ??
+            undefined
         }
       },
       {

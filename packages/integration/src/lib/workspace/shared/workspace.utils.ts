@@ -245,7 +245,7 @@ export function getWorkspaceActions(
     }
   ];
 
-  const returnActions: Action[] =
+  const returnActions =
     workspace.layer.options.workspace?.printable !== false
       ? actions
       : actions.filter((action) => action.id !== 'print');

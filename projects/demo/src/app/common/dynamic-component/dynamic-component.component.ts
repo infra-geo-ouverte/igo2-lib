@@ -23,7 +23,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSalutationComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
 
-  name = input<string>(undefined);
+  name = input<string>();
 
   onUpdateInputs() {
     this.cdRef.detectChanges();

@@ -13,7 +13,6 @@ import {
   FeatureMotion,
   IgoMap,
   IgoQueryModule,
-  ImageLayer,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
@@ -26,7 +25,6 @@ import {
   QueryableDataSourceOptions,
   SearchResult,
   VectorLayerOptions,
-  VectorTileLayer,
   VectorTileLayerOptions
 } from '@igo2/geo';
 
@@ -81,11 +79,11 @@ export class AppQueryComponent {
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)
@@ -153,7 +151,9 @@ export class AppQueryComponent {
           }
         }
       } as ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -164,14 +164,14 @@ export class AppQueryComponent {
           { name: 'description', alias: 'Alias description' }
         ]
       } as FeatureDataSourceOptions)
-      .subscribe((dataSource: FeatureDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Vector layer',
-            source: dataSource
+            source: dataSource as FeatureDataSource
           } satisfies VectorLayerOptions)
         );
-        this.addFeatures(dataSource);
+        this.addFeatures(dataSource as FeatureDataSource);
       });
 
     this.layerService
@@ -195,9 +195,9 @@ export class AppQueryComponent {
           source: 'ahocevar'
         }
       } as VectorTileLayerOptions)
-      .subscribe((layer: VectorTileLayer) =>
-        this.map.layerController.add(layer)
-      );
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
   }
 
   addFeatures(dataSource: FeatureDataSource): void {

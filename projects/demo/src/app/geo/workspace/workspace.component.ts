@@ -18,7 +18,7 @@ import {
   WorkspaceWidgetOutletComponent
 } from '@igo2/common/workspace';
 import {
-  DataSourceService,
+  AnyLayer,
   IgoGeoWorkspaceModule,
   IgoMap,
   LayerOptions,
@@ -56,11 +56,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppWorkspaceComponent implements OnInit {
-  private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
   workspaceState = inject(WorkspaceState);
 
-  public workspacePaginator: MatPaginator;
+  public workspacePaginator?: MatPaginator;
   entitySortChange$ = new BehaviorSubject<boolean>(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
     pageSize: 5, // Number of items to display on a page.
@@ -85,7 +84,7 @@ export class AppWorkspaceComponent implements OnInit {
     return this.workspaceState.store;
   }
 
-  public selectedWorkspace$: Observable<Workspace>;
+  public selectedWorkspace$!: Observable<Workspace | undefined>;
 
   public actionbarMode: ActionbarMode = ActionbarMode.Overlay;
 
@@ -98,15 +97,14 @@ export class AppWorkspaceComponent implements OnInit {
         (record: EntityRecord<Workspace>) => record.state.selected === true
       )
       .pipe(
-        map((record: EntityRecord<Workspace>) => {
-          const entity: Workspace =
-            record === undefined ? undefined : record.entity;
+        map((record) => {
+          const entity = record?.entity;
           if (entity) {
             // In fact, the download action is not fully functionnal into the igo2-lib demo
             // The button triggers a tool (importExport) and this tool is not available in the igo2-lib demo.
             // This is why it has been removed from the actions list.
             // Refer to the igo2 demo at https://infra-geo-ouverte.github.io/igo2/
-            entity.actionStore.view.filter((action: Action) => {
+            entity.actionStore?.view.filter((action: Action) => {
               return action.id !== 'wfsDownload';
             });
           }
@@ -149,7 +147,9 @@ export class AppWorkspaceComponent implements OnInit {
         } satisfies VectorLayerOptions
       ])
       .subscribe((layers) => {
-        this.map.layerController.add(...layers);
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        );
       });
   }
 

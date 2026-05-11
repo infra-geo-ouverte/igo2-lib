@@ -56,13 +56,13 @@ export class AppTimeFilterComponent {
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
             baseLayer: true,
             visible: true,
-            source: dataSource
+            source: dataSource as OSMDataSource
           } satisfies LayerOptions)
         );
       });
@@ -87,11 +87,11 @@ export class AppTimeFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceYear)
-      .subscribe((dataSource: TimeFilterableDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Embâcles',
-            source: dataSource
+            source: dataSource as TimeFilterableDataSource
           } satisfies LayerOptions)
         );
       });
