@@ -105,13 +105,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   change$ = new ReplaySubject<void>(1);
 
-  private change$$: Subscription;
-  private previousMessageId: number;
+  private change$$!: Subscription;
+  private previousMessageId!: number;
 
   sortAlphaOnIcon = SORT_ALPHA_ON_ICON;
   sortAlphaOffIcon = SORT_ALPHA_OFF_ICON;
 
-  readonly isDesktop = input<boolean>(undefined);
+  readonly isDesktop = input<boolean>();
 
   @Input()
   get contexts(): ContextsList {
@@ -123,9 +123,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _contexts: ContextsList = { ours: [] };
 
-  readonly selectedContext = model<DetailedContext>(undefined);
+  readonly selectedContext = model<DetailedContext>();
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
   @Input()
   get defaultContextId(): string | number {
@@ -137,9 +137,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   set defaultContextId(value: string | number) {
     this._defaultContextId = value;
   }
-  private _defaultContextId: string | number;
+  private _defaultContextId!: string | number;
 
-  public collapsed: { contextScope }[] = [];
+  public collapsed: { contextScope: string }[] = [];
 
   readonly select = output<DetailedContext>();
   readonly unselect = output<DetailedContext>();
@@ -165,7 +165,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  public users: ContextProfils[];
+  public users: ContextProfils[] = [];
   public permissions: ContextUserPermission[] = [];
 
   public actionStore = new ActionStore([]);
@@ -189,13 +189,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
   public _term = '';
 
   get sortedAlpha(): boolean {
-    return this._sortedAlpha;
+    return this._sortedAlpha ?? false;
   }
   set sortedAlpha(value: boolean) {
     this._sortedAlpha = value;
     this.next();
   }
-  private _sortedAlpha: boolean = undefined;
+  private _sortedAlpha?: boolean;
 
   public showContextFilter = ContextListControlsEnum.always;
 
@@ -209,9 +209,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
     );
   }
 
-  private contexts$$: Subscription;
-  private selectedContext$$: Subscription;
-  private defaultContextId$$: Subscription;
+  private contexts$$!: Subscription;
+  private selectedContext$$!: Subscription;
+  private defaultContextId$$!: Subscription;
 
   constructor() {
     this.contextConfigs = this.configService.getConfig('context');
@@ -263,7 +263,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
     this.defaultContextId$$ = this.contextService.defaultContextId$.subscribe(
       (id) => {
-        this.defaultContextId = id;
+        if (id != null) this.defaultContextId = id;
       }
     );
     const storedContextUri = this.storageService.get(
@@ -277,7 +277,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.selectedContext$$ = this.contextService.context$
       .pipe(debounceTime(100))
       .subscribe((context) => {
-        this.setSelected(context);
+        if (context) this.setSelected(context);
       });
 
     this.auth.authenticate$.subscribe((authenticate) => {
@@ -285,7 +285,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         this.contextService.getProfilByUser().subscribe((profils) => {
           this.users = profils;
           this.permissions = [];
-          const profilsAcc = this.users.reduce((acc, cur) => {
+          const profilsAcc = this.users.reduce<ContextProfils[]>((acc, cur) => {
             acc = acc.concat(cur);
             acc = cur.childs ? acc.concat(cur.childs) : acc;
             return acc;
@@ -354,9 +354,11 @@ export class ContextListComponent implements OnInit, OnDestroy {
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
         const contextTitleNormalized = context.title
-          .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          ? context.title
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+          : '';
         return contextTitleNormalized.includes(filterNormalized);
       });
 
@@ -365,30 +367,34 @@ export class ContextListComponent implements OnInit, OnDestroy {
       };
 
       if (this.contexts.public) {
-        const publics = contexts.public.filter((context) => {
+        const publics = contexts.public!.filter((context) => {
           const filterNormalized = this.term
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
+            ? context.title
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+            : '';
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.public = publics;
       }
 
       if (this.contexts.shared) {
-        const shared = contexts.shared.filter((context) => {
+        const shared = contexts.shared!.filter((context) => {
           const filterNormalized = this.term
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
+            ? context.title
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+            : '';
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.shared = shared;
@@ -426,41 +432,39 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   sortContextsList(contexts: ContextsList) {
-    if (contexts) {
-      const contextsList = JSON.parse(JSON.stringify(contexts));
-      contextsList.ours.sort((a, b) => {
-        if (this.normalize(a.title) < this.normalize(b.title)) {
+    const contextsList: ContextsList = JSON.parse(JSON.stringify(contexts));
+    contextsList.ours.sort((a, b) => {
+      if (this.normalize(a.title ?? '') < this.normalize(b.title ?? '')) {
+        return -1;
+      }
+      if (this.normalize(a.title ?? '') > this.normalize(b.title ?? '')) {
+        return 1;
+      }
+      return 0;
+    });
+
+    if (contextsList.shared) {
+      contextsList.shared.sort((a, b) => {
+        if (this.normalize(a.title ?? '') < this.normalize(b.title ?? '')) {
           return -1;
         }
-        if (this.normalize(a.title) > this.normalize(b.title)) {
+        if (this.normalize(a.title ?? '') > this.normalize(b.title ?? '')) {
           return 1;
         }
         return 0;
       });
-
-      if (contextsList.shared) {
-        contextsList.shared.sort((a, b) => {
-          if (this.normalize(a.title) < this.normalize(b.title)) {
-            return -1;
-          }
-          if (this.normalize(a.title) > this.normalize(b.title)) {
-            return 1;
-          }
-          return 0;
-        });
-      } else if (contextsList.public) {
-        contextsList.public.sort((a, b) => {
-          if (this.normalize(a.title) < this.normalize(b.title)) {
-            return -1;
-          }
-          if (this.normalize(a.title) > this.normalize(b.title)) {
-            return 1;
-          }
-          return 0;
-        });
-      }
-      return contextsList;
+    } else if (contextsList.public) {
+      contextsList.public.sort((a, b) => {
+        if (this.normalize(a.title ?? '') < this.normalize(b.title ?? '')) {
+          return -1;
+        }
+        if (this.normalize(a.title ?? '') > this.normalize(b.title ?? '')) {
+          return 1;
+        }
+        return 0;
+      });
     }
+    return contextsList;
   }
 
   normalize(str: string) {
@@ -485,19 +489,18 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe((title: string) => {
         if (title) {
-          this.onCreate({ title, empty });
+          this.onCreate({ title, empty: empty ?? false });
         }
       });
   }
 
-  getPermission(user?): ContextUserPermission {
+  getPermission(user?: ContextProfils): ContextUserPermission | undefined {
     if (user) {
-      const permission = this.permissions.find((p) => p.name === user.name);
-      return permission;
+      return this.permissions.find((p) => p.name === user.name);
     }
   }
 
-  handleToggleCategory(user, parent?) {
+  handleToggleCategory(user: ContextProfils, parent?: ContextProfils) {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;
@@ -511,19 +514,19 @@ export class ContextListComponent implements OnInit, OnDestroy {
     if (parent) {
       let indeterminate = false;
 
-      for (const c of parent.childs) {
+      for (const c of parent.childs ?? []) {
         const cPermission = this.getPermission(c);
-        if (cPermission.checked !== permission.checked) {
+        if (cPermission && cPermission.checked !== permission?.checked) {
           indeterminate = true;
           break;
         }
       }
       const parentPermission = this.getPermission(parent);
       if (parentPermission) {
-        parentPermission.checked = permission.checked;
+        parentPermission.checked = permission?.checked ?? false;
         this.storageService.set(
           'contexts.permissions.' + parentPermission.name,
-          permission.checked
+          permission?.checked ?? false
         );
         parentPermission.indeterminate = indeterminate;
       }
@@ -534,12 +537,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
         const childrenPermission = this.getPermission(c);
         if (
           childrenPermission &&
-          childrenPermission.checked !== permission.checked
+          childrenPermission.checked !== permission?.checked
         ) {
-          childrenPermission.checked = permission.checked;
+          childrenPermission.checked = permission?.checked ?? false;
           this.storageService.set(
             'contexts.permissions.' + childrenPermission.name,
-            permission.checked
+            permission?.checked ?? false
           );
         }
       }
@@ -550,13 +553,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   showContext(context: DetailedContext) {
     context.hidden = false;
-    this.contextService.showContext(context.id).subscribe();
+    this.contextService.showContext(context.id!).subscribe();
 
     this.show.emit(context);
   }
 
   onSelect(context: DetailedContext) {
-    this.contextService.loadContext(context.uri);
+    this.contextService.loadContext(context.uri!);
     this.select.emit(context);
   }
 
@@ -579,10 +582,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
     );
 
     const url =
-      context.uri === currentContext.uri
+      context.uri === currentContext?.uri
         ? this.shareMapService.generateUrl(
-            this.map(),
-            this.contextService.context$.value
+            this.map()!,
+            this.contextService.context$.value!
           )
         : `${baseOrigin}${contextKey}=${context.uri}`;
 
@@ -606,12 +609,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   onEdit(context: Context) {
-    this.contextService.loadEditedContext(context.uri);
+    this.contextService.loadEditedContext(context.uri!);
     this.edit.emit(context);
   }
 
   onSave(context: Context) {
-    const map = this.mapService.getMap();
+    const map = this.mapService.getMap()!;
     const contextFromMap = this.contextService.getContextFromMap(map);
 
     const msgSuccess = () => {
@@ -627,9 +630,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
     if (context.imported) {
       contextFromMap.title = context.title;
-      this.contextService.delete(context.id, true);
+      this.contextService.delete(context.id!, true);
       this.contextService.create(contextFromMap).subscribe((contextCreated) => {
-        this.contextService.loadContext(contextCreated.uri);
+        this.contextService.loadContext(contextCreated.uri!);
         msgSuccess();
       });
       return;
@@ -638,20 +641,21 @@ export class ContextListComponent implements OnInit, OnDestroy {
     const changes: DetailedContext = {
       layers: contextFromMap.layers,
       map: {
-        view: contextFromMap.map.view
+        view: contextFromMap.map!.view
       }
     };
 
     this.contextService
-      .update(context.id, changes)
+      .update(context.id!, changes)
       .pipe(
         tap((changes) => {
           this.handleContextChanges(changes);
           msgSuccess();
         }),
-        switchMap(() => this.contextService.getDetails(context.id)),
+        switchMap(() => this.contextService.getDetails(context.id!)),
         tap((fullContext) => {
-          this.contextService.context$.value.layers = fullContext.layers;
+          const currentCtx = this.contextService.context$.value;
+          if (currentCtx) currentCtx.layers = fullContext.layers;
         }),
         take(1)
       )
@@ -664,8 +668,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     const map = this.mapService.getMap();
     changes.layers.created.forEach((layerCreated) => {
       const layer = isLayerItemOptions(layerCreated)
-        ? map.layerController.getBySourceId(layerCreated.sourceOptions.id)
-        : map.layerController.getByTitle(layerCreated.title);
+        ? map?.layerController.getBySourceId(layerCreated.sourceOptions!.id!)
+        : map?.layerController.getByTitle(layerCreated.title!);
       if (layer) {
         layer.id = layerCreated.id;
       }
@@ -678,12 +682,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
       context.id = context.uri as any;
     }
 
-    this.contextService.setDefault(context.id).subscribe((defaultId) => {
+    this.contextService.setDefault(context.id!).subscribe((defaultId) => {
       if (this.previousMessageId) {
         this.messageService.remove(this.previousMessageId);
       }
 
-      this.contextService.defaultContextId$.next(defaultId);
+      this.contextService.defaultContextId$.next(defaultId!);
       if (defaultId != null && String(defaultId) === String(context.id)) {
         const messageObj = this.messageService.success(
           'igo.context.contextManager.dialog.favoriteMsg',
@@ -701,12 +705,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   onManageTools(context: Context) {
-    this.contextService.loadEditedContext(context.uri);
+    this.contextService.loadEditedContext(context.uri!);
     this.manageTools.emit(context);
   }
 
   onManagePermissions(context: Context) {
-    this.contextService.loadEditedContext(context.uri);
+    this.contextService.loadEditedContext(context.uri!);
     this.managePermissions.emit(context);
   }
 
@@ -719,7 +723,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .subscribe((confirm) => {
         if (confirm) {
           this.contextService
-            .delete(context.id, context.imported)
+            .delete(context.id!, context.imported)
             .subscribe(() => {
               this.messageService.info(
                 'igo.context.contextManager.dialog.deleteMsg',
@@ -739,7 +743,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       title: context.title + '-copy',
       uri: context.uri + '-copy'
     };
-    this.contextService.clone(context.id, properties).subscribe(() => {
+    this.contextService.clone(context.id!, properties).subscribe(() => {
       this.messageService.success(
         'igo.context.contextManager.dialog.cloneMsg',
         'igo.context.contextManager.dialog.cloneTitle',
@@ -752,7 +756,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   onCreate(opts: { title: string; empty: boolean }) {
     const { title, empty } = opts;
-    const context = this.contextService.getContextFromMap(this.map(), empty);
+    const context = this.contextService.getContextFromMap(this.map()!, empty);
     context.title = title;
     this.contextService.create(context).subscribe(() => {
       this.messageService.success(
@@ -761,7 +765,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         undefined,
         { value: context.title }
       );
-      this.contextService.loadContext(context.uri);
+      this.contextService.loadContext(context.uri!);
     });
 
     this.create.emit(opts);
@@ -788,7 +792,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   onHideContext(context: DetailedContext) {
-    this.contextService.hideContext(context.id).subscribe();
+    this.contextService.hideContext(context.id!).subscribe();
 
     context.hidden = true;
     if (!this.showHidden) {

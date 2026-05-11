@@ -38,12 +38,7 @@ export class ContextImportService {
 
   private getFileImporter(
     file: File
-  ): (
-    file: File,
-    observer: Observer<DetailedContext>,
-    projectionIn: string,
-    projectionOut: string
-  ) => void {
+  ): ((file: File, observer: Observer<DetailedContext>) => void) | undefined {
     const extension = getFileExtension(file);
     const mimeType = file.type;
     const allowedMimeTypes = [...ContextImportService.allowedMimeTypes];
@@ -88,7 +83,7 @@ export class ContextImportService {
       try {
         const context = this.parseContextFromFile(
           file,
-          event.target.result as string
+          event.target!.result as string
         );
         observer.next(context);
       } catch {

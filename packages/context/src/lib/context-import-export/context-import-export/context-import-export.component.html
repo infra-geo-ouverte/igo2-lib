@@ -24,12 +24,12 @@
         >
           {{ 'igo.geo.importExportForm.importButton' | translate }}
         </button>
-        <igo-spinner [shown]="loading$ | async" />
+        <igo-spinner [shown]="(loading$ | async) ?? false" />
         <input
           #fileInput
           type="file"
           [style.display]="'none'"
-          (click)="fileInput.value = null"
+          (click)="fileInput.value = ''"
           (change)="importFiles($any($event.target).files)"
         />
       </div>
@@ -86,7 +86,7 @@
       >
         {{ 'igo.geo.importExportForm.exportButton' | translate }}
       </button>
-      <igo-spinner [shown]="loading$ | async" />
+      <igo-spinner [shown]="(loading$ | async) ?? false" />
     </div>
   </form>
 }

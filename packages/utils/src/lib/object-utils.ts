@@ -315,13 +315,10 @@ export class ObjectUtils {
   ): Record<string, unknown> {
     return Object.keys(obj)
       .filter((key) => keys.indexOf(key) < 0)
-      .reduce(
-        (_obj, key) => {
-          _obj[key] = obj[key];
-          return _obj;
-        },
-        {} as Record<string, unknown>
-      );
+      .reduce<Record<string, unknown>>((_obj, key) => {
+        _obj[key] = obj[key];
+        return _obj;
+      }, {});
   }
 
   static isEmpty(obj: Record<string, unknown>): boolean {

@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 
-import { AuthService } from '@igo2/auth';
+import { AuthService, User } from '@igo2/auth';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
@@ -27,13 +27,15 @@ export class UserDialogComponent {
   private auth = inject(AuthService);
   private storageService = inject(StorageService);
 
-  public user;
-  public exp;
+  public user?: User;
+  public exp?: string;
 
   constructor() {
     const decodeToken = this.auth.decodeToken();
     this.user = decodeToken?.user;
-    this.exp = new Date(decodeToken.exp * 1000).toLocaleString();
+    this.exp = decodeToken?.exp
+      ? new Date(decodeToken.exp * 1000).toLocaleString()
+      : undefined;
   }
 
   clearPreferences() {

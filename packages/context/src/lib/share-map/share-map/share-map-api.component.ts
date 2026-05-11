@@ -46,27 +46,28 @@ export class ShareMapApiComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
   private contextService = inject(ContextService);
 
-  public form: UntypedFormGroup;
+  public form?: UntypedFormGroup;
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
-  public url: string;
-  public userId: string;
-  public idContextShared: number;
+  public url?: string;
+  public userId?: string;
+  public idContextShared?: number;
 
   ngOnInit(): void {
     this.auth.authenticate$.subscribe(() => {
       const decodeToken = this.auth.decodeToken();
-      this.userId = decodeToken?.user?.id.toString();
+      this.userId = decodeToken?.user?.id?.toString();
       this.buildForm();
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createUrl(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrlWithApi(inputs);
-    this.createContextShared(this.map(), inputs).subscribe(
+    this.createContextShared(this.map()!, inputs).subscribe(
       (rep) => {
         this.idContextShared = rep.id;
         this.messageService.success(
@@ -85,13 +86,14 @@ export class ShareMapApiComponent implements OnInit {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateContextShared(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this._updateContextShared(
-      this.map(),
+      this.map()!,
       inputs,
-      this.idContextShared
+      this.idContextShared!
     ).subscribe(
       () => {
         this.messageService.success(
@@ -131,7 +133,8 @@ export class ShareMapApiComponent implements OnInit {
     });
   }
 
-  private createContextShared(map: IgoMap, formValues) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private createContextShared(map: IgoMap, formValues: any) {
     const context = this.contextService.getContextFromMap(map);
     context.scope = 'public';
     context.title = formValues.title;
@@ -139,7 +142,8 @@ export class ShareMapApiComponent implements OnInit {
     return this.contextService.create(context);
   }
 
-  private _updateContextShared(map: IgoMap, formValues, id: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _updateContextShared(map: IgoMap, formValues: any, id: number) {
     const context = this.contextService.getContextFromMap(map);
     return this.contextService.update(id, {
       title: formValues.title,
