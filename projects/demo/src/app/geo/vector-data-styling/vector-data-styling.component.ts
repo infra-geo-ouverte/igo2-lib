@@ -39,7 +39,7 @@ export class AppVectorDataStylingComponent {
         name: 'Default',
         symbolizers: [
           { kind: 'Line', color: '#0f16e7', width: 2, opacity: 1 },
-          { kind: 'Fill', color: '#0f16e7', opacity: 0.25 },
+          { kind: 'Fill', color: '#0f16e7', fillOpacity: 0.25 },
           {
             kind: 'Mark',
             wellKnownName: 'circle',
@@ -100,7 +100,7 @@ export class AppVectorDataStylingComponent {
 
     // console.log(
     //   (this.map.layerController.getByTitle('Structures') as VectorLayer).style
-    // );    
+    // );
   }
 
   handleStyleChange(newStyle: GsStyle) {
