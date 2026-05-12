@@ -27,7 +27,6 @@ import {
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
-  MarkerOlStyle,
   MeasureLengthUnit,
   OSMDataSource,
   OSMDataSourceOptions,
@@ -42,6 +41,7 @@ import {
   featureToOl,
   isLayerGroup,
   isLayerItem,
+  markerOlStyle,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -356,7 +356,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = MarkerOlStyle({});
+    const style = markerOlStyle({});
 
     const filterLabel = this.languageService.translate.instant(
       'igo.geo.spatialFilter.spatialFilter'

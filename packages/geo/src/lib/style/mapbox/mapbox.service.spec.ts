@@ -74,12 +74,6 @@ describe('MapboxService', () => {
   });
 
   describe('getStyle', () => {
-    it('should require an OpenLayers layer', async () => {
-      await expect(service.getStyle(mapboxStyle)).rejects.toThrow(
-        'MapboxService.getStyle() requires an ol/layer/Vector or ol/layer/VectorTile instance (2nd argument).'
-      );
-    });
-
     it('should require a style url', async () => {
       await expect(
         service.getStyle(

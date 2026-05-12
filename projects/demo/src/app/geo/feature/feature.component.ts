@@ -189,7 +189,6 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         },
         style: {
           type: 'Mapbox',
-          editable: false,
           style: {
             url: 'mapboxStyleExample-feature.json',
             source: 'source_nameX'

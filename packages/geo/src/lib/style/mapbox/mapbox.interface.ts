@@ -12,9 +12,3 @@ export interface MapboxStyle {
   url: string;
   source: string;
 }
-
-declare module '../shared/style.interface' {
-  interface LayerStyleRegistry {
-    Mapbox: MapboxLayerStyle;
-  }
-}

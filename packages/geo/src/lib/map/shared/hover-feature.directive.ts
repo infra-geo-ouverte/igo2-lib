@@ -35,7 +35,7 @@ import {
 } from '../../layer/shared/layers';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
-import { NearTransparentOlStyle } from '../../style/shared/style.utils';
+import { nearTransparentOlStyle } from '../../style/shared/style.utils';
 
 /**
  * HoverFeatureDirective
@@ -155,7 +155,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       return;
     }
 
-    store.layer.style = topMostHit.layer.style ?? NearTransparentOlStyle();
+    store.layer.style = topMostHit.layer.style ?? nearTransparentOlStyle();
     const hoveredFeature = this.handleRenderFeature(topMostHit.feature);
     store.setLayerOlFeatures([hoveredFeature], FeatureMotion.None);
   }
@@ -266,7 +266,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     }
 
     this.store.clearLayer();
-    this.store.layer.style = NearTransparentOlStyle();
+    this.store.layer.style = nearTransparentOlStyle();
   }
 
   private removeHoverLayer(): void {

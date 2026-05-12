@@ -59,7 +59,7 @@ import {
 } from '../../layer/shared';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { NearTransparentOlStyle } from '../../style/shared/style.utils';
+import { nearTransparentOlStyle } from '../../style/shared/style.utils';
 import { EditionWorkspace } from './edition-workspace';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
@@ -184,7 +184,7 @@ export class EditionWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: NearTransparentOlStyle(),
+        style: nearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',

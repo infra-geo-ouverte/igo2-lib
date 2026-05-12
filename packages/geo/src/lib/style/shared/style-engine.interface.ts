@@ -9,7 +9,7 @@ export interface StyleEngine<T extends BaseLayerStyle = BaseLayerStyle> {
   supports(options: BaseLayerStyle): options is T;
   getStyle(
     options: T,
-    ol?: olLayerVectorTile | olLayerVector
+    ol: olLayerVectorTile | olLayerVector
   ): Promise<AnyOlStyle>;
   getLegend?(options: T): Promise<string | undefined>;
 }

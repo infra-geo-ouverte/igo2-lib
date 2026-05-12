@@ -34,8 +34,8 @@ import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
 import {
-  NearTransparentOlStyle,
-  SelectionOlStyle
+  nearTransparentOlStyle,
+  selectionOlStyle
 } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { WfsWorkspace } from './wfs-workspace';
@@ -153,7 +153,7 @@ export class WmsWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: NearTransparentOlStyle(),
+        style: nearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -259,7 +259,7 @@ export class WmsWorkspaceService {
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? selectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false

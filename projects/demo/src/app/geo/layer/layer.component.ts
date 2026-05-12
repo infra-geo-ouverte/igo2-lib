@@ -232,7 +232,6 @@ export class AppLayerComponent {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
         },
         style: {
-          editable: false,
           type: 'Geostyler',
           style: {
             name: '',

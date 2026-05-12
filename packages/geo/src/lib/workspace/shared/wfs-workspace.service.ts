@@ -27,7 +27,7 @@ import {
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
-import { SelectionOlStyle } from '../../style/shared/style.utils';
+import { selectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -120,7 +120,7 @@ export class WfsWorkspaceService {
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? selectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false

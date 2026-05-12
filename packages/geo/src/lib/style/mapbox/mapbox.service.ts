@@ -6,8 +6,7 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, firstValueFrom, of } from 'rxjs';
-import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
-import { Cacheable } from 'ts-cacheable';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { StyleEngine } from '../shared/style-engine.interface';
 import { AnyOlStyle, LayerStyle } from '../shared/style.types';
@@ -31,14 +30,8 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
 
   async getStyle(
     options: MapboxLayerStyle,
-    ol?: olLayerVectorTile | olLayerVector
+    ol: olLayerVectorTile | olLayerVector
   ): Promise<AnyOlStyle> {
-    if (!ol) {
-      throw new Error(
-        'MapboxService.getStyle() requires an ol/layer/Vector or ol/layer/VectorTile instance (2nd argument).'
-      );
-    }
-
     const { url, source } = options.style;
 
     if (!url?.trim()) {
@@ -55,16 +48,16 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
     const resolved = await firstValueFrom(this.getResolvedStyle$(url));
 
     if (!resolved.spriteBaseUrl) {
-      return stylefunction(ol, resolved.style as any, source);
+      return stylefunction(ol, resolved.style, source);
     }
 
     if (!resolved.spriteJson) {
-      return stylefunction(ol, resolved.style as any, source);
+      return stylefunction(ol, resolved.style, source);
     }
 
     return stylefunction(
       ol,
-      resolved.style as any,
+      resolved.style,
       source,
       undefined,
       resolved.spriteJson,
@@ -76,7 +69,6 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
     return undefined;
   }
 
-  @Cacheable()
   private getResolvedStyle$(url: string): Observable<MapboxResolvedStyle> {
     return this.http.get<MapboxUrlResponse>(url).pipe(
       switchMap((style) => {
@@ -88,16 +80,12 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
           map((spriteJson) => ({ style, spriteBaseUrl, spriteJson })),
           catchError(() => of({ style, spriteBaseUrl }))
         );
-      }),
-      shareReplay({ bufferSize: 1, refCount: true })
+      })
     );
   }
 
-  @Cacheable()
   private getSpriteJson$(spriteBaseUrl: string): Observable<unknown> {
-    return this.http
-      .get<unknown>(spriteBaseUrl + '.json')
-      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+    return this.http.get<unknown>(spriteBaseUrl + '.json');
   }
 
   private toAbsoluteUrl(base: string, maybeRelative: unknown): string {

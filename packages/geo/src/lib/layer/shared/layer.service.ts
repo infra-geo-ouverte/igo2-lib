@@ -30,7 +30,7 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { ClusterOlStyleFunction } from '../../style/shared/style.utils';
+import { clusterOlStyleFunction } from '../../style/shared/style.utils';
 import { StyleService } from '../../style/style.service';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
@@ -190,7 +190,7 @@ export class LayerService {
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
-      layerOptions.style = layerOptions.style ?? ClusterOlStyleFunction();
+      layerOptions.style = layerOptions.style ?? clusterOlStyleFunction();
     }
 
     const vectorLayer = new VectorLayer(

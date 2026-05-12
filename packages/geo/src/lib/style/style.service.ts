@@ -5,7 +5,7 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { StyleEngine } from './shared/style-engine.interface';
 import { AnyOlStyle, AnyStyle } from './shared/style.types';
-import { RandomOlFlatStyle, isAnyOlStyle } from './shared/style.utils';
+import { isAnyOlStyle, randomOlFlatStyle } from './shared/style.utils';
 import { STYLE_ENGINES } from './style.provider';
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +28,7 @@ export class StyleService {
 
     const engine = this.getEngines().find((e) => e.supports(options));
     if (!engine) {
-      return RandomOlFlatStyle();
+      return randomOlFlatStyle();
     }
 
     return engine.getStyle(options, ol);

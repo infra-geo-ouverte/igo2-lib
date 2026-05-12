@@ -17,7 +17,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { RandomOlFlatStyle } from '../../style/shared/style.utils';
+import { randomOlFlatStyle } from '../../style/shared/style.utils';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -46,7 +46,7 @@ export function addLayerAndFeaturesToMap(
     workspace: { enabled: true, searchIndexEnabled: true },
     isIgoInternalLayer: true,
     source,
-    style: RandomOlFlatStyle(),
+    style: randomOlFlatStyle(),
     idbInfo: { storeToIdb, contextUri: contextUri }
   } satisfies VectorLayerOptions) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));

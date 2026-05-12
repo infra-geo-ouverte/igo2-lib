@@ -27,7 +27,7 @@ import {
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared/map';
 import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
-import { SelectionOlStyle } from '../../style/shared/style.utils';
+import { selectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
 import {
@@ -108,7 +108,7 @@ export class FeatureWorkspaceService {
       layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? selectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false
