@@ -151,8 +151,8 @@ describe('GeostylerService', () => {
     it('should keep legend names, strip text symbolizers and normalize icon size', () => {
       const serviceWithPrivateApi = service as unknown as {
         toLegendDescriptors: (
-          styles: GeostylerLayerStyle['style'][]
-        ) => GeostylerLayerStyle['style'][];
+          styles: GeostylerLayerStyle['style']
+        ) => GeostylerLayerStyle['style'];
       };
       const textSymbolizer: TextSymbolizer = {
         kind: 'Text',
@@ -167,17 +167,15 @@ describe('GeostylerService', () => {
         size: 48
       };
 
-      const [result] = serviceWithPrivateApi.toLegendDescriptors([
-        {
-          name: 'Legend Style',
-          rules: [
-            {
-              name: 'Legend Rule',
-              symbolizers: [textSymbolizer, iconSymbolizer]
-            }
-          ]
-        }
-      ]);
+      const result = serviceWithPrivateApi.toLegendDescriptors({
+        name: 'Legend Style',
+        rules: [
+          {
+            name: 'Legend Rule',
+            symbolizers: [textSymbolizer, iconSymbolizer]
+          }
+        ]
+      });
 
       expect(result.name).toBe('Legend Style');
       expect(result.rules[0].name).toBe('Legend Rule');
