@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 
 import { MediaService } from '@igo2/core/media';
-import { NearTransparentOlStyle } from '@igo2/geo';
 import { SubjectStatus } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -36,6 +35,7 @@ import {
 } from '../../layer/shared/layers';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
+import { NearTransparentOlStyle } from '../../style/shared/style.utils';
 
 /**
  * HoverFeatureDirective
