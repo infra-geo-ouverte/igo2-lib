@@ -19,7 +19,6 @@ import { withGeostyler } from './geostyler.provider';
 import { GeostylerService } from './geostyler.service';
 
 const geostylerStyle: GeostylerLayerStyle = {
-  editable: false,
   type: 'Geostyler',
   style: {
     name: 'Test Style',
@@ -63,7 +62,6 @@ describe('GeostylerService', () => {
 
     it('should reject non Geostyler styles', () => {
       const mapboxStyle: MapboxLayerStyle = {
-        editable: false,
         type: 'Mapbox',
         style: {
           url: 'https://example.com/style.json',

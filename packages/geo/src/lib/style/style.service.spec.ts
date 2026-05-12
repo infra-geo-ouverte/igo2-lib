@@ -14,7 +14,6 @@ import { provideStyle } from './style.provider';
 import { StyleService } from './style.service';
 
 const geostylerStyle: GeostylerLayerStyle = {
-  editable: false,
   type: 'Geostyler',
   style: {
     name: 'Test Style',
@@ -33,7 +32,6 @@ const geostylerStyle: GeostylerLayerStyle = {
 };
 
 const mapboxStyle: MapboxLayerStyle = {
-  editable: false,
   type: 'Mapbox',
   style: {
     url: 'https://example.com/style.json',

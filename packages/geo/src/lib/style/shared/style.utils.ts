@@ -15,22 +15,7 @@ import { featuresAreTooDeepInView } from '../../feature/shared/feature.utils';
 import { ClusterParam } from '../../layer/shared/clusterParam';
 import { MapViewController } from '../../map/shared/controllers/view';
 import { isRecord } from './style.guards';
-import type { BaseLayerStyle } from './style.interface';
-import type { AnyOlStyle, LayerStyle } from './style.types';
-
-export function isBaseLayerStyle(
-  value: unknown
-): value is BaseLayerStyle<string, unknown> {
-  return (
-    isRecord(value) && typeof value['type'] === 'string' && 'style' in value
-  );
-}
-
-export function isEditableLayerStyle(
-  value: unknown
-): value is LayerStyle & { editable: true } {
-  return isBaseLayerStyle(value) && value.editable === true;
-}
+import type { AnyOlStyle } from './style.types';
 
 /**
  * -----------------------------------------------------------------------------
@@ -84,11 +69,6 @@ function isRule(value: unknown): value is Rule {
   return isFlatStyleLike(s) || (Array.isArray(s) && s.every(isFlatStyleLike));
 }
 
-/** Array of flat-style entries */
-export function isFlatStyleLikeArray(value: unknown): value is FlatStyleLike[] {
-  return Array.isArray(value) && value.every(isFlatStyleLike);
-}
-
 export function isFlatStyleLike(value: unknown): value is FlatStyleLike {
   if (!value) return false;
 
@@ -121,15 +101,6 @@ export function isStyleLike(value: unknown): value is StyleLike {
 
 export function isAnyOlStyle(value: unknown): value is AnyOlStyle {
   return isStyleLike(value) || isFlatStyleLike(value);
-}
-
-/**
- * Normalize style function output into an array.
- * (prevents ".find is not a function" crashes)
- */
-export function normalizeStyleResult(result: any): Style[] {
-  if (!result) return [];
-  return Array.isArray(result) ? result : [result];
 }
 
 /**

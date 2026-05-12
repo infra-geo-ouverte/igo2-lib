@@ -6,7 +6,7 @@ import olLayerVector from 'ol/layer/Vector';
 import { firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
 
-import { GeostylerLayerStyle } from '../geostyler/geostyler.interface';
+import { AnyOlStyle, LayerStyle } from '../shared/style.types';
 import { provideStyle } from '../style.provider';
 import { StyleService } from '../style.service';
 import { MapboxLayerStyle } from './mapbox.interface';
@@ -14,7 +14,6 @@ import { withMapbox } from './mapbox.provider';
 import { MapboxService } from './mapbox.service';
 
 const mapboxStyle: MapboxLayerStyle = {
-  editable: false,
   type: 'Mapbox',
   style: {
     url: 'https://example.com/style.json',
@@ -53,16 +52,13 @@ describe('MapboxService', () => {
     });
 
     it('should reject non Mapbox styles', () => {
-      const geostylerStyle: GeostylerLayerStyle = {
-        editable: false,
-        type: 'Geostyler',
-        style: {
-          name: 'Test Style',
-          rules: []
-        }
+      const olFlatStyle: AnyOlStyle = {
+        'fill-color': '#ff0000'
       };
 
-      expect(service.supports(geostylerStyle)).toBe(false);
+      expect(service.supports(olFlatStyle as unknown as LayerStyle)).toBe(
+        false
+      );
     });
   });
 

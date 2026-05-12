@@ -4,5 +4,4 @@ export interface BaseLayerStyle<
 > {
   type: TType;
   style?: TStyle;
-  editable?: boolean;
 }

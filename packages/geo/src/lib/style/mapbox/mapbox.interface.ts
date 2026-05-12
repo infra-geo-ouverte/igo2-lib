@@ -5,7 +5,6 @@ export interface MapboxUrlResponse {
 }
 
 export interface MapboxLayerStyle extends BaseLayerStyle {
-  editable: false;
   type: 'Mapbox';
   style: MapboxStyle;
 }

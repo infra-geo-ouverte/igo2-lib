@@ -56,7 +56,6 @@ import {
 import { AnyStyle } from '../../../style/shared/style.types';
 import {
   isAnyOlStyle,
-  isEditableLayerStyle,
   isFlatStyleLike
 } from '../../../style/shared/style.utils';
 import { StyleService } from '../../../style/style.service';
@@ -346,10 +345,7 @@ export class VectorLayer extends Layer {
         title: this.title,
         visible: this.visible,
         opacity: this.opacity,
-        style:
-          isEditableLayerStyle(this.style) || isFlatStyleLike(this.style)
-            ? this.style
-            : undefined,
+        style: isFlatStyleLike(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           _firstLoad: false
         })
