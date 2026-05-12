@@ -1,13 +1,14 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, inject } from '@angular/core';
 
 import {
-  AnyLayerOptions,
-  IgoMap,
-  LayerService,
-  MapBrowserComponent,
-  MapService,
-  MapViewOptions,
-  ZoomButtonComponent
+    AnyLayerOptions,
+    IgoMap,
+    LayerService,
+    MapBrowserComponent,
+    MapService,
+    MapViewOptions,
+    VectorLayer,
+    ZoomButtonComponent
 } from '@igo2/geo';
 
 import { Style as GsStyle } from 'geostyler-style';
@@ -103,7 +104,23 @@ export class AppVectorDataStylingComponent {
     // );
   }
 
-  handleStyleChange(newStyle: GsStyle) {
-    console.log('New style arrived!', newStyle);
-  }
+  handleStyleChange = (newStyle: GsStyle) => {
+    this.style = newStyle;
+
+    const structuresLayer = this.map.layerController.getByTitle(
+      'Structures'
+    ) as VectorLayer | undefined;
+
+    if (!structuresLayer) {
+      console.warn('Structures layer not found');
+      return;
+    }
+
+    // Update the layer's style property, which triggers the style service
+    // to convert Geostyler format to OpenLayers style and apply it
+    structuresLayer.style = {
+      type: 'Geostyler',
+      style: newStyle
+    };
+  };
 }
