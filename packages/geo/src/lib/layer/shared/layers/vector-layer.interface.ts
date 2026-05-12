@@ -37,7 +37,6 @@ export interface VectorLayerOptions extends LayerOptions {
   clusterParam?: ClusterParam;
   trackFeature?: string | number;
   idbInfo?: IdbInfo;
-  hoverAttribute?: string;
 }
 
 export interface IdbInfo {

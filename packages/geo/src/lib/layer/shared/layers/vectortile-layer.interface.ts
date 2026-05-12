@@ -11,5 +11,4 @@ export interface VectorTileLayerOptions extends LayerOptions {
   sourceOptions?: MVTDataSourceOptions;
   ol?: olLayerVectorTile;
   declutter?: boolean;
-  hoverAttribute?: string;
 }
