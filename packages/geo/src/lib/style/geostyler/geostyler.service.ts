@@ -25,28 +25,19 @@ export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
 
   async getStyle(options: GeostylerLayerStyle): Promise<AnyOlStyle> {
     const writeStyleResult = await this.olParser.writeStyle(options.style);
-    this.handleWarningsAndError(writeStyleResult);
-    return writeStyleResult.output;
+    this.handleWarningsAndErrors(writeStyleResult);
+    return writeStyleResult?.output;
   }
 
   async getLegend(options: GeostylerLayerStyle): Promise<string | undefined> {
-    return this.geostylerStylesToLegend([options.style]);
-  }
-
-  private async geostylerStylesToLegend(
-    styles: GsStyle[],
-    width?: number,
-    height?: number
-  ): Promise<string> {
-    const layerDescriptors = this.toLegendDescriptors(styles);
-
-    const computedHeight = height ?? this.computeLegendHeight(styles);
+    const layerDescriptors = this.toLegendDescriptors(options.style);
+    const computedHeight = this.computeLegendHeight(options.style);
 
     const renderer = new LegendRenderer({
       maxColumnWidth: 300,
       overflow: 'auto',
-      styles: layerDescriptors,
-      size: [width ?? 300, height ?? computedHeight],
+      styles: [layerDescriptors],
+      size: [300, computedHeight],
       hideRect: true
     });
     const rendered = await renderer.renderAsImage('svg');
@@ -55,10 +46,10 @@ export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
     return svgXmlString;
   }
 
-  private toLegendDescriptors(styles: GsStyle[]): GsStyle[] {
-    return styles.map((s) => ({
-      name: s.name,
-      rules: s.rules.map((rule) => ({
+  private toLegendDescriptors(style: GsStyle): GsStyle {
+    return {
+      name: style.name,
+      rules: style.rules.map((rule) => ({
         name: rule.name,
         symbolizers: rule.symbolizers
           .filter((symb) => symb.kind !== 'Text')
@@ -69,31 +60,28 @@ export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
             return { ...icon, size: 15 } as IconSymbolizer;
           })
       }))
-    }));
+    };
   }
 
-  private handleWarningsAndError(writeStyleResult: WriteStyleResult) {
+  private handleWarningsAndErrors(writeStyleResult: WriteStyleResult) {
     if (writeStyleResult?.warnings) {
       console.warn(writeStyleResult.warnings);
     }
     if (writeStyleResult?.errors) {
-      console.error(writeStyleResult.errors);
+      throw writeStyleResult?.errors;
     }
     if (writeStyleResult?.unsupportedProperties) {
       console.warn(writeStyleResult.unsupportedProperties);
     }
   }
 
-  private computeLegendHeight(styles: GsStyle[]): number {
+  private computeLegendHeight(style: GsStyle): number {
     const rowHeight = 26;
     const headerHeight = 22;
     const padding = 16;
 
-    const nbRules = styles.reduce((sum, s) => sum + s.rules.length, 0);
-    const nbNames = styles.reduce(
-      (sum, s) => sum + (s.name?.length ? 1 : 0),
-      0
-    );
+    const nbRules = style.rules.length;
+    const nbNames = style.name?.length ? 1 : 0;
 
     const raw = padding + nbNames * headerHeight + nbRules * rowHeight;
 
