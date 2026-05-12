@@ -104,7 +104,7 @@ describe('GeostylerService', () => {
       expect(result).toBe(expectedStyle);
     });
 
-    it('should log parser warnings, errors and unsupported properties', async () => {
+    it('should throw parser errors', async () => {
       const parser = service['olParser'];
       const parserError = new Error('error');
       vi.spyOn(parser, 'writeStyle').mockResolvedValue({
@@ -113,13 +113,39 @@ describe('GeostylerService', () => {
         errors: [parserError],
         unsupportedProperties: ['unsupported']
       } as unknown as WriteStyleResult);
+
+      await expect(service.getStyle(geostylerStyle)).rejects.toEqual([
+        parserError
+      ]);
+    });
+
+    it('should log warnings', async () => {
+      const parser = service['olParser'];
+      vi.spyOn(parser, 'writeStyle').mockResolvedValue({
+        output: undefined,
+        warnings: ['warning'],
+        errors: undefined,
+        unsupportedProperties: undefined
+      } as unknown as WriteStyleResult);
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       await service.getStyle(geostylerStyle);
 
       expect(warnSpy).toHaveBeenCalledWith(['warning']);
-      expect(errorSpy).toHaveBeenCalledWith([parserError]);
+    });
+
+    it('should log unsupported properties', async () => {
+      const parser = service['olParser'];
+      vi.spyOn(parser, 'writeStyle').mockResolvedValue({
+        output: undefined,
+        warnings: undefined,
+        errors: undefined,
+        unsupportedProperties: ['unsupported']
+      } as unknown as WriteStyleResult);
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await service.getStyle(geostylerStyle);
+
       expect(warnSpy).toHaveBeenCalledWith(['unsupported']);
     });
   });
@@ -186,5 +212,4 @@ describe('GeostylerService', () => {
       });
     });
   });
-  // cp
 });
