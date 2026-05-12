@@ -36,31 +36,20 @@ export class VectorTileLayer extends Layer {
       this.ol.setStyle(value);
       return;
     }
-    this.styleService
-      ?.getStyle(value, this.ol)
-      .then((returnStyle) => {
-        this.ol.setStyle(returnStyle);
-      })
-      .catch((error) => {
-        console.error('style promise rejected:', error);
-        throw error;
-      });
-
-    this.styleService
-      ?.getLegend(value)
-      .then((legend) => {
-        if (legend) {
-          this.dataSource.setLegend(
-            Object.assign({}, this.options.legendOptions, { html: legend })
-          );
-        }
-      })
-      .catch((error) => {
-        console.error('legend promise rejected:', error);
-        throw error;
-      });
+    this.styleService?.getStyle(value, this.ol).then((returnStyle) => {
+      this.ol.setStyle(returnStyle);
+    });
   }
 
+  setLegend(value: AnyStyle) {
+    this.styleService?.getLegend(value).then((legend) => {
+      if (legend) {
+        this.dataSource.setLegend(
+          Object.assign({}, this.options.legendOptions, { html: legend })
+        );
+      }
+    });
+  }
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
@@ -70,20 +59,20 @@ export class VectorTileLayer extends Layer {
     super(options, messageService, authInterceptor, styleService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+    this.setLegend(this.options.style);
   }
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVectorTile
     });
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
     const vectorTile = new olLayerVectorTile({
       ...olOptions,
-      style: undefined
+      style: isOlStyle ? layerStyle : undefined
     });
-    vectorTile.once('sourceready', () => {
-      this.style = this.options.style;
-    });
-
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
     vectorTileSource.setTileLoadFunction(
       (tile: VectorTile<Feature>, url: string) => {

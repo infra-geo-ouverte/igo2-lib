@@ -106,29 +106,19 @@ export class VectorLayer extends Layer {
       this.ol.setStyle(value);
       return;
     }
-    this.styleService
-      ?.getStyle(value, this.ol)
-      .then((returnStyle) => {
-        this.ol.setStyle(returnStyle);
-      })
-      .catch((error) => {
-        console.error('style promise rejected:', error);
-        throw error;
-      });
+    this.styleService?.getStyle(value, this.ol).then((returnStyle) => {
+      this.ol.setStyle(returnStyle);
+    });
+  }
 
-    this.styleService
-      ?.getLegend(value)
-      .then((legend) => {
-        if (legend) {
-          this.dataSource.setLegend(
-            Object.assign({}, this.options.legendOptions, { html: legend })
-          );
-        }
-      })
-      .catch((error) => {
-        console.error('legend promise rejected:', error);
-        throw error;
-      });
+  setLegend(value: AnyStyle) {
+    this.styleService?.getLegend(value).then((legend) => {
+      if (legend) {
+        this.dataSource.setLegend(
+          Object.assign({}, this.options.legendOptions, { html: legend })
+        );
+      }
+    });
   }
 
   constructor(
@@ -141,6 +131,8 @@ export class VectorLayer extends Layer {
     super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+    this.setLegend(this.options.style);
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector> {
@@ -168,15 +160,12 @@ export class VectorLayer extends Layer {
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
     const vector = new olLayerVector({
       ...olOptions,
-      style: undefined
+      style: isOlStyle ? layerStyle : undefined
     });
-
-    vector.once('sourceready', () => {
-      this.style = this.options.style;
-    });
-
     const vectorSource = vector.getSource() as olSourceVector;
     let url = vectorSource.getUrl();
     if (typeof url === 'function') {

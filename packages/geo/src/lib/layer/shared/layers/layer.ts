@@ -86,7 +86,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
     public options: LayerOptions,
     @Optional() protected messageService?: MessageService,
     @Optional() protected authInterceptor?: AuthInterceptor,
-    @Optional() protected styleService?: StyleService
+    protected styleService?: StyleService
   ) {
     super(options);
 
