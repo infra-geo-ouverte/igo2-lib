@@ -30,7 +30,10 @@ import Style from 'ol/style/Style';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
-import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource/shared/datasources';
+import {
+  FeatureDataSource,
+  FeatureDataSourceOptions
+} from '../../datasource/shared/datasources';
 import {
   Feature,
   FeatureMotion,
@@ -409,14 +412,15 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       );
       layerCounterID = Math.max(numberId, layerCounterID);
     }
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
+      {
         type: 'vector',
         queryable: true
       };
 
     const searchLayer = this.layerService.createLayer({
       isIgoInternalLayer: true,
-      id: 'igo-search-layer' + ++layerCounterID,
+      id: 'igo-search-layer' + layerCounterID + 1,
       title: layerTitle,
       source: new FeatureDataSource(sourceOptions),
       style: styles,
