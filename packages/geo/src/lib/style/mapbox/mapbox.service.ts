@@ -9,7 +9,8 @@ import { Observable, firstValueFrom, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { StyleEngine } from '../shared/style-engine.interface';
-import { AnyOlStyle, LayerStyle } from '../shared/style.types';
+import { EngineLayerStyle } from '../shared/style.interface';
+import { AnyOlStyle } from '../shared/style.types';
 import { MapboxLayerStyle, MapboxUrlResponse } from './mapbox.interface';
 
 type MapboxResolvedStyle = {
@@ -24,7 +25,7 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
 
   readonly type = 'Mapbox' as const;
 
-  supports(options: LayerStyle): options is MapboxLayerStyle {
+  supports(options: EngineLayerStyle): options is MapboxLayerStyle {
     return options?.type === 'Mapbox';
   }
 

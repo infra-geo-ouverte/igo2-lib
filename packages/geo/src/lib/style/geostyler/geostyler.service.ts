@@ -9,7 +9,8 @@ import {
 } from 'geostyler-style';
 
 import { StyleEngine } from '../shared/style-engine.interface';
-import { AnyOlStyle, LayerStyle } from '../shared/style.types';
+import { EngineLayerStyle } from '../shared/style.interface';
+import { AnyOlStyle } from '../shared/style.types';
 import { GeostylerLayerStyle } from './geostyler.interface';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
   // Reuse the parser instance instead of creating one on every call
   private readonly olParser = new OpenLayersParser();
 
-  supports(options: LayerStyle): options is GeostylerLayerStyle {
+  supports(options: EngineLayerStyle): options is GeostylerLayerStyle {
     return options?.type === 'Geostyler';
   }
 

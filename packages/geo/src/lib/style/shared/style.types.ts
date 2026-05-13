@@ -3,11 +3,7 @@ import { FlatStyleLike } from 'ol/style/flat';
 
 import { OlParserStyleFct } from 'geostyler-openlayers-parser';
 
-import { GeostylerLayerStyle } from '../geostyler/geostyler.interface';
-import { MapboxLayerStyle } from '../mapbox/mapbox.interface';
-import { BaseLayerStyle } from './style.base.interface';
-
-export type LayerStyle = GeostylerLayerStyle | MapboxLayerStyle;
+import { EngineLayerStyle } from './style.base.interface';
 
 export type AnyOlStyle = StyleLike | FlatStyleLike | OlParserStyleFct;
-export type AnyStyle = AnyOlStyle | BaseLayerStyle;
+export type AnyStyle = AnyOlStyle | EngineLayerStyle;

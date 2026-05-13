@@ -28,8 +28,8 @@ import { FlatStyle } from 'ol/style/flat';
 
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
+import { isOlFlatStyleLike } from '../../shared/style.guards';
 import { AnyStyle } from '../../shared/style.types';
-import { isOlFlatStyleLike } from '../../shared/style.utils';
 import {
   LayerMatDialogData,
   StyleModalLayerData

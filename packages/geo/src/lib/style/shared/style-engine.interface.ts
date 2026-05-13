@@ -1,12 +1,12 @@
 import olLayerVector from 'ol/layer/Vector';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 
-import { BaseLayerStyle } from './style.interface';
+import { EngineLayerStyle } from './style.interface';
 import { AnyOlStyle } from './style.types';
 
-export interface StyleEngine<T extends BaseLayerStyle = BaseLayerStyle> {
+export interface StyleEngine<T extends EngineLayerStyle = EngineLayerStyle> {
   readonly type: T['type'];
-  supports(options: BaseLayerStyle): options is T;
+  supports(options: EngineLayerStyle): options is T;
   getStyle(
     options: T,
     ol: olLayerVectorTile | olLayerVector

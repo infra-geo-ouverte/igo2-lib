@@ -53,11 +53,11 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { AnyStyle } from '../../../style/shared/style.types';
 import {
   isAnyOlStyle,
   isOlFlatStyleLike
-} from '../../../style/shared/style.utils';
+} from '../../../style/shared/style.guards';
+import { AnyStyle } from '../../../style/shared/style.types';
 import { StyleService } from '../../../style/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';

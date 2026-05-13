@@ -3,7 +3,7 @@ import { EnvironmentProviders, Provider } from '@angular/core';
 import { StyleEngineKind } from './style.enum';
 import { AnyOlStyle } from './style.types';
 
-export type { BaseLayerStyle } from './style.base.interface';
+export type { EngineLayerStyle } from './style.base.interface';
 
 export interface StyleEngineFeature<KindT extends StyleEngineKind> {
   kind: KindT;

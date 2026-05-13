@@ -9,8 +9,8 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { isAnyOlStyle } from '../../../style/shared/style.guards';
 import { AnyStyle } from '../../../style/shared/style.types';
-import { isAnyOlStyle } from '../../../style/shared/style.utils';
 import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';

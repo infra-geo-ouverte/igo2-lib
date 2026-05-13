@@ -6,7 +6,8 @@ import olLayerVector from 'ol/layer/Vector';
 import { firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
 
-import { AnyOlStyle, LayerStyle } from '../shared/style.types';
+import { EngineLayerStyle } from '../shared/style.interface';
+import { AnyOlStyle } from '../shared/style.types';
 import { provideStyle } from '../style.provider';
 import { StyleService } from '../style.service';
 import { MapboxLayerStyle } from './mapbox.interface';
@@ -56,7 +57,7 @@ describe('MapboxService', () => {
         'fill-color': '#ff0000'
       };
 
-      expect(service.supports(olFlatStyle as unknown as LayerStyle)).toBe(
+      expect(service.supports(olFlatStyle as unknown as EngineLayerStyle)).toBe(
         false
       );
     });

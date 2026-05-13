@@ -7,15 +7,13 @@ import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
 import Icon from 'ol/style/Icon';
 import Stroke from 'ol/style/Stroke';
-import Style, { type StyleFunction, type StyleLike } from 'ol/style/Style';
+import Style, { type StyleFunction } from 'ol/style/Style';
 import Text from 'ol/style/Text';
-import { type FlatStyleLike, type Rule } from 'ol/style/flat';
+import { type FlatStyleLike } from 'ol/style/flat';
 
 import { featuresAreTooDeepInView } from '../../feature/shared/feature.utils';
 import { type ClusterParam } from '../../layer/shared/clusterParam';
 import { type MapViewController } from '../../map/shared/controllers/view';
-import { isRecord } from './style.guards';
-import type { AnyOlStyle } from './style.types';
 
 type StyleVariant = 'base' | 'focus' | 'selection';
 type ExtentTuple = [number, number, number, number];
@@ -38,23 +36,6 @@ type MarkerStyleOptions = Readonly<{
 type FeatureWithTitle = OlFeature<OlGeometry> & {
   getProperties(): { _mapTitle?: string };
 };
-
-const FLAT_STYLE_KEYS = [
-  'fill-color',
-  'fill-opacity',
-  'stroke-color',
-  'stroke-width',
-  'stroke-opacity',
-  'circle-radius',
-  'circle-fill-color',
-  'icon-src',
-  'icon-scale',
-  'text-field',
-  'text-font',
-  'text-size',
-  'zIndex',
-  'renderer'
-] as const satisfies readonly string[];
 
 const STYLES_VARIANT: Record<StyleVariant, StyleConfig> = {
   base: {
@@ -95,75 +76,6 @@ const GEOMETRY_THRESHOLD = 0.0025;
 const RANDOM_STYLE_MAX_CHANNEL = 255;
 const CLUSTER_MIN_RADIUS = 6;
 const CLUSTER_RADIUS_FACTOR = 5;
-
-/**
- * -----------------------------------------------------------------------------
- * OpenLayers style guards
- * -----------------------------------------------------------------------------
- */
-
-function isOlStyleInstance(value: unknown): value is Style {
-  return value instanceof Style;
-}
-
-function isOlStyleInstanceArray(value: unknown): value is Style[] {
-  return Array.isArray(value) && value.every(isOlStyleInstance);
-}
-
-function isOlStyleFunction(value: unknown): value is StyleFunction {
-  return typeof value === 'function';
-}
-
-/**
- * -----------------------------------------------------------------------------
- * Flat style guards (heuristics)
- * -----------------------------------------------------------------------------
- */
-
-function isRule(value: unknown): value is Rule {
-  if (!isRecord(value) || !('style' in value)) return false;
-
-  const styleValue = value.style;
-  return (
-    isOlFlatStyleLike(styleValue) ||
-    (Array.isArray(styleValue) && styleValue.every(isOlFlatStyleLike))
-  );
-}
-
-function isRuleArray(value: unknown): value is Rule[] {
-  return Array.isArray(value) && value.every(isRule);
-}
-
-function hasAnyFlatStyleKey(value: Record<string, unknown>): boolean {
-  return FLAT_STYLE_KEYS.some((key) =>
-    Object.prototype.hasOwnProperty.call(value, key)
-  );
-}
-
-export function isOlFlatStyleLike(value: unknown): value is FlatStyleLike {
-  if (!value) return false;
-
-  if (isRuleArray(value)) return true;
-
-  if (Array.isArray(value)) {
-    return value.length > 0 && value.every(isOlFlatStyleLike);
-  }
-
-  return isRecord(value) && hasAnyFlatStyleKey(value);
-}
-
-function isOlStyleLike(value: unknown): value is StyleLike {
-  return (
-    !!value &&
-    (isOlStyleInstance(value) ||
-      isOlStyleInstanceArray(value) ||
-      isOlStyleFunction(value))
-  );
-}
-
-export function isAnyOlStyle(value: unknown): value is AnyOlStyle {
-  return isOlStyleLike(value) || isOlFlatStyleLike(value);
-}
 
 /**
  * -----------------------------------------------------------------------------
