@@ -9,19 +9,20 @@ import {
 } from 'geostyler-style';
 
 import { StyleEngine } from '../shared/style-engine.interface';
+import { StyleEngineKind } from '../shared/style.enum';
 import { EngineLayerStyle } from '../shared/style.interface';
 import { AnyOlStyle } from '../shared/style.types';
 import { GeostylerLayerStyle } from './geostyler.interface';
 
 @Injectable()
 export class GeostylerService implements StyleEngine<GeostylerLayerStyle> {
-  readonly type = 'Geostyler' as const;
+  readonly type = StyleEngineKind.Geostyler;
 
   // Reuse the parser instance instead of creating one on every call
   private readonly olParser = new OpenLayersParser();
 
   supports(options: EngineLayerStyle): options is GeostylerLayerStyle {
-    return options?.type === 'Geostyler';
+    return options?.type === this.type;
   }
 
   async getStyle(options: GeostylerLayerStyle): Promise<AnyOlStyle> {

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { Media, MediaService } from '@igo2/core/media';
 import {
   DataSourceService,
+  EngineLayerStyle,
   IgoMap,
   IgoMapModule,
   LayerService,
@@ -137,7 +138,7 @@ export class AppHoverComponent {
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
       })
       .subscribe((dataSource: MVTDataSource) => {
-        const rtssGeostylerStyle = {
+        const rtssGeostylerStyle: EngineLayerStyle = {
           type: 'Geostyler',
           style: {
             name: 'RTSS hover style',

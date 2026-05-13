@@ -11,7 +11,8 @@ import {
 } from 'geostyler-style';
 import { vi } from 'vitest';
 
-import { MapboxLayerStyle } from '../mapbox/mapbox.interface';
+import { EngineLayerStyle } from '../shared/style.base.interface';
+import { AnyOlStyle } from '../shared/style.types';
 import { provideStyle } from '../style.provider';
 import { StyleService } from '../style.service';
 import { GeostylerLayerStyle } from './geostyler.interface';
@@ -61,15 +62,13 @@ describe('GeostylerService', () => {
     });
 
     it('should reject non Geostyler styles', () => {
-      const mapboxStyle: MapboxLayerStyle = {
-        type: 'Mapbox',
-        style: {
-          url: 'https://example.com/style.json',
-          source: 'main'
-        }
+      const olFlatStyle: AnyOlStyle = {
+        'fill-color': '#ff0000'
       };
 
-      expect(service.supports(mapboxStyle)).toBe(false);
+      expect(service.supports(olFlatStyle as unknown as EngineLayerStyle)).toBe(
+        false
+      );
     });
   });
 

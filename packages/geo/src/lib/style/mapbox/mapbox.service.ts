@@ -8,6 +8,7 @@ import { stylefunction } from 'ol-mapbox-style';
 import { Observable, firstValueFrom, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
+import { StyleEngineKind } from '../shared';
 import { StyleEngine } from '../shared/style-engine.interface';
 import { EngineLayerStyle } from '../shared/style.interface';
 import { AnyOlStyle } from '../shared/style.types';
@@ -23,10 +24,10 @@ type MapboxResolvedStyle = {
 export class MapboxService implements StyleEngine<MapboxLayerStyle> {
   private http = inject(HttpClient);
 
-  readonly type = 'Mapbox' as const;
+  readonly type = StyleEngineKind.Mapbox;
 
   supports(options: EngineLayerStyle): options is MapboxLayerStyle {
-    return options?.type === 'Mapbox';
+    return options?.type === this.type;
   }
 
   async getStyle(
