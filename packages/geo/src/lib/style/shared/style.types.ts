@@ -9,9 +9,5 @@ import { BaseLayerStyle } from './style.base.interface';
 
 export type LayerStyle = GeostylerLayerStyle | MapboxLayerStyle;
 
-export type AnyOlStyle =
-  | StyleLike
-  | FlatStyleLike
-  | OlParserStyleFct
-  | undefined;
+export type AnyOlStyle = StyleLike | FlatStyleLike | OlParserStyleFct;
 export type AnyStyle = AnyOlStyle | BaseLayerStyle;
