@@ -1,5 +1,3 @@
-import { inject, provideAppInitializer } from '@angular/core';
-
 import { StyleEngineKind } from '../shared/style.enum';
 import { StyleEngineFeature } from '../shared/style.interface';
 import { STYLE_ENGINES } from '../style.provider';
@@ -10,11 +8,7 @@ export function withMapbox(): StyleEngineFeature<StyleEngineKind.Mapbox> {
     kind: StyleEngineKind.Mapbox,
     providers: [
       MapboxService,
-      { provide: STYLE_ENGINES, useExisting: MapboxService, multi: true },
-
-      provideAppInitializer(() => {
-        inject(MapboxService);
-      })
+      { provide: STYLE_ENGINES, useExisting: MapboxService, multi: true }
     ]
   };
 }
