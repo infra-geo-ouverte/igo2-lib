@@ -1,4 +1,11 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, inject } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  ElementRef,
+  NgZone,
+  ViewChild,
+  inject
+} from '@angular/core';
 
 import {
   AnyLayerOptions,
@@ -19,6 +26,10 @@ import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.compo
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 import './geostyler-wc.component';
 
+interface GeostylerWebComponent extends HTMLElement {
+  data?: object;
+}
+
 @Component({
   selector: 'app-vector-data-styling',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -34,10 +45,24 @@ import './geostyler-wc.component';
 export class AppVectorDataStylingComponent {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
+  private ngZone = inject(NgZone);
+  @ViewChild('geostylerElement')
+  geostylerElement: ElementRef<GeostylerWebComponent>;
 
   public structuresLayer: VectorLayer;
 
-  public geoStylerData: object = null;
+  private _geoStylerData: object | null = null;
+  public get geoStylerData(): object | null {
+    return this._geoStylerData;
+  }
+  public set geoStylerData(value: object | null) {
+    this._geoStylerData = value;
+    // Manually sync to web component element to ensure React component gets the update
+    if (this.geostylerElement) {
+      this.geostylerElement.nativeElement.data = value;
+      console.log('Manually synced data to web component element:', value);
+    }
+  }
   public name: string = 'Hello WorDld';
   public style: GsStyle = {
     name: 'My Style',
@@ -116,9 +141,15 @@ export class AppVectorDataStylingComponent {
 
     this.structuresLayer.dataSource.ol.once('featuresloadend', () => {
       const features = this.structuresLayer.dataSource.ol.getFeatures();
-      const geojson = new GeoJSON().writeFeaturesObject(features); // todo:
+      if (features) console.log('Features loaded:', features.length);
 
-      this.geoStylerData = geojson;
+      const geojson = new GeoJSON().writeFeaturesObject(features); // todo:
+      console.log('GeoJSON data:', geojson);
+
+      // OpenLayers events can fire outside Angular zone; re-enter zone to update bindings.
+      this.ngZone.run(() => {
+        this.geoStylerData = geojson;
+      });
     });
   }
 
