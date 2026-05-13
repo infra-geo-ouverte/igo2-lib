@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@r2wc/react-to-web-component": "^2.1.1",
-    "geostyler": "^18.5.1"
+    "geostyler": "^18.5.1",
+    "geostyler-geojson-parser": "^2.0.0"
   }
 }
