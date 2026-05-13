@@ -38,10 +38,10 @@ import {
   SpatialFilterType,
   VectorLayer,
   VectorLayerOptions,
-  createOverlayMarkerStyle,
   featureToOl,
   isLayerGroup,
   isLayerItem,
+  markerOlStyle,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -356,7 +356,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = createOverlayMarkerStyle();
+    const style = markerOlStyle({});
 
     const filterLabel = this.languageService.translate.instant(
       'igo.geo.spatialFilter.spatialFilter'

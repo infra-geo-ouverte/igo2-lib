@@ -9,6 +9,9 @@ import { Feature } from 'ol';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { isAnyOlStyle } from '../../../style/shared/style.guards';
+import { AnyStyle } from '../../../style/shared/style.types';
+import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -22,24 +25,55 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
+  private _style: AnyStyle;
+  get style(): AnyStyle {
+    return this._style;
+  }
+
+  set style(value: AnyStyle) {
+    this._style = value;
+    if (!this.styleService && isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+      return;
+    }
+    this.styleService?.getStyle(value, this.ol).then((returnStyle) => {
+      this.ol.setStyle(returnStyle);
+    });
+  }
+
+  setLegend(value: AnyStyle) {
+    this.styleService?.getLegend(value).then((legend) => {
+      if (legend) {
+        this.dataSource.setLegend(
+          Object.assign({}, this.options.legendOptions, { html: legend })
+        );
+      }
+    });
+  }
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+    this.setLegend(this.options.style);
   }
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVectorTile
     });
-
-    const vectorTile = new olLayerVectorTile(olOptions);
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
+    const vectorTile = new olLayerVectorTile({
+      ...olOptions,
+      style: isOlStyle ? layerStyle : undefined
+    });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
-
     vectorTileSource.setTileLoadFunction(
       (tile: VectorTile<Feature>, url: string) => {
         const loader = this.customLoader(

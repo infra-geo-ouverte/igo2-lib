@@ -53,7 +53,12 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
+import {
+  isAnyOlStyle,
+  isOlFlatStyleLike
+} from '../../../style/shared/style.guards';
+import { AnyStyle } from '../../../style/shared/style.types';
+import { StyleService } from '../../../style/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -89,15 +94,44 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
+  private _style: AnyStyle;
+  get style(): AnyStyle {
+    return this._style;
+  }
+
+  set style(value: AnyStyle) {
+    this._style = value;
+    if (!this.styleService && isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+      return;
+    }
+    this.styleService?.getStyle(value, this.ol).then((returnStyle) => {
+      this.ol.setStyle(returnStyle);
+    });
+  }
+
+  setLegend(value: AnyStyle) {
+    this.styleService?.getLegend(value).then((legend) => {
+      if (legend) {
+        this.dataSource.setLegend(
+          Object.assign({}, this.options.legendOptions, { html: legend })
+        );
+      }
+    });
+  }
+
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService
+    private geoNetworkService?: GeoNetworkService,
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+    this.setLegend(this.options.style);
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector> {
@@ -125,8 +159,12 @@ export class VectorLayer extends Layer {
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
-
-    const vector = new olLayerVector(olOptions);
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
+    const vector = new olLayerVector({
+      ...olOptions,
+      style: isOlStyle ? layerStyle : undefined
+    });
     const vectorSource = vector.getSource() as olSourceVector;
     let url = vectorSource.getUrl();
     if (typeof url === 'function') {
@@ -174,7 +212,6 @@ export class VectorLayer extends Layer {
     if (loader) {
       vectorSource.setLoader(loader);
     }
-
     if (this.options.idbInfo?.storeToIdb) {
       this.handleIdbStorage(vector);
     }
@@ -291,7 +328,6 @@ export class VectorLayer extends Layer {
   }
 
   private maintainOptionsInIdb() {
-    this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
     const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo?.contextUri,
@@ -309,7 +345,7 @@ export class VectorLayer extends Layer {
         title: this.title,
         visible: this.visible,
         opacity: this.opacity,
-        igoStyle: this.options.igoStyle,
+        style: isOlFlatStyleLike(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           _firstLoad: false
         })
@@ -356,14 +392,23 @@ export class VectorLayer extends Layer {
       const opacity = easeOut(1 - elapsedRatio);
       const newColor = ColorAsArray(this.options.animation.color || 'red');
       newColor[3] = opacity;
-      let style = this.ol
-        .getStyleFunction()
-        .call(this, feature)
-        .find((style2) => {
-          return style2.getImage();
-        });
+
+      const styleFn = this.ol.getStyleFunction();
+      if (!styleFn) {
+        unByKey(listenerKey);
+        return;
+      }
+      const res = styleFn(feature, frameState.viewState.resolution);
+      const styles = !res ? [] : Array.isArray(res) ? res : [res];
+
+      const style =
+        styles.find(
+          (s) => s && typeof s.getImage === 'function' && s.getImage()
+        ) ?? styles[0];
+
       if (!style) {
-        style = this.ol.getStyleFunction().call(this, feature)[0];
+        unByKey(listenerKey);
+        return;
       }
       const styleClone = style.clone();
 

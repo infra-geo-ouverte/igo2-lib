@@ -15,7 +15,6 @@ export const environment: EnvironmentOptions = {
         ]
       }
     },
-    importWithStyle: true,
     projections: [
       {
         code: 'EPSG:32198',
@@ -41,8 +40,7 @@ export const environment: EnvironmentOptions = {
     },
     importExport: {
       url: '/apis/ogre',
-      gpxAggregateInComment: true,
-      importWithStyle: true
+      gpxAggregateInComment: true
     },
     catalog: {
       sources: [
