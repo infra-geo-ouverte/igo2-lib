@@ -200,7 +200,7 @@ provideStyle(withGeostyler());
 
 ### Cas 5 — `importWithStyle`
 
-Cette option n’existe plus. Après import, appliquer un style explicite au layer si nécessaire.
+Cette option n’existe plus. Après import, appliquer un style explicite à la couche si nécessaire.
 
 ```ts
 style: {
@@ -211,7 +211,7 @@ style: {
 }
 ```
 
-Un style par défaut aléatoire sera fourni et sera éditable par le UI au besoin.
+Un style par défaut aléatoire sera fourni et sera éditable par l’UI au besoin.
 
 ### Cas 6 — migration des styles de recherche / query
 
@@ -226,6 +226,7 @@ Les anciens `queryOverlayStyle` et `searchOverlayStyle` deviennent un objet `Con
 ```
 
 Ces styles sont désormais gérés par les outils de recherche et de requête plutôt que par des overlays exposés sur `map`.
+
 #### Avant
 
 ```ts
