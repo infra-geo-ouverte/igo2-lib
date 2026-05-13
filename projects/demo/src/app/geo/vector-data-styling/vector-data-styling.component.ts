@@ -1,15 +1,17 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, inject } from '@angular/core';
 
 import {
-    AnyLayerOptions,
-    IgoMap,
-    LayerService,
-    MapBrowserComponent,
-    MapService,
-    MapViewOptions,
-    VectorLayer,
-    ZoomButtonComponent
+  AnyLayerOptions,
+  IgoMap,
+  LayerService,
+  MapBrowserComponent,
+  MapService,
+  MapViewOptions,
+  VectorLayer,
+  ZoomButtonComponent
 } from '@igo2/geo';
+
+import { GeoJSON } from 'ol/format';
 
 import { Style as GsStyle } from 'geostyler-style';
 
@@ -32,6 +34,10 @@ import './geostyler-wc.component';
 export class AppVectorDataStylingComponent {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
+
+  public structuresLayer: VectorLayer;
+
+  public geoStylerData: object = null;
   public name: string = 'Hello WorDld';
   public style: GsStyle = {
     name: 'My Style',
@@ -99,26 +105,29 @@ export class AppVectorDataStylingComponent {
       .createLayers(layers)
       .subscribe((layers) => this.map.layerController.add(...layers));
 
-    // console.log(
-    //   (this.map.layerController.getByTitle('Structures') as VectorLayer).style
-    // );
+    this.structuresLayer = this.map.layerController.getByTitle('Structures') as
+      | VectorLayer
+      | undefined;
+
+    if (!this.structuresLayer) {
+      console.warn('Structures layer not found');
+      return;
+    }
+
+    this.structuresLayer.dataSource.ol.once('featuresloadend', () => {
+      const features = this.structuresLayer.dataSource.ol.getFeatures();
+      const geojson = new GeoJSON().writeFeaturesObject(features); // todo:
+
+      this.geoStylerData = geojson;
+    });
   }
 
   handleStyleChange = (newStyle: GsStyle) => {
     this.style = newStyle;
 
-    const structuresLayer = this.map.layerController.getByTitle(
-      'Structures'
-    ) as VectorLayer | undefined;
-
-    if (!structuresLayer) {
-      console.warn('Structures layer not found');
-      return;
-    }
-
     // Update the layer's style property, which triggers the style service
     // to convert Geostyler format to OpenLayers style and apply it
-    structuresLayer.style = {
+    this.structuresLayer.style = {
       type: 'Geostyler',
       style: newStyle
     };
