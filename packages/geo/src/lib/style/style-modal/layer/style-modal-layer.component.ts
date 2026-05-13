@@ -29,7 +29,7 @@ import { FlatStyle } from 'ol/style/flat';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
 import { AnyStyle } from '../../shared/style.types';
-import { isFlatStyleLike } from '../../shared/style.utils';
+import { isOlFlatStyleLike } from '../../shared/style.utils';
 import {
   LayerMatDialogData,
   StyleModalLayerData
@@ -84,8 +84,8 @@ export class StyleModalLayerComponent implements OnInit {
   set style(value: AnyStyle) {
     this.data.layer.style = value;
   }
-  isFlatStyleLike(): boolean {
-    return isFlatStyleLike(this.style);
+  isOlFlatStyleLike(): boolean {
+    return isOlFlatStyleLike(this.style);
   }
 
   ngOnInit() {

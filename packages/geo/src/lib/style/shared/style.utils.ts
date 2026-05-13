@@ -17,10 +17,10 @@ import { type MapViewController } from '../../map/shared/controllers/view';
 import { isRecord } from './style.guards';
 import type { AnyOlStyle } from './style.types';
 
-type ResultStyleVariant = 'base' | 'focus' | 'selection';
+type StyleVariant = 'base' | 'focus' | 'selection';
 type ExtentTuple = [number, number, number, number];
 
-type ResultStyleConfig = Readonly<{
+type StyleConfig = Readonly<{
   fill: string;
   stroke: string;
   strokeWidth: number;
@@ -56,7 +56,7 @@ const FLAT_STYLE_KEYS = [
   'renderer'
 ] as const satisfies readonly string[];
 
-const RESULT_STYLES: Record<ResultStyleVariant, ResultStyleConfig> = {
+const STYLES_VARIANT: Record<StyleVariant, StyleConfig> = {
   base: {
     fill: 'rgba(0, 161, 222, 0.15)',
     stroke: 'rgba(0, 161, 222, 0.5)',
@@ -91,7 +91,7 @@ const DEFAULT_TEXT_FONT = '12px Calibri,sans-serif';
 const DEFAULT_TEXT_STROKE_WIDTH = 3;
 const DEFAULT_MARKER_ANCHOR: [number, number] = [0.5, 0.92];
 
-const RESULT_GEOMETRY_THRESHOLD = 0.0025;
+const GEOMETRY_THRESHOLD = 0.0025;
 const RANDOM_STYLE_MAX_CHANNEL = 255;
 const CLUSTER_MIN_RADIUS = 6;
 const CLUSTER_RADIUS_FACTOR = 5;
@@ -102,15 +102,15 @@ const CLUSTER_RADIUS_FACTOR = 5;
  * -----------------------------------------------------------------------------
  */
 
-export function isOlStyleInstance(value: unknown): value is Style {
+function isOlStyleInstance(value: unknown): value is Style {
   return value instanceof Style;
 }
 
-export function isOlStyleInstanceArray(value: unknown): value is Style[] {
+function isOlStyleInstanceArray(value: unknown): value is Style[] {
   return Array.isArray(value) && value.every(isOlStyleInstance);
 }
 
-export function isStyleFunction(value: unknown): value is StyleFunction {
+function isOlStyleFunction(value: unknown): value is StyleFunction {
   return typeof value === 'function';
 }
 
@@ -125,12 +125,12 @@ function isRule(value: unknown): value is Rule {
 
   const styleValue = value.style;
   return (
-    isFlatStyleLike(styleValue) ||
-    (Array.isArray(styleValue) && styleValue.every(isFlatStyleLike))
+    isOlFlatStyleLike(styleValue) ||
+    (Array.isArray(styleValue) && styleValue.every(isOlFlatStyleLike))
   );
 }
 
-export function isRuleArray(value: unknown): value is Rule[] {
+function isRuleArray(value: unknown): value is Rule[] {
   return Array.isArray(value) && value.every(isRule);
 }
 
@@ -140,29 +140,29 @@ function hasAnyFlatStyleKey(value: Record<string, unknown>): boolean {
   );
 }
 
-export function isFlatStyleLike(value: unknown): value is FlatStyleLike {
+export function isOlFlatStyleLike(value: unknown): value is FlatStyleLike {
   if (!value) return false;
 
   if (isRuleArray(value)) return true;
 
   if (Array.isArray(value)) {
-    return value.length > 0 && value.every(isFlatStyleLike);
+    return value.length > 0 && value.every(isOlFlatStyleLike);
   }
 
   return isRecord(value) && hasAnyFlatStyleKey(value);
 }
 
-export function isStyleLike(value: unknown): value is StyleLike {
+function isOlStyleLike(value: unknown): value is StyleLike {
   return (
     !!value &&
     (isOlStyleInstance(value) ||
       isOlStyleInstanceArray(value) ||
-      isStyleFunction(value))
+      isOlStyleFunction(value))
   );
 }
 
 export function isAnyOlStyle(value: unknown): value is AnyOlStyle {
-  return isStyleLike(value) || isFlatStyleLike(value);
+  return isOlStyleLike(value) || isOlFlatStyleLike(value);
 }
 
 /**
@@ -193,7 +193,7 @@ function createStyleGeometry(
     !featuresAreTooDeepInView(
       viewController,
       extent as ExtentTuple,
-      RESULT_GEOMETRY_THRESHOLD
+      GEOMETRY_THRESHOLD
     )
   ) {
     return undefined;
@@ -202,12 +202,12 @@ function createStyleGeometry(
   return new olPoint(getCenter(extent));
 }
 
-function createResultStyle(
-  variant: ResultStyleVariant,
+function createStyleVariant(
+  variant: StyleVariant,
   text?: string,
   imposedGeometry?: OlGeometry
 ): Style[] {
-  const config = RESULT_STYLES[variant];
+  const config = STYLES_VARIANT[variant];
 
   return [
     markerOlStyle({
@@ -226,9 +226,9 @@ function createResultStyle(
   ];
 }
 
-export function resultStyle(
+export function styleVariant(
   viewController?: MapViewController,
-  type: ResultStyleVariant = 'base'
+  type: StyleVariant = 'base'
 ): StyleFunction {
   return (olFeature: OlFeature<OlGeometry>) => {
     const { _mapTitle: mapTitle } = (
@@ -236,7 +236,7 @@ export function resultStyle(
     ).getProperties();
     const imposedGeometry = createStyleGeometry(viewController, olFeature);
 
-    return createResultStyle(type, mapTitle, imposedGeometry);
+    return createStyleVariant(type, mapTitle, imposedGeometry);
   };
 }
 
@@ -244,21 +244,21 @@ export function baseOlStyle(
   text?: string,
   imposedGeometry?: OlGeometry
 ): Style[] {
-  return createResultStyle('base', text, imposedGeometry);
+  return createStyleVariant('base', text, imposedGeometry);
 }
 
 export function focusOlStyle(
   text?: string,
   imposedGeometry?: OlGeometry
 ): Style[] {
-  return createResultStyle('focus', text, imposedGeometry);
+  return createStyleVariant('focus', text, imposedGeometry);
 }
 
 export function selectionOlStyle(
   text?: string,
   imposedGeometry?: OlGeometry
 ): Style[] {
-  return createResultStyle('selection', text, imposedGeometry);
+  return createStyleVariant('selection', text, imposedGeometry);
 }
 
 /**

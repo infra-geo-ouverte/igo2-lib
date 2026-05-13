@@ -38,7 +38,7 @@ import {
   TrackFeatureButtonComponent,
   VectorLayer,
   VectorTileLayer,
-  isFlatStyleLike,
+  isOlFlatStyleLike,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -378,7 +378,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   isStyleEditButton(layer: Layer): boolean {
     if (layer instanceof VectorLayer || layer instanceof VectorTileLayer) {
-      return layer.visible && isFlatStyleLike(layer.style);
+      return layer.visible && isOlFlatStyleLike(layer.style);
     }
     return false;
   }

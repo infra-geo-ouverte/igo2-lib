@@ -36,7 +36,7 @@ import {
   SearchResult,
   ZoomButtonComponent,
   provideSearch,
-  resultStyle,
+  styleVariant,
   withIChercheSource,
   withWorkspaceSource
 } from '@igo2/geo';
@@ -129,17 +129,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.mapService.setMap(this.map);
     this.searchResultsOverlayFocused = new Overlay(
       this.map,
-      resultStyle(this.map.viewController, 'focus')
+      styleVariant(this.map.viewController, 'focus')
     );
 
     this.searchResultsOverlaySelected = new Overlay(
       this.map,
-      resultStyle(this.map.viewController, 'selection')
+      styleVariant(this.map.viewController, 'selection')
     );
 
     this.searchResultsOverlayAll = new Overlay(
       this.map,
-      resultStyle(this.map.viewController)
+      styleVariant(this.map.viewController)
     );
 
     this.layerService
