@@ -36,12 +36,12 @@ import {
   SearchResult,
   SearchResultAddButtonComponent,
   SearchResultsComponent,
-  SearchResultsOlStyleFunction,
   computeOlFeaturesExtent,
   featureToOl,
   featuresAreOutOfView,
   moveToOlFeatures,
-  roundCoordTo
+  roundCoordTo,
+  searchResultsOlStyleFunction
 } from '@igo2/geo';
 
 import { Coordinate } from 'ol/coordinate';
@@ -190,13 +190,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.searchResultsOverlayFocused = new Overlay(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.focus ??
-        SearchResultsOlStyleFunction(this.mapState.map.viewController, 'focus')
+        searchResultsOlStyleFunction(this.mapState.map.viewController, 'focus')
     );
 
     this.searchResultsOverlaySelected = new Overlay(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.selection ??
-        SearchResultsOlStyleFunction(
+        searchResultsOlStyleFunction(
           this.mapState.map.viewController,
           'selection'
         )
@@ -205,7 +205,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.searchResultsOverlayAll = new Overlay(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.base ??
-        SearchResultsOlStyleFunction(this.mapState.map.viewController)
+        searchResultsOlStyleFunction(this.mapState.map.viewController)
     );
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
       (searchTerm: string) => {
