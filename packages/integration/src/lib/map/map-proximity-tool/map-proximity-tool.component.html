@@ -1,7 +1,7 @@
 <igo-entity-table
   #table
   class="table-compact"
-  [store]="mapProximityState.proximityFeatureStore"
+  [store]="$any(mapProximityState.proximityFeatureStore)"
   [template]="tableTemplate"
 />
 <br />
@@ -30,10 +30,7 @@
   </mat-form-field>
 }
 
-@if (
-  (mapProximityState.currentPositionCoordinate$ | async) &&
-  (mapProximityState.currentPositionCoordinate$ | async).length
-) {
+@if ((mapProximityState.currentPositionCoordinate$ | async)?.length) {
   <button mat-icon-button (click)="copyTextToClipboard()">
     <mat-icon>content_copy</mat-icon>
   </button>

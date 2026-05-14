@@ -12,7 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatToolbar } from '@angular/material/toolbar';
 import {
   NavigationEnd,
   Router,
@@ -34,10 +34,10 @@ import { ROUTES_CONFIG } from './app.routing';
   styleUrls: ['./app.component.scss'],
   imports: [
     MatExpansionModule,
-    MatToolbarModule,
     MatButtonModule,
     MatIconModule,
     MatSidenavModule,
+    MatToolbar,
     MatListModule,
     RouterLink,
     RouterLinkActive,
@@ -91,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       DomUtils.remove(intro);
-      DomUtils.remove(stylesheet);
+      if (stylesheet) DomUtils.remove(stylesheet);
     }, destroyingAnimationTime);
   }
 

@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnInit,
   inject,
+  input,
   model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,11 +16,7 @@ import { AuthService, UserService } from '@igo2/auth';
 import { CustomHtmlComponent } from '@igo2/common/custom-html';
 import { ToolComponent } from '@igo2/common/tool';
 import { ConfigService, version } from '@igo2/core/config';
-import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
-
-import { of } from 'rxjs';
-import type { Observable } from 'rxjs';
 
 import { AllEnvironmentOptions } from '../../environment';
 
@@ -47,62 +43,38 @@ export class AboutToolComponent implements OnInit {
   auth = inject(AuthService);
   private http = inject(HttpClient);
   private cdRef = inject(ChangeDetectorRef);
-  private languageService = inject(LanguageService);
   private userService = inject(UserService, {
     optional: true
   });
 
   private configOptions: AllEnvironmentOptions;
-  @Input()
-  get headerHtml() {
-    return this._headerHtml;
-  }
-  set headerHtml(value: string) {
-    this._headerHtml = Array.isArray(value) ? value.join('\n') : value;
-  }
 
-  @Input()
-  get html() {
-    return this._html;
-  }
-  set html(value: string) {
-    this._html = Array.isArray(value) ? value.join('\n') : value;
-  }
-  private _discoverTitleInLocale = 'IGO';
-  public discoverTitleInLocale$: Observable<string> = of(
-    this._discoverTitleInLocale
+  readonly headerHtml = input<string, string | string[]>('', {
+    transform: (value) => (Array.isArray(value) ? value.join('\n') : value)
+  });
+
+  readonly html = input<string, string | string[]>(
+    'igo.integration.aboutTool.html',
+    { transform: (value) => (Array.isArray(value) ? value.join('\n') : value) }
   );
 
-  @Input()
-  get discoverTitleInLocale() {
-    return this._discoverTitleInLocale;
-  }
-  set discoverTitleInLocale(value: string) {
-    this._discoverTitleInLocale = value;
-    this.discoverTitleInLocale$ = of(value);
-  }
+  readonly trainingGuideURLs = model<string[]>();
 
-  readonly trainingGuideURLs = model<string[] | undefined>(undefined);
+  public effectiveVersion?: string;
 
-  public effectiveVersion: string;
-  private _html = 'igo.integration.aboutTool.html';
-  private _headerHtml: string;
-
-  private baseUrlGuide;
+  private baseUrlGuide?: string;
 
   public loading = false;
 
   constructor() {
-    this.headerHtml = this.languageService.translate.instant(
-      'igo.integration.aboutTool.headerHtml'
-    );
     this.configOptions = this.configService.getConfigs();
     const configVersion = this.configOptions.version;
     this.effectiveVersion = configVersion?.app ?? version.app;
-    this.baseUrlGuide =
-      this.configOptions.depot?.url +
-      // todo validate this property
-      (this.configOptions.depot as any)?.guideUrl;
+    const depot = this.configOptions.depot;
+    if (depot) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.baseUrlGuide = depot.url + (depot as any).guideUrl;
+    }
   }
 
   ngOnInit(): void {
@@ -120,10 +92,10 @@ export class AboutToolComponent implements OnInit {
     }
   }
 
-  openGuide(guide?) {
+  openGuide(guide?: string) {
     const url = guide
       ? this.baseUrlGuide + guide
-      : this.baseUrlGuide + this.trainingGuideURLs()[0];
+      : this.baseUrlGuide + (this.trainingGuideURLs()?.[0] ?? '');
 
     this.loading = true;
     this.http

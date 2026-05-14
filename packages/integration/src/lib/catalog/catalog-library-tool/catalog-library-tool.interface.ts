@@ -1,23 +1,23 @@
-import { AnyDataSourceOptions } from '@igo2/geo';
+import { AnyDataSourceOptions, LayerId } from '@igo2/geo';
 
 export interface ListExport {
-  id: string;
+  id: LayerId;
   rank: string;
   layerTitle: string;
   layerGroup: string;
   catalog: string;
   provider: string;
-  url: string;
-  layerName: string;
+  url: string | undefined;
+  layerName: string | undefined;
   context: string;
   metadataAbstract: string;
-  metadataUrl: string;
+  metadataUrl: string | undefined;
 }
 
 export interface InfoFromSourceOptions {
-  id: string;
-  layerName: string;
-  url: string;
-  sourceOptions: AnyDataSourceOptions;
+  id: LayerId;
+  layerName?: string;
+  url?: string;
+  sourceOptions?: AnyDataSourceOptions;
   context: string;
 }

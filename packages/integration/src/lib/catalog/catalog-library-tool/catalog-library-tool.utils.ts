@@ -19,7 +19,7 @@ export function getInfoFromSourceOptions(
   sourceOptions: AnyDataSourceOptions,
   context: string
 ): InfoFromSourceOptions {
-  const value: InfoFromSourceOptions = {
+  const value: Partial<InfoFromSourceOptions> = {
     id: undefined,
     layerName: undefined,
     url: undefined,
@@ -100,7 +100,7 @@ export function getInfoFromSourceOptions(
     case 'carto': {
       const cartoSo = sourceOptions as CartoDataSourceOptions;
       value.layerName = cartoSo.config.layers
-        .map((layer) => layer.options.sql)
+        .map((layer: { options: { sql?: string } }) => layer.options.sql)
         .join(' ');
       value.url = `https://${cartoSo.account}.carto.com/api/v1/map`;
       value.sourceOptions = cartoSo;
@@ -116,5 +116,5 @@ export function getInfoFromSourceOptions(
       : value.url;
   }
 
-  return value;
+  return value as InfoFromSourceOptions;
 }

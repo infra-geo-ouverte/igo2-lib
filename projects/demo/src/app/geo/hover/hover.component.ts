@@ -7,7 +7,6 @@ import {
   IgoMapModule,
   LayerService,
   MapViewOptions,
-  TileLayer,
   TileLayerOptions,
   VectorLayerOptions,
   WFSDataSource,
@@ -45,7 +44,7 @@ export class AppHoverComponent {
     projection: 'EPSG:3857'
   };
 
-  get media(): Media {
+  get media(): Media | undefined {
     return this.mediaService.getMedia();
   }
 
@@ -64,7 +63,9 @@ export class AppHoverComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
@@ -74,18 +75,18 @@ export class AppHoverComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'shp'
       }
     };
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourcePoint)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         const layerOptions: VectorLayerOptions = {
           title: 'Casernes',
           visible: true,
-          source: dataSource,
+          source: dataSource as WFSDataSource,
           igoStyle: {
             styleByAttribute: {
               attribute: 'en_caserne',

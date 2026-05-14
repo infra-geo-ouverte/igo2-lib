@@ -46,7 +46,6 @@ import {
 } from '@igo2/geo';
 
 import OlFeature from 'ol/Feature';
-import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olSourceCluster from 'ol/source/Cluster';
 import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
@@ -100,26 +99,24 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     zoom: 6
   };
 
-  type = signal<SpatialFilterType>(undefined);
+  type = signal<SpatialFilterType | undefined>(undefined);
   itemType = signal<SpatialFilterItemType>(SpatialFilterItemType.Thematics);
-  freehandDrawIsActive = signal<boolean>(undefined);
+  freehandDrawIsActive = signal(false);
 
   public layers: Layer[] = [];
   public activeLayers: Layer[] = [];
 
-  public queryType: SpatialFilterQueryType;
-  public thematics: SpatialFilterThematic[];
+  public queryType?: SpatialFilterQueryType;
+  public thematics!: SpatialFilterThematic[];
   public zones: Feature[] = [];
   public zonesWithBuffer: Feature[] = [];
   public buffer: number = 0;
 
   public iterator = 1;
 
-  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
+  public selectedFeature$ = new BehaviorSubject<Feature | undefined>(undefined);
 
-  private format: olFormatGeoJSON = new olFormatGeoJSON();
-
-  public store: EntityStore = new EntityStore<Feature>([]); // Store to print results at the end
+  public store = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -129,21 +126,23 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
-  private activePredefinedLayerZones: VectorLayer;
-  private activeDrawLayerZones: VectorLayer;
+  private activePredefinedLayerZones?: VectorLayer;
+  private activeDrawLayerZones!: VectorLayer;
 
-  public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
+  public defaultStyle!:
+    | olstyle.Style
+    | ((feature: unknown, resolution: number) => olstyle.Style);
 
   constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)
@@ -189,7 +188,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private loadFilterList(): void {
     this.spatialFilterService
-      .loadFilterList(this.queryType)
+      .loadFilterList(this.queryType!)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((features: Feature[]) => {
         features.sort((a, b) => {
@@ -255,7 +254,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
     this.spatialFilterService
       .loadFilterItems(this.zones, this.itemType(), {
-        type: this.queryType,
+        type: this.queryType!,
         thematics,
         buffer: this.buffer
       })
@@ -266,10 +265,10 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
           grouped.forEach(({ points, lines }) => {
             if (points.length > 0) {
-              this.tryAddPointToMap(points, points[0].meta.id);
+              this.tryAddPointToMap(points, points[0].meta!.id);
             }
             if (lines.length > 0) {
-              this.tryAddLayerToMap(lines, lines[0].meta.id);
+              this.tryAddLayerToMap(lines, lines[0].meta!.id);
             }
           });
 
@@ -320,9 +319,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         grouped.set(typeKey, group);
       }
 
-      if (feature.geometry.type === 'Point') {
-        feature.properties.longitude = feature.geometry.coordinates[0];
-        feature.properties.latitude = feature.geometry.coordinates[1];
+      if (feature.geometry?.type === 'Point') {
+        feature.properties.longitude = feature.geometry!.coordinates[0];
+        feature.properties.latitude = feature.geometry!.coordinates[1];
         group.points.push(feature);
       } else {
         group.lines.push(feature);
@@ -347,7 +346,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         zoneIndex = parseInt(match[1], 10);
       }
     }
-    const titleFeature = features[0].meta.title;
+    const titleFeature = features[0].meta?.title ?? '';
 
     let i = 1;
     for (const layer of this.layers) {
@@ -382,12 +381,13 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     this.layerService
       .createAsyncLayer(options)
       .pipe(take(1))
-      .subscribe((layer: VectorLayer) => {
+      .subscribe((layer) => {
+        if (!layer) return;
         const featuresOl = features.map((feature) => {
           return featureToOl(feature, this.map.projection);
         });
         const ol = layer.dataSource.ol as olSourceCluster;
-        ol.getSource().addFeatures(featuresOl);
+        ol.getSource()?.addFeatures(featuresOl);
         const previousLayer = this.layers.find(
           (prevLayer) => prevLayer.id === layer.id
         );
@@ -414,14 +414,14 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         return;
       }
       for (const layer of this.layers) {
-        if (layer.title?.startsWith(features[0].meta.title)) {
+        if (layer.title?.startsWith(features[0].meta?.title ?? '')) {
           i++;
         }
       }
 
       const options: VectorLayerOptions = {
         isIgoInternalLayer: true,
-        title: (features[0].meta.title +
+        title: ((features[0].meta?.title ?? '') +
           ' ' +
           i +
           ' - ' +
@@ -438,19 +438,20 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       this.layerService
         .createAsyncLayer(options)
         .pipe(take(1))
-        .subscribe((layer: VectorLayer) => {
+        .subscribe((layer) => {
+          if (!layer) return;
           const featuresOl = features.map((feature) => {
             return featureToOl(feature, this.map.projection);
           });
           const ol = layer.dataSource.ol;
-          ol.addFeatures(featuresOl);
+          (ol as olSourceVector).addFeatures(featuresOl);
           const previousLayer = this.layers.find(
             (prevLayer) => prevLayer.id === layer.id
           );
           if (previousLayer) {
             this.map.layerController.remove(previousLayer);
             i = i - 1;
-            layer.title = (features[0].meta.title +
+            layer.title = ((features[0].meta?.title ?? '') +
               ' ' +
               i +
               ' - ' +
@@ -480,7 +481,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     return max;
   }
 
-  private createZoneStyle(feature: Feature): (f, r) => olstyle.Style {
+  private createZoneStyle(
+    feature: Feature
+  ): (f: unknown, r: number) => olstyle.Style {
     return (_feature, resolution) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const coordinates = (feature as any).coordinates;
@@ -490,7 +493,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             ? this.buffer /
               Math.cos((Math.PI / 180) * coordinates[1]) /
               resolution
-            : undefined,
+            : 0,
           fill: new olstyle.Fill({ color: 'rgba(200, 200, 20, 0.2)' }),
           stroke: new olstyle.Stroke({ width: 1, color: 'orange' })
         }),
@@ -508,12 +511,11 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         : undefined;
     if (!zoneLayer) {
       this.defaultStyle = this.createZoneStyle(features[0]);
-      this.createZoneLayer(lastZoneIndex + 1, features).subscribe(
-        (layer: VectorLayer) => {
-          this.setActiveZoneLayer(layer);
-          this.addFeaturesToLayer(layer, features);
-        }
-      );
+      this.createZoneLayer(lastZoneIndex + 1, features).subscribe((layer) => {
+        if (!layer) return;
+        this.setActiveZoneLayer(layer as VectorLayer);
+        this.addFeaturesToLayer(layer as VectorLayer, features);
+      });
     } else {
       this.addFeaturesToLayer(zoneLayer, features, buffer);
     }
@@ -613,7 +615,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
     if (toRemove.length) {
       toRemove.forEach((f) => olSource.removeFeature(f));
-      this.zones = this.zones.filter((z) => z.meta.id !== feature.meta.id);
+      this.zones = this.zones.filter((z) => z.meta?.id !== feature.meta?.id);
     }
 
     if (olSource.getFeatures().length === 0) {
@@ -632,7 +634,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     const keysNew = new Set(featuresOl.map((f) => `id:${f.getId()}`));
 
     return this.layers
-      .filter((l) => l.title.includes('Zone'))
+      .filter((l) => l.title?.includes('Zone'))
       .some((layer) => {
         const olSource = layer.dataSource.ol as olSourceVector;
         const layerFeatures = olSource.getFeatures();

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { EntityTableComponent, EntityTableTemplate } from '@igo2/common/entity';
 import {
-  DataSourceService,
+  Feature,
   FeatureDataSourceOptions,
   FeatureMotion,
   FeatureStore,
@@ -31,7 +31,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
-  private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
 
   public map: IgoMap = new IgoMap({
@@ -67,7 +66,9 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     ]
   };
 
-  public store: FeatureStore = new FeatureStore([], { map: this.map });
+  public store = new FeatureStore<Feature>([], {
+    map: this.map
+  });
 
   ngOnInit(): void {
     const loadingStrategy: FeatureStoreLoadingStrategy =
@@ -174,7 +175,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         } satisfies OSMDataSourceOptions
       })
       .subscribe((layer) => {
-        this.map.layerController.add(layer);
+        if (layer) this.map.layerController.add(layer);
       });
 
     this.layerService
@@ -193,9 +194,10 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
           }
         }
       })
-      .subscribe((layer: VectorLayer) => {
+      .subscribe((layer) => {
+        if (!layer) return;
         this.map.layerController.add(layer);
-        this.store.bindLayer(layer);
+        this.store.bindLayer(layer as VectorLayer);
         loadingStrategy.activate();
         selectionStrategy.activate();
       });

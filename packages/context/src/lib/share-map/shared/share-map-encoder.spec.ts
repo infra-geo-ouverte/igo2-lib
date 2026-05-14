@@ -98,8 +98,8 @@ describe('ShareMapEncoder', () => {
       pos: { params }
     } = SHARE_MAP_DEFS;
     const value =
-      params.center.key +
-      params.center.stringify(MAP_MOCK.viewController.getCenter());
+      params.center!.key +
+      params.center!.stringify!(MAP_MOCK.viewController.getCenter());
 
     posStringified = `${pos.key}=${encodeURIComponent(value)}`;
 
@@ -154,13 +154,13 @@ describe('ShareMapEncoder', () => {
     expectedQuery.set(
       urlsKey,
       splittedParams
-        .find((params) => params.includes(`${urlsKey}=`))
+        .find((params) => params.includes(`${urlsKey}=`))!
         .split('=')[1]
     );
     expectedQuery.set(
       layers.key,
       splittedParams
-        .find((params) => params.includes(`${layers.key}=`))
+        .find((params) => params.includes(`${layers.key}=`))!
         .split('=')[1]
     );
 
@@ -277,7 +277,10 @@ describe('ShareMapEncoder', () => {
     it('should generate a URL that includes the layer ID when the updated layer belongs to the current context', () => {
       const map = MAP_MOCK;
       const CLONED_CONTETX_MOCK = structuredClone(CONTEXT_MOCK);
-      CLONED_CONTETX_MOCK.layers.push({ ...imageLayerOptions, visible: false });
+      CLONED_CONTETX_MOCK.layers!.push({
+        ...imageLayerOptions,
+        visible: false
+      });
       shareMapEncoder['context'] = CLONED_CONTETX_MOCK;
 
       const result = shareMapEncoder.generateUrl(map, CLONED_CONTETX_MOCK);
@@ -334,12 +337,12 @@ describe('ShareMapEncoder', () => {
       const originalName = 'name,with,comma&special;chars';
 
       const encoded =
-        SHARE_MAP_DEFS.layers.params.names.stringify(originalName);
+        SHARE_MAP_DEFS.layers.params.names?.stringify?.(originalName);
       // encoded should be: [name%2Cwith%2Ccomma%26special%3Bchars]
 
       // Decode: parse it back
       const testParam = `${encoded}n`; // Add the key suffix to simulate URL param
-      const decoded = SHARE_MAP_DEFS.layers.params.names.parse(testParam);
+      const decoded = SHARE_MAP_DEFS.layers.params.names?.parse?.(testParam);
 
       expect(decoded).toBe(originalName);
     });
