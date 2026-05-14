@@ -1,17 +1,10 @@
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  Component,
-  ElementRef,
-  NgZone,
-  OnInit,
-  ViewChild,
-  inject
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import {
   AnyLayerOptions,
   IgoMap,
   LayerService,
+  LayerStylingComponent,
   MapBrowserComponent,
   MapService,
   MapViewOptions,
@@ -23,22 +16,18 @@ import { GeoJSON } from 'ol/format';
 
 import { Style as GsStyle } from 'geostyler-style';
 
+import '../../../../../../geostyler-wc/src';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
-import './geostyler-wc.component';
-
-interface GeostylerWebComponent extends HTMLElement {
-  data?: object;
-}
 
 @Component({
   selector: 'app-vector-data-styling',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     ExampleViewerComponent,
     DocViewerComponent,
     MapBrowserComponent,
-    ZoomButtonComponent
+    ZoomButtonComponent,
+    LayerStylingComponent
   ],
   templateUrl: './vector-data-styling.component.html',
   styleUrl: './vector-data-styling.component.scss'
@@ -46,26 +35,9 @@ interface GeostylerWebComponent extends HTMLElement {
 export class AppVectorDataStylingComponent implements OnInit {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
-  private ngZone = inject(NgZone);
-  @ViewChild('geostylerElement')
-  geostylerElement: ElementRef<GeostylerWebComponent>;
 
-  public structuresLayer: VectorLayer;
-
-  private _geoStylerData: object | null = null;
-  public get geoStylerData(): object | null {
-    return this._geoStylerData;
-  }
-  public set geoStylerData(value: object | null) {
-    this._geoStylerData = value;
-    // Manually sync to web component element to ensure React component gets the update
-    if (this.geostylerElement) {
-      this.geostylerElement.nativeElement.data = value;
-      console.log('Manually synced data to web component element:', value);
-    }
-  }
-  public name: string = 'Hello WorDld';
-  public style: GsStyle = {
+  public structuresLayer: VectorLayer | undefined;
+  public initialStyle: GsStyle = {
     name: 'My Style',
     rules: [
       {
@@ -105,7 +77,7 @@ export class AppVectorDataStylingComponent implements OnInit {
     this.mapService.setMap(this.map);
     const structuresStyle = {
       type: 'Geostyler' as const,
-      style: this.style
+      style: this.initialStyle
     };
 
     const layers: AnyLayerOptions[] = [
@@ -127,18 +99,12 @@ export class AppVectorDataStylingComponent implements OnInit {
       }
     ];
 
-    this.layerService
-      .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
-
-    this.structuresLayer = this.map.layerController.getByTitle('Structures') as
-      | VectorLayer
-      | undefined;
-
-    if (!this.structuresLayer) {
-      console.warn('Structures layer not found');
-      return;
-    }
+    this.layerService.createLayers(layers).subscribe((layers) => {
+      this.map.layerController.add(...layers);
+      this.structuresLayer = this.map.layerController.getByTitle(
+        'Structures'
+      ) as VectorLayer | undefined;
+    });
 
     this.structuresLayer.dataSource.ol.once('featuresloadend', () => {
       const features = this.structuresLayer.dataSource.ol.getFeatures();
@@ -146,22 +112,6 @@ export class AppVectorDataStylingComponent implements OnInit {
 
       const geojson = new GeoJSON().writeFeaturesObject(features); // todo:
       console.log('GeoJSON data:', geojson);
-
-      // OpenLayers events can fire outside Angular zone; re-enter zone to update bindings.
-      this.ngZone.run(() => {
-        this.geoStylerData = geojson;
-      });
     });
   }
-
-  handleStyleChange = (newStyle: GsStyle) => {
-    this.style = newStyle;
-
-    // Update the layer's style property, which triggers the style service
-    // to convert Geostyler format to OpenLayers style and apply it
-    this.structuresLayer.style = {
-      type: 'Geostyler',
-      style: newStyle
-    };
-  };
 }

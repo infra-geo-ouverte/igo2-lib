@@ -1,10 +1,16 @@
 <app-doc-viewer title="Vector Data Styling" subtitle="Geo">
-  <geostyler-style-wc
+  <!-- <geostyler-style-wc
     #geostylerElement
     [data]="geoStylerData"
     [geostylerStyle]="style"
     [handleStyleChange]="handleStyleChange"
-  ></geostyler-style-wc>
+  ></geostyler-style-wc> -->
+  @if (structuresLayer) {
+    <igo-layer-styling
+      [layer]="structuresLayer"
+      [initialStyle]="initialStyle"
+    ></igo-layer-styling>
+  }
 
   <app-example-viewer codeFolder="geo/vector-data-styling">
     <igo-map-browser [map]="map" [view]="view">
