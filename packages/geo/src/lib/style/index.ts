@@ -5,3 +5,4 @@ export * from './geostyler';
 export * from './mapbox';
 export * from './style.provider';
 export * from './style.service';
+export * from './layer-styling';
