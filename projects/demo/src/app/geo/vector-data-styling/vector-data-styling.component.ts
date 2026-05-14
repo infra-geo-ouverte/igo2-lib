@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   NgZone,
+  OnInit,
   ViewChild,
   inject
 } from '@angular/core';
@@ -42,7 +43,7 @@ interface GeostylerWebComponent extends HTMLElement {
   templateUrl: './vector-data-styling.component.html',
   styleUrl: './vector-data-styling.component.scss'
 })
-export class AppVectorDataStylingComponent {
+export class AppVectorDataStylingComponent implements OnInit {
   private layerService = inject(LayerService);
   private mapService = inject(MapService);
   private ngZone = inject(NgZone);
@@ -100,7 +101,7 @@ export class AppVectorDataStylingComponent {
     projection: 'EPSG:3857'
   };
 
-  constructor() {
+  ngOnInit() {
     this.mapService.setMap(this.map);
     const structuresStyle = {
       type: 'Geostyler' as const,
