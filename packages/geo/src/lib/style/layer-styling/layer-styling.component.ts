@@ -9,6 +9,7 @@ import {
   inject
 } from '@angular/core';
 
+import '@geostyler/web-component/geostyler-web-component';
 import { Style as GsStyle } from 'geostyler-style';
 
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -40,7 +41,8 @@ export class LayerStylingComponent implements OnInit, OnChanges {
     }
   }
 
-  handleStyleChange = (newStyle: GsStyle) => {
+  onStyleChange(event: Event): void {
+    const newStyle = (event as CustomEvent<GsStyle>).detail;
     this.stylingService.updateLayerStyle(newStyle);
-  };
+  }
 }

@@ -2,5 +2,5 @@
   #geostylerElement
   [data]="layerData$ | async"
   [geostylerStyle]="initialStyle"
-  [handleStyleChange]="handleStyleChange"
+  (style-change)="onStyleChange($event)"
 ></geostyler-style-wc>
