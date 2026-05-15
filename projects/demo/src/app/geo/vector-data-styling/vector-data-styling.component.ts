@@ -16,7 +16,6 @@ import { GeoJSON } from 'ol/format';
 
 import { Style as GsStyle } from 'geostyler-style';
 
-import '../../../../../../geostyler-wc/src';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
