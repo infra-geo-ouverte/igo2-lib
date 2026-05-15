@@ -30,7 +30,7 @@ export class DownloadService {
         DSOptions.download.url === undefined
       ) {
         let wfsOptions;
-        let currentProj = new olProjection({ code: layer.map!.projection });
+        let currentProj = new olProjection({ code: layer.map!.projectionCode });
         const paramsWFS = (layer.dataSource.options as any).paramsWFS;
         if (paramsWFS && Object.keys(paramsWFS).length > 0) {
           currentProj = paramsWFS.srsName

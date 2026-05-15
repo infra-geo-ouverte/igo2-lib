@@ -363,7 +363,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           }
           const response = stringToLonLat(
             term,
-            this.stopsFeatureStore().layer.map?.projection ?? 'EPSG:3857'
+            this.stopsFeatureStore().layer.map?.projectionCode ?? 'EPSG:3857'
           );
           let isCoord = false;
           if (response.lonLat) {

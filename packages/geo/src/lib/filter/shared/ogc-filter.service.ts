@@ -37,16 +37,12 @@ export class OGCFilterService {
     const ogcFilterWriter = new OgcFilterWriter();
 
     if (ogcFilters.filters) {
-      const filters = ogcFilterWriter.checkIgoFiltersProperties(
+      ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         ogcFilters.filters!,
         geometryField,
         projection,
         true
-      );
-
-      if (filters) {
-        ogcFilters.filters = filters as IgoOgcFilterObject;
-      }
+      ) as IgoOgcFilterObject;
     }
 
     if (!ogcFilters.interfaceOgcFilters) {

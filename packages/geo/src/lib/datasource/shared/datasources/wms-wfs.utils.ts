@@ -71,12 +71,12 @@ export function buildUrl(
     igoFilters,
     extent,
     proj,
-    ogcFilters?.geometryName ?? '',
+    ogcFilters?.geometryName ?? defaultFieldNameGeometry,
     options
   );
   let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(
     options,
-    ogcFilters?.geometryName ?? '',
+    ogcFilters?.geometryName ?? defaultFieldNameGeometry,
     extent,
     proj
   );
