@@ -2,7 +2,8 @@
   "name": "igo2-lib",
   "workspaces": [
     "packages/*",
-    "projects/*"
+    "projects/*",
+    "geostyler-wc"
   ],
   "version": "21.0.0-next.1",
   "description": "IGO Library",
