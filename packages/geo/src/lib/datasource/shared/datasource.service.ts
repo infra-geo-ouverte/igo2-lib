@@ -66,71 +66,71 @@ export class DataSourceService {
       console.error(options);
       throw new Error('Datasource needs a type');
     }
-    let dataSource: Observable<AnyDataSource>;
+    let dataSource$: Observable<AnyDataSource>;
     switch (options.type.toLowerCase()) {
       case 'osm':
-        dataSource = this.createOSMDataSource(options as OSMDataSourceOptions);
+        dataSource$ = this.createOSMDataSource(options as OSMDataSourceOptions);
         break;
       case 'vector':
-        dataSource = this.createFeatureDataSource(
+        dataSource$ = this.createFeatureDataSource(
           options as FeatureDataSourceOptions
         );
         break;
       case 'wfs':
-        dataSource = this.createWFSDataSource(options as WFSDataSourceOptions);
+        dataSource$ = this.createWFSDataSource(options as WFSDataSourceOptions);
         break;
       case 'wms': {
         const wmsContext = options as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
-        dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
+        dataSource$ = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
       }
       case 'wmts':
-        dataSource = this.createWMTSDataSource(
+        dataSource$ = this.createWMTSDataSource(
           options as WMTSDataSourceOptions
         );
         break;
       case 'xyz':
-        dataSource = this.createXYZDataSource(options as XYZDataSourceOptions);
+        dataSource$ = this.createXYZDataSource(options as XYZDataSourceOptions);
         break;
       case 'tiledebug':
-        dataSource = this.createTileDebugDataSource(
+        dataSource$ = this.createTileDebugDataSource(
           options as TileDebugDataSource
         );
         break;
       case 'carto':
-        dataSource = this.createCartoDataSource(
+        dataSource$ = this.createCartoDataSource(
           options as CartoDataSourceOptions
         );
         break;
       case 'arcgisrest':
-        dataSource = this.createArcGISRestDataSource(
+        dataSource$ = this.createArcGISRestDataSource(
           options as ArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'imagearcgisrest':
-        dataSource = this.createArcGISRestImageDataSource(
+        dataSource$ = this.createArcGISRestImageDataSource(
           options as ArcGISRestImageDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'websocket':
-        dataSource = this.createWebSocketDataSource(
+        dataSource$ = this.createWebSocketDataSource(
           options as FeatureDataSourceOptions
         );
         break;
       case 'mvt':
-        dataSource = this.createMVTDataSource(options as MVTDataSourceOptions);
+        dataSource$ = this.createMVTDataSource(options as MVTDataSourceOptions);
         break;
       case 'tilearcgisrest':
-        dataSource = this.createTileArcGISRestDataSource(
+        dataSource$ = this.createTileArcGISRestDataSource(
           options as TileArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'cluster':
-        dataSource = this.createClusterDataSource(
+        dataSource$ = this.createClusterDataSource(
           options as ClusterDataSourceOptions
         );
         break;
@@ -139,7 +139,7 @@ export class DataSourceService {
         throw new Error('Invalid datasource type');
     }
 
-    return dataSource;
+    return dataSource$;
   }
 
   private createOSMDataSource(

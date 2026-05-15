@@ -121,19 +121,18 @@ export class DropGeoFileDirective
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    if (!importExportOptions?.importWithStyle) {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map,
-        this.contextUri()!,
-        this.messageService,
-        this.layerService,
-        confirmDialogService,
-        this.styleListService,
-        this.styleService
-      );
-    }
+    const importWithStyle = importExportOptions?.importWithStyle ?? false;
+    handleFileImportSuccess(
+      file,
+      features,
+      this.map,
+      this.contextUri()!,
+      this.messageService,
+      this.layerService,
+      confirmDialogService,
+      importWithStyle ? this.styleListService : undefined,
+      importWithStyle ? this.styleService : undefined
+    );
   }
 
   private onFileImportError(file: File, error: Error) {
