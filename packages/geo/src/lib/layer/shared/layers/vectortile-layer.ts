@@ -34,25 +34,27 @@ export class VectorTileLayer extends Layer {
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVectorTile
+      source: this.options.source!.ol as olSourceVectorTile
     });
 
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction(
-      (tile: VectorTile<Feature>, url: string) => {
-        const loader = this.customLoader(
-          url,
-          tile.getFormat(),
-          this.authInterceptor,
-          tile.onLoad.bind(tile)
-        );
-        if (loader) {
-          tile.setLoader(loader);
-        }
+    vectorTileSource.setTileLoadFunction(((
+      tile: VectorTile<Feature>,
+      url: string
+    ) => {
+      const loader = this.customLoader(
+        url,
+        tile.getFormat(),
+        this.authInterceptor,
+        tile.onLoad.bind(tile)
+      );
+      if (loader) {
+        tile.setLoader(loader);
       }
-    );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any);
 
     return vectorTile;
   }
@@ -66,8 +68,16 @@ export class VectorTileLayer extends Layer {
    * @param success On success event action to trigger
    * @param failure On failure event action to trigger TODO
    */
-  customLoader(url, format, interceptor, success, failure?) {
-    return (extent, resolution, projection) => {
+
+  customLoader(
+    url: any,
+    format: any,
+    interceptor: any,
+    success: any,
+    failure?: any
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (extent: any, resolution: any, projection: any) => {
       const xhr = new XMLHttpRequest();
       let modifiedUrl = url;
       if (typeof url !== 'function') {
@@ -132,6 +142,7 @@ export class VectorTileLayer extends Layer {
   public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
+      return;
     } else {
       this.watcher.subscribe(() => void 1);
     }

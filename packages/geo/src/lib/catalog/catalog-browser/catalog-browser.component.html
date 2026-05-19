@@ -6,7 +6,7 @@
         [group]="item"
         [map]="map()"
         [state]="store().state"
-        [resolution]="resolution$ | async"
+        [resolution]="(resolution$ | async) ?? undefined"
         [catalogAllowLegend]="catalogAllowLegend()"
         [collapsed]="store().count === 1 ? false : true"
         [toggleCollapsed]="toggleCollapsedGroup()"
@@ -19,9 +19,9 @@
         igoListItem
         [layer]="$any(item)"
         [map]="map()"
-        [resolution]="resolution$ | async"
+        [resolution]="(resolution$ | async) ?? undefined"
         [catalogAllowLegend]="catalogAllowLegend()"
-        [added]="store().state.get(item).added"
+        [added]="store().state.get(item).added ?? false"
         (addedChange)="onLayerAddedChange($event)"
       />
     }

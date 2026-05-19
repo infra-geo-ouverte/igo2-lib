@@ -94,8 +94,8 @@ export class LayerService {
       );
     }
 
-    let layer: Layer;
-    switch (layerOptions.source.constructor) {
+    let layer: Layer | undefined;
+    switch (layerOptions.source?.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
@@ -126,7 +126,7 @@ export class LayerService {
         break;
     }
 
-    return layer;
+    return layer!;
   }
 
   createAsyncLayer(
@@ -141,7 +141,10 @@ export class LayerService {
     }
 
     return this.dataSourceService
-      .createAsyncDataSource(optionsCloned.sourceOptions, detailedContextUri)
+      .createAsyncDataSource(
+        optionsCloned.sourceOptions as any,
+        detailedContextUri
+      )
       .pipe(
         map((source) => {
           if (source === undefined) {
@@ -164,11 +167,13 @@ export class LayerService {
     detailedContextUri?: string
   ): Observable<LayerGroup> {
     if (!options.children?.length) {
-      return of(this.createGroup(null, options));
+      return of(this.createGroup([] as AnyLayer[], options));
     }
 
     return this.createLayers(options.children, detailedContextUri).pipe(
-      map((layers) => this.createGroup(layers.filter(Boolean), options))
+      map((layers) =>
+        this.createGroup(layers.filter(Boolean) as AnyLayer[], options)
+      )
     );
   }
 
@@ -184,7 +189,7 @@ export class LayerService {
     return new ImageLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor
+      this.authInterceptor ?? undefined
     );
   }
 
@@ -192,13 +197,13 @@ export class LayerService {
     return new TileLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor
+      this.authInterceptor ?? undefined
     );
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style[] | Style | OlStyleLike = layerOptions.style;
-    let igoLayer: VectorLayer;
+    let style: OlStyleLike | undefined = layerOptions.style;
+    let igoLayer: VectorLayer | undefined;
 
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
@@ -218,7 +223,7 @@ export class LayerService {
     ) {
       style = (feature, resolution) =>
         this.styleService.createStyle(
-          layerOptions.igoStyle.igoStyleObject,
+          layerOptions.igoStyle!.igoStyleObject as Record<string, any>,
           feature,
           resolution
         );
@@ -228,19 +233,19 @@ export class LayerService {
     ) {
       style = this.styleService.parseStyle(
         'style',
-        layerOptions.igoStyle.igoStyleObject
+        layerOptions.igoStyle!.igoStyleObject
       );
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
-      style = source.options.params.style;
+      style = source.options.params?.style;
     } else if (layerOptions.igoStyle?.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.igoStyle.styleByAttribute,
+          layerOptions.igoStyle!.styleByAttribute as any,
           resolution
         );
       };
@@ -248,14 +253,14 @@ export class LayerService {
       igoLayer = new VectorLayer(
         layerOptions,
         this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
+        this.authInterceptor ?? undefined,
+        this.geoNetworkService ?? undefined
       );
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
-      const baseStyle = layerOptions.igoStyle.clusterBaseStyle;
+      const baseStyle = layerOptions.igoStyle!.clusterBaseStyle;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createClusterStyle(
           feature,
@@ -268,8 +273,8 @@ export class LayerService {
       igoLayer = new VectorLayer(
         layerOptions,
         this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
+        this.authInterceptor ?? undefined,
+        this.geoNetworkService ?? undefined
       );
     }
 
@@ -277,12 +282,12 @@ export class LayerService {
       style
     });
 
-    if (!igoLayer) {
+    if (!igoLayer!) {
       igoLayer = new VectorLayer(
         layerOptionsOl,
         this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
+        this.authInterceptor ?? undefined,
+        this.geoNetworkService ?? undefined
       );
     }
 
@@ -291,7 +296,8 @@ export class LayerService {
     return igoLayer;
   }
 
-  private handleLegacyStyles(layerOptions, legacyStyleOptions: string[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private handleLegacyStyles(layerOptions: any, legacyStyleOptions: string[]) {
     legacyStyleOptions.map((legacyOption) => {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
@@ -320,8 +326,8 @@ export class LayerService {
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style[] | Style | OlStyleLike;
-    let igoLayer: VectorTileLayer;
+    let style: Style[] | Style | OlStyleLike | undefined;
+    let igoLayer: VectorTileLayer | undefined;
 
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
@@ -338,7 +344,7 @@ export class LayerService {
     if (layerOptions.igoStyle.igoStyleObject) {
       style = (feature, resolution) =>
         this.styleService.createStyle(
-          layerOptions.igoStyle.igoStyleObject,
+          layerOptions.igoStyle!.igoStyleObject as Record<string, any>,
           feature,
           resolution
         );
@@ -349,14 +355,14 @@ export class LayerService {
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.igoStyle.styleByAttribute,
+          layerOptions.igoStyle!.styleByAttribute as any,
           resolution
         );
       };
       igoLayer = new VectorTileLayer(
         layerOptions,
         this.messageService,
-        this.authInterceptor
+        this.authInterceptor ?? undefined
       );
     }
 
@@ -368,40 +374,42 @@ export class LayerService {
       igoLayer = new VectorTileLayer(
         layerOptionsOl,
         this.messageService,
-        this.authInterceptor
+        this.authInterceptor ?? undefined
       );
     }
 
-    this.applyMapboxStyle(igoLayer, layerOptionsOl);
-    return igoLayer;
+    this.applyMapboxStyle(igoLayer!, layerOptionsOl);
+    return igoLayer!;
   }
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.igoStyle?.mapboxStyle) {
-      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe((res) => {
-        if (res.sprite) {
-          const url = this.getAbsoluteUrl(
-            layerOptions.igoStyle.mapboxStyle.url,
-            res.sprite
-          );
-          this.getStuff(url + '.json').subscribe((res2) => {
+      this.getStuff(layerOptions.igoStyle!.mapboxStyle!.url).subscribe(
+        (res) => {
+          if (res.sprite) {
+            const url = this.getAbsoluteUrl(
+              layerOptions.igoStyle!.mapboxStyle!.url,
+              res.sprite
+            );
+            this.getStuff(url + '.json').subscribe((res2) => {
+              stylefunction(
+                layer.ol as olLayerVectorTile,
+                res,
+                layerOptions.igoStyle!.mapboxStyle!.source,
+                undefined,
+                res2,
+                url + '.png'
+              );
+            });
+          } else {
             stylefunction(
               layer.ol as olLayerVectorTile,
               res,
-              layerOptions.igoStyle.mapboxStyle.source,
-              undefined,
-              res2,
-              url + '.png'
+              layerOptions.igoStyle!.mapboxStyle!.source
             );
-          });
-        } else {
-          stylefunction(
-            layer.ol as olLayerVectorTile,
-            res,
-            layerOptions.igoStyle.mapboxStyle.source
-          );
+          }
         }
-      });
+      );
     }
   }
 
@@ -409,7 +417,7 @@ export class LayerService {
     return this.http.get<any>(url);
   }
 
-  private getAbsoluteUrl(source, url) {
+  private getAbsoluteUrl(source: string, url: string) {
     const r = new RegExp('^http|//', 'i');
     if (r.test(url)) {
       return url;
@@ -439,7 +447,7 @@ export class LayerService {
           layersOptions.map((layerOptions) =>
             this.createAsyncLayer(layerOptions)
           )
-        );
+        ).pipe(map((ls) => ls.filter(Boolean) as unknown as Layer[]));
       })
     );
   }
@@ -449,18 +457,21 @@ export class LayerService {
     const index = this.unavailableLayers.findIndex((item) => {
       const baseSourceOptions = item.sourceOptions;
       if (
-        this.sourceOptionsWithParams(baseSourceOptions) &&
-        this.sourceOptionsWithParams(anyLayerSourceOptions)
+        this.sourceOptionsWithParams(baseSourceOptions as any) &&
+        this.sourceOptionsWithParams(anyLayerSourceOptions as any)
       ) {
         return (
-          baseSourceOptions.params.LAYERS ===
-          anyLayerSourceOptions.params.LAYERS
+          (baseSourceOptions as any).params.LAYERS ===
+          (anyLayerSourceOptions as any).params.LAYERS
         );
       } else if (
-        this.sourceOptionsWithLayer(baseSourceOptions) &&
-        this.sourceOptionsWithLayer(anyLayerSourceOptions)
+        this.sourceOptionsWithLayer(baseSourceOptions as any) &&
+        this.sourceOptionsWithLayer(anyLayerSourceOptions as any)
       ) {
-        return baseSourceOptions.layer === anyLayerSourceOptions.layer;
+        return (
+          (baseSourceOptions as any)?.layer ===
+          (anyLayerSourceOptions as any)?.layer
+        );
       }
     });
     this.unavailableLayers.splice(index, index >= 0 ? 1 : 0);

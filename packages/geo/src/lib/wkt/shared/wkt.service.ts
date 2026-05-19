@@ -7,13 +7,13 @@ import * as olproj from 'ol/proj';
   providedIn: 'root'
 })
 export class WktService {
-  public wktToFeature(wkt, wktProj, featureProj) {
+  public wktToFeature(wkt: string, wktProj: string, featureProj: string) {
     return new olWKT().readFeature(wkt, {
       dataProjection: wktProj,
       featureProjection: featureProj
     });
   }
-  public extentToWkt(epsgTO, extent, extentProj) {
+  public extentToWkt(epsgTO: string, extent: number[], extentProj: string) {
     const currentExtent = olproj.transformExtent(extent, extentProj, epsgTO);
     this.roundCoordinateArray(currentExtent, epsgTO, 0);
     const wktPoly = `POLYGON((
@@ -40,9 +40,13 @@ export class WktService {
     };
   }
 
-  private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
+  private roundCoordinateArray(
+    coordinateArray: number[],
+    projection: string,
+    decimal = 0
+  ) {
     const lproj = olproj.get(projection);
-    const units = lproj.getUnits();
+    const units = lproj!.getUnits();
     const olUnits = ['ft', 'm', 'us-ft'];
     if (olUnits.indexOf(units) !== -1) {
       coordinateArray = this.roundArray(coordinateArray, decimal);
@@ -50,16 +54,17 @@ export class WktService {
     return coordinateArray;
   }
 
-  private roundArray(array, decimal = 0) {
+  private roundArray(array: number[], decimal = 0) {
     let x = 0;
     while (x < array.length) {
-      array[x] = array[x].toFixed(decimal);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (array as any[])[x] = array[x].toFixed(decimal);
       x++;
     }
     return array;
   }
 
-  public snrcToWkt(snrc, epsgTO) {
+  public snrcToWkt(snrc: string, epsgTO: string) {
     snrc = snrc.toLowerCase();
     let wktPoly;
     const ew = {
@@ -182,8 +187,12 @@ export class WktService {
 
       const coord: { ul?: any; lr?: any; ur?: any; ll?: any } = {
         ul: [
-          ew[partEW].to + increment250kEW + increment50kEW,
-          sn[partSN].to - increment250kSN - increment50kSN
+          (ew as Record<string, { from: number; to: number }>)[partEW].to +
+            increment250kEW +
+            increment50kEW,
+          (sn as Record<string, { from: number; to: number }>)[partSN].to -
+            increment250kSN -
+            increment50kSN
         ]
       };
 

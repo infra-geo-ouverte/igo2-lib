@@ -16,25 +16,24 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
    * Get an active map
    */
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   /**
    * Listener of toggle from advanced-map-tool
    */
-  private displayCenter$$: Subscription;
+  private displayCenter$$!: Subscription;
 
   /**
    * Set a visibility for cursor of the center of the map
    */
   ngAfterViewInit() {
     const map = this.map();
-    if (map) {
-      this.displayCenter$$ = map.mapCenter$.subscribe((value) => {
-        document.getElementById('mapCenter').style.visibility = value
-          ? 'visible'
-          : 'hidden';
-      });
-    }
+    this.displayCenter$$ = map.mapCenter$.subscribe((value) => {
+      document.getElementById('mapCenter')!.style.visibility = value
+        ? 'visible'
+        : 'hidden';
+    });
+
     this.letZoom();
   }
 
@@ -51,7 +50,7 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Zoom on div
    */
   private letZoom() {
-    document.getElementById('mapCenter').addEventListener(
+    document.getElementById('mapCenter')?.addEventListener(
       'wheel',
       (event) => {
         event.deltaY > 0

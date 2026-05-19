@@ -8,7 +8,7 @@ import { ConfigService } from '@igo2/core/config';
 export class DrawIconService {
   protected config = inject(ConfigService);
 
-  protected icons: string[];
+  protected icons?: string[];
 
   constructor() {
     this.getIconsList();

@@ -7,6 +7,6 @@ export function isIdbLayer(layer: AnyLayer): layer is VectorLayer {
   return (
     isLayerItem(layer) &&
     layer.type === 'vector' &&
-    (layer.options as VectorLayerOptions).idbInfo?.storeToIdb
+    (layer.options as VectorLayerOptions).idbInfo?.storeToIdb === true
   );
 }

@@ -21,6 +21,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import OlFeature from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 import Circle from 'ol/geom/Circle';
+import { default as OlGeometry } from 'ol/geom/Geometry';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
 import { getLength } from 'ol/sphere';
@@ -72,27 +73,27 @@ export class DrawPopupComponent {
   readonly labelFlag = model<LabelType | [LabelType, LabelType]>(
     LabelType.Custom
   );
-  readonly coordinatesMeasureUnit = model<CoordinatesUnit>(undefined);
-  readonly lengthMeasureUnit = model<MeasureLengthUnit>(undefined);
-  readonly areaMeasureUnit = model<MeasureAreaUnit>(undefined);
+  readonly coordinatesMeasureUnit = model<CoordinatesUnit>();
+  readonly lengthMeasureUnit = model<MeasureLengthUnit>();
+  readonly areaMeasureUnit = model<MeasureAreaUnit>();
 
   public geometryType = GeometryType;
   public labelType = LabelType;
   public arrayBuiltInType: any[] = [];
 
   public currentLabel: string;
-  public currentCoordinates: string;
-  public currentArea: string;
-  public currentLength: string;
+  public currentCoordinates!: string;
+  public currentArea!: string;
+  public currentLength!: string;
 
-  public olGeometryType: GeometryType = undefined;
-  public lengthInMeters: string;
-  public areaInMetersSquare: string;
-  public coordinatesInDD: string;
-  public currentCoordinatesUnit: string;
+  public olGeometryType: GeometryType;
+  public lengthInMeters!: string;
+  public areaInMetersSquare!: string;
+  public coordinatesInDD!: string;
+  public currentCoordinatesUnit!: string;
 
-  private longlatDD: Coordinate;
-  private labelLength: number;
+  private longlatDD!: Coordinate;
+  private labelLength!: number;
 
   public polygonCheck = 0; // Count for polygon label types checkboxes
 
@@ -150,18 +151,18 @@ export class DrawPopupComponent {
       this.lengthInMeters = measureOlGeometryLength(
         olGeometry,
         projection.getCode()
-      ).toFixed(2);
+      )!.toFixed(2);
       this.currentLength = this.lengthInMeters;
     } else if (this.olGeometryType === GeometryType.Polygon) {
       this.lengthInMeters = measureOlGeometryLength(
         olGeometry,
         projection.getCode()
-      ).toFixed(2);
+      )!.toFixed(2);
       this.currentLength = this.lengthInMeters;
       this.areaInMetersSquare = measureOlGeometryArea(
         olGeometry,
         projection.getCode()
-      ).toFixed(2);
+      )!.toFixed(2);
       this.currentArea = this.areaInMetersSquare;
     } else if (this.olGeometryType === GeometryType.Circle) {
       const circularPolygon = fromCircle(olGeometry, 10000);
@@ -171,7 +172,7 @@ export class DrawPopupComponent {
       this.areaInMetersSquare = measureOlGeometryArea(
         circularPolygon,
         projection.getCode()
-      ).toFixed(2);
+      )!.toFixed(2);
       this.currentArea = this.areaInMetersSquare;
     }
 
@@ -242,14 +243,14 @@ export class DrawPopupComponent {
                 'P: ' +
                 this.currentLength +
                 ' ' +
-                MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()],
+                MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()!],
               measureUnit: this.lengthMeasureUnit()
             })
           : this.dialogRef.close({
               label:
                 this.currentArea +
                 ' ' +
-                MeasureAreaUnitAbbreviation[this.areaMeasureUnit()],
+                MeasureAreaUnitAbbreviation[this.areaMeasureUnit()!],
               measureUnit: this.areaMeasureUnit()
             });
       }
@@ -260,7 +261,7 @@ export class DrawPopupComponent {
             'R: ' +
             this.currentLength +
             ' ' +
-            MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()],
+            MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()!],
           measureUnit: this.lengthMeasureUnit()
         });
       } else if (this.olGeometryType === GeometryType.LineString) {
@@ -268,7 +269,7 @@ export class DrawPopupComponent {
           label:
             this.currentLength +
             ' ' +
-            MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()],
+            MeasureLengthUnitAbbreviation[this.lengthMeasureUnit()!],
           measureUnit: this.lengthMeasureUnit()
         });
       }
@@ -277,7 +278,7 @@ export class DrawPopupComponent {
         label:
           this.currentArea +
           ' ' +
-          MeasureAreaUnitAbbreviation[this.areaMeasureUnit()],
+          MeasureAreaUnitAbbreviation[this.areaMeasureUnit()!],
         measureUnit: this.areaMeasureUnit()
       });
     }
@@ -295,7 +296,7 @@ export class DrawPopupComponent {
       if (found) {
         found.checked = checked;
       } else {
-        this.labelFlag.set(undefined);
+        this.labelFlag.set(LabelType.Custom);
       }
       if (checked) {
         this.labelFlag.set(labelType);
@@ -345,7 +346,7 @@ export class DrawPopupComponent {
     this.currentLength = metersToUnit(
       Number(this.lengthInMeters),
       lengthUnit
-    ).toFixed(2);
+    )!.toFixed(2);
   }
 
   onChangeAreaUnit(areaUnit: MeasureAreaUnit) {
@@ -353,14 +354,14 @@ export class DrawPopupComponent {
     this.currentArea = squareMetersToUnit(
       Number(this.areaInMetersSquare),
       areaUnit
-    ).toFixed(2);
+    )!.toFixed(2);
   }
 
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit) {
     this.coordinatesMeasureUnit.set(coordinatesUnit);
     const coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
     this.currentCoordinates =
-      '(' + coordinates[1] + ', ' + coordinates[0] + ')';
+      '(' + coordinates![1] + ', ' + coordinates![0] + ')';
   }
 
   buildArrayType() {
@@ -441,7 +442,7 @@ export class DrawPopupComponent {
     return MeasureAreaUnitAbbreviation[areaUnit];
   }
 
-  private getRadius(olGeometry): number {
+  private getRadius(olGeometry: OlGeometry): number {
     const length = getLength(olGeometry);
     return Number(length / (2 * Math.PI));
   }
@@ -462,11 +463,11 @@ export class DrawPopupComponent {
     );
   }
 
-  getLabelLength(event?) {
-    this.labelLength = event.length;
+  getLabelLength(event?: { length: number }) {
+    this.labelLength = event?.length ?? 0;
   }
 
-  selectOptions(option) {
+  selectOptions(option: LabelType) {
     if (this.olGeometryType === GeometryType.Point) {
       return option === LabelType.Coordinates;
     } else if (this.olGeometryType === GeometryType.LineString) {
@@ -474,7 +475,7 @@ export class DrawPopupComponent {
     }
   }
 
-  getProperLengthLabel(option) {
+  getProperLengthLabel(option: LabelType) {
     if (option === LabelType.Length) {
       if (this.olGeometryType === GeometryType.Polygon) {
         return this.languageService.translate.instant(

@@ -47,7 +47,7 @@ export class SearchSelectorComponent implements OnInit {
    * List of available search types
    */
   readonly searchTypes = input<string[]>(SEARCH_TYPES);
-  readonly searchType = model<string>(undefined);
+  readonly searchType = model<string>();
 
   /**
    * Event emitted when the enabled search type changes
@@ -55,7 +55,7 @@ export class SearchSelectorComponent implements OnInit {
   readonly searchTypeChange = output<string>();
 
   ngOnInit() {
-    this.onSetSearchType(this.searchType());
+    this.onSetSearchType(this.searchType()!);
   }
 
   /**

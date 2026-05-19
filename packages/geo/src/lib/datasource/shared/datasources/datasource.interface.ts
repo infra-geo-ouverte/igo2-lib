@@ -54,23 +54,24 @@ export interface SourceFieldsOptionsParams extends Omit<
   step?: number;
   relation?: RelationOptions;
   type?:
-    | 'number'
-    | 'number[]'
     | 'string'
-    | 'string[]'
+    | 'number'
     | 'boolean'
+    | 'number[]'
+    | 'string[]'
     | 'Date'
     | 'list'
-    | 'autocomplete'; // TODO the type need to be analyze
+    | 'autocomplete'
+    | undefined;
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
   multiple?: boolean;
   tooltip?: string;
-  searchIndex?: searchIndexOptions;
+  searchIndex?: SearchIndexOptions;
 }
 
-export interface searchIndexOptions {
+export interface SearchIndexOptions {
   enabled?: boolean;
   preset?: Preset;
   tokenize?: Tokenizer;

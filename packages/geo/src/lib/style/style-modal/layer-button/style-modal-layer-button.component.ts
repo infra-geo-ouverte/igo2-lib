@@ -25,7 +25,7 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
 export class StyleModalLayerButtonComponent {
   private dialog = inject(MatDialog);
 
-  readonly layer = input<VectorLayer>(undefined);
+  readonly layer = input<VectorLayer>();
 
   /**
    * Open the style modal dialog box
@@ -33,7 +33,7 @@ export class StyleModalLayerButtonComponent {
   openStyleModalDialog() {
     setTimeout(() => {
       // open the dialog box used to style features
-      const data: LayerMatDialogData = { layer: this.layer() };
+      const data: LayerMatDialogData = { layer: this.layer()! };
       this.dialog.open(StyleModalLayerComponent, {
         disableClose: false,
         data,

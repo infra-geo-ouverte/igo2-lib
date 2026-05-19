@@ -27,7 +27,8 @@ import {
 import { FeatureStore } from '../store';
 
 export class OlDragSelectInteraction extends OlDragBoxInteraction {
-  constructor(options) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(options: any) {
     super(options);
   }
 }
@@ -47,18 +48,19 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * Listener to the map click event that allows selecting a feature
    * by clicking on the map
    */
-  private mapClickListener;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapClickListener: any;
 
-  private olDragSelectInteraction: OlDragSelectInteraction;
+  private olDragSelectInteraction!: OlDragSelectInteraction;
 
-  private olDragSelectInteractionEndKey: EventsKey | EventsKey[];
+  private olDragSelectInteractionEndKey!: EventsKey | EventsKey[];
 
   /**
    * Subscription to all stores selected entities
    */
-  private stores$$: Subscription;
+  private stores$$!: Subscription;
 
-  private motion: FeatureMotion;
+  private motion!: FeatureMotion;
 
   /**
    * The map the layers belong to
@@ -78,7 +80,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
   constructor(protected options: FeatureStoreSelectionStrategyOptions) {
     super(options);
-    this.setMotion(options.motion);
+    if (options.motion !== undefined) this.setMotion(options.motion);
     this._overlayStore = this.createOverlayStore();
   }
 
@@ -87,8 +89,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * reactivation to properly setup watchers.
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
-    super.bindStore(store);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bindStore(store: any) {
+    super.bindStore(store as any);
     if (this.active === true) {
       // Force reactivation
       this.activate();
@@ -100,8 +103,10 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * reactivation to properly setup watchers.
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
-    super.unbindStore(store);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  unbindStore(store: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    super.unbindStore(store as any);
     if (this.active === true) {
       // Force reactivation
       this.activate();
@@ -120,7 +125,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * Unselect all entities, from all stores
    */
   unselectAll() {
-    this.stores.forEach((store: FeatureStore) => {
+    (this.stores as FeatureStore[]).forEach((store: FeatureStore) => {
       store.state.updateAll({ selected: false });
     });
   }
@@ -176,17 +181,19 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   private watchAll() {
     this.unwatchAll();
 
-    const stores$ = this.stores.map((store: FeatureStore) => {
-      return store.stateView
-        .manyBy$((record: EntityRecord<Feature>) => {
-          return record.state.selected === true;
-        })
-        .pipe(
-          map((records: EntityRecord<Feature>[]) =>
-            records.map((record) => record.entity)
-          )
-        );
-    });
+    const stores$ = (this.stores as FeatureStore[]).map(
+      (store: FeatureStore) => {
+        return store.stateView
+          .manyBy$((record: EntityRecord<Feature>) => {
+            return record.state.selected === true;
+          })
+          .pipe(
+            map((records: EntityRecord<Feature>[]) =>
+              records.map((record) => record.entity)
+            )
+          );
+      }
+    );
     this.stores$$ = combineLatest(stores$)
       .pipe(
         debounceTime(5),
@@ -236,9 +243,11 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
       layerFilter: (olLayer) => {
-        const storeOlLayer = this.stores.find((store: FeatureStore) => {
-          return store.layer?.ol === olLayer;
-        });
+        const storeOlLayer = (this.stores as FeatureStore[]).find(
+          (store: FeatureStore) => {
+            return store.layer?.ol === olLayer;
+          }
+        );
         return storeOlLayer !== undefined;
       }
     }) as OlFeature<OlGeometry>[];
@@ -286,7 +295,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     if (this.olDragSelectInteraction !== undefined) {
       this.map.ol.removeInteraction(this.olDragSelectInteraction);
     }
-    this.olDragSelectInteraction = undefined;
+    this.olDragSelectInteraction =
+      undefined as unknown as OlDragSelectInteraction;
   }
 
   /**
@@ -298,9 +308,10 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const target = event.target as any;
     const extent = target.getGeometry().getExtent();
     const olFeatures = this.stores.reduce(
-      (acc: OlFeature<OlGeometry>[], store: FeatureStore) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (acc: OlFeature<OlGeometry>[], store: any) => {
         const olSource = store.layer.ol.getSource();
-        acc.push(...olSource.getFeaturesInExtent(extent));
+        acc.push(...(olSource?.getFeaturesInExtent(extent) ?? []));
         return acc;
       },
       []
@@ -316,10 +327,10 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   private onSelectFromStore(features: Feature[]) {
     const motion = this.motion;
     const olOverlayFeatures = this.overlayStore.layer.ol
-      .getSource()
+      .getSource()!
       .getFeatures();
     const overlayFeaturesKeys = olOverlayFeatures.map(
-      (olFeature: OlFeature<OlGeometry>) => olFeature.getId()
+      (olFeature: OlFeature<OlGeometry>) => olFeature.getId() as EntityKey
     );
     const featuresKeys = features.map(this.overlayStore.getKey);
 
@@ -355,13 +366,13 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   ) {
     const groupedFeatures = this.groupFeaturesByStore(olFeatures);
 
-    this.stores.forEach((store: FeatureStore) => {
+    (this.stores as FeatureStore[]).forEach((store: FeatureStore) => {
       const features = groupedFeatures.get(store);
       if (features === undefined && exclusive === true) {
         this.unselectAllFeaturesFromStore(store);
       } else if (features === undefined && exclusive === false) {
         // Do nothing
-      } else {
+      } else if (features !== undefined) {
         this.selectFeaturesFromStore(store, features, exclusive, reverse);
       }
     });
@@ -461,7 +472,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private addOverlayLayer() {
     const layer = this.overlayStore.layer;
-    if (!this.map.layerController.getById(layer.id)) {
+    if (!this.map.layerController.getById(layer.id!)) {
       this.map.layerController.add(layer);
     }
   }

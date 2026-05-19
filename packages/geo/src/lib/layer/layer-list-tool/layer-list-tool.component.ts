@@ -51,10 +51,10 @@ export class LayerListToolComponent {
   private layerListToolService = inject(LayerListToolService);
 
   readonly mode = input.required<LayerToolMode>();
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>();
   readonly floatLabel = input<FloatLabelType>('auto');
-  readonly onlyVisible = input<boolean>(undefined);
-  readonly term = input<string>(undefined);
+  readonly onlyVisible = input<boolean>();
+  readonly term = input<string>();
 
   readonly searchChange = output<string>();
   readonly visibilityOnlyChange = output<boolean>();
@@ -66,7 +66,7 @@ export class LayerListToolComponent {
   }
 
   handleTermChange(value: string | undefined): void {
-    this.searchChange.emit(value);
+    this.searchChange.emit(value ?? '');
   }
 
   toggleSelectionMode() {

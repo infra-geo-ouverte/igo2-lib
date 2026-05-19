@@ -14,7 +14,7 @@ import { StyleByAttribute } from '../shared/vector/vector-style.interface';
   providedIn: 'root'
 })
 export class StyleService {
-  public style: olStyle.Style;
+  public style!: olStyle.Style;
 
   /**
    * Create a style based on a object as
@@ -91,8 +91,8 @@ export class StyleService {
       ) {
         if (
           feature &&
-          resolution >= labelMinResolution &&
-          resolution <= labelMaxResolution
+          resolution! >= labelMinResolution &&
+          resolution! <= labelMaxResolution
         ) {
           if (feature && options.text.attribute) {
             parsedStyle
@@ -108,13 +108,13 @@ export class StyleService {
   }
 
   public parseStyle(key: string, value: any) {
-    const styleOptions = {};
+    const styleOptions: Record<string, any> = {};
     const olCls = this.getOlCls(key);
 
     if (olCls && value instanceof Object) {
       Object.keys(value).forEach((_key) => {
         const olKey = this.getOlKey(_key);
-        styleOptions[olKey] = this.parseStyle(_key, value[_key]);
+        styleOptions[olKey as string] = this.parseStyle(_key, value[_key]);
       });
       return new olCls(styleOptions);
     } else {
@@ -138,7 +138,9 @@ export class StyleService {
   }
 
   private getOlCls(key: any) {
-    let olCls = olStyle[key.charAt(0).toUpperCase() + key.slice(1)];
+    let olCls = (olStyle as Record<string, any>)[
+      key.charAt(0).toUpperCase() + key.slice(1)
+    ];
     if (key === 'regularshape') {
       olCls = olStyle.RegularShape;
     }
@@ -212,13 +214,13 @@ export class StyleService {
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined' &&
-          feature.get(attribute) !== null
-            ? feature.get(attribute)
+          typeof feature.get(attribute!) !== 'undefined' &&
+          feature.get(attribute!) !== null
+            ? feature.get(attribute!)
             : '';
         if (
-          val === data[i] ||
-          val.toString().match(new RegExp(data[i], 'gmi'))
+          val === data![i] ||
+          val.toString().match(new RegExp(data![i], 'gmi'))
         ) {
           if (icon) {
             style = [
@@ -279,13 +281,13 @@ export class StyleService {
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined' &&
-          feature.get(attribute) !== null
-            ? feature.get(attribute)
+          typeof feature.get(attribute!) !== 'undefined' &&
+          feature.get(attribute!) !== null
+            ? feature.get(attribute!)
             : '';
         if (
-          val === data[i] ||
-          val.toString().match(new RegExp(data[i], 'gmi'))
+          val === data![i] ||
+          val.toString().match(new RegExp(data![i], 'gmi'))
         ) {
           style = [
             new olStyle.Style({
@@ -331,7 +333,7 @@ export class StyleService {
     feature: RenderFeature | OlFeature<OlGeometry>,
     resolution: number,
     clusterParam: ClusterParam = {},
-    layerStyle
+    layerStyle: any
   ) {
     let style;
     const size = feature.get('features').length;
@@ -351,7 +353,7 @@ export class StyleService {
                   color: '#fff'
                 })
               });
-              style.setText(text);
+              (style as any).setText(text);
             }
 
             if (r.dynamicRadius) {
@@ -361,7 +363,7 @@ export class StyleService {
               if (clusterRadius < radiusMin) {
                 clusterRadius = radiusMin;
               }
-              style.image_.setRadius(clusterRadius);
+              (style as any).image_.setRadius(clusterRadius);
             }
             break;
           }
@@ -406,14 +408,14 @@ export class StyleService {
     return style;
   }
 
-  getLabel(feature, labelMatch): string {
+  getLabel(feature: any, labelMatch: any): string {
     let label = labelMatch;
     if (!label) {
-      return;
+      return '';
     }
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
-    labelToGet.forEach((v) => {
+    labelToGet.forEach((v: any) => {
       label = label.replace(v[0], feature.get(v[1]));
     });
 
@@ -425,7 +427,7 @@ export class StyleService {
     return label;
   }
 
-  private guessTypeFeature(feature) {
+  private guessTypeFeature(feature: any) {
     switch (feature.getGeometry().getType()) {
       case 'Point':
       case 'MultiPoint':

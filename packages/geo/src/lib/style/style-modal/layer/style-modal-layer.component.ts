@@ -49,12 +49,12 @@ export class StyleModalLayerComponent implements OnInit {
 
   confirmFlag = model(false);
 
-  public form: UntypedFormGroup;
+  public form!: UntypedFormGroup;
 
-  public styleModalData: StyleModalData;
-  public linestringOnly: boolean;
+  public styleModalData!: StyleModalData;
+  public linestringOnly!: boolean;
 
-  private initialValues: StyleModalData;
+  private initialValues!: StyleModalData;
 
   private defaultValues: StyleModalData = {
     fillColor: 'rgba(255,255,255,0.4)',
@@ -63,12 +63,14 @@ export class StyleModalLayerComponent implements OnInit {
 
   get layerOlStyle(): olStyle {
     const style = this.data.layer.ol.getStyle();
-    return style instanceof Function ? undefined : (style as olStyle).clone();
+    return style instanceof Function
+      ? (undefined as unknown as olStyle)
+      : (style as olStyle).clone();
   }
 
   ngOnInit() {
     this.linestringOnly = true;
-    for (const feature of this.data.layer.ol.getSource().getFeatures()) {
+    for (const feature of this.data.layer.ol.getSource()!.getFeatures()) {
       if (feature.getGeometry()?.getType() !== 'LineString') {
         this.linestringOnly = false;
       }
@@ -99,10 +101,10 @@ export class StyleModalLayerComponent implements OnInit {
     let fillColor = this.defaultValues.fillColor;
     const style = this.layerOlStyle;
     if (style?.getFill()?.getColor()) {
-      const arrayColor = style.getFill().getColor();
-      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 0.4
-      })`;
+      const arrayColor = style.getFill()!.getColor() as number[];
+      fillColor =
+        `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},` +
+        `${arrayColor[3] || 0.4})`;
     }
     return fillColor;
   }
@@ -111,28 +113,32 @@ export class StyleModalLayerComponent implements OnInit {
     let strokeColor = this.defaultValues.strokeColor;
     const style = this.layerOlStyle;
     if (style?.getStroke()?.getColor()) {
-      const arrayColor = style.getStroke().getColor();
-      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
-        arrayColor[3] || 1
-      })`;
+      const arrayColor = style.getStroke()!.getColor() as number[];
+      strokeColor =
+        `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},` +
+        `${arrayColor[3] || 1})`;
     }
     return strokeColor;
   }
 
-  setLayerFillColor(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setLayerFillColor(event: any) {
     const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
+    const s = this.layerOlStyle?.clone();
+    if (!s) return;
     (s.getImage() as any).getFill().setColor(cAA);
-    s.getFill().setColor(cAA);
+    s.getFill()?.setColor(cAA);
     this.data.layer.ol.setStyle(s);
     this.styleModalData.fillColor = event;
   }
 
-  setLayerStrokeColor(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setLayerStrokeColor(event: any) {
     const cAA = ColorAsArray(event);
-    const s = this.layerOlStyle.clone();
+    const s = this.layerOlStyle?.clone();
+    if (!s) return;
     (s.getImage() as any).getStroke().setColor(cAA);
-    s.getStroke().setColor(cAA);
+    s.getStroke()?.setColor(cAA);
     this.data.layer.ol.setStyle(s);
     this.styleModalData.strokeColor = event;
   }
@@ -145,12 +151,12 @@ export class StyleModalLayerComponent implements OnInit {
 
   confirm() {
     this.confirmFlag.set(true);
-    if (this.form.get('fill').value) {
-      this.styleModalData.fillColor = this.form.get('fill').value;
+    if (this.form.get('fill')?.value) {
+      this.styleModalData.fillColor = this.form.get('fill')!.value;
     }
 
-    if (this.form.get('stroke').value) {
-      this.styleModalData.strokeColor = this.form.get('stroke').value;
+    if (this.form.get('stroke')?.value) {
+      this.styleModalData.strokeColor = this.form.get('stroke')!.value;
     }
     this.dialogRef.close(this.styleModalData);
   }

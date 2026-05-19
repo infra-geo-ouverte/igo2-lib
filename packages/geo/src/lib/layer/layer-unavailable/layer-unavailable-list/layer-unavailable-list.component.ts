@@ -20,7 +20,7 @@ import { LayerUnavailableComponent } from '../layer-unavailable.component';
 export class LayerUnavailableListComponent {
   private layerService = inject(LayerService);
 
-  readonly layersOptions = input<AnyLayerOptions[]>(undefined);
+  readonly layersOptions = input<AnyLayerOptions[]>();
 
   deleteUnavailableLayer(options: AnyLayerOptions): void {
     this.layerService.deleteUnavailableLayers(options);

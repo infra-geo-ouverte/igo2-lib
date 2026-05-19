@@ -25,8 +25,8 @@ export class WfsWorkspace extends Workspace {
     super(options);
     this.map.viewController.resolution$.subscribe((mapResolution) => {
       if (
-        mapResolution > this.layer.minResolution &&
-        mapResolution < this.layer.maxResolution
+        (mapResolution ?? 0) > this.layer.minResolution &&
+        (mapResolution ?? 0) < this.layer.maxResolution
       ) {
         this.inResolutionRange$.next(true);
       } else {
@@ -36,22 +36,19 @@ export class WfsWorkspace extends Workspace {
   }
 
   public getLayerWksOptionTabQuery(): boolean {
-    if (this.layer.options.workspace.queryOptions?.tabQuery !== undefined) {
-      return this.layer.options.workspace.queryOptions.tabQuery;
+    if (this.layer.options.workspace?.queryOptions?.tabQuery !== undefined) {
+      return this.layer.options.workspace!.queryOptions!.tabQuery!;
     }
     return true;
   }
 
   public getLayerWksOptionMapQuery(): boolean {
     if (
-      this.layer.options.workspace.queryOptions?.mapQueryOnOpenTab !== undefined
+      this.layer.options.workspace?.queryOptions?.mapQueryOnOpenTab !==
+      undefined
     ) {
-      return this.layer.options.workspace.queryOptions.mapQueryOnOpenTab;
+      return this.layer.options.workspace!.queryOptions!.mapQueryOnOpenTab!;
     }
     return true;
-  }
-
-  private getInResolutionRange(): boolean {
-    return this.inResolutionRange$.value;
   }
 }

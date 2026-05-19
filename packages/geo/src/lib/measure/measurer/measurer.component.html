@@ -82,7 +82,7 @@
       <igo-measurer-item
         [measureType]="measureType.Length"
         [measureUnit]="activeLengthUnit"
-        [measure]="measure.length"
+        [measure]="measure.length ?? 0"
         [auto]="measureUnitsAuto"
         [placeholder]="
           (activeMeasureType === measureType.Area
@@ -97,7 +97,7 @@
       <igo-measurer-item
         [measureType]="measureType.Area"
         [measureUnit]="activeAreaUnit"
-        [measure]="measure.area"
+        [measure]="measure.area ?? 0"
         [auto]="measureUnitsAuto"
         [placeholder]="'igo.geo.measure.area' | translate"
         (measureUnitChange)="onAreaUnitChange($any($event))"
@@ -114,7 +114,7 @@
       <button
         mat-icon-button
         [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
-        [disabled]="(selectedFeatures$ | async).length === 0"
+        [disabled]="(selectedFeatures$ | async)!.length === 0"
         color="accent"
         (click)="onCalculateClick()"
       >
@@ -126,7 +126,7 @@
       <button
         mat-icon-button
         [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
-        [disabled]="(selectedFeatures$ | async).length === 0"
+        [disabled]="(selectedFeatures$ | async)!.length === 0"
         color="warn"
         (click)="onDeleteClick()"
       >
@@ -138,7 +138,7 @@
   <igo-entity-table
     #table
     class="table-compact"
-    [store]="store()"
+    [store]="$any(store())"
     [template]="tableTemplate"
   />
 </div>

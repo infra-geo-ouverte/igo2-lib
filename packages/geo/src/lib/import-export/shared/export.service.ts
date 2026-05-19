@@ -14,6 +14,7 @@ import {
 } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
+import { Extent } from 'ol/extent';
 import * as olformat from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { circular } from 'ol/geom/Polygon';
@@ -97,7 +98,7 @@ export class ExportService {
   ): Observable<void> {
     const exportOlFeatures = this.cleanFeatures(
       olFeatures,
-      options.format,
+      options.format!,
       '_featureStore'
     );
 
@@ -131,7 +132,7 @@ export class ExportService {
       }
 
       const properties = keys.reduce(
-        (acc: object, key: string) => {
+        (acc: Record<string, unknown>, key: string) => {
           acc[key] = olFeature.get(key);
           return acc;
         },
@@ -150,7 +151,7 @@ export class ExportService {
         .filter((key: string) => !key.startsWith('_'));
       let comment = '';
       const properties = keys.reduce(
-        (acc: object, key: string) => {
+        (acc: Record<string, unknown>, key: string) => {
           if (key && key !== 'geometry') {
             key === 'id' && olFeature.get('draw')
               ? (comment += key + ':' + olFeature.get('draw') + '   \r\n')
@@ -180,19 +181,19 @@ export class ExportService {
   ): Observable<void> {
     const { format } = options;
     return new Observable((observer: Observer<void>) => {
-      const nothingToExport = this.nothingToExport(olFeatures, format);
+      const nothingToExport = this.nothingToExport(olFeatures, format!);
       if (nothingToExport) {
         observer.error(new ExportNothingToExportError());
         return;
       }
 
       const ogreFormats = Object.keys(ExportService.ogreFormats);
-      if (ogreFormats.indexOf(format) >= 0) {
+      if (ogreFormats.indexOf(format!) >= 0) {
         if (!this.ogreUrl) {
-          if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
+          if (ExportService.noOgreFallbacks.indexOf(format!) >= 0) {
             this.exportToFile(
               olFeatures,
-              format,
+              format!,
               title,
               projectionIn,
               projectionOut
@@ -216,7 +217,7 @@ export class ExportService {
       } else {
         this.exportToFile(
           olFeatures,
-          format,
+          format!,
           title,
           projectionIn,
           projectionOut
@@ -276,7 +277,7 @@ export class ExportService {
 
     for (const layerName of data.layers) {
       const layer = map.layerController.getById(layerName);
-      if (isLayerGroup(layer)) {
+      if (!layer || isLayerGroup(layer)) {
         continue;
       }
       const features = await lastValueFrom(
@@ -292,7 +293,7 @@ export class ExportService {
         : null;
 
       const collection: FeatureCollection = transformedFeatures
-        ? JSON.parse(formattedFeatures)
+        ? JSON.parse(formattedFeatures!)
         : {
             transformedFeatures: []
           };
@@ -300,7 +301,7 @@ export class ExportService {
         this.formatRecord(feature.properties)
       );
 
-      await addExcelSheetToWorkBook(layer.title, rows, workBook);
+      await addExcelSheetToWorkBook(layer!.title ?? '', rows, workBook);
     }
 
     const title = this.getTitleFromLayers(data.layers, map);
@@ -315,16 +316,22 @@ export class ExportService {
 
   private getLayerTitleFromId(id: LayerId, map: IgoMap): string {
     const layer = map.layerController.getById(id);
-    return layer.title;
+    return layer?.title ?? '';
   }
 
   private formatRecord(
-    record: Record<string, unknown>
+    record: Record<string, unknown> | null
   ): Record<string, unknown> {
-    return Object.entries(record).reduce((formatted, [key, value]) => {
-      formatted[key] = this.formatDataType(value);
-      return formatted;
-    }, {});
+    if (record == null) {
+      return {};
+    }
+    return Object.entries(record).reduce(
+      (formatted: Record<string, unknown>, [key, value]) => {
+        formatted[key] = this.formatDataType(value);
+        return formatted;
+      },
+      {}
+    );
   }
 
   private formatDataType(value: unknown): unknown {
@@ -347,7 +354,7 @@ export class ExportService {
 
   private exportWithOgre(
     olFeatures: OlFeature<OlGeometry>[],
-    { format, csvSeparator = null }: ExportOptions,
+    { format, csvSeparator = undefined }: ExportOptions,
     title: string,
     projectionIn: string,
     projectionOut: string
@@ -369,10 +376,10 @@ export class ExportService {
     let outputName =
       format === 'Shapefile'
         ? `${title}.zip`
-        : `${title}.${format.toLowerCase()}`;
-    let ogreFormat = ExportService.ogreFormats[format];
+        : `${title}.${format!.toLowerCase()}`;
+    let ogreFormat = ExportService.ogreFormats[format! as ExportOgreFormat];
 
-    if (isCsvExport(format)) {
+    if (isCsvExport(format!)) {
       outputName = `${title}.csv`;
 
       if (format === 'CSVcomma' || format === 'CSVsemicolon') {
@@ -420,7 +427,7 @@ export class ExportService {
       const pointOrLine = olFeatures.find((olFeature) => {
         return (
           ['Point', 'LineString', 'MultiLineString'].indexOf(
-            olFeature.getGeometry().getType()
+            olFeature.getGeometry()!.getType()
           ) >= 0
         );
       });
@@ -434,7 +441,7 @@ export class ExportService {
     options: ExportOptions
   ): OlFeature[] {
     const dataSource = layer.dataSource.ol;
-    const extent = layer.map.viewController.getExtent();
+    const extent = layer.map!.viewController.getExtent();
 
     let features: OlFeature[] = options.featureInMapExtent
       ? dataSource.getFeaturesInExtent(extent)
@@ -451,32 +458,33 @@ export class ExportService {
     layerName: string,
     data: ExportOptions
   ): OlFeature[] {
-    const hasSelection = data.layersWithSelection.indexOf(layerName) !== -1;
+    const hasSelection =
+      (data.layersWithSelection ?? []).indexOf(layerName) !== -1;
     const isInMapExtent = data.featureInMapExtent;
     if (hasSelection && isInMapExtent) {
       // Only export selected feature && into map extent
-      return wks.entityStore.stateView
-        .all()
+      return wks
+        .entityStore!.stateView.all()
         .filter(
           (e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected
         )
         .map((e) => (e.entity as Feature).ol as OlFeature);
     } else if (hasSelection && !isInMapExtent) {
       // Only export selected feature &&  (into map extent OR not)
-      return wks.entityStore.stateView
-        .all()
+      return wks
+        .entityStore!.stateView.all()
         .filter((e: EntityRecord<object>) => e.state.selected)
         .map((e) => (e.entity as Feature).ol as OlFeature);
     } else if (isInMapExtent) {
       // Only into map extent
-      return wks.entityStore.stateView
-        .all()
+      return wks
+        .entityStore!.stateView.all()
         .filter((e: EntityRecord<object>) => e.state.inMapExtent)
         .map((e) => (e.entity as Feature).ol as OlFeature);
     } else {
       // All features
-      return wks.entityStore.stateView
-        .all()
+      return wks
+        .entityStore!.stateView.all()
         .map((e) => (e.entity as Feature).ol as OlFeature);
     }
   }
@@ -489,13 +497,13 @@ export class ExportService {
   ): Observable<OlFeature[]> {
     const projection = map.viewController.getOlProjection();
     const extent = data.featureInMapExtent
-      ? map.viewController.getExtent()
+      ? (map.viewController.getExtent() as unknown as Extent)
       : undefined;
 
     if (layer.dataSource instanceof WFSDataSource) {
       return layer.dataSource
         .fetchFeatures({
-          extent,
+          extent: extent!,
           projection,
           httpClient: this.httpClient
         })
@@ -507,11 +515,11 @@ export class ExportService {
     }
     // Filter spatial use external API to make query and use Workspace to store data
     else if (layer.options.workspace?.enabled) {
-      const wks = this.getWorkspaceByLayerId(layer.id, store);
+      const wks = this.getWorkspaceByLayerId(layer.id!, store);
       if (wks?.entityStore?.stateView.all().length) {
         const features = this.getFeaturesFromWorkspace(
           wks,
-          layer.id.toString(),
+          layer.id!.toString(),
           data
         );
         return of(features).pipe(
@@ -527,7 +535,10 @@ export class ExportService {
     return of([]);
   }
 
-  getWorkspaceByLayerId(id: LayerId, store: WorkspaceStore): Workspace {
+  getWorkspaceByLayerId(
+    id: LayerId,
+    store: WorkspaceStore
+  ): Workspace | undefined {
     const wksFromLayerId = store
       .all()
       .find(
@@ -538,7 +549,7 @@ export class ExportService {
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
-    return;
+    return undefined;
   }
 
   getGeomTypes(
@@ -548,7 +559,7 @@ export class ExportService {
     let geomTypes: GeometryCollection[] = [];
     if (format === 'Shapefile' || format === 'GPX') {
       features.forEach((olFeature) => {
-        const featureGeomType = olFeature.getGeometry().getType();
+        const featureGeomType = olFeature.getGeometry()!.getType();
         const currentGeomType = geomTypes.find(
           (geomType) => geomType.type === featureGeomType
         );

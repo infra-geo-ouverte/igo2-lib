@@ -63,13 +63,13 @@ export class PrintFormComponent implements OnInit {
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
 
-  readonly disabled$ = input<BehaviorSubject<boolean>>(undefined);
+  readonly disabled$ = input<BehaviorSubject<boolean>>();
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
     return this.imageFormatField.value;
   }
-  set imageFormat(value: PrintSaveImageFormat) {
+  set imageFormat(value: PrintSaveImageFormat | undefined) {
     this.imageFormatField.setValue(value || PrintSaveImageFormat.Jpeg, {
       onlySelf: true
     });
@@ -79,7 +79,7 @@ export class PrintFormComponent implements OnInit {
   get outputFormat(): PrintOutputFormat {
     return this.outputFormatField.value;
   }
-  set outputFormat(value: PrintOutputFormat) {
+  set outputFormat(value: PrintOutputFormat | undefined) {
     this.outputFormatField.setValue(value || PrintOutputFormat.Pdf, {
       onlySelf: true
     });
@@ -89,7 +89,7 @@ export class PrintFormComponent implements OnInit {
   get paperFormat(): PrintPaperFormat {
     return this.paperFormatField.value;
   }
-  set paperFormat(value: PrintPaperFormat) {
+  set paperFormat(value: PrintPaperFormat | undefined) {
     this.paperFormatField.setValue(value || PrintPaperFormat.Letter, {
       onlySelf: true
     });
@@ -99,7 +99,7 @@ export class PrintFormComponent implements OnInit {
   get orientation(): PrintOrientation {
     return this.orientationField.value;
   }
-  set orientation(value: PrintOrientation) {
+  set orientation(value: PrintOrientation | undefined) {
     this.orientationField.setValue(value || PrintOrientation.landscape, {
       onlySelf: true
     });
@@ -109,7 +109,7 @@ export class PrintFormComponent implements OnInit {
   get resolution(): PrintResolution {
     return this.resolutionField.value;
   }
-  set resolution(value: PrintResolution) {
+  set resolution(value: PrintResolution | undefined) {
     this.resolutionField.setValue(value || ('96' satisfies PrintResolution), {
       onlySelf: true
     });
@@ -119,7 +119,7 @@ export class PrintFormComponent implements OnInit {
   get legendPosition(): PrintLegendPosition {
     return this.legendPositionField.value;
   }
-  set legendPosition(value: PrintLegendPosition) {
+  set legendPosition(value: PrintLegendPosition | undefined) {
     this.legendPositionField.setValue(value || PrintLegendPosition.none, {
       onlySelf: true
     });

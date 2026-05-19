@@ -24,15 +24,15 @@ Button to center the map to the home extent
 export class HomeExtentButtonComponent {
   configService = inject(ConfigService);
 
-  readonly map = input<IgoMap>(undefined);
-  readonly color = input<string>(undefined);
-  readonly extentOverride = input<MapExtent>(undefined);
-  readonly centerOverride = input<[number, number]>(undefined);
-  readonly zoomOverride = input<number>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly color = input<string>();
+  readonly extentOverride = input<MapExtent>();
+  readonly centerOverride = input<[number, number]>();
+  readonly zoomOverride = input<number>();
 
-  private homeExtentButtonExtent;
-  private homeExtentButtonCenter;
-  private homeExtentButtonZoom;
+  private homeExtentButtonExtent?: MapExtent;
+  private homeExtentButtonCenter?: [number, number];
+  private homeExtentButtonZoom?: number;
 
   constructor() {
     this.computeHomeExtent();

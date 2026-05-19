@@ -30,10 +30,10 @@ import { debounceTime } from 'rxjs';
 export class LayerSearchComponent implements OnInit {
   control = new FormControl();
 
-  readonly initialValue = input<string>(undefined);
-  readonly floatLabel = input<FloatLabelType>(undefined);
-  readonly placeholder = input<string>(undefined);
-  readonly tooltip = input<string>(undefined);
+  readonly initialValue = input<string>();
+  readonly floatLabel = input<FloatLabelType>('auto');
+  readonly placeholder = input<string>();
+  readonly tooltip = input<string>();
 
   readonly searchChange = output<string | undefined>();
 

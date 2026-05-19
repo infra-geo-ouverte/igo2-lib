@@ -71,14 +71,14 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   public activeDrawType: SpatialFilterType = this.spatialType.Polygon;
 
-  readonly store = input<EntityStore<Feature>>(undefined);
-  selectedQueryType = model<SpatialFilterQueryType>(undefined);
+  readonly store = input<EntityStore<Feature>>();
+  selectedQueryType = model<SpatialFilterQueryType>();
 
-  readonly zones = input<Feature[]>(undefined);
+  readonly zones = input<Feature[]>();
 
   readonly layers = input<AnyLayer[]>([]);
 
-  public type: SpatialFilterType;
+  public type!: SpatialFilterType;
 
   readonly eventType = output<SpatialFilterType>();
 
@@ -87,7 +87,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   readonly bufferChange = output<number>();
   readonly measureUnitChange = output<MeasureLengthUnit>();
 
-  readonly addZone = output<Feature>();
+  readonly addZone = output<Feature | undefined>();
   readonly removeZone = output<Feature>();
   readonly zonesWithBufferChange = output<Feature[]>();
 
@@ -118,7 +118,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
 
   onSelectionChange() {
-    this.eventQueryType.emit(this.selectedQueryType());
+    this.eventQueryType.emit(this.selectedQueryType()!);
     this.addZone.emit(undefined);
   }
 }

@@ -21,7 +21,7 @@ import { VectorLayer } from '../shared/layers/vector-layer';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class TrackFeatureButtonComponent implements OnInit {
-  readonly layer = input<VectorLayer>(undefined);
+  readonly layer = input.required<VectorLayer>();
 
   trackFeature = model(false);
 
@@ -33,11 +33,12 @@ export class TrackFeatureButtonComponent implements OnInit {
 
   toggleTrackFeature() {
     const trackFeature = this.trackFeature();
+    const layer = this.layer();
     if (trackFeature) {
-      this.layer().disableTrackFeature();
+      layer.disableTrackFeature();
       this.color = 'basic';
     } else {
-      this.layer().enableTrackFeature(this.layer().options.trackFeature);
+      layer.enableTrackFeature(layer.options.trackFeature!);
       this.color = 'primary';
     }
     this.trackFeature.set(!trackFeature);

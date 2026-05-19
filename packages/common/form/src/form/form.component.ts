@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { t } from 'typy';
 
-import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { Form, FormField } from '../shared/form.interfaces';
 import { getAllFormFields } from '../shared/form.utils';
 
 /**
@@ -89,12 +89,12 @@ export class FormComponent implements OnChanges {
   }
 
   private setData(data: Record<string, unknown>) {
-    this.form()!.fields.forEach((field: FormField) => {
+    this.form().fields.forEach((field) => {
       field.control.setValue(t(data, field.name).safeObject);
     });
 
-    this.form()!.groups.forEach((group: FormFieldGroup) => {
-      group.fields.forEach((field: FormField) => {
+    this.form().groups.forEach((group) => {
+      group.fields.forEach((field) => {
         field.control.setValue(t(data, field.name).safeObject);
       });
     });

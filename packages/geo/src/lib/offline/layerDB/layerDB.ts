@@ -2,6 +2,7 @@ import { IDBPDatabase } from 'idb';
 import { Observable, from } from 'rxjs';
 import { concatMap, first, map, mergeMap, switchMap } from 'rxjs/operators';
 
+import { LayerId } from '../../layer/shared';
 import { IgoDBSchema } from '../shared/indexed-db.interface';
 import { createIndexedDb } from '../shared/indexed-db.utils';
 import { LayerDBData } from './layerDB.interface';
@@ -22,7 +23,7 @@ export class LayerDB {
       switchMap((db) =>
         this.getByID(layerDBData.layerId).pipe(
           first(),
-          concatMap((dbObject: LayerDBData) => {
+          concatMap((dbObject: LayerDBData | undefined) => {
             if (!dbObject) {
               return from(db.add('layerData', layerDBData)).pipe(
                 map(() => layerDBData)
@@ -56,9 +57,9 @@ export class LayerDB {
    * @param layerId
    * @returns
    */
-  getByID(layerId: string): Observable<LayerDBData> {
+  getByID(layerId: LayerId): Observable<LayerDBData | undefined> {
     return this.db$.pipe(
-      switchMap((db) => from(db?.get('layerData', layerId)))
+      switchMap((db) => from(db?.get('layerData', layerId as string)))
     );
   }
 

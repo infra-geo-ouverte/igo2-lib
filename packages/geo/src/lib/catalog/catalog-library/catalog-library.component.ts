@@ -26,7 +26,6 @@ import { Md5 } from 'ts-md5';
 
 import { TypeCapabilitiesStrings } from '../../datasource/shared/capabilities.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
@@ -60,12 +59,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   /**
    * Store holding the catalogs
    */
-  readonly store = input<EntityStore<Catalog>>(undefined);
-
-  /**
-   * Map to add the catalog items to
-   */
-  readonly map = input<IgoMap>(undefined);
+  readonly store = input.required<EntityStore<Catalog>>();
 
   /**
    * Determine if the form to add a catalog is allowed
@@ -87,7 +81,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
 
   submitDisabled = true;
 
-  private addingCatalog$$: Subscription;
+  private addingCatalog$$!: Subscription;
 
   get addedCatalogs(): Catalog[] {
     return (this.storageService.get('addedCatalogs') || []) as Catalog[];
@@ -227,15 +221,15 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.unsubscribeAddingCatalog();
   }
 
-  onCatalogRemove(catalog) {
-    this.store().delete(catalog);
+  onCatalogRemove(catalog: Catalog) {
+    this.store()?.delete(catalog);
     this.addedCatalogs = this.addedCatalogs
       .slice(0)
       .filter((c) => c.id !== catalog.id);
   }
 
   addCatalogDialog(
-    error?,
+    error?: boolean,
     addedCatalog?: Catalog,
     isPredefinedCatalog?: boolean
   ) {

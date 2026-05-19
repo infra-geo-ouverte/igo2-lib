@@ -35,9 +35,9 @@ export function createOverlayLayerStyle(): (
         const styleService = new StyleService();
         return styleService.createStyle(customStyle, olFeature, resolution);
       }
-      const geometryType = olFeature.getGeometry().getType();
+      const geometryType = olFeature.getGeometry()!.getType();
       style = geometryType === 'Point' ? markerStyle : defaultStyle;
-      style.getText().setText(olFeature.get('_mapTitle'));
+      style.getText()!.setText(olFeature.get('_mapTitle'));
       return style;
     }
   };
@@ -92,7 +92,7 @@ function createBufferStyle(
   strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
   strokeWidth = 2,
   fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
-  bufferRadius?
+  bufferRadius?: number
 ): olstyle.Style {
   const stroke = new olstyle.Stroke({
     width: strokeWidth,
@@ -113,7 +113,7 @@ function createBufferStyle(
     }),
     text: new olstyle.Text({
       font: '12px Calibri,sans-serif',
-      text: bufferRadius,
+      text: String(bufferRadius),
       fill: new olstyle.Fill({ color: '#000' }),
       stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
       overflow: true

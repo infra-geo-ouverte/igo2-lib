@@ -1,14 +1,14 @@
 <igo-geometry-form-field-input
-  [formControl]="formControl()"
-  [map]="map()"
-  [geometryType]="geometryType$ | async"
-  [drawGuide]="drawGuide$ | async"
+  [formControl]="formControl()!"
+  [map]="map()!"
+  [geometryType]="(geometryType$ | async)!"
+  [drawGuide]="(drawGuide$ | async)!"
   [measure]="measure()"
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [controlOptions]="controlOptions()"
-  [drawStyle]="drawStyle()"
-  [overlayStyle]="overlayStyle()"
+  [drawStyle]="drawStyle()!"
+  [overlayStyle]="overlayStyle()!"
 />
 
 @if (geometryTypeField()) {

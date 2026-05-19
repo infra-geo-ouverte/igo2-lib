@@ -49,14 +49,14 @@ export function isLayerLinkedTogether(
     masterLink = masterA;
   }
 
-  const links = masterLink.options.linkedLayers.links;
+  const links = masterLink!.options.linkedLayers!.links;
   if (isMasterRelation) {
     const child = masterLink === layerA ? layerB : layerA;
-    return !!getLayerLinks(links, child, property);
+    return !!getLayerLinks(links ?? [], child, property);
   }
 
-  const potentialLinks = getLayerLinks(links, layerA, property);
-  return potentialLinks?.some((link) => link.linkedIds.includes(layerB.id));
+  const potentialLinks = getLayerLinks(links ?? [], layerA, property);
+  return potentialLinks?.some((link) => link.linkedIds.includes(layerB.id!));
 }
 
 function getLayerLinks(
@@ -64,7 +64,7 @@ function getLayerLinks(
   layer: Layer,
   property?: LinkedProperties
 ): LayersLinkProperties[] {
-  const linkId = layer.options.linkedLayers!.linkId;
+  const linkId = layer.options.linkedLayers!.linkId!;
   return links.filter((link) => {
     const hasLink = link.linkedIds.includes(linkId);
     if (property) {
@@ -86,11 +86,11 @@ export function isBaseLayerLinked(
   allLayers: AnyLayer[]
 ): layer is Layer {
   if (!isLayerItem(layer)) {
-    return;
+    return false;
   }
 
   const linkedMaster = getLinkedLayerMaster(layer, allLayers);
-  return linkedMaster && isBaseLayer(linkedMaster);
+  return !!(linkedMaster && isBaseLayer(linkedMaster));
 }
 
 function getLinkedLayerMaster(
@@ -108,12 +108,12 @@ function getLinkedLayerMaster(
 
 function _isLinkedMaster(layer: Layer, layerToCheck: AnyLayer): boolean {
   if (!isLayerItem(layerToCheck)) {
-    return;
+    return false;
   }
   const links = layerToCheck.options.linkedLayers?.links;
   if (links) {
     return links.some((link) =>
-      link.linkedIds.includes(layer.options.linkedLayers.linkId)
+      link.linkedIds.includes(layer.options.linkedLayers!.linkId!)
     );
   }
 

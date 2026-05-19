@@ -121,7 +121,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
             },
             {
               title: 'igo.geo.search.nominatim.country.all',
-              value: null,
+              value: null as any,
               enabled: false
             }
           ]
@@ -156,6 +156,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    if (!term) {
+      return of([]);
+    }
     const params = this.computeSearchRequestParams(term, options || {});
     if (!params.get('q')) {
       return of([]);
@@ -172,10 +175,8 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get(this.searchUrl, { params })
-      .pipe(
-        map((response: NominatimData[]) => this.extractResults(response, term))
-      );
+      .get<NominatimData[]>(this.searchUrl, { params })
+      .pipe(map((response) => this.extractResults(response, term)));
   }
 
   private computeSearchRequestParams(
@@ -259,7 +260,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     ];
   }
 
-  private computeTerm(term: string): string {
+  private computeTerm(term: string): string | null {
     return this.computeTermTags(term);
   }
 
@@ -267,7 +268,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * Add hashtag from query in Nominatim's format (+[])
    * @param term Query with hashtag
    */
-  private computeTermTags(term: string): string {
+  private computeTermTags(term: string): string | null {
     const hashtags = super.getHashtagsValid(term, 'amenity');
     if (!hashtags) {
       return this.computeTermSettings(term);
@@ -290,7 +291,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Query
    */
   private computeTermSettings(term: string): string {
-    this.options.settings.forEach((settings) => {
+    this.options.settings?.forEach((settings) => {
       if (settings.name === 'amenity') {
         settings.values.forEach((conf) => {
           if (conf.enabled && typeof conf.value === 'string') {

@@ -57,15 +57,15 @@ export class StyleModalDrawingComponent implements OnInit {
 
   confirmFlag = model(false);
 
-  public form: UntypedFormGroup;
+  public form!: UntypedFormGroup;
 
-  public styleModalData: StyleModalData;
-  public linestringOnly: boolean;
+  public styleModalData!: StyleModalData;
+  public linestringOnly!: boolean;
 
   ngOnInit() {
     this.linestringOnly = true;
     for (const feature of this.data.features) {
-      if (feature.geometry.type !== 'LineString') {
+      if (feature.geometry!.type !== 'LineString') {
         this.linestringOnly = false;
       }
     }
@@ -187,12 +187,12 @@ export class StyleModalDrawingComponent implements OnInit {
 
   confirm() {
     this.confirmFlag.set(true);
-    if (this.form.get('fill').value) {
-      this.styleModalData.fillColor = this.form.get('fill').value;
+    if (this.form.get('fill')!.value) {
+      this.styleModalData.fillColor = this.form.get('fill')!.value;
     }
 
-    if (this.form.get('stroke').value) {
-      this.styleModalData.strokeColor = this.form.get('stroke').value;
+    if (this.form.get('stroke')!.value) {
+      this.styleModalData.strokeColor = this.form.get('stroke')!.value;
     }
     this.dialogRef.close(this.styleModalData);
   }

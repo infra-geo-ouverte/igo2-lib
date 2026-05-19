@@ -17,7 +17,7 @@ export const TimeFrame = ['now', 'today'] as const;
 export type TimeFrame = (typeof TimeFrame)[number];
 
 export function isTimeFrame(
-  value: Date | TimeFrame | string | number
+  value: Date | TimeFrame | string | number | undefined
 ): value is TimeFrame {
   return (
     typeof value === 'string' &&

@@ -25,10 +25,10 @@ export class MapOfflineDirective implements AfterViewInit {
   private component: MapBrowserComponent;
 
   get map(): IgoMap {
-    return this.component.map();
+    return this.component.map()!;
   }
 
-  private previousMessageId;
+  private previousMessageId?: number;
 
   constructor() {
     const component = inject(MapBrowserComponent);
@@ -111,21 +111,21 @@ export class MapOfflineDirective implements AfterViewInit {
       if (offlinableByUrlSourceOptions) {
         const type = offlinableByUrlSourceOptions.type;
         if (type === 'mvt') {
-          layer.ol.getSource().refresh();
+          layer.ol.getSource()?.refresh();
         }
         if (!online || forcedOffline) {
-          if (['vector', 'cluster'].includes(type)) {
+          if (type && ['vector', 'cluster'].includes(type)) {
             return;
           }
           (layer.ol.getSource() as any).setUrl(
-            offlinableByUrlSourceOptions.pathOffline
+            (offlinableByUrlSourceOptions as any).pathOffline
           );
         } else if (!online || !forcedOffline) {
-          if (['vector', 'cluster'].includes(type)) {
+          if (['vector', 'cluster'].includes(type!)) {
             return;
           }
           (layer.ol.getSource() as any).setUrl(
-            offlinableByUrlSourceOptions.url
+            offlinableByUrlSourceOptions.url!
           );
         } else {
           this.handleNonOfflinableLayerResolution(online, forcedOffline, layer);

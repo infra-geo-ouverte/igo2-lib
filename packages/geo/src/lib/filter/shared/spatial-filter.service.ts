@@ -55,7 +55,7 @@ export class SpatialFilterService {
       this.configService.getConfig('spatialFilter.url') || this.baseUrl;
   }
 
-  getKeyByValue(object, value) {
+  getKeyByValue(object: Record<string, string>, value: string) {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
@@ -63,23 +63,20 @@ export class SpatialFilterService {
    * Loading data for spatial filter list component (NO GEOMETRY)
    */
   loadFilterList(type: SpatialFilterQueryType): Observable<Feature[]> {
-    const urlPath = type as string;
-    if (urlPath) {
-      return this.http
-        .get<{
-          features: Feature[];
-        }>(`${this.baseUrl}/${this.urlFilterList[urlPath]}`)
-        .pipe(
-          map((featureCollection) =>
-            featureCollection.features.map((f) => {
-              f.meta = {
-                id: f.properties.code
-              };
-              return f;
-            })
-          )
-        );
-    }
+    return this.http
+      .get<{
+        features: Feature[];
+      }>(`${this.baseUrl}/${this.urlFilterList[type]}`)
+      .pipe(
+        map((featureCollection) =>
+          featureCollection.features.map((f) => {
+            f.meta = {
+              id: f.properties.code
+            };
+            return f;
+          })
+        )
+      );
   }
 
   /*
@@ -88,12 +85,12 @@ export class SpatialFilterService {
   loadThematicsList() {
     const url = 'types';
     const items: SpatialFilterThematic[] = [];
-    return this.http.get(`${this.baseUrl}/${url}`).pipe(
-      map((types: string[]) => {
+    return this.http.get<string[]>(`${this.baseUrl}/${url}`).pipe(
+      map((types) => {
         types.forEach((type) => {
           if (type.startsWith('lieux')) {
             const item: SpatialFilterThematic = {
-              name: undefined,
+              name: '',
               source: type
             };
             let substr = type.substring(6, type.length);
@@ -127,18 +124,18 @@ export class SpatialFilterService {
           } else {
             if (this.getKeyByValue(this.urlFilterList, type)) {
               const item: SpatialFilterThematic = {
-                name: undefined,
+                name: '',
                 source: type
               };
-              const name = this.getKeyByValue(this.urlFilterList, type);
+              const name = this.getKeyByValue(this.urlFilterList, type)!;
               try {
                 item.name = this.languageService.translate.instant(
                   'igo.geo.terrapi.' + name
                 );
               } catch {
                 item.name =
-                  name.substring(0, 1).toUpperCase() +
-                  name.substring(1, name.length - 1);
+                  name!.substring(0, 1).toUpperCase() +
+                  name!.substring(1, name!.length - 1);
               }
               item.source = type;
 
@@ -185,27 +182,28 @@ export class SpatialFilterService {
   loadItemById(
     feature: Feature,
     type: SpatialFilterQueryType
-  ): Observable<Feature> {
+  ): Observable<Feature> | undefined {
     const featureType = this.urlFilterList[type];
     const featureCode = feature.properties.code;
     if (featureType && featureCode) {
-      return this.http
-        .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
-          params: {
-            geometry: 'true'
-          }
-        })
-        .pipe(
-          map((f) => {
-            f.meta = {
-              id: f.properties.code,
-              alias: f.properties.nom,
-              title: f.properties.nom
-            };
-            return f;
-          })
-        );
+      return undefined;
     }
+    return this.http
+      .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
+        params: {
+          geometry: 'true'
+        }
+      })
+      .pipe(
+        map((f) => {
+          f.meta = {
+            id: f.properties.code,
+            alias: f.properties.nom,
+            title: f.properties.nom
+          };
+          return f;
+        })
+      );
   }
 
   /*
@@ -218,14 +216,14 @@ export class SpatialFilterService {
     type?: SpatialFilterQueryType
   ): Observable<Feature> {
     if (filterType === SpatialFilterType.Predefined) {
-      const featureType = this.urlFilterList[type];
+      const featureType = type ? this.urlFilterList[type] : undefined;
       const featureCode = feature.properties.code;
       if (featureType && featureCode) {
         return this.http
           .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
             params: {
               geometry: '100',
-              bufferOutput: buffer.toString()
+              bufferOutput: buffer!.toString()
             }
           })
           .pipe(
@@ -239,18 +237,17 @@ export class SpatialFilterService {
             })
           );
       }
-    } else {
-      return this.http
-        .post<Feature>(`${this.baseUrl}/geospatial/buffer?`, {
-          buffer,
-          loc: JSON.stringify(feature)
-        })
-        .pipe(
-          map((f) => {
-            return f;
-          })
-        );
     }
+    return this.http
+      .post<Feature>(`${this.baseUrl}/geospatial/buffer?`, {
+        buffer,
+        loc: JSON.stringify(feature)
+      })
+      .pipe(
+        map((f) => {
+          return f;
+        })
+      );
   }
 
   private getHttpParams(buffer: number) {
@@ -310,7 +307,7 @@ export class SpatialFilterService {
   ) {
     const { type, thematics, buffer = 0 } = options;
     const codes = features.map((f) => f.properties.code).join(',');
-    const urlBase = `${this.baseUrl}/${this.urlFilterList[type as string]}`;
+    const urlBase = `${this.baseUrl}/${this.urlFilterList[type]}`;
     if (itemType === SpatialFilterItemType.Address) {
       return this.doGet(`${urlBase}/${codes}/adresses`, buffer, (f) =>
         this.buildMetaForAddress(f)
@@ -360,7 +357,9 @@ export class SpatialFilterService {
   ): Observable<Feature[]> {
     const { filterType, buffer, type } = options;
     if (filterType === SpatialFilterType.Predefined) {
-      const featureType = this.urlFilterList[type];
+      const featureType = (this.urlFilterList as Record<string, string>)[
+        (type as string) ?? ''
+      ];
       const featureCode =
         'code=' + features.map((f) => f.properties.code).join(',');
       if (featureType && featureCode) {
@@ -370,7 +369,7 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: '100',
-                bufferOutput: buffer.toString()
+                bufferOutput: buffer!.toString()
               }
             }
           )
@@ -387,11 +386,10 @@ export class SpatialFilterService {
             })
           );
       }
-    } else {
-      return this.http.post<Feature[]>(`${this.baseUrl}/geospatial/buffer?`, {
-        buffer,
-        loc: JSON.stringify(features)
-      });
     }
+    return this.http.post<Feature[]>(`${this.baseUrl}/geospatial/buffer?`, {
+      buffer,
+      loc: JSON.stringify(features)
+    });
   }
 }

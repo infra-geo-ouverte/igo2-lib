@@ -50,29 +50,32 @@
     </mat-select>
   </mat-form-field>
 
+  @let fields = fields$ | async;
   @if (
     (currentFilterIsSpatial$ | async) === false &&
-    (fields$ | async) &&
-    (fields$ | async).length > 0 &&
-    (fields$ | async)[0].name !== ''
+    fields &&
+    fields.length > 0 &&
+    fields[0].name !== ''
   ) {
     <mat-form-field
       class="field"
       (mouseenter)="inputClearable = 'selectField'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel()"
+      [floatLabel]="floatLabel() ?? 'auto'"
     >
       <input
         matInput
         [placeholder]="'igo.geo.sourceFields.selectField' | translate"
         [disabled]="!currentFilter().active"
         [matAutocomplete]="autoCompleteField"
-        [value]="(selectedField$ | async) ? (selectedField$ | async).alias : ''"
+        [value]="
+          (selectedField$ | async) ? (selectedField$ | async)!.alias : ''
+        "
         tooltip-position="above"
         matTooltipShowDelay="500"
         [matTooltip]="
           (selectedField$ | async)
-            ? (selectedField$ | async).alias
+            ? (selectedField$ | async)!.alias
             : ('igo.geo.sourceFields.selectField' | translate)
         "
         (input)="updateFieldsList($any($event.target).value)"
@@ -115,7 +118,7 @@
       operator: (currentFilterIsSpatial$ | async) === false,
       dualInput: (currentFilterIsSpatial$ | async)
     }"
-    [floatLabel]="floatLabel()"
+    [floatLabel]="floatLabel() ?? 'auto'"
   >
     <mat-select
       tooltip-position="below"
@@ -167,12 +170,12 @@
     </mat-form-field>
   }
 
-  @if (['expression', 'pattern'].indexOf(detectProperty()) !== -1) {
+  @if (['expression', 'pattern'].indexOf(detectProperty()!) !== -1) {
     <mat-form-field
       class="singleInput"
       (mouseenter)="inputClearable = 'selectProperty'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel()"
+      [floatLabel]="floatLabel() ?? 'auto'"
     >
       <input
         matInput
@@ -181,8 +184,8 @@
         [matAutocomplete]="autoCompleteValues"
         [value]="
           detectProperty() === 'expression'
-            ? currentFilter().expression
-            : currentFilter().pattern
+            ? (currentFilter().expression ?? '')
+            : (currentFilter().pattern ?? '')
         "
         tooltip-position="above"
         matTooltipShowDelay="500"
@@ -247,7 +250,7 @@
       class="snrc"
       (mouseenter)="inputClearable = 'selectSNRC'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel()"
+      [floatLabel]="floatLabel() ?? 'auto'"
     >
       <input
         matInput
@@ -300,13 +303,13 @@
 <div class="ogc-filter-form-container">
   @if (
     !isTemporalOperator() &&
-    ['lowerBoundary', 'begin'].indexOf(detectProperty(1)) !== -1
+    ['lowerBoundary', 'begin'].indexOf(detectProperty(1)!) !== -1
   ) {
     <mat-form-field
       class="dualInput"
       (mouseenter)="inputClearable = 'selectProperty1'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel()"
+      [floatLabel]="floatLabel() ?? 'auto'"
     >
       <input
         matInput
@@ -316,8 +319,8 @@
         type="number"
         [value]="
           detectProperty(1) === 'lowerBoundary'
-            ? currentFilter().lowerBoundary
-            : currentFilter().begin
+            ? (currentFilter().lowerBoundary ?? '')
+            : (currentFilter().begin ?? '')
         "
         (input)="updateValuesList($any($event.target).value, 1)"
       />
@@ -355,13 +358,13 @@
 
   @if (
     !isTemporalOperator() &&
-    ['upperBoundary', 'end'].indexOf(detectProperty(2)) !== -1
+    ['upperBoundary', 'end'].indexOf(detectProperty(2)!) !== -1
   ) {
     <mat-form-field
       class="dualInput"
       (mouseenter)="inputClearable = 'selectProperty2'"
       (mouseleave)="inputClearable = undefined"
-      [floatLabel]="floatLabel()"
+      [floatLabel]="floatLabel() ?? 'auto'"
     >
       <input
         matInput
@@ -371,8 +374,8 @@
         type="number"
         [value]="
           detectProperty(2) === 'upperBoundary'
-            ? currentFilter().upperBoundary
-            : currentFilter().end
+            ? (currentFilter().upperBoundary ?? '')
+            : (currentFilter().end ?? '')
         "
         (input)="updateValuesList($any($event.target).value, 2)"
       />

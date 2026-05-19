@@ -22,17 +22,16 @@ import { OptionsService } from './options.service';
 export class OptionsApiService extends OptionsService {
   private http = inject(HttpClient);
 
-  private urlApi: string;
-  private provideContextUri: boolean;
+  private urlApi?: string;
+  private provideContextUri = false;
 
   constructor() {
     const config = inject(ConfigService);
     const options = config.getConfig<OptionsApiOptions>('optionsApi');
 
     super();
-    this.urlApi = options?.url || this.urlApi;
-    this.provideContextUri =
-      options?.provideContextUri || this.provideContextUri;
+    this.urlApi = options?.url;
+    this.provideContextUri = options?.provideContextUri ?? false;
   }
 
   getWMSOptions(
@@ -44,8 +43,8 @@ export class OptionsApiService extends OptionsService {
     }
     let params = new HttpParams({
       fromObject: {
-        type: baseOptions.type,
-        url: baseOptions.url,
+        type: baseOptions.type ?? '',
+        url: baseOptions.url ?? '',
         layers: baseOptions.params.LAYERS
       }
     });
@@ -54,18 +53,14 @@ export class OptionsApiService extends OptionsService {
       params = params.append('context', detailedContextUri);
     }
 
-    const request = this.http.get(this.urlApi, {
+    const request = this.http.get<{
+      sourceOptions: WMSDataSourceOptions;
+      layerOptions: { [keys: string]: string };
+    }>(this.urlApi!, {
       params
     });
 
-    return request.pipe(
-      map(
-        (res: {
-          sourceOptions: WMSDataSourceOptions;
-          layerOptions: { [keys: string]: string };
-        }) => this.handleSourceOptions(res)
-      )
-    );
+    return request.pipe(map((res) => this.handleSourceOptions(res)));
   }
 
   getArcgisRestOptions(
@@ -84,9 +79,9 @@ export class OptionsApiService extends OptionsService {
     }
     let params = new HttpParams({
       fromObject: {
-        type: baseOptions.type,
-        url: baseOptions.url,
-        layers: baseOptions.layer
+        type: baseOptions.type ?? '',
+        url: baseOptions.url ?? '',
+        layers: baseOptions.layer ?? ''
       }
     });
 
@@ -94,21 +89,17 @@ export class OptionsApiService extends OptionsService {
       params = params.append('context', detailedContextUri);
     }
 
-    const request = this.http.get(this.urlApi, {
+    const request = this.http.get<{
+      sourceOptions:
+        | ArcGISRestDataSourceOptions
+        | ArcGISRestImageDataSourceOptions
+        | TileArcGISRestDataSourceOptions;
+      layerOptions: { [keys: string]: string };
+    }>(this.urlApi!, {
       params
     });
 
-    return request.pipe(
-      map(
-        (res: {
-          sourceOptions:
-            | ArcGISRestDataSourceOptions
-            | ArcGISRestImageDataSourceOptions
-            | TileArcGISRestDataSourceOptions;
-          layerOptions: { [keys: string]: string };
-        }) => this.handleSourceOptions(res)
-      )
-    );
+    return request.pipe(map((res) => this.handleSourceOptions(res)));
   }
 
   private handleSourceOptions<T extends AnyDataSourceOptions>(res: {

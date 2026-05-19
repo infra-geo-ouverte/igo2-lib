@@ -72,17 +72,17 @@ export class InteractiveSelectionFormComponent
   private formService = inject(FormService);
   private languageService = inject(LanguageService);
 
-  public form$ = new BehaviorSubject<Form>(undefined);
-  public submitButtonText$ = new BehaviorSubject<string>(undefined);
+  public form$ = new BehaviorSubject<Form | undefined>(undefined);
+  public submitButtonText$ = new BehaviorSubject<string | undefined>(undefined);
   public submitDisabled = true;
-  private valueChanges$$: Subscription;
+  private valueChanges$$!: Subscription;
   public data$ = new BehaviorSubject<DataSelectionData>({
     geometry: undefined,
     buffer: undefined,
     action: SelectionAction.Add
   });
-  readonly map = input<IgoMap>(undefined);
-  readonly workspace = input<FeatureWorkspace | WfsWorkspace>(undefined);
+  readonly map = input<IgoMap>();
+  readonly workspace = input<FeatureWorkspace | WfsWorkspace>();
 
   /**
    * Event emitted on complete
@@ -250,7 +250,7 @@ export class InteractiveSelectionFormComponent
   }
 
   onSubmit(data: DataSelectionData) {
-    const featureStore = this.workspace().entityStore as FeatureStore;
+    const featureStore = this.workspace()!.entityStore as FeatureStore;
     const storeFeatures = featureStore.all();
 
     const buffer = data.buffer ? +data.buffer : undefined;
@@ -264,7 +264,7 @@ export class InteractiveSelectionFormComponent
     let olFormFeature = featureToOl(formFeature, 'EPSG:4326');
     if (buffer) {
       const bufferedGeom = bufferOlGeometry(
-        olFormFeature.getGeometry(),
+        olFormFeature.getGeometry()!,
         buffer,
         'meters'
       );
@@ -280,20 +280,20 @@ export class InteractiveSelectionFormComponent
     const intersectingFeatures = storeFeatures
       .map((storeFeature) => {
         const doesIntersects = doesOlGeometryIntersects(
-          featureToOl(storeFeature, 'EPSG:4326').getGeometry(),
-          olFormFeature.getGeometry()
+          featureToOl(storeFeature, 'EPSG:4326').getGeometry()!,
+          olFormFeature.getGeometry()!
         );
         return doesIntersects ? storeFeature : undefined;
       })
-      .filter((f) => f);
+      .filter((f): f is Feature => f !== undefined);
 
     let selectedStateToApply = false;
     let exclusive = false;
     if (intersectingFeatures.length) {
-      if ([SelectionAction.New, SelectionAction.Add].includes(data.action)) {
+      if ([SelectionAction.New, SelectionAction.Add].includes(data.action!)) {
         selectedStateToApply = true;
         exclusive = data.action === SelectionAction.New ? true : false;
-      } else if (SelectionAction.Remove) {
+      } else if (data.action === SelectionAction.Remove) {
         selectedStateToApply = false;
         exclusive = false;
       }
@@ -309,9 +309,9 @@ export class InteractiveSelectionFormComponent
   }
 
   clear() {
-    const featureStore = this.workspace().entityStore as FeatureStore;
+    const featureStore = this.workspace()!.entityStore as FeatureStore;
     featureStore.state.updateAll({ selected: false });
-    this.form$.value.control.reset();
+    this.form$.value!.control.reset();
     this.setAction(SelectionAction.Add);
     this.data$.next(
       Object.assign({}, this.data$.getValue(), {

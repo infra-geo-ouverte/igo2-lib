@@ -119,7 +119,7 @@ export function hoverFeatureMarkerStyle(
     })
   });
   const olStyles = [olStyleText];
-  switch (feature.getGeometry().getType()) {
+  switch (feature.getGeometry()?.getType()) {
     case 'Point':
       olStyles.push(
         new olStyle.Style({

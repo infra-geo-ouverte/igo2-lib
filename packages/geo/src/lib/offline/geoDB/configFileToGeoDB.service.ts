@@ -5,7 +5,7 @@ import { MessageService } from '@igo2/core/message';
 
 import { default as JSZip } from 'jszip';
 import { ActiveToast } from 'ngx-toastr';
-import { of, zip } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { catchError, concatMap } from 'rxjs/operators';
 
 import { GeoDB } from './geoDB';
@@ -21,7 +21,8 @@ export class ConfigFileToGeoDBService {
     const geoDB = new GeoDB();
     let downloadMessage: ActiveToast<any>;
     this.http
-      .get(urlFile)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .get<any>(urlFile)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           this.messageService.error(
@@ -31,7 +32,7 @@ export class ConfigFileToGeoDBService {
           throw error;
         }),
         concatMap((datasToIDB: DatasToIDB) => {
-          const datas$ = [];
+          const datas$: Observable<any>[] = [];
           let firstDownload = true;
           if (datasToIDB?.geoDatas) {
             const currentDate = new Date();
@@ -47,7 +48,7 @@ export class ConfigFileToGeoDBService {
                   geoData.urls.forEach((url) => {
                     datas$.push(
                       geoDB.getGeoDBData(url).pipe(
-                        concatMap((res: GeoDBData) => {
+                        concatMap((res: GeoDBData | undefined) => {
                           if (res?.insertEvent !== insertEvent) {
                             if (firstDownload) {
                               downloadMessage = this.messageService.info(
@@ -100,7 +101,7 @@ export class ConfigFileToGeoDBService {
                                           .endsWith('.geojson')
                                       ) {
                                         zipped
-                                          .file(relativePath)
+                                          .file(relativePath)!
                                           .async('text')
                                           .then((r) => {
                                             const geojson = JSON.parse(r);
@@ -168,7 +169,7 @@ export class ConfigFileToGeoDBService {
       });
   }
 
-  private isZip(value) {
+  private isZip(value: unknown) {
     const regex = /(zip)$/;
     return typeof value === 'string' && regex.test(value.toLowerCase());
   }

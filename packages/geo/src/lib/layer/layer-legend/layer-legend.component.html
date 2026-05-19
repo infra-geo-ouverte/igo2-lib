@@ -12,7 +12,7 @@
                   matListItemIcon
                   igoCollapse
                   [target]="legend"
-                  [collapsed]="item.collapsed"
+                  [collapsed]="item.collapsed ?? false"
                   (toggle)="toggleLegendItem($event, item)"
                   >expand_less
                 </mat-icon>
@@ -55,14 +55,14 @@
                           [hideError]="true"
                           #renderedLegend
                           id="{{ item.title }}"
-                          (load)="onLoadImage(item.title)"
+                          (load)="onLoadImage(item.title!)"
                           [src]="item.imgGraphValue"
                           alt="{{
                             'igo.geo.layer.legend.loadingLegendText' | translate
                           }}"
                         />
                       }
-                      @if (imagesHeight[item.title] < 16) {
+                      @if (imagesHeight[item.title!] < 16) {
                         <small>
                           {{ 'igo.geo.layer.legend.noLegendScale' | translate }}
                         </small>

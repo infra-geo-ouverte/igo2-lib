@@ -7,6 +7,7 @@ import {
   output
 } from '@angular/core';
 
+import { EntityStoreStrategy } from '@igo2/common/entity';
 import {
   Workspace,
   WorkspaceSelectorComponent,
@@ -43,10 +44,10 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   private editionWorkspaceService = inject(EditionWorkspaceService);
   private featureWorkspaceService = inject(FeatureWorkspaceService);
 
-  private layers$$: Subscription;
+  private layers$$!: Subscription;
   private entities$$: Subscription[] = [];
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
   readonly changeWorkspace = output<string>();
   readonly disableSwitch = output<boolean>();
@@ -58,30 +59,30 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.layers$$ = this.map()
+    this.layers$$ = this.map()!
       .layerController.all$.pipe(debounceTime(50))
       .subscribe((layers) => this.onLayersChange(layers));
 
-    this.workspaceStore?.activeWorkspace$.subscribe((ws: AnyWorkspace) => {
+    this.workspaceStore?.activeWorkspace$.subscribe((ws: any) => {
       this.updateActiveWorkspaceRefreshState(ws);
     });
     this.featureWorkspaceService.ws$.subscribe((ws) => {
-      this.changeWorkspace.emit(ws);
+      this.changeWorkspace.emit(ws ?? '');
     });
     this.wmsWorkspaceService.ws$.subscribe((ws) => {
-      this.changeWorkspace.emit(ws);
+      this.changeWorkspace.emit(ws ?? '');
     });
     this.wfsWorkspaceService.ws$.subscribe((ws) => {
-      this.changeWorkspace.emit(ws);
+      this.changeWorkspace.emit(ws ?? '');
     });
     this.editionWorkspaceService.ws$.subscribe((ws) => {
-      this.changeWorkspace.emit(ws);
+      this.changeWorkspace.emit(ws ?? '');
     });
     this.editionWorkspaceService.adding$.subscribe((adding) => {
       this.disableSwitch.emit(adding);
     });
     this.editionWorkspaceService.relationLayers$.subscribe((layers) => {
-      this.relationLayers.emit(layers);
+      this.relationLayers.emit(layers!);
     });
     this.editionWorkspaceService.rowsInMapExtentCheckCondition$.subscribe(
       (condition) => {
@@ -100,22 +101,22 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     const editableLayers = layers.filter((layer) =>
       this.layerIsEditable(layer)
     );
-    const editableLayersIds = editableLayers.map((layer) => layer.id);
+    const editableLayersIds = editableLayers.map((layer) => layer.id as string);
 
     const workspacesToAdd = editableLayers
-      .map((layer: VectorLayer) => this.getOrCreateWorkspace(layer))
-      .filter((workspace: Workspace | undefined) => workspace !== undefined);
+      .map((layer: AnyLayer) => this.getOrCreateWorkspace(layer as VectorLayer))
+      .filter((workspace): workspace is Workspace => workspace !== undefined);
 
     const workspacesToRemove = this.workspaceStore
       .all()
       .filter((workspace: Workspace) => {
-        return editableLayersIds.indexOf(workspace.id) < 0;
+        return editableLayersIds.indexOf(workspace.id as string) < 0;
       });
 
     if (workspacesToRemove.length > 0) {
       workspacesToRemove.forEach((workspace: Workspace) => {
-        workspace.entityStore.deactivateStrategyOfType(
-          FeatureStoreInMapExtentStrategy
+        workspace.entityStore!.deactivateStrategyOfType(
+          FeatureStoreInMapExtentStrategy as unknown as typeof EntityStoreStrategy
         );
         workspace.deactivate();
       });
@@ -134,7 +135,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   private getOrCreateWorkspace(
     layer: VectorLayer | ImageLayer
   ): Workspace | undefined {
-    const workspace = this.workspaceStore.get(layer.id);
+    const workspace = this.workspaceStore.get(layer.id as string);
     if (workspace !== undefined) {
       return;
     }
@@ -144,7 +145,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map()
+        this.map()!
       );
       return wfsWks;
     } else if (
@@ -156,7 +157,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map()
+        this.map()!
       );
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
         (layer.dataSource.options as QueryableDataSourceOptions).queryable =
@@ -173,7 +174,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const featureWks = this.featureWorkspaceService.createWorkspace(
         layer as VectorLayer,
-        this.map()
+        this.map()!
       );
       return featureWks;
     } else if (
@@ -182,9 +183,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     ) {
       const editionWks = this.editionWorkspaceService.createWorkspace(
         layer as ImageLayer,
-        this.map()
+        this.map()!
       );
-      return editionWks;
+      return editionWks as unknown as Workspace | undefined;
     }
 
     return;
@@ -233,8 +234,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   }
 
   private disableAllLayerRefresh() {
-    this.workspaceStore.all().forEach((wks: AnyWorkspace) => {
-      const datasourceMaster = wks.layer.linkMaster?.layer?.dataSource;
+    this.workspaceStore.all().forEach((wks) => {
+      const datasourceMaster = (wks as any).layer?.linkMaster?.layer
+        ?.dataSource;
       if (!datasourceMaster || !(datasourceMaster instanceof WMSDataSource)) {
         return;
       }

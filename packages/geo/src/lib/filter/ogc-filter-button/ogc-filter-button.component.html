@@ -1,4 +1,4 @@
-@let ogcFilters = options().ogcFilters;
+@let ogcFilters = options()?.ogcFilters;
 @if (
   header() &&
   ogcFilters &&
@@ -43,7 +43,7 @@
       <igo-ogc-filterable-item
         igoListItem
         [header]="false"
-        [map]="layer().map"
+        [map]="layer()?.map"
         [layer]="layer()"
       />
     }

@@ -51,20 +51,20 @@
       class="igo-form-button-group"
     >
       <button
-        [disabled]="importForm.invalid || (loading$ | async)"
+        [disabled]="importForm.invalid || !!(loading$ | async)"
         matButton="elevated"
         type="button"
         (click)="fileInput.click()"
       >
         {{ 'igo.geo.importExportForm.importButton' | translate }}
       </button>
-      <igo-spinner [shown]="loading$ | async" />
+      <igo-spinner [shown]="!!(loading$ | async)" />
       <input
         hidden
         #fileInput
         type="file"
         [style.display]="'none'"
-        (click)="fileInput.value = null"
+        (click)="fileInput.value = ''"
         (change)="importFiles($any($event.target).files)"
       />
     </div>
@@ -130,9 +130,9 @@
                 <span matListItemTitle>
                   @if (layerHasSelectedFeatures(layer)) {
                     <mat-slide-toggle
-                      (click)="onlySelectedClick($event, layer.id)"
+                      (click)="onlySelectedClick($event, layer.id!)"
                       (checked)="inLayersIdToExportSelectionOnly(layer)"
-                      (change)="onlySelected($event, layer.id)"
+                      (change)="onlySelected($event, layer.id!)"
                     >
                       <small>{{
                         'igo.geo.importExportForm.exportSelectedFeature'
@@ -152,14 +152,14 @@
             'igo.geo.importExportForm.exportFormatPlaceholder' | translate
           }}</mat-label>
           <mat-select formControlName="format">
-            @if ((formats$ | async).length !== 0) {
+            @if ((formats$ | async)!.length !== 0) {
               @for (format of formats$ | async; track format) {
                 <mat-option [value]="format">
                   {{ 'igo.geo.export.format.' + format | translate }}
                 </mat-option>
               }
             }
-            @if ((formats$ | async).length === 0) {
+            @if ((formats$ | async)!.length === 0) {
               <mat-option disabled="true">
                 {{ 'igo.geo.export.noFormat.title' | translate }}
               </mat-option>
@@ -228,7 +228,7 @@
         <button
           matButton="elevated"
           type="button"
-          [disabled]="!form.valid || (loading$ | async)"
+          [disabled]="!form.valid || !!(loading$ | async)"
           (click)="handleExportFormSubmit(form.value)"
         >
           {{
@@ -239,7 +239,7 @@
                 : ('igo.geo.importExportForm.exportButtonLink' | translate)
           }}
         </button>
-        <igo-spinner [shown]="loading$ | async" />
+        <igo-spinner [shown]="!!(loading$ | async)" />
       </div>
       @if (exportHtmlClarifications !== '') {
         <igo-custom-html [html]="exportHtmlClarifications" />

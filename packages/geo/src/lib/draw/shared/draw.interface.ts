@@ -28,9 +28,9 @@ export type FeatureWithDraw = Feature<FeatureWithDrawProperties>;
 export interface FeatureWithDrawProperties {
   id: string;
   draw: string;
-  longitude: number;
-  latitude: number;
-  rad: number;
+  longitude: number | undefined;
+  latitude: number | undefined;
+  rad: number | undefined;
   fontStyle: string;
   drawingStyle: DrawingStyle;
   offsetX: number;
