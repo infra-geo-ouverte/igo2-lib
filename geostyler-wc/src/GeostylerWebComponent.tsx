@@ -40,9 +40,9 @@ const GeostylerStyleAdapter: React.FC<{
 
   return (
     <div ref={hostRef}>
-      <GeoStylerContext value={{ data: dataD, locale: locale.fr_FR }}>
+      <GeoStylerContext.Provider value={{ data: dataD, locale: locale.fr_FR }}>
         <Style style={geostylerStyle} onStyleChange={emitStyleChange} />
-      </GeoStylerContext>
+      </GeoStylerContext.Provider>
     </div>
   );
 };
