@@ -723,7 +723,7 @@ export class OgcFilterWriter {
             computedSelectors: ObjectUtils.copyDeep(selectors) as any
           } as SelectorGroup
         ],
-        selectorType: selector!.selectorType
+        selectorType: selectors.selectorType
       };
     }
     if (!selector.groups.find((selectorGroup) => selectorGroup.enabled)) {

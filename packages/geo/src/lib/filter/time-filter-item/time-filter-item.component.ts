@@ -73,11 +73,10 @@ export class TimeFilterItemComponent implements OnInit, OnDestroy {
       return undefined;
     }
     this.timeFilterService.filterByDate(this.datasource, date);
-    this.datasource.options.timeFilter!.value = date
-      ? date instanceof Date
+    this.datasource.options.timeFilter!.value =
+      date instanceof Date
         ? this.reformDate(date)
-        : [this.reformDate(date[0]), this.reformDate(date[1])]
-      : undefined;
+        : [this.reformDate(date[0]), this.reformDate(date[1])];
   }
 
   private reformDate(date: Date): string {
