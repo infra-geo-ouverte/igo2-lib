@@ -95,14 +95,8 @@
     }
   </section>
 } @else if (selectedMode() === 'export') {
-  @let hasExports = (exportableLayers$ | async).length === 0;
+  @let hasExports = (exportableLayers$ | async)?.length;
   @if (hasExports) {
-    <section>
-      <h4>
-        {{ 'igo.geo.importExportForm.exportNoLayersExportable' | translate }}
-      </h4>
-    </section>
-
     <form class="igo-form" [formGroup]="form">
       <div class="igo-input-container">
         <mat-form-field>
@@ -251,5 +245,11 @@
         <igo-custom-html [html]="exportHtmlClarifications" />
       }
     </form>
+  } @else {
+    <section>
+      <h4>
+        {{ 'igo.geo.importExportForm.exportNoLayersExportable' | translate }}
+      </h4>
+    </section>
   }
 }
