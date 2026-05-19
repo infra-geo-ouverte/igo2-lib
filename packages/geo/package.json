@@ -36,8 +36,7 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.8.0",
-    "@geostyler/web-component": "*"
+    "tslib": "^2.8.0"
   },
   "peerDependencies": {
     "@angular/animations": "^21.0.0",
@@ -51,6 +50,7 @@
     "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/utils": "*",
+    "@geostyler/web-component": "*",
     "@mat-datetimepicker/core": "^17.0.0",
     "geostyler-legend": "^5.2.0",
     "geostyler-openlayers-parser": "^5.7.0",
