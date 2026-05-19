@@ -1,3 +1,0 @@
-import { GeostylerWebComponent as t } from "./index";
-const e = "geostyler-style-wc";
-customElements.get(e) || customElements.define(e, t);
