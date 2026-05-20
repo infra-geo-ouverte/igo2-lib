@@ -31,9 +31,7 @@ const GeostylerStyleAdapter: React.FC<{
   };
 
   useEffect(() => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
     geoJsonParser.readData(data).then((gsData) => setDataD(gsData));
   }, [data]);
