@@ -6,7 +6,9 @@
   "module": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "watch": "vite build --watch"
   },
   "types": "dist/index.d.ts",
   "exports": {
