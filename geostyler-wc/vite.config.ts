@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
+// TODO: https://vite.dev/guide/build#library-mode
 export default defineConfig({
   plugins: [
     react(),
