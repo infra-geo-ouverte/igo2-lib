@@ -46,5 +46,6 @@ const GeostylerStyleAdapter: React.FC<{
 };
 
 export const GeostylerWebComponent = r2wc(GeostylerStyleAdapter, {
+  shadow: 'open',
   props: { geostylerStyle: 'json', handleStyleChange: 'method', data: 'json' }
 });
