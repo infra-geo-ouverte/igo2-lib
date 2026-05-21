@@ -12,8 +12,6 @@ import {
   ZoomButtonComponent
 } from '@igo2/geo';
 
-import { GeoJSON } from 'ol/format';
-
 import { Style as GsStyle } from 'geostyler-style';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -103,14 +101,6 @@ export class AppVectorDataStylingComponent implements OnInit {
       this.structuresLayer = this.map.layerController.getByTitle(
         'Structures'
       ) as VectorLayer | undefined;
-    });
-
-    this.structuresLayer.dataSource.ol.once('featuresloadend', () => {
-      const features = this.structuresLayer.dataSource.ol.getFeatures();
-      if (features) console.log('Features loaded:', features.length);
-
-      const geojson = new GeoJSON().writeFeaturesObject(features); // todo:
-      console.log('GeoJSON data:', geojson);
     });
   }
 }
