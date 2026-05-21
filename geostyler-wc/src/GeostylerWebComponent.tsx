@@ -1,16 +1,19 @@
+import { GeoJSONFeatureCollection } from 'ol/format/GeoJSON';
+
 import r2wc from '@r2wc/react-to-web-component';
 import { GeoStylerContext, Style, locale } from 'geostyler';
+import { Data } from 'geostyler-data';
 import { GeoJsonDataParser } from 'geostyler-geojson-parser';
 import React, { useEffect, useMemo } from 'react';
 
 const GeostylerStyleAdapter: React.FC<{
   container?: HTMLElement;
-  data: any;
+  data: GeoJSONFeatureCollection;
   geostylerStyle: any;
 }> = ({ container, data, geostylerStyle }) => {
   const geoJsonParser = useMemo(() => new GeoJsonDataParser(), []);
 
-  const [dataD, setDataD] = React.useState(null);
+  const [dataD, setDataD] = React.useState<Data | null>(null);
 
   const emitStyleChange = (newStyle: any) => {
     container?.dispatchEvent(
