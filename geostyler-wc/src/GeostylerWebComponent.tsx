@@ -29,17 +29,15 @@ const GeostylerStyleAdapter: React.FC<{
   useEffect(() => {
     if (!data) return;
 
-    geoJsonParser.readData(data).then((gsData) => setParsedData(gsData));
+    geoJsonParser.readData(data).then((gsData) => setParsedData(gsData)); // TODO: catch
   }, [data]);
 
   return (
-    <div>
-      <GeoStylerContext.Provider
-        value={{ data: parsedData, locale: locale.fr_FR }}
-      >
-        <Style style={geostylerStyle} onStyleChange={emitStyleChange} />
-      </GeoStylerContext.Provider>
-    </div>
+    <GeoStylerContext.Provider
+      value={{ data: parsedData, locale: locale.fr_FR }}
+    >
+      <Style style={geostylerStyle} onStyleChange={emitStyleChange} />
+    </GeoStylerContext.Provider>
   );
 };
 
