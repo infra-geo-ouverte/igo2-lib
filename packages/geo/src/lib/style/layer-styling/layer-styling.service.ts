@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { GeoJSON } from 'ol/format';
+import { GeoJSONFeatureCollection } from 'ol/format/GeoJSON';
 
 import { Style as GsStyle } from 'geostyler-style';
 import { BehaviorSubject } from 'rxjs';
@@ -10,9 +11,9 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 @Injectable()
 export class LayerStylingService {
   private selectedLayer$$ = new BehaviorSubject<VectorLayer | null>(null);
-  private layerData$$ = new BehaviorSubject<ReturnType<
-    GeoJSON['writeFeaturesObject']
-  > | null>(null);
+  private layerData$$ = new BehaviorSubject<GeoJSONFeatureCollection | null>(
+    null
+  );
   // private layerStyle$ = new BehaviorSubject<GsStyle | null>(null);
 
   selectedLayer$ = this.selectedLayer$$.asObservable();
