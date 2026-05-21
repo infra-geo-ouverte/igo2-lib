@@ -14,7 +14,7 @@ const GeostylerStyleAdapter: React.FC<{
 }> = ({ container, data, geostylerStyle }) => {
   const geoJsonParser = useMemo(() => new GeoJsonDataParser(), []);
 
-  const [dataD, setDataD] = React.useState<Data | null>(null);
+  const [parsedData, setParsedData] = React.useState<Data | null>(null);
 
   const emitStyleChange = (newStyle: GsStyle) => {
     container?.dispatchEvent(
@@ -29,12 +29,14 @@ const GeostylerStyleAdapter: React.FC<{
   useEffect(() => {
     if (!data) return;
 
-    geoJsonParser.readData(data).then((gsData) => setDataD(gsData));
+    geoJsonParser.readData(data).then((gsData) => setParsedData(gsData));
   }, [data]);
 
   return (
     <div>
-      <GeoStylerContext.Provider value={{ data: dataD, locale: locale.fr_FR }}>
+      <GeoStylerContext.Provider
+        value={{ data: parsedData, locale: locale.fr_FR }}
+      >
         <Style style={geostylerStyle} onStyleChange={emitStyleChange} />
       </GeoStylerContext.Provider>
     </div>
