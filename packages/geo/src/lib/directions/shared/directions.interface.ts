@@ -45,7 +45,6 @@ export interface FeatureWithStopProperties {
   type: DirectionsType;
   stopText: string;
   stopColor: string;
-  stopOpacity: 1;
 }
 
 export interface Stop {

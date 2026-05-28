@@ -39,7 +39,7 @@ import {
   QueryFormat,
   QueryFormatMimeType
 } from '../../query/shared/query.enums';
-import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
+import { EsriStyleGenerator } from '../../style/shared/esri-style-generator';
 import {
   TypeCapabilities,
   TypeCapabilitiesStrings
@@ -341,7 +341,7 @@ export class CapabilitiesService {
       }
     }
 
-    const options = ObjectUtils.removeUndefined({
+    const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
         maxResolution:

@@ -16,7 +16,7 @@ import {
   StoredQueriesReverseSearchSourceOptions,
   StoredQueriesSearchSourceOptions
 } from '../search';
-import { OverlayStyleOptions } from '../style';
+import { ConfigurableStylesOptions } from '../style/shared/style.interface';
 
 export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
@@ -37,7 +37,6 @@ export interface EnvironmentOptions {
   geolocate?: GeolocationOptions;
   homeExtentButton?: HomeExtentButtonOptions;
   importExport?: ImportExportServiceOptions;
-  importWithStyle?: boolean;
   menu?: {
     // todo move to common?
     button: {
@@ -47,8 +46,8 @@ export interface EnvironmentOptions {
   };
   optionsApi?: OptionsApiOptions;
   projections?: Projection[];
-  queryOverlayStyle?: OverlayStyleOptions;
-  searchOverlayStyle?: OverlayStyleOptions;
+  queryOverlayStyle?: ConfigurableStylesOptions;
+  searchOverlayStyle?: ConfigurableStylesOptions;
   searchSources?: {
     showResultsCount?: boolean;
     [key: string]:

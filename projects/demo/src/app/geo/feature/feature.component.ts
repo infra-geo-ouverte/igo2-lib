@@ -13,7 +13,8 @@ import {
   MAP_DIRECTIVES,
   MapViewOptions,
   OSMDataSourceOptions,
-  VectorLayer
+  VectorLayer,
+  VectorLayerOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -187,13 +188,14 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         animation: {
           duration: 2000
         },
-        igoStyle: {
-          mapboxStyle: {
+        style: {
+          type: 'Mapbox',
+          style: {
             url: 'mapboxStyleExample-feature.json',
             source: 'source_nameX'
           }
         }
-      })
+      } satisfies VectorLayerOptions)
       .subscribe((layer) => {
         if (!layer) return;
         this.map.layerController.add(layer);

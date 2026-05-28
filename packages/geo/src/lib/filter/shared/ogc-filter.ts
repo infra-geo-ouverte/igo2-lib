@@ -16,7 +16,6 @@ import olProjection from 'ol/proj/Projection';
 
 import { default as moment } from 'moment';
 
-import { defaultFieldNameGeometry } from '../../datasource';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 import { parseDateOperation } from './filter.utils';
 import { OgcFilterOperator, OgcFilterOperatorType } from './ogc-filter.enum';
@@ -31,6 +30,8 @@ import {
   OgcInterfaceFilterOptions,
   SelectorGroup
 } from './ogc-filter.interface';
+
+const defaultFieldNameGeometry = 'geometry';
 
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];

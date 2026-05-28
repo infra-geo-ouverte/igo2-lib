@@ -103,10 +103,10 @@ import {
   metersToUnit,
   squareMetersToUnit
 } from '../../measure/shared/measure.utils';
-import { FontType } from '../../style/shared/font.enum';
+import { DrawStyleService } from '../../style/draw-style-service/draw-style.service';
+import { FontType } from '../../style/shared';
 import { StyleModalDrawingComponent } from '../../style/style-modal/drawing/style-modal-drawing.component';
 import { StyleModalData } from '../../style/style-modal/shared/style-modal.interface';
-import { DrawStyleService } from '../../style/style-service/draw-style.service';
 import { DrawIconService } from '../shared/draw-icon.service';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';

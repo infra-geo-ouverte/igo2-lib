@@ -12,7 +12,14 @@ import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { default as JSZip } from 'jszip';
-import { Observable, Subject, forkJoin, fromEvent } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  firstValueFrom,
+  forkJoin,
+  fromEvent,
+  of
+} from 'rxjs';
 import { catchError, first, map as rxMap, timeout } from 'rxjs/operators';
 
 import { getLayersLegends } from '../../layer/utils/outputLegend';
@@ -263,58 +270,61 @@ export class PrintService {
    * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(map: IgoMap, width: number): Observable<string> {
-    return new Observable((observer) => {
-      let html = '';
-      const legends = getLayersLegends(map.layerController.all);
+  async getLayersLegendHtml(map: IgoMap, width: number): Promise<string> {
+    let html = '';
+    const legends = await getLayersLegends(map.layerController.all);
 
-      if (legends.filter((l) => l.display === true).length === 0) {
-        observer.next(html);
-        observer.complete();
-        return;
-      }
-      // Define important style to be sure that all container is convert
-      // to image not just visible part
-      html += '<style media="screen" type="text/css">';
-      html +=
-        '.html2canvas-container { width: ' +
-        width +
-        'mm !important; height: 2000px !important; }';
-      html += 'table.tableLegend {table-layout: auto;}';
-      html +=
-        'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
-      html += '</style>';
-      // The font size will also be lowered afterwards (globally along the legend size)
-      // this allows having a good relative font size here and to keep ajusting the legend size
-      // while keeping good relative font size
-      html += '<font size="3" face="Times" >';
-      html += '<div class="styleLegend">';
-      html += '<table class="tableLegend" >';
+    if (legends.filter((l) => l.display === true).length === 0) {
+      return html;
+    }
+    // Define important style to be sure that all container is convert
+    // to image not just visible part
+    html += '<style media="screen" type="text/css">';
+    html +=
+      '.html2canvas-container { width: ' +
+      width +
+      'mm !important; height: 2000px !important; }';
+    html += 'table.tableLegend {table-layout: auto;}';
+    html +=
+      'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
+    html += '</style>';
+    // The font size will also be lowered afterwards (globally along the legend size)
+    // this allows having a good relative font size here and to keep ajusting the legend size
+    // while keeping good relative font size
+    html += '<font size="3" face="Times" >';
+    html += '<div class="styleLegend">';
+    html += '<table class="tableLegend" >';
 
-      // For each legend, define an html table cell
-      const images$ = legends
-        .filter((l) => l.display && l.isInResolutionsRange === true)
-        .map((legend) =>
-          this.getDataImage(legend.url).pipe(
-            rxMap((dataImage) => {
-              let htmlImg =
-                '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
-              htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
-              return htmlImg;
-            })
-          )
-        );
-      forkJoin(images$).subscribe((dataImages) => {
-        html = dataImages.reduce((acc, current) => acc + current, html);
-        html += '</table>';
-        html += '</div>';
-        observer.next(html);
-        observer.complete();
-      });
-    });
+    // For each legend, define an html table cell
+    const images$ = legends
+      .filter((l) => l.display && l.isInResolutionsRange === true)
+      .map((legend) =>
+        this.getDataImage(legend.url).pipe(
+          rxMap((dataImage) => {
+            let htmlImg =
+              '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
+            htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
+            return htmlImg;
+          })
+        )
+      );
+    return firstValueFrom(
+      forkJoin(images$).pipe(
+        rxMap((dataImages) => {
+          html = dataImages.reduce((acc, current) => acc + current, html);
+          html += '</table>';
+          html += '</div>';
+          return html;
+        })
+      )
+    );
   }
 
   getDataImage(url: string): Observable<string> {
+    if (url.startsWith('data:')) {
+      return of(url);
+    }
+
     const depotUrl = this.config?.getConfig('depot.url');
     return fetchImageFromDepotUrl(url, depotUrl, this.http);
   }
@@ -328,7 +338,7 @@ export class PrintService {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
+    let html = (await this.getLayersLegendHtml(map, width)) ?? '';
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -557,7 +567,7 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
+    const html = (await this.getLayersLegendHtml(map, width)) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -607,7 +617,7 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = (await this.getLayersLegendHtml(map, width).toPromise()) ?? '';
+    const html = (await this.getLayersLegendHtml(map, width)) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -1289,8 +1299,7 @@ export class PrintService {
     const context = canvas.getContext('2d')!;
 
     // Get html code for the legend
-    const html =
-      (await this.getLayersLegendHtml(map, canvas.width).toPromise()) ?? '';
+    const html = (await this.getLayersLegendHtml(map, canvas.width)) ?? '';
     // If no legend, save the map directly
     if (html === '') {
       await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);

@@ -23,8 +23,6 @@ import { ProjectionsLimitationsOptions } from '../../map/';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { detectFileEPSG } from '../../map/shared/projection.utils';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { StyleService } from '../../style/style-service/style.service';
 import { EpsgSelectorModalComponent } from '../epsg-selector-modal/epsg-selector-modal.component';
 import {
   handleFileImportError,
@@ -42,8 +40,6 @@ export class DropGeoFileDirective
 {
   private component = inject(MapBrowserComponent);
   private importService = inject(ImportService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private config = inject(ConfigService);
   private messageService = inject(MessageService);
   private layerService = inject(LayerService);
@@ -121,7 +117,6 @@ export class DropGeoFileDirective
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    const importWithStyle = importExportOptions?.importWithStyle ?? false;
     handleFileImportSuccess(
       file,
       features,
@@ -129,9 +124,7 @@ export class DropGeoFileDirective
       this.contextUri()!,
       this.messageService,
       this.layerService,
-      confirmDialogService,
-      importWithStyle ? this.styleListService : undefined,
-      importWithStyle ? this.styleService : undefined
+      confirmDialogService
     );
   }
 

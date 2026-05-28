@@ -35,9 +35,9 @@ import {
   SpatialFilterTypeComponent,
   VectorLayer,
   VectorLayerOptions,
-  createOverlayMarkerStyle,
   featureToOl,
   isLayerItem,
+  markerOlStyle,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -425,7 +425,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = createOverlayMarkerStyle();
+    const style = markerOlStyle({});
 
     // 🔑 Use zoneIndex to sync layer naming
     const filterLabel = this.languageService.translate.instant(

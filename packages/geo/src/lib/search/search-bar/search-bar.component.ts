@@ -29,8 +29,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { FEATURE, Feature, FeatureMotion } from '../../feature';
-import { AnyLayer, LAYER, LayerOptions, LayerService } from '../../layer';
+import { LayerService } from '../../layer';
 import { IgoMap } from '../../map';
 import { SearchSelectorComponent } from '../search-selector/search-selector.component';
 import { SearchSettingsComponent } from '../search-settings/search-settings.component';
@@ -520,49 +519,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .filter((result) => result.source !== research.source)
         .concat(results);
       store.updateMany(newResults);
-    }
-  }
-
-  selectFirstElement() {
-    const store = this.store();
-    if (!store) return;
-    const results = store.all();
-
-    if (results.length === 0) {
-      return;
-    }
-    // find the highest result score
-    const result = results.reduce(
-      (highest, current) =>
-        current.meta.score! > highest.meta.score! ? current : highest,
-      results[0]
-    );
-
-    store!.state.update(result, { focused: true, selected: true }, true);
-
-    const map = this.map();
-    if (map) {
-      this.handleMap(map, result);
-    }
-  }
-
-  private handleMap(
-    map: IgoMap,
-    result: SearchResult<Record<string, any>>
-  ): void {
-    const { dataType } = result.meta;
-
-    if (dataType === FEATURE) {
-      const feature = (result as SearchResult<Feature>).data;
-      map.searchResultsOverlay.setFeatures([feature], FeatureMotion.Default);
-    } else if (dataType === LAYER) {
-      const layerOptions = result.data as LayerOptions;
-      if (layerOptions.sourceOptions?.optionsFromApi === undefined) {
-        layerOptions.sourceOptions!.optionsFromApi = true;
-      }
-      this.layerService.createAsyncLayer(layerOptions).subscribe((layer) => {
-        map.layerController.add(layer as AnyLayer);
-      });
     }
   }
 }

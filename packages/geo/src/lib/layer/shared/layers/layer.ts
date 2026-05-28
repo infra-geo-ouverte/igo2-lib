@@ -1,5 +1,3 @@
-import { Optional } from '@angular/core';
-
 import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
@@ -11,6 +9,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DataSource, Legend } from '../../../datasource/shared/datasources';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { StyleService } from '../../../style/style.service';
 import {
   isLayerLinked,
   isLinkMaster
@@ -82,8 +81,9 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
   constructor(
     public options: LayerOptions,
-    @Optional() protected messageService?: MessageService,
-    @Optional() protected authInterceptor?: AuthInterceptor
+    protected messageService?: MessageService,
+    protected authInterceptor?: AuthInterceptor,
+    protected styleService?: StyleService
   ) {
     super(options);
 

@@ -6,9 +6,14 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { Feature } from 'ol';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
+import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { AnyStyle } from '../../../style/shared';
+import { isAnyOlStyle } from '../../../style/shared/style-ol.utils';
+import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -22,22 +27,51 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
+  get style(): AnyStyle | undefined {
+    return this._style$.getValue();
+  }
+  set style(value: AnyStyle | undefined) {
+    this._style$.next(value);
+    this.setStyle(value);
+  }
+  private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
+  public readonly style$ = this._style$.asObservable();
+
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+  }
+
+  async getLegend(value: AnyStyle): Promise<Legend[] | undefined> {
+    const styleLegend = await this.styleService?.getLegend(value);
+    if (styleLegend) {
+      return [
+        {
+          html: styleLegend
+        }
+      ];
+    }
+
+    return this.dataSource.getLegend();
   }
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source!.ol as olSourceVectorTile
     });
-
-    const vectorTile = new olLayerVectorTile(olOptions);
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
+    const vectorTile = new olLayerVectorTile({
+      ...olOptions,
+      style: isOlStyle ? layerStyle : undefined
+    });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
     vectorTileSource.setTileLoadFunction(((
@@ -57,6 +91,18 @@ export class VectorTileLayer extends Layer {
     }) as any);
 
     return vectorTile;
+  }
+
+  private async setStyle(value: AnyStyle | undefined): Promise<void> {
+    if (!value) {
+      this.ol.setStyle(undefined);
+    } else if (this.styleService) {
+      const olStyle = await this.styleService.getStyle(value, this.ol);
+      this.ol.setStyle(olStyle);
+    } else if (isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+    }
+    // else: no service and non-OL style — silently ignore
   }
 
   /**
