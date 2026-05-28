@@ -21,7 +21,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "postinstall": "git config core.hooksPath .config/git-hooks",
+    "prepare": "husky .config/husky",
     "prestart": "npm run prestart --workspace=packages --if-present",
     "start.demo": "npm run prestart && npm run start -w demo",
     "build": "ng build",
@@ -82,7 +82,9 @@
     "angular-eslint": "^21.3.0",
     "eslint": "^10.2.0",
     "execa": "^9.6.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.0",
+    "lint-staged": "^16.4.0",
     "lodash-es": "^4.17.0",
     "madge": "^8.0.0",
     "ng-packagr": "^21.2.3",

@@ -1,0 +1,3 @@
+. "$(dirname "$0")/node-path.sh"
+
+npx --no -- commitlint --edit "$1"

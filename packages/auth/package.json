@@ -22,7 +22,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint auth",
     "lint.fix": "ng lint auth --fix",
-    "types": "tsc -p ./tsconfig.lib.json --noEmit & tsc -p ./tsconfig.spec.json --noEmit",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit && tsc -p ./tsconfig.spec.json --noEmit",
     "test": "ng test auth --watch=false",
     "test.watch": "ng test auth",
     "watch": "ng build auth --watch"
