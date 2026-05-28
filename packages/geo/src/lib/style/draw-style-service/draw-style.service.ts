@@ -4,7 +4,7 @@ import OlPoint from 'ol/geom/Point';
 import { ProjectionLike, transform } from 'ol/proj';
 import * as OlStyle from 'ol/style';
 
-import { FontType } from '../shared/font.enum';
+import { FontType } from '../shared';
 
 @Injectable({
   providedIn: 'root'

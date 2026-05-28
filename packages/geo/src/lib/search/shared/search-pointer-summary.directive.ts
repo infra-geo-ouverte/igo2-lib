@@ -16,8 +16,10 @@ import olFeature from 'ol/Feature';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import * as olgeom from 'ol/geom';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import Point from 'ol/geom/Point';
 import { transform } from 'ol/proj';
+import * as olStyle from 'ol/style';
 
 import { Subscription, first } from 'rxjs';
 
@@ -26,10 +28,12 @@ import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
+import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
-import { pointerPositionSummaryMarkerStyle } from '../../style/shared/feature/feature-style';
+import { AnyOlStyle } from '../../style/shared/style.interface';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research, SearchResult } from './search.interfaces';
@@ -41,6 +45,7 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
  * The search results are placed into a label, on a cross icon, representing the mouse coordinate.
  * By default, no search sources. Config in config file must be defined.
  * the layer level.
+ *
  */
 @Directive({
   selector: '[igoSearchPointerSummary]'
@@ -52,6 +57,7 @@ export class SearchPointerSummaryDirective
   private searchService = inject(SearchService);
   private searchSourceService = inject(SearchSourceService);
   private mediaService = inject(MediaService);
+  private layerService = inject(LayerService);
 
   public store!: FeatureStore<Feature>;
   private lonLat!: [number, number];
@@ -121,7 +127,7 @@ export class SearchPointerSummaryDirective
   private initStore() {
     const store = this.store;
 
-    const layer = new VectorLayer({
+    const layer = this.layerService.createLayer({
       isIgoInternalLayer: true,
       id: 'searchPointerSummaryId',
       title: 'searchPointerSummary',
@@ -130,8 +136,8 @@ export class SearchPointerSummaryDirective
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: pointerPositionSummaryMarkerStyle as any
-    });
+      style: this.pointerPositionSummaryMarkerStyle as AnyOlStyle
+    } satisfies VectorLayerOptions) as VectorLayer;
     tryBindStoreLayer(store, layer);
   }
 
@@ -352,7 +358,7 @@ export class SearchPointerSummaryDirective
   private addPointerOverlay(text: string) {
     this.clearLayer();
 
-    const geometry = new olgeom.Point(
+    const geometry = new Point(
       transform(this.lonLat, 'EPSG:4326', this.mapProjection)
     );
     const feature = new olFeature({ geometry });
@@ -384,5 +390,49 @@ export class SearchPointerSummaryDirective
     if (this.store) {
       this.store.clearLayer();
     }
+  }
+
+  /**
+   * Create a default style for the pointer position and it's label summary.
+   * @param feature olFeature
+   * @returns OL style function
+   */
+  private pointerPositionSummaryMarkerStyle(
+    feature: olFeature<OlGeometry>
+  ): olStyle.Style {
+    const svgCross =
+      'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 9.525 9.525">
+          <g transform="translate(0,-287.475)">
+            <rect width="0.334" height="7.149" x="4.595" y="288.663" ry="0.067"/>
+            <rect width="0.334" height="7.149" x="292.07" y="-8.337" ry="0.067" transform="rotate(90)"/>
+          </g>
+        </svg>`
+      );
+
+    return new olStyle.Style({
+      image: new olStyle.Icon({
+        src: svgCross
+      }),
+
+      text: new olStyle.Text({
+        text: feature.get('pointerSummary'),
+        textAlign: 'left',
+        textBaseline: 'bottom',
+        font: '12px Calibri,sans-serif',
+        fill: new olStyle.Fill({ color: '#000' }),
+        backgroundFill: new olStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+        backgroundStroke: new olStyle.Stroke({
+          color: 'rgba(200, 200, 200, 0.75)',
+          width: 2
+        }),
+        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
+        overflow: true,
+        offsetX: 10,
+        offsetY: -10,
+        padding: [2.5, 2.5, 2.5, 2.5]
+      })
+    });
   }
 }

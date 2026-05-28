@@ -224,8 +224,9 @@ export class ArcgisCatalog {
       maxResolution: layer.minScale
         ? getResolutionFromScale(layer.minScale)
         : undefined,
-      igoStyle: {
-        mapboxStyle: {
+      style: {
+        type: 'Mapbox',
+        style: {
           url: `${catalogUrl}/${layer.defaultStyles}`,
           source: 'esri'
         }

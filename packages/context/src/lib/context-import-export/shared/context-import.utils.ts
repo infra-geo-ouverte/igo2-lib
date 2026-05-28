@@ -1,18 +1,11 @@
 import { MessageService } from '@igo2/core/message';
 import {
-  ClusterDataSource,
-  ClusterDataSourceOptions,
-  ClusterParam,
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
   QueryableDataSourceOptions,
-  StyleByAttribute,
-  StyleListService,
-  StyleService,
   VectorLayer,
-  featureRandomStyle,
-  featureRandomStyleFunction
+  randomOlFlatStyle
 } from '@igo2/geo';
 
 import OlFeature from 'ol/Feature';
@@ -162,121 +155,13 @@ export function addImportedFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
 
-  let randomStyle;
-  let editable = false;
-  const featureKeys = olFeatures[0]?.getKeys() ?? [];
-  if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
-    randomStyle = featureRandomStyleFunction();
-  } else {
-    randomStyle = featureRandomStyle();
-    editable = true;
-  }
   const layer = new VectorLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    igoStyle: { editable },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    style: randomStyle as any,
+    style: randomOlFlatStyle(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
-  });
-  map.layerController.add(layer);
-
-  return layer;
-}
-
-export function addImportedFeaturesStyledToMap(
-  extraFeatures: ExtraFeatures,
-  map: IgoMap,
-  styleListService: StyleListService,
-  styleService: StyleService
-): VectorLayer {
-  let style: unknown;
-  let distance = 0;
-
-  if (styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')) {
-    const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
-      extraFeatures.name + '.styleByAttribute'
-    );
-
-    style = (feature: OlFeature<OlGeometry>, resolution: number) => {
-      return styleService.createStyleByAttribute(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        feature as any,
-        styleByAttribute,
-        resolution
-      );
-    };
-  } else if (
-    styleListService.getStyleList(extraFeatures.name + '.clusterStyle')
-  ) {
-    const clusterParam: ClusterParam = styleListService.getStyleList(
-      extraFeatures.name + '.clusterParam'
-    );
-    distance = styleListService.getStyleList(extraFeatures.name + '.distance');
-
-    style = (feature: OlFeature<OlGeometry>, resolution: number) => {
-      const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        feature as any,
-        resolution
-      );
-      return styleService.createClusterStyle(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        feature as any,
-        resolution,
-        clusterParam,
-        baseStyle
-      );
-    };
-  } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
-    style = (feature: OlFeature<OlGeometry>, resolution: number) =>
-      styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name + '.style'),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        feature as any,
-        resolution
-      );
-  } else {
-    style = (feature: OlFeature<OlGeometry>, resolution: number) =>
-      styleService.createStyle(
-        styleListService.getStyleList('default.style'),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        feature as any,
-        resolution
-      );
-  }
-  let source;
-  const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
-    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
-      {
-        distance,
-        type: 'cluster',
-        queryable: true
-      };
-    source = new ClusterDataSource(sourceOptions);
-    source.ol?.addFeatures(olFeatures);
-  } else {
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
-      {
-        type: 'vector',
-        queryable: true
-      };
-    source = new FeatureDataSource(sourceOptions);
-    source.ol.addFeatures(olFeatures);
-  }
-
-  const layer = new VectorLayer({
-    title: extraFeatures.name,
-    isIgoInternalLayer: true,
-    source,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    style: style as any,
-    opacity: extraFeatures.opacity,
-    visible: extraFeatures.visible
   });
   map.layerController.add(layer);
 

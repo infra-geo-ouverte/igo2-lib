@@ -9,12 +9,11 @@ import {
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import {
-  CommonVectorStyleOptions,
+  ConfigurableStylesOptions,
   Feature,
   FeatureMotion,
   FeatureStore,
   FeatureWorkspace,
-  OverlayStyleOptions,
   SearchResult,
   SearchSource,
   SearchSourceService
@@ -45,9 +44,6 @@ export class SearchState {
   private mapState = inject(MapState);
 
   public searchLayerStores: FeatureStore<Feature>[] = [];
-  public searchOverlayStyle: CommonVectorStyleOptions = {};
-  public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
-  public searchOverlayStyleFocus: CommonVectorStyleOptions = {};
 
   public focusedOrResolution$$?: Subscription;
   public selectedOrResolution$$?: Subscription;
@@ -84,6 +80,7 @@ export class SearchState {
    * Store that holds the search results
    */
   readonly store = new EntityStore<SearchResult>([]);
+  public searchOverlayStyle: ConfigurableStylesOptions = {};
 
   /**
    * Search types currently enabled in the search source service
@@ -95,13 +92,10 @@ export class SearchState {
   }
 
   constructor() {
-    const searchOverlayStyle: OverlayStyleOptions =
-      this.configService.getConfig('searchOverlayStyle');
-    if (searchOverlayStyle) {
-      this.searchOverlayStyle = searchOverlayStyle.base ?? {};
-      this.searchOverlayStyleSelection = searchOverlayStyle.selection ?? {};
-      this.searchOverlayStyleFocus = searchOverlayStyle.focus ?? {};
-    }
+    this.searchOverlayStyle = this.configService.getConfig(
+      'searchOverlayStyle',
+      {}
+    );
 
     const searchResultsGeometryEnabled = this.storageService.get(
       'searchResultsGeometryEnabled'

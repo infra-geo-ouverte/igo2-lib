@@ -41,7 +41,9 @@ import {
 import {
   ItemStyleOptions,
   Layer,
-  LegendMapViewOptions
+  LegendMapViewOptions,
+  VectorLayer,
+  VectorTileLayer
 } from '../shared/layers';
 
 @Component({
@@ -82,6 +84,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Subscription to the map's resolution
    */
   private state$$!: Subscription;
+  private style$$?: Subscription;
 
   /**
    * The available styles
@@ -138,7 +141,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
     const layer = this.layer()!;
-    if (
+
+    if (this.isStyleLegendLayer(layer)) {
+      this.style$$ = layer.style$.subscribe(() => {
+        void this.refreshLegendFromLayerStyle();
+      });
+    } else if (
       typeof layer.options.legendOptions !== 'undefined' &&
       layer.options.legendOptions.display === false
     ) {
@@ -168,6 +176,35 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (this.state$$ !== undefined) {
       this.state$$.unsubscribe();
     }
+    this.style$$?.unsubscribe();
+  }
+
+  private async refreshLegendFromLayerStyle() {
+    const layer = this.layer()!;
+    if (!this.isStyleLegendLayer(layer)) {
+      return;
+    }
+    if (
+      typeof layer.options.legendOptions !== 'undefined' &&
+      layer.options.legendOptions.display === false
+    ) {
+      this.legendItems$.next([]);
+      return;
+    }
+
+    const style = layer.style;
+    if (style) {
+      try {
+        const styleLegend = await layer.getLegend(style);
+
+        if (styleLegend && styleLegend.length) {
+          this.setLegendItems(styleLegend);
+          return;
+        }
+      } catch (error) {
+        console.warn('Error fetching style legend:', error);
+      }
+    }
   }
 
   getLegendGraphic(item: Legend) {
@@ -192,6 +229,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
           this.legendItems$.value[idx].imgGraphValue = legendGraph;
           this.cdRef.detectChanges();
         });
+    }
+  }
+
+  private setLegendItems(legendItems: Legend[]) {
+    const layer = this.layer()!;
+    layer.legend = legendItems;
+    this.legendItems$.next(legendItems);
+    for (const legend of legendItems) {
+      this.getLegendGraphic(legend);
     }
   }
 
@@ -261,10 +307,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
     }
-    this.legendItems$.next(legendItems);
-    for (const legend of this.legendItems$.value) {
-      this.getLegendGraphic(legend);
-    }
+    this.setLegendItems(legendItems);
   }
 
   private listStyles() {
@@ -323,5 +366,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       )!.nativeElement as HTMLImageElement;
     }
     this.imagesHeight[id] = elemRef.height;
+  }
+
+  private isStyleLegendLayer(
+    layer: Layer
+  ): layer is VectorLayer | VectorTileLayer {
+    return layer instanceof VectorLayer || layer instanceof VectorTileLayer;
   }
 }

@@ -2,7 +2,7 @@ import { IDBPDatabase } from 'idb';
 import { Observable, from } from 'rxjs';
 import { concatMap, first, map, mergeMap, switchMap } from 'rxjs/operators';
 
-import { LayerId } from '../../layer/shared';
+import type { LayerId } from '../../layer/shared/layers/layer.interface';
 import { IgoDBSchema } from '../shared/indexed-db.interface';
 import { createIndexedDb } from '../shared/indexed-db.utils';
 import { LayerDBData } from './layerDB.interface';

@@ -19,7 +19,7 @@ import olProjection from 'ol/proj/Projection';
 import { getVectorContext } from 'ol/render';
 import olSourceVector, { VectorSourceEvent } from 'ol/source/Vector';
 
-import { fromEvent, merge, of } from 'rxjs';
+import { BehaviorSubject, fromEvent, merge, of } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -32,6 +32,7 @@ import {
 
 import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -53,7 +54,12 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
+import { AnyStyle } from '../../../style/shared';
+import {
+  isAnyOlStyle,
+  isOlFlatStyleLike
+} from '../../../style/shared/style-ol.utils';
+import { StyleService } from '../../../style/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -90,15 +96,40 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
+  get style(): AnyStyle | undefined {
+    return this._style$.getValue();
+  }
+  set style(value: AnyStyle | undefined) {
+    this._style$.next(value);
+    this.setStyle(value);
+  }
+  private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
+  public readonly style$ = this._style$.asObservable();
+
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService
+    private geoNetworkService?: GeoNetworkService,
+    public styleService?: StyleService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+  }
+
+  async getLegend(value: AnyStyle): Promise<Legend[] | undefined> {
+    const styleLegend = await this.styleService?.getLegend(value);
+    if (styleLegend) {
+      return [
+        {
+          html: styleLegend
+        }
+      ];
+    }
+
+    return this.dataSource.getLegend();
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector> {
@@ -123,8 +154,12 @@ export class VectorLayer extends Layer {
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
-
-    const vector = new olLayerVector(olOptions);
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
+    const vector = new olLayerVector({
+      ...olOptions,
+      style: isOlStyle ? layerStyle : undefined
+    });
     const vectorSource = vector.getSource() as olSourceVector;
     let url = vectorSource.getUrl();
     if (typeof url === 'function') {
@@ -179,6 +214,18 @@ export class VectorLayer extends Layer {
     }
 
     return vector;
+  }
+
+  private async setStyle(value: AnyStyle | undefined): Promise<void> {
+    if (!value) {
+      this.ol.setStyle(undefined);
+    } else if (this.styleService) {
+      const olStyle = await this.styleService.getStyle(value, this.ol);
+      this.ol.setStyle(olStyle);
+    } else if (isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+    }
+    // else: no service and non-OL style — silently ignore
   }
 
   private handleIdbStorage(
@@ -293,9 +340,7 @@ export class VectorLayer extends Layer {
   }
 
   private maintainOptionsInIdb() {
-    this.options.igoStyle ??= {};
-    this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
-    const layerData = ObjectUtils.removeUndefined({
+    const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo?.contextUri,
       sourceOptions: {
@@ -312,7 +357,7 @@ export class VectorLayer extends Layer {
         title: this.title,
         visible: this.visible,
         opacity: this.opacity,
-        igoStyle: this.options.igoStyle,
+        style: isOlFlatStyleLike(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           _firstLoad: false
         })

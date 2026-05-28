@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
@@ -20,6 +20,7 @@ import {
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
+  Overlay,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
@@ -53,7 +54,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     AsyncPipe
   ]
 })
-export class AppQueryComponent {
+export class AppQueryComponent implements OnInit {
   private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
 
@@ -73,6 +74,7 @@ export class AppQueryComponent {
     center: [-73, 47.2],
     zoom: 6
   };
+  public queryResultsOverlayAll!: Overlay;
 
   constructor() {
     this.dataSourceService
@@ -190,14 +192,20 @@ export class AppQueryComponent {
           ],
           queryLayerFeatures: false
         },
-        mapboxStyle: {
-          url: 'mapboxStyleExample-vectortile.json',
-          source: 'ahocevar'
+        style: {
+          type: 'Mapbox',
+          style: {
+            url: 'mapboxStyleExample-vectortile.json',
+            source: 'ahocevar'
+          }
         }
       } as VectorTileLayerOptions)
       .subscribe((layer) => {
         if (layer) this.map.layerController.add(layer);
       });
+  }
+  ngOnInit(): void {
+    this.queryResultsOverlayAll = new Overlay(this.map);
   }
 
   addFeatures(dataSource: FeatureDataSource): void {
@@ -235,7 +243,7 @@ export class AppQueryComponent {
     const features: Feature[] = results.features;
     if (features.length && features[0]) {
       this.features$.next(features);
-      this.map.queryResultsOverlay.setFeatures(features, FeatureMotion.None);
+      this.queryResultsOverlayAll.setFeatures(features, FeatureMotion.None);
     }
   }
 

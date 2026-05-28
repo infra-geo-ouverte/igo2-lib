@@ -52,6 +52,8 @@
     "@igo2/core": "*",
     "@igo2/utils": "*",
     "@mat-datetimepicker/core": "^17.0.0",
+    "geostyler-legend": "^5.2.0",
+    "geostyler-openlayers-parser": "^5.7.0",
     "@turf/boolean-intersects": "^7.3.0",
     "@turf/buffer": "^7.3.0",
     "@turf/helpers": "^7.3.0",

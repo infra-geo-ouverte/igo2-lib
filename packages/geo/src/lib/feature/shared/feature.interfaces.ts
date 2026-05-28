@@ -15,6 +15,7 @@ import { Geometry } from 'geojson';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources';
 import type { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap } from '../../map/shared/map';
+import type { AnyOlStyle } from '../../style/shared/style.interface';
 import { FeatureMotion } from './feature.enums';
 
 export interface Feature<P = Record<string, any>> {
@@ -35,7 +36,7 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
-  style?: Record<string, any>;
+  style?: AnyOlStyle;
   alias?: Record<string, string>;
   revision?: number;
   excludeAttribute?: string[];
