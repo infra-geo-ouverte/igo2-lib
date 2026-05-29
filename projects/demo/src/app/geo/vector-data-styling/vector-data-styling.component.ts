@@ -40,8 +40,8 @@ export class AppVectorDataStylingComponent implements OnInit {
       {
         name: 'Default',
         symbolizers: [
-          { kind: 'Line', color: '#0f16e7', width: 2, opacity: 1 },
-          { kind: 'Fill', color: '#0f16e7', fillOpacity: 0.25 },
+          // { kind: 'Line', color: '#0f16e7', width: 2, opacity: 1 },
+          // { kind: 'Fill', color: '#0f16e7', fillOpacity: 0.25 },
           {
             kind: 'Mark',
             wellKnownName: 'circle',
@@ -88,7 +88,7 @@ export class AppVectorDataStylingComponent implements OnInit {
       },
       {
         title: 'Structures',
-        style: structuresStyle,
+        style: structuresStyle, // TODO: potential wrong type
         sourceOptions: {
           type: 'vector',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=ms:gsq_v_desc_strct_tri&outfile=Structure&srsname=EPSG:4326&outputformat=geojson'
@@ -101,6 +101,7 @@ export class AppVectorDataStylingComponent implements OnInit {
       this.structuresLayer = this.map.layerController.getByTitle(
         'Structures'
       ) as VectorLayer | undefined;
+      console.log(this.structuresLayer);
     });
   }
 }
