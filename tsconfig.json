@@ -17,6 +17,9 @@
     "target": "ES2022",
     "types": ["node", "vitest/globals"],
     "paths": {
+      "@geostyler/web-component/geostyler-web-component": [
+        "./geostyler-wc/src/geostyler-web-component"
+      ],
       "@igo2/core": ["./packages/core/src/public_api"],
       "@igo2/core/*": ["./packages/core/*/src/public_api"],
       "@igo2/auth": ["./packages/auth/src/public_api"],
