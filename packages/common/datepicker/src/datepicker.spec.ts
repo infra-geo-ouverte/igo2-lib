@@ -75,4 +75,25 @@ describe('DatepickerComponent', () => {
     component.ngOnInit();
     expect(component.dateLabelFormControl.value).toBe('Today');
   });
+
+  it('should update internal controls when value input changes after init', () => {
+    const testDate = new Date(2026, 4, 29);
+
+    fixture.componentRef.setInput('value', testDate);
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value?.getTime()).toBe(testDate.getTime());
+    expect(component.dateLabelFormControl.value).toBe('2026-05-29');
+  });
+
+  it('should clear internal controls when value input becomes undefined', () => {
+    fixture.componentRef.setInput('value', new Date(2026, 4, 29));
+    fixture.detectChanges();
+
+    fixture.componentRef.setInput('value', undefined);
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value).toBeNull();
+    expect(component.dateLabelFormControl.value).toBeNull();
+  });
 });

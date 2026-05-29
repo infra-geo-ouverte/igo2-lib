@@ -66,7 +66,15 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly startView = model<'multi-year' | 'year' | 'month'>();
   readonly startAt = input<Date | TimeFrame>();
   readonly datepickerFilter = input<(date: Date | null) => boolean>();
-  readonly value = input<Date | TimeFrame>();
+  @Input()
+  set value(value: Date | TimeFrame | undefined) {
+    this._value = value;
+    this.syncValueFromInput();
+  }
+  get value(): Date | TimeFrame | undefined {
+    return this._value;
+  }
+  private _value: Date | TimeFrame | undefined;
   readonly todayButtonLabel = input<string>('Today');
   readonly clearButtonLabel = input<string>('Clear');
 
@@ -92,7 +100,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initStartView();
     this.initFormControls();
 
-    this.todaySelected = this.value() ? isTimeFrame(this.value()!) : false;
+    this.todaySelected = this.value ? isTimeFrame(this.value) : false;
 
     this.dateFormControl.valueChanges.subscribe((value) => {
       this.picker().startAt = value ? value : null;
@@ -125,7 +133,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         if (this.previousValue === this.dateFormControl.value) {
           this.todaySelected = this.previousTodaySelected;
-        } else if (this.value() && isTimeFrame(this.value()!)) {
+        } else if (this.value && isTimeFrame(this.value)) {
           this.todaySelected = true;
         }
       });
@@ -246,7 +254,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initFormControls() {
-    const date = this.value() ?? new Date();
+    const date = this.value ?? new Date();
     this.dateFormControl = new FormControl({
       value: resolveDate(date),
       disabled: this.disabled
@@ -255,6 +263,22 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateLabelFormControl = new FormControl({
       value: this.getFormattedLabel(date),
       disabled: this.disabled
+    });
+  }
+
+  private syncValueFromInput(): void {
+    if (!this.dateFormControl || !this.dateLabelFormControl) {
+      return;
+    }
+
+    const value = this.value;
+    this.todaySelected = value ? isTimeFrame(value) : false;
+
+    this.dateFormControl.setValue(value ? resolveDate(value) : null, {
+      emitEvent: false
+    });
+    this.dateLabelFormControl.setValue(this.getFormattedLabel(value), {
+      emitEvent: false
     });
   }
 

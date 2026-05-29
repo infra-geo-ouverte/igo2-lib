@@ -1,0 +1,156 @@
+<app-doc-viewer title="Datepicker" subtitle="Common">
+  <app-example-viewer codeFolder="common/datepicker">
+    <section class="reference-panel">
+      <h3>Datepicker reference</h3>
+      <p>
+        Use <strong>calendarType</strong> to control what the user selects and
+        how the date is displayed in the field. Use <strong>today</strong> and
+        <strong>now</strong> when you want a relative value instead of a fixed
+        date.
+      </p>
+
+      <div class="reference-table-wrapper">
+        <table class="reference-table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Use it for</th>
+              <th>What the user selects</th>
+              <th>Example</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>calendarType=&quot;date&quot;</code></td>
+              <td>Standard date picking</td>
+              <td>A full date</td>
+              <td><code>2026-05-29</code></td>
+              <td>Best choice for forms that need a day, month, and year.</td>
+            </tr>
+            <tr>
+              <td><code>calendarType=&quot;month&quot;</code></td>
+              <td>Month-based input</td>
+              <td>A month within a year</td>
+              <td><code>2026-05</code></td>
+              <td>
+                Useful for reporting periods, billing cycles, and monthly
+                filters.
+              </td>
+            </tr>
+            <tr>
+              <td><code>calendarType=&quot;year&quot;</code></td>
+              <td>Year-only input</td>
+              <td>A year</td>
+              <td><code>2026</code></td>
+              <td>Useful when the day and month do not matter.</td>
+            </tr>
+            <tr>
+              <td><code>calendarType=&quot;datetime&quot;</code></td>
+              <td>Date and time workflows</td>
+              <td>A date, with support for relative <code>now</code></td>
+              <td><code>2026-05-29 14:30</code></td>
+              <td>
+                Use this when the current moment matters more than only the
+                current day.
+              </td>
+            </tr>
+            <tr>
+              <td><code>today</code></td>
+              <td>Relative date value</td>
+              <td>The current day</td>
+              <td><code>today</code></td>
+              <td>This is a dynamic keyword, not a fixed calendar date.</td>
+            </tr>
+            <tr>
+              <td><code>now</code></td>
+              <td>Relative datetime value</td>
+              <td>The current date and time</td>
+              <td><code>now</code></td>
+              <td>
+                Use this with <code>calendarType=&quot;datetime&quot;</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="demo-grid">
+      @for (config of exampleConfigs; track config.title) {
+        <article class="demo-card">
+          <h3>{{ config.title }}</h3>
+          <p>{{ config.description }}</p>
+
+          <igo-datepicker
+            [placeholder]="config.placeholder"
+            [calendarType]="config.calendarType ?? 'date'"
+            [value]="config.value"
+            [startView]="config.startView"
+            [startAt]="config.startAt"
+            [minDate]="config.minDate"
+            [maxDate]="config.maxDate"
+            [datepickerFilter]="config.datepickerFilter"
+            [todayButtonLabel]="config.todayButtonLabel ?? 'Today'"
+            [clearButtonLabel]="config.clearButtonLabel ?? 'Clear'"
+            [disabled]="config.disabled ?? false"
+            (valueChange)="
+              onExampleValueChange($event, config.calendarType ?? 'date')
+            "
+          />
+        </article>
+      }
+    </section>
+
+    <section class="playground">
+      <div class="playground-header">
+        <div>
+          <h3>Interactive playground</h3>
+          <p>
+            Try absolute values, relative values, and the disabled state on a
+            single instance.
+          </p>
+        </div>
+
+        <mat-slide-toggle
+          [checked]="disabled"
+          (change)="toggleDisabled($event.checked)"
+        >
+          Disabled
+        </mat-slide-toggle>
+      </div>
+
+      <igo-datepicker
+        placeholder="Playground"
+        calendarType="datetime"
+        [value]="(playgroundValue$ | async)!"
+        [disabled]="disabled"
+        todayButtonLabel="Now"
+        clearButtonLabel="Clear"
+        (valueChange)="onPlaygroundValueChange($event)"
+      />
+
+      <div class="playground-actions">
+        <button mat-stroked-button type="button" (click)="setToday()">
+          Inject today
+        </button>
+        <button mat-stroked-button type="button" (click)="setNow()">
+          Inject now
+        </button>
+        <button mat-stroked-button type="button" (click)="setSpecificDate()">
+          Inject fixed datetime
+        </button>
+        <button mat-stroked-button type="button" (click)="clearPlayground()">
+          Clear input value
+        </button>
+      </div>
+    </section>
+
+    <section class="output-panel">
+      <h3>Last emitted value</h3>
+      <pre>{{
+        formatEmittedValue((emittedValue$ | async)!, lastEmittedCalendarType)
+      }}</pre>
+    </section>
+  </app-example-viewer>
+</app-doc-viewer>

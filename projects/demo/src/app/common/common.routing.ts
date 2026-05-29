@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { AppActionComponent } from './action/action.component';
+import { AppDatepickerComponent } from './datepicker/datepicker.component';
 import { AppDialogComponent } from './dialog/dialog.component';
 import { AppDynamicComponentComponent } from './dynamic-component/dynamic-component.component';
 import { AppEntitySelectorComponent } from './entity-selector/entity-selector.component';
@@ -17,6 +18,11 @@ export const routes: Routes = [
     title: 'Action',
     path: 'action',
     component: AppActionComponent
+  },
+  {
+    title: 'Datepicker',
+    path: 'datepicker',
+    component: AppDatepickerComponent
   },
   {
     title: 'Dialogs',

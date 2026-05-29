@@ -72,6 +72,14 @@ export class AppFormComponent implements OnInit, OnDestroy {
             { value: 2, title: 'Married' }
           ]
         }
+      },
+      {
+        name: 'date',
+        title: 'Date',
+        type: 'date',
+        options: {
+          cols: 2
+        }
       }
     ];
 
@@ -98,7 +106,8 @@ export class AppFormComponent implements OnInit, OnDestroy {
     this.data$.next({
       id: 1,
       name: 'Bob',
-      status: 2
+      status: 2,
+      date: '2026-05-29'
     });
   }
 

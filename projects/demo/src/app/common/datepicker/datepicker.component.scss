@@ -1,0 +1,99 @@
+.demo-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-bottom: 24px;
+}
+
+.reference-panel,
+.demo-card,
+.playground,
+.output-panel {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.reference-panel {
+  margin-bottom: 24px;
+}
+
+.reference-panel h3 {
+  margin: 0 0 8px;
+}
+
+.reference-panel p {
+  margin: 0 0 16px;
+}
+
+.reference-table-wrapper {
+  overflow-x: auto;
+}
+
+.reference-table {
+  border-collapse: collapse;
+  min-width: 720px;
+  width: 100%;
+}
+
+.reference-table th,
+.reference-table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.reference-table th {
+  background: #f6f7f9;
+  font-weight: 600;
+}
+
+.reference-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.demo-card h3,
+.playground h3,
+.output-panel h3 {
+  margin: 0 0 8px;
+}
+
+.demo-card p,
+.playground p {
+  margin: 0 0 16px;
+}
+
+.playground {
+  margin-bottom: 24px;
+}
+
+.playground-header {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.playground-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.output-panel pre {
+  background: #f6f7f9;
+  border-radius: 8px;
+  margin: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+@media (max-width: 640px) {
+  .playground-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
