@@ -1,4 +1,7 @@
 <div>
+  @if (showLabel() === true) {
+    <mat-label>{{ placeholder() | translate }}</mat-label>
+  }
   <igo-datepicker
     #datepicker
     [placeholder]="placeholder() | translate"
