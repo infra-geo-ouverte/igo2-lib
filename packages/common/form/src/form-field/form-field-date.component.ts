@@ -166,6 +166,10 @@ export class FormFieldDateComponent
     return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
+  get datepickerValue(): Date | TimeFrame | undefined {
+    return this.normalizeDateValue(this.formControl().value);
+  }
+
   onDisableSwitchClick() {
     this.toggleDisabled();
   }
