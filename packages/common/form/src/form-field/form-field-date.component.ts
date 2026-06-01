@@ -14,9 +14,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
-import { DatepickerComponent } from '@igo2/common/datepicker';
+import {
+  DatepickerComponent,
+  type DatepickerInputValue
+} from '@igo2/common/datepicker';
 import { IgoLanguageModule } from '@igo2/core/language';
-import { TimeFrame, isIsoDate, isTimeFrame } from '@igo2/utils';
+import { TimeFrame } from '@igo2/utils';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -132,11 +135,13 @@ export class FormFieldDateComponent
         return;
       }
 
-      if (this.areSameDateValues(this.formControl().value, value)) {
+      if (this.datepicker().hasSameValue(this.formControl().value, value)) {
         return;
       }
 
-      this.formControl().setValue(this.toControlValue(value) ?? null);
+      this.formControl().setValue(
+        this.datepicker().toControlValue(value) ?? null
+      );
     });
 
     this.formControl()
@@ -166,10 +171,6 @@ export class FormFieldDateComponent
     return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
-  get datepickerValue(): Date | TimeFrame | undefined {
-    return this.normalizeDateValue(this.formControl().value);
-  }
-
   onDisableSwitchClick() {
     this.toggleDisabled();
   }
@@ -185,152 +186,10 @@ export class FormFieldDateComponent
     this.disabled.set(disabled);
   }
 
-  private syncDatepickerFromControl(value: unknown) {
+  private syncDatepickerFromControl(value: DatepickerInputValue) {
     this.syncingFromControl = true;
 
-    const normalizedValue = this.normalizeDateValue(value);
-    if (normalizedValue !== undefined) {
-      this.datepicker().reset(normalizedValue);
-    } else {
-      this.datepicker().clearDate();
-    }
-
+    this.datepicker().writeValue(value);
     this.syncingFromControl = false;
-  }
-
-  private normalizeDateValue(value: unknown): Date | TimeFrame | undefined {
-    if (value instanceof Date) {
-      return value;
-    }
-
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      const date = new Date(value);
-      return Number.isNaN(date.getTime()) ? undefined : date;
-    }
-
-    if (typeof value === 'string') {
-      if (isTimeFrame(value)) {
-        return value;
-      }
-
-      const calendarDate = this.parseCalendarTypeValue(value);
-      if (calendarDate) {
-        return calendarDate;
-      }
-
-      if (isIsoDate(value)) {
-        const date = new Date(value);
-        return Number.isNaN(date.getTime()) ? undefined : date;
-      }
-    }
-
-    return undefined;
-  }
-
-  private areSameDateValues(left: unknown, right: unknown): boolean {
-    const normalizedLeft = this.normalizeDateValue(left);
-    const normalizedRight = this.normalizeDateValue(right);
-
-    if (normalizedLeft === undefined && normalizedRight === undefined) {
-      return true;
-    }
-
-    if (normalizedLeft instanceof Date && normalizedRight instanceof Date) {
-      return normalizedLeft.getTime() === normalizedRight.getTime();
-    }
-
-    return normalizedLeft === normalizedRight;
-  }
-
-  private toControlValue(
-    value: unknown
-  ): Date | TimeFrame | string | undefined {
-    const normalizedValue = this.normalizeDateValue(value);
-    if (normalizedValue === undefined || isTimeFrame(normalizedValue)) {
-      return normalizedValue;
-    }
-
-    switch (this.calendarType()) {
-      case 'year':
-        return this.formatYear(normalizedValue);
-      case 'month':
-        return this.formatMonth(normalizedValue);
-      case 'date':
-        return this.formatDate(normalizedValue);
-      case 'datetime':
-      default:
-        return normalizedValue;
-    }
-  }
-
-  private parseCalendarTypeValue(value: string): Date | undefined {
-    const trimmedValue = value.trim();
-
-    switch (this.calendarType()) {
-      case 'year': {
-        const match = trimmedValue.match(/^(\d{4})$/);
-        if (!match) {
-          return undefined;
-        }
-        return new Date(Number(match[1]), 0, 1);
-      }
-      case 'month': {
-        const match = trimmedValue.match(/^(\d{4})-(\d{2})$/);
-        if (!match) {
-          return undefined;
-        }
-        return this.createLocalDate(match[1], match[2], '01');
-      }
-      case 'date': {
-        const match = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (!match) {
-          return undefined;
-        }
-        return this.createLocalDate(match[1], match[2], match[3]);
-      }
-      case 'datetime':
-      default:
-        return undefined;
-    }
-  }
-
-  private createLocalDate(
-    yearValue: string,
-    monthValue: string,
-    dayValue: string
-  ): Date | undefined {
-    const year = Number(yearValue);
-    const month = Number(monthValue);
-    const day = Number(dayValue);
-    const date = new Date(year, month - 1, day);
-
-    return date.getFullYear() === year &&
-      date.getMonth() === month - 1 &&
-      date.getDate() === day
-      ? date
-      : undefined;
-  }
-
-  private formatDate(date: Date): string {
-    return [
-      this.formatYear(date),
-      this.padToTwoDigits(date.getMonth() + 1),
-      this.padToTwoDigits(date.getDate())
-    ].join('-');
-  }
-
-  private formatMonth(date: Date): string {
-    return [
-      this.formatYear(date),
-      this.padToTwoDigits(date.getMonth() + 1)
-    ].join('-');
-  }
-
-  private formatYear(date: Date): string {
-    return date.getFullYear().toString();
-  }
-
-  private padToTwoDigits(value: number): string {
-    return value.toString().padStart(2, '0');
   }
 }
