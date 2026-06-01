@@ -1,11 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
   inject,
-  input
+  input,
+  signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
@@ -15,8 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { IgoLanguageModule } from '@igo2/core/language';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
 import {
@@ -39,14 +37,13 @@ import {
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
-    AsyncPipe,
     IgoLanguageModule
   ]
 })
 export class FormFieldTextComponent implements OnInit {
   private cdRef = inject(ChangeDetectorRef);
 
-  disabled$ = new BehaviorSubject<boolean>(false);
+  readonly disabled = signal(false);
   hide = true;
   private lastTimeoutRequest?: number;
 
@@ -83,7 +80,7 @@ export class FormFieldTextComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.disabled$.next(this.formControl().disabled);
+    this.disabled.set(this.formControl().disabled);
   }
 
   /**
@@ -98,13 +95,13 @@ export class FormFieldTextComponent implements OnInit {
   }
 
   private toggleDisabled() {
-    const disabled = !this.disabled$.value;
+    const disabled = !this.disabled();
     if (disabled === true) {
       this.formControl().disable();
     } else {
       this.formControl().enable();
     }
-    this.disabled$.next(disabled);
+    this.disabled.set(disabled);
   }
 
   togglePassword() {
