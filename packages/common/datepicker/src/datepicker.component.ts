@@ -25,6 +25,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
+import { TimepickerComponent } from '@igo2/common/timepicker';
 import { TimeFrame, isIsoDate, isTimeFrame, resolveDate } from '@igo2/utils';
 
 import { Subject } from 'rxjs';
@@ -48,7 +49,8 @@ export type DatepickerInputValue =
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    TimepickerComponent
   ],
   providers: [DatePipe, provideNativeDateAdapter()]
 })
@@ -57,6 +59,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   private _locale = inject(LOCALE_ID);
 
   readonly picker = viewChild.required<MatDatepicker<Date>>('picker');
+  readonly timepicker = viewChild<TimepickerComponent>('timepicker');
 
   @Input()
   set disabled(value: boolean) {
@@ -177,7 +180,19 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   clearDate(): void {
     this.dateFormControl.reset();
     this.dateLabelFormControl.reset();
+    if (this.calendarType() === 'datetime') {
+      this.timepicker()?.clear();
+    }
     this.picker().close();
+  }
+
+  updateTime(event: { hour: number; minute: number }): void {
+    const currentValue = this.dateFormControl.value ?? new Date();
+    const nextDate = new Date(currentValue);
+    nextDate.setHours(event.hour, event.minute, 0, 0);
+
+    this.todaySelected = false;
+    this.dateFormControl.setValue(nextDate);
   }
 
   writeValue(value: DatepickerInputValue): void {
@@ -250,6 +265,14 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return undefined;
+  }
+
+  get timepickerValue(): Date | TimeFrame | undefined {
+    if (this.todaySelected) {
+      return this.calendarType() === 'datetime' ? TimeFrame[0] : TimeFrame[1];
+    }
+
+    return this.dateFormControl?.value ?? this.normalizeValue(this.value());
   }
 
   private registerAutoCloseEvents(): void {
@@ -387,6 +410,14 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateLabelFormControl.setValue(nextLabel, {
       emitEvent: false
     });
+
+    if (this.calendarType() === 'datetime') {
+      if (normalizedValue) {
+        this.timepicker()?.reset(normalizedValue);
+      } else {
+        this.timepicker()?.clear();
+      }
+    }
   }
 
   private setDisabledState(): void {
@@ -411,6 +442,21 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateDateControl(date: Date | null | undefined) {
+    if (date && this.calendarType() === 'datetime') {
+      const currentValue = this.dateFormControl.value;
+      if (currentValue) {
+        const nextDate = new Date(date);
+        nextDate.setHours(
+          currentValue.getHours(),
+          currentValue.getMinutes(),
+          0,
+          0
+        );
+        this.dateFormControl.setValue(nextDate);
+        return;
+      }
+    }
+
     this.dateFormControl.setValue(date);
   }
 
@@ -424,6 +470,8 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.format(date as Date, 'yyyy');
     } else if (calendarType === 'month') {
       return this.formatYearMonth(date as Date);
+    } else if (calendarType === 'datetime') {
+      return this.format(date as Date, 'short');
     }
     return this.format(date as Date, 'shortDate');
   }
@@ -453,7 +501,13 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         return this.createLocalDate(match[1], match[2], match[3]);
       }
-      case 'datetime':
+      case 'datetime': {
+        const match = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) {
+          return undefined;
+        }
+        return this.createLocalDate(match[1], match[2], match[3]);
+      }
       default:
         return undefined;
     }

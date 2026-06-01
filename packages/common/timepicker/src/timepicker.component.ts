@@ -97,6 +97,11 @@ export class TimepickerComponent implements OnInit {
     this.minuteFormControl.setValue(date.getMinutes(), { emitEvent: false });
   }
 
+  clear(): void {
+    this.hourFormControl.setValue(0, { emitEvent: false });
+    this.minuteFormControl.setValue(0, { emitEvent: false });
+  }
+
   private setDisabledState(): void {
     if (!this.hourFormControl || !this.minuteFormControl) return;
     const disabled = this.disabled || isTimeFrame(this.value() as any);
