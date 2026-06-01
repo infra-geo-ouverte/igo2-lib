@@ -1,5 +1,8 @@
 <mat-form-field subscriptSizing="dynamic">
-  @if (startView() === 'multi-year' && calendarType() === 'year') {
+  @if (
+    showLabel() === true ||
+    (startView() === 'multi-year' && calendarType() === 'year')
+  ) {
     <mat-label>
       {{ placeholder() }}
     </mat-label>

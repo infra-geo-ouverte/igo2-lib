@@ -49,6 +49,9 @@ export class AppFormComponent implements OnInit, OnDestroy {
         options: {
           cols: 1,
           validator: Validators.required
+        },
+        inputs: {
+          showLabel: true
         }
       },
       {
@@ -67,6 +70,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
           cols: 2
         },
         inputs: {
+          showLabel: true,
           choices: [
             { value: 1, title: 'Single' },
             { value: 2, title: 'Married' }

@@ -58,6 +58,11 @@ export class FormFieldSelectComponent implements OnInit {
   readonly formControl = input.required<UntypedFormControl>();
 
   /**
+   * Field showLabel
+   */
+  readonly showLabel = input<boolean>(false);
+
+  /**
    * Field placeholder
    */
   readonly placeholder = input<string>();

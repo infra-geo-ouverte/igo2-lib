@@ -72,6 +72,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   private _disabled = false;
 
   readonly placeholder = input<string>('');
+  readonly showLabel = input<boolean>(false);
   readonly minDate = input<Date | TimeFrame>();
   readonly maxDate = input<Date | TimeFrame>();
   readonly calendarType = input<'year' | 'month' | 'date' | 'datetime'>('date');
