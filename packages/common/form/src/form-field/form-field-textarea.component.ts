@@ -1,9 +1,9 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  input
+  input,
+  signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
@@ -12,8 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { IgoLanguageModule } from '@igo2/core/language';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
 import {
@@ -35,12 +33,12 @@ import {
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
-    AsyncPipe,
+
     IgoLanguageModule
   ]
 })
 export class FormFieldTextareaComponent implements OnInit {
-  disabled$ = new BehaviorSubject<boolean>(false);
+  readonly disabled = signal(false);
 
   /**
    * The field's form control
@@ -70,7 +68,7 @@ export class FormFieldTextareaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.disabled$.next(this.formControl().disabled);
+    this.disabled.set(this.formControl().disabled);
   }
 
   /**
@@ -85,12 +83,12 @@ export class FormFieldTextareaComponent implements OnInit {
   }
 
   private toggleDisabled() {
-    const disabled = !this.disabled$.value;
+    const disabled = !this.disabled();
     if (disabled === true) {
       this.formControl().disable();
     } else {
       this.formControl().enable();
     }
-    this.disabled$.next(disabled);
+    this.disabled.set(disabled);
   }
 }
