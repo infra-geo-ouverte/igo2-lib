@@ -3,7 +3,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
-import { TimeFrame, isTimeFrame, resolveDate } from '@igo2/utils';
+import { TimeFrame, resolveDate } from '@igo2/utils';
 
 import { combineLatest } from 'rxjs';
 import { startWith } from 'rxjs/operators';
@@ -104,9 +104,8 @@ export class TimepickerComponent implements OnInit {
 
   private setDisabledState(): void {
     if (!this.hourFormControl || !this.minuteFormControl) return;
-    const disabled = this.disabled || isTimeFrame(this.value() as any);
-    this.toggleDisabled(this.hourFormControl, disabled);
-    this.toggleDisabled(this.minuteFormControl, disabled);
+    this.toggleDisabled(this.hourFormControl, this.disabled);
+    this.toggleDisabled(this.minuteFormControl, this.disabled);
   }
 
   private toggleDisabled(control: FormControl, disabled: boolean): void {

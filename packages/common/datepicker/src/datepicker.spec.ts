@@ -8,6 +8,8 @@ import { By } from '@angular/platform-browser';
 import { TimepickerComponent } from '@igo2/common/timepicker';
 import { TimeFrame } from '@igo2/utils';
 
+import { vi } from 'vitest';
+
 import { DatepickerComponent } from './datepicker.component';
 
 describe('DatepickerComponent', () => {
@@ -149,5 +151,30 @@ describe('DatepickerComponent', () => {
     expect(lastEmittedValue).toBeInstanceOf(Date);
     expect((lastEmittedValue as Date).getHours()).toBe(9);
     expect((lastEmittedValue as Date).getMinutes()).toBe(45);
+  });
+
+  it('should set current hour and minute when choosing now in datetime mode', () => {
+    const mockedNow = new Date(2026, 4, 29, 16, 42, 0, 0);
+
+    vi.useFakeTimers();
+    vi.setSystemTime(mockedNow);
+
+    fixture.componentRef.setInput('calendarType', 'datetime');
+    fixture.componentRef.setInput('value', new Date(2026, 4, 29, 9, 15));
+    fixture.detectChanges();
+
+    component.setToday();
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value?.getHours()).toBe(16);
+    expect(component.dateFormControl.value?.getMinutes()).toBe(42);
+
+    const timepicker = fixture.debugElement.query(
+      By.directive(TimepickerComponent)
+    ).componentInstance as TimepickerComponent;
+    expect(timepicker.hourFormControl.value).toBe(16);
+    expect(timepicker.minuteFormControl.value).toBe(42);
+
+    vi.useRealTimers();
   });
 });

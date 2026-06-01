@@ -172,7 +172,10 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     picker.startAt = date;
     this.dateLabelFormControl.setValue(this.getFormattedLabel(keyword));
     this.todaySelected = true;
-    this.updateDateControl(date);
+    this.dateFormControl.setValue(date);
+    if (this.calendarType() === 'datetime') {
+      this.timepicker()?.reset(date);
+    }
 
     picker.close();
   }

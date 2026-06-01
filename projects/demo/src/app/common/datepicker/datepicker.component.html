@@ -110,6 +110,50 @@
             Try absolute values, relative values, and the disabled state on a
             single instance.
           </p>
+
+          <div class="playground-actions">
+            <span>Calendar type:</span>
+            <button
+              mat-stroked-button
+              type="button"
+              [color]="
+                playgroundCalendarType === 'date' ? 'primary' : undefined
+              "
+              (click)="selectPlaygroundCalendarType('date')"
+            >
+              Date
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              [color]="
+                playgroundCalendarType === 'datetime' ? 'primary' : undefined
+              "
+              (click)="selectPlaygroundCalendarType('datetime')"
+            >
+              Datetime
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              [color]="
+                playgroundCalendarType === 'month' ? 'primary' : undefined
+              "
+              (click)="selectPlaygroundCalendarType('month')"
+            >
+              Month
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              [color]="
+                playgroundCalendarType === 'year' ? 'primary' : undefined
+              "
+              (click)="selectPlaygroundCalendarType('year')"
+            >
+              Year
+            </button>
+          </div>
         </div>
 
         <mat-slide-toggle
@@ -122,7 +166,7 @@
 
       <igo-datepicker
         placeholder="Playground"
-        calendarType="datetime"
+        [calendarType]="playgroundCalendarType"
         [value]="(playgroundValue$ | async)!"
         [disabled]="disabled"
         todayButtonLabel="Now"
