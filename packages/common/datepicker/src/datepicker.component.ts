@@ -6,6 +6,7 @@ import {
   LOCALE_ID,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input,
   model,
@@ -24,10 +25,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { TimeFrame, isTimeFrame, resolveDate } from '@igo2/utils';
+import { TimepickerComponent } from '@igo2/common/timepicker';
+import { TimeFrame, isIsoDate, isTimeFrame, resolveDate } from '@igo2/utils';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+export type DatepickerInputValue =
+  | Date
+  | TimeFrame
+  | string
+  | number
+  | null
+  | undefined;
 
 @Component({
   selector: 'igo-datepicker',
@@ -39,7 +49,8 @@ import { takeUntil } from 'rxjs/operators';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    TimepickerComponent
   ],
   providers: [DatePipe, provideNativeDateAdapter()]
 })
@@ -48,6 +59,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   private _locale = inject(LOCALE_ID);
 
   readonly picker = viewChild.required<MatDatepicker<Date>>('picker');
+  readonly timepicker = viewChild<TimepickerComponent>('timepicker');
 
   @Input()
   set disabled(value: boolean) {
@@ -66,19 +78,11 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly startView = model<'multi-year' | 'year' | 'month'>();
   readonly startAt = input<Date | TimeFrame>();
   readonly datepickerFilter = input<(date: Date | null) => boolean>();
-  @Input()
-  set value(value: Date | TimeFrame | undefined) {
-    this._value = value;
-    this.syncValueFromInput();
-  }
-  get value(): Date | TimeFrame | undefined {
-    return this._value;
-  }
-  private _value: Date | TimeFrame | undefined;
+  readonly value = input<DatepickerInputValue>();
   readonly todayButtonLabel = input<string>('Today');
   readonly clearButtonLabel = input<string>('Clear');
 
-  readonly valueChange = output<Date | TimeFrame>();
+  readonly valueChange = output<Date | TimeFrame | undefined>();
 
   get panelClassName(): string {
     return ['year', 'month'].includes(this.calendarType())
@@ -95,12 +99,25 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   previousValue!: Date | TimeFrame | null | undefined;
 
   private destroy$ = new Subject<void>();
+  private hasInitializedValueSync = false;
+
+  constructor() {
+    effect(() => {
+      const value = this.value();
+      if (!this.hasInitializedValueSync) {
+        this.hasInitializedValueSync = true;
+        return;
+      }
+      this.syncValueFromInput(value);
+    });
+  }
 
   ngOnInit(): void {
     this.initStartView();
     this.initFormControls();
 
-    this.todaySelected = this.value ? isTimeFrame(this.value) : false;
+    const value = this.normalizeValue(this.value());
+    this.todaySelected = value ? isTimeFrame(value) : false;
 
     this.dateFormControl.valueChanges.subscribe((value) => {
       this.picker().startAt = value ? value : null;
@@ -113,7 +130,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
           ? TimeFrame[0]
           : TimeFrame[1]
         : (value ?? undefined);
-      this.valueChange.emit(emittedValue as any);
+      this.valueChange.emit(emittedValue);
     });
   }
 
@@ -131,9 +148,10 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.picker()
       .closedStream.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
+        const value = this.normalizeValue(this.value());
         if (this.previousValue === this.dateFormControl.value) {
           this.todaySelected = this.previousTodaySelected;
-        } else if (this.value && isTimeFrame(this.value)) {
+        } else if (value && isTimeFrame(value)) {
           this.todaySelected = true;
         }
       });
@@ -154,7 +172,10 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     picker.startAt = date;
     this.dateLabelFormControl.setValue(this.getFormattedLabel(keyword));
     this.todaySelected = true;
-    this.updateDateControl(date);
+    this.dateFormControl.setValue(date);
+    if (this.calendarType() === 'datetime') {
+      this.timepicker()?.reset(date);
+    }
 
     picker.close();
   }
@@ -162,7 +183,99 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   clearDate(): void {
     this.dateFormControl.reset();
     this.dateLabelFormControl.reset();
+    if (this.calendarType() === 'datetime') {
+      this.timepicker()?.clear();
+    }
     this.picker().close();
+  }
+
+  updateTime(event: { hour: number; minute: number }): void {
+    const currentValue = this.dateFormControl.value ?? new Date();
+    const nextDate = new Date(currentValue);
+    nextDate.setHours(event.hour, event.minute, 0, 0);
+
+    this.todaySelected = false;
+    this.dateFormControl.setValue(nextDate);
+  }
+
+  writeValue(value: DatepickerInputValue): void {
+    this.syncValueFromInput(value);
+  }
+
+  hasSameValue(
+    left: DatepickerInputValue,
+    right: DatepickerInputValue
+  ): boolean {
+    const normalizedLeft = this.normalizeValue(left);
+    const normalizedRight = this.normalizeValue(right);
+
+    if (normalizedLeft === undefined && normalizedRight === undefined) {
+      return true;
+    }
+
+    if (normalizedLeft instanceof Date && normalizedRight instanceof Date) {
+      return normalizedLeft.getTime() === normalizedRight.getTime();
+    }
+
+    return normalizedLeft === normalizedRight;
+  }
+
+  toControlValue(
+    value: DatepickerInputValue
+  ): Date | TimeFrame | string | undefined {
+    const normalizedValue = this.normalizeValue(value);
+    if (normalizedValue === undefined || isTimeFrame(normalizedValue)) {
+      return normalizedValue;
+    }
+
+    switch (this.calendarType()) {
+      case 'year':
+        return this.formatYear(normalizedValue);
+      case 'month':
+        return this.formatMonth(normalizedValue);
+      case 'date':
+        return this.formatDateValue(normalizedValue);
+      case 'datetime':
+      default:
+        return normalizedValue;
+    }
+  }
+
+  normalizeValue(value: DatepickerInputValue): Date | TimeFrame | undefined {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? undefined : date;
+    }
+
+    if (typeof value === 'string') {
+      if (isTimeFrame(value)) {
+        return value;
+      }
+
+      const calendarDate = this.parseCalendarTypeValue(value);
+      if (calendarDate) {
+        return calendarDate;
+      }
+
+      if (isIsoDate(value)) {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? undefined : date;
+      }
+    }
+
+    return undefined;
+  }
+
+  get timepickerValue(): Date | TimeFrame | undefined {
+    if (this.todaySelected) {
+      return this.calendarType() === 'datetime' ? TimeFrame[0] : TimeFrame[1];
+    }
+
+    return this.dateFormControl?.value ?? this.normalizeValue(this.value());
   }
 
   private registerAutoCloseEvents(): void {
@@ -254,7 +367,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initFormControls() {
-    const date = this.value ?? new Date();
+    const date = this.normalizeValue(this.value()) ?? new Date();
     this.dateFormControl = new FormControl({
       value: resolveDate(date),
       disabled: this.disabled
@@ -266,20 +379,48 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private syncValueFromInput(): void {
+  private syncValueFromInput(value: DatepickerInputValue): void {
     if (!this.dateFormControl || !this.dateLabelFormControl) {
       return;
     }
 
-    const value = this.value;
-    this.todaySelected = value ? isTimeFrame(value) : false;
+    const normalizedValue = this.normalizeValue(value);
 
-    this.dateFormControl.setValue(value ? resolveDate(value) : null, {
+    const nextTodaySelected = normalizedValue
+      ? isTimeFrame(normalizedValue)
+      : false;
+    const nextDateValue = normalizedValue ? resolveDate(normalizedValue) : null;
+    const nextLabel = this.getFormattedLabel(normalizedValue);
+
+    const currentDateValue = this.dateFormControl.value ?? null;
+    const hasSameDateValue =
+      (!currentDateValue && !nextDateValue) ||
+      (!!currentDateValue &&
+        !!nextDateValue &&
+        currentDateValue.getTime() === nextDateValue.getTime());
+    const hasSameLabel = this.dateLabelFormControl.value === nextLabel;
+    const hasSameTodaySelected = this.todaySelected === nextTodaySelected;
+
+    if (hasSameDateValue && hasSameLabel && hasSameTodaySelected) {
+      return;
+    }
+
+    this.todaySelected = nextTodaySelected;
+
+    this.dateFormControl.setValue(nextDateValue, {
       emitEvent: false
     });
-    this.dateLabelFormControl.setValue(this.getFormattedLabel(value), {
+    this.dateLabelFormControl.setValue(nextLabel, {
       emitEvent: false
     });
+
+    if (this.calendarType() === 'datetime') {
+      if (normalizedValue) {
+        this.timepicker()?.reset(normalizedValue);
+      } else {
+        this.timepicker()?.clear();
+      }
+    }
   }
 
   private setDisabledState(): void {
@@ -304,6 +445,21 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateDateControl(date: Date | null | undefined) {
+    if (date && this.calendarType() === 'datetime') {
+      const currentValue = this.dateFormControl.value;
+      if (currentValue) {
+        const nextDate = new Date(date);
+        nextDate.setHours(
+          currentValue.getHours(),
+          currentValue.getMinutes(),
+          0,
+          0
+        );
+        this.dateFormControl.setValue(nextDate);
+        return;
+      }
+    }
+
     this.dateFormControl.setValue(date);
   }
 
@@ -317,8 +473,87 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.format(date as Date, 'yyyy');
     } else if (calendarType === 'month') {
       return this.formatYearMonth(date as Date);
+    } else if (calendarType === 'datetime') {
+      return this.format(date as Date, 'short');
     }
     return this.format(date as Date, 'shortDate');
+  }
+
+  private parseCalendarTypeValue(value: string): Date | undefined {
+    const trimmedValue = value.trim();
+
+    switch (this.calendarType()) {
+      case 'year': {
+        const match = trimmedValue.match(/^(\d{4})$/);
+        if (!match) {
+          return undefined;
+        }
+        return new Date(Number(match[1]), 0, 1);
+      }
+      case 'month': {
+        const match = trimmedValue.match(/^(\d{4})-(\d{2})$/);
+        if (!match) {
+          return undefined;
+        }
+        return this.createLocalDate(match[1], match[2], '01');
+      }
+      case 'date': {
+        const match = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) {
+          return undefined;
+        }
+        return this.createLocalDate(match[1], match[2], match[3]);
+      }
+      case 'datetime': {
+        const match = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) {
+          return undefined;
+        }
+        return this.createLocalDate(match[1], match[2], match[3]);
+      }
+      default:
+        return undefined;
+    }
+  }
+
+  private createLocalDate(
+    yearValue: string,
+    monthValue: string,
+    dayValue: string
+  ): Date | undefined {
+    const year = Number(yearValue);
+    const month = Number(monthValue);
+    const day = Number(dayValue);
+    const date = new Date(year, month - 1, day);
+
+    return date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+      ? date
+      : undefined;
+  }
+
+  private formatDateValue(date: Date): string {
+    return [
+      this.formatYear(date),
+      this.padToTwoDigits(date.getMonth() + 1),
+      this.padToTwoDigits(date.getDate())
+    ].join('-');
+  }
+
+  private formatMonth(date: Date): string {
+    return [
+      this.formatYear(date),
+      this.padToTwoDigits(date.getMonth() + 1)
+    ].join('-');
+  }
+
+  private formatYear(date: Date): string {
+    return date.getFullYear().toString();
+  }
+
+  private padToTwoDigits(value: number): string {
+    return value.toString().padStart(2, '0');
   }
 
   private format(date: Date, formatStr: string): string {

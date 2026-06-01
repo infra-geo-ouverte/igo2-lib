@@ -36,6 +36,7 @@ export class AppDatepickerComponent {
   lastEmittedCalendarType: CalendarType = 'datetime';
 
   disabled = false;
+  playgroundCalendarType: CalendarType = 'datetime';
 
   readonly defaultDate = new Date(2026, 4, 29);
   readonly monthDate = new Date(2026, 7, 1);
@@ -128,12 +129,12 @@ export class AppDatepickerComponent {
     this.defaultDate
   );
 
-  onPlaygroundValueChange(value: Date | TimeFrame): void {
-    this.setPlaygroundValue(value, 'datetime');
+  onPlaygroundValueChange(value: Date | TimeFrame | undefined): void {
+    this.setPlaygroundValue(value, this.playgroundCalendarType);
   }
 
   onExampleValueChange(
-    value: Date | TimeFrame,
+    value: Date | TimeFrame | undefined,
     calendarType: CalendarType
   ): void {
     this.lastEmittedCalendarType = calendarType;
@@ -144,20 +145,28 @@ export class AppDatepickerComponent {
     this.disabled = disabled;
   }
 
+  selectPlaygroundCalendarType(calendarType: CalendarType): void {
+    this.playgroundCalendarType = calendarType;
+    this.lastEmittedCalendarType = calendarType;
+  }
+
   setToday(): void {
-    this.setPlaygroundValue(this.today, 'datetime');
+    this.setPlaygroundValue(this.today, this.playgroundCalendarType);
   }
 
   setNow(): void {
-    this.setPlaygroundValue(this.now, 'datetime');
+    this.setPlaygroundValue(this.now, this.playgroundCalendarType);
   }
 
   setSpecificDate(): void {
-    this.setPlaygroundValue(new Date(2026, 9, 6, 9, 45), 'datetime');
+    this.setPlaygroundValue(
+      new Date(2026, 9, 6, 9, 45),
+      this.playgroundCalendarType
+    );
   }
 
   clearPlayground(): void {
-    this.setPlaygroundValue(undefined, 'datetime');
+    this.setPlaygroundValue(undefined, this.playgroundCalendarType);
   }
 
   private allowWeekdaysOnly(date: Date | null): boolean {

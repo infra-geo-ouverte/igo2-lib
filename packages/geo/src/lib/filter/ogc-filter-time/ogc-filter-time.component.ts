@@ -152,10 +152,14 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   changeTemporalProperty(
-    value: Date | TimeFrame,
+    value: Date | TimeFrame | undefined,
     position: number,
     refreshFilter = true
   ) {
+    if (value === undefined) {
+      return;
+    }
+
     if (isTimeFrame(value)) {
       this.changeProperty.emit({
         value: value.toString(),
@@ -245,10 +249,14 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   yearSelected(
-    year: Date | TimeFrame,
+    year: Date | TimeFrame | undefined,
     property?: string,
     refreshFilter = true
   ) {
+    if (year === undefined) {
+      return;
+    }
+
     if (!this.ogcFilterTimeService.stepIsYearDuration(this.step)) return;
     if (!isTimeFrame(year)) {
       if (property === 'end') {
@@ -270,10 +278,14 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   monthSelected(
-    month: Date | TimeFrame,
+    month: Date | TimeFrame | undefined,
     property?: 'begin' | 'end',
     refreshFilter = true
   ): void {
+    if (month === undefined) {
+      return;
+    }
+
     if (!this.ogcFilterTimeService.stepIsMonthDuration(this.step)) return;
     if (!isTimeFrame(month)) {
       if (property === 'end') {

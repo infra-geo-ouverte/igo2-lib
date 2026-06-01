@@ -83,6 +83,10 @@ export class AppFormComponent implements OnInit, OnDestroy {
         type: 'date',
         options: {
           cols: 2
+        },
+        inputs: {
+          placeholder: 'Select date and time (HH:mm)',
+          calendarType: 'datetime'
         }
       }
     ];

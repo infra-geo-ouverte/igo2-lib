@@ -3,8 +3,12 @@ import localeEnCa from '@angular/common/locales/en-CA';
 import localeFrCa from '@angular/common/locales/fr-CA';
 import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
+import { TimepickerComponent } from '@igo2/common/timepicker';
 import { TimeFrame } from '@igo2/utils';
+
+import { vi } from 'vitest';
 
 import { DatepickerComponent } from './datepicker.component';
 
@@ -95,5 +99,82 @@ describe('DatepickerComponent', () => {
 
     expect(component.dateFormControl.value).toBeNull();
     expect(component.dateLabelFormControl.value).toBeNull();
+  });
+
+  it('should parse a date-only string as a local date in datetime mode', () => {
+    fixture.componentRef.setInput('calendarType', 'datetime');
+    fixture.componentRef.setInput('value', '2026-05-29');
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value?.getFullYear()).toBe(2026);
+    expect(component.dateFormControl.value?.getMonth()).toBe(4);
+    expect(component.dateFormControl.value?.getDate()).toBe(29);
+  });
+
+  it('should clear the timepicker when datetime value becomes undefined', () => {
+    fixture.componentRef.setInput('calendarType', 'datetime');
+    fixture.componentRef.setInput('value', new Date(2026, 4, 29, 14, 30));
+    fixture.detectChanges();
+
+    fixture.componentRef.setInput('value', undefined);
+    fixture.detectChanges();
+
+    const timepicker = fixture.debugElement.query(
+      By.directive(TimepickerComponent)
+    ).componentInstance as TimepickerComponent;
+
+    expect(timepicker.hourFormControl.value).toBe(0);
+    expect(timepicker.minuteFormControl.value).toBe(0);
+  });
+
+  it('should let datetime mode update hours and minutes through the timepicker', () => {
+    const emittedValues: Array<Date | TimeFrame | undefined> = [];
+    const testDate = new Date(2026, 4, 29, 14, 30);
+
+    fixture.componentRef.setInput('calendarType', 'datetime');
+    fixture.componentRef.setInput('value', testDate);
+    fixture.detectChanges();
+
+    component.valueChange.subscribe((value) => emittedValues.push(value));
+
+    const timepicker = fixture.debugElement.query(
+      By.directive(TimepickerComponent)
+    ).componentInstance as TimepickerComponent;
+
+    timepicker.valueChange.emit({ hour: 9, minute: 45 });
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value?.getHours()).toBe(9);
+    expect(component.dateFormControl.value?.getMinutes()).toBe(45);
+
+    const lastEmittedValue = emittedValues.at(-1);
+    expect(lastEmittedValue).toBeInstanceOf(Date);
+    expect((lastEmittedValue as Date).getHours()).toBe(9);
+    expect((lastEmittedValue as Date).getMinutes()).toBe(45);
+  });
+
+  it('should set current hour and minute when choosing now in datetime mode', () => {
+    const mockedNow = new Date(2026, 4, 29, 16, 42, 0, 0);
+
+    vi.useFakeTimers();
+    vi.setSystemTime(mockedNow);
+
+    fixture.componentRef.setInput('calendarType', 'datetime');
+    fixture.componentRef.setInput('value', new Date(2026, 4, 29, 9, 15));
+    fixture.detectChanges();
+
+    component.setToday();
+    fixture.detectChanges();
+
+    expect(component.dateFormControl.value?.getHours()).toBe(16);
+    expect(component.dateFormControl.value?.getMinutes()).toBe(42);
+
+    const timepicker = fixture.debugElement.query(
+      By.directive(TimepickerComponent)
+    ).componentInstance as TimepickerComponent;
+    expect(timepicker.hourFormControl.value).toBe(16);
+    expect(timepicker.minuteFormControl.value).toBe(42);
+
+    vi.useRealTimers();
   });
 });
