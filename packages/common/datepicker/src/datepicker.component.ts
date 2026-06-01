@@ -6,6 +6,7 @@ import {
   LOCALE_ID,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input,
   model,
@@ -66,19 +67,11 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly startView = model<'multi-year' | 'year' | 'month'>();
   readonly startAt = input<Date | TimeFrame>();
   readonly datepickerFilter = input<(date: Date | null) => boolean>();
-  @Input()
-  set value(value: Date | TimeFrame | undefined) {
-    this._value = value;
-    this.syncValueFromInput();
-  }
-  get value(): Date | TimeFrame | undefined {
-    return this._value;
-  }
-  private _value: Date | TimeFrame | undefined;
+  readonly value = input<Date | TimeFrame>();
   readonly todayButtonLabel = input<string>('Today');
   readonly clearButtonLabel = input<string>('Clear');
 
-  readonly valueChange = output<Date | TimeFrame>();
+  readonly valueChange = output<Date | TimeFrame | undefined>();
 
   get panelClassName(): string {
     return ['year', 'month'].includes(this.calendarType())
@@ -95,12 +88,24 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   previousValue!: Date | TimeFrame | null | undefined;
 
   private destroy$ = new Subject<void>();
+  private hasInitializedValueSync = false;
+
+  constructor() {
+    effect(() => {
+      const value = this.value();
+      if (!this.hasInitializedValueSync) {
+        this.hasInitializedValueSync = true;
+        return;
+      }
+      this.syncValueFromInput(value);
+    });
+  }
 
   ngOnInit(): void {
     this.initStartView();
     this.initFormControls();
 
-    this.todaySelected = this.value ? isTimeFrame(this.value) : false;
+    this.todaySelected = this.value() ? isTimeFrame(this.value()) : false;
 
     this.dateFormControl.valueChanges.subscribe((value) => {
       this.picker().startAt = value ? value : null;
@@ -113,7 +118,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
           ? TimeFrame[0]
           : TimeFrame[1]
         : (value ?? undefined);
-      this.valueChange.emit(emittedValue as any);
+      this.valueChange.emit(emittedValue);
     });
   }
 
@@ -131,9 +136,10 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.picker()
       .closedStream.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
+        const value = this.value();
         if (this.previousValue === this.dateFormControl.value) {
           this.todaySelected = this.previousTodaySelected;
-        } else if (this.value && isTimeFrame(this.value)) {
+        } else if (value && isTimeFrame(value)) {
           this.todaySelected = true;
         }
       });
@@ -254,7 +260,7 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initFormControls() {
-    const date = this.value ?? new Date();
+    const date = this.value() ?? new Date();
     this.dateFormControl = new FormControl({
       value: resolveDate(date),
       disabled: this.disabled
@@ -266,18 +272,34 @@ export class DatepickerComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private syncValueFromInput(): void {
+  private syncValueFromInput(value: Date | TimeFrame | undefined): void {
     if (!this.dateFormControl || !this.dateLabelFormControl) {
       return;
     }
 
-    const value = this.value;
-    this.todaySelected = value ? isTimeFrame(value) : false;
+    const nextTodaySelected = value ? isTimeFrame(value) : false;
+    const nextDateValue = value ? resolveDate(value) : null;
+    const nextLabel = this.getFormattedLabel(value);
 
-    this.dateFormControl.setValue(value ? resolveDate(value) : null, {
+    const currentDateValue = this.dateFormControl.value ?? null;
+    const hasSameDateValue =
+      (!currentDateValue && !nextDateValue) ||
+      (!!currentDateValue &&
+        !!nextDateValue &&
+        currentDateValue.getTime() === nextDateValue.getTime());
+    const hasSameLabel = this.dateLabelFormControl.value === nextLabel;
+    const hasSameTodaySelected = this.todaySelected === nextTodaySelected;
+
+    if (hasSameDateValue && hasSameLabel && hasSameTodaySelected) {
+      return;
+    }
+
+    this.todaySelected = nextTodaySelected;
+
+    this.dateFormControl.setValue(nextDateValue, {
       emitEvent: false
     });
-    this.dateLabelFormControl.setValue(this.getFormattedLabel(value), {
+    this.dateLabelFormControl.setValue(nextLabel, {
       emitEvent: false
     });
   }

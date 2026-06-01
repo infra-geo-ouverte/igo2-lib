@@ -128,12 +128,12 @@ export class AppDatepickerComponent {
     this.defaultDate
   );
 
-  onPlaygroundValueChange(value: Date | TimeFrame): void {
+  onPlaygroundValueChange(value: Date | TimeFrame | undefined): void {
     this.setPlaygroundValue(value, 'datetime');
   }
 
   onExampleValueChange(
-    value: Date | TimeFrame,
+    value: Date | TimeFrame | undefined,
     calendarType: CalendarType
   ): void {
     this.lastEmittedCalendarType = calendarType;
