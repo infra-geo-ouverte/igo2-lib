@@ -36,8 +36,8 @@
   }
 </mat-menu>
 
-@if (headerHtml !== '') {
-  <igo-custom-html [html]="headerHtml | translate" />
+@if (headerHtml() !== '') {
+  <igo-custom-html [html]="headerHtml() | translate" />
 }
 
-<igo-custom-html [html]="html | translate: { version: effectiveVersion }" />
+<igo-custom-html [html]="html() | translate: { version: effectiveVersion }" />

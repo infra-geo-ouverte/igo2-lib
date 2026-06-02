@@ -33,7 +33,7 @@ export class FeatureDataSource extends DataSource {
     if (!formatType) {
       olFormatCls = olformat.GeoJSON;
     } else {
-      olFormatCls = olformat[formatType];
+      olFormatCls = (olformat as any)[formatType];
       if (olFormatCls === undefined) {
         throw new Error('Invalid vector source format ${formatType}.');
       }

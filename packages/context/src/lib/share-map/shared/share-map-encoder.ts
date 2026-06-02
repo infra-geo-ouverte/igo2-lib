@@ -30,8 +30,8 @@ import {
 import { getFlattenOptions } from './share-map.utils';
 
 export class ShareMapEncoder {
-  private context: DetailedContext | undefined;
-  language: string;
+  private context?: DetailedContext;
+  language?: string;
 
   constructor(
     private SHARE_MAP_DEFS: ShareMapKeysDefinitions,
@@ -44,7 +44,7 @@ export class ShareMapEncoder {
     const layers = [
       map.layerController.baseLayer,
       ...map.layerController.layersFlattened
-    ].filter(Boolean);
+    ].filter((l): l is AnyLayer => !!l);
 
     const urlParams = this.getBaseUrlConfig(map.viewController);
     this.buildQueryUrl(layers, urlParams);
@@ -61,7 +61,7 @@ export class ShareMapEncoder {
   private replaceGroupLocalIds(layers: AnyLayer[]): void {
     const idMap = new Map<LayerId, LayerId>();
     const existingIds = new Set(
-      layers.map((layer) => layer.id).filter(Boolean)
+      layers.map((layer) => layer.id).filter((id): id is LayerId => id != null)
     );
 
     // eslint-disable-next-line prefer-const
@@ -91,11 +91,11 @@ export class ShareMapEncoder {
     rotation?: number;
   } {
     return ObjectUtils.removeUndefined({
-      layers: this.context?.layers,
-      center: this.context?.map.view.center,
-      projection: this.context?.map.view.projection,
-      zoom: this.context?.map.view.zoom,
-      rotation: this.context?.map.view.rotation
+      layers: this.context?.layers ?? [],
+      center: this.context?.map?.view.center,
+      projection: this.context?.map?.view.projection,
+      zoom: this.context?.map?.view.zoom,
+      rotation: this.context?.map?.view.rotation
     });
   }
 
@@ -157,10 +157,12 @@ export class ShareMapEncoder {
     const ctxFlattened = getFlattenOptions(ctxLayers);
 
     return new Map(
-      ctxFlattened.map((lctx) => {
-        const identifier = getLayerOptionIdentifier(lctx);
-        return [identifier, lctx] as const;
-      })
+      ctxFlattened
+        .map((lctx) => {
+          const identifier = getLayerOptionIdentifier(lctx);
+          return [identifier ?? '', lctx] as const;
+        })
+        .filter(([key]) => key !== '')
     );
   }
 
@@ -180,7 +182,7 @@ export class ShareMapEncoder {
       const opacityChange = layer.opacity !== (ctxLayer.opacity ?? 1);
       const layerParentId = this.getIdsNestedParent(layer)?.join('.');
       const ctxParentId =
-        ctxLayer.parentId ?? findParentId(this.context.layers, ctxLayer);
+        ctxLayer.parentId ?? findParentId(this.context?.layers ?? [], ctxLayer);
       const parentIdChange = ctxParentId !== layerParentId;
 
       let expandedChange = false;
@@ -213,9 +215,9 @@ export class ShareMapEncoder {
 
     if (node.parent) {
       if (!ids) {
-        ids = [node.parent.id];
+        ids = [node.parent.id!];
       } else {
-        ids.unshift(node.parent.id);
+        ids.unshift(node.parent.id!);
       }
       return this.getIdsNestedParent(node.parent, ids);
     }
@@ -263,14 +265,16 @@ export class ShareMapEncoder {
   }
 
   private getLayerNames(dataSourceOptions: AnyDataSourceOptions): string {
-    const type = dataSourceOptions.type.toLowerCase() as ServiceType;
+    const type = dataSourceOptions.type!.toLowerCase() as ServiceType;
     if (type === 'wms') {
       const params = (dataSourceOptions as Partial<WMSDataSourceOptions>)
         .params;
-      return params.LAYERS;
+      return params!.LAYERS;
     }
 
-    return 'layer' in dataSourceOptions ? dataSourceOptions.layer : '';
+    return 'layer' in dataSourceOptions
+      ? ((dataSourceOptions.layer as string) ?? '')
+      : '';
   }
 
   private getWmsVersion(
@@ -285,29 +289,29 @@ export class ShareMapEncoder {
   private concatUrlWithVersion(
     dataSourceOptions: AnyDataSourceOptions
   ): string {
-    const url = dataSourceOptions.url;
+    const url = dataSourceOptions.url ?? '';
 
-    if ((dataSourceOptions.type.toLowerCase() as ServiceType) === 'wms') {
+    if ((dataSourceOptions.type!.toLowerCase() as ServiceType) === 'wms') {
       const version = this.getWmsVersion(dataSourceOptions);
       if (version) {
         const operator = url.includes('?') ? '&' : '?';
         const { version: versionDef } = this.SHARE_MAP_DEFS.layers.params;
-        return `${url}${operator}${versionDef.key}=${version}`;
+        return `${url}${operator}${versionDef!.key}=${version}`;
       }
     }
 
-    return dataSourceOptions.url;
+    return url;
   }
 
   private getLayerParams(layer: Layer): LayerParams {
     const dataSourceOptions = layer.dataSource.options;
     const isExisting = this.context?.layers
-      ? this.hasLayerId(this.context.layers, layer.id)
+      ? this.hasLayerId(this.context.layers, layer.id!)
       : false;
     return {
-      index: undefined,
+      index: 0,
       ...(isExisting
-        ? { id: layer.id }
+        ? { id: layer.id! }
         : {
             names: this.getLayerNames(dataSourceOptions),
             type: dataSourceOptions?.type
@@ -419,11 +423,11 @@ export class ShareMapEncoder {
     const keys: string[] = [];
     for (const key in defs) {
       if (Object.prototype.hasOwnProperty.call(defs, key)) {
-        const value = defs[key];
+        const value = (defs as unknown as Record<string, unknown>)[key];
         if (typeof value === 'string') {
           keys.push(value);
         } else if (typeof value === 'object' && value !== null) {
-          keys.push(value.key);
+          keys.push((value as { key: string }).key);
         }
       }
     }
@@ -469,8 +473,11 @@ export class ShareMapEncoder {
       definitions
     );
 
+    const centerDef = definitions.center;
     const result = [
-      `${definitions.center.key}${definitions.center.stringify(center)}`,
+      centerDef && center
+        ? `${centerDef.key}${centerDef.stringify!(center)}`
+        : undefined,
       stringifiedParams
     ].filter(Boolean);
 
@@ -483,10 +490,15 @@ export class ShareMapEncoder {
   ): string | undefined {
     const result = Object.keys(ObjectUtils.removeUndefined(values))
       .map((key) => {
-        const { key: defKey, stringify } = definitions[key] as BaseKeyParams;
+        const def = (definitions as Record<string, BaseKeyParams | undefined>)[
+          key
+        ];
+        if (!def) return undefined;
+        const { key: defKey, stringify } = def;
         const value = stringify ? stringify(values[key]) : values[key];
         return `${value}${defKey}`;
       })
+      .filter(Boolean)
       .join(',');
     return result === '' ? undefined : result;
   }
@@ -504,17 +516,17 @@ export class ShareMapEncoder {
 
   private getLayerGroupParams(layer: LayerGroup): GroupParams {
     return {
-      id: layer.id,
-      title: layer.title,
-      zIndex: layer.zIndex,
-      parentId: layer.parent?.id,
+      id: layer.id!,
+      title: layer.title!,
+      zIndex: layer.zIndex!,
+      parentId: layer.parent?.id as LayerId,
       visible: this.getVisibility(layer.visible),
-      opacity: this.getOpacity(layer.opacity),
+      opacity: this.getOpacity(layer.opacity) as number,
       expanded: layer.expanded
     } satisfies OptionalRequired<GroupParams>;
   }
 
-  private stringifyGroupParams(params: GroupParams): string {
+  private stringifyGroupParams(params: GroupParams): string | undefined {
     return this.stringifyDefinitions(params, this.SHARE_MAP_DEFS.groups.params);
   }
 }

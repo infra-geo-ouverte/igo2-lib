@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 import { Catalog, CollectCatalogItemsFn } from './catalog.abstract';
-import { TypeCatalog } from './catalog.enum';
+import { TypeCatalog, TypeCatalogStrings } from './catalog.enum';
 import {
   CatalogItem,
   CatalogItemGroup,
@@ -11,12 +11,11 @@ import {
 
 export class WMSCatalog extends Catalog {
   constructor(
-    options: Catalog,
+    options: ICatalog,
     private _collectCatlogItems: CollectCatalogItemsFn
   ) {
     super(options);
-    const sType: string = TypeCatalog[TypeCatalog.wms];
-    this.type = TypeCatalog[sType];
+    this.type = TypeCatalog[TypeCatalog.wms] as TypeCatalogStrings;
   }
 
   public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -26,12 +25,11 @@ export class WMSCatalog extends Catalog {
 
 export class WMTSCatalog extends Catalog {
   constructor(
-    options: Catalog,
+    options: ICatalog,
     private _collectCatlogItems: CollectCatalogItemsFn
   ) {
     super(options);
-    const sType: string = TypeCatalog[TypeCatalog.wmts];
-    this.type = TypeCatalog[sType];
+    this.type = TypeCatalog[TypeCatalog.wmts] as TypeCatalogStrings;
   }
 
   public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -41,12 +39,11 @@ export class WMTSCatalog extends Catalog {
 
 export class BaselayersCatalog extends Catalog {
   constructor(
-    options: Catalog,
+    options: ICatalog,
     private _collectCatlogItems: CollectCatalogItemsFn
   ) {
     super(options);
-    const sType: string = TypeCatalog[TypeCatalog.baselayers];
-    this.type = TypeCatalog[sType];
+    this.type = TypeCatalog[TypeCatalog.baselayers] as TypeCatalogStrings;
   }
 
   public collectCatalogItems(): Observable<CatalogItemGroup[]> {
@@ -56,12 +53,11 @@ export class BaselayersCatalog extends Catalog {
 
 export class ArcGISRestCatalog extends Catalog {
   constructor(
-    options: Catalog,
+    options: ICatalog,
     private _collectCatlogItems: CollectCatalogItemsFn
   ) {
     super(options);
-    const sType: string = TypeCatalog[TypeCatalog.arcgisrest];
-    this.type = TypeCatalog[sType];
+    this.type = TypeCatalog[TypeCatalog.arcgisrest] as TypeCatalogStrings;
   }
 
   public collectCatalogItems() {
@@ -71,12 +67,12 @@ export class ArcGISRestCatalog extends Catalog {
 
 export class TileOrImageArcGISRestCatalog extends Catalog {
   constructor(
-    options: Catalog,
+    options: ICatalog,
     public _collectCatlogItems: CollectCatalogItemsFn,
     typeCatalog: TypeCatalog
   ) {
     super(options);
-    this.type = TypeCatalog[TypeCatalog[typeCatalog]];
+    this.type = TypeCatalog[typeCatalog] as TypeCatalogStrings;
   }
 
   public collectCatalogItems() {
@@ -88,13 +84,12 @@ export class CompositeCatalog extends Catalog implements ICompositeCatalog {
   declare composite: ICatalog[];
 
   constructor(
-    options: Catalog,
+    options: ICompositeCatalog,
     private _collectCatlogItems: CollectCatalogItemsFn
   ) {
     super(options);
-    const sType: string = TypeCatalog[TypeCatalog.composite];
-    this.type = TypeCatalog[sType];
-    this.url = null;
+    this.type = TypeCatalog[TypeCatalog.composite] as TypeCatalogStrings;
+    this.url = '';
   }
 
   public collectCatalogItems(): Observable<CatalogItem[]> {

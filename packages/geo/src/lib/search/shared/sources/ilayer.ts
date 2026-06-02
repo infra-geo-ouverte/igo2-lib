@@ -101,7 +101,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     super(options, storageService);
     this.languageService.language$.subscribe(() => {
       this.title$.next(
-        this.languageService.translate.instant(this.options.title)
+        this.languageService.translate.instant(this.options.title!)
       );
     });
   }
@@ -214,7 +214,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               }
             ]
           } satisfies SearchSourceSettings)
-      ].filter(Boolean)
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 
@@ -227,12 +227,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
-    const params = this.computeSearchRequestParams(term, options || {});
+    const params = this.computeSearchRequestParams(term ?? '', options || {});
     if (!params.get('q') || !params.get('type')) {
       return of([]);
     }
-    this.options.params.page = params.get('page') || '1';
-    return this.getSearch(term, params);
+    this.options.params!.page = params.get('page') || '1';
+    return this.getSearch(term!, params);
   }
 
   @Cacheable({
@@ -244,12 +244,8 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     return this.http
-      .get(this.searchUrl, { params })
-      .pipe(
-        map((response: ILayerServiceResponse) =>
-          this.extractResults(response, term)
-        )
-      );
+      .get<ILayerServiceResponse>(this.searchUrl, { params })
+      .pipe(map((response) => this.extractResults(response, term)));
   }
 
   private computeSearchRequestParams(
@@ -331,10 +327,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
         score:
           data.score ||
-          computeTermSimilarity(term.trim(), data.properties.name),
+          computeTermSimilarity(term.trim(), data.properties.name ?? ''),
         nextPage:
-          response.items.length % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          response!.items.length % +this.options.params!.limit! === 0 &&
+          +this.options.params!.page! < 10
       },
       data: layerOptions
     };
@@ -343,7 +339,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   private computeLayerOptions(data: ILayerData): ILayerItemResponse {
     const url = data.properties.url;
     const queryParams: QueryableDataSourceOptions =
-      this.extractQueryParamsFromSourceUrl(url);
+      this.extractQueryParamsFromSourceUrl(url ?? '');
     return ObjectUtils.removeUndefined({
       sourceOptions: {
         id: data.properties.id,
@@ -373,7 +369,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         abstract: data.properties.abstract || undefined
       },
       properties: this.formatter.formatResult(data).properties
-    });
+    }) as ILayerItemResponse;
   }
 
   private extractQueryParamsFromSourceUrl(url: string): {
@@ -387,15 +383,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       for (const key of Object.keys(formatOpt)) {
         const value = formatOpt[key];
         if (value === '*') {
-          queryFormat = QueryFormat[key.toUpperCase()];
-          break;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryFormat = (QueryFormat as any)[key.toUpperCase()];
         }
 
-        const urls = (value as any as { urls: string[] }).urls;
+        const urls = (value as { urls: string[] }).urls;
         if (Array.isArray(urls)) {
           urls.forEach((urlOpt) => {
             if (url.indexOf(urlOpt) !== -1) {
-              queryFormat = QueryFormat[key.toUpperCase()];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              queryFormat = (QueryFormat as any)[key.toUpperCase()];
             }
           });
           break;
@@ -406,13 +403,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         queryFormat === QueryFormat.HTML ||
         queryFormat === QueryFormat.HTMLGML2
       ) {
-        queryHtmlTarget = 'iframe';
+        queryHtmlTarget = 'iframe' as QueryHtmlTarget;
       }
     }
 
     return {
       queryFormat,
-      queryHtmlTarget
+      queryHtmlTarget: queryHtmlTarget!
     };
   }
 }

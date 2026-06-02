@@ -3,12 +3,12 @@ import { Component, inject } from '@angular/core';
 import { Media, MediaService } from '@igo2/core/media';
 import {
   DataSourceService,
+  EngineLayerStyle,
   IgoMap,
   IgoMapModule,
   LayerService,
   MVTDataSource,
   MapViewOptions,
-  TileLayer,
   TileLayerOptions,
   VectorLayerOptions,
   VectorTileLayerOptions,
@@ -31,7 +31,7 @@ export class AppHoverComponent {
   private mediaService = inject(MediaService);
 
   public pointerCoordDelay = 0;
-  public pointerHoverFeatureDelay = 0;
+  public pointerHoverFeatureDelay = 100;
   public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
@@ -47,7 +47,7 @@ export class AppHoverComponent {
     projection: 'EPSG:3857'
   };
 
-  get media(): Media {
+  get media(): Media | undefined {
     return this.mediaService.getMedia();
   }
 
@@ -66,7 +66,9 @@ export class AppHoverComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     const wfsDatasourcePoint: WFSDataSourceOptions = {
       type: 'wfs',
@@ -76,19 +78,55 @@ export class AppHoverComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: '',
         outputFormatDownload: 'shp'
       }
     };
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourcePoint)
-      .subscribe((dataSource: WFSDataSource) => {
+      .subscribe((dataSource) => {
         const layerOptions: VectorLayerOptions = {
           title: 'Casernes',
           visible: true,
-          source: dataSource,
-          hoverAttribute: 'Caserne: ${no_caserne} \nMun: ${nom_ssi}'
+          source: dataSource as WFSDataSource,
+          style: [
+            {
+              filter: ['==', ['get', '_hovered'], true],
+              style: {
+                'circle-radius': 12,
+                'circle-stroke-width': 5,
+                'circle-stroke-color': '#f2a100',
+                'text-value': [
+                  'concat',
+                  'Caserne: ',
+                  ['case', ['has', 'no_caserne'], ['get', 'no_caserne'], ''],
+                  '\nMun: ',
+                  ['case', ['has', 'nom_ssi'], ['get', 'nom_ssi'], '']
+                ],
+                'text-font': '12px sans-serif',
+                'text-fill-color': '#111111',
+                'text-stroke-width': 0,
+                'text-background-fill-color': '#ffffff',
+                'text-background-stroke-color': '#c8c8c8',
+                'text-background-stroke-width': 1,
+                'text-padding': [4, 6, 4, 6],
+                'text-align': 'left',
+                'text-offset-x': 30
+              }
+            },
+            {
+              else: true,
+              style: {
+                'circle-radius': 5,
+                'circle-fill-color': 'blue',
+                'circle-stroke-width': 2,
+                'circle-stroke-color': 'white',
+                'text-fill-color': 'black',
+                'text-offset-y': -15
+              }
+            }
+          ]
         };
         this.map.layerController.add(
           this.layerService.createLayer(layerOptions)
@@ -100,12 +138,52 @@ export class AppHoverComponent {
         type: 'mvt',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
       })
-      .subscribe((dataSource: MVTDataSource) => {
+      .subscribe((dataSource) => {
+        const rtssGeostylerStyle: EngineLayerStyle = {
+          type: 'Geostyler',
+          style: {
+            name: 'RTSS hover style',
+            rules: [
+              {
+                name: 'Hovered RTSS',
+                filter: ['==', '_hovered', true],
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#f2a100',
+                    width: 5
+                  },
+                  {
+                    kind: 'Text',
+                    label: 'RTSS: {{num_rts}}',
+                    color: '#111111',
+                    haloColor: '#ffffff',
+                    haloWidth: 2,
+                    font: ['sans-serif'],
+                    size: 12,
+                    offset: [0, -14]
+                  }
+                ]
+              },
+              {
+                name: 'Default RTSS',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#2b7fff',
+                    width: 2
+                  }
+                ]
+              }
+            ]
+          }
+        };
+
         const layerOptions: VectorTileLayerOptions = {
           title: 'RTSS',
           visible: true,
-          source: dataSource,
-          hoverAttribute: 'RTSS: ${num_rts}'
+          source: dataSource as MVTDataSource,
+          style: rtssGeostylerStyle
         };
         this.map.layerController.add(
           this.layerService.createLayer(layerOptions)

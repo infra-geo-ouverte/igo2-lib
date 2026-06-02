@@ -1,20 +1,20 @@
-/* eslint-disable no-prototype-builtins */
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { ActionStore } from '@igo2/common/action';
 import {
+  EntityService,
+  EntityStore,
   EntityStoreFilterSelectionStrategy,
   EntityTableButton,
   EntityTableColumn,
   EntityTableColumnRenderer,
-  EntityTableTemplate
+  EntityTableTemplate,
+  SelectEntityTableColumn,
+  isChoiceField,
+  isChoiceFieldWithLabelField
 } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
@@ -27,10 +27,11 @@ import WKT from 'ol/format/WKT';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, skipWhile, take } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { skipWhile, take } from 'rxjs/operators';
 
 import {
+  AnyDataSourceOptions,
   RelationOptions,
   WMSDataSource
 } from '../../datasource/shared/datasources';
@@ -59,14 +60,22 @@ import {
 } from '../../layer/shared';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { NearTransparentOlStyle } from '../../style/shared/style.utils';
+import { nearTransparentOlStyle } from '../../style/shared/style.utils';
+import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 import { EditionWorkspace } from './edition-workspace';
+import { EditionFeature } from './edition-workspace.interface';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
+
+interface WFSoptions
+  extends
+    Omit<WFSDataSourceOptions, 'ogcFilters'>,
+    OgcFilterableDataSourceOptions {}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EditionWorkspaceService {
+  private entityService = inject(EntityService);
   private layerService = inject(LayerService);
   private storageService = inject(StorageService);
   private configService = inject(ConfigService);
@@ -75,11 +84,11 @@ export class EditionWorkspaceService {
   private dialog = inject(MatDialog);
   authInterceptor? = inject(AuthInterceptor);
 
-  public ws$ = new BehaviorSubject<string>(undefined);
+  public ws$ = new BehaviorSubject<string | undefined>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);
-  public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(
-    undefined
-  );
+  public relationLayers$ = new BehaviorSubject<
+    ImageLayer[] | VectorLayer[] | undefined
+  >(undefined);
   public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
   public loading = false;
   public wktFormat = new WKT();
@@ -89,10 +98,13 @@ export class EditionWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
+  createWorkspace(
+    layer: ImageLayer,
+    map: IgoMap
+  ): EditionWorkspace | undefined {
     if (
       layer.options.workspace?.enabled !== true ||
-      layer.dataSource.options.edition.enabled !== true
+      layer.dataSource.options.edition?.enabled !== true
     ) {
       return;
     }
@@ -142,14 +154,10 @@ export class EditionWorkspaceService {
     }
     clonedLinks.push(linkProperties);
 
-    // TODO: Démystifier ce bout de code
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    ((layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
+    layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId
       ? layer.options.linkedLayers.linkId
-      : wmsLinkId),
-      (layer.options.linkedLayers.links = clonedLinks));
-    interface WFSoptions
-      extends WFSDataSourceOptions, OgcFilterableDataSourceOptions {}
+      : wmsLinkId;
+    layer.options.linkedLayers.links = clonedLinks;
 
     layer.createLink();
 
@@ -184,7 +192,7 @@ export class EditionWorkspaceService {
           layer.options.workspace?.maxResolution ||
           layer.maxResolution ||
           Infinity,
-        style: NearTransparentOlStyle(),
+        style: nearTransparentOlStyle(),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -201,12 +209,14 @@ export class EditionWorkspaceService {
           edition: dataSource.options.edition
         } as WFSoptions
       })
-      .subscribe((workspaceLayer: VectorLayer) => {
+      .subscribe((layer: Layer | undefined) => {
+        const workspaceLayer = layer as VectorLayer;
+        if (!workspaceLayer) return;
         map.layerController.add(workspaceLayer);
-        layer.ol.setProperties(
+        layer!.ol.setProperties(
           {
             linkedLayers: {
-              linkId: layer.options.linkedLayers.linkId,
+              linkId: layer!.options.linkedLayers!.linkId,
               links: clonedLinks
             }
           },
@@ -214,38 +224,34 @@ export class EditionWorkspaceService {
         );
         workspaceLayer.dataSource.ol.refresh();
 
-        wks = new EditionWorkspace(
-          this.dialog,
-          this.configService,
-          this.adding$,
-          (relation: RelationOptions) => this.getDomainValues(relation),
-          {
-            id: layer.id,
-            title: layer.title,
-            layer: workspaceLayer,
-            map,
-            entityStore: this.createFeatureStore(workspaceLayer, map),
-            actionStore: new ActionStore([]),
-            meta: {
-              tableTemplate: undefined
-            }
+        wks = new EditionWorkspace(this.configService, this.adding$, {
+          id: layer!.id!,
+          title: layer!.title!,
+          layer: workspaceLayer,
+          map,
+          entityStore: this.createFeatureStore(
+            workspaceLayer,
+            map
+          ) as unknown as EntityStore,
+          actionStore: new ActionStore([]),
+          meta: {
+            tableTemplate: null as unknown as EntityTableTemplate
           }
-        );
+        });
         this.createTableTemplate(wks, workspaceLayer);
 
-        workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
-        layer.options.workspace = Object.assign({}, layer.options.workspace, {
+        workspaceLayer.options.workspace!.workspaceId = workspaceLayer.id;
+        layer!.options.workspace = Object.assign({}, layer!.options.workspace, {
           wksConfig
         } as GeoWorkspaceOptions);
 
         delete dataSource.options.download;
-        return wks;
       });
     return wks;
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
-    const store = new FeatureStore([], { map });
+    const store = new FeatureStore([] as Feature[], { map });
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
@@ -273,13 +279,13 @@ export class EditionWorkspaceService {
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
     store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
-    return store;
+    return store as FeatureStore<Feature>;
   }
 
   private createTableTemplate(
     workspace: EditionWorkspace,
     layer: VectorLayer
-  ): EntityTableTemplate {
+  ): EntityTableTemplate | undefined {
     const fields = layer.dataSource.options.sourceFields || [];
 
     const relations = layer.dataSource.options.relations || [];
@@ -298,11 +304,11 @@ export class EditionWorkspaceService {
               icon: 'edit',
               color: 'primary',
               disabled:
-                layer.dataSource.options.edition.modifyButton === false
+                layer.dataSource.options.edition!.modifyButton === false
                   ? true
                   : false,
-              click: (feature) => {
-                workspace.editFeature(feature, workspace);
+              click: (record) => {
+                workspace.editFeature(record.entity);
               }
             },
             {
@@ -310,11 +316,11 @@ export class EditionWorkspaceService {
               icon: 'delete',
               color: 'warn',
               disabled:
-                layer.dataSource.options.edition.deleteButton === false
+                layer.dataSource.options.edition!.deleteButton === false
                   ? true
                   : false,
-              click: (feature) => {
-                workspace.deleteFeature(feature, workspace);
+              click: (record) => {
+                this.askForDeleteFeature(record.entity, workspace);
               }
             },
             {
@@ -322,8 +328,8 @@ export class EditionWorkspaceService {
               icon: 'check',
               color: 'primary',
               disabled: this.loading,
-              click: (feature) => {
-                this.saveFeature(feature, workspace);
+              click: (record) => {
+                this.saveFeature(record.entity, workspace);
               }
             },
             {
@@ -331,18 +337,18 @@ export class EditionWorkspaceService {
               icon: 'close',
               color: 'primary',
               disabled: this.loading,
-              click: (feature) => {
-                this.cancelEdit(workspace, feature);
+              click: (record) => {
+                this.cancelEdit(record.entity, workspace);
               }
             }
-          ] as EntityTableButton[];
+          ] as EntityTableButton<Feature>[];
         }
       }
     ];
 
     if (fields.length === 0) {
-      workspace.entityStore.entities$
-        .pipe(
+      workspace
+        .entityStore!.entities$.pipe(
           skipWhile((val) => val.length === 0),
           take(1)
         )
@@ -364,58 +370,50 @@ export class EditionWorkspaceService {
                 renderer: rendererType
               };
             });
-          workspace.meta.tableTemplate = {
+          workspace.meta!.tableTemplate = {
             selection: false,
             sort: true,
             columns: columnsFromFeatures
-          };
+          } as EntityTableTemplate;
         });
       return;
     }
 
     const columns: EntityTableColumn[] = fields.map((field) => {
       const column = {
+        ...field,
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
         renderer: rendererType,
         valueAccessor: undefined,
         cellClassFunc: () => {
-          const cellClass = {};
+          const cellClass: Record<string, boolean> = {};
           if (field.type) {
             cellClass[`class_${field.type}`] = true;
             return cellClass;
           }
+          return {};
         },
-        primary: field.primary === true ? true : false,
-        visible: field.visible,
-        validation: field.validation,
-        linkColumnForce: field.linkColumnForce,
-        type: field.type,
-        domainValues: undefined,
-        relation: undefined,
-        multiple: field.multiple,
-        step: field.step,
-        tooltip: field.tooltip
+        primary: field.primary === true ? true : false
       };
 
-      if (field.type === 'list' || field.type === 'autocomplete') {
-        this.getDomainValues(field.relation).subscribe((result) => {
-          column.domainValues = result;
-          column.relation = field.relation;
+      // Prefetch the domain values for the choice field with no label field
+      if (isChoiceField(field) && !isChoiceFieldWithLabelField(field)) {
+        this.entityService.getDomainValues(field).subscribe((result) => {
+          (column as unknown as SelectEntityTableColumn).domainValues = result;
         });
       }
+
       return column;
     });
 
     const relationsColumn = relations.map((relation: RelationOptions) => {
       return {
+        ...relation,
         name: `properties.${relation.name}`,
         title: relation.alias ? relation.alias : relation.name,
         renderer: EntityTableColumnRenderer.Icon,
-        icon: relation.icon,
-        parent: relation.parent,
         type: 'relation',
-        tooltip: relation.tooltip,
         onClick: () => {
           if (this.adding$.getValue() === false) {
             this.ws$.next(relation.title);
@@ -428,145 +426,168 @@ export class EditionWorkspaceService {
     });
 
     columns.push(...relationsColumn);
-    columns.push(...buttons);
+    columns.push(...(buttons as unknown as EntityTableColumn[]));
 
-    workspace.meta.tableTemplate = {
+    workspace.meta!.tableTemplate = {
       selection: false,
       sort: true,
       columns
     };
   }
 
-  public saveFeature(feature, workspace: EditionWorkspace) {
+  public saveFeature(feature: EditionFeature, workspace: EditionWorkspace) {
     if (!this.validateFeature(feature, workspace)) {
       return false;
     }
 
-    this.sanitizeParameter(feature, workspace);
-
-    const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
-    let url = this.configService.getConfig('edition.url');
-
-    if (!url) {
-      url = baseUrl;
-    } else {
-      url += baseUrl ? baseUrl : '';
-    }
+    const baseUrl = workspace.layer.dataSource.options.edition!.baseUrl;
+    let url = `${this.configService.getConfig('edition.url') ?? ''}/${baseUrl}`;
 
     if (feature.newFeature) {
-      url += workspace.layer.dataSource.options.edition.addUrl;
+      url += workspace.layer.dataSource.options.edition!.addUrl;
 
-      const addHeaders = workspace.layer.dataSource.options.edition.addHeaders;
+      const addHeaders = workspace.layer.dataSource.options.edition!.addHeaders;
       const headers = new HttpHeaders(addHeaders);
 
       this.addFeature(feature, workspace, url, headers);
     } else {
       if (
-        workspace.layer.dataSource.options.edition.modifyProtocol !== 'post'
+        workspace.layer.dataSource.options.edition!.modifyProtocol !== 'post'
       ) {
         url +=
           '?' +
-          workspace.layer.dataSource.options.edition.modifyUrl +
+          workspace.layer.dataSource.options.edition!.modifyUrl +
           feature.idkey;
       } else {
-        url += workspace.layer.dataSource.options.edition.modifyUrl;
+        url += workspace.layer.dataSource.options.edition!.modifyUrl;
       }
 
       const protocole =
-        workspace.layer.dataSource.options.edition.modifyProtocol;
+        workspace.layer.dataSource.options.edition!.modifyProtocol;
       const modifyHeaders =
-        workspace.layer.dataSource.options.edition.modifyHeaders;
+        workspace.layer.dataSource.options.edition!.modifyHeaders;
       const headers = new HttpHeaders(modifyHeaders);
 
       this.modifyFeature(feature, workspace, url, headers, protocole);
     }
   }
 
+  private parseFeature(feature: Feature, columns: EntityTableColumn[]) {
+    const properties = { ...feature.properties };
+    columns.forEach((column) => {
+      const key = getColumnKeyWithoutPropertiesTag(column.name);
+      switch (column.type) {
+        case 'list':
+        case 'autocomplete':
+          if (column.multiple) {
+            properties[key] = this.entityService.encodeListValue(
+              feature,
+              column as SelectEntityTableColumn
+            );
+          }
+          break;
+
+        default:
+          break;
+      }
+    });
+    return properties;
+  }
+
   public addFeature(
-    feature,
+    feature: Feature,
     workspace: EditionWorkspace,
     url: string,
     headers: Record<string, any>
   ) {
-    if (workspace.layer.dataSource.options.edition.hasGeometry) {
+    const dataSourceOptions = workspace.layer.dataSource.options;
+    if (dataSourceOptions.edition!.hasGeometry) {
       const projDest =
-        workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
-      feature.properties[
-        workspace.layer.dataSource.options.params.fieldNameGeometry
-      ] =
+        workspace.layer.options.sourceOptions!.edition!.geomDatabaseProj;
+      feature.properties[(dataSourceOptions as any).params.fieldNameGeometry] =
         'SRID=' +
-        projDest.replace('EPSG:', '') +
+        projDest!.replace('EPSG:', '') +
         ';' +
         this.wktFormat.writeGeometry(
           (
             this.geoJsonFormat.readFeature(
-              feature.geometry
+              feature.geometry!
             ) as olFeature<OlGeometry>
           )
-            .getGeometry()
-            .transform('EPSG:4326', projDest),
-          { dataProjection: projDest }
+            .getGeometry()!
+            .transform('EPSG:4326', projDest!),
+          { dataProjection: projDest! }
         );
     }
 
-    for (const property in feature.properties) {
-      for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (
-          (sf.name === property && sf.validation?.readonly) ||
-          (sf.name === property && sf.validation?.send === false)
-        ) {
-          delete feature.properties[property];
-        }
-      }
-    }
+    this.cleanFeatureProperties(feature, dataSourceOptions);
+
+    // WORKAROUND to handle PostgrestApi specificity
+    const properties = this.parseFeature(
+      feature,
+      workspace.meta!.tableTemplate!.columns
+    );
 
     this.loading = true;
-    this.http
-      .post(`${url}`, feature.properties, { headers: headers })
-      .subscribe(
-        () => {
-          this.loading = false;
-          workspace.entityStore.stateView.clear();
-          workspace.deleteDrawings();
-          workspace.entityStore.delete(feature);
-
-          this.messageService.success('igo.geo.workspace.addSuccess');
-
-          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
-          this.adding$.next(false);
-          this.rowsInMapExtentCheckCondition$.next(true);
-        },
-        (error) => {
-          this.loading = false;
-          error.error.caught = true;
-          const messages = workspace.layer.dataSource.options.edition.messages;
-          if (messages) {
-            let text;
-            messages.forEach((message) => {
-              const key = Object.keys(message)[0];
-              if (error.error.message.includes(key)) {
-                text = message[key];
-                this.messageService.error(text);
-              }
-            });
-            if (!text) {
-              this.messageService.error('igo.geo.workspace.addError');
-            }
-          } else {
-            this.messageService.error('igo.geo.workspace.addError');
-          }
-        }
-      );
-  }
-
-  public deleteFeature(workspace: EditionWorkspace, url: string) {
-    this.loading = true;
-    this.http.delete(`${url}`, {}).subscribe(
+    this.http.post(`${url}`, properties, { headers: headers }).subscribe(
       () => {
         this.loading = false;
+        workspace.entityStore!.stateView.clear();
+        workspace.deleteDrawings();
+        workspace.entityStore!.delete(feature);
+
+        this.messageService.success('igo.geo.workspace.addSuccess');
+
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
+        this.adding$.next(false);
+        this.rowsInMapExtentCheckCondition$.next(true);
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (error: any) => {
+        this.loading = false;
+        error.error.caught = true;
+        const messages = dataSourceOptions.edition!.messages;
+        if (messages) {
+          let text;
+          messages.forEach((message) => {
+            const key = Object.keys(message)[0];
+            if (error.error.message.includes(key)) {
+              text = message[key];
+              this.messageService.error(text);
+            }
+          });
+          if (!text) {
+            this.messageService.error('igo.geo.workspace.addError');
+          }
+        } else {
+          this.messageService.error('igo.geo.workspace.addError');
+        }
+      }
+    );
+  }
+
+  askForDeleteFeature(feature: Feature, workspace: EditionWorkspace) {
+    const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+      disableClose: false,
+      data: { type: 'delete' }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        return;
+      }
+      this.deleteFeature(feature, workspace);
+    });
+  }
+
+  private deleteFeature(feature: Feature, workspace: EditionWorkspace) {
+    this.loading = true;
+    const url = workspace.getDeleteUrl(feature);
+    this.http.delete(url).subscribe({
+      next: () => {
         this.messageService.success('igo.geo.workspace.deleteSuccess');
 
-        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
         const relations =
           workspace.layer.options.sourceOptions?.relations ?? [];
         for (const relation of relations) {
@@ -576,10 +597,9 @@ export class EditionWorkspaceService {
           layer?.dataSource.ol.refresh();
         }
       },
-      (error) => {
-        this.loading = false;
+      error: (error) => {
         error.error.caught = true;
-        const messages = workspace.layer.dataSource.options.edition.messages;
+        const messages = workspace.layer.dataSource.options.edition!.messages;
         if (messages) {
           let text;
           messages.forEach((message) => {
@@ -595,79 +615,81 @@ export class EditionWorkspaceService {
         } else {
           this.messageService.error('igo.geo.workspace.addError');
         }
-      }
-    );
+      },
+      complete: () => (this.loading = false)
+    });
   }
 
   public modifyFeature(
-    feature,
+    feature: Feature,
     workspace: EditionWorkspace,
     url: string,
     headers: Record<string, any>,
     protocole = 'patch'
   ) {
-    if (workspace.layer.dataSource.options.edition.hasGeometry) {
+    const dataSourceOptions = workspace.layer.dataSource.options;
+    if (dataSourceOptions.edition!.hasGeometry) {
       const projDest =
-        workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
+        workspace.layer.options.sourceOptions!.edition!.geomDatabaseProj;
       // Remove 3e dimension
-      feature.geometry.coordinates = removeZ(feature.geometry.coordinates);
-      feature.properties[
-        workspace.layer.dataSource.options.params.fieldNameGeometry
-      ] =
+      feature.geometry!.coordinates = removeZ(feature.geometry!.coordinates);
+      feature.properties[(dataSourceOptions as any).params.fieldNameGeometry] =
         'SRID=' +
-        projDest.replace('EPSG:', '') +
+        projDest!.replace('EPSG:', '') +
         ';' +
         this.wktFormat.writeGeometry(
           (
             this.geoJsonFormat.readFeature(
-              feature.geometry
+              feature.geometry!
             ) as olFeature<OlGeometry>
           )
-            .getGeometry()
-            .transform('EPSG:4326', projDest),
-          { dataProjection: projDest }
+            .getGeometry()!
+            .transform('EPSG:4326', projDest!),
+          { dataProjection: projDest! }
         );
     }
 
-    for (const property in feature.properties) {
-      for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (
-          (sf.name === property && sf.validation?.readonly) ||
-          (sf.name === property && sf.validation?.send === false) ||
-          property === 'boundedBy'
-        ) {
-          delete feature.properties[property];
-        }
-      }
-    }
+    this.cleanFeatureProperties(feature, dataSourceOptions);
 
+    // WORKAROUND to handle PostgrestApi specificity
+    const properties = this.parseFeature(
+      feature,
+      workspace.meta!.tableTemplate!.columns
+    );
     this.loading = true;
-    this.http[protocole](`${url}`, feature.properties, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const baseRequest = (this.http as any)[protocole as any];
+    baseRequest(`${url}`, properties, {
       headers: headers
     }).subscribe(
       () => {
         this.loading = false;
-        this.cancelEdit(workspace, feature, true);
+        this.cancelEdit(feature, workspace, true);
 
         this.messageService.success('igo.geo.workspace.modifySuccess');
 
-        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
 
-        const relationLayers = [];
-        workspace.layer.options.sourceOptions.relations?.forEach((relation) => {
-          workspace.map.layerController.all.forEach((layer) => {
-            if (isLayerItem(layer) && layer.title === relation.title) {
-              relationLayers.push(layer);
-              layer.dataSource.ol.refresh();
-            }
-          });
-        });
-        this.relationLayers$.next(relationLayers);
+        const relationLayers: (ImageLayer | VectorLayer)[] = [];
+        workspace.layer.options.sourceOptions!.relations?.forEach(
+          (relation) => {
+            workspace.map.layerController.all.forEach((layer) => {
+              if (isLayerItem(layer) && layer.title === relation.title) {
+                relationLayers.push(layer as VectorLayer | ImageLayer);
+                layer.dataSource.ol.refresh();
+              }
+            });
+          }
+        );
+        this.relationLayers$.next(
+          relationLayers as unknown as ImageLayer[] | VectorLayer[]
+        );
       },
-      (error) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (error: any) => {
         this.loading = false;
         error.error.caught = true;
-        const messages = workspace.layer.dataSource.options.edition.messages;
+        const messages = dataSourceOptions.edition!.messages;
         if (messages) {
           let text;
           messages.forEach((message) => {
@@ -687,44 +709,65 @@ export class EditionWorkspaceService {
     );
   }
 
-  cancelEdit(workspace: EditionWorkspace, feature, fromSave = false) {
+  private cleanFeatureProperties(
+    feature: Feature,
+    dataSourceOptions: AnyDataSourceOptions
+  ): void {
+    const fieldsSchema = dataSourceOptions.sourceFields;
+    for (const key in feature.properties) {
+      const schema = fieldsSchema?.find((schema) => schema.name === key);
+      const isGeomField = this.isGeometryField(key, dataSourceOptions);
+
+      if (isGeomField) {
+        continue;
+      }
+
+      if (
+        !schema ||
+        schema?.validation?.readonly ||
+        schema?.validation?.send === false
+      ) {
+        delete feature.properties[key];
+      } else if (isChoiceFieldWithLabelField(schema)) {
+        delete feature.properties[schema.labelField];
+      }
+    }
+  }
+
+  private isGeometryField(
+    field: string,
+    dataSourceOptions: AnyDataSourceOptions
+  ): boolean {
+    if (dataSourceOptions.edition!.hasGeometry) {
+      return (dataSourceOptions as any).params?.fieldNameGeometry === field;
+    } else {
+      return false;
+    }
+  }
+
+  cancelEdit(
+    feature: EditionFeature,
+    workspace: EditionWorkspace,
+    fromSave = false
+  ) {
     feature.edition = false;
     this.adding$.next(false);
     workspace.deleteDrawings();
-    workspace.entityStore.stateView.clear();
+    workspace.entityStore!.stateView.clear();
 
     if (feature.newFeature) {
-      workspace.entityStore.delete(feature);
+      workspace.entityStore!.delete(feature);
       workspace.deactivateDrawControl();
 
       this.rowsInMapExtentCheckCondition$.next(true);
     } else {
       if (!fromSave) {
-        feature.properties = feature.original_properties;
+        feature.properties = feature.original_properties as Record<string, any>;
         feature.geometry = feature.original_geometry;
       }
       delete feature.original_properties;
       delete feature.original_geometry;
     }
-  }
-
-  getDomainValues(relation: RelationOptions): Observable<any> {
-    let url = relation.url;
-    if (!url) {
-      url = this.configService.getConfig('edition.url')
-        ? this.configService.getConfig('edition.url') + relation.table
-        : relation.table;
-    }
-
-    return this.http.get<any>(url).pipe(
-      map((result) => {
-        return result;
-      }),
-      catchError((err: HttpErrorResponse) => {
-        err.error.caught = true;
-        return throwError(err);
-      })
-    );
   }
 
   /*
@@ -742,13 +785,14 @@ export class EditionWorkspaceService {
       failure
     ) => {
       layer.customWFSLoader(
-        layer.ol.getSource(),
+        layer.ol.getSource()!,
         layer.options.sourceOptions as WFSDataSourceOptions,
         extent,
         resolution,
         proj,
-        success,
-        failure,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        success as any,
+        failure!,
         true
       );
     };
@@ -757,9 +801,10 @@ export class EditionWorkspaceService {
 
     const id = String(layer.id);
     for (const lay of map.layerController.all) {
+      const layId = String(lay.id);
       if (
         isLayerItem(lay) &&
-        lay.id !== layer.id &&
+        layId !== id &&
         lay.options.linkedLayers?.linkId
           .toString()
           .includes(id.substr(0, id.indexOf('.') - 1)) &&
@@ -775,18 +820,25 @@ export class EditionWorkspaceService {
     }
   }
 
-  validateFeature(feature, workspace: EditionWorkspace) {
-    let key;
+  validateFeature(feature: Feature, workspace: EditionWorkspace) {
+    let key: string;
     let valid = true;
-    workspace.meta.tableTemplate.columns.forEach((column) => {
-      if (column.hasOwnProperty('validation') && column.validation) {
+    workspace.meta!.tableTemplate!.columns.forEach((column) => {
+      if (
+        Object.prototype.hasOwnProperty.call(column, 'validation') &&
+        column.validation
+      ) {
         key = getColumnKeyWithoutPropertiesTag(column.name);
-        Object.keys(column.validation).forEach((type) => {
+        const validation = column.validation!;
+        Object.keys(validation).forEach((type) => {
           switch (type) {
             case 'mandatory': {
               if (
-                column.validation[type] &&
-                (!feature.properties.hasOwnProperty(key) ||
+                validation[type] &&
+                (!Object.prototype.hasOwnProperty.call(
+                  feature.properties,
+                  key
+                ) ||
                   !feature.properties[key])
               ) {
                 valid = false;
@@ -801,9 +853,9 @@ export class EditionWorkspaceService {
             }
             case 'minValue': {
               if (
-                feature.properties.hasOwnProperty(key) &&
+                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                 feature.properties[key] &&
-                feature.properties[key] < column.validation[type]
+                feature.properties[key] < validation[type]!
               ) {
                 valid = false;
                 this.messageService.error(
@@ -812,7 +864,7 @@ export class EditionWorkspaceService {
                   undefined,
                   {
                     column: column.title,
-                    value: column.validation[type]
+                    value: validation[type]
                   }
                 );
               }
@@ -820,9 +872,9 @@ export class EditionWorkspaceService {
             }
             case 'maxValue': {
               if (
-                feature.properties.hasOwnProperty(key) &&
+                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                 feature.properties[key] &&
-                feature.properties[key] > column.validation[type]
+                feature.properties[key] > validation[type]!
               ) {
                 valid = false;
                 this.messageService.error(
@@ -831,17 +883,17 @@ export class EditionWorkspaceService {
                   undefined,
                   {
                     column: column.title,
-                    value: column.validation[type]
+                    value: validation[type]
                   }
                 );
               }
               break;
             }
-            case 'minLength': {
+            case 'minlength': {
               if (
-                feature.properties.hasOwnProperty(key) &&
+                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                 feature.properties[key] &&
-                feature.properties[key].length < column.validation[type]
+                feature.properties[key].length < validation[type]!
               ) {
                 valid = false;
                 this.messageService.error(
@@ -850,17 +902,17 @@ export class EditionWorkspaceService {
                   undefined,
                   {
                     column: column.title,
-                    value: column.validation[type]
+                    value: validation[type]
                   }
                 );
               }
               break;
             }
-            case 'maxLength': {
+            case 'maxlength': {
               if (
-                feature.properties.hasOwnProperty(key) &&
+                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                 feature.properties[key] &&
-                feature.properties[key].length > column.validation[type]
+                feature.properties[key].length > validation[type]!
               ) {
                 valid = false;
                 this.messageService.error(
@@ -869,7 +921,7 @@ export class EditionWorkspaceService {
                   undefined,
                   {
                     column: column.title,
-                    value: column.validation[type]
+                    value: validation[type]
                   }
                 );
               }
@@ -880,20 +932,6 @@ export class EditionWorkspaceService {
       }
     });
     return valid;
-  }
-
-  sanitizeParameter(feature, workspace: EditionWorkspace) {
-    workspace.meta.tableTemplate.columns.forEach((column) => {
-      if (
-        column.type === 'list' &&
-        feature.properties[getColumnKeyWithoutPropertiesTag(column.name)]
-      ) {
-        feature.properties[getColumnKeyWithoutPropertiesTag(column.name)] =
-          feature.properties[
-            getColumnKeyWithoutPropertiesTag(column.name)
-          ].toString();
-      }
-    });
   }
 }
 

@@ -42,7 +42,7 @@ export class InteractiveTourComponent {
    * Toolbox that holds main tools
    */
   readonly tourToStart = input('');
-  readonly styleButton = input<'icon' | 'raised'>(undefined);
+  readonly styleButton = input<'icon' | 'raised'>();
   readonly discoverTitleInLocale$ = input<Observable<string>>(of('IGO'));
 
   constructor() {
@@ -60,7 +60,7 @@ export class InteractiveTourComponent {
     return this.toolService.toolbox;
   }
 
-  getTourToStart() {
+  getTourToStart(): string | undefined {
     const tourToStart = this.tourToStart();
     if (tourToStart) {
       return tourToStart;
@@ -69,10 +69,11 @@ export class InteractiveTourComponent {
     }
   }
 
-  get activeToolName() {
+  get activeToolName(): string | undefined {
     if (this.toolbox) {
-      if (this.isActiveTool) {
-        return this.toolbox.activeTool$.getValue().name;
+      const activeTool = this.toolbox.activeTool$.getValue();
+      if (activeTool) {
+        return activeTool.name;
       } else {
         return 'global';
       }
@@ -85,17 +86,19 @@ export class InteractiveTourComponent {
     if (this.toolbox) {
       return this.toolbox.activeTool$.getValue() !== undefined;
     } else {
-      return undefined;
+      return false;
     }
   }
 
   get isToolHaveTour(): boolean {
+    const tourToStart = this.getTourToStart();
+    if (!tourToStart) {
+      return false;
+    }
     if (this.activeToolName === 'about' && !this.tourToStart()) {
       return false;
     }
-    return this.interactiveTourService.isToolHaveTourConfig(
-      this.getTourToStart()
-    );
+    return this.interactiveTourService.isToolHaveTourConfig(tourToStart);
   }
 
   get showTourButton(): boolean {
@@ -119,7 +122,11 @@ export class InteractiveTourComponent {
   }
 
   get disabledTourButton(): boolean {
-    return this.interactiveTourService.disabledTourButton(this.activeToolName);
+    const activeToolName = this.activeToolName;
+    if (!activeToolName) {
+      return true;
+    }
+    return this.interactiveTourService.disabledTourButton(activeToolName);
   }
 
   startInteractiveTour() {

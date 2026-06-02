@@ -10,7 +10,7 @@
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strict": false,
+    "strict": true,
     "moduleResolution": "bundler",
     "module": "ES2022",
     "jsx": "react",

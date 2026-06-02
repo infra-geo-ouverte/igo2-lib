@@ -85,7 +85,7 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        @if ((stopsStore().count$ | async) > 2) {
+        @if ((stopsStore().count$ | async)! > 2) {
           <button
             class="delete-button"
             mat-icon-button

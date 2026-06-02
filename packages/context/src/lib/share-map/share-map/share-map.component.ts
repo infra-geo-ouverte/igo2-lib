@@ -12,5 +12,5 @@ import { ShareMapUrlComponent } from './share-map-url.component';
   imports: [MatTabsModule, ShareMapUrlComponent]
 })
 export class ShareMapComponent {
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 }

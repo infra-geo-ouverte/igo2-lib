@@ -76,13 +76,13 @@ export function computeProjectionsConstraints(
 export function detectFileEPSG(options: {
   file: File;
   nbLines?: number;
-}): Observable<string> {
+}): Observable<string | undefined> {
   const file = options.file;
   const nbLines = options.nbLines ?? 500;
 
   const reader = new FileReader();
   return from(
-    new Promise<string>((resolve) => {
+    new Promise<string | undefined>((resolve) => {
       if (
         !file.name.toLowerCase().endsWith('.geojson') &&
         !file.name.toLowerCase().endsWith('.json') &&

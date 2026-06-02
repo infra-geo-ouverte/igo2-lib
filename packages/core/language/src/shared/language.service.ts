@@ -9,8 +9,8 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 export class LanguageService {
   translate = inject(TranslateService);
 
-  private language: string;
-  readonly language$ = new BehaviorSubject<string>(undefined);
+  private language: string | undefined;
+  readonly language$ = new BehaviorSubject<string | undefined>(undefined);
 
   constructor() {
     const defaultLang = this.translate.defaultLang;
@@ -29,7 +29,9 @@ export class LanguageService {
   }
 
   public getLanguage(): string {
-    return this.matchLanguage(this.language) ? this.language : 'en';
+    return this.language && this.matchLanguage(this.language)
+      ? this.language
+      : 'en';
   }
 
   private matchLanguage(lang: string): boolean {

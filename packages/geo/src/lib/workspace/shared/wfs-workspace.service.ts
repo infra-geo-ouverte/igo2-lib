@@ -1,7 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 
 import { ActionStore } from '@igo2/common/action';
-import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
+import {
+  EntityStore,
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 
@@ -10,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
+  Feature,
   FeatureMotion,
   FeatureStore,
   FeatureStoreInMapExtentStrategy,
@@ -27,7 +31,7 @@ import {
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
-import { SelectionOlStyle } from '../../style/shared/style.utils';
+import { selectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
 import {
@@ -49,9 +53,9 @@ export class WfsWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  public ws$ = new BehaviorSubject<string>(undefined);
+  public ws$ = new BehaviorSubject<string | undefined>(undefined);
 
-  createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
+  createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace | undefined {
     if (
       layer.options.workspace?.enabled === false ||
       layer.dataSource.options.edition
@@ -66,15 +70,15 @@ export class WfsWorkspaceService {
     } as GeoWorkspaceOptions);
 
     if (!layer.options.linkedLayers) {
-      layer.options.linkedLayers = { linkId: layer.id, links: [] };
+      layer.options.linkedLayers = { linkId: layer.id!, links: [] };
     }
 
     const wks = new WfsWorkspace({
-      id: layer.id,
-      title: layer.title,
+      id: layer.id!,
+      title: layer.title!,
       layer,
       map,
-      entityStore: this.createFeatureStore(layer, map),
+      entityStore: this.createFeatureStore(layer, map) as EntityStore,
       actionStore: new ActionStore([]),
       meta: {
         tableTemplate: undefined
@@ -85,7 +89,7 @@ export class WfsWorkspaceService {
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
-    const store = new FeatureStore([], { map });
+    const store = new FeatureStore([] as Feature[], { map });
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
@@ -103,7 +107,7 @@ export class WfsWorkspaceService {
     const id = layer.id + '.FeatureStore';
 
     if (!layer.link) {
-      layer.options.linkedLayers.links = [
+      layer.options.linkedLayers!.links = [
         {
           syncedDelete: true,
           linkedIds: [id],
@@ -120,7 +124,7 @@ export class WfsWorkspaceService {
         },
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? selectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false

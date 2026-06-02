@@ -35,20 +35,20 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   public pageSize = 50;
   public pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
   public showFirstLastButtons = true;
-  private count$$: Subscription;
-  private entitySortChange$$: Subscription;
+  private count$$?: Subscription;
+  private entitySortChange$$?: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
   readonly entitySortChange$ = input(new BehaviorSubject<boolean>(false));
   /**
    * Entity store
    */
-  readonly store = input<EntityStore<object>>(undefined);
+  readonly store = input<EntityStore<object>>();
 
   /**
    * Paginator options
    */
-  readonly paginatorOptions = input<EntityTablePaginatorOptions>(undefined);
+  readonly paginatorOptions = input<EntityTablePaginatorOptions>();
 
   public length = 0;
 
@@ -61,10 +61,13 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
 
   ngOnChanges() {
     this.unsubscribeAll();
-    this.count$$ = this.store().stateView.count$.subscribe((count) => {
-      this.length = count;
-      this.emitPaginator();
-    });
+    const store = this.store();
+    if (store) {
+      this.count$$ = store.stateView.count$.subscribe((count) => {
+        this.length = count;
+        this.emitPaginator();
+      });
+    }
     this.entitySortChange$$ = this.entitySortChange$().subscribe(() => {
       const paginator = this.paginator();
       if (paginator) {
@@ -98,38 +101,44 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
       this.languageService.translate
         .get('igo.common.paginator.firstPageLabel')
         .subscribe((label: string) => {
-          this.paginator()._intl.firstPageLabel = label;
+          const p = this.paginator();
+          if (p) p._intl.firstPageLabel = label;
         })
     );
 
-    this.paginator()._intl.getRangeLabel = this.rangeLabel;
+    const p = this.paginator();
+    if (p) p._intl.getRangeLabel = this.rangeLabel;
 
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.itemsPerPageLabel')
         .subscribe((label: string) => {
-          this.paginator()._intl.itemsPerPageLabel = label;
+          const p = this.paginator();
+          if (p) p._intl.itemsPerPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.lastPageLabel')
         .subscribe((label: string) => {
-          this.paginator()._intl.lastPageLabel = label;
+          const p = this.paginator();
+          if (p) p._intl.lastPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.nextPageLabel')
         .subscribe((label: string) => {
-          this.paginator()._intl.nextPageLabel = label;
+          const p = this.paginator();
+          if (p) p._intl.nextPageLabel = label;
         })
     );
     this.paginationLabelTranslation$$.push(
       this.languageService.translate
         .get('igo.common.paginator.previousPageLabel')
         .subscribe((label: string) => {
-          this.paginator()._intl.previousPageLabel = label;
+          const p = this.paginator();
+          if (p) p._intl.previousPageLabel = label;
         })
     );
   }
@@ -171,6 +180,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   }
 
   emitPaginator() {
-    this.paginatorChange.emit(this.paginator());
+    const p = this.paginator();
+    if (p) this.paginatorChange.emit(p);
   }
 }

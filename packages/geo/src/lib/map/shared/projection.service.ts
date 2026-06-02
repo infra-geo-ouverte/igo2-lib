@@ -32,7 +32,11 @@ export class ProjectionService {
     for (let utmZone = 1; utmZone < 61; utmZone++) {
       const code = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
       const def = `+proj=utm +zone=${utmZone} +datum=WGS84 +units=m +no_defs`;
-      const proj: Projection = { code, def, extent: undefined };
+      const proj: Projection = {
+        code,
+        def,
+        extent: undefined
+      };
       this.registerProjection(proj);
     }
 
@@ -49,7 +53,11 @@ export class ProjectionService {
         lon0 = -49.5 - Number(mtmZone) * 3;
       }
       const def = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"`;
-      const proj: Projection = { code, def, extent: undefined };
+      const proj: Projection = {
+        code,
+        def,
+        extent: undefined
+      };
       this.registerProjection(proj);
     }
   }
@@ -59,10 +67,10 @@ export class ProjectionService {
    * @param projection Projection
    */
   registerProjection(projection: Projection) {
-    proj4.defs(projection.code, projection.def);
+    proj4.defs(projection.code, projection.def!);
     olproj4.register(proj4);
     if (projection.extent) {
-      olproj.get(projection.code).setExtent(projection.extent);
+      olproj.get(projection.code)!.setExtent(projection.extent);
     }
   }
 }

@@ -1,7 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 
 import { ActionStore } from '@igo2/common/action';
-import { EntityStoreFilterSelectionStrategy } from '@igo2/common/entity';
+import {
+  EntityStore,
+  EntityStoreFilterSelectionStrategy
+} from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 
@@ -10,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
+  Feature,
   FeatureMotion,
   FeatureStore,
   FeatureStoreInMapExtentStrategy,
@@ -27,7 +31,7 @@ import {
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared/map';
 import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
-import { SelectionOlStyle } from '../../style/shared/style.utils';
+import { selectionOlStyle } from '../../style/shared/style.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
 import {
@@ -49,9 +53,12 @@ export class FeatureWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  public ws$ = new BehaviorSubject<string>(undefined);
+  public ws$ = new BehaviorSubject<string | undefined>(undefined);
 
-  createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
+  createWorkspace(
+    layer: VectorLayer,
+    map: IgoMap
+  ): FeatureWorkspace | undefined {
     if (
       layer.options.workspace?.enabled === false ||
       layer.dataSource.options.edition
@@ -60,21 +67,21 @@ export class FeatureWorkspaceService {
     }
 
     layer.options.workspace = Object.assign({}, layer.options.workspace, {
-      srcId: layer.id,
-      workspaceId: layer.id,
+      srcId: layer.id!,
+      workspaceId: layer.id!,
       enabled: true
     } as GeoWorkspaceOptions);
 
     if (!layer.options.linkedLayers) {
-      layer.options.linkedLayers = { linkId: layer.id, links: [] };
+      layer.options.linkedLayers = { linkId: layer.id!, links: [] };
     }
 
     const wks = new FeatureWorkspace({
-      id: layer.id,
-      title: layer.title,
+      id: layer.id!,
+      title: layer.title!,
       layer,
       map,
-      entityStore: this.createFeatureStore(layer, map),
+      entityStore: this.createFeatureStore(layer, map) as EntityStore,
       actionStore: new ActionStore([]),
       meta: {
         tableTemplate: undefined
@@ -85,7 +92,7 @@ export class FeatureWorkspaceService {
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
-    const store = new FeatureStore([], { map });
+    const store = new FeatureStore([] as Feature[], { map });
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
@@ -108,7 +115,7 @@ export class FeatureWorkspaceService {
       layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: confQueryOverlayStyle?.selection ?? SelectionOlStyle(),
+        style: confQueryOverlayStyle?.selection ?? selectionOlStyle(),
         showInLayerList: false,
         exportable: false,
         browsable: false

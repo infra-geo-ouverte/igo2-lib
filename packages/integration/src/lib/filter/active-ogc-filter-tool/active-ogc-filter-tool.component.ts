@@ -30,7 +30,7 @@ export class ActiveOgcFilterToolComponent {
     return this.mapState.map;
   }
 
-  get layer(): Layer {
+  get layer(): Layer | undefined {
     for (const lay of this.map.layerController.all) {
       if (isLayerItem(lay) && this.map.layerController.isSelected(lay)) {
         return lay;

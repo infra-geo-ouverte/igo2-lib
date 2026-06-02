@@ -45,8 +45,8 @@ export class SearchState {
 
   public searchLayerStores: FeatureStore<Feature>[] = [];
 
-  public focusedOrResolution$$: Subscription;
-  public selectedOrResolution$$: Subscription;
+  public focusedOrResolution$$?: Subscription;
+  public selectedOrResolution$$?: Subscription;
 
   /**
    * Default feature motion are:
@@ -60,17 +60,21 @@ export class SearchState {
 
   readonly searchTermSplitter$ = new BehaviorSubject<string>('|');
 
-  readonly searchTerm$ = new BehaviorSubject<string>(undefined);
+  readonly searchTerm$ = new BehaviorSubject<string | undefined>(undefined);
 
-  readonly searchType$ = new BehaviorSubject<string>(undefined);
+  readonly searchType$ = new BehaviorSubject<string | undefined>(undefined);
 
   readonly searchDisabled$ = new BehaviorSubject<boolean>(false);
 
   readonly searchResultsGeometryEnabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchSettingsChange$ = new BehaviorSubject<boolean>(undefined);
+  readonly searchSettingsChange$ = new BehaviorSubject<boolean | undefined>(
+    undefined
+  );
 
-  readonly selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
+  readonly selectedResult$ = new BehaviorSubject<SearchResult | undefined>(
+    undefined
+  );
 
   /**
    * Store that holds the search results
@@ -109,7 +113,7 @@ export class SearchState {
         const searchableWks = e.filter(
           (fw) =>
             fw instanceof FeatureWorkspace &&
-            fw.layer.options.workspace.searchIndexEnabled
+            fw.layer.options.workspace?.searchIndexEnabled
         );
         this.searchSourceService.setWorkspaces(wksSource, searchableWks);
       });
@@ -172,12 +176,14 @@ export class SearchState {
     this.searchDisabled$.next(true);
   }
 
-  setSearchTerm(searchTerm: string) {
+  setSearchTerm(searchTerm: string | undefined) {
     this.searchTerm$.next(searchTerm);
   }
 
-  setSearchType(searchType: string) {
-    this.searchSourceService.enableSourcesByType(searchType);
+  setSearchType(searchType: string | undefined) {
+    if (searchType) {
+      this.searchSourceService.enableSourcesByType(searchType);
+    }
     this.searchType$.next(searchType);
   }
 
@@ -189,7 +195,7 @@ export class SearchState {
     this.selectedResult$.next(result);
   }
 
-  setSearchResultsGeometryStatus(value) {
+  setSearchResultsGeometryStatus(value: boolean) {
     this.storageService.set('searchResultsGeometryEnabled', value);
     this.searchResultsGeometryEnabled$.next(value);
   }

@@ -1,4 +1,4 @@
-<mat-sidenav #sidenav igoSidenavShim mode="side" [opened]="opened">
+<mat-sidenav #sidenav igoSidenavShim mode="side" [opened]="opened()">
   <div class="igo-sidenav-content">
     <igo-flexible
       #topPanel
@@ -8,8 +8,10 @@
       [state]="topPanelState"
     >
       <div class="igo-content">
-        <igo-panel [title]="tool ? (tool.title | translate) : title">
-          @if (tool) {
+        <igo-panel
+          [title]="tool() ? (tool()!.title | translate) : displayTitle()"
+        >
+          @if (tool()) {
             <button
               mat-icon-button
               panelLeftButton
@@ -21,7 +23,7 @@
             </button>
           }
 
-          @if (tool) {
+          @if (tool()) {
             <button
               mat-icon-button
               panelRightButton
@@ -36,7 +38,7 @@
       </div>
 
       <div igoFlexibleFill class="igo-content">
-        @if (feature && media !== 'mobile') {
+        @if (feature() && media() !== 'mobile') {
           <igo-panel [title]="featureTitle">
             <button
               mat-icon-button
@@ -50,7 +52,7 @@
                   : 'arrow_upward'
               }}</mat-icon>
             </button>
-            @if (feature.geometry) {
+            @if (feature().geometry) {
               <button
                 mat-icon-button
                 panelRightButton
@@ -61,7 +63,7 @@
               </button>
             }
             @if (['collapsed', 'initial'].indexOf(topPanel.state) >= 0) {
-              <igo-feature-details [feature]="feature" />
+              <igo-feature-details [feature]="feature()!" />
             }
           </igo-panel>
         }

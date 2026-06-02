@@ -75,29 +75,29 @@ export class ContextPermissionsComponent implements OnInit {
   private contextPermissionService = inject(ContextPermissionService);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef); // Modern way to handle cleanup
-  public form: UntypedFormGroup;
+  public form!: UntypedFormGroup;
 
   readonly context = model<Context>();
   readonly permissions = model<IAnyContextPermission[]>();
   readonly permissionsRead = computed(() =>
-    this.permissions().filter(
+    this.permissions()?.filter(
       (permission) => permission.typePermission === 'read'
     )
   );
   readonly permissionsWrite = computed(() =>
-    this.permissions().filter(
+    this.permissions()?.filter(
       (permission) => permission.typePermission === 'write'
     )
   );
 
   profils = signal<ContextUserOrProfils[]>([]);
 
-  canWrite = computed(() => this.context().permission === 'write');
+  canWrite = computed(() => this.context()?.permission === 'write');
 
-  private baseUrlProfils;
+  private baseUrlProfils!: string;
 
   public formControl = new UntypedFormControl();
-  formValueChanges$$: Subscription;
+  formValueChanges$$!: Subscription;
 
   ngOnInit(): void {
     this.buildForm();
@@ -120,18 +120,18 @@ export class ContextPermissionsComponent implements OnInit {
     this.handleEditedContextChange();
   }
 
-  displayFn(profil?: ContextUserOrProfils): string | undefined {
-    return profil ? profil.title : undefined;
+  displayFn(profil?: ContextUserOrProfils): string {
+    return profil ? profil.title : '';
   }
 
   handleFormSubmit(value: IAnyContextPermission) {
-    const contextId = this.context().id;
+    const contextId = this.context()?.id;
     this.contextPermissionService
-      .add(contextId, value)
+      .add(contextId!, value)
       .subscribe((permission) => {
         this.permissions.update((permissions) => {
-          permissions.push(permission);
-          return [...permissions];
+          permissions!.push(permission);
+          return [...permissions!];
         });
         this.messageService.success(
           'igo.context.permission.dialog.addMsg',
@@ -161,16 +161,16 @@ export class ContextPermissionsComponent implements OnInit {
   }
 
   onRemovePermission(permission: IAnyContextPermission) {
-    const contextId = this.context().id;
+    const contextId = this.context()?.id;
     this.contextPermissionService
-      .delete(contextId, permission.id)
+      .delete(contextId!, permission.id)
       .subscribe(() => {
         this.permissions.update((permissions) => {
-          const index = permissions.findIndex((p) => {
+          const index = permissions!.findIndex((p) => {
             return p.id === permission.id;
           });
-          permissions.splice(index, 1);
-          return [...permissions];
+          permissions!.splice(index, 1);
+          return [...permissions!];
         });
 
         this.messageService.success(
@@ -184,7 +184,7 @@ export class ContextPermissionsComponent implements OnInit {
 
   onScopeChanged(context: Context) {
     const scope = context.scope;
-    this.contextService.update(context.id, { scope }).subscribe(() => {
+    this.contextService.update(context.id!, { scope }).subscribe(() => {
       this.messageService.success(
         'igo.context.permission.dialog.scopeChangedMsg',
         'igo.context.permission.dialog.scopeChangedTitle',
@@ -203,7 +203,7 @@ export class ContextPermissionsComponent implements OnInit {
         // 2. Switch to the permissions call, or return an empty array if context is null
         switchMap((context) => {
           if (!context) return of([]);
-          return this.contextPermissionService.getAll(context.id);
+          return this.contextPermissionService.getAll(context.id!);
         }),
 
         // 3. Automatically unsubscribe when component is destroyed

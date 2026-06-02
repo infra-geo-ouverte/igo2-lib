@@ -27,7 +27,9 @@ export class ImportExportState {
   readonly selectedMode$ = new BehaviorSubject<ImportExportMode>(
     ImportExportMode.import
   );
-  readonly exportOptions$ = new BehaviorSubject<ExportOptions>(undefined);
+  readonly exportOptions$ = new BehaviorSubject<ExportOptions | undefined>(
+    undefined
+  );
 
   setImportExportType(type: ImportExportType) {
     this.importExportType$.next(type);

@@ -47,15 +47,14 @@ export class DropGeoFileDirective
   private dialog = inject(MatDialog);
 
   private epsgCode$$: Subscription[] = [];
-  private filesDropped$$: OutputRefSubscription;
+  private filesDropped$$!: OutputRefSubscription;
 
   get map(): IgoMap {
-    return this.component.map();
+    return this.component.map()!;
   }
 
-  readonly contextUri = input<string>(undefined);
-  readonly projectionsLimitations =
-    input<ProjectionsLimitationsOptions>(undefined);
+  readonly contextUri = input<string>();
+  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>();
 
   ngOnInit() {
     this.filesDropped$$ = this.filesDropped.subscribe((files) => {
@@ -69,17 +68,17 @@ export class DropGeoFileDirective
   }
 
   @HostListener('dragover', ['$event'])
-  public onDragOver(evt) {
+  public onDragOver(evt: DragEvent) {
     super.onDragOver(evt);
   }
 
   @HostListener('dragleave', ['$event'])
-  public onDragLeave(evt) {
+  public onDragLeave(evt: DragEvent) {
     super.onDragLeave(evt);
   }
 
   @HostListener('drop', ['$event'])
-  public onDrop(evt) {
+  public onDrop(evt: DragEvent) {
     super.onDrop(evt);
   }
 
@@ -118,12 +117,11 @@ export class DropGeoFileDirective
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-
     handleFileImportSuccess(
       file,
       features,
       this.map,
-      this.contextUri(),
+      this.contextUri()!,
       this.messageService,
       this.layerService,
       confirmDialogService
@@ -139,13 +137,13 @@ export class DropGeoFileDirective
     );
   }
 
-  private openEPSGModal(file): Observable<string> {
+  private openEPSGModal(file: File): Observable<string> {
     const dialogRef = this.dialog.open(EpsgSelectorModalComponent, {
       width: '600px',
       data: {
         fileName: file.name,
         projections: this.importService.computeProjections(
-          this.projectionsLimitations()
+          this.projectionsLimitations()!
         )
       }
     });

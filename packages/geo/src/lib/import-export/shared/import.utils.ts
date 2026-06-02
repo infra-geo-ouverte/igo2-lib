@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
@@ -17,7 +18,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { RandomOlFlatStyle } from '../../style/shared/style.utils';
+import { randomOlFlatStyle } from '../../style/shared/style.utils';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -46,7 +47,7 @@ export function addLayerAndFeaturesToMap(
     workspace: { enabled: true, searchIndexEnabled: true },
     isIgoInternalLayer: true,
     source,
-    style: RandomOlFlatStyle(),
+    style: randomOlFlatStyle(),
     idbInfo: { storeToIdb, contextUri: contextUri }
   } satisfies VectorLayerOptions) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
@@ -56,7 +57,7 @@ export function addLayerAndFeaturesToMap(
   return layer;
 }
 
-function padTo2Digits(num) {
+function padTo2Digits(num: any) {
   return num.toString().padStart(2, '0');
 }
 
@@ -124,7 +125,7 @@ export function handleFileImportError(
     'Invalid SRS definition': handleSRSImportError,
     'Error 500 with OGRE': handleOgreServerImportError
   };
-  errMapping[error.message](file, error, messageService, sizeMb);
+  (errMapping as any)[error.message](file, error, messageService, sizeMb);
 }
 
 export function handleInvalidFileImportError(
@@ -215,7 +216,7 @@ export function handleOgreServerImportError(
 }
 
 export function getFileExtension(file: File): string {
-  return file.name.split('.').pop().toLowerCase();
+  return (file.name.split('.').pop() ?? '').toLowerCase();
 }
 
 export function computeLayerTitleFromFile(file: File): string {

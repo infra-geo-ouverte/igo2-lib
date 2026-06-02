@@ -3,6 +3,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
 import {
+  AnyLayer,
   AnyLayerOptions,
   DownloadButtonComponent,
   FILTER_DIRECTIVES,
@@ -232,7 +233,6 @@ export class AppLayerComponent {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
         },
         style: {
-          editable: false,
           type: 'Geostyler',
           style: {
             name: '',
@@ -474,6 +474,10 @@ export class AppLayerComponent {
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 }

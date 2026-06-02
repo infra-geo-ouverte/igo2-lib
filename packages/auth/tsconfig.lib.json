@@ -5,10 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": [],
-    "paths": {
-      "@igo2/*": ["dist/*"]
-    }
+    "types": []
   },
   "exclude": ["./src/test.ts", "**/*.spec.ts"],
   "angularCompilerOptions": {

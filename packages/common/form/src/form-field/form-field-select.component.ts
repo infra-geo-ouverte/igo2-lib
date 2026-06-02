@@ -55,17 +55,17 @@ export class FormFieldSelectComponent implements OnInit {
   /**
    * The field's form control
    */
-  readonly formControl = input<UntypedFormControl>(undefined);
+  readonly formControl = input.required<UntypedFormControl>();
 
   /**
    * Field placeholder
    */
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
   /**
    * Field placeholder
    */
-  readonly errors = input<Record<string, string>>(undefined);
+  readonly errors = input<Record<string, string>>();
 
   /**
    * Wheter a disable switch should be available
@@ -87,7 +87,7 @@ export class FormFieldSelectComponent implements OnInit {
    * Get error message
    */
   getErrorMessage(): string {
-    return getControlErrorMessage(this.formControl(), this.errors());
+    return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
   onDisableSwitchClick() {

@@ -31,9 +31,9 @@ export class RotationButtonComponent implements AfterContentInit {
     transform: 'rotate(0rad)'
   });
 
-  readonly map = input<IgoMap>(undefined);
-  readonly showIfNoRotation = input<boolean>(undefined);
-  readonly color = input<string>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly showIfNoRotation = input<boolean>();
+  readonly color = input<string>();
 
   ngAfterContentInit() {
     this.map().viewController.rotation$.subscribe((r) => {

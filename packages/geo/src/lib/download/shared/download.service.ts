@@ -5,7 +5,6 @@ import { MessageService } from '@igo2/core/message';
 import * as olproj from 'ol/proj';
 import olProjection from 'ol/proj/Projection';
 
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import {
   OgcFilterWriter,
   OgcFilterableDataSourceOptions
@@ -24,14 +23,14 @@ export class DownloadService {
       'igo.geo.download.title'
     );
 
-    const DSOptions: DataSourceOptions = layer.dataSource.options;
-    if (Object.keys(DSOptions.download).length > 0) {
+    const DSOptions = layer.dataSource.options;
+    if (DSOptions.download && Object.keys(DSOptions.download).length > 0) {
       if (
         DSOptions.download.dynamicUrl &&
         DSOptions.download.url === undefined
       ) {
         let wfsOptions;
-        let currentProj = new olProjection({ code: layer.map.projection });
+        let currentProj = new olProjection({ code: layer.map!.projectionCode });
         const paramsWFS = (layer.dataSource.options as any).paramsWFS;
         if (paramsWFS && Object.keys(paramsWFS).length > 0) {
           currentProj = paramsWFS.srsName
@@ -43,8 +42,8 @@ export class DownloadService {
         }
 
         const currentExtent = olproj.transformExtent(
-          layer.map.viewController.getExtent(),
-          new olProjection({ code: layer.map.projection }),
+          layer.map!.viewController.getExtent(),
+          new olProjection({ code: layer.map!.projection }),
           currentProj
         );
         const outputFormatDownload =
@@ -62,29 +61,31 @@ export class DownloadService {
         const ogcFilters = (
           layer.dataSource.options as OgcFilterableDataSourceOptions
         ).ogcFilters;
-
-        let filterQueryString;
-        filterQueryString = new OgcFilterWriter().handleOgcFiltersAppliedValue(
-          layer.dataSource.options,
-          ogcFilters.geometryName,
-          currentExtent as [number, number, number, number],
-          currentProj
-        );
-        if (!filterQueryString) {
-          // Prevent getting all the features for empty filter
-          filterQueryString = new OgcFilterWriter().buildFilter(
-            undefined,
-            currentExtent as [number, number, number, number],
-            currentProj,
-            ogcFilters.geometryName
+        if (ogcFilters) {
+          let filterQueryString =
+            new OgcFilterWriter().handleOgcFiltersAppliedValue(
+              layer.dataSource.options,
+              ogcFilters.geometryName!,
+              currentExtent as [number, number, number, number],
+              currentProj
+            );
+          if (!filterQueryString) {
+            // Prevent getting all the features for empty filter
+            filterQueryString = new OgcFilterWriter().buildFilter(
+              undefined,
+              currentExtent as [number, number, number, number],
+              currentProj,
+              ogcFilters.geometryName
+            );
+          } else {
+            filterQueryString =
+              'filter=' + encodeURIComponent(filterQueryString);
+          }
+          window.open(
+            `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
+            '_blank'
           );
-        } else {
-          filterQueryString = 'filter=' + encodeURIComponent(filterQueryString);
         }
-        window.open(
-          `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
-          '_blank'
-        );
       } else if (DSOptions.download) {
         window.open(DSOptions.download.url, '_blank');
       }

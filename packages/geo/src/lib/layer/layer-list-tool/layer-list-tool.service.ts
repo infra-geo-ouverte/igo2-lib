@@ -47,10 +47,10 @@ export class LayerListToolService {
 
   renameGroup(group: LayerGroup): Observable<string | undefined> {
     const config = { ...FORM_GROUP_CONFIG };
-    const field = config.formFieldConfigs.find(
+    const field = config.formFieldConfigs!.find(
       (field) => field.name === 'name'
     );
-    field.options.initialValue = group.title;
+    field!.options!.initialValue = group.title;
 
     return this.formDialogService
       .open(config, {

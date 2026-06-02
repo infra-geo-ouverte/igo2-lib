@@ -68,7 +68,7 @@ export class CoordinatesReverseSearchSource
     this.projections = projections;
     this.languageService.language$.subscribe(() => {
       this.title$.next(
-        this.languageService.translate.instant(this.options.title)
+        this.languageService.translate.instant(this.options.title!)
       );
     });
   }
@@ -104,7 +104,7 @@ export class CoordinatesReverseSearchSource
     reverseSearchCoordsFormatEnabled?: boolean
   ): Observable<SearchResult<Feature>[]> {
     return of([
-      this.dataToResult(lonLat, options, reverseSearchCoordsFormatEnabled)
+      this.dataToResult(lonLat, options!, reverseSearchCoordsFormatEnabled!)
     ]);
   }
 
@@ -117,7 +117,7 @@ export class CoordinatesReverseSearchSource
     const convertedCoord = lonLatConversion(data, this.projections);
     const coords = convertedCoord.reduce(
       (obj, item) => ((obj[item.alias] = item.igo2CoordFormat), obj),
-      {}
+      {} as Record<string, unknown>
     );
 
     const roundedCoordString = !reverseSearchCoordsFormatEnabled
@@ -133,7 +133,7 @@ export class CoordinatesReverseSearchSource
       coordinates: [data[0], data[1]]
     };
 
-    const properties = {};
+    const properties: Record<string, unknown> = {};
     let subtitleHtml = '';
     if (options.distance) {
       const radiusKey = this.languageService.translate.instant(

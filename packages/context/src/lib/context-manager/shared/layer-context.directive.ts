@@ -38,8 +38,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private configService = inject(ConfigService);
   private shareMapService = inject(ShareMapService);
 
-  private context$$: Subscription;
-  private queryParams: Params;
+  private context$$!: Subscription;
+  private queryParams!: Params;
 
   private contextLayers: AnyLayer[] = [];
 
@@ -115,7 +115,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private handleAddLayers(layers: (AnyLayer | undefined)[]) {
     const layersFiltrered = layers
-      .filter((layer) => layer)
+      .filter((layer): layer is AnyLayer => !!layer)
       .map((layer) => {
         layer.visible = this.computeLayerVisibilityFromUrl(layer);
         return layer;
@@ -128,7 +128,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {
     const params = this.queryParams;
-    const currentContext = this.contextService.context$.value.uri;
+    const currentContext = this.contextService.context$.value?.uri;
     const currentLayerid = layer.id;
 
     let visible = layer.visible;
@@ -141,10 +141,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
       const visibleOnLayers =
-        params[this.shareMapService.routeService.options.visibleOnLayersKey];
+        params[this.shareMapService.routeService.options.visibleOnLayersKey!];
 
       const visibleOffLayers =
-        params[this.shareMapService.routeService.options.visibleOffLayersKey];
+        params[this.shareMapService.routeService.options.visibleOffLayersKey!];
 
       if (visibleOnLayers) {
         visibleOnLayersParams = visibleOnLayers;
@@ -186,7 +186,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     context: DetailedContext
   ): AnyLayerOptions[] {
     if (!this.queryParams) {
-      return context.layers;
+      return context.layers ?? [];
     }
 
     const { layers, uri } = context;
@@ -194,11 +194,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     if (!contextValue || contextValue === uri) {
       const layersOptions = this.shareMapService.parseLayers(this.queryParams);
-      if (layersOptions.length) {
-        return mergeLayersOptions([...layers], layersOptions);
+      if (layersOptions && layersOptions.length) {
+        return mergeLayersOptions([...(layers ?? [])], layersOptions);
       }
     }
-    return layers;
+    return layers ?? [];
   }
 }
 

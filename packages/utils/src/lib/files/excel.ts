@@ -16,7 +16,7 @@ export async function createExcelWorkBook(
 }
 export async function addExcelSheetToWorkBook<T = Record<string, unknown>>(
   title: string,
-  rows: T[],
+  rows: T[] | string,
   workBook: WorkBook,
   opts?: {
     json2SheetOpts?: JSON2SheetOpts;
@@ -25,11 +25,13 @@ export async function addExcelSheetToWorkBook<T = Record<string, unknown>>(
 ): Promise<void> {
   const { utils } = await import('xlsx');
 
-  const worksheet = utils.json_to_sheet(rows, opts?.json2SheetOpts);
+  const values = typeof rows === 'string' ? JSON.parse(rows) : rows;
+
+  const worksheet = utils.json_to_sheet(values, opts?.json2SheetOpts);
 
   /* calculate column width */
   if (rows?.length) {
-    worksheet['!cols'] = getColumnsInfo(rows);
+    worksheet['!cols'] = getColumnsInfo(values);
   }
 
   const SHEET_NAME_MAX_LENGTH = 31;
@@ -62,14 +64,16 @@ export async function writeExcelFile(
   writeFile(workBook, `${cleanedFileName}.xlsx`, opts);
 }
 
-function getColumnsInfo<T = Record<string, unknown>>(rows: T[]): ColInfo[] {
+function getColumnsInfo<T extends Record<string, unknown>>(
+  rows: T[]
+): ColInfo[] {
   const columns = Object.keys(rows[0]);
   return columns.map((column) => ({
     wch: getColumnMaxWidth(column, rows)
   }));
 }
 
-function getColumnMaxWidth<T = Record<string, unknown>>(
+function getColumnMaxWidth<T extends Record<string, unknown>>(
   column: string,
   rows: T[]
 ): number {

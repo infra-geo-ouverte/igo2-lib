@@ -32,7 +32,7 @@ describe('Sentry', () => {
       };
       initSentry(options, true);
       const client = getClient();
-      const replay = client.getIntegrationByName('Replay');
+      const replay = client!.getIntegrationByName('Replay');
       expect(replay).toBeDefined();
     });
   });

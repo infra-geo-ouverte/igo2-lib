@@ -1,4 +1,4 @@
-import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { EntityStore } from '@igo2/common/entity';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -11,7 +11,7 @@ export class Toolbox {
   /**
    * Observable of the active tool
    */
-  activeTool$ = new BehaviorSubject<Tool>(undefined);
+  activeTool$ = new BehaviorSubject<Tool | undefined>(undefined);
 
   /**
    * Ordered list of tool names to display in a toolbar
@@ -21,14 +21,14 @@ export class Toolbox {
   /**
    * Observable of the active tool
    */
-  private activeTool$$: Subscription;
+  private activeTool$$!: Subscription;
 
   /**
    * Active tool history. Useful for activating the previous tool.
    */
   private activeToolHistory: string[] = [];
-  private previousToolName: string;
-  private currentToolName: string;
+  private previousToolName!: string;
+  private currentToolName!: string;
 
   /**
    * Tool store
@@ -41,8 +41,8 @@ export class Toolbox {
     return this.store.entities$;
   }
 
-  constructor(private options: ToolboxOptions = {}) {
-    this.setToolbar(options.toolbar);
+  constructor(options: ToolboxOptions = {}) {
+    this.setToolbar(options.toolbar || []);
     this.initStore();
   }
 
@@ -50,7 +50,7 @@ export class Toolbox {
    * Destroy the toolbox
    */
   destroy() {
-    this.activeTool$$.unsubscribe();
+    this.activeTool$$?.unsubscribe();
     this.store.destroy();
   }
 
@@ -59,7 +59,7 @@ export class Toolbox {
    * @param name Tool name
    * @returns tool Tool
    */
-  getTool(name: string): Tool {
+  getTool(name: string): Tool | undefined {
     return this.store.get(name);
   }
 
@@ -176,8 +176,8 @@ export class Toolbox {
     });
 
     this.activeTool$$ = this.store.stateView
-      .firstBy$((record: EntityRecord<Tool>) => record.state.active === true)
-      .subscribe((record: EntityRecord<Tool>) => {
+      .firstBy$((record) => record?.state?.active === true)
+      .subscribe((record) => {
         if (record === undefined) {
           this.setActiveTool(undefined);
           return;

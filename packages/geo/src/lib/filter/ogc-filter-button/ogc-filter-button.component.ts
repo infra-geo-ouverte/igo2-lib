@@ -36,25 +36,25 @@ import {
   ]
 })
 export class OgcFilterButtonComponent {
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input<Layer>();
 
-  readonly options = computed<OgcFilterableDataSourceOptions>(
+  readonly options = computed<OgcFilterableDataSourceOptions | undefined>(
     () => this.layer()?.dataSource.options
   );
 
-  readonly map = input<MapBase>(undefined);
+  readonly map = input<MapBase>();
 
   readonly color = input('primary');
 
-  readonly header = input<boolean>(undefined);
+  readonly header = input(false);
 
   public ogcFilterCollapse = false;
 
   readonly badge = computed(() => this.getBadge());
 
-  getBadge(): string | number {
+  getBadge(): string | number | undefined {
     const options = this.options();
-    const filter = options.ogcFilters as any;
+    const filter = options?.ogcFilters as any;
     let cnt = 0;
     if (filter && !filter.advancedOgcFilters) {
       if (filter.pushButtons) {
@@ -67,7 +67,7 @@ export class OgcFilterButtonComponent {
           currentPushButtonGroup.computedSelectors?.map(
             (cb) =>
               (cntPushButtons += (cb.selectors as any)?.filter(
-                (button) => button.enabled
+                (button: any) => button.enabled
               ).length)
           );
         }
@@ -80,9 +80,9 @@ export class OgcFilterButtonComponent {
         if (currentCheckboxGroup) {
           currentCheckboxGroup.computedSelectors?.map(
             (cb) =>
-              (cntCheckboxes += (cb.selectors as any)?.filter(
-                (checkbox) => checkbox.enabled
-              ).length)
+              (cntCheckboxes +=
+                cb.selectors?.filter((checkbox) => checkbox.enabled)?.length ??
+                0)
           );
         }
         cnt += cntCheckboxes;
@@ -96,9 +96,8 @@ export class OgcFilterButtonComponent {
         if (currentRadioButtonsGroup) {
           currentRadioButtonsGroup.computedSelectors?.map(
             (cb) =>
-              (cntRadioButtons += (cb.selectors as any)?.filter(
-                (radio) => radio.enabled
-              ).length)
+              (cntRadioButtons +=
+                cb.selectors?.filter((radio) => radio.enabled)?.length ?? 0)
           );
         }
         cnt += cntRadioButtons;
@@ -111,8 +110,7 @@ export class OgcFilterButtonComponent {
           currentSelectGroup.computedSelectors?.map(
             (cb) =>
               (cntSelect +=
-                (cb.selectors as any)?.filter((multi) => multi.enabled)
-                  .length ?? 0)
+                cb.selectors?.filter((multi) => multi.enabled).length ?? 0)
           );
         }
         cnt += cntSelect;
@@ -127,9 +125,8 @@ export class OgcFilterButtonComponent {
           currentAutocompleteGroup.computedSelectors?.map(
             (cb) =>
               (cntAutocomplete +=
-                (cb.selectors as any)?.filter(
-                  (autocomplete) => autocomplete.enabled
-                ).length ?? 0)
+                cb.selectors?.filter((autocomplete) => autocomplete.enabled)
+                  ?.length ?? 0)
           );
         }
         cnt += cntAutocomplete;
@@ -149,15 +146,15 @@ export class OgcFilterButtonComponent {
         // year mode check just year
         if (
           filterActiveValue.begin.substring(0, 4) !==
-            options.minDate.substring(0, 4) ||
+            options!.minDate!.substring(0, 4) ||
           filterActiveValue.end.substring(0, 4) !==
-            options.maxDate.substring(0, 4)
+            options!.maxDate!.substring(0, 4)
         ) {
           cnt += 1;
         }
       } else if (
-        filterActiveValue.begin !== options.minDate ||
-        filterActiveValue.end !== options.maxDate
+        filterActiveValue.begin !== options!.minDate ||
+        filterActiveValue.end !== options!.maxDate
       ) {
         cnt += 1;
       }

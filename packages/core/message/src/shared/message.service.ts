@@ -16,8 +16,8 @@ interface ActiveMessageTranslation {
   id: number;
   titleKey: string;
   textKey: string;
-  textInterpolateParams?: object;
-  titleInterpolateParams?: object;
+  textInterpolateParams?: Record<string, unknown>;
+  titleInterpolateParams?: Record<string, unknown>;
 }
 @Injectable({
   providedIn: 'root'
@@ -58,7 +58,9 @@ export class MessageService {
                 if (k) {
                   translatedTextInterpolateParams[k] =
                     this.languageService.translate.instant(
-                      activeMessageTranslation.textInterpolateParams[k]
+                      activeMessageTranslation.textInterpolateParams?.[
+                        k
+                      ] as string
                     );
                 }
               });
@@ -70,7 +72,9 @@ export class MessageService {
                 if (k) {
                   translatedTitleInterpolateParams[k] =
                     this.languageService.translate.instant(
-                      activeMessageTranslation.titleInterpolateParams[k]
+                      activeMessageTranslation.titleInterpolateParams?.[
+                        k
+                      ] as string
                     );
                 }
               });
@@ -112,29 +116,18 @@ export class MessageService {
 
     this.messages$.next(this.messages$.value.concat([message]));
 
-    message.options = message.options || ({} as MessageOptions);
+    const options = message.options || ({} as MessageOptions);
     const currentDate = new Date();
 
-    message.options.from = message.options.from
-      ? message.options.from
-      : new Date('1 jan 1900');
-    message.options.to = message.options.to
-      ? message.options.to
-      : new Date('1 jan 3000');
-    if (typeof message.options.from === 'string') {
-      message.options.from = new Date(
-        Date.parse(message.options.from.replace(/-/g, ' '))
-      );
+    options.from = options.from ? options.from : new Date('1 jan 1900');
+    options.to = options.to ? options.to : new Date('1 jan 3000');
+    if (typeof options.from === 'string') {
+      options.from = new Date(Date.parse(options.from.replace(/-/g, ' ')));
     }
-    if (typeof message.options.to === 'string') {
-      message.options.to = new Date(
-        Date.parse(message.options.to.replace(/-/g, ' '))
-      );
+    if (typeof options.to === 'string') {
+      options.to = new Date(Date.parse(options.to.replace(/-/g, ' ')));
     }
-    if (
-      currentDate > message.options.from &&
-      currentDate < message.options.to
-    ) {
+    if (currentDate > options.from && currentDate < options.to) {
       if (message.showIcon === false) {
         this.toastr.toastrConfig.iconClasses[messageType] =
           `toast-${messageType} toast-no-icon`;
@@ -200,7 +193,8 @@ export class MessageService {
             );
             break;
         }
-        message.options.id = messageShown.toastId;
+        options.id = messageShown.toastId;
+        message.options = options;
       }
     }
   }
@@ -209,8 +203,8 @@ export class MessageService {
     text: string,
     title = 'igo.core.message.success',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'success',
@@ -226,8 +220,8 @@ export class MessageService {
     text: string,
     title = 'igo.core.message.error',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'error',
@@ -243,8 +237,8 @@ export class MessageService {
     text: string,
     title = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'info',
@@ -260,8 +254,8 @@ export class MessageService {
     text: string,
     title = 'igo.core.message.alert',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'alert',
@@ -277,8 +271,8 @@ export class MessageService {
     text: string,
     title = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     return this.handleNgxToastr(
       'show',
@@ -295,8 +289,8 @@ export class MessageService {
     text: string,
     title: string,
     options: Partial<IndividualConfig> = {},
-    textInterpolateParams?: object,
-    titleInterpolateParams?: object
+    textInterpolateParams?: Record<string, unknown>,
+    titleInterpolateParams?: Record<string, unknown>
   ): ActiveToast<any> {
     const translatedTextInterpolateParams = { ...textInterpolateParams };
     const translatedTitlenterpolateParams = { ...titleInterpolateParams };
@@ -359,13 +353,13 @@ export class MessageService {
     return activeToast;
   }
 
-  remove(id?: number) {
+  remove(id: number) {
     this.toastr.remove(id);
   }
 
   removeAllAreNotError() {
     for (const mess of this.messages$.value) {
-      if (mess.type !== MessageType.ERROR) {
+      if (mess.options?.id && mess.type !== MessageType.ERROR) {
         this.remove(mess.options.id);
       }
     }
@@ -378,7 +372,9 @@ export class MessageService {
 
     let html = this.options?.template;
     html = html.replace('${text}', message.text);
-    html = html.replace('${title}', message.title);
+    if (message.title) {
+      html = html.replace('${title}', message.title);
+    }
 
     message.html = undefined;
     message.text = html;

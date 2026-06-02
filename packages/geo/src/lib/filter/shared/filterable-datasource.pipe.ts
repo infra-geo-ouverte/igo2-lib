@@ -9,7 +9,7 @@ import { OgcFilterableDataSource } from './ogc-filter.interface';
 })
 export class FilterableDataSourcePipe implements PipeTransform {
   transform(value: AnyLayer[], arg: string): Layer[] {
-    let layers: Layer[];
+    let layers: Layer[] = [];
     if (arg === 'time') {
       layers = value.filter((layer) => {
         if (isLayerGroup(layer)) {

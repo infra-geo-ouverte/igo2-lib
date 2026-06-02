@@ -7,7 +7,8 @@ export class DomUtils {
     const el = doc.createElement(tagName);
 
     for (const key in options) {
-      el[key] = options[key];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (el as any)[key] = options[key as keyof typeof options];
     }
 
     return el;

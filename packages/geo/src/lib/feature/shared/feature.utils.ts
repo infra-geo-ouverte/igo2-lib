@@ -37,7 +37,7 @@ import { Feature, FeatureGeometry } from './feature.interfaces';
 export function featureToOl(
   feature: Feature,
   projectionOut: string,
-  getId?: (Feature) => EntityKey
+  getId?: (arg0: Feature) => EntityKey
 ): OlFeature<OlGeometry> {
   getId = getId ? getId : getEntityId;
 
@@ -129,12 +129,12 @@ export function renderFeatureFromOl(
     );
   }
 
-  const geometry = olFormat.writeGeometryObject(geom, {
+  const geometry = olFormat.writeGeometryObject(geom!, {
     dataProjection: projectionOut,
     featureProjection: projectionIn
   }) as FeatureGeometry;
 
-  const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
+  const id = (olRenderFeature.getId() ?? uuid()) as EntityKey;
   const mapTitle = olRenderFeature.get('_mapTitle');
   const extent = olproj.transformExtent(
     olRenderFeature.getExtent(),
@@ -181,12 +181,15 @@ export function featureFromOl(
   const keys = olFeature.getKeys().filter((key: string) => {
     return !key.startsWith('_') && key !== 'geometry';
   });
-  const properties = keys.reduce((acc: object, key: string) => {
-    acc[key] = olFeature.get(key);
-    return acc;
-  }, {});
+  const properties = keys.reduce(
+    (acc: Record<string, unknown>, key: string) => {
+      (acc as Record<string, unknown>)[key] = olFeature.get(key);
+      return acc;
+    },
+    {}
+  );
 
-  const geometry = olFormat.writeGeometryObject(olFeature.getGeometry(), {
+  const geometry = olFormat.writeGeometryObject(olFeature.getGeometry()!, {
     dataProjection: projectionOut,
     featureProjection: projectionIn
   }) as FeatureGeometry;
@@ -255,7 +258,7 @@ export function computeOlFeatureExtent(
     );
   } else {
     const olGeometry = olFeature.getGeometry();
-    if (olGeometry !== null) {
+    if (olGeometry !== null && olGeometry !== undefined) {
       olExtent = olGeometry.getExtent();
     }
   }
@@ -426,7 +429,7 @@ export function computeOlFeaturesDiff(
     olFeaturesMap.set(olFeature.getId(), olFeature);
   });
 
-  const olFeaturesToRemove = [];
+  const olFeaturesToRemove: OlFeature<OlGeometry>[] = [];
   source.forEach((olFeature: OlFeature<OlGeometry>) => {
     const newOlFeature = olFeaturesMap.get(olFeature.getId());
     if (newOlFeature === undefined) {

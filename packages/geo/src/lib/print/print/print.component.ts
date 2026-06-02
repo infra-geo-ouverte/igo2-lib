@@ -29,13 +29,13 @@ export class PrintComponent {
 
   public disabled$ = new BehaviorSubject(false);
 
-  readonly map = input<IgoMap>(undefined);
-  readonly outputFormat = input<PrintOutputFormat>(undefined);
-  readonly paperFormat = input<PrintPaperFormat>(undefined);
-  readonly orientation = input<PrintOrientation>(undefined);
-  readonly imageFormat = input<PrintSaveImageFormat>(undefined);
-  readonly legendPosition = input<PrintLegendPosition>(undefined);
-  readonly resolution = input<PrintResolution>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly outputFormat = input<PrintOutputFormat>();
+  readonly paperFormat = input<PrintPaperFormat>();
+  readonly orientation = input<PrintOrientation>();
+  readonly imageFormat = input<PrintSaveImageFormat>();
+  readonly legendPosition = input<PrintLegendPosition>();
+  readonly resolution = input<PrintResolution>();
 
   handleFormSubmit(data: PrintOptions) {
     this.disabled$.next(true);
@@ -53,7 +53,7 @@ export class PrintComponent {
       if (data.showLegend) {
         nbFileToProcess++;
       }
-      if (data.imageFormat.toLowerCase() === 'tiff') {
+      if (data.imageFormat!.toLowerCase() === 'tiff') {
         nbFileToProcess++;
       }
 
@@ -75,7 +75,7 @@ export class PrintComponent {
           data.comment,
           data.doZipFile,
           data.legendPosition,
-          data.showNorthArrow
+          data.showNorthArrow!
         )
         .pipe(take(1))
         .subscribe(() => {

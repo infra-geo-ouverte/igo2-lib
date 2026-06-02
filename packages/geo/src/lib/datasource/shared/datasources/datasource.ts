@@ -20,7 +20,7 @@ import {
 export abstract class DataSource {
   public id: string;
   public ol: olSource | olVectorSource | olClusterSource;
-  private legend: Legend[];
+  private legend: Legend[] = [];
 
   get saveableOptions(): Partial<DataSourceOptions> {
     return {
@@ -96,7 +96,7 @@ export abstract class DataSource {
     });
   }
 
-  protected abstract onUnwatch();
+  protected abstract onUnwatch(): void;
 }
 
 class DatasourceProperties {

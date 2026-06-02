@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import olLayerVector from 'ol/layer/Vector';
 import Fill from 'ol/style/Fill';
 import Style from 'ol/style/Style';
 
@@ -11,7 +12,7 @@ import {
 } from 'geostyler-style';
 import { vi } from 'vitest';
 
-import { MapboxLayerStyle } from '../mapbox/mapbox.interface';
+import { AnyOlStyle, EngineLayerStyle } from '../shared/style.interface';
 import { provideStyle } from '../style.provider';
 import { StyleService } from '../style.service';
 import { GeostylerLayerStyle } from './geostyler.interface';
@@ -19,7 +20,6 @@ import { withGeostyler } from './geostyler.provider';
 import { GeostylerService } from './geostyler.service';
 
 const geostylerStyle: GeostylerLayerStyle = {
-  editable: false,
   type: 'Geostyler',
   style: {
     name: 'Test Style',
@@ -40,6 +40,7 @@ const geostylerStyle: GeostylerLayerStyle = {
 describe('GeostylerService', () => {
   let service: GeostylerService;
   let styleService: StyleService;
+  let olLayer: olLayerVector;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -50,6 +51,7 @@ describe('GeostylerService', () => {
     });
     service = TestBed.inject(GeostylerService);
     styleService = TestBed.inject(StyleService);
+    olLayer = new olLayerVector({});
   });
 
   it('should be created', () => {
@@ -62,23 +64,29 @@ describe('GeostylerService', () => {
     });
 
     it('should reject non Geostyler styles', () => {
-      const mapboxStyle: MapboxLayerStyle = {
-        editable: false,
-        type: 'Mapbox',
-        style: {
-          url: 'https://example.com/style.json',
-          source: 'main'
-        }
+      const olFlatStyle: AnyOlStyle = {
+        'fill-color': '#ff0000'
       };
 
-      expect(service.supports(mapboxStyle)).toBe(false);
+      expect(service.supports(olFlatStyle as unknown as EngineLayerStyle)).toBe(
+        false
+      );
     });
   });
 
   it('should register the geostyler engine in StyleService', async () => {
-    const result = await styleService.getStyle(geostylerStyle);
+    const expected: AnyOlStyle = {
+      'fill-color': '#ff0000'
+    };
+    const getStyleSpy = vi
+      .spyOn(service, 'getStyle')
+      .mockResolvedValue(expected);
 
+    const result = await styleService.getStyle(geostylerStyle, olLayer);
+
+    expect(getStyleSpy).toHaveBeenCalledWith(geostylerStyle, olLayer);
     expect(result).toBeTruthy();
+    expect(result).toEqual(expected);
   });
 
   describe('getLayerOlStyle', () => {
@@ -104,7 +112,7 @@ describe('GeostylerService', () => {
       expect(result).toBe(expectedStyle);
     });
 
-    it('should log parser warnings, errors and unsupported properties', async () => {
+    it('should throw parser errors', async () => {
       const parser = service['olParser'];
       const parserError = new Error('error');
       vi.spyOn(parser, 'writeStyle').mockResolvedValue({
@@ -113,13 +121,39 @@ describe('GeostylerService', () => {
         errors: [parserError],
         unsupportedProperties: ['unsupported']
       } as unknown as WriteStyleResult);
+
+      await expect(service.getStyle(geostylerStyle)).rejects.toEqual([
+        parserError
+      ]);
+    });
+
+    it('should log warnings', async () => {
+      const parser = service['olParser'];
+      vi.spyOn(parser, 'writeStyle').mockResolvedValue({
+        output: new Style(),
+        warnings: ['warning'],
+        errors: undefined,
+        unsupportedProperties: undefined
+      } as unknown as WriteStyleResult);
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       await service.getStyle(geostylerStyle);
 
       expect(warnSpy).toHaveBeenCalledWith(['warning']);
-      expect(errorSpy).toHaveBeenCalledWith([parserError]);
+    });
+
+    it('should log unsupported properties', async () => {
+      const parser = service['olParser'];
+      vi.spyOn(parser, 'writeStyle').mockResolvedValue({
+        output: new Style(),
+        warnings: undefined,
+        errors: undefined,
+        unsupportedProperties: ['unsupported']
+      } as unknown as WriteStyleResult);
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await service.getStyle(geostylerStyle);
+
       expect(warnSpy).toHaveBeenCalledWith(['unsupported']);
     });
   });
@@ -151,8 +185,8 @@ describe('GeostylerService', () => {
     it('should keep legend names, strip text symbolizers and normalize icon size', () => {
       const serviceWithPrivateApi = service as unknown as {
         toLegendDescriptors: (
-          styles: GeostylerLayerStyle['style'][]
-        ) => GeostylerLayerStyle['style'][];
+          styles: GeostylerLayerStyle['style']
+        ) => GeostylerLayerStyle['style'];
       };
       const textSymbolizer: TextSymbolizer = {
         kind: 'Text',
@@ -167,17 +201,15 @@ describe('GeostylerService', () => {
         size: 48
       };
 
-      const [result] = serviceWithPrivateApi.toLegendDescriptors([
-        {
-          name: 'Legend Style',
-          rules: [
-            {
-              name: 'Legend Rule',
-              symbolizers: [textSymbolizer, iconSymbolizer]
-            }
-          ]
-        }
-      ]);
+      const result = serviceWithPrivateApi.toLegendDescriptors({
+        name: 'Legend Style',
+        rules: [
+          {
+            name: 'Legend Rule',
+            symbolizers: [textSymbolizer, iconSymbolizer]
+          }
+        ]
+      });
 
       expect(result.name).toBe('Legend Style');
       expect(result.rules[0].name).toBe('Legend Rule');
@@ -188,5 +220,4 @@ describe('GeostylerService', () => {
       });
     });
   });
-  // cp
 });

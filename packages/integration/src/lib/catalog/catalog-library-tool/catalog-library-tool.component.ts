@@ -17,6 +17,7 @@ import { LanguageService } from '@igo2/core/language';
 import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
   Catalog,
+  CatalogItem,
   CatalogItemGroup,
   CatalogItemLayer,
   CatalogItemType,
@@ -70,7 +71,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   private storageService = inject(StorageService);
   private languageService = inject(LanguageService);
 
-  private generatelist$$: Subscription;
+  private generatelist$$?: Subscription;
   /**
    * Store that contains the catalogs
    * @internal
@@ -94,7 +95,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    */
   readonly predefinedCatalogs = input<Catalog[]>([]);
 
-  set selectedCatalogId(id) {
+  set selectedCatalogId(id: string | null) {
     this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
   }
 
@@ -157,13 +158,13 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    * Get the item abstract for getCatalogList
    */
   private getMetadataAbstract(item: CatalogItemLayer): string {
-    return item.options.metadata.abstract?.replaceAll('\n', '') ?? '';
+    return item.options.metadata?.abstract?.replaceAll('\n', '') ?? '';
   }
   /**
    * Get the item url metadata for getCatalogList
    */
-  private getMetadataUrl(item: CatalogItemLayer): string {
-    return item.options.metadata.url;
+  private getMetadataUrl(item: CatalogItemLayer): string | undefined {
+    return item.options.metadata?.url;
   }
 
   private layersInfoFromContexts(): Observable<InfoFromSourceOptions[]> {
@@ -171,18 +172,18 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       switchMap((contextsList) =>
         forkJoin(
           contextsList.ours.map((context) =>
-            this.contextService.getLocalContext(context.uri)
+            this.contextService.getLocalContext(context.uri!)
           )
         )
       ),
       concatAll(),
       map((detailedContext) => {
-        return detailedContext.layers
+        return (detailedContext.layers ?? [])
           .filter((layer) => isLayerItemOptions(layer))
           .map((layer) =>
             getInfoFromSourceOptions(
-              layer.sourceOptions,
-              detailedContext.title ?? detailedContext.uri
+              layer.sourceOptions!,
+              detailedContext.title ?? detailedContext.uri ?? ''
             )
           );
       }),
@@ -215,7 +216,8 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
             (catalogListExports, item) => {
               if (item.type === CatalogItemType.Group) {
                 const group = item as CatalogItemGroup;
-                group.items.forEach((layer: CatalogItemLayer) => {
+                group.items?.forEach((item: CatalogItem) => {
+                  const layer = item as CatalogItemLayer;
                   catalogListExports.push(
                     this.formatLayer(layer, rank, group.title, catalog.title)
                   );
@@ -254,30 +256,30 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   private formatLayer(
-    layer: CatalogItemLayer,
+    catalogItem: CatalogItemLayer,
     rank: number,
     groupTitle: string,
     catalogTitle: string
   ): ListExport {
-    const infos = getInfoFromSourceOptions(
-      layer.options.sourceOptions,
-      layer.id
-    );
+    const sourceOptions = catalogItem.options.sourceOptions;
+    const infos = sourceOptions
+      ? getInfoFromSourceOptions(sourceOptions, catalogItem.id)
+      : undefined;
     const t = this.languageService.translate;
     return {
-      id: infos.id,
+      id: infos?.id ?? catalogItem.options.id!,
       rank: rank.toString(),
-      layerTitle: layer.title,
+      layerTitle: catalogItem.title,
       layerGroup: groupTitle,
       catalog: catalogTitle,
-      provider: layer.externalProvider
+      provider: catalogItem.externalProvider
         ? t.instant('igo.integration.catalog.listExport.external')
         : t.instant('igo.integration.catalog.listExport.internal'),
-      url: infos.url,
-      layerName: infos.layerName,
+      url: infos?.url,
+      layerName: infos?.layerName,
       context: '',
-      metadataAbstract: this.getMetadataAbstract(layer),
-      metadataUrl: this.getMetadataUrl(layer)
+      metadataAbstract: this.getMetadataAbstract(catalogItem),
+      metadataUrl: this.getMetadataUrl(catalogItem)
     };
   }
 
@@ -331,7 +333,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     });
 
     const catalogOutput = catalogOutputs.map((catalogOutput) => {
-      delete catalogOutput.id;
+      delete (catalogOutput as Partial<typeof catalogOutput>).id;
       return catalogOutput;
     });
 

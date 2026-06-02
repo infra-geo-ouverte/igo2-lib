@@ -2,6 +2,7 @@ import { IconSvg } from '@igo2/common/icon';
 
 import { Observable } from 'rxjs';
 
+import { ConfigurableStylesOptions } from '../../style/shared/style.interface';
 import { SearchSource } from './sources/source';
 import {
   ReverseSearchOptions,
@@ -18,6 +19,7 @@ export interface SearchResult<T = Record<string, any>> {
   data: T;
   source: SearchSource;
   meta: SearchMeta;
+  style?: ConfigurableStylesOptions;
 }
 
 export interface SearchMeta {

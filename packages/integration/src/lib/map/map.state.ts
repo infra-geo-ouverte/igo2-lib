@@ -16,14 +16,14 @@ export class MapState {
   private storageService = inject(StorageService);
   private configService = inject(ConfigService);
 
-  get showAllLegendsValue(): boolean {
+  get showAllLegendsValue(): boolean | undefined {
     return this._legendToolShowAll;
   }
 
   set showAllLegendsValue(value) {
     this._legendToolShowAll = value;
   }
-  private _legendToolShowAll: boolean;
+  private _legendToolShowAll: boolean | undefined;
 
   /**
    * Active map

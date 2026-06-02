@@ -9,9 +9,21 @@ import * as olproj from 'ol/proj';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
+import {
+  ArcgisLayerOptions,
+  ArcgisLegendInfo,
+  ArcgisServiceCapabilities
+} from '../../catalog/shared/arcgis-catalog.interface';
+import {
+  WmsCapabilityLayer,
+  WmsDimension,
+  WmsStyle,
+  WmtsCapabilities,
+  WmtsCapabilityLayer
+} from '../../catalog/shared/catalog.interface';
 import {
   TimeFilterStyle,
   TimeFilterType
@@ -27,7 +39,7 @@ import {
   QueryFormat,
   QueryFormatMimeType
 } from '../../query/shared/query.enums';
-import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
+import { EsriStyleGenerator } from '../../style/shared/esri-style-generator';
 import {
   TypeCapabilities,
   TypeCapabilitiesStrings
@@ -56,29 +68,32 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions
   ): Observable<WMSDataSourceOptions> {
     const url = baseOptions.url;
-    const version = (baseOptions.params as any).VERSION;
+    const version = (baseOptions.params as unknown as Record<string, string>)
+      .VERSION;
 
     return this.getCapabilities('wms', url, version).pipe(
-      map((capabilities: any) => {
+      map((capabilities) => {
         return capabilities
           ? this.parseWMSOptions(baseOptions, capabilities)
-          : undefined;
-      })
+          : null;
+      }),
+      filter((options): options is WMSDataSourceOptions => options !== null)
     );
   }
 
   getWMTSOptions(
     baseOptions: WMTSDataSourceOptions
   ): Observable<WMTSDataSourceOptions> {
-    const url = baseOptions.url;
+    const url = baseOptions.url!;
     const version = baseOptions.version;
 
     const options = this.getCapabilities('wmts', url, version).pipe(
-      map((capabilities: any) => {
+      map((capabilities) => {
         return capabilities
           ? this.parseWMTSOptions(baseOptions, capabilities)
-          : undefined;
-      })
+          : null;
+      }),
+      filter((options): options is WMTSDataSourceOptions => options !== null)
     );
     return options;
   }
@@ -111,11 +126,11 @@ export class CapabilitiesService {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const serviceCapabilities = this.getCapabilities(
       'arcgisrest',
-      baseOptions.url
+      baseOptions.url!
     );
     const arcgisOptions = this.http.get(baseUrl);
     return forkJoin([arcgisOptions, serviceCapabilities]).pipe(
-      map((res: any) => {
+      map((res) => {
         return this.parseArcgisOptions(baseOptions, res[0], res[1]);
       })
     );
@@ -135,18 +150,18 @@ export class CapabilitiesService {
     const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities(
       'imagearcgisrest',
-      baseOptions.url
+      baseOptions.url!
     );
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
-      map((res: any) => res),
+      map((res) => res),
       catchError((err) => {
         console.log('No legend associated with this Image Service');
         return of(err);
       })
     );
     return forkJoin([arcgisOptions, legend, serviceCapabilities]).pipe(
-      map((res: any) => {
+      map((res) => {
         return this.parseTileOrImageArcgisOptions(
           baseOptions,
           res[0],
@@ -169,18 +184,18 @@ export class CapabilitiesService {
     const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities(
       'tilearcgisrest',
-      baseOptions.url
+      baseOptions.url!
     );
     const arcgisOptions = this.http.get(baseUrl);
     const legendInfo = this.http.get(legendUrl).pipe(
-      map((res: any) => res),
+      map((res) => res),
       catchError((err) => {
         console.log('No legend associated with this Tile Service');
         return of(err);
       })
     );
     return forkJoin([arcgisOptions, legendInfo, serviceCapabilities]).pipe(
-      map((res: any) =>
+      map((res) =>
         this.parseTileOrImageArcgisOptions(baseOptions, res[0], res[1], res[2])
       )
     );
@@ -228,7 +243,7 @@ export class CapabilitiesService {
             }
           };
         } else {
-          return this.parsers[service].read(res);
+          return this.parsers[service as 'wms' | 'wmts'].read(res as string);
         }
       }),
       catchError((e) => {
@@ -280,13 +295,13 @@ export class CapabilitiesService {
 
     const extent = isExtentInGeographic
       ? olproj.transformExtent(
-          layer.EX_GeographicBoundingBox,
+          layer.EX_GeographicBoundingBox as [number, number, number, number],
           'EPSG:4326',
-          this.mapService.getMap().projection
+          this.mapService.getMap()?.projection
         )
       : undefined;
 
-    let queryFormat: QueryFormat;
+    let queryFormat: QueryFormat | undefined;
     const queryFormatMimeTypePriority = [
       QueryFormatMimeType.GEOJSON,
       QueryFormatMimeType.GEOJSON2,
@@ -303,9 +318,13 @@ export class CapabilitiesService {
         ) !== -1
       ) {
         const keyEnum = Object.keys(QueryFormatMimeType).find(
-          (key) => QueryFormatMimeType[key] === mimeType
+          (key) =>
+            QueryFormatMimeType[key as keyof typeof QueryFormatMimeType] ===
+            mimeType
         );
-        queryFormat = QueryFormat[keyEnum];
+        if (keyEnum !== undefined) {
+          queryFormat = QueryFormat[keyEnum as keyof typeof QueryFormat];
+        }
         break;
       }
     }
@@ -325,8 +344,14 @@ export class CapabilitiesService {
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
-        maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
-        minResolution: getResolutionFromScale(layer.MinScaleDenominator),
+        maxResolution:
+          layer.MaxScaleDenominator !== undefined
+            ? getResolutionFromScale(layer.MaxScaleDenominator)
+            : undefined,
+        minResolution:
+          layer.MinScaleDenominator !== undefined
+            ? getResolutionFromScale(layer.MinScaleDenominator)
+            : undefined,
         extent,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
@@ -343,39 +368,43 @@ export class CapabilitiesService {
       minDate: timeFilterable ? timeFilter.min : undefined,
       maxDate: timeFilterable ? timeFilter.max : undefined,
       stepDate: timeFilterable ? timeFilter.step : undefined
-    });
+    }) as unknown as WMSDataSourceOptions;
 
-    return ObjectUtils.mergeDeep(options, baseOptions);
+    return ObjectUtils.mergeDeep<WMSDataSourceOptions>(options, baseOptions);
   }
 
   private parseWMTSOptions(
     baseOptions: WMTSDataSourceOptions,
-    capabilities: any
+    capabilities: WmtsCapabilities
   ): WMTSDataSourceOptions {
     // Put Title source in _layerOptionsFromSource. (For source & catalog in _layerOptionsFromSource, if not already on config)
     const layer = capabilities.Contents.Layer.find(
-      (el) => el.Identifier === baseOptions.layer
+      (el: WmtsCapabilityLayer) => el.Identifier === baseOptions.layer
     );
 
     const options = optionsFromCapabilities(capabilities, baseOptions);
 
-    const ouputOptions = Object.assign(options, baseOptions);
+    const ouputOptions = Object.assign(options ?? {}, baseOptions);
     const sourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
-        title: layer.Title
+        title: layer!.Title ?? ''
       }
-    });
+    }) as unknown as WMTSDataSourceOptions;
 
-    return ObjectUtils.mergeDeep(sourceOptions, ouputOptions);
+    return ObjectUtils.mergeDeep<WMTSDataSourceOptions>(
+      sourceOptions,
+      ouputOptions
+    );
   }
 
   private parseCartoOptions(
     baseOptions: CartoDataSourceOptions,
-    cartoOptions: any
+    cartoOptions: Record<string, unknown>
   ): CartoDataSourceOptions {
-    const layers = [];
-    const params = cartoOptions.layers[1].options.layer_definition;
-    params.layers.forEach((element) => {
+    const layers: { type: string; options: unknown; legend: unknown }[] = [];
+    const params = (cartoOptions.layers as any)[1].options.layer_definition;
+
+    params.layers.forEach((element: any) => {
       layers.push({
         type: element.type.toLowerCase(),
         options: element.options,
@@ -387,17 +416,17 @@ export class CapabilitiesService {
         version: params.version,
         layers
       }
-    });
+    }) as CartoDataSourceOptions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
-    arcgisOptions: any,
-    serviceCapabilities: any
+    arcgisOptions: ArcgisLayerOptions,
+    serviceCapabilities: ArcgisServiceCapabilities
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
-    let legendInfo: any;
+    let legendInfo: unknown;
 
     if (arcgisOptions.drawingInfo?.renderer) {
       legendInfo = arcgisOptions.drawingInfo.renderer;
@@ -409,7 +438,10 @@ export class CapabilitiesService {
     if (arcgisOptions.drawingInfo) {
       const styleGenerator = new EsriStyleGenerator();
       const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
-      style = styleGenerator.generateStyle(arcgisOptions, units);
+      style = styleGenerator.generateStyle(
+        arcgisOptions as Parameters<typeof styleGenerator.generateStyle>[0],
+        units
+      );
     }
     const attributions = new olAttribution({
       target: arcgisOptions.copyrightText
@@ -439,12 +471,18 @@ export class CapabilitiesService {
         time: timeExtent
       }
     );
-    const options = ObjectUtils.removeUndefined({
+    const options = ObjectUtils.removeUndefined<Record<string, unknown>>({
       params,
       _layerOptionsFromSource: {
         title,
-        minResolution: getResolutionFromScale(arcgisOptions.maxScale),
-        maxResolution: getResolutionFromScale(arcgisOptions.minScale),
+        minResolution:
+          arcgisOptions.minScale !== undefined
+            ? getResolutionFromScale(arcgisOptions.minScale)
+            : undefined,
+        maxResolution:
+          arcgisOptions.maxScale !== undefined
+            ? getResolutionFromScale(arcgisOptions.maxScale)
+            : undefined,
         metadata: {
           extern: false,
           abstract:
@@ -456,17 +494,20 @@ export class CapabilitiesService {
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
-    options.attributions = attributions;
-    return ObjectUtils.mergeDeep(options, baseOptions);
+    options['attributions'] = attributions;
+    return ObjectUtils.mergeDeep(
+      options,
+      baseOptions
+    ) as unknown as ArcGISRestDataSourceOptions;
   }
 
   private parseTileOrImageArcgisOptions(
     baseOptions:
       | TileArcGISRestDataSourceOptions
       | ArcGISRestImageDataSourceOptions,
-    arcgisOptions: any,
-    legend: any,
-    serviceCapabilities: any
+    arcgisOptions: ArcgisLayerOptions,
+    legend: ArcgisLegendInfo,
+    serviceCapabilities: ArcgisServiceCapabilities
   ): TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions {
     const title = arcgisOptions.name;
     const legendInfo = legend.layers
@@ -499,12 +540,18 @@ export class CapabilitiesService {
         time: timeExtent
       }
     );
-    const options = ObjectUtils.removeUndefined({
+    const options = ObjectUtils.removeUndefined<Record<string, unknown>>({
       params,
       _layerOptionsFromSource: {
         title,
-        minResolution: getResolutionFromScale(arcgisOptions.maxScale),
-        maxResolution: getResolutionFromScale(arcgisOptions.minScale),
+        minResolution:
+          arcgisOptions.minScale !== undefined
+            ? getResolutionFromScale(arcgisOptions.minScale)
+            : undefined,
+        maxResolution:
+          arcgisOptions.maxScale !== undefined
+            ? getResolutionFromScale(arcgisOptions.maxScale)
+            : undefined,
         metadata: {
           extern: false,
           abstract:
@@ -516,13 +563,16 @@ export class CapabilitiesService {
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
-    options.attributions = attributions;
+    options['attributions'] = attributions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
-  private findDataSourceInCapabilities(layerArray, name): any {
+  private findDataSourceInCapabilities(
+    layerArray: WmsCapabilityLayer | WmsCapabilityLayer[],
+    name: string
+  ): WmsCapabilityLayer | undefined {
     if (Array.isArray(layerArray)) {
-      let layer;
+      let layer: WmsCapabilityLayer | undefined;
       layerArray.find((value) => {
         layer = this.findDataSourceInCapabilities(value, name);
         return layer !== undefined;
@@ -539,28 +589,32 @@ export class CapabilitiesService {
     }
   }
 
-  getTimeFilter(layer): TimeFilterOptions {
-    let dimension;
+  getTimeFilter(layer: WmsCapabilityLayer): TimeFilterOptions | undefined {
+    let dimension: WmsDimension | undefined;
 
     if (layer.Dimension) {
       const timeFilter: TimeFilterOptions = {};
       dimension = layer.Dimension[0];
 
-      if (dimension.values) {
+      if (dimension?.values) {
         const minMaxDim = dimension.values.split('/');
         timeFilter.min = minMaxDim[0] !== undefined ? minMaxDim[0] : undefined;
         timeFilter.max = minMaxDim[1] !== undefined ? minMaxDim[1] : undefined;
-        timeFilter.step = minMaxDim[2] !== undefined ? minMaxDim[2] : undefined;
+        timeFilter.step =
+          minMaxDim[2] !== undefined
+            ? (minMaxDim[2] as unknown as number)
+            : undefined;
       }
 
-      if (dimension.default) {
+      if (dimension?.default) {
         timeFilter.value = timeFilter.default = dimension.default;
       }
       return timeFilter;
     }
+    return undefined;
   }
 
-  getStyle(Style): LegendOptions {
+  getStyle(Style: WmsStyle[]): LegendOptions {
     const styleOptions: ItemStyleOptions[] = Style.map((style) => {
       return {
         name: style.Name,
@@ -569,7 +623,7 @@ export class CapabilitiesService {
     })
       // Handle repeat the style "default" in output  (MapServer or OpenLayer)
       .filter(
-        (item, index, self) =>
+        (item: ItemStyleOptions, index: number, self: ItemStyleOptions[]) =>
           self.findIndex((i: ItemStyleOptions) => i.name === item.name) ===
           index
       );

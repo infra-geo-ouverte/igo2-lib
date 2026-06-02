@@ -60,11 +60,11 @@ export const appConfig: ApplicationConfig = {
     provideConfig({
       default: environment.igo
     }),
-    provideTranslation(withStaticConfig(environment.igo.language)),
+    provideTranslation(withStaticConfig(environment.igo.language!)),
     provideAuthentification(),
     provideIcon(),
-    provideSentryMonitoring(environment.igo.monitoring),
-    provideAuthUserMonitoring(environment.igo.monitoring),
+    provideSentryMonitoring(environment.igo.monitoring!),
+    provideAuthUserMonitoring(environment.igo.monitoring ?? null),
     provideOffline({ enable: true }),
     provideStyle(withGeostyler(), withMapbox()),
     {

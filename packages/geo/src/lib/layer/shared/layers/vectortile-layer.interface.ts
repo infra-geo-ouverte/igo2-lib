@@ -2,7 +2,7 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt-datasource.interface';
-import { AnyStyle } from '../../../style/shared/style.types';
+import { AnyStyle } from '../../../style/shared';
 import { LayerOptions } from './layer.interface';
 
 export interface VectorTileLayerOptions extends LayerOptions {
@@ -11,5 +11,4 @@ export interface VectorTileLayerOptions extends LayerOptions {
   sourceOptions?: MVTDataSourceOptions;
   ol?: olLayerVectorTile;
   declutter?: boolean;
-  hoverAttribute?: string;
 }

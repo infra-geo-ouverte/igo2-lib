@@ -50,7 +50,7 @@ export class ContextPermissionItemComponent {
     return (
       this.canWrite() ||
       (isContextPermissionUser(permission) &&
-        permission.user.externalId === this.user().id)
+        permission.user.externalId === this.user()?.id)
     );
   });
 

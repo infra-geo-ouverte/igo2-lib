@@ -48,13 +48,16 @@ export interface EnvironmentOptions {
   queryOverlayStyle?: ConfigurableStylesOptions;
   searchOverlayStyle?: ConfigurableStylesOptions;
   projections?: Projection[];
+  queryOverlayStyle?: ConfigurableStylesOptions;
+  searchOverlayStyle?: ConfigurableStylesOptions;
   searchSources?: {
     showResultsCount?: boolean;
     [key: string]:
       | SearchSourceOptions
       | StoredQueriesSearchSourceOptions
       | StoredQueriesReverseSearchSourceOptions
-      | boolean;
+      | boolean
+      | undefined;
   };
   searchBar?: {
     showSearchButton?: boolean;

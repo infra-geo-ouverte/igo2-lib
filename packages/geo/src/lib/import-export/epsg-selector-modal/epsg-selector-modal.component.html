@@ -14,7 +14,7 @@
         'igo.geo.importExportForm.importProjPlaceholder' | translate
       }}</mat-label>
       <mat-select [(value)]="selectedEpsg">
-        @for (projection of data?.projections; track projection) {
+        @for (projection of data.projections; track projection) {
           <mat-option
             [value]="projection.code"
             (click)="$event.stopPropagation()"

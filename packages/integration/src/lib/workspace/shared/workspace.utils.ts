@@ -27,9 +27,9 @@ import { ToolState } from '../../tool';
 
 export function handleZoomAuto(
   workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,
-  storageService
+  storageService: StorageService
 ) {
-  const zoomStrategy = workspace.entityStore.getStrategyOfType(
+  const zoomStrategy = workspace.entityStore!.getStrategyOfType(
     FeatureStoreSelectionStrategy
   ) as FeatureStoreSelectionStrategy;
   zoomStrategy.setMotion(
@@ -43,7 +43,7 @@ export function getWorkspaceActions(
   workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,
   rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
   selectOnlyCheckCondition$: BehaviorSubject<boolean>,
-  ogcFilterWidget: Widget,
+  ogcFilterWidget: Widget | null | undefined,
   zoomAuto$: BehaviorSubject<boolean>,
   maximize$: BehaviorSubject<boolean>,
   storageService: StorageService,
@@ -52,7 +52,7 @@ export function getWorkspaceActions(
   toolState: ToolState,
   interactiveSelectionFormWidget?: Widget
 ): Action[] {
-  const actions = [
+  const actions: Action[] = [
     {
       id: 'zoomAuto',
       checkbox: true,
@@ -71,7 +71,9 @@ export function getWorkspaceActions(
       id: 'filterInMapExtent',
       checkbox: true,
       title: 'igo.integration.workspace.inMapExtent.title',
-      tooltip: mapExtentStrategyActiveToolTip(workspace),
+      tooltip: mapExtentStrategyActiveToolTip(
+        workspace as FeatureWorkspace | WfsWorkspace
+      ),
       checkCondition: rowsInMapExtentCheckCondition$,
       handler: () =>
         rowsInMapExtentCheckCondition$.next(
@@ -93,12 +95,12 @@ export function getWorkspaceActions(
       title: 'igo.integration.workspace.clearSelection.title',
       tooltip: 'igo.integration.workspace.clearSelection.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
-        ws.entityStore.state.updateMany(ws.entityStore.view.all(), {
+        ws.entityStore!.state.updateMany(ws.entityStore!.view.all(), {
           selected: false
         });
       },
       args: [workspace],
-      availability: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) =>
+      availability: (ws: FeatureWorkspace | WfsWorkspace) =>
         noElementSelected(ws)
     },
     {
@@ -107,21 +109,23 @@ export function getWorkspaceActions(
       title: 'igo.integration.workspace.download.title',
       tooltip: 'igo.integration.workspace.download.tooltip',
       handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
-        const filterStrategy = ws.entityStore.getStrategyOfType(
+        const filterStrategy = ws.entityStore?.getStrategyOfType(
           EntityStoreFilterCustomFuncStrategy
         );
-        const filterSelectionStrategy = ws.entityStore.getStrategyOfType(
+        const filterSelectionStrategy = ws.entityStore?.getStrategyOfType(
           EntityStoreFilterSelectionStrategy
         );
-        const layersWithSelection = filterSelectionStrategy.active
+        const layersWithSelection = filterSelectionStrategy?.active
           ? [ws.layer.id]
           : [];
         toolState.toolToActivateFromOptions({
           tool: 'importExport',
           options: {
-            layers: [ws.layer.id],
-            featureInMapExtent: filterStrategy.active,
-            layersWithSelection
+            layers: [ws.layer.id!],
+            featureInMapExtent: filterStrategy?.active,
+            layersWithSelection: layersWithSelection.filter(
+              (id): id is string => id !== undefined
+            )
           }
         });
       },
@@ -148,7 +152,7 @@ export function getWorkspaceActions(
       ) =>
         of(
           (ws.layer.options.sourceOptions as OgcFilterableDataSourceOptions)
-            ?.ogcFilters?.enabled
+            ?.ogcFilters?.enabled ?? false
         )
     },
     {
@@ -242,7 +246,7 @@ export function getWorkspaceActions(
   ];
 
   const returnActions =
-    workspace.layer.options.workspace.printable !== false
+    workspace.layer.options.workspace?.printable !== false
       ? actions
       : actions.filter((action) => action.id !== 'print');
   return returnActions;

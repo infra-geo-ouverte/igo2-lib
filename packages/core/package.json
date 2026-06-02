@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "21.0.0-next.1",
+  "version": "21.0.0-next.7",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -23,6 +23,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint core",
     "lint.fix": "ng lint core --fix",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit && tsc -p ./tsconfig.spec.json --noEmit",
     "test": "ng test core --watch=false",
     "test.watch": "ng test core",
     "watch": "ng build core --watch && npm run postbuild"

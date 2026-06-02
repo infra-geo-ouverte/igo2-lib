@@ -5,12 +5,13 @@ import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { OGCFilterService } from '../../filter/shared/ogc-filter.service';
 import { CapabilitiesService } from './capabilities.service';
 import {
+  AnyDataSource,
   AnyDataSourceOptions,
   ArcGISRestDataSource,
   ArcGISRestDataSourceOptions,
@@ -57,8 +58,6 @@ export class DataSourceService {
   private messageService = inject(MessageService);
   private authInterceptor = inject(AuthInterceptor);
 
-  public datasources$ = new BehaviorSubject<DataSource[]>([]);
-
   createAsyncDataSource(
     options: AnyDataSourceOptions,
     detailedContextUri?: string
@@ -67,71 +66,71 @@ export class DataSourceService {
       console.error(options);
       throw new Error('Datasource needs a type');
     }
-    let dataSource;
+    let dataSource$: Observable<AnyDataSource>;
     switch (options.type.toLowerCase()) {
       case 'osm':
-        dataSource = this.createOSMDataSource(options as OSMDataSourceOptions);
+        dataSource$ = this.createOSMDataSource(options as OSMDataSourceOptions);
         break;
       case 'vector':
-        dataSource = this.createFeatureDataSource(
+        dataSource$ = this.createFeatureDataSource(
           options as FeatureDataSourceOptions
         );
         break;
       case 'wfs':
-        dataSource = this.createWFSDataSource(options as WFSDataSourceOptions);
+        dataSource$ = this.createWFSDataSource(options as WFSDataSourceOptions);
         break;
       case 'wms': {
         const wmsContext = options as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
-        dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
+        dataSource$ = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
       }
       case 'wmts':
-        dataSource = this.createWMTSDataSource(
+        dataSource$ = this.createWMTSDataSource(
           options as WMTSDataSourceOptions
         );
         break;
       case 'xyz':
-        dataSource = this.createXYZDataSource(options as XYZDataSourceOptions);
+        dataSource$ = this.createXYZDataSource(options as XYZDataSourceOptions);
         break;
       case 'tiledebug':
-        dataSource = this.createTileDebugDataSource(
+        dataSource$ = this.createTileDebugDataSource(
           options as TileDebugDataSource
         );
         break;
       case 'carto':
-        dataSource = this.createCartoDataSource(
+        dataSource$ = this.createCartoDataSource(
           options as CartoDataSourceOptions
         );
         break;
       case 'arcgisrest':
-        dataSource = this.createArcGISRestDataSource(
+        dataSource$ = this.createArcGISRestDataSource(
           options as ArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'imagearcgisrest':
-        dataSource = this.createArcGISRestImageDataSource(
+        dataSource$ = this.createArcGISRestImageDataSource(
           options as ArcGISRestImageDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'websocket':
-        dataSource = this.createWebSocketDataSource(
+        dataSource$ = this.createWebSocketDataSource(
           options as FeatureDataSourceOptions
         );
         break;
       case 'mvt':
-        dataSource = this.createMVTDataSource(options as MVTDataSourceOptions);
+        dataSource$ = this.createMVTDataSource(options as MVTDataSourceOptions);
         break;
       case 'tilearcgisrest':
-        dataSource = this.createTileArcGISRestDataSource(
+        dataSource$ = this.createTileArcGISRestDataSource(
           options as TileArcGISRestDataSourceOptions,
           detailedContextUri
         );
         break;
       case 'cluster':
-        dataSource = this.createClusterDataSource(
+        dataSource$ = this.createClusterDataSource(
           options as ClusterDataSourceOptions
         );
         break;
@@ -140,9 +139,7 @@ export class DataSourceService {
         throw new Error('Invalid datasource type');
     }
 
-    this.datasources$.next(this.datasources$.value.concat([dataSource]));
-
-    return dataSource;
+    return dataSource$;
   }
 
   private createOSMDataSource(
@@ -223,10 +220,10 @@ export class DataSourceService {
     observables.push(of(options));
 
     return forkJoin(observables).pipe(
-      map((options: WMSDataSourceOptions[]) => {
-        const optionsMerged = options.reduce((a, b) =>
+      map((opts) => {
+        const optionsMerged = opts.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
-        );
+        ) as WMSDataSourceOptions;
 
         if (optionsMerged?.params) {
           optionsMerged.params = this.normalizeParams(optionsMerged.params);
@@ -250,7 +247,9 @@ export class DataSourceService {
     const uppercasedParams: Partial<WMSDataSourceOptionsParams> = {};
     for (const key in params) {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
-        uppercasedParams[key.toUpperCase()] = params[key];
+        (uppercasedParams as unknown as Record<string, unknown>)[
+          key.toUpperCase()
+        ] = (params as unknown as Record<string, unknown>)[key];
       }
     }
 
@@ -262,9 +261,7 @@ export class DataSourceService {
   ): Observable<WMTSDataSource> {
     if (options.optionsFromCapabilities && window.navigator.onLine) {
       return this.capabilitiesService.getWMTSOptions(options).pipe(
-        map((options: WMTSDataSourceOptions) => {
-          return options ? new WMTSDataSource(options) : undefined;
-        }),
+        map((opts: WMTSDataSourceOptions) => new WMTSDataSource(opts)),
         catchError(() => {
           this.messageService.error(
             'igo.geo.dataSource.unavailable',
@@ -272,7 +269,7 @@ export class DataSourceService {
             undefined,
             { value: options.layer }
           );
-          return of(undefined);
+          return of(undefined as unknown as WMTSDataSource);
         })
       );
     }
@@ -349,8 +346,8 @@ export class DataSourceService {
     }
     observables.push(of(options));
     return forkJoin(observables).pipe(
-      map((options: ArcGISRestDataSource[]) => {
-        const optionsMerged = options.reduce((a, b) =>
+      map((opts) => {
+        const optionsMerged = opts.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
         return new ArcGISRestDataSource(optionsMerged);
@@ -358,13 +355,13 @@ export class DataSourceService {
       catchError(() => {
         return of(undefined);
       })
-    );
+    ) as Observable<ArcGISRestDataSource>;
   }
 
   private createArcGISRestImageDataSource(
     options: ArcGISRestImageDataSourceOptions,
     detailedContextUri?: string
-  ): Observable<ArcGISRestImageDataSourceOptions> {
+  ): Observable<ImageArcGISRestDataSource> {
     const observables = [];
 
     if (window.navigator.onLine) {
@@ -406,8 +403,8 @@ export class DataSourceService {
     }
     observables.push(of(options));
     return forkJoin(observables).pipe(
-      map((options: ImageArcGISRestDataSource[]) => {
-        const optionsMerged = options.reduce((a, b) =>
+      map((opts) => {
+        const optionsMerged = opts.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
         return new ImageArcGISRestDataSource(optionsMerged);
@@ -415,7 +412,7 @@ export class DataSourceService {
       catchError(() => {
         return of(undefined);
       })
-    );
+    ) as Observable<ImageArcGISRestDataSource>;
   }
 
   private createTileArcGISRestDataSource(
@@ -462,8 +459,8 @@ export class DataSourceService {
     }
     observables.push(of(options));
     return forkJoin(observables).pipe(
-      map((options: TileArcGISRestDataSource[]) => {
-        const optionsMerged = options.reduce((a, b) =>
+      map((opts) => {
+        const optionsMerged = opts.reduce((a, b) =>
           ObjectUtils.mergeDeep(a, b)
         );
         return new TileArcGISRestDataSource(optionsMerged);
@@ -471,7 +468,7 @@ export class DataSourceService {
       catchError(() => {
         return of(undefined);
       })
-    );
+    ) as Observable<TileArcGISRestDataSource>;
   }
 
   private createMVTDataSource(

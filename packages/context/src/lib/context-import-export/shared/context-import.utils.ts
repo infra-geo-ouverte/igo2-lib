@@ -4,8 +4,8 @@ import {
   FeatureDataSourceOptions,
   IgoMap,
   QueryableDataSourceOptions,
-  RandomOlFlatStyle,
-  VectorLayer
+  VectorLayer,
+  randomOlFlatStyle
 } from '@igo2/geo';
 
 import OlFeature from 'ol/Feature';
@@ -55,7 +55,10 @@ export function handleFileImportError(
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError
   };
-  errMapping[error.message](file, error, messageService, sizeMb);
+  const handler = errMapping[error.message as keyof typeof errMapping];
+  if (handler) {
+    handler(file, error, messageService, sizeMb);
+  }
 }
 
 export function handleInvalidFileImportError(
@@ -128,11 +131,11 @@ export function addContextToContextList(
   contextService.contexts$.value.ours.unshift(context);
   contextService.contexts$.next(contextService.contexts$.value);
   contextService.importedContext.unshift(context);
-  contextService.loadContext(context.uri);
+  contextService.loadContext(context.uri!);
 }
 
 export function getFileExtension(file: File): string {
-  return file.name.split('.').pop().toLowerCase();
+  return file.name.split('.').pop()?.toLowerCase() ?? '';
 }
 
 export function computeLayerTitleFromFile(file: File): string {
@@ -156,7 +159,7 @@ export function addImportedFeaturesToMap(
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    style: RandomOlFlatStyle(),
+    style: randomOlFlatStyle(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
   });

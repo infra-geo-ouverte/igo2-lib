@@ -45,7 +45,7 @@ export class AnalyticsService {
       g.async = true;
       g.defer = true;
       g.src = url + '.js';
-      s.parentNode.insertBefore(g, s);
+      s.parentNode?.insertBefore(g, s);
     })();
   }
 

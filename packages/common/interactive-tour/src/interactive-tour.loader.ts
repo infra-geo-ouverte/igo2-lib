@@ -14,7 +14,7 @@ export class InteractiveTourLoader {
   private configService = inject(ConfigService);
 
   private jsonURL: string;
-  private allToursOptions;
+  private allToursOptions?: Record<string, InteractiveTourOptions>;
 
   constructor() {
     this.jsonURL = this.getPathToConfigFile();
@@ -49,12 +49,13 @@ export class InteractiveTourLoader {
     );
   }
 
-  public getTourOptionData(toolName): InteractiveTourOptions {
+  public getTourOptionData(
+    toolName: string
+  ): InteractiveTourOptions | undefined {
     if (this.allToursOptions === undefined) {
       return undefined;
     }
-    let nameInConfigFile = toolName;
-    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
+    const nameInConfigFile = toolName.replace(/\s/g, '');
     return this.allToursOptions[nameInConfigFile];
   }
 }

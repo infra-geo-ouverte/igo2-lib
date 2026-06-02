@@ -14,7 +14,6 @@ import { provideStyle } from './style.provider';
 import { StyleService } from './style.service';
 
 const geostylerStyle: GeostylerLayerStyle = {
-  editable: false,
   type: 'Geostyler',
   style: {
     name: 'Test Style',
@@ -33,7 +32,6 @@ const geostylerStyle: GeostylerLayerStyle = {
 };
 
 const mapboxStyle: MapboxLayerStyle = {
-  editable: false,
   type: 'Mapbox',
   style: {
     url: 'https://example.com/style.json',
@@ -44,6 +42,7 @@ const mapboxStyle: MapboxLayerStyle = {
 describe('StyleService', () => {
   describe('without style engine providers', () => {
     let service: StyleService;
+    let olLayer: olLayerVector;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -51,6 +50,7 @@ describe('StyleService', () => {
       });
 
       service = TestBed.inject(StyleService);
+      olLayer = new olLayerVector({});
     });
 
     it('should be created', () => {
@@ -62,7 +62,7 @@ describe('StyleService', () => {
         'fill-color': '#ff0000'
       };
 
-      const result = await service.getStyle(olStyle);
+      const result = await service.getStyle(olStyle, olLayer);
 
       expect(result).toBe(olStyle);
     });
@@ -73,7 +73,7 @@ describe('StyleService', () => {
         .mockReturnValueOnce(0.2)
         .mockReturnValueOnce(0.3);
 
-      const result = await service.getStyle(geostylerStyle);
+      const result = await service.getStyle(geostylerStyle, olLayer);
 
       expect(result).toEqual({
         'stroke-color': [25, 51, 76, 1],
@@ -102,6 +102,7 @@ describe('StyleService', () => {
   describe('withGeostyler', () => {
     let service: StyleService;
     let geostylerService: GeostylerService;
+    let olLayer: olLayerVector;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -110,6 +111,7 @@ describe('StyleService', () => {
 
       service = TestBed.inject(StyleService);
       geostylerService = TestBed.inject(GeostylerService);
+      olLayer = new olLayerVector({});
     });
 
     it('should delegate Geostyler style conversion to GeostylerService', async () => {
@@ -120,10 +122,10 @@ describe('StyleService', () => {
         .spyOn(geostylerService, 'getStyle')
         .mockResolvedValue(expectedStyle);
 
-      const result = await service.getStyle(geostylerStyle);
+      const result = await service.getStyle(geostylerStyle, olLayer);
 
       expect(getStyleSpy).toHaveBeenCalledTimes(1);
-      expect(getStyleSpy).toHaveBeenCalledWith(geostylerStyle, undefined);
+      expect(getStyleSpy).toHaveBeenCalledWith(geostylerStyle, olLayer);
       expect(result).toEqual(expectedStyle);
     });
 

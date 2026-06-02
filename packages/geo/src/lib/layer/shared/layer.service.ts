@@ -4,6 +4,8 @@ import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
+import { StyleFunction } from 'ol/style/Style';
+
 import { Observable, combineLatest, of } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 
@@ -30,7 +32,7 @@ import {
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { ClusterOlStyleFunction } from '../../style/shared/style.utils';
+import { clusterOlStyleFunction } from '../../style/shared/style.utils';
 import { StyleService } from '../../style/style.service';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
@@ -84,8 +86,8 @@ export class LayerService {
       );
     }
 
-    let layer: Layer;
-    switch (layerOptions.source.constructor) {
+    let layer: Layer | undefined;
+    switch (layerOptions.source?.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
@@ -115,7 +117,7 @@ export class LayerService {
         break;
     }
 
-    return layer;
+    return layer!;
   }
 
   createAsyncLayer(
@@ -129,7 +131,10 @@ export class LayerService {
     }
 
     return this.dataSourceService
-      .createAsyncDataSource(optionsCloned.sourceOptions, detailedContextUri)
+      .createAsyncDataSource(
+        optionsCloned.sourceOptions as any,
+        detailedContextUri
+      )
       .pipe(
         map((source) => {
           if (source === undefined) {
@@ -152,11 +157,13 @@ export class LayerService {
     detailedContextUri?: string
   ): Observable<LayerGroup> {
     if (!options.children?.length) {
-      return of(this.createGroup(null, options));
+      return of(this.createGroup([] as AnyLayer[], options));
     }
 
     return this.createLayers(options.children, detailedContextUri).pipe(
-      map((layers) => this.createGroup(layers.filter(Boolean), options))
+      map((layers) =>
+        this.createGroup(layers.filter(Boolean) as AnyLayer[], options)
+      )
     );
   }
 
@@ -172,7 +179,7 @@ export class LayerService {
     return new ImageLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor
+      this.authInterceptor ?? undefined
     );
   }
 
@@ -180,25 +187,26 @@ export class LayerService {
     return new TileLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor
+      this.authInterceptor ?? undefined
     );
   }
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
-      layerOptions.style = source.options.params.style;
+      layerOptions.style = source.options.params?.style;
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
-      layerOptions.style = layerOptions.style ?? ClusterOlStyleFunction();
+      layerOptions.style =
+        layerOptions.style ?? (clusterOlStyleFunction() as StyleFunction);
     }
 
     const vectorLayer = new VectorLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor,
-      this.geoNetworkService,
-      this.styleService
+      this.authInterceptor ?? undefined,
+      this.geoNetworkService ?? undefined,
+      this.styleService ?? undefined
     );
 
     return vectorLayer;
@@ -210,8 +218,8 @@ export class LayerService {
     return new VectorTileLayer(
       layerOptions,
       this.messageService,
-      this.authInterceptor,
-      this.styleService
+      this.authInterceptor ?? undefined,
+      this.styleService ?? undefined
     );
   }
 
@@ -232,7 +240,7 @@ export class LayerService {
           layersOptions.map((layerOptions) =>
             this.createAsyncLayer(layerOptions)
           )
-        );
+        ).pipe(map((ls) => ls.filter(Boolean) as unknown as Layer[]));
       })
     );
   }
@@ -242,18 +250,21 @@ export class LayerService {
     const index = this.unavailableLayers.findIndex((item) => {
       const baseSourceOptions = item.sourceOptions;
       if (
-        this.sourceOptionsWithParams(baseSourceOptions) &&
-        this.sourceOptionsWithParams(anyLayerSourceOptions)
+        this.sourceOptionsWithParams(baseSourceOptions as any) &&
+        this.sourceOptionsWithParams(anyLayerSourceOptions as any)
       ) {
         return (
-          baseSourceOptions.params.LAYERS ===
-          anyLayerSourceOptions.params.LAYERS
+          (baseSourceOptions as any).params.LAYERS ===
+          (anyLayerSourceOptions as any).params.LAYERS
         );
       } else if (
-        this.sourceOptionsWithLayer(baseSourceOptions) &&
-        this.sourceOptionsWithLayer(anyLayerSourceOptions)
+        this.sourceOptionsWithLayer(baseSourceOptions as any) &&
+        this.sourceOptionsWithLayer(anyLayerSourceOptions as any)
       ) {
-        return baseSourceOptions.layer === anyLayerSourceOptions.layer;
+        return (
+          (baseSourceOptions as any)?.layer ===
+          (anyLayerSourceOptions as any)?.layer
+        );
       }
     });
     this.unavailableLayers.splice(index, index >= 0 ? 1 : 0);

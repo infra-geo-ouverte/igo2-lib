@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
@@ -6,39 +7,36 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { stylefunction } from 'ol-mapbox-style';
 import { Observable, firstValueFrom, of } from 'rxjs';
-import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
-import { Cacheable } from 'ts-cacheable';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { StyleEngine } from '../shared/style-engine.interface';
-import { AnyOlStyle, LayerStyle } from '../shared/style.types';
+import {
+  AnyOlStyle,
+  EngineLayerStyle,
+  StyleEngine
+} from '../shared/style.interface';
 import { MapboxLayerStyle, MapboxUrlResponse } from './mapbox.interface';
 
 type MapboxResolvedStyle = {
   style: MapboxUrlResponse;
   spriteBaseUrl?: string;
-  spriteJson?: unknown;
+  spriteJson?: Record<string, unknown>;
 };
 
 @Injectable()
 export class MapboxService implements StyleEngine<MapboxLayerStyle> {
   private http = inject(HttpClient);
+  private documentRef = inject(DOCUMENT);
 
-  readonly type = 'Mapbox' as const;
+  readonly type = 'Mapbox';
 
-  supports(options: LayerStyle): options is MapboxLayerStyle {
-    return options?.type === 'Mapbox';
+  supports(options: EngineLayerStyle): options is MapboxLayerStyle {
+    return options?.type === this.type;
   }
 
   async getStyle(
     options: MapboxLayerStyle,
-    ol?: olLayerVectorTile | olLayerVector
+    ol: olLayerVectorTile | olLayerVector
   ): Promise<AnyOlStyle> {
-    if (!ol) {
-      throw new Error(
-        'MapboxService.getStyle() requires an ol/layer/Vector or ol/layer/VectorTile instance (2nd argument).'
-      );
-    }
-
     const { url, source } = options.style;
 
     if (!url?.trim()) {
@@ -55,16 +53,16 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
     const resolved = await firstValueFrom(this.getResolvedStyle$(url));
 
     if (!resolved.spriteBaseUrl) {
-      return stylefunction(ol, resolved.style as any, source);
+      return stylefunction(ol, resolved.style, source);
     }
 
     if (!resolved.spriteJson) {
-      return stylefunction(ol, resolved.style as any, source);
+      return stylefunction(ol, resolved.style, source);
     }
 
     return stylefunction(
       ol,
-      resolved.style as any,
+      resolved.style,
       source,
       undefined,
       resolved.spriteJson,
@@ -76,42 +74,74 @@ export class MapboxService implements StyleEngine<MapboxLayerStyle> {
     return undefined;
   }
 
-  @Cacheable()
   private getResolvedStyle$(url: string): Observable<MapboxResolvedStyle> {
     return this.http.get<MapboxUrlResponse>(url).pipe(
       switchMap((style) => {
-        if (!style?.sprite) return of({ style });
+        const sprite = this.normalizeSpriteUrl(style?.sprite);
+        if (!sprite) return of({ style });
 
-        const spriteBaseUrl = this.toAbsoluteUrl(url, style.sprite);
+        const spriteBaseUrl = this.toAbsoluteUrl(url, sprite);
 
         return this.getSpriteJson$(spriteBaseUrl).pipe(
           map((spriteJson) => ({ style, spriteBaseUrl, spriteJson })),
           catchError(() => of({ style, spriteBaseUrl }))
         );
-      }),
-      shareReplay({ bufferSize: 1, refCount: true })
+      })
     );
   }
 
-  @Cacheable()
-  private getSpriteJson$(spriteBaseUrl: string): Observable<unknown> {
-    return this.http
-      .get<unknown>(spriteBaseUrl + '.json')
-      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private getSpriteJson$(
+    spriteBaseUrl: string
+  ): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(spriteBaseUrl + '.json');
   }
 
-  private toAbsoluteUrl(base: string, maybeRelative: unknown): string {
-    const rel = String(maybeRelative);
+  private normalizeSpriteUrl(sprite: unknown): string | undefined {
+    if (typeof sprite !== 'string') return undefined;
 
-    if (/^(https?:)?\/\//i.test(rel)) {
-      if (rel.startsWith('//')) return window.location.protocol + rel;
-      return rel;
+    const value = sprite.trim();
+    return value.length > 0 ? value : undefined;
+  }
+
+  private toAbsoluteUrl(base: string, url: string): string {
+    const urlParsed = url.trim();
+
+    if (urlParsed.startsWith('//')) {
+      return this.getProtocolFromBase(base) + urlParsed;
+    }
+
+    if (/^https?:\/\//i.test(urlParsed)) {
+      return urlParsed;
     }
 
     const absoluteBase = /^https?:\/\//i.test(base)
       ? base
-      : new URL(base, document.baseURI).toString();
+      : new URL(base, this.getBaseHref()).toString();
 
-    return new URL(rel, absoluteBase).toString();
+    return new URL(urlParsed, absoluteBase).toString();
+  }
+
+  private getProtocolFromBase(base: string): string {
+    if (/^https?:\/\//i.test(base)) {
+      return new URL(base).protocol;
+    }
+
+    const protocol = this.documentRef.location.protocol;
+    if (typeof protocol === 'string' && protocol.length > 0) {
+      return protocol;
+    }
+
+    return 'https:';
+  }
+
+  private getBaseHref(): string {
+    const href = this.documentRef.location.href;
+    if (typeof href === 'string' && href.length > 0) {
+      return href;
+    }
+
+    throw new Error(
+      'Cannot resolve relative URL without a runtime location href.'
+    );
   }
 }

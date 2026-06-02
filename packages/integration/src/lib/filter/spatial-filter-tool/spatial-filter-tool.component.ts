@@ -21,6 +21,7 @@ import {
   FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
+  Layer,
   LayerService,
   MarkerOlStyle,
   MeasureLengthUnit,
@@ -37,6 +38,7 @@ import {
   VectorLayerOptions,
   featureToOl,
   isLayerItem,
+  markerOlStyle,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -98,23 +100,23 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  readonly type = model<SpatialFilterType>(undefined);
+  readonly type = model<SpatialFilterType>();
   readonly itemType = model<SpatialFilterItemType>(
     SpatialFilterItemType.Thematics
   );
-  readonly freehandDrawIsActive = model<boolean>(undefined);
+  readonly freehandDrawIsActive = model<boolean>();
 
   public layers: AnyLayer[] = [];
   public activeLayers: AnyLayer[] = [];
 
-  public queryType: SpatialFilterQueryType;
-  public thematics: SpatialFilterThematic[];
+  public queryType?: SpatialFilterQueryType;
+  public thematics?: SpatialFilterThematic[];
 
   public buffer = 0;
 
   public iterator = 1;
 
-  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
+  public selectedFeature$ = new BehaviorSubject<Feature | undefined>(undefined);
 
   public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
 
@@ -126,12 +128,14 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
-  public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
+  public defaultStyle?:
+    | olstyle.Style
+    | ((feature: unknown, resolution: unknown) => olstyle.Style);
   public zones: Feature[] = [];
 
   private unsubscribe$ = new Subject<void>();
-  private activePredefinedLayerZones: VectorLayer;
-  private activeDrawLayerZones: VectorLayer;
+  private activePredefinedLayerZones?: VectorLayer;
+  private activeDrawLayerZones?: VectorLayer;
 
   ngOnInit() {
     for (const layer of this.map.layerController.all) {
@@ -175,7 +179,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     const ids = [];
     const re = new RegExp('^Zone \\d+');
     for (const layer of this.layers) {
-      if (!layer.title.match(re)) {
+      if (!layer.title?.match(re)) {
         ids.push(layer.id);
       }
     }
@@ -184,8 +188,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.toolState.toolbox.activateTool('importExport');
   }
 
-  activateWorkspace(record?) {
-    let layerToOpenWks;
+  activateWorkspace(record?: Record<string, unknown>) {
+    let layerToOpenWks: AnyLayer | undefined;
     this.workspaceState.store.entities$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
@@ -201,7 +205,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             for (const thematic of this.thematics) {
               if (!thematic.zeroResults) {
                 layerToOpenWks = this.activeLayers.find((layer) =>
-                  layer.title.includes(
+                  layer.title?.includes(
                     thematic.name + ' ' + this.iterator.toString()
                   )
                 );
@@ -211,7 +215,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           } else {
             const title = 'Adresses ' + this.iterator.toString();
             this.activeLayers.forEach((layer) => {
-              if (layer.title.includes(title)) {
+              if (layer.title?.includes(title)) {
                 layerToOpenWks = layer;
               }
             });
@@ -219,7 +223,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
           if (layerToOpenWks) {
             this.workspaceState.expanded.set(true);
-            this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
+            this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id!);
           }
         } else if (
           record &&
@@ -234,12 +238,15 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       });
   }
 
-  private selectWorkspaceEntity(record) {
+  private selectWorkspaceEntity(record: Record<string, unknown>) {
     this.workspaceState.store.all().forEach((workspace) => {
-      workspace.entityStore.state.updateAll({ selected: false });
-      if (workspace.title.includes(record.added[0].meta.title)) {
+      workspace.entityStore?.state.updateAll({ selected: false });
+      if (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        workspace.title.includes((record['added'] as any[])[0]?.meta?.title)
+      ) {
         this.workspaceState.setActiveWorkspaceById(workspace.id);
-        workspace.entityStore.state.updateMany(record.added, {
+        workspace.entityStore?.state.updateMany(record['added'] as object[], {
           selected: true
         });
       }
@@ -248,7 +255,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   private loadFilterList() {
     this.spatialFilterService
-      .loadFilterList(this.queryType)
+      .loadFilterList(this.queryType!)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((features: Feature[]) => {
         features.sort((a, b) => {
@@ -300,7 +307,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       };
       thematics = [theme];
     } else {
-      thematics = this.thematics;
+      thematics = this.thematics ?? [];
     }
     if (
       this.measureUnit === MeasureLengthUnit.Kilometers &&
@@ -314,7 +321,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
     this.spatialFilterService
       .loadFilterItems(this.zones, this.itemType(), {
-        type: this.queryType,
+        type: this.queryType!,
         thematics,
         buffer: this.buffer
       })
@@ -327,10 +334,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
           grouped.forEach(({ points, lines }) => {
             if (points.length > 0) {
-              this.tryAddPointToMap(points, points[0].meta.id);
+              this.tryAddPointToMap(points, points[0].meta?.id);
             }
             if (lines.length > 0) {
-              this.tryAddLayerToMap(lines, lines[0].meta.id);
+              this.tryAddLayerToMap(lines, lines[0].meta?.id);
             }
           });
 
@@ -381,7 +388,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         grouped.set(typeKey, group);
       }
 
-      if (feature.geometry.type === 'Point') {
+      if (feature.geometry?.type === 'Point') {
         feature.properties.longitude = feature.geometry.coordinates[0];
         feature.properties.latitude = feature.geometry.coordinates[1];
         group.points.push(feature);
@@ -396,7 +403,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
    * Try to add point features to the map
    * Necessary to create clusters
    */
-  private tryAddPointToMap(features: Feature[], id) {
+  private tryAddPointToMap(features: Feature[], id: unknown) {
     // 🔑 Get active zone index from its title
     const activeZone =
       this.type() === SpatialFilterType.Predefined
@@ -409,17 +416,17 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         zoneIndex = parseInt(match[1], 10);
       }
     }
-    const titleFeature = features[0].meta.title;
+    const titleFeature = features[0].meta?.title;
 
     // Count how many layers with the same meta.title already exist
     let i = 1;
     for (const layer of this.layers) {
-      if (layer.title?.startsWith(titleFeature)) {
+      if (layer.title?.startsWith(titleFeature ?? '')) {
         i++;
       }
     }
 
-    const style = MarkerOlStyle({});
+    const style = markerOlStyle({});
 
     // 🔑 Use zoneIndex to sync layer naming
     const filterLabel = this.languageService.translate.instant(
@@ -446,14 +453,16 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.layerService
       .createAsyncLayer(options)
       .pipe(take(1))
-      .subscribe((layer: VectorLayer) => {
+      .subscribe((layer: Layer | undefined) => {
+        if (!layer) return;
+        const vectorLayer = layer as VectorLayer;
         const featuresOl = features.map((feature) => {
           return featureToOl(feature, this.map.projection);
         });
-        const ol = layer.dataSource.ol as olSourceCluster;
-        ol.getSource().addFeatures(featuresOl);
+        const ol = vectorLayer.dataSource.ol as olSourceCluster;
+        ol.getSource()!.addFeatures(featuresOl);
         const previousLayer = this.layers.find(
-          (prevLayer) => prevLayer.id === layer.id
+          (prevLayer) => prevLayer.id === vectorLayer.id
         );
         if (previousLayer) {
           this.map.layerController.remove(previousLayer);
@@ -472,21 +481,21 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   /**
    * Try to add line or polygon features to the map
    */
-  private tryAddLayerToMap(features: Feature[], id) {
+  private tryAddLayerToMap(features: Feature[], id: unknown) {
     let i = 1;
     if (features.length) {
       if (this.map === undefined) {
         return;
       }
       for (const layer of this.layers) {
-        if (layer.title?.startsWith(features[0].meta.title)) {
+        if (layer.title?.startsWith(features[0].meta?.title ?? '')) {
           i++;
         }
       }
 
       const options: VectorLayerOptions = {
         isIgoInternalLayer: true,
-        title: (features[0].meta.title +
+        title: ((features[0].meta?.title ?? '') +
           ' ' +
           i +
           ' - ' +
@@ -503,19 +512,21 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       this.layerService
         .createAsyncLayer(options)
         .pipe(take(1))
-        .subscribe((layer: VectorLayer) => {
+        .subscribe((layer: Layer | undefined) => {
+          if (!layer) return;
+          const vectorLayer = layer as VectorLayer;
           const featuresOl = features.map((feature) => {
             return featureToOl(feature, this.map.projection);
           });
-          const ol = layer.dataSource.ol as olSourceVector;
+          const ol = vectorLayer.dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
           const previousLayer = this.layers.find(
-            (prevLayer) => prevLayer.id === layer.id
+            (prevLayer) => prevLayer.id === vectorLayer.id
           );
           if (previousLayer) {
             this.map.layerController.remove(previousLayer);
             i = i - 1;
-            layer.title = (features[0].meta.title +
+            layer.title = ((features[0].meta?.title ?? '') +
               ' ' +
               i +
               ' - ' +
@@ -531,7 +542,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  private pushLayer(layer) {
+  private pushLayer(layer: AnyLayer) {
     for (const lay of this.activeLayers) {
       if (lay.id === layer.id) {
         return;
@@ -568,7 +579,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
     if (toRemove.length) {
       toRemove.forEach((f) => olSource.removeFeature(f));
-      this.zones = this.zones.filter((z) => z.meta.id !== feature.meta.id);
+      this.zones = this.zones.filter((z) => z.meta?.id !== feature.meta?.id);
     }
 
     if (olSource.getFeatures().length === 0) {
@@ -596,13 +607,13 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         : undefined;
     if (!zoneLayer) {
       this.defaultStyle = this.createZoneStyle(features[0]);
-      this.createZoneLayer(lastZoneIndex + 1, features).subscribe(
-        (layer: VectorLayer) => {
-          this.setActiveZoneLayer(layer);
-          this.addFeaturesToLayer(layer, features);
-          this.cdRef.detectChanges();
-        }
-      );
+      this.createZoneLayer(lastZoneIndex + 1, features).subscribe((layer) => {
+        if (!layer) return;
+        const vectorLayer = layer as VectorLayer;
+        this.setActiveZoneLayer(vectorLayer);
+        this.addFeaturesToLayer(vectorLayer, features);
+        this.cdRef.detectChanges();
+      });
     } else {
       this.addFeaturesToLayer(zoneLayer, features, buffer);
     }
@@ -611,12 +622,12 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   private zonesExistsInLayers(): boolean {
     if (this.type() !== SpatialFilterType.Predefined) return false;
     return this.layers
-      .filter((l) => l.title.includes('Zone'))
+      .filter((l) => l.title?.includes('Zone'))
       .some((layer) => {
-        const olSource = layer.dataSource.ol as olSourceVector;
+        const olSource = layer.dataSource?.ol as olSourceVector;
         const layerFeatures = olSource.getFeatures();
         return this.zones.every((zone) =>
-          layerFeatures.some((feature) => feature.getId() === zone.meta.id)
+          layerFeatures.some((feature) => feature.getId() === zone.meta?.id)
         );
       });
   }
@@ -635,7 +646,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     return max;
   }
 
-  private createZoneStyle(feature: Feature): (f, r) => olstyle.Style {
+  private createZoneStyle(
+    feature: Feature
+  ): (f: unknown, r: unknown) => olstyle.Style {
     return (_feature, resolution) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const coordinates = (feature as any).coordinates;
@@ -644,8 +657,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           radius: coordinates
             ? this.buffer /
               Math.cos((Math.PI / 180) * coordinates[1]) /
-              resolution
-            : undefined,
+              (resolution as number)
+            : 0,
           fill: new olstyle.Fill({ color: 'rgba(200, 200, 20, 0.2)' }),
           stroke: new olstyle.Stroke({ width: 1, color: 'orange' })
         }),
@@ -735,6 +748,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     radius: number
   ): void {
     const olGeometry = featureOl.getGeometry();
+    if (!olGeometry) return;
     const [longitude, latitude] = transform(
       olGeometry.getFlatCoordinates(),
       projectionCode,

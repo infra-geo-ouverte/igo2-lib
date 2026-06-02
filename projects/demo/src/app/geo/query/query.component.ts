@@ -13,7 +13,6 @@ import {
   FeatureMotion,
   IgoMap,
   IgoQueryModule,
-  ImageLayer,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
@@ -27,7 +26,6 @@ import {
   QueryableDataSourceOptions,
   SearchResult,
   VectorLayerOptions,
-  VectorTileLayer,
   VectorTileLayerOptions
 } from '@igo2/geo';
 
@@ -76,18 +74,18 @@ export class AppQueryComponent implements OnInit {
     center: [-73, 47.2],
     zoom: 6
   };
-  public queryResultsOverlayAll: Overlay;
+  public queryResultsOverlayAll!: Overlay;
 
   constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)
@@ -155,7 +153,9 @@ export class AppQueryComponent implements OnInit {
           }
         }
       } as ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -166,14 +166,14 @@ export class AppQueryComponent implements OnInit {
           { name: 'description', alias: 'Alias description' }
         ]
       } as FeatureDataSourceOptions)
-      .subscribe((dataSource: FeatureDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Vector layer',
-            source: dataSource
+            source: dataSource as FeatureDataSource
           } satisfies VectorLayerOptions)
         );
-        this.addFeatures(dataSource);
+        this.addFeatures(dataSource as FeatureDataSource);
       });
 
     this.layerService
@@ -200,9 +200,12 @@ export class AppQueryComponent implements OnInit {
           }
         }
       } as VectorTileLayerOptions)
-      .subscribe((layer: VectorTileLayer) =>
-        this.map.layerController.add(layer)
-      );
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
+  }
+  ngOnInit(): void {
+    this.queryResultsOverlayAll = new Overlay(this.map);
   }
   ngOnInit(): void {
     this.queryResultsOverlayAll = new Overlay(this.map);

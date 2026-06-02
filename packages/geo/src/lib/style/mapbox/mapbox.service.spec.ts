@@ -6,7 +6,7 @@ import olLayerVector from 'ol/layer/Vector';
 import { firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
 
-import { GeostylerLayerStyle } from '../geostyler/geostyler.interface';
+import { AnyOlStyle, EngineLayerStyle } from '../shared/style.interface';
 import { provideStyle } from '../style.provider';
 import { StyleService } from '../style.service';
 import { MapboxLayerStyle } from './mapbox.interface';
@@ -14,7 +14,6 @@ import { withMapbox } from './mapbox.provider';
 import { MapboxService } from './mapbox.service';
 
 const mapboxStyle: MapboxLayerStyle = {
-  editable: false,
   type: 'Mapbox',
   style: {
     url: 'https://example.com/style.json',
@@ -53,37 +52,32 @@ describe('MapboxService', () => {
     });
 
     it('should reject non Mapbox styles', () => {
-      const geostylerStyle: GeostylerLayerStyle = {
-        editable: false,
-        type: 'Geostyler',
-        style: {
-          name: 'Test Style',
-          rules: []
-        }
+      const olFlatStyle: AnyOlStyle = {
+        'fill-color': '#ff0000'
       };
 
-      expect(service.supports(geostylerStyle)).toBe(false);
+      expect(service.supports(olFlatStyle as unknown as EngineLayerStyle)).toBe(
+        false
+      );
     });
   });
 
-  it('should register the mapbox engine in StyleService', async () => {
-    const engineSpy = vi
+  it('should register the Mapbox engine in StyleService', async () => {
+    const expected: AnyOlStyle = {
+      'fill-color': '#ff0000'
+    };
+    const getStyleSpy = vi
       .spyOn(service, 'getStyle')
-      .mockResolvedValue(undefined);
+      .mockResolvedValue(expected);
 
-    await styleService.getStyle(mapboxStyle, olLayer);
+    const result = await styleService.getStyle(mapboxStyle, olLayer);
 
-    expect(engineSpy).toHaveBeenCalledTimes(1);
-    expect(engineSpy).toHaveBeenCalledWith(mapboxStyle, olLayer);
+    expect(getStyleSpy).toHaveBeenCalledWith(mapboxStyle, olLayer);
+    expect(result).toBeTruthy();
+    expect(result).toEqual(expected);
   });
 
   describe('getStyle', () => {
-    it('should require an OpenLayers layer', async () => {
-      await expect(service.getStyle(mapboxStyle)).rejects.toThrow(
-        'MapboxService.getStyle() requires an ol/layer/Vector or ol/layer/VectorTile instance (2nd argument).'
-      );
-    });
-
     it('should require a style url', async () => {
       await expect(
         service.getStyle(
@@ -233,7 +227,7 @@ describe('MapboxService', () => {
 
     it('should preserve protocol-relative sprite urls', () => {
       const privateApi = service as unknown as {
-        toAbsoluteUrl: (base: string, maybeRelative: unknown) => string;
+        toAbsoluteUrl: (base: string, maybeRelative: string) => string;
       };
 
       const result = privateApi.toAbsoluteUrl(
@@ -241,9 +235,69 @@ describe('MapboxService', () => {
         '//cdn.example.com/sprite'
       );
 
-      expect(result).toBe(
-        window.location.protocol + '//cdn.example.com/sprite'
+      expect(result).toBe('https://cdn.example.com/sprite');
+    });
+  });
+
+  describe('normalizeSpriteUrl', () => {
+    it('should ignore non-string sprite values', async () => {
+      const styleResponse = { sprite: { url: './sprites/main' } };
+      const styleOptions = {
+        ...mapboxStyle,
+        style: {
+          ...mapboxStyle.style,
+          url: 'https://example.com/style-with-invalid-sprite.json'
+        }
+      };
+      const privateApi = service as unknown as {
+        getResolvedStyle$: (
+          url: string
+        ) => ReturnType<(typeof service)['getResolvedStyle$']>;
+      };
+
+      const resultPromise = firstValueFrom(
+        privateApi.getResolvedStyle$(styleOptions.style.url)
       );
+
+      httpMock.expectOne(styleOptions.style.url).flush(styleResponse);
+
+      const result = await resultPromise;
+
+      expect(result).toEqual({ style: styleResponse });
+    });
+
+    it('should trim string sprite values before resolution', async () => {
+      const styleResponse = { sprite: '  ./sprites/sprite-trimmed  ' };
+      const spriteJson = { icon: { x: 0, y: 0, width: 10, height: 10 } };
+      const styleOptions = {
+        ...mapboxStyle,
+        style: {
+          ...mapboxStyle.style,
+          url: 'https://example.com/style-with-trimmed-sprite.json'
+        }
+      };
+      const privateApi = service as unknown as {
+        getResolvedStyle$: (
+          url: string
+        ) => ReturnType<(typeof service)['getResolvedStyle$']>;
+      };
+
+      const resultPromise = firstValueFrom(
+        privateApi.getResolvedStyle$(styleOptions.style.url)
+      );
+
+      httpMock.expectOne(styleOptions.style.url).flush(styleResponse);
+      httpMock
+        .expectOne('https://example.com/sprites/sprite-trimmed.json')
+        .flush(spriteJson);
+
+      const result = await resultPromise;
+
+      expect(result).toEqual({
+        style: styleResponse,
+        spriteBaseUrl: 'https://example.com/sprites/sprite-trimmed',
+        spriteJson
+      });
     });
   });
 });

@@ -12,7 +12,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { getEntityTitle } from '@igo2/common/entity';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
 
 /**
@@ -32,15 +31,7 @@ import { Catalog } from '../shared/catalog.abstract';
   ]
 })
 export class CatalogLibraryItemComponent {
-  /**
-   * Catalog
-   */
-  readonly catalog = input<Catalog>(undefined);
-
-  /**
-   * Map to add the catalog items to
-   */
-  readonly map = input<IgoMap>(undefined);
+  readonly catalog = input.required<Catalog>();
 
   readonly catalogRemove = output();
 
@@ -48,7 +39,7 @@ export class CatalogLibraryItemComponent {
     return getEntityTitle(this.catalog());
   }
 
-  removeCatalogFromLibrary(event) {
+  removeCatalogFromLibrary(event: Event) {
     event.stopPropagation();
     this.catalogRemove.emit();
   }

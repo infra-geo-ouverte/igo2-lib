@@ -6,9 +6,9 @@ import { EntityStateManager } from './state';
 import type { EntityStoreStrategy } from './strategies/strategy';
 import { EntityView } from './view';
 
-export interface EntityStoreOptions {
-  getKey?: (entity: object) => EntityKey;
-  getProperty?: (entity: object, property: string) => any;
+export interface EntityStoreOptions<E extends object = object> {
+  getKey?: (entity: E) => EntityKey;
+  getProperty?: (entity: E, property: string) => any;
 }
 
 /**
@@ -59,12 +59,12 @@ export class EntityStore<
   /**
    * Method to get an entity's id
    */
-  readonly getKey: (E) => EntityKey;
+  readonly getKey: (arg0: E) => EntityKey;
 
   /**
    * Method to get an entity's named property
    */
-  readonly getProperty: (E, prop: string) => any;
+  readonly getProperty: (arg0: E, arg1: string) => any;
 
   /**
    * Store index
@@ -72,7 +72,7 @@ export class EntityStore<
   get index(): Map<EntityKey, E> {
     return this._index;
   }
-  private _index: Map<EntityKey, E>;
+  private _index!: Map<EntityKey, E>;
 
   /**
    * Store index
@@ -87,7 +87,7 @@ export class EntityStore<
    */
   private strategies: EntityStoreStrategy[] = [];
 
-  constructor(entities: E[], options: EntityStoreOptions = {}) {
+  constructor(entities: E[], options: EntityStoreOptions<E> = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty
       ? options.getProperty
@@ -112,7 +112,7 @@ export class EntityStore<
    * @param key Key
    * @returns Entity
    */
-  get(key: EntityKey): E {
+  get(key: EntityKey): E | undefined {
     return this.index.get(key);
   }
 
@@ -210,7 +210,10 @@ export class EntityStore<
    * @param strategy Entity store strategy
    * @returns Entity store
    */
-  addStrategy(strategy: EntityStoreStrategy, activate = false): EntityStore {
+  addStrategy(
+    strategy: EntityStoreStrategy,
+    activate = false
+  ): EntityStore<E, S> {
     const existingStrategy = this.strategies.find(
       (_strategy: EntityStoreStrategy) => {
         return strategy.constructor === _strategy.constructor;
@@ -223,7 +226,7 @@ export class EntityStore<
     }
 
     this.strategies.push(strategy);
-    strategy.bindStore(this);
+    strategy.bindStore(this as unknown as EntityStore<object, EntityState>);
 
     if (activate === true) {
       strategy.activate();
@@ -237,11 +240,11 @@ export class EntityStore<
    * @param strategy Entity store strategy
    * @returns Entity store
    */
-  removeStrategy(strategy: EntityStoreStrategy): EntityStore {
+  removeStrategy(strategy: EntityStoreStrategy): EntityStore<E, S> {
     const index = this.strategies.indexOf(strategy);
     if (index >= 0) {
       this.strategies.splice(index, 1);
-      strategy.unbindStore(this);
+      strategy.unbindStore(this as unknown as EntityStore<object, EntityState>);
     }
     return this;
   }
@@ -251,7 +254,9 @@ export class EntityStore<
    * @param type Entity store strategy class
    * @returns Strategies
    */
-  getStrategyOfType(type: typeof EntityStoreStrategy): EntityStoreStrategy {
+  getStrategyOfType(
+    type: typeof EntityStoreStrategy
+  ): EntityStoreStrategy | undefined {
     return this.strategies.find((strategy: EntityStoreStrategy) => {
       return strategy instanceof type;
     });
@@ -369,7 +374,7 @@ export class EntityStore<
           const ref = `${key}-${revision}`;
           return { entity, state, revision, ref };
         }
-      })
+      } as any)
       .createIndex((record: EntityRecord<E, S>) => this.getKey(record.entity));
   }
 

@@ -2,6 +2,7 @@ import { TimeFrame } from '@igo2/utils';
 
 import { Extent } from 'ol/extent';
 import * as OlFormat from 'ol/format';
+import olFormatFeature from 'ol/format/Feature';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
@@ -50,7 +51,7 @@ export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
  */
 export function buildUrl(
   options: WFSDataSourceOptions,
-  extent: Extent,
+  extent: Extent | undefined,
   proj: olProjection,
   randomParam?: boolean
 ): string {
@@ -59,7 +60,7 @@ export function buildUrl(
   const queryStringValues = formatWFSQueryString(
     options,
     undefined,
-    options.paramsWFS.srsName
+    options.paramsWFS!.srsName
   );
   let igoFilters;
   if (ogcFilters?.enabled) {
@@ -70,12 +71,12 @@ export function buildUrl(
     igoFilters,
     extent,
     proj,
-    ogcFilters?.geometryName,
+    ogcFilters?.geometryName ?? defaultFieldNameGeometry,
     options
   );
   let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(
     options,
-    ogcFilters?.geometryName,
+    ogcFilters?.geometryName ?? defaultFieldNameGeometry,
     extent,
     proj
   );
@@ -87,15 +88,15 @@ export function buildUrl(
   }
 
   if (ogcFilters?.advancedOgcFilters || filterOrPush) {
-    paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
+    paramsWFS!.xmlFilter = ogcFilters?.advancedOgcFilters
       ? filterOrBox
       : `${prefix}=${filterOrPush}`;
   }
 
-  let baseUrl = queryStringValues.find((f) => f.name === 'getfeature').value;
+  let baseUrl = queryStringValues.find((f) => f.name === 'getfeature')!.value;
   const patternFilter = /(filter|bbox)=.*/gi;
-  baseUrl = patternFilter.test(paramsWFS.xmlFilter)
-    ? `${baseUrl}&${paramsWFS.xmlFilter}`
+  baseUrl = patternFilter.test(paramsWFS!.xmlFilter ?? '')
+    ? `${baseUrl}&${paramsWFS!.xmlFilter}`
     : baseUrl;
   options.download = Object.assign({}, options.download, {
     dynamicUrl: baseUrl
@@ -127,23 +128,23 @@ export function formatWFSQueryString(
   const paramsWFS = dataSourceOptions.paramsWFS;
   const effectiveCount = count || defaultMaxFeatures;
   const effectiveStartIndex =
-    paramsWFS.version === versionWfs200 ? `startIndex=${startIndex}` : '';
+    paramsWFS!.version === versionWfs200 ? `startIndex=${startIndex}` : '';
   const epsgCode = epsg || defaultEpsg;
-  let outputFormat = paramsWFS.outputFormat
-    ? `outputFormat=${paramsWFS.outputFormat}`
+  let outputFormat = paramsWFS!.outputFormat
+    ? `outputFormat=${paramsWFS!.outputFormat}`
     : '';
-  let version = paramsWFS.version
-    ? `version=${paramsWFS.version}`
+  let version = paramsWFS!.version
+    ? `version=${paramsWFS!.version}`
     : `version=${defaultWfsVersion}`;
   const paramTypename =
-    paramsWFS.version === versionWfs200 ? 'typenames' : 'typename';
-  const featureTypes = `${paramTypename}=${paramsWFS.featureTypes}`;
+    paramsWFS!.version === versionWfs200 ? 'typenames' : 'typename';
+  const featureTypes = `${paramTypename}=${paramsWFS!.featureTypes}`;
   const paramMaxFeatures =
-    paramsWFS.version === versionWfs200 ? 'count' : 'maxFeatures';
+    paramsWFS!.version === versionWfs200 ? 'count' : 'maxFeatures';
   let cnt = count
     ? `${paramMaxFeatures}=${effectiveCount}`
-    : paramsWFS.maxFeatures
-      ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}`
+    : paramsWFS!.maxFeatures
+      ? `${paramMaxFeatures}=${paramsWFS!.maxFeatures}`
       : `${paramMaxFeatures}=${effectiveCount}`;
   if (forceDefaultOutputFormat) {
     outputFormat = '';
@@ -153,8 +154,8 @@ export function formatWFSQueryString(
 
   const srs = epsg
     ? `srsname=${epsgCode}`
-    : paramsWFS.srsName
-      ? 'srsname=' + paramsWFS.srsName
+    : paramsWFS!.srsName
+      ? 'srsname=' + paramsWFS!.srsName
       : `srsname=${epsgCode}`;
 
   let propertyName = '';
@@ -165,22 +166,22 @@ export function formatWFSQueryString(
   }
   const sourceFields = dataSourceOptions.sourceFields;
   if (!propertyName && sourceFields && sourceFields.length > 0) {
-    const fieldsNames = [];
-    dataSourceOptions.sourceFields.forEach((sourcefield) => {
+    const fieldsNames: string[] = [];
+    dataSourceOptions.sourceFields!.forEach((sourcefield) => {
       fieldsNames.push(sourcefield.name);
     });
     propertyName = `propertyName=${fieldsNames.join(',')},${
-      paramsWFS.fieldNameGeometry
+      paramsWFS!.fieldNameGeometry
     }`;
   }
 
-  const separator = url.indexOf('?') === -1 ? '?' : '&';
+  const separator = url!.indexOf('?') === -1 ? '?' : '&';
   const getCapabilities = `${url}${separator}service=WFS&request=GetCapabilities&${version}`;
   let getFeature = `${url}${separator}service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
 
-  if (dataSourceOptions[EventRefresh]) {
-    getFeature += `&${EventRefresh}=${dataSourceOptions[EventRefresh]}`;
+  if ((dataSourceOptions as any)[EventRefresh]) {
+    getFeature += `&${EventRefresh}=${(dataSourceOptions as any)[EventRefresh]}`;
   }
 
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
@@ -208,13 +209,18 @@ export function formatWFSQueryString(
  * @param wfsDataSourceOptions  WFSDataSourceOptions The common wfs datasource options interface
  * @returns An array array of {name: '', value: ''} of predefined query params.
  */
-export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
+export function checkWfsParams(
+  wfsDataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions,
+  srcType?: string
+) {
   if (srcType && srcType === 'wfs') {
     // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
-    wfsDataSourceOptions.paramsWFS = wfsDataSourceOptions.params;
+    (wfsDataSourceOptions as WFSDataSourceOptions).paramsWFS = (
+      wfsDataSourceOptions as WFSDataSourceOptions
+    ).params;
   }
 
-  const paramsWFS = wfsDataSourceOptions.paramsWFS;
+  const paramsWFS = wfsDataSourceOptions.paramsWFS!;
   wfsDataSourceOptions.urlWfs =
     wfsDataSourceOptions.urlWfs || wfsDataSourceOptions.url;
 
@@ -223,12 +229,12 @@ export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
     paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
   paramsWFS.maxFeatures = paramsWFS.maxFeatures || defaultMaxFeatures;
 
-  let outputFormat;
+  let outputFormat: string | undefined;
   if (paramsWFS.outputFormat) {
     outputFormat = paramsWFS.outputFormat;
   }
 
-  if (gmlRegex.test(outputFormat) || !outputFormat) {
+  if (!outputFormat || gmlRegex.test(outputFormat)) {
     paramsWFS.version = '1.1.0';
   }
   return Object.assign({}, wfsDataSourceOptions);
@@ -240,7 +246,7 @@ export function getFormatFromOptions(
   const wfsOptions = options as WFSDataSourceOptions;
 
   let olFormatCls;
-  const outputFormat = wfsOptions.paramsWFS.outputFormat
+  const outputFormat = wfsOptions.paramsWFS?.outputFormat
     ? wfsOptions.paramsWFS.outputFormat
     : undefined;
 
@@ -249,9 +255,11 @@ export function getFormatFromOptions(
     return new olFormatCls(wfsOptions.formatOptions);
   }
 
-  if (OlFormat[outputFormat]) {
-    olFormatCls = OlFormat[outputFormat];
-    return new olFormatCls(wfsOptions.formatOptions);
+  if ((OlFormat as Record<string, unknown>)[outputFormat]) {
+    olFormatCls = (OlFormat as Record<string, unknown>)[outputFormat];
+    return new (olFormatCls as new (opts?: unknown) => olFormatFeature)(
+      wfsOptions.formatOptions
+    );
   } else if (outputFormat.toLowerCase().match('gml2')) {
     olFormatCls = OlFormat.WFS;
     return new olFormatCls({
@@ -290,13 +298,13 @@ export function getFormatFromOptions(
     return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('osmxml')) {
     olFormatCls = olFormatOSMXML;
-    return new olFormatCls(wfsOptions.formatOptions);
+    return new olFormatCls();
   } else if (outputFormat.toLowerCase().match('kml')) {
     olFormatCls = OlFormat.KML;
     return new olFormatCls(wfsOptions.formatOptions);
   }
 
-  return new olFormatCls();
+  return new (olFormatCls as unknown as new () => olFormatFeature)();
 }
 
 export function getSaveableOgcParams(
@@ -304,7 +312,7 @@ export function getSaveableOgcParams(
 ): IOgcFiltersOptionSaveable {
   const selectors = OgcSelectorFields.reduce((selector, selectorName) => {
     if (options[selectorName]) {
-      selector[selectorName] = {
+      (selector as Record<string, unknown>)[selectorName] = {
         groups: options[selectorName].groups
       };
     }
@@ -316,14 +324,14 @@ export function getSaveableOgcParams(
     ...(options?.interfaceOgcFilters && {
       interfaceOgcFilters: options.interfaceOgcFilters.map((interfaceOgc) => {
         const filters = searchFilter(
-          options.filters,
+          options.filters!,
           'filterid',
           interfaceOgc.filterid
         );
-        return interfaceOgcFilters(filters, interfaceOgc);
+        return interfaceOgcFilters(filters!, interfaceOgc);
       })
     })
-  };
+  } as IOgcFiltersOptionSaveable;
 }
 
 function interfaceOgcFilters(
@@ -338,8 +346,8 @@ function interfaceOgcFilters(
   };
 
   Object.keys(saveableInterface).forEach((key) => {
-    if (isEmpty(saveableInterface[key])) {
-      delete saveableInterface[key];
+    if (isEmpty(saveableInterface[key as keyof IOgcInterfaceFilterOptions])) {
+      delete saveableInterface[key as keyof IOgcInterfaceFilterOptions];
     }
   });
 
@@ -364,6 +372,7 @@ function handleFilterDate(
       : new Date(date).toISOString().split('.')[0] + 'Z';
 
   keys.forEach((key) => {
+    key = key as keyof AnyBaseOgcFilterOptions;
     if (filter && !isEmpty(filter[key])) {
       if (formatDate(filter[key]) !== formatDate(interfaceOgc[key])) {
         saveableInterface[key] = interfaceOgc[key];
@@ -455,21 +464,23 @@ function countOgcActiveSelectors(options: OgcFiltersOptions): number {
 }
 
 function countOgcActiveInterface(options: OgcFiltersOptions): number {
-  return options.interfaceOgcFilters.reduce((cnt, interfaceOgc) => {
-    const layerFilter = searchFilter(
-      options.filters,
-      'propertyName',
-      interfaceOgc.propertyName
-    );
-    if (
-      layerFilter &&
-      isOgcFilterDuringOptions(layerFilter) &&
-      interfaceOgc.active
-    ) {
-      return cnt + (interfaceOgc.begin || interfaceOgc.end ? 1 : 0);
-    }
-    return cnt;
-  }, 0);
+  return (
+    options.interfaceOgcFilters?.reduce((cnt, interfaceOgc) => {
+      const layerFilter = searchFilter(
+        options.filters!,
+        'propertyName',
+        interfaceOgc.propertyName ?? ''
+      );
+      if (
+        layerFilter &&
+        isOgcFilterDuringOptions(layerFilter) &&
+        interfaceOgc.active
+      ) {
+        return cnt + (interfaceOgc.begin || interfaceOgc.end ? 1 : 0);
+      }
+      return cnt;
+    }, 0) ?? 0
+  );
 }
 
 function getTimeFilterBadge(

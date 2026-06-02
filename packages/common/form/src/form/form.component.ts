@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { t } from 'typy';
 
-import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { Form, FormField } from '../shared/form.interfaces';
 import { getAllFormFields } from '../shared/form.utils';
 
 /**
@@ -29,12 +29,12 @@ export class FormComponent implements OnChanges {
   /**
    * Form
    */
-  readonly form = input<Form>(undefined);
+  readonly form = input.required<Form>();
 
   /**
    * Input data
    */
-  readonly formData = input<Record<string, any>>(undefined);
+  readonly formData = input<Record<string, unknown>>();
 
   /**
    * Form autocomplete
@@ -44,12 +44,12 @@ export class FormComponent implements OnChanges {
   /**
    * Event emitted when the form is submitted
    */
-  readonly submitForm = output<Record<string, any>>();
+  readonly submitForm = output<Record<string, unknown>>();
 
   readonly buttons = viewChild<ElementRef>('buttons');
 
   get hasButtons(): boolean {
-    return this.buttons().nativeElement.children.length !== 0;
+    return (this.buttons()?.nativeElement.children.length ?? 0) !== 0;
   }
 
   /**
@@ -80,27 +80,30 @@ export class FormComponent implements OnChanges {
     this.submitForm.emit(this.getData());
   }
 
-  getData(): Record<string, any> {
+  getData(): Record<string, unknown> {
     const data = {};
-    getAllFormFields(this.form()).forEach((field: FormField) => {
+    getAllFormFields(this.form()!).forEach((field: FormField) => {
       this.updateDataWithFormField(data, field);
     });
     return data;
   }
 
-  private setData(data: Record<string, any>) {
-    this.form().fields.forEach((field: FormField) => {
+  private setData(data: Record<string, unknown>) {
+    this.form().fields.forEach((field) => {
       field.control.setValue(t(data, field.name).safeObject);
     });
 
-    this.form().groups.forEach((group: FormFieldGroup) => {
-      group.fields.forEach((field: FormField) => {
+    this.form().groups.forEach((group) => {
+      group.fields.forEach((field) => {
         field.control.setValue(t(data, field.name).safeObject);
       });
     });
   }
 
-  private updateDataWithFormField(data: Record<string, any>, field: FormField) {
+  private updateDataWithFormField(
+    data: Record<string, unknown>,
+    field: FormField
+  ) {
     const control = field.control;
     if (!control.disabled) {
       data[field.name] = control.value;
@@ -111,6 +114,6 @@ export class FormComponent implements OnChanges {
    * Clear form
    */
   private clear() {
-    this.form().control.reset();
+    this.form()?.control.reset();
   }
 }

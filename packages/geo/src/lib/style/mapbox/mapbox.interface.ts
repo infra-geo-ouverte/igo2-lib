@@ -1,21 +1,14 @@
-import type { BaseLayerStyle } from '../shared/style.interface';
+import type { EngineLayerStyle } from '../shared/style.interface';
 
 export interface MapboxUrlResponse {
-  sprite?: unknown;
+  sprite?: string | unknown;
 }
 
-export interface MapboxLayerStyle extends BaseLayerStyle {
-  editable: false;
+export interface MapboxLayerStyle extends EngineLayerStyle<MapboxStyle> {
   type: 'Mapbox';
   style: MapboxStyle;
 }
-export interface MapboxStyle {
+interface MapboxStyle {
   url: string;
   source: string;
-}
-
-declare module '../shared/style.interface' {
-  interface LayerStyleRegistry {
-    Mapbox: MapboxLayerStyle;
-  }
 }

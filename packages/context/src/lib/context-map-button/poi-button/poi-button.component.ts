@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -49,28 +49,13 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
   private confirmDialogService = inject(ConfirmDialogService);
-  selected: Poi;
+  selected!: Poi;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  readonly map = input.required<IgoMap>();
+  readonly color = input<string>();
 
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
-
-  public pois: Poi[];
-  private authenticate$$: Subscription;
+  public pois!: Poi[];
+  private authenticate$$!: Subscription;
 
   ngOnInit() {
     this.authenticate$$ = this.authService.authenticate$.subscribe((auth) => {
@@ -94,7 +79,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
         )
         .subscribe((confirm) => {
           if (confirm) {
-            this.poiService.delete(poi.id).subscribe(
+            this.poiService.delete(poi.id!).subscribe(
               () => {
                 this.messageService.info(
                   'igo.context.poiButton.dialog.deleteMsg',
@@ -130,15 +115,15 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   }
 
   createPoi() {
-    const view = this.map.ol.getView();
+    const view = this.map().ol.getView();
     const proj = view.getProjection().getCode();
-    const center = new olPoint(view.getCenter()).transform(proj, 'EPSG:4326');
+    const center = new olPoint(view.getCenter()!).transform(proj, 'EPSG:4326');
 
     const poi: Poi = {
       title: '',
       x: center.getCoordinates()[0],
       y: center.getCoordinates()[1],
-      zoom: view.getZoom()
+      zoom: view.getZoom()!
     };
 
     this.dialog
@@ -167,15 +152,16 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
       });
   }
 
-  zoomOnPoi(id) {
+  zoomOnPoi(id: string) {
     const poi = this.pois.find((p) => p.id === id);
+    if (!poi) return;
 
     const center = olproj.fromLonLat(
       [Number(poi.x), Number(poi.y)],
-      this.map.projection
+      this.map().projectionCode
     );
 
-    this.map.ol.getView().animate({
+    this.map().ol.getView().animate({
       center,
       zoom: poi.zoom,
       duration: 500,

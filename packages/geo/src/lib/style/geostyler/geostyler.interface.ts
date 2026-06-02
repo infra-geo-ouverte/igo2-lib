@@ -1,9 +1,8 @@
 import { Style as GsStyle } from 'geostyler-style';
 
-import { BaseLayerStyle } from '../shared/style.base.interface';
+import { EngineLayerStyle } from '../shared/style.interface';
 
-export interface GeostylerLayerStyle extends BaseLayerStyle {
-  editable?: boolean;
+export interface GeostylerLayerStyle extends EngineLayerStyle<GsStyle> {
   type: 'Geostyler';
   style: GsStyle;
 }

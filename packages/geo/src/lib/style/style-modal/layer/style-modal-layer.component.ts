@@ -28,10 +28,11 @@ import { FlatStyle } from 'ol/style/flat';
 
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { VectorTileLayer } from '../../../layer/shared/layers/vectortile-layer';
-import { AnyStyle } from '../../shared/style.types';
-import { isFlatStyleLike } from '../../shared/style.utils';
+import { isOlFlatStyleLike } from '../../shared/style-ol.utils';
+import { AnyStyle } from '../../shared/style.interface';
 import {
   LayerMatDialogData,
+  StyleModalData,
   StyleModalLayerData
 } from '../shared/style-modal.interface';
 
@@ -59,10 +60,11 @@ export class StyleModalLayerComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
   data = inject<LayerMatDialogData>(MAT_DIALOG_DATA);
   confirmFlag = model(false);
-  public form: UntypedFormGroup;
+  public styleModalData!: StyleModalData;
+  public form!: UntypedFormGroup;
   public geometryTypes = new Map<Type, number>();
   public featuresProperties = new Map<string, number>();
-  public mostFrequentGeometryType: Type;
+  public mostFrequentGeometryType!: Type;
   public showForm = {
     fill: true,
     stroke: true,
@@ -70,7 +72,7 @@ export class StyleModalLayerComponent implements OnInit {
     fields: true,
     radius: false
   };
-  private initialLayerStyle: AnyStyle;
+  private initialLayerStyle!: AnyStyle;
   private defaultValues: StyleModalLayerData = {
     fillColor: 'rgba(255,255,255,0.4)',
     strokeColor: 'rgba(143,7,7,1)',
@@ -78,24 +80,23 @@ export class StyleModalLayerComponent implements OnInit {
     field: '_mapTitle',
     radius: 3
   };
-  get style(): AnyStyle {
+  get style(): AnyStyle | undefined {
     return this.data.layer.style;
   }
   set style(value: AnyStyle) {
     this.data.layer.style = value;
   }
-  isFlatStyleLike(): boolean {
-    return isFlatStyleLike(this.style);
+  isOlFlatStyleLike(): boolean {
+    return isOlFlatStyleLike(this.style);
   }
 
   ngOnInit() {
     let features: Feature<Geometry>[] = [];
     if (this.data.layer instanceof VectorLayer) {
-      features = this.data.layer.ol.getSource().getFeatures();
+      features = this.data.layer.ol.getSource()?.getFeatures() ?? [];
     } else if (this.data.layer instanceof VectorTileLayer) {
-      features = this.data.layer.ol.getFeaturesInExtent(
-        this.data.layer.map.viewController.getExtent()
-      );
+      const extent = this.data.layer.map?.viewController.getExtent();
+      features = extent ? this.data.layer.ol.getFeaturesInExtent(extent) : [];
     }
     this.initialLayerStyle = JSON.parse(JSON.stringify(this.style));
     this.computeInfoFromFeatures(features);
@@ -115,6 +116,7 @@ export class StyleModalLayerComponent implements OnInit {
         this.featuresProperties.set(propName, currentPropCount + 1);
       });
     });
+
     let maxCount = 0;
     this.geometryTypes.forEach((count, type) => {
       if (count > maxCount) {
@@ -180,15 +182,20 @@ export class StyleModalLayerComponent implements OnInit {
     const rv: StyleModalLayerData = {
       field: this.extractPropertyName(olFlatStyle['text-value'])
     };
+
     switch (this.mostFrequentGeometryType) {
       case 'Point':
       case 'MultiPoint':
       case 'Circle':
         Object.assign(rv, {
-          fillColor: toString(ColorAsArray(olFlatStyle['circle-fill-color'])),
-          strokeColor: toString(
-            ColorAsArray(olFlatStyle['circle-stroke-color'])
-          ),
+          fillColor:
+            olFlatStyle['circle-fill-color'] !== undefined
+              ? toString(ColorAsArray(olFlatStyle['circle-fill-color']))
+              : this.defaultValues.fillColor,
+          strokeColor:
+            olFlatStyle['circle-stroke-color'] !== undefined
+              ? toString(ColorAsArray(olFlatStyle['circle-stroke-color']))
+              : this.defaultValues.strokeColor,
           strokeWidth: olFlatStyle['circle-stroke-width'],
           radius: olFlatStyle['circle-radius']
         });
@@ -196,15 +203,24 @@ export class StyleModalLayerComponent implements OnInit {
       case 'Polygon':
       case 'MultiPolygon':
         Object.assign(rv, {
-          fillColor: toString(ColorAsArray(olFlatStyle['fill-color'])),
-          strokeColor: toString(ColorAsArray(olFlatStyle['stroke-color'])),
+          fillColor:
+            olFlatStyle['fill-color'] !== undefined
+              ? toString(ColorAsArray(olFlatStyle['fill-color']))
+              : this.defaultValues.fillColor,
+          strokeColor:
+            olFlatStyle['stroke-color'] !== undefined
+              ? toString(ColorAsArray(olFlatStyle['stroke-color']))
+              : this.defaultValues.strokeColor,
           strokeWidth: olFlatStyle['stroke-width']
         });
         break;
       case 'LineString':
       case 'MultiLineString':
         Object.assign(rv, {
-          strokeColor: toString(ColorAsArray(olFlatStyle['stroke-color'])),
+          strokeColor:
+            olFlatStyle['stroke-color'] !== undefined
+              ? toString(ColorAsArray(olFlatStyle['stroke-color']))
+              : this.defaultValues.strokeColor,
           strokeWidth: olFlatStyle['stroke-width']
         });
         break;
@@ -255,9 +271,9 @@ export class StyleModalLayerComponent implements OnInit {
     this.dialogRef.disableClose = false;
   }
 
-  extractPropertyName(expression: unknown) {
+  extractPropertyName(expression: unknown): string | undefined {
     if (!Array.isArray(expression)) {
-      return null;
+      return undefined;
     }
 
     for (const item of expression) {
@@ -273,6 +289,6 @@ export class StyleModalLayerComponent implements OnInit {
       }
     }
 
-    return null;
+    return undefined;
   }
 }

@@ -46,11 +46,11 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)

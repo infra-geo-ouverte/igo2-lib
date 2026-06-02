@@ -20,18 +20,18 @@ import { Layer, VectorLayer } from '../../layer/shared';
   imports: [MatButtonModule, MatTooltipModule, MatIconModule, IgoLanguageModule]
 })
 export class ExportButtonComponent {
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input.required<Layer>();
 
   readonly color = input('primary');
 
   readonly isExportable = computed<boolean>(() => {
     const layer = this.layer();
-    const download = layer?.dataSource.options.download;
-    const workspace = layer?.options.workspace;
+    const download = layer.dataSource.options.download;
+    const workspace = layer.options.workspace;
     if (
-      (layer instanceof VectorLayer && layer?.exportable === true) ||
+      (layer instanceof VectorLayer && layer.exportable === true) ||
       download?.url ||
-      (workspace?.enabled && workspace?.workspaceId !== layer?.id)
+      (workspace?.enabled && workspace?.workspaceId !== layer.id)
     ) {
       return true;
     }

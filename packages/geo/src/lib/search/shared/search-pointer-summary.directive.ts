@@ -33,6 +33,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
+import { AnyOlStyle } from '../../style/shared/style.interface';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research, SearchResult } from './search.interfaces';
@@ -58,19 +59,21 @@ export class SearchPointerSummaryDirective
   private mediaService = inject(MediaService);
   private layerService = inject(LayerService);
 
-  public store: FeatureStore<Feature>;
-  private lonLat: [number, number];
+  public store!: FeatureStore<Feature>;
+  private lonLat!: [number, number];
   private pointerSearchStore: EntityStore<SearchResult> =
     new EntityStore<SearchResult>([]);
-  private lastTimeoutRequest;
-  private store$$: Subscription;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private lastTimeoutRequest: any;
+  private store$$!: Subscription;
   private reverseSearch$$: Subscription[] = [];
   private hasPointerReverseSearchSource = false;
 
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private pointerMoveListener: any;
 
   private searchPointerSummaryFeatureId = 'searchPointerSummaryFeatureId';
   /**
@@ -133,7 +136,7 @@ export class SearchPointerSummaryDirective
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: this.pointerPositionSummaryMarkerStyle
+      style: this.pointerPositionSummaryMarkerStyle as AnyOlStyle
     } satisfies VectorLayerOptions) as VectorLayer;
     tryBindStoreLayer(store, layer);
   }
@@ -178,7 +181,7 @@ export class SearchPointerSummaryDirective
    * @returns OL style function
    */
   private computeSummaryClosestFeature(results: SearchResult[]) {
-    const closestResultByType = {};
+    const closestResultByType: Record<string, any> = {};
 
     results.map((result) => {
       if (result.data.properties.type && result.data.properties.distance >= 0) {
@@ -217,8 +220,10 @@ export class SearchPointerSummaryDirective
       resultsUnderPointerPosition
     );
     const summarizedClosestType = Object.keys(closestResultByType);
-    const processedSummarizedClosestType = [];
-    const summary = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const processedSummarizedClosestType: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const summary: any[] = [];
     resultsUnderPointerPosition.map((result) => {
       const typeIndex = summarizedClosestType.indexOf(
         result.data.properties.type
@@ -329,7 +334,7 @@ export class SearchPointerSummaryDirective
     for (const i in results) {
       if (results.length > 0) {
         this.reverseSearch$$.push(
-          results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
+          results[i].request.subscribe((_results) => {
             this.onSearch({ research: results[i], results: _results });
           })
         );

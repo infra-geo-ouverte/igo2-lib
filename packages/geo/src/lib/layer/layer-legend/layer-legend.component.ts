@@ -41,7 +41,9 @@ import {
 import {
   ItemStyleOptions,
   Layer,
-  LegendMapViewOptions
+  LegendMapViewOptions,
+  VectorLayer,
+  VectorTileLayer
 } from '../shared/layers';
 
 @Component({
@@ -81,22 +83,25 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the map's resolution
    */
-  private state$$: Subscription;
+  private state$$!: Subscription;
+  private style$$?: Subscription;
 
   /**
    * The available styles
    */
-  public styles;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public styles: any;
 
   /**
    * The style used to make the legend
    */
-  public currentStyle;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public currentStyle: any;
 
   /**
    * The extent used to make the legend
    */
-  private view: LegendMapViewOptions = undefined;
+  private view?: LegendMapViewOptions;
   /**
    * Get list of images display
    */
@@ -107,7 +112,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   public imagesHeight: Record<string, number> = {};
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input<Layer>();
 
   /**
    * if getLegendGraphic is authorized
@@ -118,14 +123,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * On init, subscribe to the map's resolution and update the legend accordingly
    */
   ngOnInit() {
-    let lastlLegend = this.layer().legend;
+    let lastlLegend = this.layer()!.legend;
     this.styles = this.listStyles();
-    const sourceOptions = this.layer().options.source.options as any;
+    const sourceOptions = this.layer()!.options.source?.options as any;
     if (sourceOptions && sourceOptions.params && sourceOptions.params.STYLES) {
       // if a styles is provided into the layers wms params
       this.currentStyle = this.styles.find(
-        (style) => style.name === sourceOptions.params.STYLES
-      ).name;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (style: any) => style.name === sourceOptions.params.STYLES
+      )?.name;
     } else if (!lastlLegend) {
       // if no legend is manually provided
       if (this.styles && this.styles.length > 1) {
@@ -134,8 +140,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
-    const layer = this.layer();
-    if (
+    const layer = this.layer()!;
+
+    if (this.isStyleLegendLayer(layer)) {
+      this.style$$ = layer.style$.subscribe(() => {
+        void this.refreshLegendFromLayerStyle();
+      });
+    } else if (
       typeof layer.options.legendOptions !== 'undefined' &&
       layer.options.legendOptions.display === false
     ) {
@@ -148,7 +159,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       this.updateLegendOnResolutionChange() ||
       (sourceOptions as WMSDataSourceOptions).contentDependentLegend
     ) {
-      const state$ = layer.map.viewController.state$;
+      const state$ = layer.map!.viewController.state$;
       this.state$$ = state$.subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
@@ -164,6 +175,35 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.state$$ !== undefined) {
       this.state$$.unsubscribe();
+    }
+    this.style$$?.unsubscribe();
+  }
+
+  private async refreshLegendFromLayerStyle() {
+    const layer = this.layer()!;
+    if (!this.isStyleLegendLayer(layer)) {
+      return;
+    }
+    if (
+      typeof layer.options.legendOptions !== 'undefined' &&
+      layer.options.legendOptions.display === false
+    ) {
+      this.legendItems$.next([]);
+      return;
+    }
+
+    const style = layer.style;
+    if (style) {
+      try {
+        const styleLegend = await layer.getLegend(style);
+
+        if (styleLegend && styleLegend.length) {
+          this.setLegendItems(styleLegend);
+          return;
+        }
+      } catch (error) {
+        console.warn('Error fetching style legend:', error);
+      }
     }
   }
 
@@ -192,21 +232,31 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     }
   }
 
+  private setLegendItems(legendItems: Legend[]) {
+    const layer = this.layer()!;
+    layer.legend = legendItems;
+    this.legendItems$.next(legendItems);
+    for (const legend of legendItems) {
+      this.getLegendGraphic(legend);
+    }
+  }
+
   toggleLegendItem(collapsed: boolean, item: Legend) {
     item.collapsed = collapsed;
   }
 
   private transfertToggleLegendItem(newLegends: Legend[]): Legend[] {
     const outLegends: Legend[] = newLegends;
-    const lastLegends = this.layer().legend;
-    for (let i = 0; i < lastLegends.length; i++) {
-      outLegends[i].collapsed = lastLegends[i].collapsed;
+    const lastLegends = this.layer()!.legend;
+    for (let i = 0; i < (lastLegends ?? []).length; i++) {
+      outLegends[i].collapsed = lastLegends![i].collapsed;
     }
     return outLegends;
   }
 
-  computeItemTitle(layerLegend): Observable<string> {
-    const layerOptions = this.layer().dataSource.options as any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  computeItemTitle(layerLegend: any): Observable<string> {
+    const layerOptions = this.layer()!.dataSource.options as any;
     if (layerOptions.type !== 'wms') {
       return of(layerLegend.title);
     }
@@ -214,11 +264,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     const layers = layerOptions.params.LAYERS.split(',');
     const localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
     localLayerOptions.params.LAYERS = layers.find(
-      (layer) => layer === layerLegend.title
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (layer: any) => layer === layerLegend.title
     );
     return this.capabilitiesService.getWMSOptions(localLayerOptions).pipe(
       map((wmsDataSourceOptions) => {
-        return wmsDataSourceOptions._layerOptionsFromSource.title;
+        return wmsDataSourceOptions._layerOptionsFromSource!.title;
       })
     );
   }
@@ -230,11 +281,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   private onViewControllerStateChange() {
     this.view = {
-      resolution: this.layer().map.viewController.getResolution(),
-      extent: this.layer().map.viewController.getExtent(),
-      projection: this.layer().map.viewController.getOlProjection().getCode(),
-      scale: this.layer().map.viewController.getScale(),
-      size: this.layer().map.ol.getSize()
+      resolution: this.layer()!.map!.viewController.getResolution(),
+      extent: this.layer()!.map!.viewController.getExtent(),
+      projection: this.layer()!.map!.viewController.getOlProjection().getCode(),
+      scale: this.layer()!.map!.viewController.getScale(),
+      size: this.layer()!.map!.ol.getSize()
     } as LegendMapViewOptions;
     this.updateLegend();
   }
@@ -243,11 +294,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer().dataSource.getLegend(
+    let legendItems = this.layer()!.dataSource.getLegend(
       this.currentStyle,
       this.view
     );
-    const layer = this.layer();
+    const layer = this.layer()!;
     if (layer.legend && layer.legend.length > 1) {
       legendItems = this.transfertToggleLegendItem(legendItems);
     }
@@ -256,14 +307,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
     }
-    this.legendItems$.next(legendItems);
-    for (const legend of this.legendItems$.value) {
-      this.getLegendGraphic(legend);
-    }
+    this.setLegendItems(legendItems);
   }
 
   private listStyles() {
-    const layerOptions = this.layer().options;
+    const layerOptions = this.layer()!.options;
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
@@ -285,8 +333,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       stylesAvailable.map(
         (s) =>
           (s.title =
-            s.title.charAt(0).toUpperCase() +
-            s.title.slice(1).replace(/_/g, ' '))
+            (s.title ?? '').charAt(0).toUpperCase() +
+            (s.title ?? '').slice(1).replace(/_/g, ' '))
       );
       return stylesAvailable;
     }
@@ -296,7 +344,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     let STYLES = '';
-    const layer = this.layer();
+    const layer = this.layer()!;
     if (layer.dataSource instanceof WMSDataSource) {
       layer.dataSource.ol
         .getParams()
@@ -315,8 +363,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else {
       elemRef = renderedLegends.find(
         (renderedLegend) => renderedLegend.nativeElement.id === id
-      ).nativeElement as HTMLImageElement;
+      )!.nativeElement as HTMLImageElement;
     }
     this.imagesHeight[id] = elemRef.height;
+  }
+
+  private isStyleLegendLayer(
+    layer: Layer
+  ): layer is VectorLayer | VectorTileLayer {
+    return layer instanceof VectorLayer || layer instanceof VectorTileLayer;
   }
 }

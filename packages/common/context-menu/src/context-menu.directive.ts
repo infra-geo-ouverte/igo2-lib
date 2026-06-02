@@ -25,10 +25,10 @@ export class ContextMenuDirective {
   viewContainerRef = inject(ViewContainerRef);
   private elementRef = inject(ElementRef);
 
-  private overlayRef: OverlayRef | null;
-  private sub: Subscription;
+  private overlayRef: OverlayRef | null = null;
+  private sub?: Subscription;
 
-  readonly menuContext = input<TemplateRef<any>>(undefined, {
+  readonly menuContext = input.required<TemplateRef<any>>({
     alias: 'igoContextMenu'
   });
   readonly menuPosition = output<{
@@ -96,11 +96,13 @@ export class ContextMenuDirective {
           if (
             clickTarget &&
             !this.elementRef.nativeElement.contains(clickTarget) &&
+            this.overlayRef &&
             !this.overlayRef.overlayElement.contains(clickTarget)
           ) {
             return true;
           } else {
             event.preventDefault();
+            return false;
           }
         }),
         take(1)

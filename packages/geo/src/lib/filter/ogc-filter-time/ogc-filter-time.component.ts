@@ -60,8 +60,8 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component
 export class OgcFilterTimeComponent implements OnInit {
   ogcFilterTimeService = inject(OGCFilterTimeService);
 
-  readonly datasource = input<OgcFilterableDataSource>(undefined);
-  readonly currentFilter = input<any>(undefined);
+  readonly datasource = input<OgcFilterableDataSource>();
+  readonly currentFilter = input<any>();
   readonly changeProperty = output<any>();
 
   readonly _defaultMin: string = '1900-01-01';
@@ -72,13 +72,13 @@ export class OgcFilterTimeComponent implements OnInit {
   sliderMode = signal(false);
 
   readonly defaultStepMillisecond = 60000;
-  options: OgcFilterableDataSourceOptions;
+  options!: OgcFilterableDataSourceOptions;
 
-  onlyYearBegin: number;
-  onlyYearEnd: number;
+  onlyYearBegin!: number | undefined;
+  onlyYearEnd!: number | undefined;
   calendarTypeYear = false;
   resetIcon = 'replay';
-  filterStateDisable: boolean;
+  filterStateDisable!: boolean;
 
   readonly beginDatepicker = viewChild<DatepickerComponent>('beginDatepicker');
   readonly endDatepicker = viewChild<DatepickerComponent>('endDatepicker');
@@ -86,11 +86,11 @@ export class OgcFilterTimeComponent implements OnInit {
   readonly beginTime = viewChild<TimepickerComponent>('beginTimepicker');
   readonly endTime = viewChild<TimepickerComponent>('endTimepicker');
 
-  private filterOriginConfig: OgcFilterDuringOptions;
+  private filterOriginConfig!: OgcFilterDuringOptions;
 
   get step(): string {
-    const datasource = this.datasource();
-    return datasource.options.stepDate
+    const datasource = this.datasource()!;
+    return datasource?.options.stepDate
       ? datasource.options.stepDate
       : this.currentFilter().step;
   }
@@ -100,8 +100,8 @@ export class OgcFilterTimeComponent implements OnInit {
     return step === 0 ? this.defaultStepMillisecond : step;
   }
 
-  beginValue: Date | TimeFrame;
-  endValue: Date | TimeFrame;
+  beginValue!: Date | TimeFrame;
+  endValue!: Date | TimeFrame;
 
   get sliderInterval(): number {
     const currentFilter = this.currentFilter();
@@ -111,8 +111,8 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   get maxDate(): string {
-    const datasource = this.datasource();
-    return datasource.options.maxDate
+    const datasource = this.datasource()!;
+    return datasource?.options.maxDate
       ? datasource.options.maxDate
       : this._defaultMax;
   }
@@ -124,13 +124,15 @@ export class OgcFilterTimeComponent implements OnInit {
       : this._defaultDisplayFormat;
   }
 
-  filterBeginFunction;
-  filterEndFunction;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filterBeginFunction: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filterEndFunction: any;
 
   resolveDate = resolveDate;
 
   ngOnInit(): void {
-    this.filterOriginConfig = this.datasource().options.ogcFilters
+    this.filterOriginConfig = this.datasource()!.options.ogcFilters!
       .filters as OgcFilterDuringOptions;
     const currentFilter = this.currentFilter();
     if (currentFilter.sliderOptions) {
@@ -167,7 +169,7 @@ export class OgcFilterTimeComponent implements OnInit {
       }
       return;
     }
-    value = resolveDate(value);
+    value = resolveDate(value) as Date;
     let valueTmp = this.getDateTime(value, position);
     if (this.isCalendarYearMode()) {
       let dateStringFromYearNotime;
@@ -216,7 +218,7 @@ export class OgcFilterTimeComponent implements OnInit {
     });
   }
 
-  handleDate(value: string): Date {
+  handleDate(value: string | undefined): Date | undefined {
     if (!value || value === '') {
       return undefined;
     }
@@ -298,11 +300,13 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  changePropertyByPass(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changePropertyByPass(event: any) {
     this.changeProperty.emit(event);
   }
 
-  modeChange(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  modeChange(event: any) {
     if (!event.checked) {
       this.updateValues();
     }
@@ -313,7 +317,7 @@ export class OgcFilterTimeComponent implements OnInit {
       this.filterOriginConfig.begin
     );
     const maxDefaultDate = this.parseDateToComparable(
-      this.filterOriginConfig.end
+      this.filterOriginConfig.end!
     );
 
     const currentBegin = this.parseDateToComparable(this.currentFilter().begin);
@@ -328,7 +332,8 @@ export class OgcFilterTimeComponent implements OnInit {
       this.endValue = isTimeFrame(maxDefaultDate)
         ? maxDefaultDate
         : new Date(maxDefaultDate);
-      this.beginDatepicker().reset(this.beginValue);
+
+      this.beginDatepicker()!.reset(this.beginValue);
       this.endDatepicker()?.reset(this.endValue);
       if (this.calendarType() === 'datetime') {
         this.beginTime()?.reset(this.beginValue);
@@ -360,7 +365,7 @@ export class OgcFilterTimeComponent implements OnInit {
     let date = position === 1 ? this.beginValue : this.endValue;
     if (!isTimeFrame(date)) {
       date = new Date(
-        resolveDate(date).setHours(event.hour, event.minute, 0, 0)
+        resolveDate(date as Date)!.setHours(event.hour, event.minute, 0, 0)
       );
     }
     this.changeTemporalProperty(date, position);
@@ -368,7 +373,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
   dateNotTimeFrame(
     value: Date | TimeFrame | undefined,
-    fallbackDate: string
+    fallbackDate: string | undefined
   ): boolean {
     return !isTimeFrame(value ?? this.handleDate(fallbackDate));
   }
@@ -400,11 +405,12 @@ export class OgcFilterTimeComponent implements OnInit {
       this.endValue = this.parseFilter(this.handleMax());
     }
 
-    this.onlyYearBegin = resolveDate(this.beginValue).getUTCFullYear();
-    this.onlyYearEnd = resolveDate(this.endValue).getUTCFullYear();
+    this.onlyYearBegin = resolveDate(this.beginValue)?.getUTCFullYear();
+    this.onlyYearEnd = resolveDate(this.endValue)?.getUTCFullYear();
   }
 
-  private parseFilter(filter): Date {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private parseFilter(filter: any): Date {
     if (!filter) {
       return new Date();
     } else if (isNaN(new Date(filter).getTime())) {
@@ -589,7 +595,7 @@ export class OgcFilterTimeComponent implements OnInit {
     } else if (this.calendarType() === 'datetime') {
       const reference = pos === 1 ? this.beginValue : this.endValue;
       const existingTime = resolveDate(reference);
-      valuetmp.setHours(existingTime.getHours(), existingTime.getMinutes());
+      valuetmp.setHours(existingTime!.getHours(), existingTime!.getMinutes());
     }
     return valuetmp;
   }
@@ -600,7 +606,7 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   private handleMin() {
-    const options = this.datasource().options;
+    const options = this.datasource()!.options;
     return this.currentFilter().begin
       ? this.currentFilter().begin
       : options.minDate
@@ -609,7 +615,7 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   private handleMax() {
-    const options = this.datasource().options;
+    const options = this.datasource()!.options;
     return this.currentFilter().end
       ? this.currentFilter().end
       : options.maxDate

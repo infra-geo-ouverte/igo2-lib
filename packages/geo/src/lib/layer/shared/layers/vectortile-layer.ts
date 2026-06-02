@@ -6,11 +6,13 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { Feature } from 'ol';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
+import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
-import { AnyStyle } from '../../../style/shared/style.types';
-import { isAnyOlStyle } from '../../../style/shared/style.utils';
+import { AnyStyle } from '../../../style/shared';
+import { isAnyOlStyle } from '../../../style/shared/style-ol.utils';
 import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
@@ -25,41 +27,15 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
-  private _style: AnyStyle;
-  get style(): AnyStyle {
-    return this._style;
+  get style(): AnyStyle | undefined {
+    return this._style$.getValue();
   }
-
-  set style(value: AnyStyle) {
-    this._style = value;
-    if (!this.styleService && isAnyOlStyle(value)) {
-      this.ol.setStyle(value);
-      return;
-    }
-    this.styleService
-      ?.getStyle(value, this.ol)
-      .then((returnStyle) => {
-        this.ol.setStyle(returnStyle);
-      })
-      .catch((error) => {
-        console.error('style promise rejected:', error);
-        throw error;
-      });
-
-    this.styleService
-      ?.getLegend(value)
-      .then((legend) => {
-        if (legend) {
-          this.dataSource.setLegend(
-            Object.assign({}, this.options.legendOptions, { html: legend })
-          );
-        }
-      })
-      .catch((error) => {
-        console.error('legend promise rejected:', error);
-        throw error;
-      });
+  set style(value: AnyStyle | undefined) {
+    this._style$.next(value);
+    this.setStyle(value);
   }
+  private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
+  public readonly style$ = this._style$.asObservable();
 
   constructor(
     options: VectorTileLayerOptions,
@@ -70,36 +46,63 @@ export class VectorTileLayer extends Layer {
     super(options, messageService, authInterceptor, styleService);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+  }
+
+  async getLegend(value: AnyStyle): Promise<Legend[] | undefined> {
+    const styleLegend = await this.styleService?.getLegend(value);
+    if (styleLegend) {
+      return [
+        {
+          html: styleLegend
+        }
+      ];
+    }
+
+    return this.dataSource.getLegend();
   }
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVectorTile
+      source: this.options.source!.ol as olSourceVectorTile
     });
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
     const vectorTile = new olLayerVectorTile({
       ...olOptions,
-      style: undefined
+      style: isOlStyle ? layerStyle : undefined
     });
-    vectorTile.once('sourceready', () => {
-      this.style = this.options.style;
-    });
-
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
-    vectorTileSource.setTileLoadFunction(
-      (tile: VectorTile<Feature>, url: string) => {
-        const loader = this.customLoader(
-          url,
-          tile.getFormat(),
-          this.authInterceptor,
-          tile.onLoad.bind(tile)
-        );
-        if (loader) {
-          tile.setLoader(loader);
-        }
+
+    vectorTileSource.setTileLoadFunction(((
+      tile: VectorTile<Feature>,
+      url: string
+    ) => {
+      const loader = this.customLoader(
+        url,
+        tile.getFormat(),
+        this.authInterceptor,
+        tile.onLoad.bind(tile)
+      );
+      if (loader) {
+        tile.setLoader(loader);
       }
-    );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any);
 
     return vectorTile;
+  }
+
+  private async setStyle(value: AnyStyle | undefined): Promise<void> {
+    if (!value) {
+      this.ol.setStyle(undefined);
+    } else if (this.styleService) {
+      const olStyle = await this.styleService.getStyle(value, this.ol);
+      this.ol.setStyle(olStyle);
+    } else if (isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+    }
+    // else: no service and non-OL style — silently ignore
   }
 
   /**
@@ -111,8 +114,16 @@ export class VectorTileLayer extends Layer {
    * @param success On success event action to trigger
    * @param failure On failure event action to trigger TODO
    */
-  customLoader(url, format, interceptor, success, failure?) {
-    return (extent, resolution, projection) => {
+
+  customLoader(
+    url: any,
+    format: any,
+    interceptor: any,
+    success: any,
+    failure?: any
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (extent: any, resolution: any, projection: any) => {
       const xhr = new XMLHttpRequest();
       let modifiedUrl = url;
       if (typeof url !== 'function') {
@@ -177,6 +188,7 @@ export class VectorTileLayer extends Layer {
   public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
+      return;
     } else {
       this.watcher.subscribe(() => void 1);
     }

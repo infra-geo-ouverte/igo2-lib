@@ -36,14 +36,14 @@ import { MiniBaseMapComponent } from './mini-basemap.component';
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   private mediaService = inject(MediaService);
 
-  readonly map = input<IgoMap>(undefined);
-  readonly useStaticIcon = model<boolean>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly useStaticIcon = model<boolean>();
 
   public _baseLayers: Layer[] = [];
   public expand = false;
   public showButton = true;
 
-  private layers$$: Subscription;
+  private layers$$!: Subscription;
 
   get hasMoreThanTwo(): boolean {
     return this.baseLayers.length > 1;
@@ -86,10 +86,10 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
           mapResolution <= l.options.maxResolution) &&
         (!l.options.minResolution ||
           mapResolution >= l.options.minResolution) &&
-        (!l.options.source.options.maxZoom ||
-          mapZoom <= l.options.source.options.maxZoom) &&
-        (!l.options.source.options.minZoom ||
-          mapZoom >= l.options.source.options.minZoom)
+        (!l.options.source?.options.maxZoom ||
+          mapZoom <= l.options.source!.options.maxZoom) &&
+        (!l.options.source?.options.minZoom ||
+          mapZoom >= l.options.source!.options.minZoom)
       );
     });
 

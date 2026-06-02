@@ -69,7 +69,12 @@ export class ImportService {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     if (importConfig.formats) {
       ImportService.allowedExtensions = importConfig.formats
-        .map((format) => ImportService.formatExtensionAssociation[format])
+        .map(
+          (format) =>
+            ImportService.formatExtensionAssociation[
+              format as keyof typeof ImportService.formatExtensionAssociation
+            ]
+        )
         .filter((e) => e);
       if (ImportService.allowedExtensions.includes('geojson')) {
         ImportService.allowedExtensions.push('json');
@@ -87,15 +92,17 @@ export class ImportService {
 
   private getFileImporter(
     file: File
-  ): (
-    file: File,
-    observer: Observer<Feature[]>,
-    projectionIn: string,
-    projectionOut: string
-  ) => void {
+  ):
+    | ((
+        file: File,
+        observer: Observer<Feature[]>,
+        projectionIn: string,
+        projectionOut: string
+      ) => void)
+    | undefined {
     const extension = getFileExtension(file);
     const allowedExtensions = ImportService.allowedExtensions;
-    let zipMimeTypes = [];
+    let zipMimeTypes: string[] = [];
     if (allowedExtensions.includes('zip')) {
       zipMimeTypes = ImportService.allowedZipMimeTypes;
     }
@@ -277,7 +284,7 @@ export class ImportService {
       });
     });
 
-    return features;
+    return features as Feature[];
   }
 
   private parseFeaturesFromGeoJSON(
@@ -341,8 +348,8 @@ export class ImportService {
 
     if (projectionsConstraints.mtm) {
       // all mtm zones
-      const minZone = projectionsConstraints.mtmZone.minZone;
-      const maxZone = projectionsConstraints.mtmZone.maxZone;
+      const minZone = projectionsConstraints.mtmZone!.minZone ?? 1;
+      const maxZone = projectionsConstraints.mtmZone!.maxZone ?? 16;
 
       for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
         const code =
@@ -360,8 +367,8 @@ export class ImportService {
 
     if (projectionsConstraints.utm) {
       // all utm zones
-      const minZone = projectionsConstraints.utmZone.minZone;
-      const maxZone = projectionsConstraints.utmZone.maxZone;
+      const minZone = projectionsConstraints.utmZone!.minZone ?? 1;
+      const maxZone = projectionsConstraints.utmZone!.maxZone ?? 60;
 
       for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
         const code =

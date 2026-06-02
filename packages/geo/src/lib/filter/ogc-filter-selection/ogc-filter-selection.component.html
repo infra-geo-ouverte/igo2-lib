@@ -4,7 +4,7 @@
       @if (selector.selectorType === 'pushButton') {
         <div class="pushButtonGroups">
           <mat-divider />
-          @if (getPushButtonsGroups().length > 1) {
+          @if (getPushButtonsGroups()!.length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
                 <mat-select
@@ -59,7 +59,7 @@
       @if (selector.selectorType === 'checkbox') {
         <div class="checkboxGroups">
           <mat-divider />
-          @if (getCheckboxesGroups().length > 1) {
+          @if (getCheckboxesGroups()!.length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
                 <mat-select
@@ -97,7 +97,7 @@
                   (change)="
                     onSelectionChange(ogcCheckbox, selector.selectorType)
                   "
-                  [value]="ogcCheckbox"
+                  [value]="$any(ogcCheckbox)"
                   >{{ ogcCheckbox.title }}
                 </mat-checkbox>
               }
@@ -129,7 +129,7 @@
       @if (selector.selectorType === 'radioButton') {
         <div class="radioButtonGroups">
           <mat-divider />
-          @if (getRadioButtonsGroups().length > 1) {
+          @if (getRadioButtonsGroups()!.length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
                 <mat-select
@@ -204,7 +204,7 @@
       @if (selector.selectorType === 'select') {
         <div class="selectGroups">
           <mat-divider />
-          @if (getSelectGroups().length > 1) {
+          @if (getSelectGroups()!.length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
                 <mat-select
@@ -250,7 +250,7 @@
                     <mat-select
                       #selection
                       [multiple]="bundle.multiple"
-                      [placeholder]="bundle.title"
+                      [placeholder]="bundle.title!"
                       formControlName="selectMulti"
                     >
                       <div class="checkboxes">
@@ -284,7 +284,7 @@
                   </div>
                 } @else {
                   <mat-select
-                    [placeholder]="bundle.title"
+                    [placeholder]="bundle.title!"
                     formControlName="select"
                   >
                     @for (ogcSelect of bundle.selectors; track ogcSelect) {
@@ -310,7 +310,7 @@
       @if (selector.selectorType === 'autocomplete') {
         <div class="autocompleteGroups">
           <mat-divider />
-          @if (getAutocompleteGroups().length > 1) {
+          @if (getAutocompleteGroups()!.length > 1) {
             <div class="groupsSelector">
               <mat-form-field>
                 <mat-select

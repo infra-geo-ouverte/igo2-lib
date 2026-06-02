@@ -4,12 +4,14 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input,
-  signal
+  linkedSignal,
+  signal,
+  viewChild
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -41,7 +43,8 @@ import {
   featureToOl,
   featuresAreOutOfView,
   moveToOlFeatures,
-  roundCoordTo
+  roundCoordTo,
+  styleVariant
 } from '@igo2/geo';
 
 import { Coordinate } from 'ol/coordinate';
@@ -115,19 +118,21 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    */
   readonly topPanelStateDefault = input('expanded');
 
-  private searchResultsOverlayAll$$: Subscription;
+  private searchResultsOverlayAll$$!: Subscription;
 
   public saveSearchResultInLayer = false;
 
-  private searchResultsOverlayFocused: Overlay;
-  private searchResultsOverlaySelected: Overlay;
-  private searchResultsOverlayAll: Overlay;
+  private searchResultsOverlayFocused!: Overlay;
+  private searchResultsOverlaySelected!: Overlay;
+  private searchResultsOverlayAll!: Overlay;
 
-  private getRoute$$: Subscription;
+  private getRoute$$?: Subscription;
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
-  private isSelectedResultOutOfView$$: Subscription;
+  private isSelectedResultOutOfView$$!: Subscription;
   private destroyRef = inject(DestroyRef);
   public debouncedEmpty = signal(true);
+
+  private searchResult = viewChild(SearchResultsComponent);
 
   /**
    * Store holding the search results
@@ -145,27 +150,24 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  get featureTitle(): string {
-    return this.feature() ? getEntityTitle(this.feature()) : undefined;
+  get featureTitle(): string | undefined {
+    return this.feature() ? getEntityTitle(this.feature()!) : undefined;
   }
 
-  feature = signal<Feature>(undefined);
+  feature = signal<Feature | undefined>(undefined);
 
   public term = '';
-  private searchTerm$$: Subscription;
+  private searchTerm$$!: Subscription;
 
-  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+  readonly topPanelState = input<FlexibleState>();
 
-  public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
-  private topPanelState$$: Subscription;
-
-  @Input()
-  set topPanelState(value: FlexibleState) {
-    this.topPanelState$.next(value);
-  }
-  get topPanelState(): FlexibleState {
-    return this.topPanelState$.value;
-  }
+  public topPanelStateValue = linkedSignal<
+    FlexibleState | undefined,
+    FlexibleState
+  >({
+    source: this.topPanelState,
+    computation: (v, previous) => v ?? previous?.value ?? 'initial'
+  });
 
   get termSplitter(): string {
     return this.searchState.searchTermSplitter$.value;
@@ -184,55 +186,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       'saveSearchResultInLayer'
     );
     this.handleShowAllResults();
-  }
-
-  ngOnInit() {
-    this.searchResultsOverlayFocused = new Overlay(
-      this.mapState.map,
-      this.searchState.searchOverlayStyle?.focus ??
-        SearchResultsOlStyleFunction(this.mapState.map.viewController, 'focus')
-    );
-
-    this.searchResultsOverlaySelected = new Overlay(
-      this.mapState.map,
-      this.searchState.searchOverlayStyle?.selection ??
-        SearchResultsOlStyleFunction(
-          this.mapState.map.viewController,
-          'selection'
-        )
-    );
-
-    this.searchResultsOverlayAll = new Overlay(
-      this.mapState.map,
-      this.searchState.searchOverlayStyle?.base ??
-        SearchResultsOlStyleFunction(this.mapState.map.viewController)
-    );
-    this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
-      (searchTerm: string) => {
-        if (
-          searchTerm !== undefined &&
-          searchTerm !== null &&
-          searchTerm !== ''
-        ) {
-          this.term = searchTerm;
-          this.debouncedEmpty.set(false);
-        } else if (searchTerm === '') {
-          this.debouncedEmpty.set(true);
-        }
-      }
-    );
-
-    for (const res of this.store.stateView.all$().value) {
-      if (this.store.state.get(res.entity).selected === true) {
-        this.topPanelState = 'expanded';
-      }
-    }
-
-    this.searchState.searchSettingsChange$.subscribe(() => {
-      this.settingsChange$.next(true);
-    });
-
-    this.topPanelState$$ = this.topPanelState$.subscribe(() => {
+    effect(() => {
+      this.topPanelStateValue(); // re-run on state change
       const igoList = this.computeElementRef()[0];
       const selected = this.computeElementRef()[1];
       if (selected) {
@@ -243,6 +198,49 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           }
         }, FlexibleComponent.transitionTime + 50);
       }
+    });
+  }
+
+  ngOnInit() {
+    this.searchResultsOverlayFocused = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.focus ??
+        styleVariant(this.mapState.map.viewController, 'focus')
+    );
+
+    this.searchResultsOverlaySelected = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.selection ??
+        styleVariant(this.mapState.map.viewController, 'selection')
+    );
+
+    this.searchResultsOverlayAll = new Overlay(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.base ??
+        styleVariant(this.mapState.map.viewController)
+    );
+
+    this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm) => {
+      if (
+        searchTerm !== undefined &&
+        searchTerm !== null &&
+        searchTerm !== ''
+      ) {
+        this.term = searchTerm;
+        this.debouncedEmpty.set(false);
+      } else if (searchTerm === '') {
+        this.debouncedEmpty.set(true);
+      }
+    });
+
+    for (const res of this.store.stateView.all$().value) {
+      if (this.store.state.get(res.entity).selected === true) {
+        this.topPanelStateValue.set('expanded');
+      }
+    }
+
+    this.searchState.searchSettingsChange$.subscribe(() => {
+      this.searchResult()?.resetPage();
     });
 
     this.monitorResultOutOfView();
@@ -311,7 +309,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.topPanelState$$.unsubscribe();
     this.searchTerm$$.unsubscribe();
     if (this.isSelectedResultOutOfView$$) {
       this.isSelectedResultOutOfView$$.unsubscribe();
@@ -362,15 +359,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     );
     this.searchState.setSelectedResult(result);
 
-    if (this.topPanelState === 'initial') {
+    if (this.topPanelStateValue() === 'initial') {
       if (this.topPanelStateDefault() !== 'collapsed') {
-        this.topPanelState = 'expanded';
+        this.topPanelStateValue.set('expanded');
       } else {
-        this.topPanelState = 'collapsed';
+        this.topPanelStateValue.set('collapsed');
       }
     }
 
-    if (this.topPanelState === 'expanded') {
+    if (this.topPanelStateValue() === 'expanded') {
       const igoList = this.computeElementRef()[0];
       const selected = this.computeElementRef()[1];
       if (!this.isScrolledIntoView(igoList, selected)) {
@@ -441,12 +438,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return [igoList, selectedItem];
   }
 
-  adjustTopPanel(elemSource, elem) {
+  adjustTopPanel(elemSource: HTMLElement, elem: HTMLElement) {
     if (!this.isScrolledIntoView(elemSource, elem)) {
+      const firstChild = elem.children[0];
+      const childHeight =
+        firstChild instanceof HTMLElement ? firstChild.offsetHeight : 0;
       elemSource.scrollTop =
-        elem.offsetTop +
-        elem.children[0].offsetHeight -
-        elemSource.clientHeight;
+        elem.offsetTop + childHeight - elemSource.clientHeight;
     }
   }
 
@@ -454,10 +452,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (event && (event.target as any)?.className !== 'igo-panel-title') {
       return;
     } else {
-      if (this.topPanelState === 'expanded') {
-        this.topPanelState = 'collapsed';
+      if (this.topPanelStateValue() === 'expanded') {
+        this.topPanelStateValue.set('collapsed');
       } else {
-        this.topPanelState = 'expanded';
+        this.topPanelStateValue.set('expanded');
       }
     }
   }
@@ -496,10 +494,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (!feature.geometry) {
       return;
     }
+
+    if (!feature.meta) {
+      return;
+    }
+
     overlay.setFeatures([feature], motion);
   }
 
-  isScrolledIntoView(elemSource, elem) {
+  isScrolledIntoView(elemSource: HTMLElement, elem: HTMLElement) {
     const padding = 6;
     const docViewTop = elemSource.scrollTop;
     const docViewBottom = docViewTop + elemSource.clientHeight;
@@ -543,9 +546,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 ];
               }
             }
-            stop.text = this.featureTitle;
-            stop.coordinates = coord;
-            this.directionState.stopsStore.update(stop);
+            if (stop) {
+              stop.text = this.featureTitle ?? '';
+              stop.coordinates = coord;
+              this.directionState.stopsStore.update(stop);
+            }
             if (this.map.geolocationController.position$.value) {
               const currentPos = this.map.geolocationController.position$.value;
               const stop = this.directionState.stopsStore
@@ -560,9 +565,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 [currentCoord[0], currentCoord[1]],
                 6
               );
-              stop.text = coord.join(',');
-              stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
+              if (stop) {
+                stop.text = coord.join(',');
+                stop.coordinates = coord;
+                this.directionState.stopsStore.update(stop);
+              }
             }
           }
         });

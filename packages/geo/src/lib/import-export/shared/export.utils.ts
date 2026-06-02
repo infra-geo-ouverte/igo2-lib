@@ -69,7 +69,7 @@ export function entitiesToRowData(
         valueAccessor = column.valueAccessor;
       }
       valueAccessor = valueAccessor ? valueAccessor : getEntityProperty;
-      return valueAccessor(entity, column.name);
+      return valueAccessor(entity, column.name as any);
     });
   });
 }

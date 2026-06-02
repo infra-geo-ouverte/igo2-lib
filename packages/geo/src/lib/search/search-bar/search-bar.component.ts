@@ -29,6 +29,8 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { LayerService } from '../../layer';
+import { IgoMap } from '../../map';
 import { SearchSelectorComponent } from '../search-selector/search-selector.component';
 import { SearchSettingsComponent } from '../search-settings/search-settings.component';
 import { SearchSourceService } from '../shared/search-source.service';
@@ -60,6 +62,7 @@ import { SearchService } from '../shared/search.service';
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
+  private layerService = inject(LayerService);
   private configService = inject(ConfigService);
   private searchService = inject(SearchService);
   private searchSourceService = inject(SearchSourceService);
@@ -86,7 +89,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the ssearch bar term
    */
-  private term$$: Subscription;
+  private term$$!: Subscription;
 
   /**
    * Search term stream
@@ -96,14 +99,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the search term stream
    */
-  private stream$$: Subscription;
+  private stream$$!: Subscription;
 
   /**
    * Subscription to the search type
    */
-  private searchType$$: Subscription;
+  private searchType$$!: Subscription;
 
-  private researches$$: Subscription[];
+  private researches$$!: Subscription[];
 
   /**
    * whether to show search button or not
@@ -116,7 +119,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   readonly searchTypes = input<string[]>(SEARCH_TYPES);
 
-  readonly withDivider = input<boolean>(undefined);
+  readonly withDivider = input<boolean>();
 
   /**
    * Search term
@@ -126,9 +129,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.setSearchType(value);
   }
   get searchType(): string {
-    return this.searchType$.value;
+    return this.searchType$.value!;
   }
-  readonly searchType$ = new BehaviorSubject<string>(undefined);
+  readonly searchType$ = new BehaviorSubject<string | undefined>(undefined);
 
   /**
    * Event emitted when the pointer summary is activated by the searchbar setting
@@ -144,6 +147,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the coords format setting is changed
    */
   readonly reverseSearchCoordsFormatStatus = output<boolean>();
+
+  /**
+   * Map to add layer
+   */
+  readonly map = input<IgoMap>();
 
   /**
    * Search term
@@ -193,9 +201,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   readonly appearance = input<MatFormFieldAppearance>('fill');
 
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
-  readonly label = input<string>(undefined);
+  readonly label = input<string>();
 
   /**
    * Icons color (search and clear)
@@ -232,7 +240,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Search results store
    */
-  readonly store = input<EntityStore<SearchResult>>(undefined);
+  readonly store = input<EntityStore<SearchResult>>();
 
   /**
    * Event emitted when the search term changes
@@ -293,7 +301,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.searchType$$ = this.searchType$
       .pipe(distinctUntilChanged())
-      .subscribe((searchType: string) => this.onSetSearchType(searchType));
+      .subscribe(
+        (searchType: string | undefined) =>
+          searchType && this.onSetSearchType(searchType)
+      );
 
     const configValue = this.configService.getConfig(
       'searchBar.showSearchButton'
@@ -392,7 +403,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private clear() {
     this.term$.next('');
     this.stream$.next('');
-    this.input().nativeElement.focus();
+    this.input()!.nativeElement.focus();
   }
 
   /**
@@ -408,7 +419,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @param term Search term
    */
   private onSetTerm(term: string | undefined) {
-    this.searchTermChange.emit(term);
+    this.searchTermChange.emit(term ?? '');
     this.doSearch(term);
   }
 
@@ -451,13 +462,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private doSearch(rawTerm: string | undefined) {
     if (this.researches$$) {
       this.researches$$.map((research) => research.unsubscribe());
-      this.researches$$ = undefined;
+      this.researches$$ = [] as Subscription[];
     }
 
     let terms;
     const termSplitter = this.termSplitter();
-    if (termSplitter && rawTerm.match(new RegExp(termSplitter, 'g'))) {
-      terms = rawTerm
+    if (termSplitter && rawTerm?.match(new RegExp(termSplitter, 'g'))) {
+      terms = rawTerm!
         .split(termSplitter)
         .filter((t) => t.length >= this.minLength());
       const store = this.store();
@@ -469,7 +480,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     let researches: Research[] = [];
-    terms.map((term: string) => {
+    terms.map((term: string | undefined) => {
       const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
       if (slug === '') {
         const store = this.store();
@@ -480,7 +491,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
 
       researches = researches.concat(
-        this.searchService.search(term, {
+        this.searchService.search(term!, {
           forceNA: this.forceNA()
         })
       );

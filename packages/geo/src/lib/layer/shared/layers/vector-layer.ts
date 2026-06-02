@@ -19,7 +19,7 @@ import olProjection from 'ol/proj/Projection';
 import { getVectorContext } from 'ol/render';
 import olSourceVector, { VectorSourceEvent } from 'ol/source/Vector';
 
-import { fromEvent, merge, of } from 'rxjs';
+import { BehaviorSubject, fromEvent, merge, of } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -32,6 +32,7 @@ import {
 
 import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -53,12 +54,11 @@ import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import { AnyStyle } from '../../../style/shared/style.types';
+import { AnyStyle } from '../../../style/shared';
 import {
   isAnyOlStyle,
-  isEditableLayerStyle,
-  isFlatStyleLike
-} from '../../../style/shared/style.utils';
+  isOlFlatStyleLike
+} from '../../../style/shared/style-ol.utils';
 import { StyleService } from '../../../style/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
@@ -74,7 +74,7 @@ interface VectorRequest {
 export class VectorLayer extends Layer {
   type: LayerType = 'vector';
 
-  private lastRequest: VectorRequest;
+  private lastRequest?: VectorRequest;
   private ongoingRequests: VectorRequest[] = [];
   declare public dataSource:
     | FeatureDataSource
@@ -85,7 +85,8 @@ export class VectorLayer extends Layer {
   declare public options: VectorLayerOptions;
   declare public ol: olLayerVector<olSourceVector>;
   private watcher: VectorWatcher;
-  private trackFeatureListenerId;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private trackFeatureListenerId: any;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -95,41 +96,15 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
-  private _style: AnyStyle;
-  get style(): AnyStyle {
-    return this._style;
+  get style(): AnyStyle | undefined {
+    return this._style$.getValue();
   }
-
-  set style(value: AnyStyle) {
-    this._style = value;
-    if (!this.styleService && isAnyOlStyle(value)) {
-      this.ol.setStyle(value);
-      return;
-    }
-    this.styleService
-      ?.getStyle(value, this.ol)
-      .then((returnStyle) => {
-        this.ol.setStyle(returnStyle);
-      })
-      .catch((error) => {
-        console.error('style promise rejected:', error);
-        throw error;
-      });
-
-    this.styleService
-      ?.getLegend(value)
-      .then((legend) => {
-        if (legend) {
-          this.dataSource.setLegend(
-            Object.assign({}, this.options.legendOptions, { html: legend })
-          );
-        }
-      })
-      .catch((error) => {
-        console.error('legend promise rejected:', error);
-        throw error;
-      });
+  set style(value: AnyStyle | undefined) {
+    this._style$.next(value);
+    this.setStyle(value);
   }
+  private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
+  public readonly style$ = this._style$.asObservable();
 
   constructor(
     options: VectorLayerOptions,
@@ -141,12 +116,26 @@ export class VectorLayer extends Layer {
     super(options, messageService, authInterceptor, styleService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+  }
+
+  async getLegend(value: AnyStyle): Promise<Legend[] | undefined> {
+    const styleLegend = await this.styleService?.getLegend(value);
+    if (styleLegend) {
+      return [
+        {
+          html: styleLegend
+        }
+      ];
+    }
+
+    return this.dataSource.getLegend();
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector> {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVector,
-      sourceOptions: this.options.sourceOptions || this.options.source.options
+      source: this.options.source?.ol as olSourceVector,
+      sourceOptions: this.options.sourceOptions || this.options.source?.options
     });
 
     if (
@@ -157,32 +146,26 @@ export class VectorLayer extends Layer {
     }
 
     if (this.options.animation) {
-      this.dataSource.ol.on(
-        'addfeature',
-        function (e) {
-          this.flash(e.feature);
-        }.bind(this)
-      );
+      this.dataSource.ol.on('addfeature', (e) => {
+        if (e.feature) this.flash(e.feature);
+      });
     }
 
     if (this.options.trackFeature) {
       this.enableTrackFeature(this.options.trackFeature);
     }
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
     const vector = new olLayerVector({
       ...olOptions,
-      style: undefined
+      style: isOlStyle ? layerStyle : undefined
     });
-
-    vector.once('sourceready', () => {
-      this.style = this.options.style;
-    });
-
     const vectorSource = vector.getSource() as olSourceVector;
     let url = vectorSource.getUrl();
     if (typeof url === 'function') {
       return vector;
     }
-    let loader: FeatureLoader;
+    let loader: FeatureLoader | undefined;
     const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
     if (
       wfsOptions?.type === 'wfs' &&
@@ -195,8 +178,8 @@ export class VectorLayer extends Layer {
           extent,
           resolution,
           proj,
-          success,
-          failure
+          success as any,
+          failure as any
         );
       };
     } else {
@@ -205,18 +188,19 @@ export class VectorLayer extends Layer {
         this.options.idbInfo?.storeToIdb &&
         this.options.idbInfo?._firstLoad === false
       ) {
-        url = this.id.toString();
+        url = this.id!.toString();
       }
       if (url) {
+        const loaderUrl = url;
         loader = (extent, resolution, proj, success, failure) => {
           this.customLoader(
             vectorSource,
-            url,
+            loaderUrl,
             extent,
             resolution,
             proj,
-            success,
-            failure
+            success as any,
+            failure as any
           );
         };
       }
@@ -229,6 +213,18 @@ export class VectorLayer extends Layer {
     }
 
     return vector;
+  }
+
+  private async setStyle(value: AnyStyle | undefined): Promise<void> {
+    if (!value) {
+      this.ol.setStyle(undefined);
+    } else if (this.styleService) {
+      const olStyle = await this.styleService.getStyle(value, this.ol);
+      this.ol.setStyle(olStyle);
+    } else if (isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+    }
+    // else: no service and non-OL style — silently ignore
   }
 
   private handleIdbStorage(
@@ -246,18 +242,21 @@ export class VectorLayer extends Layer {
     fromEvent<BaseEvent>(vector, 'sourceready')
       .pipe(
         tap(() => {
-          if (this.options.idbInfo._firstLoad !== false) {
+          if (this.options.idbInfo?._firstLoad !== false) {
             this.maintainFeaturesInIdb();
             this.maintainOptionsInIdb();
           }
         }),
         switchMap(() =>
           merge(
-            fromEvent<VectorSourceEvent>(vector.getSource(), 'featuresloadend'),
-            fromEvent<VectorSourceEvent>(vector.getSource(), 'addfeature'),
-            fromEvent<VectorSourceEvent>(vector.getSource(), 'changefeature'),
-            fromEvent<VectorSourceEvent>(vector.getSource(), 'clear'),
-            fromEvent<VectorSourceEvent>(vector.getSource(), 'removefeature')
+            fromEvent<VectorSourceEvent>(
+              vector.getSource()!,
+              'featuresloadend'
+            ),
+            fromEvent<VectorSourceEvent>(vector.getSource()!, 'addfeature'),
+            fromEvent<VectorSourceEvent>(vector.getSource()!, 'changefeature'),
+            fromEvent<VectorSourceEvent>(vector.getSource()!, 'clear'),
+            fromEvent<VectorSourceEvent>(vector.getSource()!, 'removefeature')
           )
         )
       )
@@ -282,7 +281,7 @@ export class VectorLayer extends Layer {
   }
 
   private handlePreload(): void {
-    const preloadOptions = this.options.sourceOptions.preload;
+    const preloadOptions = this.options.sourceOptions?.preload;
     if (this.dataSource instanceof FeatureDataSource) {
       const initialOpacityValue = this.options.opacity || 1;
       const initialVisibleValue = this.options.visible !== false;
@@ -295,24 +294,24 @@ export class VectorLayer extends Layer {
 
       this.options.opacity = 0;
       if (
-        preloadOptions.bypassResolution &&
+        preloadOptions?.bypassResolution &&
         (this.options.minResolution || this.options.maxResolution)
       ) {
         this.options.minResolution = 0;
         this.options.maxResolution = Infinity;
       }
-      if (preloadOptions.bypassVisible && !initialVisibleValue) {
+      if (preloadOptions?.bypassVisible && !initialVisibleValue) {
         this.options.visible = true;
       }
       this.dataSource.ol.once('featuresloadend', () => {
         if (initialOpacityValue) {
           this.opacity = initialOpacityValue;
         }
-        if (preloadOptions.bypassResolution) {
+        if (preloadOptions?.bypassResolution) {
           this.minResolution = initialMinResValue;
           this.maxResolution = initialMaxResValue;
         }
-        if (preloadOptions.bypassVisible) {
+        if (preloadOptions?.bypassVisible) {
           this.visible = initialVisibleValue;
         }
       });
@@ -334,8 +333,8 @@ export class VectorLayer extends Layer {
     const geoDB = new GeoDB();
     const layerDB = new LayerDB();
     merge(
-      geoDB.delete(this.id.toString()),
-      layerDB.delete(this.id.toString())
+      geoDB.delete(this.id!.toString()),
+      layerDB.delete(this.id!.toString())
     ).subscribe();
   }
 
@@ -357,16 +356,13 @@ export class VectorLayer extends Layer {
         title: this.title,
         visible: this.visible,
         opacity: this.opacity,
-        style:
-          isEditableLayerStyle(this.style) || isFlatStyleLike(this.style)
-            ? this.style
-            : undefined,
+        style: isOlFlatStyleLike(this.style) ? this.style : undefined,
         idbInfo: Object.assign({ contextUri: '*' }, this.options.idbInfo, {
           _firstLoad: false
         })
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
-    });
+    }) as LayerDBData;
     const layerDB = new LayerDB();
     layerDB.update(layerData).pipe(first()).subscribe();
   }
@@ -384,8 +380,8 @@ export class VectorLayer extends Layer {
     const geoDB = new GeoDB();
     geoDB
       .update(
-        this.options.sourceOptions?.url || this.id.toString(),
-        this.id,
+        this.options.sourceOptions?.url || this.id!.toString(),
+        this.id!,
         geojsonObject,
         InsertSourceInsertDBEnum.User,
         `${this.title}-${this.id}-${new Date()}`
@@ -398,36 +394,26 @@ export class VectorLayer extends Layer {
     const start = new Date().getTime();
     const listenerKey = this.ol.on('postrender', animate.bind(this));
 
-    function animate(event) {
+    function animate(this: VectorLayer, event: any) {
       const vectorContext = getVectorContext(event);
       const frameState = event.frameState;
-      const flashGeom = feature.getGeometry().clone();
+      const flashGeom = feature?.getGeometry()?.clone();
       const elapsed = frameState.time - start;
-      const elapsedRatio = elapsed / this.options.animation.duration;
+      const elapsedRatio = elapsed / (this.options.animation!.duration ?? 1000);
       const opacity = easeOut(1 - elapsedRatio);
-      const newColor = ColorAsArray(this.options.animation.color || 'red');
+      const newColor = ColorAsArray(this.options.animation?.color || 'red');
       newColor[3] = opacity;
-
-      const styleFn = this.ol.getStyleFunction();
-      if (!styleFn) {
-        unByKey(listenerKey);
-        return;
-      }
-      const res = styleFn(feature, frameState.viewState.resolution);
-      const styles = !res ? [] : Array.isArray(res) ? res : [res];
-
-      const style =
-        styles.find(
-          (s) => s && typeof s.getImage === 'function' && s.getImage()
-        ) ?? styles[0];
-
+      let style: any = (this.ol.getStyleFunction() as any)
+        ?.call(this, feature)
+        ?.find((style2: any) => {
+          return style2.getImage();
+        });
       if (!style) {
-        unByKey(listenerKey);
-        return;
+        style = (this.ol.getStyleFunction() as any)?.call(this, feature)?.[0];
       }
       const styleClone = style.clone();
 
-      switch (feature.getGeometry().getType()) {
+      switch (feature?.getGeometry()?.getType()) {
         case 'Point':
           if (
             styleClone.getImage() !== null &&
@@ -474,23 +460,26 @@ export class VectorLayer extends Layer {
 
       styleClone.setText('');
       vectorContext.setStyle(styleClone);
-      vectorContext.drawGeometry(flashGeom);
+      if (flashGeom) {
+        vectorContext.drawGeometry(flashGeom);
+      }
 
-      if (elapsed > this.options.animation.duration) {
+      if (elapsed > (this.options.animation?.duration ?? 1000)) {
         unByKey(listenerKey);
         // remove last geometry
         // there is a little flash before feature disappear, better solution ?
-        this.map.ol.render();
+        this.map?.ol.render();
         return;
       }
       // tell OpenLayers to continue postcompose animation
-      this.map.ol.render();
+      this.map?.ol.render();
     }
   }
 
   public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
+      return;
     } else {
       this.watcher.subscribe(() => void 0);
     }
@@ -507,29 +496,26 @@ export class VectorLayer extends Layer {
   }
 
   public stopAnimation() {
-    this.dataSource.ol.un(
-      'addfeature',
-      function (e) {
-        if (this.visible) {
-          this.flash(e.feature);
-        }
-      }.bind(this)
-    );
+    this.dataSource.ol.un('addfeature', (e) => {
+      if (this.visible && e.feature) {
+        this.flash(e.feature);
+      }
+    });
   }
 
   public enableTrackFeature(id: string | number): void {
     this.trackFeatureListenerId = this.dataSource.ol.on(
       'addfeature',
-      this.trackFeature.bind(this, id)
+      this.trackFeature.bind(this, id) as any
     );
   }
 
   public centerMapOnFeature(id: string | number) {
     const feat = this.dataSource.ol.getFeatureById(id);
     if (feat) {
-      this.map.ol
-        .getView()
-        .setCenter((feat.getGeometry() as any).getCoordinates());
+      this.map!.ol.getView().setCenter(
+        (feat.getGeometry() as any)?.getCoordinates()
+      );
     }
   }
 
@@ -566,7 +552,7 @@ export class VectorLayer extends Layer {
     randomParam?: boolean
   ) {
     const paramsWFS = options.paramsWFS;
-    const wfsProj = this.getProjection(proj, paramsWFS);
+    const wfsProj = this.getProjection(proj, paramsWFS!);
     const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
 
     if (
@@ -597,14 +583,14 @@ export class VectorLayer extends Layer {
     };
 
     if (
-      paramsWFS.version === '2.0.0' &&
-      paramsWFS.maxFeatures > defaultMaxFeatures
+      paramsWFS!.version === '2.0.0' &&
+      (paramsWFS!.maxFeatures ?? 0) > defaultMaxFeatures
     ) {
       this.batchGetFeatures(
         url,
         request,
         vectorSource,
-        paramsWFS,
+        paramsWFS!,
         readOptions,
         success,
         failure
@@ -622,7 +608,9 @@ export class VectorLayer extends Layer {
   }
 
   private abortRequests(vectorSource: olSourceVector): void {
-    vectorSource.removeLoadedExtent(this.lastRequest.extent);
+    if (this.lastRequest) {
+      vectorSource.removeLoadedExtent(this.lastRequest.extent);
+    }
     for (const request of this.ongoingRequests) {
       request.xhr?.abort();
       this.removeRequest(request);
@@ -653,7 +641,7 @@ export class VectorLayer extends Layer {
   ) {
     const nbOfFeature = 1000;
     let startIndex = 0;
-    while (startIndex < paramsWFS.maxFeatures) {
+    while (startIndex < (paramsWFS.maxFeatures ?? 0)) {
       let alteredUrl = url.replace(
         'count=' + paramsWFS.maxFeatures,
         'count=' + nbOfFeature
@@ -694,7 +682,8 @@ export class VectorLayer extends Layer {
     failure: () => void
   ): void {
     const xhr = new XMLHttpRequest();
-    const alteredUrlWithKeyAuth = this.authInterceptor.alterUrlWithKeyAuth(url);
+    const alteredUrlWithKeyAuth =
+      this.authInterceptor?.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
@@ -752,7 +741,7 @@ export class VectorLayer extends Layer {
     success: (features: OlFeature[]) => void,
     onError: () => void
   ) {
-    const format = vectorSource.getFormat();
+    const format = vectorSource.getFormat()!;
     const type = format.getType();
     if (content) {
       let source: string | object | Document | Element | ArrayBuffer;
@@ -832,7 +821,7 @@ export class VectorLayer extends Layer {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
     }
-    const format = vectorSource.getFormat();
+    const format = vectorSource.getFormat()!;
     const type = format.getType();
     if (this.geoNetworkService && typeof url !== 'function') {
       const options: SimpleGetOptions = { responseType: type };

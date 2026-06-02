@@ -49,7 +49,7 @@ export class LayerViewerBottomActionsComponent {
   readonly map = input.required<MapBase>();
   readonly controller = input.required<LayerController>();
   readonly searchTerm = input.required<string>();
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>();
 
   readonly layerChange = output();
 
@@ -84,7 +84,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   get canRename(): boolean {
-    if (!this.viewerOptions().group?.canRename || this.selected.length > 1) {
+    if (!this.viewerOptions()?.group?.canRename || this.selected.length > 1) {
       return false;
     }
 
@@ -117,7 +117,7 @@ export class LayerViewerBottomActionsComponent {
     this.selected
       .filter((layer) => isIdbLayer(layer))
       .forEach((layer) => {
-        layer.options.idbInfo._deleteFromIdb = true;
+        layer.options.idbInfo!._deleteFromIdb = true;
       });
     this.controller().remove(...this.selected);
     this.controller().clearSelection();

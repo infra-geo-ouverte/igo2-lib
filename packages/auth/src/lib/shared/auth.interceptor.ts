@@ -90,7 +90,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq);
   }
 
-  interceptXhr(xhr, url: string): boolean {
+  interceptXhr(xhr: XMLHttpRequest, url: string): boolean {
     const withCredentials = this.handleHostsWithCredentials(url);
     if (withCredentials) {
       xhr.withCredentials = withCredentials;
@@ -109,7 +109,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return true;
   }
 
-  alterUrlWithKeyAuth(url: string): string {
+  alterUrlWithKeyAuth(url: string): string | undefined {
     const hostWithKey = this.handleHostsAuthByKey(url);
     const interceptedUrl = url;
     if (hostWithKey) {
@@ -128,21 +128,29 @@ export class AuthInterceptor implements HttpInterceptor {
   private handleHostsWithCredentials(reqUrl: string) {
     let withCredentials = false;
     for (const hostWithCredentials of this.hostsWithCredentials) {
+      if (!hostWithCredentials.domainRegFilters) {
+        return;
+      }
       const domainRegex = new RegExp(hostWithCredentials.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
         withCredentials =
           hostWithCredentials.withCredentials !== undefined
             ? hostWithCredentials.withCredentials
-            : undefined;
+            : false;
         break;
       }
     }
     return withCredentials;
   }
 
-  private handleHostsAuthByKey(reqUrl: string): { key: string; value: string } {
-    let hostWithKey;
+  private handleHostsAuthByKey(
+    reqUrl: string
+  ): { key: string; value: string } | undefined {
+    let hostWithKey: { key: string; value: string } | undefined;
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
+      if (!hostWithAuthByKey.domainRegFilters) {
+        return;
+      }
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
         const replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
@@ -165,7 +173,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     if (
       !this.refreshInProgress &&
-      jwt &&
+      jwt?.exp &&
       currentTime < jwt.exp &&
       currentTime > jwt.exp - 1800
     ) {

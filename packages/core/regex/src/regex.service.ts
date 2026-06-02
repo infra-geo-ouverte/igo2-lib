@@ -20,7 +20,7 @@ export class RegexService {
     return this.options;
   }
 
-  get(key) {
+  get(key: string) {
     if (this.options) {
       return this.options[key];
     }
