@@ -4,8 +4,16 @@ import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
-import { StorageService, StorageServiceEventEnum } from '@igo2/core/storage';
-import { EditionWorkspace, OgcFilterWidget } from '@igo2/geo';
+import {
+  StorageService,
+  StorageServiceEvent,
+  StorageServiceEventEnum
+} from '@igo2/core/storage';
+import {
+  EditionWorkspace,
+  NewEditionWorkspace,
+  OgcFilterWidget
+} from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -50,7 +58,7 @@ export class EditionActionsService implements OnDestroy {
   }
 
   loadActions(
-    workspace: EditionWorkspace,
+    workspace: EditionWorkspace | NewEditionWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
   ) {
@@ -63,7 +71,7 @@ export class EditionActionsService implements OnDestroy {
   }
 
   buildActions(
-    workspace: EditionWorkspace,
+    workspace: EditionWorkspace | NewEditionWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
   ): Action[] {

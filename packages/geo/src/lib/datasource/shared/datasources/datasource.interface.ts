@@ -96,6 +96,7 @@ export interface EditionOptions {
   messages?: any[];
   addHeaders?: Record<string, any>;
   modifyHeaders?: Record<string, any>;
+  modifyMethod?: 'post' | 'patch';
   modifyProtocol?: string;
   addButton?: boolean;
   modifyButton?: boolean;
@@ -118,7 +119,6 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
-  send?: boolean;
 }
 
 export interface Legend {

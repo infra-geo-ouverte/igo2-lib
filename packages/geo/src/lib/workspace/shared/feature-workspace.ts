@@ -2,6 +2,7 @@ import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { Feature } from '../../feature/shared';
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 
@@ -10,7 +11,7 @@ export interface FeatureWorkspaceOptions extends WorkspaceOptions {
   map: IgoMap;
 }
 
-export class FeatureWorkspace extends Workspace {
+export class FeatureWorkspace extends Workspace<Feature> {
   readonly inResolutionRange$ = new BehaviorSubject<boolean>(true);
 
   get layer(): VectorLayer {

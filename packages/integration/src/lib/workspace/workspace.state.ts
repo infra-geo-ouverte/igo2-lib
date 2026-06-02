@@ -12,6 +12,7 @@ import { StorageService } from '@igo2/core/storage';
 import {
   EditionWorkspace,
   FeatureWorkspace,
+  NewEditionWorkspace,
   LayerId,
   WfsWorkspace
 } from '@igo2/geo';
