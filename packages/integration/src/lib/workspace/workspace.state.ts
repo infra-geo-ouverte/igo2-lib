@@ -13,6 +13,7 @@ import {
   EditionWorkspace,
   FeatureWorkspace,
   LayerId,
+  NewEditionWorkspace,
   WfsWorkspace
 } from '@igo2/geo';
 
@@ -134,7 +135,10 @@ export class WorkspaceState implements OnDestroy {
               this.rowsInMapExtentCheckCondition$,
               this.selectOnlyCheckCondition$
             );
-          } else if (wks.entity instanceof EditionWorkspace) {
+          } else if (
+            wks.entity instanceof EditionWorkspace ||
+            wks.entity instanceof NewEditionWorkspace
+          ) {
             this.editionActionsService.loadActions(
               wks.entity,
               this.rowsInMapExtentCheckCondition$,

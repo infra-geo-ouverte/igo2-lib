@@ -456,9 +456,7 @@ export class EditionWorkspaceService {
 
       this.addFeature(feature, workspace, url, headers);
     } else {
-      if (
-        workspace.layer.dataSource.options.edition!.modifyProtocol !== 'post'
-      ) {
+      if (workspace.layer.dataSource.options.edition!.modifyMethod !== 'post') {
         url +=
           '?' +
           workspace.layer.dataSource.options.edition!.modifyUrl +
@@ -468,7 +466,7 @@ export class EditionWorkspaceService {
       }
 
       const protocole =
-        workspace.layer.dataSource.options.edition!.modifyProtocol;
+        workspace.layer.dataSource.options.edition!.modifyMethod;
       const modifyHeaders =
         workspace.layer.dataSource.options.edition!.modifyHeaders;
       const headers = new HttpHeaders(modifyHeaders);
@@ -727,6 +725,14 @@ export class EditionWorkspaceService {
         continue;
       }
 
+      // TODO Valider le changement avec la branche d'Olivier Saint-Cyr
+      // +
+      // if (!workspace.layer.dataSource.options.sourceFields) {
+      //   if (property === 'boundedBy' || property === 'msGeometry') {
+      //     delete feature.properties[property];
+      //   }
+      //   continue;
+      // }
       if (
         !schema ||
         schema?.validation?.readonly ||

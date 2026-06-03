@@ -123,8 +123,7 @@ export class AppWorkspaceComponent implements OnInit {
           visible: true
         } satisfies LayerOptions,
         {
-          title: 'Simple WFS ',
-          maxResolution: 3000,
+          title: 'NewEditionWorkspace - NOT REAL BACKEND',
           visible: true,
           workspace: {
             enabled: true
@@ -138,8 +137,27 @@ export class AppWorkspaceComponent implements OnInit {
               version: '2.0.0',
               outputFormat: 'geojson'
             },
+            // Enable edition mode so this layer is bound to NewEditionWorkspace.
+            // This demo keeps write buttons disabled because no writable backend is configured.
+            edition: {
+              enabled: true,
+              baseUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+              addUrl: '?service=WFS&request=Transaction',
+              deleteUrl: '?service=WFS&request=Transaction&featureId=',
+              modifyUrl: '?service=WFS&request=Transaction',
+              geomType: 'Point',
+              hasGeometry: true,
+              modifyMethod: 'post',
+              modifyButton: true,
+              deleteButton: true
+            },
             sourceFields: [
-              { name: 'idetablis', alias: 'ID' },
+              {
+                name: 'idetablis',
+                alias: 'ID',
+                primary: true,
+                validation: { readonly: true }
+              },
               { name: 'nometablis', alias: 'Name' },
               { name: 'typetablis', alias: 'Type' }
             ]

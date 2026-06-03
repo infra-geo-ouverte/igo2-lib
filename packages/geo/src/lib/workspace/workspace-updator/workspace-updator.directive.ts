@@ -18,6 +18,7 @@ import { isLayerItem } from '../../layer';
 import { AnyLayer, ImageLayer, Layer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { EditionWorkspaceFactoryService } from '../new-edition-workspace/edition-workspace-factory.service';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
@@ -31,6 +32,9 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   private wmsWorkspaceService = inject(WmsWorkspaceService);
   private editionWorkspaceService = inject(EditionWorkspaceService);
   private featureWorkspaceService = inject(FeatureWorkspaceService);
+  private editionWorkspaceFactoryService = inject(
+    EditionWorkspaceFactoryService
+  );
 
   private layers$$!: Subscription;
   private entities$$: Subscription[] = [];
@@ -91,6 +95,19 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     const workspace = this.workspaceStore()!.get(layer.id!);
     if (workspace !== undefined) {
       return;
+    }
+
+    if (
+      // TODO Probablement, tu devras modifier pour avoir un FeatureDataSource
+      layer.dataSource instanceof WFSDataSource &&
+      layer.dataSource.options.edition?.enabled
+    ) {
+      const wks = this.editionWorkspaceFactoryService.createWFSEditionWorkspace(
+        layer as VectorLayer,
+        this.map()!
+      );
+      console.log(wks);
+      return wks;
     }
     if (
       layer.dataSource instanceof WFSDataSource &&
