@@ -26,7 +26,7 @@ import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { EditionFeature } from './edition-workspace.interface';
 
-export interface EditionWorkspaceOptions extends WorkspaceOptions<EditionWorkspaceMeta> {
+interface EditionWorkspaceOptions extends WorkspaceOptions<EditionWorkspaceMeta> {
   layer: ImageLayer | VectorLayer;
   map: IgoMap;
 }

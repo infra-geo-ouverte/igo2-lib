@@ -96,7 +96,7 @@ export interface EditionOptions {
   messages?: any[];
   addHeaders?: Record<string, any>;
   modifyHeaders?: Record<string, any>;
-  modifyProtocol?: string;
+  modifyMethod?: 'post' | 'patch';
   addButton?: boolean;
   modifyButton?: boolean;
   deleteButton?: boolean;

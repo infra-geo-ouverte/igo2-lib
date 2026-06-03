@@ -40,7 +40,6 @@
         ($any(workspace).inResolutionRange$ | async)
       ) {
         <igo-entity-table
-          class="table-compact table-centered"
           [paginator]="workspacePaginator!"
           [scrollBehavior]="scrollBehavior"
           [store]="workspace.entityStore"
