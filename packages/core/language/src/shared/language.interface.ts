@@ -1,14 +1,36 @@
 import { TranslateLoader } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
+export enum IgoLanguagePackage {
+  Core = 'core',
+  Auth = 'auth',
+  Common = 'common',
+  Geo = 'geo',
+  Context = 'context',
+  Integration = 'integration'
+}
+
+export const IGO_LANGUAGE_PACKAGES: readonly IgoLanguagePackage[] = [
+  IgoLanguagePackage.Core,
+  IgoLanguagePackage.Auth,
+  IgoLanguagePackage.Common,
+  IgoLanguagePackage.Geo,
+  IgoLanguagePackage.Context,
+  IgoLanguagePackage.Integration
+];
+
+export type LanguagePackage = IgoLanguagePackage | (string & {});
+
 export interface LanguageOptions {
   prefix?: string | string[];
-  ignoreLibsLocale?: boolean;
+  appPrefix?: string | string[];
+  packages?: LanguagePackage[];
+  packageBasePath?: string;
 }
 
 export abstract class LanguageLoaderBase implements TranslateLoader {
   abstract isLoaded$: Observable<boolean>;
-  abstract getTranslation(lang: string): Observable<any>;
+  abstract getTranslation(lang: string): Observable<TranslationObject>;
 }
 
 export type Translation =

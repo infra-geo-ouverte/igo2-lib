@@ -1,5 +1,8 @@
+import { IGO_LANGUAGE_PACKAGES } from '@igo2/core/language';
 import { CatalogQueryFormatTypes, ICatalog, TooltipType } from '@igo2/geo';
 import { EnvironmentOptions } from '@igo2/integration';
+
+export const DEMO_LANGUAGE_PACKAGES = [...IGO_LANGUAGE_PACKAGES];
 
 export const environment: EnvironmentOptions = {
   production: false,
@@ -32,7 +35,9 @@ export const environment: EnvironmentOptions = {
       allowAnonymous: true
     },
     language: {
-      prefix: './locale/'
+      appPrefix: './locale/',
+      packageBasePath: 'igo2',
+      packages: DEMO_LANGUAGE_PACKAGES
     },
     interactiveTour: {
       tourInMobile: true,

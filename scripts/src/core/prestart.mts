@@ -5,7 +5,6 @@ import {
   compileBaseStyle,
   prebuiltThemes
 } from './utils/core-style.utils.mts';
-import { bundleLocalization } from './utils/localization.mts';
 
 executor(`Prepare the base for @igo2/core`, async () => {
   await prebuiltThemes();
@@ -13,8 +12,6 @@ executor(`Prepare the base for @igo2/core`, async () => {
   await compileBaseStyle();
 
   await compileAllBaseStyle();
-
-  await bundleLocalization();
 
   await copyExternalAssets();
 

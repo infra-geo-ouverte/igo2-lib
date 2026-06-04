@@ -30,7 +30,11 @@ import { provideAuthUserMonitoring } from '@igo2/auth/monitoring';
 import { provideIcon } from '@igo2/common/icon';
 import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
-import { provideTranslation, withStaticConfig } from '@igo2/core/language';
+import {
+  IGO_LANGUAGE_PACKAGES,
+  provideTranslation,
+  withStaticConfig
+} from '@igo2/core/language';
 import { provideSentryMonitoring } from '@igo2/core/monitoring';
 import {
   provideOffline,
@@ -60,7 +64,10 @@ export const appConfig: ApplicationConfig = {
     provideConfig({
       default: environment.igo
     }),
-    provideTranslation(withStaticConfig(environment.igo.language!)),
+    provideTranslation(
+      withStaticConfig(environment.igo.language!),
+      environment.igo.language?.packages ?? IGO_LANGUAGE_PACKAGES
+    ),
     provideAuthentification(),
     provideIcon(),
     provideSentryMonitoring(environment.igo.monitoring!),

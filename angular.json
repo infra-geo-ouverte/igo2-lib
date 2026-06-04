@@ -46,10 +46,34 @@
                 "output": "igo2/core/"
               },
               {
-                "glob": "**/*",
+                "glob": "*.core.json",
                 "input": "./dist/core/locale/",
-                "output": "./locale/libs_locale",
-                "ignore": ["**/*.core.json"]
+                "output": "igo2/core/locale"
+              },
+              {
+                "glob": "*.auth.json",
+                "input": "./dist/auth/locale/",
+                "output": "igo2/auth/locale"
+              },
+              {
+                "glob": "*.common.json",
+                "input": "./dist/common/locale/",
+                "output": "igo2/common/locale"
+              },
+              {
+                "glob": "*.geo.json",
+                "input": "./dist/geo/locale/",
+                "output": "igo2/geo/locale"
+              },
+              {
+                "glob": "*.context.json",
+                "input": "./dist/context/locale/",
+                "output": "igo2/context/locale"
+              },
+              {
+                "glob": "*.integration.json",
+                "input": "./dist/integration/locale/",
+                "output": "igo2/integration/locale"
               },
               {
                 "glob": "**/*",

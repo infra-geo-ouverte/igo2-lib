@@ -1,6 +1,7 @@
 import { HttpBackend } from '@angular/common/http';
 import {
   DOCUMENT,
+  ENVIRONMENT_INITIALIZER,
   EnvironmentProviders,
   Provider,
   inject,
@@ -22,7 +23,12 @@ import {
 import { first } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-import { LanguageLoaderBase, LanguageOptions } from './language.interface';
+import { LanguagePackagesService } from './language-packages.service';
+import {
+  LanguageLoaderBase,
+  LanguageOptions,
+  LanguagePackage
+} from './language.interface';
 import {
   LanguageLoader,
   LanguageLoaderWithAsyncConfig
@@ -47,9 +53,10 @@ export enum TranslationFeatureKind {
  * Make sure you only call this method in the root module of your application, most of the time called AppModule.
  */
 export function provideTranslation(
-  featureConfig: TranslationFeature<TranslationFeatureKind.Translation>
+  featureConfig: TranslationFeature<TranslationFeatureKind.Translation>,
+  packageNames?: readonly LanguagePackage[]
 ): EnvironmentProviders {
-  return makeEnvironmentProviders([
+  const providers: (Provider | EnvironmentProviders)[] = [
     ...featureConfig.providers,
     provideAppInitializer(() => {
       const languageService = inject(LanguageService);
@@ -64,7 +71,17 @@ export function provideTranslation(
         })
       );
     })
-  ]);
+  ];
+
+  if (packageNames?.length) {
+    providers.unshift(
+      makeEnvironmentProviders(
+        createTranslationPackageRegistration(packageNames)
+      )
+    );
+  }
+
+  return makeEnvironmentProviders(providers);
 }
 
 export function withStaticConfig(
@@ -98,6 +115,35 @@ export function withAsyncConfig(
       provideTranslateService(setTranslationConfig(loader, defaultLanguage))
     ]
   };
+}
+
+export function provideTranslationPackages(
+  packageNames: readonly LanguagePackage[]
+): EnvironmentProviders {
+  return makeEnvironmentProviders(
+    createTranslationPackageRegistration(packageNames)
+  );
+}
+
+export function provideTranslationPackage(
+  packageName: LanguagePackage
+): EnvironmentProviders {
+  return provideTranslationPackages([packageName]);
+}
+
+function createTranslationPackageRegistration(
+  packageNames: readonly LanguagePackage[]
+): Provider[] {
+  return [
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useValue: () => {
+        const packagesService = inject(LanguagePackagesService);
+        packagesService.registerMany(packageNames);
+      }
+    }
+  ];
 }
 
 /**
