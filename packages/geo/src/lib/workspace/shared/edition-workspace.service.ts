@@ -327,7 +327,7 @@ export class EditionWorkspaceService {
               editMode: true,
               icon: 'check',
               color: 'primary',
-              disabled: this.loading,
+              disabled: this.loading, // TODO: OR the record entity has not changed
               click: (record) => {
                 this.saveFeature(record.entity, workspace);
               }
