@@ -25,6 +25,7 @@
 - **directions:** added possibility to toggle between two routing sources ([#1644](https://github.com/infra-geo-ouverte/igo2-lib/issues/1644)) ([ef607e2](https://github.com/infra-geo-ouverte/igo2-lib/commit/ef607e2df80ad53f5b4587413f80f882c0bdb40b))
 - **geo:** add modularity for search and direction ([#1669](https://github.com/infra-geo-ouverte/igo2-lib/issues/1669)) ([cd199eb](https://github.com/infra-geo-ouverte/igo2-lib/commit/cd199ebe69b39d4ca98a0898cb39b3fc211d5469))
 - **geo:** update Openlayers to v9 ([#1642](https://github.com/infra-geo-ouverte/igo2-lib/issues/1642)) ([06ed562](https://github.com/infra-geo-ouverte/igo2-lib/commit/06ed5623dcd65e329aa7d85d76dcd4a6bdcb8a0f))
+- **geo:** support MIMEType application/geo+json ([728c239](https://github.com/infra-geo-ouverte/igo2-lib/commit/728c23917befef81b1e49310d2ceeb3ee832f40c))
 - **integration:** catalog keep selection when changing tools ([#1654](https://github.com/infra-geo-ouverte/igo2-lib/issues/1654)) ([946d9f4](https://github.com/infra-geo-ouverte/igo2-lib/commit/946d9f4a7cca13703c87f667b6efb174653da8d6))
 - replace our icon library @mdi/angular-material with the Google Font - Material Symbol ([#1664](https://github.com/infra-geo-ouverte/igo2-lib/issues/1664)) ([f74c495](https://github.com/infra-geo-ouverte/igo2-lib/commit/f74c495db129502af99c8e6a16579b103e97d3a3))
 
