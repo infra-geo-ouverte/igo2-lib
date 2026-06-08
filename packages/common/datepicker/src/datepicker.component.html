@@ -48,12 +48,3 @@
     }
   </mat-datepicker>
 </mat-form-field>
-
-@if (calendarType() === 'datetime') {
-  <igo-timepicker
-    #timepicker
-    [value]="timepickerValue"
-    [disabled]="disabled"
-    (valueChange)="updateTime($event)"
-  />
-}

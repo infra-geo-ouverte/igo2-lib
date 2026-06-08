@@ -2,13 +2,6 @@
   width: 150px;
 }
 
-:host {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 ::ng-deep .igo-datepicker-month-year-picker .mat-calendar-period-button {
   pointer-events: none;
   cursor: default;
