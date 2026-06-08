@@ -78,16 +78,17 @@ export class AppFormComponent implements OnInit, OnDestroy {
         }
       },
       {
-        name: 'date',
+        name: 'datetime',
         title: 'Date',
-        type: 'date',
+        type: 'datetime',
         options: {
           cols: 2
         },
         inputs: {
           showLabel: true,
-          placeholder: 'Select date',
-          calendarType: 'date'
+          placeholder: 'Date',
+          timePlaceholder: 'Time',
+          interval: '20m'
         }
       }
     ];
@@ -116,7 +117,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
       id: 1,
       name: 'Bob',
       status: 2,
-      date: '2026-05-29'
+      datetime: new Date(2026, 4, 29, 16, 42, 0, 0)
     });
   }
 
@@ -125,6 +126,45 @@ export class AppFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(data: object): void {
-    alert(JSON.stringify(data));
+    const submitted = data as Record<string, unknown>;
+    const localDatetime = this.toDateValue(submitted['datetime']);
+
+    alert(
+      JSON.stringify(
+        {
+          ...submitted,
+          localDatetimeIsoLike: localDatetime
+            ? this.formatLocalDateTime(localDatetime)
+            : null,
+          localDatetimeToString: localDatetime ? localDatetime.toString() : null
+        },
+        null,
+        2
+      )
+    );
+  }
+
+  private toDateValue(value: unknown): Date | null {
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+  }
+
+  private formatLocalDateTime(date: Date): string {
+    const pad = (value: number): string => String(value).padStart(2, '0');
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 }

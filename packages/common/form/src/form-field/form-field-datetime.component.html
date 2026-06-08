@@ -1,0 +1,47 @@
+<div class="igo-form-field-datetime">
+  <mat-form-field>
+    @if (showLabel() === true) {
+      <mat-label>{{ placeholder() | translate }}</mat-label>
+    }
+
+    <input
+      matInput
+      [matDatepicker]="datePicker"
+      [required]="required"
+      [placeholder]="placeholder() | translate"
+      [formControl]="dateControl"
+      [min]="minDate() ?? null"
+      [max]="maxDate() ?? null"
+    />
+    <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+    <mat-datepicker #datePicker />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>{{ timePlaceholder() | translate }}</mat-label>
+
+    <input
+      matInput
+      [matTimepicker]="timePicker"
+      [required]="required"
+      [placeholder]="timePlaceholder() | translate"
+      [formControl]="timeControl"
+      [matTimepickerMin]="minTime()"
+      [matTimepickerMax]="maxTime()"
+      [matTimepickerOpenOnClick]="openOnClick()"
+    />
+
+    <mat-timepicker-toggle matIconSuffix [for]="timePicker" />
+    <mat-timepicker #timePicker [interval]="interval()" [options]="options()" />
+  </mat-form-field>
+
+  @if (disableSwitch() === true) {
+    <mat-icon class="igo-form-disable-switch" (click)="onDisableSwitchClick()"
+      >{{ disabled() === true ? 'check_box_outline_blank' : 'check_box' }}
+    </mat-icon>
+  }
+
+  @if (formControl().errors) {
+    <mat-error>{{ getErrorMessage() | translate }}</mat-error>
+  }
+</div>
