@@ -23,6 +23,9 @@ executor('Library Prepublish', async () => {
     await setPackageVersion(folder, version);
   }
 
+  // Regenerate the package-lock.json with the latest version
+  await $({ stdio: 'inherit' })`npm i --package-lock-only --no-audit`;
+
   log.info('Build the lib');
   await $({ stdio: 'inherit' })`npm run build.libs`;
 
