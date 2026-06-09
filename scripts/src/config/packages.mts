@@ -83,7 +83,7 @@ export async function publishPackage(
   channel?: string
 ): Promise<void> {
   const preReleaseTag = RELEASE_TAGS.find((tag) => version.includes(tag));
-  const distTag = preReleaseTag ?? channel;
+  const distTag = preReleaseTag ?? channel?.replace(/\./g, '-');
 
   let command = `npm publish --access public`;
 
