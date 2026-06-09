@@ -25,16 +25,17 @@ jobs:
       id-token: write # to enable use of OIDC for npm provenance
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'npm'
+          package-manager-cache: false
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci --no-audit
