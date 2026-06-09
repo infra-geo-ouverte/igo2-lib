@@ -79,14 +79,16 @@ export function cleanPackageExports(name: string): Promise<void> {
 
 export async function publishPackage(
   name: PackageName,
-  version: string
+  version: string,
+  channel?: string
 ): Promise<void> {
-  const tag = RELEASE_TAGS.find((tag) => version.includes(tag));
+  const preReleaseTag = RELEASE_TAGS.find((tag) => version.includes(tag));
+  const distTag = preReleaseTag ?? channel;
 
   let command = `npm publish --access public`;
 
-  if (tag) {
-    command += ` --tag ${tag}`;
+  if (distTag) {
+    command += ` --tag ${distTag}`;
   }
   log.info(command);
 
