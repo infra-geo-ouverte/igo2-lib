@@ -454,6 +454,7 @@ export class QueryService {
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
       case QueryFormat.GEOJSON2:
+      case QueryFormat.GEO_PLUS_JSON:
         features = this.extractGeoJSONData(
           res,
           layer.zIndex,
