@@ -26,7 +26,8 @@ import {
   MAP_DIRECTIVES,
   MapViewOptions,
   VectorLayerOptions,
-  WorkspaceSelectorDirective
+  WorkspaceSelectorDirective,
+  WorkspaceUpdatorDirective
 } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
 
@@ -51,6 +52,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     MAP_DIRECTIVES,
     WorkspaceSelectorComponent,
     WorkspaceSelectorDirective,
+    WorkspaceUpdatorDirective,
     WorkspaceWidgetOutletComponent,
     MatCardModule
   ]
