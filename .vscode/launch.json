@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "editor-browser",
+      "name": "Launch Demo (Integrated Browser)",
+      "request": "launch",
+      "url": "http://127.0.0.1:4200/projects/demo",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "npm: start",
+      "sourceMaps": true
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Launch Demo",
@@ -49,6 +58,6 @@
       "request": "launch",
       "preLaunchTask": "npm: test.context",
       "url": "http://localhost:9876/debug.html"
-    },
+    }
   ]
 }
