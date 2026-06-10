@@ -84,7 +84,9 @@ describe('ShareMapLegacyParser', () => {
   let service: ShareMapLegacyParser;
 
   beforeEach(() => {
-    service = new ShareMapLegacyParser(ROUTE_OPTION_LEGACY_MOCK);
+    service = new ShareMapLegacyParser({
+      legacyOptions: ROUTE_OPTION_LEGACY_MOCK
+    });
   });
 
   it('should be created', () => {

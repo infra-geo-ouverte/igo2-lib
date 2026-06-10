@@ -102,7 +102,9 @@ describe('ShareMapParseUrl', () => {
   beforeEach(() => {
     const optionsLegacy = ROUTE_OPTION_LEGACY_MOCK;
     SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
-    shareMapParseUrl = new ShareMapParser(SHARE_MAP_DEFS, optionsLegacy);
+    shareMapParseUrl = new ShareMapParser(SHARE_MAP_DEFS, {
+      legacyOptions: optionsLegacy
+    });
   });
 
   it('should be created', () => {

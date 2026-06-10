@@ -27,6 +27,7 @@ export interface EnvironmentOptions {
     contextListFile?: string;
     defaultContextUri?: string;
   };
+  mapServerUrl?: string;
   layer?: LayerConfig;
   depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;

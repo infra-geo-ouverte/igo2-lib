@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Params } from '@angular/router';
 
+import { ConfigService } from '@igo2/core/config';
 import { RouteService, RouteServiceOptions } from '@igo2/core/route';
 import { AnyLayerOptions, IgoMap } from '@igo2/geo';
 
@@ -22,6 +23,7 @@ import {
 export class ShareMapService {
   routeService = inject(RouteService);
   document = inject<Document>(DOCUMENT);
+  config = inject(ConfigService);
 
   get language(): string {
     return this._language;
@@ -50,10 +52,10 @@ export class ShareMapService {
 
     this.encoder = new ShareMapEncoder(this.keysDefinitions, this.document);
 
-    this.parser = new ShareMapParser(
-      this.keysDefinitions,
-      this.routeService.legacyOptions
-    );
+    this.parser = new ShareMapParser(this.keysDefinitions, {
+      legacyOptions: this.routeService.legacyOptions,
+      serverUrl: this.config.getConfig('mapServerUrl')
+    });
 
     this.routeService.queryParams.subscribe((params) => {
       const language = params[this.keysDefinitions.languageKey];

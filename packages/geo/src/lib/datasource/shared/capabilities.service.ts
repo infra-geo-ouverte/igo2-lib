@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
-import { ObjectUtils } from '@igo2/utils';
+import { ConfigService } from '@igo2/core/config';
+import { ObjectUtils, resolveUrl } from '@igo2/utils';
 
 import olAttribution from 'ol/control/Attribution';
 import { EsriJSON, WMSCapabilities, WMTSCapabilities } from 'ol/format';
@@ -41,6 +42,7 @@ import {
 } from '../../query/shared/query.enums';
 import { EsriStyleGenerator } from '../../style/shared/esri-style-generator';
 import {
+  GetCapabilitiesParams,
   TypeCapabilities,
   TypeCapabilitiesStrings
 } from './capabilities.interface';
@@ -57,12 +59,18 @@ import { WMTSDataSourceOptions } from './datasources/wmts-datasource.interface';
 export class CapabilitiesService {
   private http = inject(HttpClient);
   private mapService = inject(MapService);
+  private configService = inject(ConfigService);
+  private mapServerUrl?: string;
 
   private parsers = {
     wms: new WMSCapabilities(),
     wmts: new WMTSCapabilities(),
     esriJSON: new EsriJSON()
   };
+
+  constructor() {
+    this.mapServerUrl = this.configService.getConfig<string>('mapServerUrl');
+  }
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -209,20 +217,21 @@ export class CapabilitiesService {
     baseUrl: string,
     version?: string
   ): Observable<any> {
-    const params = new HttpParams({
-      fromObject: {
-        request: 'GetCapabilities',
-        service: service.toUpperCase(),
-        version: version || '1.3.0',
-        _i: 'true'
-      }
-    });
+    const resolvedUrl = resolveUrl(baseUrl, this.mapServerUrl);
+
+    const fullParams: Record<GetCapabilitiesParams | '_i', string> = {
+      request: 'GetCapabilities',
+      service: service.toUpperCase(),
+      version: version || '1.3.0',
+      _i: 'true'
+    };
+    const params = this.buildHttpParams(resolvedUrl, fullParams);
 
     let request;
     if (TypeCapabilities[service] === 'esriJSON') {
-      request = this.http.get(baseUrl + '?f=json');
+      request = this.http.get(resolvedUrl + '?f=json');
     } else {
-      request = this.http.get(baseUrl, {
+      request = this.http.get(resolvedUrl, {
         params,
         responseType: 'text'
       });
@@ -633,5 +642,29 @@ export class CapabilitiesService {
     } as LegendOptions;
 
     return legendOptions;
+  }
+
+  /**
+   * Builds HttpParams by excluding keys already present in the base URL's query string.
+   * This avoids duplicate parameters when appending to an existing URL.
+   */
+  private buildHttpParams(
+    url: string,
+    params: Record<string, string>
+  ): HttpParams {
+    const [, queryString] = url.split('?');
+
+    const existingKeys = new Set(
+      (queryString ?? '')
+        .split('&')
+        .map((pair) => pair.split('=')[0].trim())
+        .filter(Boolean)
+    );
+
+    const filteredParams = Object.fromEntries(
+      Object.entries(params).filter(([key]) => !existingKeys.has(key))
+    );
+
+    return new HttpParams({ fromObject: filteredParams });
   }
 }

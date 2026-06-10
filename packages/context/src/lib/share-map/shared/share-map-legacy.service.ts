@@ -1,11 +1,14 @@
 import { HttpParams } from '@angular/common/http';
 import { Params } from '@angular/router';
 
-import { RouteServiceOptions } from '@igo2/core/route';
 import { LayerOptions, generateIdFromSourceOptions } from '@igo2/geo';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, resolveUrl } from '@igo2/utils';
 
-import { PositionParams, ServiceType } from './share-map.interface';
+import {
+  PositionParams,
+  ServiceType,
+  ShareMapParserOptions
+} from './share-map.interface';
 import { buildDataSourceOptions } from './share-map.utils';
 
 interface SharedLayerConfig {
@@ -14,7 +17,7 @@ interface SharedLayerConfig {
 }
 
 export class ShareMapLegacyParser {
-  constructor(private options: RouteServiceOptions) {}
+  constructor(private options: ShareMapParserOptions) {}
 
   parseUrl(params: Params): LayerOptions[] {
     const layerOptions = ServiceType.flatMap((type) =>
@@ -25,10 +28,10 @@ export class ShareMapLegacyParser {
   }
 
   parsePosition(params: Params): PositionParams {
-    const center = params[this.options.centerKey!];
-    const projection = params[this.options.projectionKey!];
-    const zoom = params[this.options.zoomKey!];
-    const rotation = params[this.options.rotationKey!];
+    const center = params[this.options.legacyOptions.centerKey!];
+    const projection = params[this.options.legacyOptions.projectionKey!];
+    const zoom = params[this.options.legacyOptions.zoomKey!];
+    const rotation = params[this.options.legacyOptions.rotationKey!];
 
     return ObjectUtils.removeUndefined({
       center: center?.split(',').map(Number),
@@ -90,7 +93,7 @@ export class ShareMapLegacyParser {
       iarcgisLayersKey,
       tarcgisUrlKey,
       tarcgisLayersKey
-    } = this.options;
+    } = this.options.legacyOptions;
 
     switch (type) {
       case 'wms':
@@ -146,6 +149,9 @@ export class ShareMapLegacyParser {
     if (url.endsWith('?')) {
       url = url.substring(0, url.length - 1);
     }
+
+    url = resolveUrl(url, this.options.serverUrl);
+
     return [url, version];
   }
 

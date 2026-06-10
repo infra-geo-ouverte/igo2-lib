@@ -137,3 +137,8 @@ export const SHARE_MAP_KEYS_DEFAULT_OPTIONS: ShareMapRouteKeysOptions = {
   rotation: 'r',
   opacity: 'o'
 };
+
+export interface ShareMapParserOptions {
+  legacyOptions: RouteServiceOptions;
+  serverUrl?: string;
+}

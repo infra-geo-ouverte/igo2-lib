@@ -1,19 +1,19 @@
 import { Params } from '@angular/router';
 
-import { RouteServiceOptions } from '@igo2/core/route';
 import type {
   AnyLayerOptions,
   LayerGroupOptions,
   LayerOptions
 } from '@igo2/geo';
-import { ObjectUtils, OptionalRequired } from '@igo2/utils';
+import { ObjectUtils, OptionalRequired, resolveUrl } from '@igo2/utils';
 
 import { ShareMapLegacyParser } from './share-map-legacy.service';
 import {
   LayerProperties,
   PositionParams,
   ServiceType,
-  ShareMapKeysDefinitions
+  ShareMapKeysDefinitions,
+  ShareMapParserOptions
 } from './share-map.interface';
 import {
   buildDataSourceOptions,
@@ -41,15 +41,15 @@ export class ShareMapParser {
 
   constructor(
     private keysDefinitions: ShareMapKeysDefinitions,
-    private legacyOptions: RouteServiceOptions
+    private options: ShareMapParserOptions
   ) {
-    this.legacy = new ShareMapLegacyParser(legacyOptions);
+    this.legacy = new ShareMapLegacyParser(this.options);
   }
 
   parseLayers(params: Params): AnyLayerOptions[] {
     if (
       !hasModernShareParams(params, this.keysDefinitions) &&
-      hasLegacyParams(params, this.legacyOptions)
+      hasLegacyParams(params, this.options.legacyOptions)
     ) {
       return this.legacy.parseUrl(params);
     }
@@ -123,7 +123,7 @@ export class ShareMapParser {
       const urlIndex = this.extractUrlIndex(layer);
       if (urlIndex === undefined) return undefined;
 
-      const url = urls[urlIndex];
+      const url = resolveUrl(urls[urlIndex], this.options.serverUrl);
       const version = this.extractVersionFromUrl(url);
 
       const sourceOptions = buildDataSourceOptions(
