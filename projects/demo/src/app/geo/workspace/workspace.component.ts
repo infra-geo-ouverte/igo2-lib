@@ -162,7 +162,78 @@ export class AppWorkspaceComponent implements OnInit {
               { name: 'typetablis', alias: 'Type' }
             ]
           }
+        } satisfies VectorLayerOptions,
+        {
+          title: 'NewEditionWorkspace - REAL BACKEND',
+          visible: true,
+          workspace: {
+            enabled: true
+          },
+          sourceOptions: {
+            type: 'vector',
+            url: 'http://localhost:5000/collections/test/items',
+            params: {
+              featureTypes: 'etablissement_mtq',
+              fieldNameGeometry: 'geometry',
+              version: '2.0.0',
+              outputFormat: 'geojson'
+            },
+            // Enable edition mode so this layer is bound to NewEditionWorkspace.
+            // This demo keeps write buttons disabled because no writable backend is configured.
+            edition: {
+              enabled: true,
+              baseUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+              addUrl: '?service=WFS&request=Transaction',
+              deleteUrl: '?service=WFS&request=Transaction&featureId=',
+              modifyUrl: '?service=WFS&request=Transaction',
+              geomType: 'Point',
+              hasGeometry: true,
+              modifyMethod: 'post',
+              modifyButton: true,
+              deleteButton: true
+            },
+            sourceFields: [
+              {
+                name: 'idetablis',
+                alias: 'ID',
+                primary: true,
+                validation: { readonly: true }
+              },
+              { name: 'nometablis', alias: 'Name' },
+              { name: 'typetablis', alias: 'Type' }
+            ]
+          }
         } satisfies VectorLayerOptions
+        // TODO: uncomment before merge
+        // {
+        //   title: 'NewEditionWorkspace - test',
+        //   visible: true,
+        //   workspace: {
+        //     enabled: true
+        //   },
+        //   sourceOptions: {
+        //     type: 'vector',
+        //     url: 'http://localhost:5000/collections/test/items',
+        //     formatOptions: {
+        //       dataProjection: 'EPSG:4326',
+        //       featureProjection: 'EPSG:3857'
+        //     },
+        //     // Enable edition mode so this layer is bound to NewEditionWorkspace.
+        //     // This demo keeps write buttons disabled because no writable backend is configured.
+        //     edition: {
+        //       enabled: true,
+        //       baseUrl: 'https://localhost:5000/collections/test/items',
+        //       addUrl: '',
+        //       deleteUrl: '',
+        //       modifyUrl: '',
+        //       geomType: 'Point',
+        //       hasGeometry: true,
+        //       modifyMethod: 'post',
+        //       modifyButton: true,
+        //       deleteButton: true
+        //     }
+        //   }
+        // } satisfies VectorLayerOptions
       ])
       .subscribe((layers) => {
         this.map.layerController.add(
