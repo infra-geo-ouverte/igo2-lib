@@ -145,8 +145,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     }
 
     if (
-      // TODO Probablement, tu devras modifier pour avoir un FeatureDataSource
-      layer.dataSource instanceof WFSDataSource &&
+      (layer.dataSource instanceof WFSDataSource ||
+        layer.dataSource instanceof FeatureDataSource) &&
       layer.dataSource.options.edition?.enabled
     ) {
       const wks = this.editionWorkspaceFactoryService.createWFSEditionWorkspace(
