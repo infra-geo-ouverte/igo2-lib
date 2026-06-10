@@ -99,10 +99,14 @@ describe('CapabilitiesService', () => {
 
       service.getCapabilities('wms', url).subscribe({ error: () => {} });
 
-      // The URL should not be prefixed with the server origin
-      const req = httpMock.expectOne(
-        (r) => !r.url.startsWith('https://server.example.com')
-      );
+      // The URL should not resolve to the configured server host
+      const req = httpMock.expectOne((r) => {
+        try {
+          return new URL(r.url).host !== 'server.example.com';
+        } catch {
+          return true;
+        }
+      });
       expect(req.request.url).not.toContain('server.example.com');
       req.flush('');
     });
