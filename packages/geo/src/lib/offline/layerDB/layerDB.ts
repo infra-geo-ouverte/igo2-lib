@@ -79,11 +79,6 @@ export class LayerDB {
     );
   }
 
-  /** @deprecated Use delete method instead*/
-  deleteByKey(key: string): Observable<object> {
-    return this.delete(key);
-  }
-
   /**
    * This method retrive all idb layer definition
    * @param layerId

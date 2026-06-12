@@ -145,11 +145,6 @@ export class GeoDB {
     );
   }
 
-  /** @deprecated Use delete method instead*/
-  deleteByKey(key: string): Observable<object> {
-    return this.delete(key);
-  }
-
   getRegionCountByID(id: number): Observable<number> {
     return this.getRegionByID(id).pipe(
       switchMap((datas) => {
