@@ -43,7 +43,7 @@ export class DownloadService {
 
         const currentExtent = olproj.transformExtent(
           layer.map!.viewController.getExtent(),
-          new olProjection({ code: layer.map!.projection }),
+          new olProjection({ code: layer.map!.projectionCode }),
           currentProj
         );
         const outputFormatDownload =

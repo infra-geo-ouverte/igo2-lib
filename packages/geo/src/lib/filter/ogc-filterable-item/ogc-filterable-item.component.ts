@@ -191,7 +191,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
           operator: firstOperatorName,
           active: true,
           igoSpatialSelector: 'fixedExtent',
-          srsName: this.map()!.projection
+          srsName: this.map()!.projectionCode
         } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,

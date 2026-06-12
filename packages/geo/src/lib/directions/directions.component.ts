@@ -253,7 +253,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       if (this.focusOnStop === false) {
         const selectCoordinates: Coordinate = olProj.transform(
           evt.mapBrowserEvent.coordinate,
-          this.routesFeatureStore().layer.map?.projection,
+          this.routesFeatureStore().layer.map?.projectionCode,
           this.projection
         );
         const addedStop: Stop = addStopToStore(this.stopsStore());
@@ -289,7 +289,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
     const translationCoordinates = olProj.transform(
       firstFeature.getGeometry().getCoordinates(),
-      this.stopsFeatureStore().layer.map?.projection,
+      this.stopsFeatureStore().layer.map?.projectionCode,
       this.projection
     );
     const translatedStop = this.stopsStore().get(translatedStopId);

@@ -540,7 +540,7 @@ export class PrintService {
     let textProjScale = '';
     if (options.showProjection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
-      textProjScale += projText + ': ' + map.projection;
+      textProjScale += projText + ': ' + map.projectionCode;
     }
     if (options.showScale === true) {
       if (options.showProjection === true) {
@@ -1133,7 +1133,8 @@ export class PrintService {
         let projectionScaleText = '';
         if (projection !== false) {
           const projText = translate.instant('igo.geo.printForm.projection');
-          projectionScaleText = projText + ': ' + map.projection + '         ';
+          projectionScaleText =
+            projText + ': ' + map.projectionCode + '         ';
         }
 
         if (scale !== false) {
@@ -1214,7 +1215,7 @@ export class PrintService {
       let fileNameWithExt = 'map.' + format;
       if (format.toLowerCase() === 'tiff') {
         fileNameWithExt =
-          'map' + map.projection.replace(':', '_') + '.' + format;
+          'map' + map.projectionCode.replace(':', '_') + '.' + format;
       }
 
       try {

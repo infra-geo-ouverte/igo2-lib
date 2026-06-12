@@ -40,9 +40,8 @@ export abstract class MapBase {
 
   // Getter
   layerController!: LayerController;
-  projection!: string;
-  viewProjection!: Projection;
   projectionCode!: string;
+  viewProjection!: Projection;
 
   abstract setTarget(id: string): void;
   abstract updateView(options: MapViewOptions): void;

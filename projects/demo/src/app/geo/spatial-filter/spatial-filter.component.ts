@@ -384,7 +384,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       .subscribe((layer) => {
         if (!layer) return;
         const featuresOl = features.map((feature) => {
-          return featureToOl(feature, this.map.projection);
+          return featureToOl(feature, this.map.projectionCode);
         });
         const ol = layer.dataSource.ol as olSourceCluster;
         ol.getSource()?.addFeatures(featuresOl);
@@ -441,7 +441,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         .subscribe((layer) => {
           if (!layer) return;
           const featuresOl = features.map((feature) => {
-            return featureToOl(feature, this.map.projection);
+            return featureToOl(feature, this.map.projectionCode);
           });
           const ol = layer.dataSource.ol;
           (ol as olSourceVector).addFeatures(featuresOl);
@@ -564,7 +564,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
     if (buffer) olSource.clear();
 
-    const featuresOl = features.map((f) => featureToOl(f, this.map.projection));
+    const featuresOl = features.map((f) =>
+      featureToOl(f, this.map.projectionCode)
+    );
 
     if (this.type() !== SpatialFilterType.Predefined) {
       const type =
@@ -606,7 +608,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     const olSource = zoneLayer.dataSource.ol;
 
     // Convert to OL feature (same way as when adding)
-    const featureOl = featureToOl(feature, this.map.projection);
+    const featureOl = featureToOl(feature, this.map.projectionCode);
 
     // Find matching OL feature(s) by id or geometry
     const toRemove = olSource.getFeatures().filter((f) => {
@@ -629,7 +631,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private zonesExistsInLayers(): boolean {
     const featuresOl = this.zones.map((f) =>
-      featureToOl(f, this.map.projection)
+      featureToOl(f, this.map.projectionCode)
     );
     const keysNew = new Set(featuresOl.map((f) => `id:${f.getId()}`));
 

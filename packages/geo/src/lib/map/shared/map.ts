@@ -57,11 +57,6 @@ export class IgoMap implements MapBase {
     controls: { attribution: false }
   };
 
-  /** @deprecated use projectionCode */
-  get projection(): string {
-    return this.projectionCode;
-  }
-
   get viewProjection(): olproj.Projection {
     return this.viewController.getOlProjection();
   }

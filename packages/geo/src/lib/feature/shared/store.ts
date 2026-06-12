@@ -89,7 +89,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     this.checkLayer();
 
     const olFeatures = features.map((feature: Feature) =>
-      featureToOl(feature, this.map.projection, getId)
+      featureToOl(feature, this.map.projectionCode, getId)
     );
     this.setLayerOlFeatures(olFeatures, motion, viewScale, areaRatio);
   }
@@ -103,7 +103,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     const features = olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       olFeature.set('_featureStore', this, true);
-      return featureFromOl(olFeature, this.layer.map!.projection);
+      return featureFromOl(olFeature, this.layer.map!.projectionCode);
     });
     this.load(features as T[]);
   }
@@ -173,7 +173,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     const olFeatures: OlFeature<OlGeometry>[] = [];
 
     features.forEach((feature) => {
-      olFeatures.push(featureToOl(feature, this.map.projection));
+      olFeatures.push(featureToOl(feature, this.map.projectionCode));
     });
     const featuresExtent = computeOlFeaturesExtent(
       olFeatures,
