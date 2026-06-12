@@ -456,7 +456,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         if (!layer) return;
         const vectorLayer = layer as VectorLayer;
         const featuresOl = features.map((feature) => {
-          return featureToOl(feature, this.map.projection);
+          return featureToOl(feature, this.map.projectionCode);
         });
         const ol = vectorLayer.dataSource.ol as olSourceCluster;
         ol.getSource()!.addFeatures(featuresOl);
@@ -515,7 +515,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           if (!layer) return;
           const vectorLayer = layer as VectorLayer;
           const featuresOl = features.map((feature) => {
-            return featureToOl(feature, this.map.projection);
+            return featureToOl(feature, this.map.projectionCode);
           });
           const ol = vectorLayer.dataSource.ol as olSourceVector;
           ol.addFeatures(featuresOl);
@@ -569,7 +569,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     const olSource = zoneLayer.dataSource.ol;
 
     // Convert to OL feature (same way as when adding)
-    const featureOl = featureToOl(feature, this.map.projection);
+    const featureOl = featureToOl(feature, this.map.projectionCode);
 
     // Find matching OL feature(s) by id or geometry
     const toRemove = olSource.getFeatures().filter((f) => {
@@ -710,7 +710,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
     if (buffer) olSource.clear();
 
-    const featuresOl = features.map((f) => featureToOl(f, this.map.projection));
+    const featuresOl = features.map((f) =>
+      featureToOl(f, this.map.projectionCode)
+    );
 
     const type = this.type();
     if (type !== SpatialFilterType.Predefined) {

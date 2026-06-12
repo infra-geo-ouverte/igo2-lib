@@ -71,7 +71,7 @@ export class SearchService {
 
     this.searchTerm.set(term);
 
-    const proj = this.mapService.getMap()?.projection || 'EPSG:3857';
+    const proj = this.mapService.getMap()?.projectionCode || 'EPSG:3857';
     const response = stringToLonLat(term, proj, {
       forceNA: options.forceNA
     });

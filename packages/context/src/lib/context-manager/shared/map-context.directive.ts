@@ -61,7 +61,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
     const shouldOverrideView =
       !this.component.view() ||
       viewContext.keepCurrentView !== true ||
-      context.map.view.projection !== this.map.projection;
+      context.map.view.projection !== this.map.projectionCode;
 
     if (
       this.shareMapService.hasPositionParams(this.queryParams) &&

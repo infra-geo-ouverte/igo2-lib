@@ -297,7 +297,7 @@ export class CapabilitiesService {
       ? olproj.transformExtent(
           layer.EX_GeographicBoundingBox as [number, number, number, number],
           'EPSG:4326',
-          this.mapService.getMap()?.projection
+          this.mapService.getMap()?.projectionCode
         )
       : undefined;
 

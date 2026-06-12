@@ -353,8 +353,8 @@ export class OgcFilterFormComponent implements OnInit {
     const currentFilter = this.currentFilter();
     if (this.snrc && currentFilter.igoSpatialSelector === 'snrc') {
       currentFilter.wkt_geometry =
-        this.wktService.snrcToWkt(this.snrc, this.map()!.projection)?.wktPoly ??
-        '';
+        this.wktService.snrcToWkt(this.snrc, this.map()!.projectionCode)
+          ?.wktPoly ?? '';
     }
     this.refreshFilters()?.();
   }
@@ -371,9 +371,9 @@ export class OgcFilterFormComponent implements OnInit {
     const currentFilter = this.currentFilter();
     if (currentFilter.igoSpatialSelector === 'fixedExtent') {
       currentFilter.wkt_geometry = this.wktService.extentToWkt(
-        this.map()!.projection,
+        this.map()!.projectionCode,
         this.map()!.viewController.getExtent(),
-        this.map()!.projection
+        this.map()!.projectionCode
       ).wktPoly;
     }
     if (refresh) {

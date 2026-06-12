@@ -996,7 +996,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             feature.get('drawingStyle').stroke,
             feature.get('offsetX'),
             feature.get('offsetY'),
-            this.map().projection,
+            this.map().projectionCode,
             this.icon
           );
         },
@@ -1464,7 +1464,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       const geom = feature.getGeometry() as OlPoint;
       const coordinates = olproj.transform(
         geom.getCoordinates(),
-        this.map().projection,
+        this.map().projectionCode,
         'EPSG:4326'
       );
 
@@ -1515,7 +1515,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('drawingStyle').stroke,
           feature.get('offsetX'),
           feature.get('offsetY'),
-          this.map().projection,
+          this.map().projectionCode,
           this.icon
         );
       });
@@ -1530,7 +1530,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('drawingStyle').stroke,
           feature.get('offsetX'),
           feature.get('offsetY'),
-          this.map().projection
+          this.map().projectionCode
         );
       });
     }

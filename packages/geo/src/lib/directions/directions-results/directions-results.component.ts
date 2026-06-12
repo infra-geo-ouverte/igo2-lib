@@ -184,7 +184,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     const geometry4326: olGeom.LineString = new olGeom.LineString(coordinates);
     const geometryMapProjection: olGeom.Geometry = geometry4326.transform(
       'EPSG:4326',
-      map?.projection
+      map?.projectionCode
     );
     const routeSegmentCoordinates: Coordinate[] = (
       geometryMapProjection as any
@@ -199,7 +199,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
         geometry: lastPointGeometry
       });
 
-    const projection = map?.projection;
+    const projection = map?.projectionCode;
     const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(
       lastPointGeometry,
       {

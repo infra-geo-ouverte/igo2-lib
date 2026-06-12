@@ -118,7 +118,7 @@ export class MapProximityState {
               coord = olProj.transform(
                 currentPos.position,
                 currentPos.projection,
-                this.map.projection
+                this.map.projectionCode
               );
               this.map.mapCenter$.next(false);
             } else {
@@ -128,7 +128,7 @@ export class MapProximityState {
 
             const coordLonLat = olProj.transform(
               coord,
-              this.map.projection,
+              this.map.projectionCode,
               'EPSG:4269'
             );
             const roundedCoordLonLat = roundCoordTo(
@@ -157,7 +157,7 @@ export class MapProximityState {
                 olFeaturesAtCoordinate.map((olFeatureAtCoordinate) => {
                   const featureAtThisPosition = featureFromOl(
                     olFeatureAtCoordinate,
-                    this.map.projection
+                    this.map.projectionCode
                   );
                   const title = this.getQueryTitle(
                     featureAtThisPosition,
@@ -181,7 +181,7 @@ export class MapProximityState {
                   if (!closestOlGeom) return;
                   const closestFeature = featureFromOl(
                     closestOlFeature,
-                    this.map.projection
+                    this.map.projectionCode
                   );
                   const geometryClosestPoint =
                     closestOlGeom.getClosestPoint(coord);

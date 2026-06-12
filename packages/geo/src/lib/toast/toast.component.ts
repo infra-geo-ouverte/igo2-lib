@@ -60,7 +60,7 @@ export class ToastComponent {
     if (feature?.geometry && map) {
       const olFeature = this.format.readFeature(this.feature, {
         dataProjection: feature?.projection,
-        featureProjection: map?.projection
+        featureProjection: map?.projectionCode
       });
       moveToOlFeatures(map?.viewController, olFeature, FeatureMotion.Zoom);
     }

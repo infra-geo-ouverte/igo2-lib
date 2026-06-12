@@ -60,7 +60,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   }
 
   get mapProjection(): string {
-    return (this.component.map() as IgoMap).projection;
+    return (this.component.map() as IgoMap).projectionCode;
   }
 
   /**

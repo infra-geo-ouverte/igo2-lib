@@ -102,7 +102,7 @@ export class SearchResultsItemComponent {
     }
     const olFeature = this.format.readFeature(this.result().data, {
       dataProjection: this.result().data.projection,
-      featureProjection: map.projection
+      featureProjection: map.projectionCode
     });
     moveToOlFeatures(map.viewController, olFeature, FeatureMotion.Default);
   }

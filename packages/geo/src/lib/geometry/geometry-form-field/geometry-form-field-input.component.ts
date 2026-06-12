@@ -505,7 +505,7 @@ export class GeometryFormFieldInputComponent
     }
 
     const value = this.olGeoJSON.writeGeometryObject(olGeometry!, {
-      featureProjection: this.map()!.projection,
+      featureProjection: this.map()!.projectionCode,
       dataProjection: 'EPSG:4326'
     }) as any;
     if (olGeometry!.get('radius')) {
@@ -520,7 +520,7 @@ export class GeometryFormFieldInputComponent
     const center = olGeometry.getCenter();
     const coordinates = olproj.transform(
       center,
-      this.map()!.projection,
+      this.map()!.projectionCode,
       'EPSG:4326'
     );
     const radius = Math.round(
@@ -540,7 +540,7 @@ export class GeometryFormFieldInputComponent
   private addGeoJSONToOverlay(geometry: GeoJSONGeometry) {
     const olGeometry = this.olGeoJSON.readGeometry(geometry, {
       dataProjection: 'EPSG:4326',
-      featureProjection: this.map()!.projection
+      featureProjection: this.map()!.projectionCode
     });
     const olFeature = new OlFeature({
       geometry: olGeometry
@@ -569,7 +569,7 @@ export class GeometryFormFieldInputComponent
   private updateMeasureTooltip(
     olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle
   ) {
-    const measure = measureOlGeometry(olGeometry, this.map()!.projection);
+    const measure = measureOlGeometry(olGeometry, this.map()!.projectionCode);
     const lengths = measure.lengths!;
     const lastIndex =
       olGeometry.getType() === 'Polygon'
