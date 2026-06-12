@@ -1,3 +1,5 @@
+import { GeoJSON } from 'geojson';
+
 import { SourceFieldsOptionsParams } from '../../datasource';
 import {
   NewEditionFeature,
@@ -9,22 +11,15 @@ export class RestAPIEdition extends NewEditionWorkspace {
     return this.layer.dataSource.options;
   }
 
-  getUpdateBody(feature: NewEditionFeature): object {
+  getUpdateBody(feature: NewEditionFeature): GeoJSON {
     // TODO support Geometry
-    const {
-      params: { fieldNameGeometry }
-    } = this.dataSourceOptions;
-
-    const fieldsToRemove: string[] = this.getPropertyKeys(
-      (sourceField) => sourceField.validation?.readonly === true
-    );
-
-    if (fieldNameGeometry) {
-      fieldsToRemove.push(fieldNameGeometry);
-    }
-    fieldsToRemove.push('boundedBy');
-
-    return this.removeProperties(feature, fieldsToRemove);
+    // TODO check if id exists
+    return {
+      type: 'Feature',
+      id: feature.properties.id,
+      geometry: feature.geometry as GeoJSON.Geometry,
+      properties: feature.properties
+    };
   }
 
   getCreateBody(feature: NewEditionFeature): object {
