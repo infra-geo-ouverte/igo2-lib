@@ -1,3 +1,0 @@
-. "$(dirname "$0")/node-path.sh"
-
-npx lint-staged

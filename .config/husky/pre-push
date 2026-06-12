@@ -1,0 +1,5 @@
+. "$(dirname "$0")/node-path.sh"
+
+npm run lint
+npm run types
+npm run format
