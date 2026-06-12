@@ -15,6 +15,7 @@ export function storedqueriesSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the StoredQueries search source
+ * @deprecated This provider is deprecated and will be removed in a future major version, likely in 23.x+.
  */
 export function provideStoredQueriesSearchSource() {
   return {
@@ -24,6 +25,9 @@ export function provideStoredQueriesSearchSource() {
   };
 }
 
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
 export function withStoredQueriesSource(): SearchSourceFeature<SearchSourceKind.StoredQueries> {
   return {
     kind: SearchSourceKind.StoredQueries,
@@ -42,6 +46,7 @@ export function storedqueriesReverseSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the StoredQueriesReverse search source
+ * @deprecated This provider is deprecated and will be removed in a future major version, likely in 23.x+.
  */
 export function provideStoredQueriesReverseSearchSource() {
   return {
@@ -51,6 +56,9 @@ export function provideStoredQueriesReverseSearchSource() {
   };
 }
 
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
 export function withStoredQueriesReverseSource(): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
   return {
     kind: SearchSourceKind.StoredQueriesReverse,
