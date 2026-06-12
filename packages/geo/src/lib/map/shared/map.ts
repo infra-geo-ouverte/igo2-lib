@@ -8,7 +8,6 @@ import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olinteraction from 'ol/interaction';
 import * as olproj from 'ol/proj';
-import OlProjection from 'ol/proj/Projection';
 import * as olproj4 from 'ol/proj/proj4';
 import { getUid } from 'ol/util';
 
@@ -26,7 +25,6 @@ import type { MapBase } from './map.abstract';
 import {
   MapAttributionOptions,
   MapControlsOptions,
-  MapExtent,
   MapOptions,
   MapScaleLineOptions,
   MapViewOptions
@@ -220,29 +218,6 @@ export class IgoMap implements MapBase {
     controls.forEach((control) => {
       this.ol.addControl(control);
     });
-  }
-
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getCenter(projection?: string | OlProjection): [number, number] {
-    return this.viewController.getCenter(projection);
-  }
-
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getExtent(projection?: string | OlProjection): MapExtent {
-    return this.viewController.getExtent(projection);
-  }
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getZoom(): number {
-    return this.viewController.getZoom();
   }
 
   /** @deprecated find a way to remove this method. For now we discourage to use it until we find the way to remove it */
