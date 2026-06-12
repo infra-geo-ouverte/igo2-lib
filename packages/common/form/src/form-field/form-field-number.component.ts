@@ -1,56 +1,51 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
+  inject,
   input,
   signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
-import { FormFieldSelectChoice } from '../shared/form.interfaces';
 import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
 
 /**
- * This component renders a select field
+ * This component renders a number field
  */
-@IgoFormFieldComponent('select')
+@IgoFormFieldComponent('number')
 @Component({
-  selector: 'igo-form-field-select',
-  templateUrl: './form-field-select.component.html',
+  selector: 'igo-form-field-number',
+  templateUrl: './form-field-number.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
-    MatSelectModule,
+    MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    MatOptionModule,
     MatCheckboxModule,
+    MatButtonModule,
     IgoLanguageModule
   ]
 })
-export class FormFieldSelectComponent implements OnInit {
+export class FormFieldNumberComponent implements OnInit {
+  private cdRef = inject(ChangeDetectorRef);
+
   readonly disabled = signal(false);
-
-  /**
-   * Select input choices
-   */
-  readonly choices = input.required<FormFieldSelectChoice[]>();
-
-  /**
-   * If the select allow multiple selections
-   */
-  readonly multiple = input(false);
+  hide = true;
+  private lastTimeoutRequest?: number;
 
   /**
    * The field's form control

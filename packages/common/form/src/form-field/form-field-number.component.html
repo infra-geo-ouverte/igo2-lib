@@ -2,13 +2,13 @@
   @if (showLabel() === true) {
     <mat-label>{{ placeholder() | translate }}</mat-label>
   }
-  <textarea
+  <input
     matInput
+    type="number"
     [required]="required"
     [placeholder]="placeholder() | translate"
     [formControl]="formControl()"
-  >
-  </textarea>
+  />
   @if (disableSwitch() === true) {
     <mat-checkbox
       class="igo-form-disable-switch"
@@ -17,6 +17,7 @@
       matPrefix
     />
   }
+
   @if (formControl().errors) {
     <mat-error>{{ getErrorMessage() | translate }}</mat-error>
   }
