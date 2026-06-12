@@ -1,7 +1,8 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders
+  HttpHeaders,
+  HttpRequest
 } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -196,11 +197,12 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   private removeFeature(feature: NewEditionFeature) {
-    const deleteUrl = this.layer.dataSource.options.edition?.deleteUrl;
-    const url = this.getFeatureEditionUrl(feature, deleteUrl, 'delete');
+    const deleteUrl = this.layer.dataSource.options.edition?.baseUrl;
+    const url = `${deleteUrl}/${this.getFeatureId(feature)}`;
 
     this._isLoading.set(true);
-    this.http.delete(url, {}).subscribe({
+
+    this.http.request(new HttpRequest('DELETE', url)).subscribe({
       next: () => {
         this._isLoading.set(false);
         this.refreshLayer();
@@ -219,48 +221,38 @@ export abstract class NewEditionWorkspace extends Workspace {
     olLayer.refresh();
   }
 
-  private getFeatureEditionUrl(
-    feature: NewEditionFeature,
-    methodUrl: string | undefined,
-    method: string | undefined
-  ) {
-    const baseUrl = methodUrl ?? '';
-    const featUrl =
-      method !== 'post' ? baseUrl + this.getFeatureId(feature) : baseUrl;
-    return new URL(featUrl, this.options.editionUrl).href;
-  }
-
   private saveUpdateFeature(feature: NewEditionFeature) {
     const editionOptions = this.layer.dataSource.options.edition;
     if (!editionOptions) {
       throw Error('Missing edition options');
     }
 
-    const { modifyUrl, modifyMethod, modifyHeaders } = editionOptions;
-
-    const url = this.getFeatureEditionUrl(feature, modifyUrl, modifyMethod);
-
-    const headers = new HttpHeaders(modifyHeaders);
-
     this._isLoading.set(true);
 
-    this.http[modifyMethod ?? 'patch'](url, this.getUpdateBody(feature), {
-      headers
-    }).subscribe({
-      next: () => {
-        this._isLoading.set(false);
-        this.closeEdition(feature);
+    const { modifyMethod, modifyHeaders } = editionOptions;
 
-        this.refreshLayer();
+    const method = modifyMethod?.toUpperCase() ?? 'PATCH';
+    const url = `${editionOptions.baseUrl}/${this.getFeatureId(feature)}`;
+    const body = this.getUpdateBody(feature);
+    const headers = new HttpHeaders(modifyHeaders);
 
-        this.messageService.success('igo.geo.workspace.modifySuccess');
-      },
-      error: (error: HttpErrorResponse) => {
-        this._isLoading.set(false);
-        this.closeEdition(feature);
-        this.handleEditionError(error);
-      }
-    });
+    this.http
+      .request(new HttpRequest(method, url, body, { headers }))
+      .subscribe({
+        next: () => {
+          this._isLoading.set(false);
+          this.closeEdition(feature);
+
+          this.refreshLayer();
+
+          this.messageService.success('igo.geo.workspace.modifySuccess');
+        },
+        error: (error: HttpErrorResponse) => {
+          this._isLoading.set(false);
+          this.closeEdition(feature);
+          this.handleEditionError(error);
+        }
+      });
   }
 
   private saveCreateFeature(feature: NewEditionFeature) {
