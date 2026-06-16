@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { EntityRecord } from '@igo2/common/entity';
@@ -19,7 +19,15 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { circular } from 'ol/geom/Polygon';
 
 import { FeatureCollection } from 'geojson';
-import { Observable, Observer, catchError, lastValueFrom, of, tap } from 'rxjs';
+import {
+  Observable,
+  Observer,
+  catchError,
+  lastValueFrom,
+  of,
+  tap,
+  throwError
+} from 'rxjs';
 
 import { ClusterDataSource, WFSDataSource } from '../../datasource';
 import { Feature } from '../../feature';
@@ -45,9 +53,9 @@ const SHAPEFILE_FIELD_MAX_LENGHT = 255;
 })
 export class ExportService {
   static ogreFormats: Record<ExportOgreFormat, string> = {
-    GML: 'gml',
-    GPX: 'gpx',
-    KML: 'kml',
+    GML: 'GML',
+    GPX: 'GPX',
+    KML: 'KML',
     Shapefile: 'ESRI Shapefile',
     CSV: 'CSV',
     /** @deprecated use CSV */
@@ -195,7 +203,7 @@ export class ExportService {
           title,
           projectionIn,
           projectionOut
-        ).subscribe({
+        )?.subscribe({
           complete: () => observer.complete(),
           error: (error) => observer.error(error)
         });
@@ -334,48 +342,78 @@ export class ExportService {
     projectionIn: string,
     projectionOut: string
   ) {
-    const featuresText = new olformat.GeoJSON().writeFeatures(olFeatures, {
+    if (!format) {
+      return;
+    }
+
+    const features = new olformat.GeoJSON().writeFeaturesObject(olFeatures, {
       dataProjection: projectionOut,
       featureProjection: projectionIn
     });
+
+    const sizeError = this.checkOgrePayloadSize(JSON.stringify(features));
+    if (sizeError) return sizeError;
+
     const url = `${this.ogreUrl}/convertJson`;
 
-    const formData = new FormData();
+    let outputName = title;
+    let ogreFormat = ExportService.ogreFormats[format as ExportOgreFormat];
 
-    formData.append('json', featuresText);
-
-    let outputName =
-      format === 'Shapefile'
-        ? `${title}.zip`
-        : `${title}.${format.toLowerCase()}`;
-    let ogreFormat = ExportService.ogreFormats[format];
+    let params = new HttpParams();
 
     if (isCsvExport(format)) {
-      outputName = `${title}.csv`;
+      outputName = title;
 
       if (format === 'CSVcomma' || format === 'CSVsemicolon') {
         ogreFormat = 'CSV';
       }
 
-      formData.append('lco', `SEPARATOR=${csvSeparator}`);
-
-      if (format === 'CSVsemicolon') {
-        formData.append('lco', `SEPARATOR=${csvSeparator}`);
-      }
+      params = params.append('lco', `SEPARATOR=${csvSeparator}`);
     }
 
-    formData.append('outputName', this.formatFilename(outputName));
-    formData.append('format', ogreFormat);
+    params = params
+      .set('name', this.formatFilename(outputName))
+      .set('format', ogreFormat)
+      .set('forceUTF8', 'true');
 
     return this.httpClient
-      .post(url, formData, {
-        responseType: 'blob'
+      .post(url, features, {
+        params,
+        responseType: 'blob',
+        observe: 'response'
       })
       .pipe(
-        tap((value) => {
-          downloadBlob(value, outputName);
+        tap((response) => {
+          if (!response.body) {
+            return;
+          }
+
+          const filename = this.getFileName(
+            response.headers,
+            outputName,
+            format
+          );
+          downloadBlob(response.body, filename);
         })
       );
+  }
+
+  private getFileName(
+    headers: HttpHeaders,
+    outputName: string,
+    format: AnyExportFormat
+  ): string {
+    const contentDisposition = headers.get('content-disposition');
+    const filenameMatch = contentDisposition?.match(/filename="?([^";\n]+)"?/);
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1];
+    }
+
+    let extension = format.toLowerCase();
+    if (format === 'Shapefile') {
+      extension = 'zip';
+    }
+    return `${outputName}.${extension}`;
   }
 
   private formatFilename(name: string): string {
@@ -383,7 +421,7 @@ export class ExportService {
       .replaceAll(' ', '_')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/’/g, "'");
+      .replace(/[^a-zA-Z0-9_-]/g, '');
   }
 
   private nothingToExport(
@@ -554,5 +592,22 @@ export class ExportService {
     });
 
     return geomTypes;
+  }
+
+  /**
+   * Checks if the given payload exceeds the OGRE maximum allowed size (50MB).
+   * @param payload The GeoJSON payload as a string.
+   * @returns An Observable that throws an error if the payload is too large, or undefined if the size is acceptable.
+   */
+  private checkOgrePayloadSize(payload: string): Observable<never> | undefined {
+    const OGRE_MAX_SIZE = 50 * 1024 * 1024; // 50MB
+    const byteLength = new TextEncoder().encode(payload).length;
+    if (byteLength > OGRE_MAX_SIZE) {
+      const error = new Error();
+      error.name = 'maxFieldsSize';
+      error.message = `GeoJSON too large for OGRE: ${byteLength} bytes (max is ${OGRE_MAX_SIZE})`;
+      return throwError(() => error);
+    }
+    return undefined;
   }
 }
