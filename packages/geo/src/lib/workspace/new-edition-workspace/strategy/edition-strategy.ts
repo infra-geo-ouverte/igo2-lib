@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 
 import { Feature } from '../../../feature/shared';
 
+// todo: move to shared location
 export type EditionVerb = 'PATCH' | 'PUT';
 
 export interface ItemsQuery {
