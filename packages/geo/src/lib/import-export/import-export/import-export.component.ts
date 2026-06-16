@@ -541,10 +541,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       if (!isCSV || !data.combineLayers) {
         geomTypes.forEach((geomType) => {
-          if (geomType.type) {
-            fileName += geomType.type;
-          }
-          this.handleExport(geomType.features, data, fileName);
+          const formattedFilename = geomType.type
+            ? `${fileName}_${geomType.type}`
+            : fileName;
+          this.handleExport(geomType.features, data, formattedFilename);
         });
       }
       this.loading$.next(false);

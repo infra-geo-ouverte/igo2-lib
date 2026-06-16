@@ -116,9 +116,9 @@ export function detectFileEPSG(options: {
           const text = reader.result as string;
           const lines = (text as string).split('\n');
           for (let line = 0; line <= nbLines; line++) {
-            const epsg = lines[line].match(/EPSG:\d{0,6}/gm);
+            const epsg = lines[line].match(/EPSG:{1,2}\d{1,6}/gm);
             if (epsg !== null && epsg.length) {
-              resolve(epsg[0]);
+              resolve(epsg[0].replace(/::/g, ':'));
               break;
             } else {
               resolve(undefined);
