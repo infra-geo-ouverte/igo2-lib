@@ -39,12 +39,13 @@ export class EditionSession {
    * @param feature
    * @throws Error if the session has reached its maximum edit capacity.
    */
-  add(feature: Feature): void {
+  add(feature: Feature): FeatureEdit {
     if (this.isFull)
       throw new Error('EditionSession has reached maximum edit capacity');
 
     const edit = new FeatureEdit(feature);
     this.edits.add(edit);
+    return edit;
   }
 
   /**
