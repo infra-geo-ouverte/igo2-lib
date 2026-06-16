@@ -120,7 +120,18 @@ export class NewEditionWorkspace extends Workspace {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) {
-        this.removeFeature(feature);
+        this._isLoading.set(true);
+        this.strategy.delete(feature).subscribe({
+          next: () => {
+            this._isLoading.set(false);
+            this.refreshLayer();
+            this.messageService.success('igo.geo.workspace.deleteSuccess');
+          },
+          error: (error: HttpErrorResponse) => {
+            this._isLoading.set(false);
+            this.handleEditionError(error);
+          }
+        });
       }
     });
   }
@@ -229,21 +240,6 @@ export class NewEditionWorkspace extends Workspace {
     }
 
     this.focusEditedFeature(feature);
-  }
-
-  private removeFeature(feature: NewEditionFeature) {
-    this._isLoading.set(true);
-    this.strategy.delete(feature).subscribe({
-      next: () => {
-        this._isLoading.set(false);
-        this.refreshLayer();
-        this.messageService.success('igo.geo.workspace.deleteSuccess');
-      },
-      error: (error: HttpErrorResponse) => {
-        this._isLoading.set(false);
-        this.handleEditionError(error);
-      }
-    });
   }
 
   private initNewFeatureProperties() {
