@@ -8,15 +8,19 @@ import { resolveFeatureIdField } from './feature-id';
 
 // import { buildMergePatch } from './patch-diff';
 
+interface OgcApiEditionStrategyConfig {
+  baseUrl: string;
+  collectionName: string;
+  featureIdField?: string;
+  verb: EditionVerb; /* todo: default PUT */
+  headers: Record<string, string>;
+  columns: EntityTableColumn[];
+}
+
 export class OgcApiEditionStrategy implements EditionStrategy {
   constructor(
     private http: HttpClient,
-    private config: {
-      baseUrl: string;
-      collectionName: string;
-      featureIdField?: string;
-      verb: EditionVerb; /* todo: default PUT */
-    }
+    private config: OgcApiEditionStrategyConfig
   ) {}
 
   getItemsUrl(query: ItemsQuery): string {
