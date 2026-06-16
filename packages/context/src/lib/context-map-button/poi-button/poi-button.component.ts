@@ -49,12 +49,12 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
   private confirmDialogService = inject(ConfirmDialogService);
-  selected!: Poi;
+  selected?: Poi;
 
   readonly map = input.required<IgoMap>();
   readonly color = input<string>();
 
-  public pois!: Poi[];
+  public pois: Poi[] = [];
   private authenticate$$!: Subscription;
 
   ngOnInit() {
