@@ -1,5 +1,5 @@
 import {
-  HttpClient,
+  // HttpClient,
   HttpErrorResponse,
   HttpHeaders,
   HttpRequest
@@ -17,6 +17,9 @@ import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { ConfirmationPopupComponent } from '../confirmation-popup';
 import { GeometryEditor } from './geometry-editor';
+import { EditionOverlay } from './rendering/edition-overlay';
+import { EditionSession } from './session/edition-session';
+import { EditionStrategy } from './strategy/edition-strategy';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -51,7 +54,7 @@ interface CreationEdition extends BaseEdition {
 
 type CurrentEdition = UpdateEdition | CreationEdition;
 
-export abstract class NewEditionWorkspace extends Workspace {
+export class NewEditionWorkspace extends Workspace {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
   readonly isLoading: Signal<boolean>;
 
@@ -59,11 +62,15 @@ export abstract class NewEditionWorkspace extends Workspace {
   private edition?: CurrentEdition = undefined;
   private geometryEditor: GeometryEditor;
 
+  private editionSession: EditionSession | undefined;
+
   constructor(
-    private http: HttpClient,
+    private strategy: EditionStrategy,
+    private overlay: EditionOverlay,
     private dialog: MatDialog,
     private messageService: MessageService,
     protected options: EditionWorkspaceOptions
+    // private http: HttpClient,
   ) {
     // TODO Add support for geometry edition
     // TODO freeze entity table on move when editing
@@ -87,6 +94,11 @@ export abstract class NewEditionWorkspace extends Workspace {
     return this.layer.isInResolutionsRange$;
   }
 
+  canEdit(): boolean {
+    // todo
+    return true;
+  }
+
   createFeature() {
     const feature = {
       type: 'Feature',
@@ -100,7 +112,7 @@ export abstract class NewEditionWorkspace extends Workspace {
     this.editFeature(feature, EditionType.CREATION);
   }
 
-  deleteFeature(feature: NewEditionFeature) {
+  deleteFeature(feature: Feature) {
     const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
       disableClose: false,
       data: { type: 'delete' }
@@ -113,27 +125,50 @@ export abstract class NewEditionWorkspace extends Workspace {
     });
   }
 
-  saveFeature(feature: NewEditionFeature) {
-    switch (this.edition?.type) {
-      case EditionType.CREATION:
-        return this.saveCreateFeature(feature);
-      case EditionType.UPDATE:
-        return this.saveUpdateFeature(feature);
+  saveFeature(feature: Feature) {
+    if (!this.editionSession)
+      throw Error("Can't save feature: not editing any feature"); // todo:
+
+    switch (this.editionSession?.mode) {
+      case 'create':
+        this.strategy.create(feature);
+        // this.saveCreateFeature(feature);
+        break;
+      case 'modify':
+        this.strategy.update(feature);
+        this.saveUpdateFeature(feature);
+        break;
+      default: {
+        const _exhaustiveCheck: never = this.editionSession?.mode;
+        throw Error(`Unknown edition mode: ${_exhaustiveCheck}`);
+      }
     }
   }
 
-  updateFeature(feature: NewEditionFeature) {
-    if (this.edition) {
-      this.cancelEdit(this.edition.feature);
+  updateFeature(feature: Feature) {
+    if (!this.canEdit()) {
+      // todo
+      throw Error('Not implemented yet');
     }
 
-    this.editFeature(feature, EditionType.UPDATE);
+    this.editionSession = new EditionSession('modify');
+    const featureEdition = this.editionSession.add(feature);
 
-    this.geometryEditor.enableEdit(feature);
+    //tryCatch
+    this.overlay.showGhost(featureEdition.snapshot);
+    this.overlay.enableModify(featureEdition.feature);
+
+    // if (this.edition) {
+    //   this.cancelEdit(this.edition.feature);
+    // }
+
+    // this.editFeature(feature, EditionType.UPDATE);
+
+    // this.geometryEditor.enableEdit(feature);
     // TODO remove edited feature from layer and add it back if cancel
   }
 
-  cancelEdit(feature: NewEditionFeature) {
+  cancelEdit(feature: Feature) {
     if (!this.edition) {
       throw Error("Can't cancel: not editing any feature");
     }
@@ -197,16 +232,11 @@ export abstract class NewEditionWorkspace extends Workspace {
   }
 
   private removeFeature(feature: NewEditionFeature) {
-    const deleteUrl = this.layer.dataSource.options.edition?.baseUrl;
-    const url = `${deleteUrl}/${this.getFeatureId(feature)}`;
-
     this._isLoading.set(true);
-
-    this.http.request(new HttpRequest('DELETE', url)).subscribe({
+    this.strategy.delete(feature).subscribe({
       next: () => {
         this._isLoading.set(false);
         this.refreshLayer();
-
         this.messageService.success('igo.geo.workspace.deleteSuccess');
       },
       error: (error: HttpErrorResponse) => {

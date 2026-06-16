@@ -32,7 +32,9 @@ import { IgoMap } from '../../map/shared';
 import { createFilterInMapExtentOrResolutionStrategy } from '../shared/workspace.utils';
 import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
 import { NewEditionWorkspace } from './new-edition-workspace';
-import { RestAPIEdition } from './rest-api-edition';
+import { EditionOverlay } from './rendering/edition-overlay';
+import { EditionVerb } from './strategy/edition-strategy';
+import { OgcApiEditionStrategy } from './strategy/ogc-api-edition-strategy';
 
 @Injectable({
   providedIn: 'root'
@@ -45,18 +47,35 @@ export class EditionWorkspaceFactoryService {
   private messageService = inject(MessageService);
   private dialog = inject(MatDialog);
 
+  private tableTemplateFactory = new EditionWorkspaceTableTemplateFactory();
+
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
-
-  private tableTemplateFactory = new EditionWorkspaceTableTemplateFactory();
 
   createWFSEditionWorkspace(
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
-    const workspace = new RestAPIEdition(
-      this.http,
+    const editionStrategy = new OgcApiEditionStrategy(this.http, {
+      baseUrl: this.getEditionUrl(layer),
+      collectionName:
+        (layer.dataSource as FeatureDataSource).options.collectionName ?? '',
+      featureIdField: (layer.dataSource as FeatureDataSource).options
+        .featureIdField,
+      verb:
+        (layer.dataSource.options.edition?.modifyMethod?.toUpperCase() as EditionVerb) ?? // todo: code smell
+        'PUT'
+    });
+
+    const overlay = new EditionOverlay(
+      map,
+      layer.dataSource.options.edition?.geomType ?? 'Point' // todo: find geometry in layer.datasource?
+    );
+
+    const workspace = new NewEditionWorkspace(
+      editionStrategy,
+      overlay,
       this.dialog,
       this.messageService,
       {
