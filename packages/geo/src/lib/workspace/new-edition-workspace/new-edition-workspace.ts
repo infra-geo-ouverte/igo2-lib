@@ -4,7 +4,7 @@ import {
   HttpHeaders,
   HttpRequest
 } from '@angular/common/http';
-import { signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntityRecord } from '@igo2/common/entity';
@@ -53,8 +53,27 @@ type CurrentEdition = UpdateEdition | CreationEdition;
 
 export abstract class NewEditionWorkspace extends Workspace {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
+  readonly isLoading: Signal<boolean>;
+
   private readonly _isLoading = signal(false);
-  readonly isLoading = this._isLoading.asReadonly();
+  private edition?: CurrentEdition = undefined;
+  private geometryEditor: GeometryEditor;
+
+  constructor(
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private messageService: MessageService,
+    protected options: EditionWorkspaceOptions
+  ) {
+    // TODO Add support for geometry edition
+    // TODO freeze entity table on move when editing
+    // TODO implement domainValues
+    // TODO handle relations
+    // TODO NEXT implement messages
+    super(options);
+    this.isLoading = this._isLoading.asReadonly();
+    this.geometryEditor = new GeometryEditor(this.map, GeometryType.Point);
+  }
 
   get layer(): ImageLayer | VectorLayer {
     return this.options.layer;
@@ -68,59 +87,6 @@ export abstract class NewEditionWorkspace extends Workspace {
     return this.layer.isInResolutionsRange$;
   }
 
-  private edition?: CurrentEdition = undefined;
-  private geometryEditor: GeometryEditor;
-  constructor(
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private messageService: MessageService,
-    protected options: EditionWorkspaceOptions
-  ) {
-    // TODO Add support for geometry edition
-    // TODO freeze entity table on move when editing
-    // TODO implement domainValues
-    // TODO handle relations
-    // TODO NEXT implement messages
-    super(options);
-    this.geometryEditor = new GeometryEditor(this.map, GeometryType.Point);
-  }
-
-  abstract getUpdateBody(feature: NewEditionFeature): object;
-  abstract getCreateBody(feature: NewEditionFeature): object;
-
-  updateFeature(feature: NewEditionFeature) {
-    if (this.edition) {
-      this.cancelEdit(this.edition.feature);
-    }
-
-    this.editFeature(feature, EditionType.UPDATE);
-
-    this.geometryEditor.enableEdit(feature);
-    // TODO remove edited feature from layer and add it back if cancel
-  }
-
-  private editFeature(feature: NewEditionFeature, type: EditionType) {
-    feature.edition = true;
-
-    this.edition =
-      type === EditionType.UPDATE
-        ? {
-            type: EditionType.UPDATE,
-            feature,
-            featureData: {
-              geometry: feature.geometry,
-              properties: JSON.parse(JSON.stringify(feature.properties))
-            }
-          }
-        : { type: EditionType.CREATION, feature };
-
-    if (type === EditionType.CREATION) {
-      this.entityStore!.insert(feature);
-    }
-
-    this.focusEditedFeature(feature);
-  }
-
   createFeature() {
     const feature = {
       type: 'Feature',
@@ -132,19 +98,6 @@ export abstract class NewEditionWorkspace extends Workspace {
     }
     this.geometryEditor.enableCreate(feature);
     this.editFeature(feature, EditionType.CREATION);
-  }
-
-  private initNewFeatureProperties() {
-    const sourceFields = this.layer.options.sourceOptions?.sourceFields ?? [];
-    const properties: Record<string, unknown> = {};
-
-    sourceFields.forEach((field) => {
-      if (!field.primary) {
-        properties[field.name] = '';
-      }
-    });
-
-    return properties;
   }
 
   deleteFeature(feature: NewEditionFeature) {
@@ -169,6 +122,17 @@ export abstract class NewEditionWorkspace extends Workspace {
     }
   }
 
+  updateFeature(feature: NewEditionFeature) {
+    if (this.edition) {
+      this.cancelEdit(this.edition.feature);
+    }
+
+    this.editFeature(feature, EditionType.UPDATE);
+
+    this.geometryEditor.enableEdit(feature);
+    // TODO remove edited feature from layer and add it back if cancel
+  }
+
   cancelEdit(feature: NewEditionFeature) {
     if (!this.edition) {
       throw Error("Can't cancel: not editing any feature");
@@ -189,11 +153,47 @@ export abstract class NewEditionWorkspace extends Workspace {
     this.closeEdition(feature);
   }
 
-  private closeEdition(feature: NewEditionFeature) {
-    delete feature.edition;
-    this.entityStore!.stateView.clear();
-    this.edition = undefined;
-    this.geometryEditor.disable();
+  private getFeatureId(feature: NewEditionFeature) {
+    const columns: { primary?: boolean; name: string }[] =
+      this.meta.tableTemplate.columns;
+
+    const primaryColumn = columns.find((column) => column.primary);
+    if (!primaryColumn) {
+      throw Error('No primary keys in feature');
+    }
+
+    const { name: primaryColumnName } = primaryColumn;
+    const propertyName = primaryColumnName.includes('properties.')
+      ? primaryColumnName.split('.')[1]
+      : primaryColumnName;
+
+    const primaryProperty = Object.keys(feature.properties).find(
+      (property) => property === propertyName
+    );
+
+    return primaryProperty ? feature.properties[primaryProperty] : undefined;
+  }
+
+  private editFeature(feature: NewEditionFeature, type: EditionType) {
+    feature.edition = true;
+
+    this.edition =
+      type === EditionType.UPDATE
+        ? {
+            type: EditionType.UPDATE,
+            feature,
+            featureData: {
+              geometry: feature.geometry,
+              properties: JSON.parse(JSON.stringify(feature.properties))
+            }
+          }
+        : { type: EditionType.CREATION, feature };
+
+    if (type === EditionType.CREATION) {
+      this.entityStore!.insert(feature);
+    }
+
+    this.focusEditedFeature(feature);
   }
 
   private removeFeature(feature: NewEditionFeature) {
@@ -214,6 +214,26 @@ export abstract class NewEditionWorkspace extends Workspace {
         this.handleEditionError(error);
       }
     });
+  }
+
+  private initNewFeatureProperties() {
+    const sourceFields = this.layer.options.sourceOptions?.sourceFields ?? [];
+    const properties: Record<string, unknown> = {};
+
+    sourceFields.forEach((field) => {
+      if (!field.primary) {
+        properties[field.name] = '';
+      }
+    });
+
+    return properties;
+  }
+
+  private closeEdition(feature: NewEditionFeature) {
+    delete feature.edition;
+    this.entityStore!.stateView.clear();
+    this.edition = undefined;
+    this.geometryEditor.disable();
   }
 
   private refreshLayer() {
@@ -319,24 +339,6 @@ export abstract class NewEditionWorkspace extends Workspace {
     this.entityStore!.state.update(feature, { edit: true }, true);
   }
 
-  private getFeatureId(feature: NewEditionFeature) {
-    const columns: { primary?: boolean; name: string }[] =
-      this.meta.tableTemplate.columns;
-
-    const primaryColumn = columns.find((column) => column.primary);
-    if (!primaryColumn) {
-      throw Error('No primary keys in feature');
-    }
-
-    const { name: primaryColumnName } = primaryColumn;
-    const propertyName = primaryColumnName.includes('properties.')
-      ? primaryColumnName.split('.')[1]
-      : primaryColumnName;
-
-    const primaryProperty = Object.keys(feature.properties).find(
-      (property) => property === propertyName
-    );
-
-    return primaryProperty ? feature.properties[primaryProperty] : undefined;
-  }
+  abstract getUpdateBody(feature: NewEditionFeature): object;
+  abstract getCreateBody(feature: NewEditionFeature): object;
 }
