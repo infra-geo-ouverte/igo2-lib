@@ -19,10 +19,9 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     }
   ) {}
 
-  //   getItemsUrl(query: ItemsQuery): string {
-  //     // itemsUrl() + bbox/limit/offset query params + f=json
-
-  //   }
+  getItemsUrl(query: ItemsQuery): string {
+    // itemsUrl() + bbox/limit/offset query params + f=json
+  }
 
   parseItems(response): Feature[] {
     // map GeoJSON FeatureCollection.features -> igo Feature[]
