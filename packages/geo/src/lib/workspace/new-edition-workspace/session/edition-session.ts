@@ -21,6 +21,10 @@ export class EditionSession {
     return this.edits.size >= MAX_EDIT_CAPACITY;
   }
 
+  get single(): FeatureEdit | undefined {
+    return [...this.edits].at(0);
+  }
+
   includes(feature: Feature): boolean {
     for (const edit of this.edits) {
       if (edit.feature === feature) {
