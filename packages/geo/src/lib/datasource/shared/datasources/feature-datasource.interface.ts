@@ -15,6 +15,8 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   preload?: PreloadOptions;
   excludeAttribute?: string[];
   excludeAttributeOffline?: string[];
+  collectionName?: string; // todo: should be required?
+  featureIdField?: string;
 }
 
 export interface PreloadOptions {
