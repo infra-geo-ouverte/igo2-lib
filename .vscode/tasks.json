@@ -22,26 +22,6 @@
       }
     },
     {
-      "label": "npm: link.start",
-      "type": "npm",
-      "script": "link.start",
-      "path": "projects/client",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
-        }
-      }
-    },
-    {
       "type": "npm",
       "script": "test",
       "isBackground": true,
