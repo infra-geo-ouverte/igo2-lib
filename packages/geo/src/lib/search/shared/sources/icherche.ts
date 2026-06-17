@@ -702,7 +702,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): TextSearchOptions {
     const hashtags = super.getHashtagsValid(term, 'type');
-    if (hashtags) {
+    if (hashtags?.length) {
       options.params = Object.assign(options.params || {}, {
         type: hashtags.join(',')
       });
