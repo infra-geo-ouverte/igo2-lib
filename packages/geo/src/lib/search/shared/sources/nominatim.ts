@@ -270,7 +270,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    */
   private computeTermTags(term: string): string | null {
     const hashtags = super.getHashtagsValid(term, 'amenity');
-    if (!hashtags) {
+    if (hashtags?.length) {
       return this.computeTermSettings(term);
     }
 
