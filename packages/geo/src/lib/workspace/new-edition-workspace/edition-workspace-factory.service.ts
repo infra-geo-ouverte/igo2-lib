@@ -73,6 +73,8 @@ export class EditionWorkspaceFactoryService {
       layer.dataSource.options.edition?.geomType ?? 'Point' // todo: find geometry in layer.datasource?
     );
 
+    const featureStore = this.createFeatureStore(layer, map) as unknown as EntityStore; // todo: code smell
+
     const workspace = new NewEditionWorkspace(
       editionStrategy,
       overlay,
@@ -84,10 +86,7 @@ export class EditionWorkspaceFactoryService {
         layer,
         map,
         editionUrl: this.getEditionUrl(layer),
-        entityStore: this.createFeatureStore(
-          layer,
-          map
-        ) as unknown as EntityStore,
+        entityStore: featureStore,
         actionStore: new ActionStore([]),
         meta: {
           tableTemplate: undefined
