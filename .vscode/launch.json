@@ -14,15 +14,6 @@
       "sourceMaps": true
     },
     {
-      "type": "chrome",
-      "request": "launch",
-      "name": "igo2-client/start (LINK)",
-      "preLaunchTask": "npm: link.start",
-      "url": "http://127.0.0.1:4201",
-      "webRoot": "${workspaceFolder}/projects/client",
-      "sourceMaps": true
-    },
-    {
       "name": "test",
       "type": "chrome",
       "request": "launch",
@@ -49,6 +40,6 @@
       "request": "launch",
       "preLaunchTask": "npm: test.context",
       "url": "http://localhost:9876/debug.html"
-    },
+    }
   ]
 }
