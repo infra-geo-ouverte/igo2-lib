@@ -13,10 +13,7 @@ import { take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams } from '../../datasource';
 import { Feature } from '../../feature/shared';
 import { VectorLayer } from '../../layer/shared';
-import {
-  NewEditionFeature,
-  NewEditionWorkspace
-} from './new-edition-workspace';
+import { NewEditionWorkspace } from './new-edition-workspace';
 
 export class EditionWorkspaceTableTemplateFactory {
   // TODO add columns type see EntityTableColumn
@@ -140,7 +137,7 @@ export class EditionWorkspaceTableTemplateFactory {
         title: undefined,
         renderer: EntityTableColumnRenderer.ButtonGroup,
         primary: false,
-        valueAccessor: (entity: NewEditionFeature) => {
+        valueAccessor: (entity: Feature) => {
           return [
             {
               editMode: false,
@@ -153,7 +150,7 @@ export class EditionWorkspaceTableTemplateFactory {
               click: () => {
                 workspace.updateFeature(entity);
               }
-            } satisfies EntityTableButton<NewEditionFeature>,
+            } satisfies EntityTableButton<Feature>,
             {
               editMode: false,
               icon: 'delete',
@@ -165,7 +162,7 @@ export class EditionWorkspaceTableTemplateFactory {
               click: () => {
                 workspace.deleteFeature(entity);
               }
-            } satisfies EntityTableButton<NewEditionFeature>,
+            } satisfies EntityTableButton<Feature>,
             {
               editMode: true,
               icon: 'check',
@@ -184,7 +181,7 @@ export class EditionWorkspaceTableTemplateFactory {
                 workspace.cancelEdit(entity);
               }
             }
-          ] satisfies EntityTableButton<NewEditionFeature>[];
+          ] satisfies EntityTableButton<Feature>[];
         }
       }
     ];
