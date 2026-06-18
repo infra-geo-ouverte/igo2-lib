@@ -102,10 +102,11 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
         layer.dataSource instanceof FeatureDataSource) &&
       layer.dataSource.options.edition?.enabled
     ) {
-      const wks = this.editionWorkspaceFactoryService.createOgcApiEditionWorkspace(
-        layer as VectorLayer,
-        this.map()!
-      );
+      const wks =
+        this.editionWorkspaceFactoryService.createOgcApiEditionWorkspace(
+          layer as VectorLayer,
+          this.map()!
+        );
       console.log(wks);
       return wks;
     }

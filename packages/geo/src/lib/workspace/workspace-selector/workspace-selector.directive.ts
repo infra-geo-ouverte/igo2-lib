@@ -150,9 +150,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       layer.dataSource.options.edition?.enabled
     ) {
       const wks = this.editionWorkspaceFactoryService.createOgcApiEditionWorkspace(
-        layer as VectorLayer,
-        this.map()!
-      );
+          layer as VectorLayer,
+          this.map()!
+        );
       console.log(wks);
       return wks;
     }
