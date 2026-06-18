@@ -149,7 +149,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
         layer.dataSource instanceof FeatureDataSource) &&
       layer.dataSource.options.edition?.enabled
     ) {
-      const wks = this.editionWorkspaceFactoryService.createWFSEditionWorkspace(
+      const wks = this.editionWorkspaceFactoryService.createOgcApiEditionWorkspace(
         layer as VectorLayer,
         this.map()!
       );

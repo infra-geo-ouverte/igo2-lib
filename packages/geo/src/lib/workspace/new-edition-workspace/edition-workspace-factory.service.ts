@@ -53,7 +53,7 @@ export class EditionWorkspaceFactoryService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  createWFSEditionWorkspace(
+  createOgcApiEditionWorkspace(
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
