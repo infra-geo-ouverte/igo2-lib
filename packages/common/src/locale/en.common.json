@@ -31,7 +31,9 @@
         "filter": "Filter"
       },
       "entity-table": {
-        "targetHtmlUrl": "Open the external link"
+        "targetHtmlUrl": "Open the external link",
+        "noData": "No data to display",
+        "unavailableDataAtScale": "Data unavailable at this scale. Please zoom in"
       },
       "form": {
         "errors": {

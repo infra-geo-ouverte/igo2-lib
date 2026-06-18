@@ -51,10 +51,12 @@
           [store]="workspace.entityStore"
           [template]="workspace.meta.tableTemplate"
         />
+      } @else {
+        <p>{{ "igo.common.entity-table.noData" | translate }}</p>
       }
       @if (($any(workspace).inResolutionRange$ | async) === false) {
         <mat-card-content>
-          No data available at this scale. Please zoom in.
+          {{ "igo.common.entity-table.unavailableDataAtScale" | translate }}
         </mat-card-content>
       }
       <igo-workspace-widget-outlet [workspace]="workspace" />

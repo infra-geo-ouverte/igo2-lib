@@ -31,7 +31,9 @@
         "filter": "Filtre"
       },
       "entity-table": {
-        "targetHtmlUrl": "Ouvrir le lien externe"
+        "targetHtmlUrl": "Ouvrir le lien externe",
+        "noData": "Aucune donnée à afficher",
+        "unavailableDataAtScale": "Données non disponibles à cette échelle. Veuillez agrandir"
       },
       "form": {
         "errors": {

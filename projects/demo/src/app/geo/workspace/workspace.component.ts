@@ -36,6 +36,7 @@ import { map } from 'rxjs/operators';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+import { IgoLanguageModule } from '@igo2/core/language';
 
 @Component({
   selector: 'app-workspace',
@@ -49,6 +50,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ActionbarComponent,
     EntityTablePaginatorComponent,
     IgoGeoWorkspaceModule,
+    IgoLanguageModule,
     MAP_DIRECTIVES,
     WorkspaceSelectorComponent,
     WorkspaceSelectorDirective,
