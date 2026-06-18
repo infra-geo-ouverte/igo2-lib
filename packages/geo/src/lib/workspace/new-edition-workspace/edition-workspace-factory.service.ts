@@ -65,7 +65,9 @@ export class EditionWorkspaceFactoryService {
         .featureIdField,
       verb:
         (layer.dataSource.options.edition?.modifyMethod?.toUpperCase() as EditionVerb) ?? // todo: code smell
-        'PUT'
+        'PUT',
+      headers: {}, // todo
+      columns: [] // todo
     });
 
     const overlay = new EditionOverlay(
