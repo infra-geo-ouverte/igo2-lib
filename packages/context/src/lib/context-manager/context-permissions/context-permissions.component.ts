@@ -215,14 +215,16 @@ export class ContextPermissionsComponent implements OnInit {
   }
 
   private getProfils(value: string) {
+    const term = value.trim();
     return this.http
-      .get<ContextUserOrProfils[]>(this.baseUrlProfils + 'q=' + value)
+      .get<ContextUserOrProfils[]>(this.baseUrlProfils + 'q=' + term)
       .pipe(
         map((profils) => {
-          const search = normalizeStr(value);
-          return profils.filter((p) =>
-            normalizeStr(p.name + p.title).includes(search)
-          );
+          const searchTokens = normalizeStr(term).split(/\s+/).filter(Boolean);
+          return profils.filter((p) => {
+            const candidate = normalizeStr(`${p.title ?? ''} ${p.name ?? ''}`);
+            return searchTokens.every((token) => candidate.includes(token));
+          });
         })
       );
   }
