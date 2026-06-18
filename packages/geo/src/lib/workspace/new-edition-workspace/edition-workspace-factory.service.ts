@@ -73,7 +73,10 @@ export class EditionWorkspaceFactoryService {
       layer.dataSource.options.edition?.geomType ?? 'Point' // todo: find geometry in layer.datasource?
     );
 
-    const featureStore = this.createFeatureStore(layer, map) as unknown as EntityStore; // todo: code smell
+    const featureStore = this.createFeatureStore(
+      layer,
+      map
+    ) as unknown as EntityStore; // todo: code smell
 
     const workspace = new NewEditionWorkspace(
       editionStrategy,
