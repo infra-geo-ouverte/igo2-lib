@@ -5,12 +5,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActionStore } from '@igo2/common/action';
 import {
   EntityStore,
-  EntityStoreFilterSelectionStrategy
+  EntityStoreFilterSelectionStrategy,
+  EntityTableColumnRenderer
 } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 
+import olFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
+import { skipWhile, take } from 'rxjs';
+
+import { SourceFieldsOptionsParams } from '../../datasource/shared';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import {
   Feature,
@@ -30,7 +37,8 @@ import {
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
 import { createFilterInMapExtentOrResolutionStrategy } from '../shared/workspace.utils';
-import { EditionWorkspaceTableTemplateFactory } from './edition-table-template-factory';
+import { createEditionTableActions } from './edition-table-actions';
+import { EditionTableTemplateComposer } from './edition-table-template-composer';
 import { NewEditionWorkspace } from './new-edition-workspace';
 import { EditionOverlay } from './rendering/edition-overlay';
 import { EditionVerb } from './strategy/edition-strategy';
@@ -47,7 +55,7 @@ export class EditionWorkspaceFactoryService {
   private messageService = inject(MessageService);
   private dialog = inject(MatDialog);
 
-  private tableTemplateFactory = new EditionWorkspaceTableTemplateFactory();
+  private composer = new EditionTableTemplateComposer();
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -99,13 +107,64 @@ export class EditionWorkspaceFactoryService {
       }
     );
 
-    this.tableTemplateFactory.addTemplateToWorkspace(workspace, layer);
+    const fields = layer.dataSource.options.sourceFields;
+    const relations = layer.dataSource.options.relations ?? [];
+    const actions = createEditionTableActions(workspace, layer);
+
+    if (fields) {
+      workspace.meta.tableTemplate = this.composer.compose({
+        fields,
+        relations,
+        actions
+      });
+    } else {
+      workspace
+        .entityStore!.entities$.pipe(
+          skipWhile((val) => val.length === 0),
+          take(1)
+        )
+        .subscribe((entities) => {
+          const derivedFields = this.deriveFieldsFromEntity(
+            entities[0] as Feature
+          );
+          workspace.meta.tableTemplate = this.composer.compose({
+            fields: derivedFields,
+            relations,
+            actions
+          });
+        });
+    }
+
     layer.options.workspace = Object.assign({}, layer.options.workspace, {
       srcId: layer.id,
       workspaceId: layer.id,
       enabled: true
     } as GeoWorkspaceOptions);
     return workspace;
+  }
+
+  private deriveFieldsFromEntity(
+    feature: Feature
+  ): SourceFieldsOptionsParams[] {
+    const ol = feature.ol as olFeature<OlGeometry>;
+    const columnsFromFeatures = ol
+      .getKeys()
+      .filter(
+        (col) =>
+          !col.startsWith('_') &&
+          col !== 'geometry' &&
+          col !== ol.getGeometryName() &&
+          !col.match(/boundedby/gi)
+      )
+      .map((key) => {
+        return {
+          name: `properties.${key}`,
+          title: key,
+          renderer: EntityTableColumnRenderer.UnsanitizedHTML
+        };
+      });
+
+    return columnsFromFeatures;
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
