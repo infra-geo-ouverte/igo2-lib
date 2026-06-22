@@ -12,7 +12,11 @@ export class FeatureEdit {
 
   constructor(feature: Feature) {
     this.feature = feature;
-    this.snapshot = structuredClone(feature);
+    this.snapshot = {
+      ...feature,
+      ol: feature.ol ? feature.ol.clone() : undefined
+    };
+
     this.status = 'dirty';
   }
 }
