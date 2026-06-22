@@ -109,7 +109,7 @@ export class EditionWorkspaceFactoryService {
 
     const fields = layer.dataSource.options.sourceFields;
     const relations = layer.dataSource.options.relations ?? [];
-    const actions = createEditionTableActions(workspace, layer);
+    const actions = createEditionTableActions(workspace);
 
     if (fields) {
       workspace.meta.tableTemplate = this.composer.compose({

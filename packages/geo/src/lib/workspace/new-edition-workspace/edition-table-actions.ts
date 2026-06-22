@@ -13,8 +13,7 @@ export interface EditionTableActions {
 }
 
 export function createEditionTableActions(
-  workspace: NewEditionWorkspace,
-  layer: VectorLayer
+  workspace: NewEditionWorkspace
 ): EditionTableActions {
   const edition = layer.dataSource.options.edition;
   return {
