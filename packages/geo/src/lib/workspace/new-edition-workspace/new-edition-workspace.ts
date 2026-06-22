@@ -27,33 +27,6 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
   editionUrl: string;
 }
 
-export interface NewEditionFeature extends Feature {
-  edition?: boolean;
-}
-
-enum EditionType {
-  CREATION,
-  UPDATE
-}
-
-interface BaseEdition {
-  feature: NewEditionFeature;
-}
-
-interface UpdateEdition extends BaseEdition {
-  type: EditionType.UPDATE;
-  featureData: {
-    geometry?: FeatureGeometry;
-    properties: Record<string, unknown>;
-  };
-}
-
-interface CreationEdition extends BaseEdition {
-  type: EditionType.CREATION;
-}
-
-type CurrentEdition = UpdateEdition | CreationEdition;
-
 export class NewEditionWorkspace extends Workspace {
   // TODO !!IMPORTANT!! rename to EditionWorkspace
   readonly isLoading: Signal<boolean>;
