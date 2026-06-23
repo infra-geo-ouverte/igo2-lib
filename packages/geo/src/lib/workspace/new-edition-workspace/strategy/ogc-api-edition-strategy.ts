@@ -76,6 +76,7 @@ export class OgcApiEditionStrategy implements EditionStrategy {
   delete(feature: Feature): Observable<void> {
     // DELETE itemUrl()
     const url = this.itemUrl(feature);
+
     return this.http
       .request(new HttpRequest('DELETE', url))
       .pipe(map(() => {}));
@@ -95,15 +96,11 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     // throw Error('Not implemented');
   }
 
-  private itemUrl(feature: Feature): string {
-    // `${this.itemsUrl()}/${resolveFeatureIdField(...)-value}`  (Q6: same id as body)
+  private itemsUrl(): string {
+    return this.config.baseUrl;
+  }
 
-    // const id = resolveFeatureIdField(this.config.featureIdField); // todo
-    // if (!id)
-    //   throw Error(
-    //     'No feature id found for feature with properties ' +
-    //       JSON.stringify(feature.properties)
-    //   );
+  private itemUrl(feature: Feature): string {
     return `${this.itemsUrl()}/${feature.properties.id}`;
   }
 
