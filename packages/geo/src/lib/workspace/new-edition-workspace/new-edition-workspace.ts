@@ -99,15 +99,14 @@ export class NewEditionWorkspace extends Workspace {
     if (!workingCopy) throw Error("Can't save feature: no active edit");
     this.strategy.update(workingCopy, feature).subscribe({
       next: () => {
-        console.log('next');
         this._isLoading.set(false);
         this.refreshLayer();
-        this.messageService.success('igo.geo.workspace.updateSuccess');
+        // this.messageService.success('igo.geo.workspace.updateSuccess');
       },
-      error: (_error: HttpErrorResponse) => {
+      error: (error: HttpErrorResponse) => {
         this._isLoading.set(false);
         // todo
-        // this.handleEditionError(error);
+        console.log(error);
       }
     });
   }
