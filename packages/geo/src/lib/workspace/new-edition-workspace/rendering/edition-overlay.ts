@@ -16,16 +16,9 @@ import { DrawControl } from '../../../geometry/shared/controls/draw';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../../map/shared';
 
-/**
- * z-index bands (Q7 — distinct layers, documented, no collision with
- * selection overlay which is fixed at 300 throughout the workspace).
- *
- * SELECTION_Z (300) < GHOST_Z (301) < ACTIVE_Z (302)
- */
 const Z_GHOST = 301; // faded snapshot — visual reference only, non-interactive
 const Z_ACTIVE = 499; // solid working copy — the only target for OlModify
 
-/** Solid style for the draggable working-copy point. */
 const activeStyle = new OlStyle.Style({
   stroke: new OlStyle.Stroke({ color: 'rgba(255,255,255,1)', width: 1 }),
   fill: new OlStyle.Fill({ color: 'rgba(0,161,222,1)' }),
@@ -36,7 +29,6 @@ const activeStyle = new OlStyle.Style({
   })
 });
 
-/** Faded style for the ghost (initial-position reference). Non-interactive. */
 const ghostStyle = new OlStyle.Style({
   stroke: new OlStyle.Stroke({ color: 'rgba(0,161,222,0.4)', width: 1 }),
   fill: new OlStyle.Fill({ color: 'rgba(0,161,222,0.2)' }),
@@ -48,16 +40,14 @@ const ghostStyle = new OlStyle.Style({
 });
 
 /**
- * Manages the two map overlay layers used during feature editing.
+ * Manages two map layers and interactions for editing features.
  *
- * - **Ghost layer** (`Z_GHOST = 301`): faded snapshot at the feature's
- *   original position. Non-interactive — `OlModify` is never attached to it.
- * - **Active layer** (`Z_ACTIVE = 302`): solid working copy. Sole target for
- *   `OlModify` drag interaction.
+ * `ghostLayer` displays a faded snapshot of the original feature (non-interactive).
  *
- * The overlay owns an internal `workingCopy` cloned from the original feature
- * when editing starts. All drag mutations happen on this copy, so the original
- * feature is never touched. Cancel simply calls `clear()` — no restore needed.
+ * `activeLayer` displays a solid working copy of the feature (interactive).
+ *
+ * The working copy is a clone of the original feature, and any modifications are applied to it.
+ * The original feature remains unchanged until the user saves the changes.
  */
 export class EditionOverlay {
   private readonly ghostLayer: VectorLayer;
@@ -75,10 +65,6 @@ export class EditionOverlay {
     this.activeLayer = this.createLayer('igo-edition-active-layer', Z_ACTIVE);
     this.drawControl = this.createDrawControl();
   }
-
-  // ---------------------------------------------------------------------------
-  // Public API
-  // ---------------------------------------------------------------------------
 
   /**
    * Renders the original feature as a faded, non-interactive ghost.
@@ -116,7 +102,9 @@ export class EditionOverlay {
     this.renderActive();
   }
 
-  /** Returns the current working copy (contains any geometry the user moved). */
+  /**
+   * Returns the current working copy (contains any geometry the user moved).
+   */
   getWorkingCopy(): Feature | undefined {
     return this.workingCopy;
   }
@@ -134,10 +122,6 @@ export class EditionOverlay {
     this.map.layerController.remove(this.activeLayer);
     this.workingCopy = undefined;
   }
-
-  // ---------------------------------------------------------------------------
-  // Private helpers
-  // ---------------------------------------------------------------------------
 
   /**
    * Activates the draw control so the user can place a new point.
