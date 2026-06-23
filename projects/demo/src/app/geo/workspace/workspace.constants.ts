@@ -114,13 +114,13 @@ export const LOCAL_LAYER = {
     // This demo keeps write buttons disabled because no writable backend is configured.
     edition: {
       enabled: true,
-      baseUrl: 'https://localhost:5000/collections/test/items',
+      baseUrl: 'http://localhost:5000/collections/test/items',
       addUrl: '',
       deleteUrl: '',
       modifyUrl: '',
       geomType: 'Point',
       hasGeometry: true,
-      modifyMethod: 'post',
+      modifyMethod: 'put',
       modifyButton: true,
       deleteButton: true
     }

@@ -95,9 +95,6 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     // throw Error('Not implemented');
   }
 
-  private itemsUrl(): string {
-    return `${this.config.baseUrl}/collections/${this.config.collectionName}/items`;
-  }
   private itemUrl(feature: Feature): string {
     // `${this.itemsUrl()}/${resolveFeatureIdField(...)-value}`  (Q6: same id as body)
 
