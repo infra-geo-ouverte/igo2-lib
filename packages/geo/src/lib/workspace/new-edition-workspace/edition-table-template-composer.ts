@@ -99,31 +99,31 @@ export class EditionTableTemplateComposer {
         const feature = entity as Feature;
         return [
           {
-            editMode: false,
             icon: 'edit',
             color: 'primary',
             disabled: !actions.canModify(),
+            visible: (e) => !actions.isEditing(e as Feature),
             click: () => actions.onEdit(feature)
           } satisfies EntityTableButton<Feature>,
           {
-            editMode: false,
             icon: 'delete',
             color: 'warn',
             disabled: !actions.canDelete(),
+            visible: (e) => !actions.isEditing(e as Feature),
             click: () => actions.onDelete(feature)
           } satisfies EntityTableButton<Feature>,
           {
-            editMode: true,
             icon: 'check',
             color: 'primary',
             disabled: actions.isBusy(),
+            visible: (e) => actions.isEditing(e as Feature),
             click: () => actions.onSave(feature)
           },
           {
-            editMode: true,
             icon: 'close',
             color: 'primary',
             disabled: actions.isBusy(),
+            visible: (e) => actions.isEditing(e as Feature),
             click: () => actions.onCancel(feature)
           }
         ] satisfies EntityTableButton<Feature>[];

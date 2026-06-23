@@ -1,5 +1,4 @@
 import { Feature } from '../../feature';
-import { VectorLayer } from '../../layer';
 import { NewEditionWorkspace } from './new-edition-workspace';
 
 export interface EditionTableActions {
@@ -10,19 +9,20 @@ export interface EditionTableActions {
   isBusy(): boolean;
   canModify(): boolean;
   canDelete(): boolean;
+  isEditing(entity: Feature): boolean;
 }
 
 export function createEditionTableActions(
   workspace: NewEditionWorkspace
 ): EditionTableActions {
-  const edition = layer.dataSource.options.edition;
   return {
-    onEdit: (e) => workspace.updateFeature(e),
+    onEdit: (e) => workspace.editFeature(e),
     onDelete: (e) => workspace.deleteFeature(e),
     onSave: (e) => workspace.saveFeature(e),
     onCancel: (e) => workspace.cancelEdit(e),
     isBusy: () => workspace.isLoading(),
-    canModify: () => edition?.modifyButton !== false,
-    canDelete: () => edition?.deleteButton !== false
+    canModify: () => workspace.canEdit(),
+    canDelete: () => workspace.canDelete,
+    isEditing: (e) => workspace.isEditing(e)
   };
 }

@@ -337,8 +337,10 @@
                       track button
                     ) {
                       @if (
-                        isEdition(row.record) === button.editMode ||
-                        button.editMode === undefined
+                        button.visible
+                          ? button.visible(row.record.entity)
+                          : isEdition(row.record) === button.editMode ||
+                            button.editMode === undefined
                       ) {
                         <span>
                           @if (button.style === 'mat-icon-button') {

@@ -1,10 +1,10 @@
 import { HttpClient, HttpRequest } from '@angular/common/http';
 
+import { EntityTableColumn } from 'packages/common/entity/src/shared';
 import { Observable, map } from 'rxjs';
 
 import { Feature } from '../../../feature/shared';
-import { EditionStrategy, EditionVerb } from './edition-strategy';
-import { resolveFeatureIdField } from './feature-id';
+import { EditionStrategy, EditionVerb, ItemsQuery } from './edition-strategy';
 
 // import { buildMergePatch } from './patch-diff';
 
@@ -24,23 +24,42 @@ export class OgcApiEditionStrategy implements EditionStrategy {
   ) {}
 
   getItemsUrl(query: ItemsQuery): string {
+    console.log(query);
+    return '';
     // itemsUrl() + bbox/limit/offset query params + f=json
   }
 
-  parseItems(response): Feature[] {
+  parseItems(response: unknown): Feature[] {
     // map GeoJSON FeatureCollection.features -> igo Feature[]
+    console.log(response);
     throw Error('Not implemented');
   }
 
-  create(feature): Observable<string> {
+  create(feature: unknown): Observable<string> {
     // POST itemsUrl(), body = full geo+json Feature, Content-Type application/geo+json
     // -> extract server-assigned id from Location header / response
+    console.log(feature);
     throw Error('Not implemented');
   }
 
-  update(edit): Observable<void> {
+  update(source: Feature, target: Feature): Observable<void> {
     // verb === 'PUT'  -> PUT itemUrl(), full Feature body (id from same field as URL)
     // verb === 'PATCH'-> PATCH itemUrl(), buildMergePatch(working, snapshot)
+    switch (this.config.verb) {
+      case 'PUT': {
+        const url = this.itemUrl(source);
+        return this.http
+          .request(new HttpRequest('PUT', url, target))
+          .pipe(map(() => {}));
+        break;
+      }
+      case 'PATCH':
+        // Implement PATCH logic here
+        // todo
+        break;
+      default:
+        throw Error(`Unknown edition verb: ${this.config.verb}`);
+    }
     throw Error('Not implemented');
   }
 
@@ -71,12 +90,13 @@ export class OgcApiEditionStrategy implements EditionStrategy {
   }
   private itemUrl(feature: Feature): string {
     // `${this.itemsUrl()}/${resolveFeatureIdField(...)-value}`  (Q6: same id as body)
-    const id = resolveFeatureIdField(this.config, feature.columns);
-    if (!id)
-      throw Error(
-        'No feature id found for feature with properties ' +
-          JSON.stringify(feature.properties)
-      );
-    return `${this.itemsUrl()}/${feature.properties[id]}`;
+
+    // const id = resolveFeatureIdField(this.config.featureIdField); // todo
+    // if (!id)
+    //   throw Error(
+    //     'No feature id found for feature with properties ' +
+    //       JSON.stringify(feature.properties)
+    //   );
+    return `${this.itemsUrl()}/${feature.properties.id}`;
   }
 }

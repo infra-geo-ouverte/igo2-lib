@@ -23,7 +23,7 @@ import { IgoMap } from '../../../map/shared';
  * SELECTION_Z (300) < GHOST_Z (301) < ACTIVE_Z (302)
  */
 const Z_GHOST = 301; // faded snapshot — visual reference only, non-interactive
-const Z_ACTIVE = 302; // solid working copy — the only target for OlModify
+const Z_ACTIVE = 499; // solid working copy — the only target for OlModify
 
 /** Solid style for the draggable working-copy point. */
 const activeStyle = new OlStyle.Style({
@@ -55,9 +55,9 @@ const ghostStyle = new OlStyle.Style({
  * - **Active layer** (`Z_ACTIVE = 302`): solid working copy. Sole target for
  *   `OlModify` drag interaction.
  *
- * Both layers each own ONE `FeatureDataSource` / `OlVectorSource`, fixing the
- * double-source bug in the old `GeometryEditor` where `clearDrawings()` and
- * `addFeatureToMap()` used different sources (Q7).
+ * The overlay owns an internal `workingCopy` cloned from the original feature
+ * when editing starts. All drag mutations happen on this copy, so the original
+ * feature is never touched. Cancel simply calls `clear()` — no restore needed.
  */
 export class EditionOverlay {
   private readonly ghostLayer: VectorLayer;
@@ -65,6 +65,7 @@ export class EditionOverlay {
   private drawControl: DrawControl;
   private drawEnd$$?: Subscription;
   private modifyInteraction?: OlModify;
+  private workingCopy: Feature | undefined;
 
   constructor(
     private map: IgoMap,
@@ -80,13 +81,12 @@ export class EditionOverlay {
   // ---------------------------------------------------------------------------
 
   /**
-   * Renders the snapshot as a faded, non-interactive ghost at the feature's
-   * original position (Q3). Call before `enableModify` so the ghost always
-   * sits below the active point.
+   * Renders the original feature as a faded, non-interactive ghost.
+   * Call before `enableModify` so the ghost always sits below the active point.
    */
-  showGhost(snapshot: Feature): void {
+  showGhost(feature: Feature): void {
     const projection = this.map.ol.getView().getProjection().getCode();
-    const olFeature = featureToOl(snapshot, projection);
+    const olFeature = featureToOl(feature, projection);
     olFeature.setStyle(ghostStyle);
     this.ghostLayer.dataSource.ol.clear();
     this.ghostLayer.dataSource.ol.addFeature(olFeature);
@@ -94,41 +94,36 @@ export class EditionOverlay {
   }
 
   /**
-   * Renders the working copy solid and attaches `OlModify` so the user can
-   * drag it. Only the active layer is passed to `OlModify` — the ghost is
-   * never interactive (Q3). Falls back to `enableCreate` when the feature
-   * has no geometry yet.
+   * Clones the feature into an internal working copy, renders it solid, and
+   * attaches `OlModify`. The original feature is never mutated.
+   * Falls back to `enableCreate` when the feature has no geometry yet.
    */
-  enableModify(working: Feature): void {
-    if (!working.geometry) {
-      return this.enableCreate(working);
+  enableModify(feature: Feature): void {
+    this.workingCopy = {
+      ...feature,
+      extent: feature.extent
+        ? ([...feature.extent] as [number, number, number, number])
+        : undefined,
+      properties: structuredClone(feature.properties),
+      geometry: structuredClone(feature.geometry),
+      ol: undefined
+    };
+
+    if (!this.workingCopy.geometry) {
+      return this.enableCreate();
     }
-    const projection = this.map.ol.getView().getProjection().getCode();
-    const olFeature = featureToOl(working, projection);
-    olFeature.setStyle(activeStyle);
 
-    this.activeLayer.dataSource.ol.clear();
-    this.activeLayer.dataSource.ol.addFeature(olFeature);
-    this.map.layerController.add(this.activeLayer);
-
-    this.attachModify(olFeature, working);
+    this.renderActive();
   }
 
-  /**
-   * Activates the draw control so the user can place a new point.
-   * Used for create mode (no existing geometry). The draw control is wired to
-   * the active layer's single source — no second detached source (Q7).
-   */
-  enableCreate(working: Feature): void {
-    this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry) => {
-      this.updateFeatureGeometry(working, olGeometry);
-    });
-    this.drawControl.setOlMap(this.map.ol, true);
+  /** Returns the current working copy (contains any geometry the user moved). */
+  getWorkingCopy(): Feature | undefined {
+    return this.workingCopy;
   }
 
   /**
    * Removes all overlays and detaches interactions.
-   * Single teardown path — call on save-success, cancel, or rollback.
+   * Single teardown path — call on save-success or cancel.
    */
   clear(): void {
     this.detachDrawControl();
@@ -137,13 +132,39 @@ export class EditionOverlay {
     this.activeLayer.dataSource.ol.clear();
     this.map.layerController.remove(this.ghostLayer);
     this.map.layerController.remove(this.activeLayer);
+    this.workingCopy = undefined;
   }
 
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
 
-  private attachModify(olFeature: OlFeature<Geometry>, working: Feature): void {
+  /**
+   * Activates the draw control so the user can place a new point.
+   * Used for create mode (no existing geometry on the working copy).
+   */
+  private enableCreate(): void {
+    this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry) => {
+      this.updateWorkingCopyGeometry(olGeometry);
+    });
+    this.drawControl.setOlMap(this.map.ol, true);
+  }
+
+  private renderActive(): void {
+    if (!this.workingCopy?.geometry) return;
+
+    const projection = this.map.ol.getView().getProjection().getCode();
+    const olFeature = featureToOl(this.workingCopy, projection);
+    olFeature.setStyle(activeStyle);
+
+    this.activeLayer.dataSource.ol.clear();
+    this.activeLayer.dataSource.ol.addFeature(olFeature);
+    this.map.layerController.add(this.activeLayer);
+
+    this.attachModify(olFeature);
+  }
+
+  private attachModify(olFeature: OlFeature<Geometry>): void {
     this.detachModify();
     const features = new Collection([olFeature], { unique: true });
     this.modifyInteraction = new OlModify({ features });
@@ -151,7 +172,7 @@ export class EditionOverlay {
     this.modifyInteraction.on('modifyend', (event) => {
       const modified = event.features.getArray()[0]?.getGeometry();
       if (modified) {
-        this.updateFeatureGeometry(working, modified);
+        this.updateWorkingCopyGeometry(modified);
       }
     });
   }
@@ -169,19 +190,19 @@ export class EditionOverlay {
     this.drawControl.setOlMap(undefined);
   }
 
-  private updateFeatureGeometry(feature: Feature, olGeometry: Geometry): void {
+  private updateWorkingCopyGeometry(olGeometry: Geometry): void {
+    if (!this.workingCopy) return;
+
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: 'EPSG:4326'
     }) as unknown as FeatureGeometry;
 
-    feature.projection = 'EPSG:4326';
-    feature.geometry = geometry;
+    this.workingCopy.projection = 'EPSG:4326';
+    this.workingCopy.geometry = geometry;
 
-    // Re-render the active layer with the updated geometry and re-attach OlModify
-    // to the new OlFeature instance (avoids stale references after each drag end).
-    this.enableModify(feature);
+    this.renderActive();
   }
 
   private createLayer(id: string, zIndex: number): VectorLayer {
@@ -189,6 +210,7 @@ export class EditionOverlay {
       id,
       title: id,
       zIndex,
+      isIgoInternalLayer: true,
       source: new FeatureDataSource(),
       showInLayerList: false,
       exportable: false,

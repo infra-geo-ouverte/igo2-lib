@@ -129,6 +129,7 @@ export interface EntityTableButton<T extends object> {
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';
   editMode?: boolean;
+  visible?: (entity: object) => boolean;
 }
 
 export type AnyEntityField = AnyChoiceEntityField | BaseEntityField;
@@ -197,7 +198,7 @@ export interface BaseEntityTableColumn extends BaseEntityField {
   title: string;
   tooltip?: string;
   validation?: EntityTableColumnValidation & { send?: boolean };
-  visible?: boolean;
+  visible?: boolean | ((entity: object) => boolean);
   icon?: string;
   linkColumnForce?: string;
   cellClassFunc?: (
