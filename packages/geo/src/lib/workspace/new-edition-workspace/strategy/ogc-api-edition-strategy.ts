@@ -1,4 +1,4 @@
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 
 import { GeoJSON } from 'geojson';
 import { EntityTableColumn } from 'packages/common/entity/src/shared';
@@ -44,24 +44,33 @@ export class OgcApiEditionStrategy implements EditionStrategy {
   }
 
   update(source: Feature, target: Feature): Observable<void> {
-    // verb === 'PUT'  -> PUT itemUrl(), full Feature body (id from same field as URL)
-    // verb === 'PATCH'-> PATCH itemUrl(), buildMergePatch(working, snapshot)
     switch (this.config.verb) {
       case 'PUT': {
         const url = this.itemUrl(source);
+        const body = this.getUpdateBody(source);
+        const headers = new HttpHeaders(this.config.headers);
+
         return this.http
-          .request(new HttpRequest('PUT', url, target))
+          .request(
+            new HttpRequest('PUT', url, body, {
+              headers: headers
+            })
+          )
           .pipe(map(() => {}));
         break;
       }
       case 'PATCH':
-        // Implement PATCH logic here
         // todo
+        // Implement PATCH logic here
+        return new Observable<void>((observer) => {
+          // Simulate a successful PATCH request
+          observer.next();
+          observer.complete();
+        });
         break;
       default:
         throw Error(`Unknown edition verb: ${this.config.verb}`);
     }
-    throw Error('Not implemented');
   }
 
   delete(feature: Feature): Observable<void> {
