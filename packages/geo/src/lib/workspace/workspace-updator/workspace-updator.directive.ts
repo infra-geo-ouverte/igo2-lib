@@ -107,7 +107,6 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
           layer as VectorLayer,
           this.map()!
         );
-      console.log(wks);
       return wks;
     }
     if (
