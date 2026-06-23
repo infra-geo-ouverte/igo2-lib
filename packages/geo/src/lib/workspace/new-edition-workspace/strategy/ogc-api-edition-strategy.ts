@@ -1,5 +1,6 @@
 import { HttpClient, HttpRequest } from '@angular/common/http';
 
+import { GeoJSON } from 'geojson';
 import { EntityTableColumn } from 'packages/common/entity/src/shared';
 import { Observable, map } from 'rxjs';
 
@@ -98,5 +99,16 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     //       JSON.stringify(feature.properties)
     //   );
     return `${this.itemsUrl()}/${feature.properties.id}`;
+  }
+
+  private getUpdateBody(feature: Feature): GeoJSON {
+    // TODO support Geometry
+    // TODO check if id exists
+    return {
+      type: 'Feature',
+      id: feature.properties.id,
+      geometry: feature.geometry as GeoJSON.Geometry,
+      properties: feature.properties
+    };
   }
 }
