@@ -99,9 +99,9 @@ export const FEATURES_LAYER = {
  */
 export const LOCAL_LAYER = {
   title: 'NewEditionWorkspace - test',
-  visible: false,
+  visible: true,
   workspace: {
-    enabled: false
+    enabled: true
   },
   sourceOptions: {
     type: 'vector',
@@ -123,6 +123,15 @@ export const LOCAL_LAYER = {
       modifyMethod: 'put',
       modifyButton: true,
       deleteButton: true
-    }
+    },
+    sourceFields: [
+      {
+        name: 'id',
+        alias: 'ID',
+        primary: true,
+        validation: { readonly: true }
+      },
+      { name: 'name', alias: 'Name' }
+    ]
   }
 } satisfies VectorLayerOptions;
