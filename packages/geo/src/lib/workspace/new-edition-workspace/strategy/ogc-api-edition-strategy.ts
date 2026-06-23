@@ -5,9 +5,7 @@ import { EntityTableColumn } from 'packages/common/entity/src/shared';
 import { Observable, map } from 'rxjs';
 
 import { Feature } from '../../../feature/shared';
-import { EditionStrategy, EditionVerb, ItemsQuery } from './edition-strategy';
-
-// import { buildMergePatch } from './patch-diff';
+import { EditionStrategy, EditionVerb } from './edition-strategy';
 
 interface OgcApiEditionStrategyConfig {
   baseUrl: string;
@@ -24,22 +22,7 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     private config: OgcApiEditionStrategyConfig
   ) {}
 
-  getItemsUrl(query: ItemsQuery): string {
-    console.log(query);
-    return '';
-    // itemsUrl() + bbox/limit/offset query params + f=json
-  }
-
-  parseItems(response: unknown): Feature[] {
-    // map GeoJSON FeatureCollection.features -> igo Feature[]
-    console.log(response);
-    throw Error('Not implemented');
-  }
-
   create(feature: unknown): Observable<string> {
-    // POST itemsUrl(), body = full geo+json Feature, Content-Type application/geo+json
-    // -> extract server-assigned id from Location header / response
-    console.log(feature);
     throw Error('Not implemented');
   }
 
@@ -80,20 +63,6 @@ export class OgcApiEditionStrategy implements EditionStrategy {
     return this.http
       .request(new HttpRequest('DELETE', url))
       .pipe(map(() => {}));
-    // .subscribe({
-    //   next: () => {
-    //     this._isLoading.set(false);
-    //     this.refreshLayer();
-
-    //     this.messageService.success('igo.geo.workspace.deleteSuccess');
-    //   },
-    //   error: (error: HttpErrorResponse) => {
-    //     this._isLoading.set(false);
-    //     this.handleEditionError(error);
-    //   }
-    // });
-
-    // throw Error('Not implemented');
   }
 
   private itemsUrl(): string {

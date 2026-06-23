@@ -12,8 +12,6 @@ export interface ItemsQuery {
 }
 
 export interface EditionStrategy {
-  getItemsUrl(query: ItemsQuery): string;
-  parseItems(response: unknown): Feature[];
   create(feature: Feature): Observable<string>;
   update(feature: Feature, snapshot: Feature): Observable<void>;
   delete(feature: Feature): Observable<void>;
