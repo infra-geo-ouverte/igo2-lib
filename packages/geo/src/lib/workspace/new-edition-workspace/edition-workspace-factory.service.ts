@@ -65,6 +65,8 @@ export class EditionWorkspaceFactoryService {
     layer: VectorLayer,
     map: IgoMap
   ): NewEditionWorkspace {
+    const headers = layer.dataSource.options.edition?.modifyHeaders ?? {};
+
     const editionStrategy = new OgcApiEditionStrategy(this.http, {
       baseUrl: this.getEditionUrl(layer),
       collectionName:
@@ -74,8 +76,8 @@ export class EditionWorkspaceFactoryService {
       verb:
         (layer.dataSource.options.edition?.modifyMethod?.toUpperCase() as EditionVerb) ?? // todo: code smell
         'PUT',
-      headers: {}, // todo
-      columns: [] // todo
+      headers: headers,
+      columns: [] // todo ? pourquoi
     });
 
     const overlay = new EditionOverlay(
