@@ -102,14 +102,16 @@ export class EditionTableTemplateComposer {
             icon: 'edit',
             color: 'primary',
             disabled: !actions.canModify(),
-            visible: (e) => !actions.isEditing(e as Feature),
+            visible: (e) =>
+              !actions.isEditing(e as Feature) && actions.canModify(),
             click: () => actions.onEdit(feature)
           } satisfies EntityTableButton<Feature>,
           {
             icon: 'delete',
             color: 'warn',
             disabled: !actions.canDelete(),
-            visible: (e) => !actions.isEditing(e as Feature),
+            visible: (e) =>
+              !actions.isEditing(e as Feature) && actions.canModify(),
             click: () => actions.onDelete(feature)
           } satisfies EntityTableButton<Feature>,
           {

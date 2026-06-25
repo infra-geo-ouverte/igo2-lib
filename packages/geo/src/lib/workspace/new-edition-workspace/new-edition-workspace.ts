@@ -97,28 +97,34 @@ export class NewEditionWorkspace extends Workspace {
   saveFeature(feature: Feature) {
     const workingCopy = this.overlay.getWorkingCopy();
     if (!workingCopy) throw Error("Can't save feature: no active edit");
+    this._isLoading.set(true);
     this.strategy.update(workingCopy, feature).subscribe({
       next: () => {
         this._isLoading.set(false);
+        this.activeFeature = undefined;
+        this._canEdit.set(true);
+        this.overlay.clear();
         this.refreshLayer();
         // this.messageService.success('igo.geo.workspace.updateSuccess');
       },
-      error: (error: HttpErrorResponse) => {
+      error: (_error: HttpErrorResponse) => {
         this._isLoading.set(false);
         // todo
-        console.log(error);
+        // this.messageService.success('igo.geo.workspace.updateError');
       }
     });
   }
 
   editFeature(feature: Feature) {
     this.activeFeature = feature;
+    this._canEdit.set(false);
     this.overlay.showGhost(feature);
     this.overlay.enableModify(feature);
   }
 
   cancelEdit(_feature: Feature) {
     this.activeFeature = undefined;
+    this._canEdit.set(true);
     this.overlay.clear();
   }
 
