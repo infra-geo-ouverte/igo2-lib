@@ -1,8 +1,13 @@
-import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEventType,
+  HttpHeaders,
+  HttpRequest
+} from '@angular/common/http';
 
 import { GeoJSON } from 'geojson';
 import { EntityTableColumn } from 'packages/common/entity/src/shared';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 
 import { Feature } from '../../../feature/shared';
 import { EditionStrategy, EditionVerb } from './edition-strategy';
@@ -39,7 +44,10 @@ export class OgcApiEditionStrategy implements EditionStrategy {
               headers: headers
             })
           )
-          .pipe(map(() => {}));
+          .pipe(
+            filter((event) => event.type === HttpEventType.Response),
+            map(() => {})
+          );
         break;
       }
       case 'PATCH':
