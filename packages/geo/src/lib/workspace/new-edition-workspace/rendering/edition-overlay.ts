@@ -9,23 +9,9 @@ import type { Type as GeometryType } from 'ol/geom/Geometry';
 import OlModify from 'ol/interaction/Modify';
 import * as OlStyle from 'ol/style';
 
-import { Subscription } from 'rxjs';
-
-import { FeatureDataSource } from '../../../datasource';
-import { createInteractionStyle } from '../../../draw/shared';
-import {
-  Feature,
-  FeatureGeometry,
-  FeatureMotion,
-  featureToOl
-} from '../../../feature';
-import { DrawControl } from '../../../geometry/shared/controls/draw';
-import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
-
+import { Feature, FeatureGeometry, FeatureMotion } from '../../../feature';
 
 const activeStyle = new OlStyle.Style({
-  stroke: new OlStyle.Stroke({ color: 'rgba(255,255,255,1)', width: 1 }),
-  fill: new OlStyle.Fill({ color: 'rgba(0,161,222,1)' }),
   image: new OlStyle.Circle({
     radius: 7,
     stroke: new OlStyle.Stroke({ color: 'rgba(255,255,255,1)', width: 1 }),
@@ -44,8 +30,6 @@ const activeStyle = new OlStyle.Style({
  * The original feature remains unchanged until the user saves the changes.
  */
 export class EditionOverlay {
-  private drawControl: DrawControl | undefined;
-  private drawEnd$$?: Subscription;
   private modifyInteraction?: OlModify;
   private workingCopy: Feature | undefined;
 
@@ -90,7 +74,6 @@ export class EditionOverlay {
    * Single teardown path — call on save-success or cancel.
    */
   clear(): void {
-    this.detachDrawControl();
     this.detachModify();
     this.map.overlay.clear();
     this.workingCopy = undefined;
@@ -99,27 +82,39 @@ export class EditionOverlay {
   private renderActive(): void {
     if (!this.workingCopy?.geometry) return;
 
-    const projection = this.map.ol.getView().getProjection().getCode();
-    const olFeature = featureToOl(this.workingCopy, projection);
-    olFeature.setStyle(activeStyle);
+    this.map.overlay.clear();
 
     this.map.overlay.addFeatures([this.workingCopy], FeatureMotion.None);
 
-    this.attachModify(olFeature);
+    const activeOlFeatures = this.map.overlay.dataSource.ol.getFeatures();
+    const olFeature = activeOlFeatures.at(-1);
+
+    if (olFeature) {
+      olFeature.setStyle(activeStyle);
+      this.attachModify(olFeature);
+    }
   }
 
   private attachModify(olFeature: OlFeature<Geometry>): void {
     this.detachModify();
-    const features = new Collection([olFeature], { unique: true });
-    this.modifyInteraction = new OlModify({ features });
+
+    const overlaySource = this.map.overlay.dataSource.ol;
+
+    this.modifyInteraction = new OlModify({
+      source: overlaySource,
+      features: new Collection([olFeature], { unique: true })
+    });
+
     this.map.ol.addInteraction(this.modifyInteraction);
+
     this.modifyInteraction.on('modifyend', (event) => {
-      const modified = event.features.getArray()[0]?.getGeometry();
-      if (modified) {
-        this.updateWorkingCopyGeometry(modified);
+      const modifiedFeature = event.features.getArray()[0];
+      const modifiedGeometry = modifiedFeature.getGeometry();
+
+      if (modifiedGeometry) {
+        this.updateWorkingCopyGeometry(modifiedGeometry);
       }
     });
-    this.createDrawControl(olFeature);
   }
 
   private detachModify(): void {
@@ -127,13 +122,6 @@ export class EditionOverlay {
       this.map.ol.removeInteraction(this.modifyInteraction);
       this.modifyInteraction = undefined;
     }
-  }
-
-  private detachDrawControl(): void {
-    this.drawEnd$$?.unsubscribe();
-    this.drawEnd$$ = undefined;
-
-    this.drawControl?.setOlMap(undefined);
   }
 
   private updateWorkingCopyGeometry(olGeometry: Geometry): void {
@@ -147,31 +135,5 @@ export class EditionOverlay {
 
     this.workingCopy.projection = 'EPSG:4326';
     this.workingCopy.geometry = geometry;
-
-    this.renderActive();
-  }
-
-  private createLayer(id: string, zIndex: number): VectorLayer {
-    return new VectorLayer({
-      id,
-      title: id,
-      zIndex,
-      isIgoInternalLayer: true,
-      source: new FeatureDataSource(),
-      showInLayerList: false,
-      exportable: false,
-      browsable: false,
-      workspace: { enabled: false }
-    });
-  }
-
-  private createDrawControl(feature: OlFeature<Geometry>): DrawControl {
-    return new DrawControl({
-      geometryType: feature.getGeometry()?.getType() as GeometryType,
-      // drawingLayerSource: this.activeLayer.dataSource.ol,
-      drawingLayerSource: this.map.overlay.layer.dataSource.ol,
-      drawingLayerStyle: new OlStyle.Style({}),
-      interactionStyle: createInteractionStyle()
-    });
   }
 }
