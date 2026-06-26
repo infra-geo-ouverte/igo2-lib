@@ -30,10 +30,10 @@ export class NewEditionWorkspace extends Workspace {
   private readonly _canEdit = signal(true);
 
   private activeFeature: Feature | undefined;
+  private overlay: EditionOverlay;
 
   constructor(
     private strategy: EditionStrategy,
-    private overlay: EditionOverlay,
     private dialog: MatDialog,
     private messageService: MessageService,
     protected options: EditionWorkspaceOptions
@@ -45,6 +45,10 @@ export class NewEditionWorkspace extends Workspace {
     // TODO handle relations
     // TODO NEXT implement messages
     super(options);
+    this.overlay = new EditionOverlay(
+      this.map,
+      this.options.layer.dataSource.options.edition?.geomType ?? 'Point'
+    );
     this.isLoading = this._isLoading.asReadonly();
     this.canEdit = this._canEdit.asReadonly();
   }
@@ -116,16 +120,14 @@ export class NewEditionWorkspace extends Workspace {
   }
 
   editFeature(feature: Feature) {
-    this.activeFeature = feature;
     this._canEdit.set(false);
-    this.overlay.showGhost(feature);
     this.overlay.enableModify(feature);
+    this.activeFeature = feature;
   }
 
   cancelEdit(_feature: Feature) {
     this.activeFeature = undefined;
     this._canEdit.set(true);
-    this.overlay.clear();
   }
 
   private refreshLayer() {

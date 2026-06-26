@@ -40,7 +40,6 @@ import { createFilterInMapExtentOrResolutionStrategy } from '../shared/workspace
 import { createEditionTableActions } from './edition-table-actions';
 import { EditionTableTemplateComposer } from './edition-table-template-composer';
 import { NewEditionWorkspace } from './new-edition-workspace';
-import { EditionOverlay } from './rendering/edition-overlay';
 import { EditionVerb } from './strategy/edition-strategy';
 import { OgcApiEditionStrategy } from './strategy/ogc-api-edition-strategy';
 
@@ -80,11 +79,6 @@ export class EditionWorkspaceFactoryService {
       columns: [] // todo ? pourquoi
     });
 
-    const overlay = new EditionOverlay(
-      map,
-      layer.dataSource.options.edition?.geomType ?? 'Point' // todo: find geometry in layer.datasource?
-    );
-
     const featureStore = this.createFeatureStore(
       layer,
       map
@@ -92,7 +86,6 @@ export class EditionWorkspaceFactoryService {
 
     const workspace = new NewEditionWorkspace(
       editionStrategy,
-      overlay,
       this.dialog,
       this.messageService,
       {

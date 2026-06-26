@@ -1,3 +1,5 @@
+import { MapBase } from '@igo2/geo';
+
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -11,13 +13,15 @@ import { Subscription } from 'rxjs';
 
 import { FeatureDataSource } from '../../../datasource';
 import { createInteractionStyle } from '../../../draw/shared';
-import { Feature, FeatureGeometry, featureToOl } from '../../../feature';
+import {
+  Feature,
+  FeatureGeometry,
+  FeatureMotion,
+  featureToOl
+} from '../../../feature';
 import { DrawControl } from '../../../geometry/shared/controls/draw';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
-import { IgoMap } from '../../../map/shared';
 
-const Z_GHOST = 301; // faded snapshot — visual reference only, non-interactive
-const Z_ACTIVE = 499; // solid working copy — the only target for OlModify
 
 const activeStyle = new OlStyle.Style({
   stroke: new OlStyle.Stroke({ color: 'rgba(255,255,255,1)', width: 1 }),
@@ -26,16 +30,6 @@ const activeStyle = new OlStyle.Style({
     radius: 7,
     stroke: new OlStyle.Stroke({ color: 'rgba(255,255,255,1)', width: 1 }),
     fill: new OlStyle.Fill({ color: 'rgba(0,161,222,1)' })
-  })
-});
-
-const ghostStyle = new OlStyle.Style({
-  stroke: new OlStyle.Stroke({ color: 'rgba(0,161,222,0.4)', width: 1 }),
-  fill: new OlStyle.Fill({ color: 'rgba(0,161,222,0.2)' }),
-  image: new OlStyle.Circle({
-    radius: 7,
-    stroke: new OlStyle.Stroke({ color: 'rgba(0,161,222,0.4)', width: 1 }),
-    fill: new OlStyle.Fill({ color: 'rgba(0,161,222,0.2)' })
   })
 });
 
@@ -50,34 +44,20 @@ const ghostStyle = new OlStyle.Style({
  * The original feature remains unchanged until the user saves the changes.
  */
 export class EditionOverlay {
-  private readonly ghostLayer: VectorLayer;
-  private readonly activeLayer: VectorLayer;
-  private drawControl: DrawControl;
+  private drawControl: DrawControl | undefined;
   private drawEnd$$?: Subscription;
   private modifyInteraction?: OlModify;
   private workingCopy: Feature | undefined;
 
   constructor(
-    private map: IgoMap,
+    private map: MapBase,
     private geometryType: GeometryType
-  ) {
-    this.ghostLayer = this.createLayer('igo-edition-ghost-layer', Z_GHOST);
-    this.activeLayer = this.createLayer('igo-edition-active-layer', Z_ACTIVE);
-    this.drawControl = this.createDrawControl();
-  }
+  ) {}
 
   /**
    * Renders the original feature as a faded, non-interactive ghost.
    * Call before `enableModify` so the ghost always sits below the active point.
    */
-  showGhost(feature: Feature): void {
-    const projection = this.map.ol.getView().getProjection().getCode();
-    const olFeature = featureToOl(feature, projection);
-    olFeature.setStyle(ghostStyle);
-    this.ghostLayer.dataSource.ol.clear();
-    this.ghostLayer.dataSource.ol.addFeature(olFeature);
-    this.map.layerController.add(this.ghostLayer);
-  }
 
   /**
    * Clones the feature into an internal working copy, renders it solid, and
@@ -94,10 +74,6 @@ export class EditionOverlay {
       geometry: structuredClone(feature.geometry),
       ol: undefined
     };
-
-    if (!this.workingCopy.geometry) {
-      return this.enableCreate();
-    }
 
     this.renderActive();
   }
@@ -116,22 +92,8 @@ export class EditionOverlay {
   clear(): void {
     this.detachDrawControl();
     this.detachModify();
-    this.ghostLayer.dataSource.ol.clear();
-    this.activeLayer.dataSource.ol.clear();
-    this.map.layerController.remove(this.ghostLayer);
-    this.map.layerController.remove(this.activeLayer);
+    this.map.overlay.clear();
     this.workingCopy = undefined;
-  }
-
-  /**
-   * Activates the draw control so the user can place a new point.
-   * Used for create mode (no existing geometry on the working copy).
-   */
-  private enableCreate(): void {
-    this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry) => {
-      this.updateWorkingCopyGeometry(olGeometry);
-    });
-    this.drawControl.setOlMap(this.map.ol, true);
   }
 
   private renderActive(): void {
@@ -141,9 +103,7 @@ export class EditionOverlay {
     const olFeature = featureToOl(this.workingCopy, projection);
     olFeature.setStyle(activeStyle);
 
-    this.activeLayer.dataSource.ol.clear();
-    this.activeLayer.dataSource.ol.addFeature(olFeature);
-    this.map.layerController.add(this.activeLayer);
+    this.map.overlay.addFeatures([this.workingCopy], FeatureMotion.None);
 
     this.attachModify(olFeature);
   }
@@ -159,6 +119,7 @@ export class EditionOverlay {
         this.updateWorkingCopyGeometry(modified);
       }
     });
+    this.createDrawControl(olFeature);
   }
 
   private detachModify(): void {
@@ -171,7 +132,8 @@ export class EditionOverlay {
   private detachDrawControl(): void {
     this.drawEnd$$?.unsubscribe();
     this.drawEnd$$ = undefined;
-    this.drawControl.setOlMap(undefined);
+
+    this.drawControl?.setOlMap(undefined);
   }
 
   private updateWorkingCopyGeometry(olGeometry: Geometry): void {
@@ -203,10 +165,11 @@ export class EditionOverlay {
     });
   }
 
-  private createDrawControl(): DrawControl {
+  private createDrawControl(feature: OlFeature<Geometry>): DrawControl {
     return new DrawControl({
-      geometryType: this.geometryType,
-      drawingLayerSource: this.activeLayer.dataSource.ol,
+      geometryType: feature.getGeometry()?.getType() as GeometryType,
+      // drawingLayerSource: this.activeLayer.dataSource.ol,
+      drawingLayerSource: this.map.overlay.layer.dataSource.ol,
       drawingLayerStyle: new OlStyle.Style({}),
       interactionStyle: createInteractionStyle()
     });
