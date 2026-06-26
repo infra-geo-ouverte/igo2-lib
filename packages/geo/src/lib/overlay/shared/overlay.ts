@@ -23,7 +23,7 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * The map to add the layer to
    */
-  private map!: T;
+  private _map!: T;
 
   /**
    * Overlay layer
@@ -35,6 +35,10 @@ export class Overlay<T extends MapBase = MapBase> {
    */
   get dataSource(): FeatureDataSource {
     return this.layer.dataSource as FeatureDataSource;
+  }
+
+  protected get map(): T {
+    return this._map;
   }
 
   constructor(map: T, style?: AnyOlStyle) {
@@ -53,13 +57,13 @@ export class Overlay<T extends MapBase = MapBase> {
    */
   setMap(map: T) {
     if (map === undefined) {
-      if (this.map !== undefined) {
-        this.map.ol.removeLayer(this.layer.ol);
+      if (this._map !== undefined) {
+        this._map.ol.removeLayer(this.layer.ol);
       }
     } else {
       map.ol.addLayer(this.layer.ol);
     }
-    this.map = map;
+    this._map = map;
   }
 
   /**
@@ -105,7 +109,7 @@ export class Overlay<T extends MapBase = MapBase> {
   ) {
     const olFeatures: OlFeature<OlGeometry>[] = [];
     features.forEach((feature: Feature) => {
-      const olFeature = featureToOl(feature, this.map.projectionCode);
+      const olFeature = featureToOl(feature, this._map.projectionCode);
       const olGeometry = olFeature.getGeometry();
       if (olGeometry === null) {
         return;
@@ -138,7 +142,7 @@ export class Overlay<T extends MapBase = MapBase> {
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     this.dataSource.ol.addFeatures(olFeatures);
-    moveToOlFeatures(this.map.viewController, olFeatures, motion);
+    moveToOlFeatures(this._map.viewController, olFeatures, motion);
   }
 
   /**
