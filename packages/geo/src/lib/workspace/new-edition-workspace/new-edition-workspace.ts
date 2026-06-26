@@ -126,6 +126,7 @@ export class NewEditionWorkspace extends Workspace {
   }
 
   cancelEdit(_feature: Feature) {
+    this.overlay.clear();
     this.activeFeature = undefined;
     this._canEdit.set(true);
   }
