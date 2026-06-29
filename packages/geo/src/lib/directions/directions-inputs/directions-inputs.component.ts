@@ -335,7 +335,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   private useCoordinatesAsStop(coordinates: Coordinate, stop: Stop): void {
     const projectedCoordinates: Coordinate = olProj.transform(
       coordinates,
-      this.stopsFeatureStore().layer.map?.projection,
+      this.stopsFeatureStore().layer.map?.projectionCode,
       this.projection()
     );
     const roundedCoordinates: Coordinate = roundCoordTo(

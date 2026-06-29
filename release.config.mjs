@@ -29,7 +29,7 @@ export default {
         prepareCmd:
           'node --import tsx scripts/src/pre-release.mts ${nextRelease.version}',
         publishCmd:
-          'node --import tsx scripts/src/publish.mts ${nextRelease.version}'
+          "node --import tsx scripts/src/publish.mts ${nextRelease.version} ${nextRelease.channel || ''}"
       }
     ],
     '@semantic-release/github',

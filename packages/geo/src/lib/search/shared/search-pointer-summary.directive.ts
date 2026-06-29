@@ -101,7 +101,7 @@ export class SearchPointerSummaryDirective
   }
 
   get mapProjection(): string {
-    return (this.component.map() as IgoMap).projection;
+    return (this.component.map() as IgoMap).projectionCode;
   }
 
   /**

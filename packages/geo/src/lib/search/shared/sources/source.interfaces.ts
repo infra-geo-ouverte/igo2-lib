@@ -64,11 +64,20 @@ export interface SearchSourceFeature<KindT extends SearchSourceKind> {
 export enum SearchSourceKind {
   ICherche = 0,
   IChercheReverse = 1,
+  /**
+   * @deprecated Deprecated source kind, will be removed in a future major version, likely in 23.x+.
+   */
   Cadastre = 2,
   CoordinatesReverse = 3,
   ILayer = 4,
   Nominatim = 5,
+  /**
+   * @deprecated Deprecated source kind, will be removed in a future major version, likely in 23.x+.
+   */
   StoredQueries = 6,
+  /**
+   * @deprecated Deprecated source kind, will be removed in a future major version, likely in 23.x+.
+   */
   StoredQueriesReverse = 7,
   Workspace = 8
 }

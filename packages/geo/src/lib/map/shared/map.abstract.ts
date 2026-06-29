@@ -16,7 +16,6 @@ import {
 } from '../shared/controllers';
 import {
   MapControlsOptions,
-  MapExtent,
   MapOptions,
   MapViewOptions
 } from '../shared/map.interface';
@@ -40,17 +39,13 @@ export abstract class MapBase {
 
   // Getter
   layerController!: LayerController;
-  projection!: string;
-  viewProjection!: Projection;
   projectionCode!: string;
+  viewProjection!: Projection;
 
   abstract setTarget(id: string): void;
   abstract updateView(options: MapViewOptions): void;
   abstract setView(options: MapViewOptions): void;
   abstract updateControls(value: MapControlsOptions): void;
-  abstract getCenter(projection?: string | Projection): [number, number];
-  abstract getExtent(projection?: string | Projection): MapExtent;
-  abstract getZoom(): number;
   /** @deprecated find a way to remove this method. For now we discourage to use it until we find the way to remove it */
   abstract getLayerByOlUId(olUId: string): AnyLayer | undefined;
 }

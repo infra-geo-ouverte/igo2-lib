@@ -6,7 +6,7 @@
   [(value)]="selected"
 >
   <mat-select-trigger>
-    {{ selected.title || '' }}
+    {{ selected?.title || '' }}
   </mat-select-trigger>
   <mat-option (click)="createPoi()" class="poi-option">
     <div

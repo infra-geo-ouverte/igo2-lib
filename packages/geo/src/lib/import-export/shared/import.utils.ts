@@ -29,7 +29,7 @@ export function addLayerAndFeaturesToMap(
   storeToIdb = false
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
-    featureToOl(feature, map.projection)
+    featureToOl(feature, map.projectionCode)
   );
 
   const id = uuid();

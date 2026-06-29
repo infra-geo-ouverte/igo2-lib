@@ -2,6 +2,7 @@ export enum QueryFormat {
   GML2 = 'gml2',
   GML3 = 'gml3',
   JSON = 'json',
+  GEO_PLUS_JSON = 'geo+json',
   GEOJSON = 'geojson',
   GEOJSON2 = 'geojson2',
   ESRIJSON = 'esrijson',
@@ -14,6 +15,7 @@ export enum QueryFormatMimeType {
   GML2 = 'application/vnd.ogc.gml',
   GML3 = 'application/vnd.ogc.gml/3.1.1',
   JSON = 'application/json',
+  GEO_PLUS_JSON = 'application/geo+json',
   GEOJSON = 'application/geojson',
   GEOJSON2 = 'geojson',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values

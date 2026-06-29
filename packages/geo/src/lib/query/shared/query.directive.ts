@@ -159,7 +159,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     queries$.push(
       ...this.queryService.query(queryLayers, {
         coordinates: event.coordinate as [number, number],
-        projection: this.map.projection,
+        projection: this.map.projectionCode,
         resolution
       })
     );
@@ -214,7 +214,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           if (featureOL) {
             if (featureOL.get('features')) {
               for (const feature of featureOL.get('features')) {
-                const newFeature = featureFromOl(feature, this.map.projection);
+                const newFeature = featureFromOl(
+                  feature,
+                  this.map.projectionCode
+                );
                 newFeature.meta = {
                   title: feature.values_.nom,
                   id: layerOL.values_._layer.id + '.' + feature.id_!,
@@ -228,7 +231,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
             } else if (featureOL instanceof OlRenderFeature) {
               const newFeature = renderFeatureFromOl(
                 featureOL,
-                this.map.projection,
+                this.map.projectionCode,
                 layerOL
               );
               newFeature.meta = {
@@ -245,7 +248,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
             } else {
               const newFeature = featureFromOl(
                 featureOL,
-                this.map.projection,
+                this.map.projectionCode,
                 layerOL
               );
               newFeature.meta = {
@@ -284,7 +287,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
             (olFeature: any) => {
               const newFeature: Feature = featureFromOl(
                 olFeature,
-                this.map.projection,
+                this.map.projectionCode,
                 layer.ol
               );
               newFeature.meta = {

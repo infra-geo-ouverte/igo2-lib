@@ -143,7 +143,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(
           geom.getCoordinates(),
-          this.map().projection,
+          this.map().projectionCode,
           'EPSG:4326'
         );
         return new olStyle.Style({

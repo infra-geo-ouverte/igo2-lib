@@ -1,6 +1,7 @@
 {
   "angular.enable-strict-mode-prompt": false,
   "eslint.useFlatConfig": true,
+  "git.scanRepositories": ["projects/client"],
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,

@@ -49,6 +49,17 @@ export class AppFormComponent implements OnInit, OnDestroy {
         options: {
           cols: 1,
           validator: Validators.required
+        },
+        inputs: {
+          showLabel: true
+        }
+      },
+      {
+        name: 'amount',
+        title: 'Amout (number)',
+        type: 'number',
+        options: {
+          validator: Validators.required
         }
       },
       {
@@ -67,10 +78,26 @@ export class AppFormComponent implements OnInit, OnDestroy {
           cols: 2
         },
         inputs: {
+          showLabel: true,
           choices: [
             { value: 1, title: 'Single' },
             { value: 2, title: 'Married' }
           ]
+        }
+      },
+      {
+        name: 'datetime',
+        title: 'Date',
+        type: 'datetime',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          showLabel: true,
+          placeholder: 'Date',
+          timePlaceholder: 'Time',
+          interval: '20m'
         }
       }
     ];
@@ -98,7 +125,8 @@ export class AppFormComponent implements OnInit, OnDestroy {
     this.data$.next({
       id: 1,
       name: 'Bob',
-      status: 2
+      status: 2,
+      datetime: new Date(2026, 4, 29, 16, 42, 0, 0)
     });
   }
 
@@ -107,6 +135,45 @@ export class AppFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(data: object): void {
-    alert(JSON.stringify(data));
+    const submitted = data as Record<string, unknown>;
+    const localDatetime = this.toDateValue(submitted['datetime']);
+
+    alert(
+      JSON.stringify(
+        {
+          ...submitted,
+          localDatetimeIsoLike: localDatetime
+            ? this.formatLocalDateTime(localDatetime)
+            : null,
+          localDatetimeToString: localDatetime ? localDatetime.toString() : null
+        },
+        null,
+        2
+      )
+    );
+  }
+
+  private toDateValue(value: unknown): Date | null {
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+  }
+
+  private formatLocalDateTime(date: Date): string {
+    const pad = (value: number): string => String(value).padStart(2, '0');
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 }

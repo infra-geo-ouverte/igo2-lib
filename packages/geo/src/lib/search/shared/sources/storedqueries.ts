@@ -34,6 +34,7 @@ import {
 
 /**
  * StoredQueries search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
 @Injectable()
 export class StoredQueriesSearchSource
@@ -392,12 +393,8 @@ export class StoredQueriesSearchSource
 
 /**
  * StoredQueriesReverse search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
-
-// EXAMPLE CALLS
-
-// https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
-//
 
 @Injectable()
 export class StoredQueriesReverseSearchSource

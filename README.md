@@ -1,6 +1,4 @@
-[![Angular Style Guide](https://mgechev.github.io/angular2-style-guide/images/badge.svg)](https://angular.io/styleguide)
-[![master Status](https://github.com/infra-geo-ouverte/igo2-lib/workflows/complete/badge.svg)](https://github.com/infra-geo-ouverte/igo2-lib/actions?query=workflow/complete)
-[![join chat https://gitter.im/igo2/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/igo2/Lobby)
+[![Angular Style Guide](https://mgechev.github.io/angular2-style-guide/images/badge.svg)](https://angular.dev/style-guide)
 [![Known Vulnerabilities](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib/badge.svg)](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib)
 
 # IGO2 Library
@@ -49,12 +47,16 @@ Require:
 
 | IGO2 version | Node version |
 | ------------ | ------------ |
+| >= 21.x      | >= 20.19.0   |
+| >= 20.x      | >= 20.19.0   |
 | >= 16.x      | >= 18.10.0   |
 | >= 1.15.x    | >= 16.19.x   |
 | >= 1.13.x    | >= 14, <= 16 |
 | 1.5.x        | >= 12, <= 14 |
 | < 1.5.x      | >= 8, <= 11  |
 | 0.x.x        | >= 6, <= 10  |
+
+Refer to [Angular compatibility matrix](https://angular.dev/reference/versions#actively-supported-versions)
 
 If you want to develop in IGO2 Library, it can be installed by:
 

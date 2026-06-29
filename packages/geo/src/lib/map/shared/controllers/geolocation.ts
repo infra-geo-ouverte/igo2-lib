@@ -526,7 +526,7 @@ export class MapGeolocationController extends MapController {
           ? [0.25, 0.25, 0.25, 0.25]
           : [0.15, 0.1, 0.1, 0.1];
       const areOutOfView = featuresAreOutOfView(
-        this.map.getExtent(),
+        this.map.viewController.getExtent(),
         featuresExtent,
         edgeRatios
       );

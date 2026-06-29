@@ -12,6 +12,7 @@ export function cadastreSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the Cadastre search source
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+. As an alternative, provide iCherche. Within icherche, you could use the "cadastre type"
  */
 export function provideCadastreSearchSource() {
   return {
@@ -21,6 +22,9 @@ export function provideCadastreSearchSource() {
   };
 }
 
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
 export function withCadastreSource(): SearchSourceFeature<SearchSourceKind.Cadastre> {
   return {
     kind: SearchSourceKind.Cadastre,

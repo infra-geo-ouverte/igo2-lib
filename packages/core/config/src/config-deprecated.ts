@@ -1,19 +1,6 @@
 import { AlternateConfigOptions, DeprecatedOptions } from './config.interface';
 
-export const CONFIG_DEPRECATED: Record<string, DeprecatedOptions> = {
-  showMenuButton: {
-    alternativeKey: 'menu.button.visible',
-    mayBeRemoveIn: new Date('2024-06-06')
-  },
-  menuButtonReverseColor: {
-    alternativeKey: 'menu.button.useThemeColor',
-    mayBeRemoveIn: new Date('2024-06-06')
-  },
-  hasGeolocateButton: {
-    alternativeKey: 'geolocate.button.visible',
-    mayBeRemoveIn: new Date('2024-06-06')
-  }
-};
+export const CONFIG_DEPRECATED: Record<string, DeprecatedOptions> = {};
 
 export const ALTERNATE_CONFIG_FROM_DEPRECATION = new Map<
   string,

@@ -25,6 +25,7 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 /**
  * Cadastre search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
 @Injectable()
 export class CadastreSearchSource extends SearchSource implements TextSearch {
