@@ -7,7 +7,10 @@ import {
   inject,
   input
 } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStoreWatcher } from '@igo2/common/entity';
 import { LanguageService } from '@igo2/core/language';
@@ -32,6 +35,7 @@ import { SearchService } from '../search/shared/search.service';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
 import { DirectionsResultsComponent } from './directions-results/directions-results.component';
+import { DirectionsSource } from './directions-sources/directions-source';
 import { DirectionsSourceService } from './shared/directions-source.service';
 import { DirectionsType, ProposalType } from './shared/directions.enum';
 import {
@@ -61,7 +65,10 @@ import {
   templateUrl: './directions.component.html',
   styleUrls: ['./directions.component.scss'],
   imports: [
+    MatFormFieldModule,
+    MatSelectModule,
     MatSlideToggleModule,
+    MatTooltipModule,
     DirectionsButtonsComponent,
     DirectionsInputsComponent,
     DirectionsResultsComponent,
@@ -78,7 +85,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private queryService = inject(QueryService);
 
   public projection = 'EPSG:4326';
-  public twoSourcesAvailable = false;
 
   private storeEmpty$$!: Subscription;
   private storeChange$$!: Subscription;
@@ -121,6 +127,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     return this.directionsSourceService.sources[0].getEnabledProfile()
       .authorization;
   }
+  get activeSource(): DirectionsSource {
+    return this.directionsSourceService.activeSource;
+  }
+
+  get sources(): DirectionsSource[] {
+    return this.directionsSourceService.sources;
+  }
 
   constructor() {
     effect(() => {
@@ -131,10 +144,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.twoSourcesAvailable =
-      this.directionsSourceService.sources[0].profiles.length === 2
-        ? true
-        : false;
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
@@ -515,5 +524,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
+  }
+
+  onSourceChange(sourceId: string): void {
+    this.directionsSourceService.setActiveSource(sourceId);
+    this.getRoutes(this.isTranslating);
   }
 }

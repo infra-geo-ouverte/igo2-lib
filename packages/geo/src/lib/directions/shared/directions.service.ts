@@ -14,7 +14,6 @@ import { Observable, Subject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintService } from '../../print/shared/print.service';
-import { DirectionsSource } from '../directions-sources/directions-source';
 import { DirectionOptions, Directions } from '../shared/directions.interface';
 import { DirectionsSourceService } from './directions-source.service';
 import { formatDistance, formatDuration, formatStep } from './directions.utils';
@@ -43,7 +42,7 @@ export class DirectionsService {
     if (coordinates.length === 0) {
       return;
     }
-    const source: DirectionsSource = this.directionsSourceService.sources[0];
+    const source = this.directionsSourceService.activeSource;
     const request = source.route(coordinates, directionsOptions);
     return request;
   }

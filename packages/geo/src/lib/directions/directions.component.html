@@ -1,4 +1,25 @@
 <div class="directions-options">
+  @if (sources.length > 1) {
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>{{
+        'igo.geo.directions.results.routingSource' | translate
+      }}</mat-label>
+      <mat-select
+        [matTooltip]="
+          'igo.geo.directions.results.routingSourceTooltip' | translate
+        "
+        [value]="activeSource"
+        (selectionChange)="onSourceChange($event.value)"
+      >
+        @for (source of sources; track source) {
+          <mat-option [value]="source.getSourceId()">{{
+            source.getSourceName()
+          }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
   <mat-slide-toggle
     [checked]="directionControlIsActive"
     [labelPosition]="'before'"
