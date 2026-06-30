@@ -474,6 +474,8 @@
             }
           },
           "routeOptions": "Choix d'itinéraires",
+          "routingSource": "Source d'itinéraire",
+          "routingSourceTooltip": "Changer de source recalcule immédiatement l'itinéraire",
           "stepTitleTooltip": "Cadrer sur le lieu"
         },
         "toggle": {

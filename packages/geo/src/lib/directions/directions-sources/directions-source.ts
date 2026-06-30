@@ -6,6 +6,7 @@ import { BaseDirectionsSourceOptionsProfile } from './directions-source.interfac
 
 export abstract class DirectionsSource {
   abstract profiles: BaseDirectionsSourceOptionsProfile[];
+  abstract getSourceId(): string;
   abstract getSourceName(): string;
   abstract getEnabledProfile(): BaseDirectionsSourceOptionsProfile;
   abstract getProfileWithAuthorization(): BaseDirectionsSourceOptionsProfile;

@@ -6,6 +6,7 @@ export const environment: EnvironmentOptions = {
   igo: {
     directionsSources: {
       osrm: {
+        id: 'orsmQc',
         name: 'OSRM Québec',
         baseUrl: '/apis/itineraire/route/v1/',
         profiles: [

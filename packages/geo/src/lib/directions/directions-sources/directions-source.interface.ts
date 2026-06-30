@@ -1,15 +1,17 @@
 import { Provider } from '@angular/core';
 
-export interface DirectionsSourceOptions extends BaseDirectionsSourceOptions {
+export interface DirectionsSourceOptions {
   osrm?: OsrmDirectionsSourceOptions;
   logo?: string;
+  defaultSourceId?: string;
 }
 
 export type OsrmDirectionsSourceOptions = BaseDirectionsSourceOptions;
 
-interface BaseDirectionsSourceOptions {
+export interface BaseDirectionsSourceOptions {
+  id: string;
+  baseUrl: string;
   name?: string;
-  baseUrl?: string;
   profiles?: BaseDirectionsSourceOptionsProfile[];
 }
 

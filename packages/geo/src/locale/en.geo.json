@@ -475,6 +475,8 @@
             }
           },
           "routeOptions": "Route options",
+          "routingSource": "Routing source",
+          "routingSourceTooltip": "Changing source recalculates the route immediately",
           "stepTitleTooltip": "Zoom on location"
         },
         "toggle": {
