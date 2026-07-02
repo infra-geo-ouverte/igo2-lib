@@ -1,10 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
-import { MessageService } from '@igo2/core/message';
+import { ActiveToast, MessageService } from '@igo2/core/message';
 
 import { default as JSZip } from 'jszip';
-import { ActiveToast } from 'ngx-toastr';
 import { Observable, of, zip } from 'rxjs';
 import { catchError, concatMap } from 'rxjs/operators';
 
@@ -19,7 +18,7 @@ export class ConfigFileToGeoDBService {
 
   load(urlFile: string) {
     const geoDB = new GeoDB();
-    let downloadMessage: ActiveToast<any>;
+    let downloadMessage: ActiveToast;
     this.http
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .get<any>(urlFile)

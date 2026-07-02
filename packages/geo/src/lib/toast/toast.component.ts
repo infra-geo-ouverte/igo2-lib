@@ -14,8 +14,9 @@ import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 
+/** @deprecated */
 @Component({
-  selector: 'igo-toast',
+  selector: 'igo-feature-details-panel',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
   imports: [
@@ -26,7 +27,7 @@ import { IgoMap } from '../map/shared/map';
     FeatureDetailsComponent
   ]
 })
-export class ToastComponent {
+export class FeatureDetailsPanelComponent {
   static SWIPE_ACTION = {
     UP: 'swipeup',
     DOWN: 'swipedown'
@@ -67,11 +68,11 @@ export class ToastComponent {
   }
 
   swipe(action: string) {
-    if (action === ToastComponent.SWIPE_ACTION.UP) {
+    if (action === FeatureDetailsPanelComponent.SWIPE_ACTION.UP) {
       if (!this.expanded()) {
         this.toggle();
       }
-    } else if (action === ToastComponent.SWIPE_ACTION.DOWN) {
+    } else if (action === FeatureDetailsPanelComponent.SWIPE_ACTION.DOWN) {
       if (this.expanded()) {
         this.toggle();
       }
