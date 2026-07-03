@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   Component,
   DestroyRef,
@@ -33,7 +33,7 @@ import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 
-import { Subscription, map, of, switchMap, tap } from 'rxjs';
+import { Subscription, of, switchMap, tap } from 'rxjs';
 
 import { ContextService } from '../shared';
 import { Context } from '../shared/context.interface';
@@ -215,21 +215,9 @@ export class ContextPermissionsComponent implements OnInit {
   }
 
   private getProfils(value: string) {
-    return this.http
-      .get<ContextUserOrProfils[]>(this.baseUrlProfils + 'q=' + value)
-      .pipe(
-        map((profils) => {
-          const search = normalizeStr(value);
-          return profils.filter((p) =>
-            normalizeStr(p.name + p.title).includes(search)
-          );
-        })
-      );
+    const params = new HttpParams().set('q', value);
+    return this.http.get<ContextUserOrProfils[]>(this.baseUrlProfils, {
+      params
+    });
   }
 }
-
-const normalizeStr = (str: string): string =>
-  str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
