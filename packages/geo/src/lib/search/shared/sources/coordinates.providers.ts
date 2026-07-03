@@ -1,9 +1,16 @@
+import { Projection } from '../../../map/shared/projection.interfaces';
 import {
+  COORDINATES_REVERSE_SEARCH_SOURCE_OPTIONS,
+  COORDINATES_REVERSE_SEARCH_SOURCE_PROJECTIONS,
   CoordinatesReverseSearchSource,
   CoordinatesSearchResultFormatter
 } from './coordinates';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * Coordinate search result formatter factory
@@ -42,12 +49,31 @@ export function provideCoordinatesReverseSearchSource() {
   };
 }
 
-export function withCoordinatesReverseSource(): SearchSourceFeature<SearchSourceKind.CoordinatesReverse> {
+export function withCoordinatesReverseSource(config?: {
+  options?: SearchSourceOptions;
+  projections?: Projection[];
+}): SearchSourceFeature<SearchSourceKind.CoordinatesReverse> {
   return {
     kind: SearchSourceKind.CoordinatesReverse,
     providers: [
       provideCoordinatesReverseSearchSource(),
-      provideDefaultCoordinatesSearchResultFormatter()
+      provideDefaultCoordinatesSearchResultFormatter(),
+      ...(config?.options
+        ? [
+            {
+              provide: COORDINATES_REVERSE_SEARCH_SOURCE_OPTIONS,
+              useValue: config.options
+            }
+          ]
+        : []),
+      ...(config?.projections
+        ? [
+            {
+              provide: COORDINATES_REVERSE_SEARCH_SOURCE_PROJECTIONS,
+              useValue: config.projections
+            }
+          ]
+        : [])
     ]
   };
 }

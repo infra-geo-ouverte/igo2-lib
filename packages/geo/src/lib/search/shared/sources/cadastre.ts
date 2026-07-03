@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
-import { customCacheHasher } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';
 
@@ -23,6 +23,9 @@ import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
+export const CADASTRE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('CadastreSearchSourceOptions');
+
 /**
  * Cadastre search source
  * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
@@ -37,9 +40,13 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig(
-      `searchSources.${CadastreSearchSource.id}`
+    const directOptions = inject(CADASTRE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig(`searchSources.${CadastreSearchSource.id}`) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);

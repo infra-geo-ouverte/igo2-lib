@@ -1,6 +1,12 @@
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
+import {
+  STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS,
+  STORED_QUERIES_SEARCH_SOURCE_OPTIONS,
   StoredQueriesReverseSearchSource,
   StoredQueriesSearchSource
 } from './storedqueries';
@@ -28,10 +34,22 @@ export function provideStoredQueriesSearchSource() {
 /**
  * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
  */
-export function withStoredQueriesSource(): SearchSourceFeature<SearchSourceKind.StoredQueries> {
+export function withStoredQueriesSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.StoredQueries> {
   return {
     kind: SearchSourceKind.StoredQueries,
-    providers: [provideStoredQueriesSearchSource()]
+    providers: [
+      provideStoredQueriesSearchSource(),
+      ...(options
+        ? [
+            {
+              provide: STORED_QUERIES_SEARCH_SOURCE_OPTIONS,
+              useValue: options
+            }
+          ]
+        : [])
+    ]
   };
 }
 
@@ -59,9 +77,21 @@ export function provideStoredQueriesReverseSearchSource() {
 /**
  * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
  */
-export function withStoredQueriesReverseSource(): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
+export function withStoredQueriesReverseSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
   return {
     kind: SearchSourceKind.StoredQueriesReverse,
-    providers: [provideStoredQueriesReverseSearchSource()]
+    providers: [
+      provideStoredQueriesReverseSearchSource(),
+      ...(options
+        ? [
+            {
+              provide: STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS,
+              useValue: options
+            }
+          ]
+        : [])
+    ]
   };
 }

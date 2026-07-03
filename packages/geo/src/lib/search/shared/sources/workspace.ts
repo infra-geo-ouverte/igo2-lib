@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
+import { ObjectUtils } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -16,6 +17,9 @@ import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { WorkspaceData } from './workspace.interfaces';
+
+export const WORKSPACE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('WorkspaceSearchSourceOptions');
 
 /**
  * Workspace search source
@@ -34,9 +38,15 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${WorkspaceSearchSource.id}`
+    const directOptions = inject(WORKSPACE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${WorkspaceSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
