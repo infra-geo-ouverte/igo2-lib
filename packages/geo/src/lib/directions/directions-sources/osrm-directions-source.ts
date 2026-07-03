@@ -47,6 +47,14 @@ export class OsrmDirectionsSource extends DirectionsSource {
     this._options.name = value;
   }
 
+  get sourceId(): string {
+    return this._options.id;
+  }
+
+  set sourceId(value: string) {
+    this._options.id = value;
+  }
+
   get baseUrl(): string {
     return this._options.baseUrl!;
   }
@@ -75,6 +83,9 @@ export class OsrmDirectionsSource extends DirectionsSource {
     if (!this.baseUrl) {
       this.baseUrl = '/apis/itineraire/route/v1/';
     }
+    if (!this.sourceId) {
+      this.sourceId = 'osrmQc';
+    }
 
     if (!this.sourceName) {
       this.sourceName = 'OSRM Québec';
@@ -93,8 +104,12 @@ export class OsrmDirectionsSource extends DirectionsSource {
     }
   }
 
+  getSourceId(): string {
+    return this.sourceId;
+  }
+
   getSourceName(): string {
-    return this.sourceName;
+    return this.sourceName ?? this.sourceId;
   }
 
   getEnabledProfile(): BaseDirectionsSourceOptionsProfile {
