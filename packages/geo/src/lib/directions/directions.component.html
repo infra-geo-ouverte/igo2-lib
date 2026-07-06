@@ -8,7 +8,7 @@
         [matTooltip]="
           'igo.geo.directions.results.routingSourceTooltip' | translate
         "
-        [value]="activeSource"
+        [value]="activeSource.getSourceId()"
         (selectionChange)="onSourceChange($event.value)"
       >
         @for (source of sources; track source) {
