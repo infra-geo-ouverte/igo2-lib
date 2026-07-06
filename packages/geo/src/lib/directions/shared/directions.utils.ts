@@ -410,14 +410,21 @@ export function addRouteToRoutesFeatureStore(
   if (!coordinate) {
     return;
   }
-  const linestring4326 = new olGeom.LineString(coordinate);
-  const linestringStore = linestring4326.transform(
+  let directionGeom: olGeom.LineString | olGeom.MultiLineString;
+  if (directions.geometry?.type === 'LineString') {
+    directionGeom = new olGeom.LineString(coordinate);
+  } else if (directions.geometry?.type === 'MultiLineString') {
+    directionGeom = new olGeom.MultiLineString(coordinate);
+  } else {
+    return;
+  }
+  const directionGeomInMapProjection = directionGeom.transform(
     projection,
     routesFeatureStore.map.projectionCode
   );
 
   const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(
-    linestringStore,
+    directionGeomInMapProjection,
     {
       featureProjection: routesFeatureStore.map.projectionCode,
       dataProjection: routesFeatureStore.map.projectionCode
@@ -445,7 +452,7 @@ export function addRouteToRoutesFeatureStore(
       id: directions.id,
       revision: previousRouteRevision + 1
     },
-    ol: new olFeature({ linestringStore })
+    ol: new olFeature({ directionGeomInMapProjection })
   };
   routesFeatureStore.update(routeFeatureStore);
 }

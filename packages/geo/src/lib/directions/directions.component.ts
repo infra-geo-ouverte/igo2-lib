@@ -495,7 +495,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
             addRouteToRoutesFeatureStore(
               this.routesFeatureStore(),
               direction,
-              this.projection,
+              direction.projection ?? this.projection,
               direction === directions[0] ? true : false
             )
           );
