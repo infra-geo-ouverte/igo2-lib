@@ -406,14 +406,16 @@ export function addRouteToRoutesFeatureStore(
   projection: string,
   active = false
 ): void {
-  const coordinate = directions.geometry?.coordinates;
-  if (!coordinate) {
+  const geometry = directions.geometry;
+  if (!geometry) {
     return;
   }
+
+  const coordinate = geometry.coordinates;
   let directionGeom: olGeom.LineString | olGeom.MultiLineString;
-  if (directions.geometry?.type === 'LineString') {
+  if (geometry.type === 'LineString') {
     directionGeom = new olGeom.LineString(coordinate);
-  } else if (directions.geometry?.type === 'MultiLineString') {
+  } else if (geometry.type === 'MultiLineString') {
     directionGeom = new olGeom.MultiLineString(coordinate);
   } else {
     return;
@@ -452,7 +454,7 @@ export function addRouteToRoutesFeatureStore(
       id: directions.id,
       revision: previousRouteRevision + 1
     },
-    ol: new olFeature({ directionGeomInMapProjection })
+    ol: new olFeature({ geometry: directionGeomInMapProjection })
   };
   routesFeatureStore.update(routeFeatureStore);
 }
