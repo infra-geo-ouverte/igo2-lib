@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -32,6 +32,9 @@ import {
   SearchSourceSettings,
   TextSearchOptions
 } from './source.interfaces';
+
+export const ILAYER_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('ILayerSearchSourceOptions');
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -93,9 +96,15 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${ILayerSearchSource.id}`
+    const directOptions = inject(ILAYER_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${ILayerSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);

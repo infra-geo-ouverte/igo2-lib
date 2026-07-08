@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -32,6 +32,14 @@ import {
   StoredQueriesSearchSourceOptions
 } from './storedqueries.interfaces';
 
+export const STORED_QUERIES_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('StoredQueriesSearchSourceOptions');
+
+export const STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>(
+    'StoredQueriesReverseSearchSourceOptions'
+  );
+
 /**
  * StoredQueries search source
  * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
@@ -57,10 +65,16 @@ export class StoredQueriesSearchSource
   public multipleFieldsQuery!: boolean;
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${StoredQueriesSearchSource.id}`
+    const directOptions = inject(STORED_QUERIES_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${StoredQueriesSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -412,10 +426,16 @@ export class StoredQueriesReverseSearchSource
   public multipleFieldsQuery!: boolean;
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${StoredQueriesReverseSearchSource.id}`
+    const directOptions = inject(STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${StoredQueriesReverseSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);

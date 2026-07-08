@@ -1,6 +1,13 @@
-import { CadastreSearchSource } from './cadastre';
+import {
+  CADASTRE_SEARCH_SOURCE_OPTIONS,
+  CadastreSearchSource
+} from './cadastre';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * Cadastre search source factory
@@ -25,9 +32,16 @@ export function provideCadastreSearchSource() {
 /**
  * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
  */
-export function withCadastreSource(): SearchSourceFeature<SearchSourceKind.Cadastre> {
+export function withCadastreSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.Cadastre> {
   return {
     kind: SearchSourceKind.Cadastre,
-    providers: [provideCadastreSearchSource()]
+    providers: [
+      provideCadastreSearchSource(),
+      ...(options
+        ? [{ provide: CADASTRE_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
+    ]
   };
 }

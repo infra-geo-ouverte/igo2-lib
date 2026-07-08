@@ -3,7 +3,7 @@ import {
   HttpParameterCodec,
   HttpParams
 } from '@angular/common/http';
-import { Injectable, Injector, inject } from '@angular/core';
+import { Injectable, InjectionToken, Injector, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { IconSvg } from '@igo2/common/icon';
@@ -36,6 +36,12 @@ import {
   SearchSourceSettings,
   TextSearchOptions
 } from './source.interfaces';
+
+export const ICHERCHE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('IChercheSearchSourceOptions');
+
+export const ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('IChercheReverseSearchSourceOptions');
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -100,9 +106,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig(
-      `searchSources.${IChercheSearchSource.id}`
+    const directOptions = inject(ICHERCHE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${IChercheSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -741,10 +753,16 @@ export class IChercheReverseSearchSource
   }
 
   constructor() {
-    const config = inject(ConfigService);
     const storageService = inject(StorageService);
-    const options = config.getConfig(
-      `searchSources.${IChercheReverseSearchSource.id}`
+    const directOptions = inject(ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${IChercheReverseSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
     const injector = inject(Injector);
 
