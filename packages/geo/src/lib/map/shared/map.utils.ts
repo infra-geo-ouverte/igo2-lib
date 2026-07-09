@@ -53,7 +53,7 @@ export function stringToLonLat(
 
   const projectionPattern = '(\\s*;\\s*[\\d]{4,6})';
   const toProjection = '4326';
-  let projectionStr: string = '';
+  let projectionStr: string | undefined;
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
   const lonlatCoord = '([-+])?([\\d]{1,3})([,.](\\d+))?°?';
