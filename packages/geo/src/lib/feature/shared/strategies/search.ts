@@ -1,6 +1,10 @@
-import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
+import {
+  EntityKey,
+  EntityStore,
+  EntityStoreStrategy
+} from '@igo2/common/entity';
 
-import FlexSearch, { DocumentOptions } from 'flexsearch';
+import FlexSearch, { DocumentData, DocumentOptions } from 'flexsearch';
 import { Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -9,9 +13,9 @@ import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
 
 type SearchDocumentFieldOptions = SearchIndexOptions & { field: string };
-type SearchableDocument = Record<string, string> & { igoSearchID: string };
+type SearchableDocument = DocumentData & { igoSearchID: EntityKey };
 type IndexedFeatureProperties = {
-  igoSearchID: string;
+  igoSearchID: EntityKey;
   properties: Record<string, unknown>;
 };
 
@@ -117,7 +121,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   private buildSearchDocument(
     properties: Record<string, unknown>,
     fieldNames: string[],
-    igoSearchID: string
+    igoSearchID: EntityKey
   ): SearchableDocument {
     const searchDocument: SearchableDocument = { igoSearchID };
 
@@ -139,7 +143,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
 
     store.index.forEach((value, key) => {
       indexedFeatures.push({
-        igoSearchID: String(key),
+        igoSearchID: key,
         properties: value.properties as Record<string, unknown>
       });
     });
@@ -270,8 +274,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     this.initStoreSearchIndex(store);
 
     const subscription = store.entities$
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .pipe(skipWhile((e: any) => !e.length))
+      .pipe(skipWhile((entities) => entities.length === 0))
       .subscribe(() => this.onEntitiesChanges(store));
     this.stores$$.set(store, subscription);
   }
