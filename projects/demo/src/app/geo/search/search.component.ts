@@ -36,13 +36,15 @@ import {
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
   SearchResultsComponent,
+  VectorLayerOptions,
+  WorkspaceUpdatorDirective,
   ZoomButtonComponent,
   provideSearch,
   styleVariant,
   withIChercheSource,
   withWorkspaceSource
 } from '@igo2/geo';
-import { SearchState } from '@igo2/integration';
+import { SearchState, WorkspaceState } from '@igo2/integration';
 
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
@@ -67,7 +69,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     PanelComponent,
     SEARCH_RESULTS_DIRECTIVES,
     ActionbarComponent,
-    FeatureDetailsComponent
+    FeatureDetailsComponent,
+    WorkspaceUpdatorDirective
   ],
   providers: [
     provideSearch([withIChercheSource(), withWorkspaceSource()], {
@@ -87,6 +90,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public searchResultsOverlaySelected: Overlay;
   public searchResultsOverlayAll: Overlay;
   private searchResultsOverlayAll$$!: Subscription;
+  workspaceState = inject(WorkspaceState);
 
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
@@ -153,6 +157,42 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Vector dataSource',
+        visible: true,
+        workspace: {
+          enabled: true,
+          searchIndexEnabled: true
+        },
+        sourceOptions: {
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=WFS&request=GetFeature&version=1.1.0&typename=aeroport_piste&outputFormat=geojson',
+          type: 'vector',
+          sourceFields: [
+            { name: 'longpiste2' },
+            {
+              name: 'idobj',
+              searchIndex: { enabled: true, tokenize: 'strict' }
+            },
+            { name: 'codeindic', searchIndex: { enabled: true } },
+            { name: 'nomnavcana', searchIndex: { enabled: true } },
+            { name: 'nbrpiste' },
+            { name: 'indicpiste' },
+            { name: 'surface' },
+            { name: 'province' },
+            { name: 'datdebappt' },
+            { name: 'datmodif' },
+            { name: 'version' },
+            { name: 'source', searchIndex: { enabled: true } },
+            { name: 'remarque', searchIndex: { enabled: true } },
+            { name: 'objectid' }
+          ]
+        }
+      } satisfies VectorLayerOptions)
       .subscribe((layer) => {
         if (layer) this.map.layerController.add(layer);
       });

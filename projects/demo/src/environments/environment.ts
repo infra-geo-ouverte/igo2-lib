@@ -292,6 +292,10 @@ export const environment: EnvironmentOptions = {
       logErrors: true
     },
     searchSources: {
+      workspace: {
+        enabled: true,
+        available: true
+      },
       storedqueriesreverse: { enabled: false },
       storedqueries: {
         available: true,
