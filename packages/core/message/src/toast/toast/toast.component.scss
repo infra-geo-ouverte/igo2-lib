@@ -1,0 +1,114 @@
+:host {
+  display: block;
+  pointer-events: all;
+  opacity: 0;
+  /* Controls the 'active => removed' or 'active => inactive' transition */
+  transition: opacity 300ms ease-out;
+
+  &.active {
+    opacity: 1;
+    /* Controls the 'inactive => active' transition */
+    transition: opacity 300ms ease-in;
+  }
+
+  &.inactive,
+  &.removed {
+    opacity: 0;
+  }
+
+  ::ng-deep {
+    // Pour éviter que le progress bar semble faire un saut lors de l'animation, on ajoute une transition sur la barre de progression.
+    .mdc-linear-progress__bar {
+      transition: transform 150ms 0ms cubic-bezier(0.4, 0, 0.6, 1);
+    }
+  }
+}
+
+.igo-toast {
+  position: relative;
+  overflow: hidden;
+  padding: 12px 16px;
+  border-radius: 4px;
+  box-shadow:
+    0 3px 6px -1px rgba(0, 0, 0, 0.12),
+    0 10px 36px -4px rgba(77, 96, 232, 0.3);
+  color: #fff;
+  min-width: 300px;
+  max-width: 400px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.toast-success {
+  background-color: #51a351;
+}
+.toast-error {
+  background-color: #bd362f;
+}
+.toast-info {
+  background-color: #2f96b4;
+}
+.toast-warning {
+  background-color: #f89406;
+}
+.toast-show {
+  background-color: #2f96b4;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-weight: bold;
+  font-size: var(--sdg-font-size-h5, 19px);
+  line-height: 24px;
+}
+
+.toast-message {
+  color: inherit;
+  font-size: 13px;
+  word-wrap: break-word;
+  margin-bottom: 0px !important;
+}
+
+.toast-close-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  opacity: 0.8;
+  color: inherit;
+}
+
+.toast-close-button:hover {
+  opacity: 1;
+}
+
+mat-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  --mdc-linear-progress-active-indicator-transition-duration: 0ms;
+  --mdc-linear-progress-active-indicator-color: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ) !important;
+  --mdc-linear-progress-track-color: rgba(255, 255, 255, 0.3) !important;
+  --mat-progress-bar-active-indicator-color: rgba(255, 255, 255, 0.7);
+  --mat-progress-bar-track-color: rgba(255, 255, 255, 0.3);
+  --mdc-linear-progress-track-height: 3px;
+  --mdc-linear-progress-active-indicator-height: 3px;
+}

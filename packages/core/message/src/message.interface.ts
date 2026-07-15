@@ -1,13 +1,10 @@
-import { TemplateRef } from '@angular/core';
-
-import { IndividualConfig } from 'ngx-toastr';
-
 import { MessageType } from './message.enum';
+import { IndividualToastConfig } from './toast';
 
 export interface Message {
   title?: string;
   text: string;
-  html?: string | TemplateRef<unknown>;
+  html?: string;
   type: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
@@ -16,7 +13,7 @@ export interface Message {
   showIcon?: boolean;
 }
 
-export interface MessageOptions extends IndividualConfig {
+export interface MessageOptions extends IndividualToastConfig {
   template?: string;
   from?: Date | string;
   to?: Date | string;

@@ -12,7 +12,6 @@ import {
   provideTranslation,
   withAsyncConfig
 } from '@igo2/core/language';
-import { provideMessage } from '@igo2/core/message';
 import { IgoErrorModule } from '@igo2/core/request';
 
 @NgModule({
@@ -23,7 +22,7 @@ import { IgoErrorModule } from '@igo2/core/request';
     IgoActivityModule.forRoot(),
     IgoErrorModule.forRoot()
   ],
-  providers: [provideMessage(), provideHttpClient(withInterceptorsFromDi())]
+  providers: [provideHttpClient(withInterceptorsFromDi())]
 })
 export class IgoCoreModule {
   static forRoot(

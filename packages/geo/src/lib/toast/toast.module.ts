@@ -1,13 +1,13 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { ToastComponent } from './toast.component';
+import { FeatureDetailsPanelComponent } from './toast.component';
 
 /**
- * @deprecated import the ToastComponent directly
+ * @deprecated import the FeatureDetailsPanelComponent directly
  */
 @NgModule({
-  imports: [ToastComponent],
-  exports: [ToastComponent]
+  imports: [FeatureDetailsPanelComponent],
+  exports: [FeatureDetailsPanelComponent]
 })
 export class IgoToastModule {
   static forRoot(): ModuleWithProviders<IgoToastModule> {
