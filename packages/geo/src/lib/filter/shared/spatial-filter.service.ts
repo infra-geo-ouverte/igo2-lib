@@ -185,7 +185,7 @@ export class SpatialFilterService {
   ): Observable<Feature> | undefined {
     const featureType = this.urlFilterList[type];
     const featureCode = feature.properties.code;
-    if (featureType && featureCode) {
+    if (!featureType || !featureCode) {
       return undefined;
     }
     return this.http
