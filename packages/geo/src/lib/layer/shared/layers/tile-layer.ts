@@ -1,5 +1,4 @@
 import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
 
 import Tile from 'ol/Tile';
 import olLayerTile from 'ol/layer/Tile';
@@ -31,12 +30,8 @@ export class TileLayer extends Layer {
 
   private watcher: TileWatcher;
 
-  constructor(
-    options: TileLayerOptions,
-    public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
-  ) {
-    super(options, messageService);
+  constructor(options: TileLayerOptions) {
+    super(options);
 
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;

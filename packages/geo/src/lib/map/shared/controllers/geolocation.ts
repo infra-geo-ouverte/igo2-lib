@@ -24,6 +24,7 @@ import {
   moveToOlFeatures
 } from '../../../feature/shared/feature.utils';
 import { Overlay } from '../../../overlay/shared/overlay';
+import type { OverlayService } from '../../../overlay/shared/overlay.service';
 import type { MapBase } from '../map.abstract';
 import { MapViewOptions } from '../map.interface';
 import { MapController } from './controller';
@@ -199,12 +200,13 @@ export class MapGeolocationController extends MapController {
 
   constructor(
     private map: MapBase,
+    overlayService: OverlayService,
     private options?: MapGeolocationControllerOptions,
     private storageService?: StorageService,
     private configService?: ConfigService
   ) {
     super();
-    this.geolocationOverlay = new Overlay(this.map);
+    this.geolocationOverlay = overlayService.create(this.map);
     this._followPosition =
       this.options && this.options.followPosition
         ? this.options.followPosition

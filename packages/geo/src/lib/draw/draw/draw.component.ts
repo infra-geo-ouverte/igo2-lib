@@ -87,7 +87,7 @@ import {
 } from '../../feature';
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { DrawControl } from '../../geometry/shared/controls/draw';
-import type { LayerId } from '../../layer/shared';
+import { type LayerId, LayerService } from '../../layer/shared';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import {
@@ -171,6 +171,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private drawStyleService = inject(DrawStyleService);
   private dialog = inject(MatDialog);
   private drawIconService = inject(DrawIconService);
+  private layerService = inject(LayerService);
 
   /**
    * Table template
@@ -978,7 +979,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.layerCounterID = Math.max(numberId, this.layerCounterID);
     }
     this.activeDrawingLayer.set(
-      new VectorLayer({
+      this.layerService.createLayer({
         isIgoInternalLayer: true,
         id: 'igo-draw-layer' + ++this.layerCounterID,
         title: isNewLayer
@@ -1006,7 +1007,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         workspace: {
           enabled: false
         }
-      })
+      }) as VectorLayer
     );
 
     tryBindStoreLayer(
@@ -1024,6 +1025,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     tryAddSelectionStrategy(
       this.activeStore as unknown as FeatureStore,
       new FeatureStoreSelectionStrategy({
+        layerService: this.layerService,
         map: this.map()!,
         motion: FeatureMotion.None,
         many: true

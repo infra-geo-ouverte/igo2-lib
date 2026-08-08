@@ -1,4 +1,5 @@
 import { FeatureDataSource } from '../../datasource/shared/datasources';
+import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { FeatureStore } from './store';
 
@@ -11,7 +12,8 @@ import type { FeatureStore } from './store';
  */
 export function tryBindStoreLayer(
   store: FeatureStore,
-  layer?: VectorLayer
+  layer?: VectorLayer,
+  layerService?: LayerService
 ): VectorLayer {
   if (store.layer !== undefined) {
     if (!store.map.layerController.getById(store.layer.id!)) {
@@ -20,11 +22,14 @@ export function tryBindStoreLayer(
     return store.layer;
   }
 
-  layer = layer
-    ? layer
-    : new VectorLayer({
-        source: new FeatureDataSource()
-      });
+  if (!layer) {
+    if (!layerService) {
+      throw new Error('LayerService is required to create a store layer.');
+    }
+    layer = layerService.createLayer({
+      source: new FeatureDataSource()
+    }) as VectorLayer;
+  }
   store.bindLayer(layer);
   if (!store.map.layerController.getById(layer.id!)) {
     store.map.layerController.add(store.layer);

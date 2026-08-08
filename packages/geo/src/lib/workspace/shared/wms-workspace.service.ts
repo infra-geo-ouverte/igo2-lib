@@ -272,7 +272,6 @@ export class WmsWorkspaceService {
         exportable: false,
         browsable: false
       } satisfies VectorLayerOptions) as VectorLayer,
-
       map,
       hitTolerance: 15,
       motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,

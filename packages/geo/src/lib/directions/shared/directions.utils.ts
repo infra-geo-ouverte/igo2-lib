@@ -18,7 +18,7 @@ import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { LayerService, VectorLayer } from '../../layer/shared';
 import { markerOlStyle } from '../../style/shared/style.utils';
 import {
   DirectionRelativePositionType,
@@ -195,14 +195,15 @@ export function directionsStyle(
  */
 export function initStopsFeatureStore(
   stopsFeatureStore: StopsFeatureStore,
-  languageService: LanguageService
+  languageService: LanguageService,
+  layerService: LayerService
 ): void {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const stopsLayer: VectorLayer = new VectorLayer({
+  const stopsLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-stops-layer',
     title: languageService.translate.instant('igo.geo.directions.layer.stops'),
@@ -226,7 +227,7 @@ export function initStopsFeatureStore(
     exportable: true,
     browsable: false,
     style: directionsStyle
-  });
+  }) as VectorLayer;
   tryBindStoreLayer(stopsFeatureStore as unknown as FeatureStore, stopsLayer);
   tryAddLoadingStrategy(
     stopsFeatureStore as unknown as FeatureStore,
@@ -242,14 +243,15 @@ export function initStopsFeatureStore(
  */
 export function initRoutesFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
-  languageService: LanguageService
+  languageService: LanguageService,
+  layerService: LayerService
 ): void {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const routeLayer: VectorLayer = new VectorLayer({
+  const routeLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-route-layer',
     title: languageService.translate.instant('igo.geo.directions.layer.route'),
@@ -266,7 +268,7 @@ export function initRoutesFeatureStore(
     exportable: true,
     browsable: false,
     style: directionsStyle
-  });
+  }) as VectorLayer;
   tryBindStoreLayer(routesFeatureStore as unknown as FeatureStore, routeLayer);
   tryAddLoadingStrategy(
     routesFeatureStore as unknown as FeatureStore,
@@ -279,13 +281,16 @@ export function initRoutesFeatureStore(
  *
  * @param {StopsFeatureStore} stepsFeatureStore - The steps feature store to initialize.
  */
-export function initStepsFeatureStore(stepsFeatureStore: StepsFeatureStore) {
+export function initStepsFeatureStore(
+  stepsFeatureStore: StepsFeatureStore,
+  layerService: LayerService
+) {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const stepLayer: VectorLayer = new VectorLayer({
+  const stepLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-step-layer',
     title: '',
@@ -302,7 +307,7 @@ export function initStepsFeatureStore(stepsFeatureStore: StepsFeatureStore) {
     exportable: false,
     browsable: false,
     style: directionsStyle
-  });
+  }) as VectorLayer;
   tryBindStoreLayer(stepsFeatureStore as unknown as FeatureStore, stepLayer);
   tryAddLoadingStrategy(
     stepsFeatureStore as unknown as FeatureStore,

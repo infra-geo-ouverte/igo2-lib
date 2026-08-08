@@ -34,6 +34,7 @@ import {
   FeatureStore,
   IgoMap,
   Overlay,
+  OverlayService,
   Research,
   SearchResult,
   SearchResultAddButtonComponent,
@@ -106,6 +107,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private elRef = inject(ElementRef);
   toolState = inject(ToolState);
   private directionState = inject(DirectionState);
+  private overlayService = inject(OverlayService);
 
   /**
    * to show hide results icons
@@ -201,19 +203,19 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchResultsOverlayFocused = new Overlay(
+    this.searchResultsOverlayFocused = this.overlayService.create(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.focus ??
         styleVariant(this.mapState.map.viewController, 'focus')
     );
 
-    this.searchResultsOverlaySelected = new Overlay(
+    this.searchResultsOverlaySelected = this.overlayService.create(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.selection ??
         styleVariant(this.mapState.map.viewController, 'selection')
     );
 
-    this.searchResultsOverlayAll = new Overlay(
+    this.searchResultsOverlayAll = this.overlayService.create(
       this.mapState.map,
       this.searchState.searchOverlayStyle?.base ??
         styleVariant(this.mapState.map.viewController)

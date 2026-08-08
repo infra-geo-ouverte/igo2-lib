@@ -456,14 +456,19 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @returns Overlay layer
    */
   private createOverlayLayer(): VectorLayer {
-    return new VectorLayer({
+    if (!this.options.layerService) {
+      throw new Error(
+        'LayerService is required when no selection layer is provided.'
+      );
+    }
+    return this.options.layerService.createLayer({
       zIndex: 300,
       source: new FeatureDataSource(),
       style: undefined,
       showInLayerList: false,
       exportable: false,
       browsable: false
-    });
+    }) as VectorLayer;
   }
 
   /**

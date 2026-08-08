@@ -1,8 +1,12 @@
+import { TestBed } from '@angular/core/testing';
+
 import {
   AnyLayerOptions,
+  IgoMap,
   ImageLayer,
   Layer,
   LayerGroup,
+  LayerService,
   findParentId,
   isLayerItem
 } from '@igo2/geo';
@@ -12,9 +16,9 @@ import { ShareMapEncoder } from './share-map-encoder';
 import { LayerParams, ShareMapKeysDefinitions } from './share-map.interface';
 import {
   CONTEXT_MOCK,
-  MAP_GROUP_MOCK,
-  MAP_MOCK,
   SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK,
+  createMapGroupMock,
+  createMapMock,
   imageLayerOptions
 } from './share-map.mock';
 
@@ -71,8 +75,15 @@ describe('ShareMapEncoder', () => {
   let SHARE_MAP_DEFS: ShareMapKeysDefinitions;
   let posStringified: string;
   let mockDocument: Document;
+  let MAP_MOCK: IgoMap;
+  let MAP_GROUP_MOCK: IgoMap;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({});
+    const layerService = TestBed.inject(LayerService);
+    MAP_MOCK = createMapMock(layerService);
+    MAP_GROUP_MOCK = createMapGroupMock(layerService);
+
     SHARE_MAP_DEFS = shareMapKeyDefs(SHARE_MAP_KEYS_DEFAULT_OPTIONS_MOCK);
     const origin = globalThis?.location?.origin ?? '';
     const pathname = globalThis?.location?.pathname ?? '';

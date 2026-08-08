@@ -58,7 +58,7 @@ import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { AnyLayer, VectorLayer } from '../../../layer/shared';
+import { AnyLayer, LayerService, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
@@ -104,6 +104,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private spatialFilterService = inject(SpatialFilterService);
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
+  private layerService = inject(LayerService);
 
   readonly map = input.required<IgoMap>();
 
@@ -549,14 +550,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: undefined,
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
+      }) as VectorLayer,
       map: this.map(),
       hitTolerance: 15,
       motion: FeatureMotion.Default,

@@ -14,6 +14,7 @@ import { SubjectStatus, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
 
+import { OverlayService } from '../../overlay/shared/overlay.service';
 import { IgoMap } from '../shared/map';
 import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 
@@ -24,6 +25,7 @@ import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityService = inject(ActivityService);
+  private overlayService = inject(OverlayService);
 
   private activityId?: string;
   private status$$!: Subscription;
@@ -56,6 +58,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
   ngOnInit() {
+    this.map().initializeOverlays?.(this.overlayService);
     this.status$$ = this.map().status$.subscribe((status) =>
       this.handleStatusChange(status)
     );

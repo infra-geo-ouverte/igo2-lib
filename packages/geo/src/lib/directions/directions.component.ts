@@ -28,6 +28,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
+import { LayerService } from '../layer/shared';
 import { roundCoordTo, roundCoordToString, stringToLonLat } from '../map';
 import { QueryService } from '../query/shared/query.service';
 import { SearchResult } from '../search/shared/search.interfaces';
@@ -83,6 +84,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private directionsSourceService = inject(DirectionsSourceService);
   private searchService = inject(SearchService);
   private queryService = inject(QueryService);
+  private layerService = inject(LayerService);
 
   public projection = 'EPSG:4326';
 
@@ -147,9 +149,17 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
-      initStopsFeatureStore(this.stopsFeatureStore(), this.languageService);
-      initRoutesFeatureStore(this.routesFeatureStore(), this.languageService);
-      initStepsFeatureStore(this.stepsFeatureStore());
+      initStopsFeatureStore(
+        this.stopsFeatureStore(),
+        this.languageService,
+        this.layerService
+      );
+      initRoutesFeatureStore(
+        this.routesFeatureStore(),
+        this.languageService,
+        this.layerService
+      );
+      initStepsFeatureStore(this.stepsFeatureStore(), this.layerService);
       this.initOlInteraction();
     }, 1);
   }

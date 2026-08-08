@@ -99,7 +99,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            addImportedFeaturesToMap(featureCollection, this.map);
+            addImportedFeaturesToMap(
+              featureCollection,
+              this.map,
+              this.layerService
+            );
           });
         }
 

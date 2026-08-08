@@ -22,7 +22,7 @@ import { FeatureDataSource } from '../../datasource/shared';
 import { GeometryType, createInteractionStyle } from '../../draw/shared';
 import { Feature, FeatureGeometry, featureToOl } from '../../feature/shared';
 import { DrawControl } from '../../geometry/shared';
-import { ImageLayer, VectorLayer } from '../../layer/shared';
+import { ImageLayer, LayerService, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { EditionFeature } from './edition-workspace.interface';
 
@@ -94,6 +94,7 @@ export class EditionWorkspace extends Workspace {
   constructor(
     private configService: ConfigService,
     private adding$: BehaviorSubject<boolean>,
+    private layerService: LayerService,
     protected options: EditionWorkspaceOptions
   ) {
     super(options);
@@ -111,7 +112,7 @@ export class EditionWorkspace extends Workspace {
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point);
 
-    this.olDrawingLayer = new VectorLayer({
+    this.olDrawingLayer = this.layerService.createLayer({
       id: 'igo-draw-layer',
       title: 'edition',
       zIndex: 300,
@@ -122,7 +123,7 @@ export class EditionWorkspace extends Workspace {
       workspace: {
         enabled: false
       }
-    });
+    }) as VectorLayer;
 
     this.map.layerController.remove(this.olDrawingLayer);
   }

@@ -10,8 +10,6 @@ import {
 } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { MapBase } from '../../map/shared/map.abstract';
-import { AnyOlStyle } from '../../style/shared';
-import { baseOlStyle } from '../../style/shared/style.utils';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -37,13 +35,8 @@ export class Overlay<T extends MapBase = MapBase> {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map: T, style?: AnyOlStyle) {
-    this.layer = new VectorLayer({
-      title: 'Overlay',
-      zIndex: 300,
-      source: new FeatureDataSource(),
-      style: style ?? baseOlStyle()
-    });
+  constructor(map: T, layer: VectorLayer) {
+    this.layer = layer;
     this.setMap(map as T);
   }
 

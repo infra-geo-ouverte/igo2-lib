@@ -8,6 +8,7 @@ import {
   ImageLayerOptions,
   LayerGroup,
   LayerGroupOptions,
+  LayerService,
   MapViewOptions,
   TileLayer,
   TileLayerOptions,
@@ -83,12 +84,14 @@ export const imageLayerOptions: ImageLayerOptions = {
   }
 };
 
-function createWmsLayer(options: ImageLayerOptions): ImageLayer {
+function createWmsLayer(
+  layerService: LayerService,
+  options: ImageLayerOptions
+): ImageLayer {
   options.source = new WMSDataSource(
     options.sourceOptions as WMSDataSourceOptions
   );
-  const layer = new ImageLayer(options);
-  return layer;
+  return layerService.createLayer(options) as ImageLayer;
 }
 
 /*********** WMTS Layer ***********/
@@ -107,12 +110,14 @@ const tileLayerOptions: TileLayerOptions = {
   }
 };
 
-function createWmtsLayer(options: TileLayerOptions): TileLayer {
+function createWmtsLayer(
+  layerService: LayerService,
+  options: TileLayerOptions
+): TileLayer {
   options.source = new WMTSDataSource(
     options.sourceOptions as WMTSDataSourceOptions
   );
-  const layer = new TileLayer(options);
-  return layer;
+  return layerService.createLayer(options) as TileLayer;
 }
 
 /*********** IMAGEARCGISREST Layer ***********/
@@ -131,12 +136,14 @@ const imagearcgisrestOption: ImageLayerOptions = {
   }
 };
 
-function createImagearcgisrestLayer(options: ImageLayerOptions): ImageLayer {
+function createImagearcgisrestLayer(
+  layerService: LayerService,
+  options: ImageLayerOptions
+): ImageLayer {
   options.source = new ImageArcGISRestDataSource(
     options.sourceOptions as ArcGISRestImageDataSourceOptions
   );
-  const layer = new ImageLayer(options);
-  return layer;
+  return layerService.createLayer(options) as ImageLayer;
 }
 
 function createGroup(
@@ -146,14 +153,13 @@ function createGroup(
   return new LayerGroup(children, options);
 }
 
-export const MAP_MOCK = createMap();
-
-function createMap(): IgoMap {
-  const QUEBEC_BASE_MAP = createWmtsLayer(tileLayerOptions);
+export function createMapMock(layerService: LayerService): IgoMap {
+  const QUEBEC_BASE_MAP = createWmtsLayer(layerService, tileLayerOptions);
   const IMAGE_ARCGIS_REST_LAYER = createImagearcgisrestLayer(
+    layerService,
     imagearcgisrestOption
   );
-  const ETABLISSEMENT_LAYER = createWmsLayer(imageLayerOptions);
+  const ETABLISSEMENT_LAYER = createWmsLayer(layerService, imageLayerOptions);
   const view: MapViewOptions = {
     projection: 'EPSG:4326',
     center: [-71.51804, 46.58602],
@@ -173,10 +179,9 @@ function createMap(): IgoMap {
 }
 
 /*********** GROUPS MOCK ***********/
-export const MAP_GROUP_MOCK = createMapGroup();
-
-function createMapGroup(): IgoMap {
+export function createMapGroupMock(layerService: LayerService): IgoMap {
   const IMAGE_ARCGIS_REST_LAYER = createImagearcgisrestLayer(
+    layerService,
     imagearcgisrestOption
   );
 

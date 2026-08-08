@@ -1,6 +1,3 @@
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
-
 import VectorTile from 'ol/VectorTile';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
@@ -13,7 +10,6 @@ import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-dataso
 import type { MapBase } from '../../../map/shared/map.abstract';
 import { AnyStyle } from '../../../style/shared';
 import { isAnyOlStyle } from '../../../style/shared/style-ol.utils';
-import { StyleService } from '../../../style/style.service';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -37,13 +33,8 @@ export class VectorTileLayer extends Layer {
   private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
   public readonly style$ = this._style$.asObservable();
 
-  constructor(
-    options: VectorTileLayerOptions,
-    public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor,
-    public styleService?: StyleService
-  ) {
-    super(options, messageService, authInterceptor, styleService);
+  constructor(options: VectorTileLayerOptions) {
+    super(options);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
     this.style = this.options.style;

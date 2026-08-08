@@ -21,6 +21,7 @@ import {
   OSMDataSource,
   OSMDataSourceOptions,
   Overlay,
+  OverlayService,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
@@ -57,6 +58,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppQueryComponent implements OnInit {
   private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
+  private overlayService = inject(OverlayService);
 
   public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
     []
@@ -205,7 +207,7 @@ export class AppQueryComponent implements OnInit {
       });
   }
   ngOnInit(): void {
-    this.queryResultsOverlayAll = new Overlay(this.map);
+    this.queryResultsOverlayAll = this.overlayService.create(this.map);
   }
 
   addFeatures(dataSource: FeatureDataSource): void {
