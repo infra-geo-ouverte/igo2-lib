@@ -20,8 +20,7 @@ export interface ContextUserOrProfils extends ContextProfils {
 }
 
 export type IAnyContextPermission =
-  | IContextPermissionProfil
-  | IContextPermissionUser;
+  IContextPermissionProfil | IContextPermissionUser;
 
 export interface IContextPermissionUser extends IBaseContextPermission {
   userId: number;

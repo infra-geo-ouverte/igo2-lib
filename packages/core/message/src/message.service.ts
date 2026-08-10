@@ -27,8 +27,7 @@ export class MessageService {
 
   showError(httpError: HttpErrorResponse) {
     const errorPayload = httpError.error as
-      | { caught?: boolean; message?: string; title?: string }
-      | undefined;
+      { caught?: boolean; message?: string; title?: string } | undefined;
 
     if (errorPayload && typeof errorPayload === 'object') {
       errorPayload.caught = true;

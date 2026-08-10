@@ -57,8 +57,7 @@ export class WorkspaceWidgetOutletComponent {
    * @internal
    */
   get widgetSubscribers$():
-    | BehaviorSubject<Record<string, (event: unknown) => void>>
-    | undefined {
+    BehaviorSubject<Record<string, (event: unknown) => void>> | undefined {
     return this.workspace()?.widgetSubscribers$;
   }
 

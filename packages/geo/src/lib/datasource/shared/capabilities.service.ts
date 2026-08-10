@@ -141,8 +141,7 @@ export class CapabilitiesService {
   })
   getImageArcgisOptions(
     baseOptions:
-      | ArcGISRestImageDataSourceOptions
-      | TileArcGISRestDataSourceOptions
+      ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
   ): Observable<
     ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
   > {
@@ -503,8 +502,7 @@ export class CapabilitiesService {
 
   private parseTileOrImageArcgisOptions(
     baseOptions:
-      | TileArcGISRestDataSourceOptions
-      | ArcGISRestImageDataSourceOptions,
+      TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions,
     arcgisOptions: ArcgisLayerOptions,
     legend: ArcgisLegendInfo,
     serviceCapabilities: ArcgisServiceCapabilities

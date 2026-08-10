@@ -78,11 +78,9 @@ export class TableDataSource extends DataSource<any> {
 
     return data.sort((a, b) => {
       const propertyA: number | string = ObjectUtils.resolve(a, sort.active) as
-        | number
-        | string;
+        number | string;
       const propertyB: number | string = ObjectUtils.resolve(b, sort.active) as
-        | number
-        | string;
+        number | string;
 
       return ObjectUtils.naturalCompare(propertyB, propertyA, sort.direction);
     });

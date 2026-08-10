@@ -39,8 +39,7 @@ export type AnyBaseOgcFilterOptions =
   | OgcFilterIsNullOptions;
 
 export type IgoOgcFilterObject =
-  | IgoLogicalArrayOptions
-  | AnyBaseOgcFilterOptions;
+  IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
 
 export interface OgcFiltersOptions {
   enabled?: boolean;
@@ -64,11 +63,7 @@ export interface IgoOgcSelector {
   groups: SelectorGroup[];
   bundles: OgcSelectorBundle[];
   selectorType:
-    | 'pushButton'
-    | 'checkbox'
-    | 'radioButton'
-    | 'select'
-    | 'autocomplete';
+    'pushButton' | 'checkbox' | 'radioButton' | 'select' | 'autocomplete';
   order?: number;
 }
 

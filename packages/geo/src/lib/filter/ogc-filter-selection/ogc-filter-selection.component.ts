@@ -59,11 +59,7 @@ import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 
 type OgcSelectorItem =
-  | OgcPushButton
-  | OgcCheckbox
-  | OgcRadioButton
-  | OgcSelect
-  | OgcAutocomplete;
+  OgcPushButton | OgcCheckbox | OgcRadioButton | OgcSelect | OgcAutocomplete;
 
 @Component({
   selector: 'igo-ogc-filter-selection',

@@ -134,8 +134,7 @@ export interface EntityTableButton<T extends object> {
 export type AnyEntityField = AnyChoiceEntityField | BaseEntityField;
 
 export type AnyChoiceEntityField =
-  | ChoiceEntityFieldWithDomain
-  | ChoiceEntityFieldWithLabelField;
+  ChoiceEntityFieldWithDomain | ChoiceEntityFieldWithLabelField;
 
 export interface ChoiceEntityFieldWithDomain extends BaseChoiceEntityField {
   domainValues: SelectOption[];

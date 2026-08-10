@@ -9,13 +9,7 @@ import { PATHS, getPackageJson } from './paths.mts';
 import { RELEASE_TAGS } from './release.interface.mts';
 
 export type PackageName =
-  | 'auth'
-  | 'common'
-  | 'context'
-  | 'core'
-  | 'geo'
-  | 'integration'
-  | 'utils';
+  'auth' | 'common' | 'context' | 'core' | 'geo' | 'integration' | 'utils';
 
 export interface PackageOptions {
   dependsOn: PackageName[];

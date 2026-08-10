@@ -128,8 +128,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
   public defaultStyle?:
-    | olstyle.Style
-    | ((feature: unknown, resolution: unknown) => olstyle.Style);
+    olstyle.Style | ((feature: unknown, resolution: unknown) => olstyle.Style);
   public zones: Feature[] = [];
 
   private unsubscribe$ = new Subject<void>();

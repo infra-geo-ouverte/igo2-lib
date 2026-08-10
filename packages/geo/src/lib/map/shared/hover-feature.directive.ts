@@ -199,9 +199,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     }
 
     const layer = this.map.getLayerByOlUId(getUid(olLayer)) as
-      | VectorLayer
-      | VectorTileLayer
-      | undefined;
+      VectorLayer | VectorTileLayer | undefined;
 
     if (!layer || !layer.visible || layer.isIgoInternalLayer) {
       return undefined;

@@ -130,8 +130,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   private activeDrawLayerZones!: VectorLayer;
 
   public defaultStyle!:
-    | olstyle.Style
-    | ((feature: unknown, resolution: number) => olstyle.Style);
+    olstyle.Style | ((feature: unknown, resolution: number) => olstyle.Style);
 
   constructor() {
     this.dataSourceService

@@ -325,21 +325,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public freehandDrawIsActive = false;
 
   public drawStyle!:
-    | olStyle.Style
-    | ((feature: any, resolution: any) => olStyle.Style);
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
   public drawZone?: Feature;
 
   public overlayStyle!:
-    | olStyle.Style
-    | ((feature: any, resolution: any) => olStyle.Style);
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
 
   public PointStyle!:
-    | olStyle.Style
-    | ((feature: any, resolution: any) => olStyle.Style);
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
 
   public PolyStyle!:
-    | olStyle.Style
-    | ((feature: any, resolution: any) => olStyle.Style);
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
 
   public radius?: number;
   public buffer = 0;
