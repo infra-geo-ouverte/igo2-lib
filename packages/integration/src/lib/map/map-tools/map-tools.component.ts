@@ -123,7 +123,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   readonly layerListControls = input<
     LayerListControlsOptions,
     LayerListControlsOptions
-  >({}, { transform: this.transformLayerListControls });
+  >({}, { transform: (value) => this.transformLayerListControls(value) });
 
   get map(): IgoMap {
     return this.mapState.map;
