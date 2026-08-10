@@ -1,7 +1,5 @@
 import type { HttpClient } from '@angular/common/http';
 
-import { AuthInterceptor } from '@igo2/auth';
-
 import OlFeature from 'ol/Feature';
 import { Extent } from 'ol/extent';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -61,8 +59,7 @@ export class WFSDataSource extends DataSource {
   constructor(
     public options: WFSDataSourceOptions,
     protected wfsService: WFSService,
-    private ogcFilterService: OGCFilterService,
-    private authInterceptor?: AuthInterceptor
+    private ogcFilterService: OGCFilterService
   ) {
     super(checkWfsParams(options, 'wfs'));
 

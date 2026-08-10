@@ -58,6 +58,9 @@
     "./analytics": {
       "import": "./analytics/src/public_api.ts"
     },
+    "./auth": {
+      "import": "./auth/src/public_api.ts"
+    },
     "./config": {
       "import": "./config/src/public_api.ts"
     },

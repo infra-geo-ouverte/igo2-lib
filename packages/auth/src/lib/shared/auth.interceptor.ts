@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
+import { IXhrInterceptor } from '@igo2/core/auth';
 import { ConfigService } from '@igo2/core/config';
 
 import { Observable } from 'rxjs';
@@ -22,7 +23,7 @@ import { TokenService } from './token.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthInterceptor implements HttpInterceptor {
+export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
   private config = inject(ConfigService);
   private tokenService = inject(TokenService);
   private http = inject(HttpClient);

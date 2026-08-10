@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { XHR_INTERCEPTOR } from '@igo2/core/auth';
 
 import { WMSDataSource } from '../../datasource/shared/datasources';
 import { LayerService } from './layer.service';
@@ -11,7 +11,7 @@ describe('LayerService', () => {
     TestBed.configureTestingModule({
       providers: [
         {
-          provide: AuthInterceptor,
+          provide: XHR_INTERCEPTOR,
           useValue: {
             alterUrlWithKeyAuth: vi.fn(),
             interceptXhr: vi.fn()

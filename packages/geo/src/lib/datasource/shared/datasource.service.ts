@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { XHR_INTERCEPTOR } from '@igo2/core/auth';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
@@ -56,7 +56,7 @@ export class DataSourceService {
   private ogcFilterService = inject(OGCFilterService);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
-  private authInterceptor = inject(AuthInterceptor);
+  private xhrInterceptor = inject(XHR_INTERCEPTOR, { optional: true });
 
   createAsyncDataSource(
     options: AnyDataSourceOptions,
@@ -168,8 +168,7 @@ export class DataSourceService {
         new WFSDataSource(
           options,
           this.wfsDataSourceService,
-          this.ogcFilterService,
-          this.authInterceptor
+          this.ogcFilterService
         )
       )
     );

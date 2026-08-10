@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { XHR_INTERCEPTOR } from '@igo2/core/auth';
 import { Message, MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
 
@@ -36,7 +36,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
   /** Do not remove those injections, they are needed in the other layer class. Without that they are not injected. */
   protected messageService = inject(MessageService, { optional: true });
-  protected authInterceptor = inject(AuthInterceptor, { optional: true });
+  protected xhrInterceptor = inject(XHR_INTERCEPTOR, { optional: true });
   protected styleService = inject(StyleService, { optional: true });
 
   get visible() {

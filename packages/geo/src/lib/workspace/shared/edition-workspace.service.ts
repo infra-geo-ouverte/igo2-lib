@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { AuthInterceptor } from '@igo2/auth';
 import { ActionStore } from '@igo2/common/action';
 import {
   EntityService,
@@ -82,7 +81,6 @@ export class EditionWorkspaceService {
   private messageService = inject(MessageService);
   private http = inject(HttpClient);
   private dialog = inject(MatDialog);
-  authInterceptor? = inject(AuthInterceptor);
 
   public ws$ = new BehaviorSubject<string | undefined>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);

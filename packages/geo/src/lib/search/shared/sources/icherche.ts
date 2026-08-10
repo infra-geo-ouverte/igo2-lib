@@ -3,9 +3,8 @@ import {
   HttpParameterCodec,
   HttpParams
 } from '@angular/common/http';
-import { Injectable, InjectionToken, Injector, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
-import { AuthService } from '@igo2/auth';
 import { IconSvg } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -119,15 +118,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     super(options, storageService);
 
-    const authService = inject(AuthService);
     if (this.settings.length) {
-      if (!authService) {
-        this.getAllowedTypes();
-      } else {
-        authService.authenticate$.subscribe(() => {
-          this.getAllowedTypes();
-        });
-      }
+      this.getAllowedTypes();
     }
 
     this.languageService.language$.subscribe(() => {
@@ -764,7 +756,6 @@ export class IChercheReverseSearchSource
       ) ?? {},
       directOptions ?? {}
     );
-    const injector = inject(Injector);
 
     super(options, storageService);
 
@@ -774,15 +765,8 @@ export class IChercheReverseSearchSource
       );
     });
 
-    const authService = injector.get(AuthService);
     if (this.settings.length) {
-      if (!authService) {
-        this.getAllowedTypes();
-      } else {
-        authService.authenticate$.subscribe(() => {
-          this.getAllowedTypes();
-        });
-      }
+      this.getAllowedTypes();
     }
   }
 
