@@ -180,8 +180,11 @@ export function formatWFSQueryString(
   let getFeature = `${url}${separator}service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
 
-  if ((dataSourceOptions as any)[EventRefresh]) {
-    getFeature += `&${EventRefresh}=${(dataSourceOptions as any)[EventRefresh]}`;
+  const refreshValue = (
+    dataSourceOptions as unknown as Record<string, unknown>
+  )[EventRefresh];
+  if (refreshValue !== undefined) {
+    getFeature += `&${EventRefresh}=${String(refreshValue)}`;
   }
 
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;

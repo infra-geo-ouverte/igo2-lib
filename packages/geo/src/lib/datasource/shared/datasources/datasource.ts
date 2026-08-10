@@ -21,6 +21,7 @@ export abstract class DataSource {
   public id: string;
   public ol: olSource | olVectorSource | olClusterSource;
   private legend: Legend[] = [];
+  private destroyed = false;
 
   get saveableOptions(): Partial<DataSourceOptions> {
     return {
@@ -91,12 +92,16 @@ export abstract class DataSource {
   }
 
   public destroy(): void {
-    this.events.forEach((listener) => {
-      listener.unsubscribe();
-    });
+    if (this.destroyed) {
+      return;
+    }
+
+    this.destroyed = true;
+    this.removeEvents();
+    this.onUnwatch();
   }
 
-  protected abstract onUnwatch(): void;
+  public abstract onUnwatch(): void;
 }
 
 class DatasourceProperties {

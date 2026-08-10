@@ -32,6 +32,9 @@
       "sass": "./src/_index.scss",
       "import": "./src/public_api.ts"
     },
+    "./offline": {
+      "import": "./offline/src/public_api.ts"
+    },
     "./style": {
       "sass": "./style/style.scss"
     }

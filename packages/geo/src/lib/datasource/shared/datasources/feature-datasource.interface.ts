@@ -12,12 +12,6 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   format?: olFormatFeature;
   url?: string;
   pathOffline?: string;
-  preload?: PreloadOptions;
   excludeAttribute?: string[];
   excludeAttributeOffline?: string[];
-}
-
-export interface PreloadOptions {
-  bypassVisible?: boolean;
-  bypassResolution?: boolean;
 }

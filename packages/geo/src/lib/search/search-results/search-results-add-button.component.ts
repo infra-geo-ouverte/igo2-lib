@@ -47,7 +47,7 @@ import { LAYER } from '../../layer/shared/layer.enums';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { getTooltipsOfOlGeometry } from '../../measure';
 import { QueryableDataSourceOptions } from '../../query/shared';
