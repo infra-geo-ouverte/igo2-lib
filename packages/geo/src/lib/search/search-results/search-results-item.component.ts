@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
 import {
   getEntityIcon,
   getEntityTitle,
@@ -35,6 +36,7 @@ import { SearchResult } from '../shared/search.interfaces';
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,
+    SanitizeHtmlPipe,
     StopPropagationDirective
   ]
 })
