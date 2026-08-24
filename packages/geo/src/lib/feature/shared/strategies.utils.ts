@@ -38,23 +38,18 @@ export function tryAddLoadingStrategy(
  */
 export function tryAddSelectionStrategy(
   store: FeatureStore,
-  strategy?: FeatureStoreSelectionStrategy
+  strategy: FeatureStoreSelectionStrategy
 ) {
   if (
     store.getStrategyOfType(
-      FeatureStoreSelectionStrategy as unknown as typeof EntityStoreStrategy
+      FeatureStoreSelectionStrategy as typeof EntityStoreStrategy
     ) !== undefined
   ) {
     store.activateStrategyOfType(
-      FeatureStoreSelectionStrategy as unknown as typeof EntityStoreStrategy
+      FeatureStoreSelectionStrategy as typeof EntityStoreStrategy
     );
     return;
   }
-  strategy = strategy
-    ? strategy
-    : new FeatureStoreSelectionStrategy({
-        map: store.map
-      });
-  store.addStrategy(strategy as unknown as EntityStoreStrategy);
+  store.addStrategy(strategy as EntityStoreStrategy);
   strategy.activate();
 }

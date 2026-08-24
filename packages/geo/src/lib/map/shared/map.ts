@@ -18,6 +18,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { LayerController } from '../../layer';
 import type { AnyLayer, Layer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
+import type { OverlayService } from '../../overlay/shared/overlay.service';
 import { LayerWatcher, LayerWatcherChange } from '../utils/layer-watcher';
 import { MapGeolocationController } from './controllers/geolocation';
 import { MapViewController } from './controllers/view';
@@ -51,6 +52,7 @@ export class IgoMap implements MapBase {
   public layerWatcher: LayerWatcher;
   readonly options: MapOptions;
   private mapViewOptions!: MapViewOptions;
+  private overlayService?: OverlayService;
   private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
@@ -121,10 +123,13 @@ export class IgoMap implements MapBase {
       stateHistory: true
     });
     this.viewController.setOlMap(this.ol);
-    this.overlay = new Overlay(this);
     this.ol.once('rendercomplete', () => {
+      if (!this.overlayService) {
+        return;
+      }
       this.geolocationController = new MapGeolocationController(
         this,
+        this.overlayService,
         {
           projection: this.viewController.getOlProjection()
         },
@@ -139,6 +144,14 @@ export class IgoMap implements MapBase {
       }
       this.viewController.monitorRotation();
     });
+  }
+
+  initializeOverlays(overlayService: OverlayService): void {
+    if (this.overlayService) {
+      return;
+    }
+    this.overlayService = overlayService;
+    this.overlay = overlayService.create(this);
   }
 
   setTarget(id: string | undefined) {

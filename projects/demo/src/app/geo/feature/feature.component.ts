@@ -78,6 +78,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
 
     const selectionStrategy: FeatureStoreSelectionStrategy =
       new FeatureStoreSelectionStrategy({
+        layerService: this.layerService,
         map: this.map,
         motion: FeatureMotion.Default
       });

@@ -2,6 +2,7 @@ import { inputBinding } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OSMDataSource } from '../../datasource/shared/datasources/osm-datasource';
+import { LayerService } from '../../layer/shared/layer.service';
 import { TileLayer } from '../../layer/shared/layers/tile-layer';
 import { IgoMap } from '../../map';
 import { IgoLayerModule } from '../layer.module';
@@ -18,10 +19,10 @@ describe('LayerViewerBottomActionsComponent', () => {
     });
 
     const map = new IgoMap();
-    const layer = new TileLayer({
+    const layer = TestBed.inject(LayerService).createLayer({
       title: 'test',
       source: new OSMDataSource()
-    });
+    }) as TileLayer;
     const controller = new LayerController(map, [layer]);
     controller.select(layer);
 

@@ -1,5 +1,5 @@
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
+import { inject } from '@angular/core';
+
 import { ObjectUtils } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
@@ -59,7 +59,6 @@ import {
   isAnyOlStyle,
   isOlFlatStyleLike
 } from '../../../style/shared/style-ol.utils';
-import { StyleService } from '../../../style/style.service';
 import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -87,6 +86,7 @@ export class VectorLayer extends Layer {
   private watcher: VectorWatcher;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private trackFeatureListenerId: any;
+  private geoNetworkService = inject(GeoNetworkService, { optional: true });
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -106,14 +106,8 @@ export class VectorLayer extends Layer {
   private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
   public readonly style$ = this._style$.asObservable();
 
-  constructor(
-    options: VectorLayerOptions,
-    public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor,
-    private geoNetworkService?: GeoNetworkService,
-    public styleService?: StyleService
-  ) {
-    super(options, messageService, authInterceptor, styleService);
+  constructor(options: VectorLayerOptions) {
+    super(options);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
     this.style = this.options.style;

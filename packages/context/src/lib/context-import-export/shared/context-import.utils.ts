@@ -3,6 +3,7 @@ import {
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
+  LayerService,
   QueryableDataSourceOptions,
   VectorLayer,
   randomOlFlatStyle
@@ -144,7 +145,8 @@ export function computeLayerTitleFromFile(file: File): string {
 
 export function addImportedFeaturesToMap(
   extraFeatures: ExtraFeatures,
-  map: IgoMap
+  map: IgoMap,
+  layerService: LayerService
 ): VectorLayer {
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
     type: 'vector',
@@ -155,14 +157,14 @@ export function addImportedFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
 
-  const layer = new VectorLayer({
+  const layer = layerService.createLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
     style: randomOlFlatStyle(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
-  });
+  }) as VectorLayer;
   map.layerController.add(layer);
 
   return layer;

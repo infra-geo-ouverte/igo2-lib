@@ -31,6 +31,7 @@ import {
   MapService,
   MapViewOptions,
   Overlay,
+  OverlayService,
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
@@ -78,6 +79,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSearchComponent implements OnInit, OnDestroy {
   private mapService = inject(MapService);
   private layerService = inject(LayerService);
+  private overlayService = inject(OverlayService);
   private searchState = inject(SearchState);
   private mediaService = inject(MediaService);
   private storageService = inject(StorageService);
@@ -127,17 +129,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.mapService.setMap(this.map);
-    this.searchResultsOverlayFocused = new Overlay(
+    this.searchResultsOverlayFocused = this.overlayService.create(
       this.map,
       styleVariant(this.map.viewController, 'focus')
     );
 
-    this.searchResultsOverlaySelected = new Overlay(
+    this.searchResultsOverlaySelected = this.overlayService.create(
       this.map,
       styleVariant(this.map.viewController, 'selection')
     );
 
-    this.searchResultsOverlayAll = new Overlay(
+    this.searchResultsOverlayAll = this.overlayService.create(
       this.map,
       styleVariant(this.map.viewController)
     );

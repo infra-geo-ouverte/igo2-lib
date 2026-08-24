@@ -2,7 +2,12 @@ import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
-import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
+import {
+  IgoMap,
+  MapService,
+  OverlayService,
+  ProjectionService
+} from '@igo2/geo';
 
 /**
  * Service that holds the state of the map module
@@ -15,6 +20,7 @@ export class MapState {
   private projectionService = inject(ProjectionService);
   private storageService = inject(StorageService);
   private configService = inject(ConfigService);
+  private overlayService = inject(OverlayService);
 
   get showAllLegendsValue(): boolean | undefined {
     return this._legendToolShowAll;
@@ -47,6 +53,7 @@ export class MapState {
       this.configService
     );
 
+    this._map.initializeOverlays(this.overlayService);
     this.mapService.setMap(this.map);
   }
 }

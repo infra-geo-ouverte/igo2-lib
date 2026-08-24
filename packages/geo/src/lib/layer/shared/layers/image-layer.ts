@@ -1,5 +1,3 @@
-import { Optional } from '@angular/core';
-
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core/message';
 
@@ -22,13 +20,9 @@ export class ImageLayer extends Layer {
 
   private watcher: ImageWatcher;
 
-  constructor(
-    options: ImageLayerOptions,
-    @Optional() public messageService?: MessageService,
-    @Optional() public authInterceptor?: AuthInterceptor
-  ) {
-    super(options, messageService, authInterceptor);
-    this.watcher = new ImageWatcher(this, this.messageService);
+  constructor(options: ImageLayerOptions) {
+    super(options);
+    this.watcher = new ImageWatcher(this, this.messageService ?? undefined);
     this.status$ = this.watcher.status$;
     this.status$.subscribe((valStatus) => {
       if (valStatus === 0) {
@@ -49,8 +43,8 @@ export class ImageLayer extends Layer {
           this.customLoader(
             tile,
             src,
-            this.authInterceptor,
-            this.messageService
+            this.authInterceptor!,
+            this.messageService ?? undefined
           );
         }
       );

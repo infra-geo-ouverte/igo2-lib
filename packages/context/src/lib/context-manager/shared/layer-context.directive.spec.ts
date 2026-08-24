@@ -6,6 +6,7 @@ import {
   AnyLayer,
   ImageLayer,
   ImageLayerOptions,
+  LayerService,
   MapBrowserComponent,
   TileLayer,
   TileLayerOptions,
@@ -40,12 +41,14 @@ const tileLayerOptions: TileLayerOptions = {
   }
 };
 
-function createWmtsLayer(options: TileLayerOptions): TileLayer {
+function createWmtsLayer(
+  layerService: LayerService,
+  options: TileLayerOptions
+): TileLayer {
   options.source = new WMTSDataSource(
     options.sourceOptions as WMTSDataSourceOptions
   );
-  const layer = new TileLayer(options);
-  return layer;
+  return layerService.createLayer(options) as TileLayer;
 }
 
 const imageLayerOptions: ImageLayerOptions = {
@@ -64,12 +67,14 @@ const imageLayerOptions: ImageLayerOptions = {
   }
 };
 
-function createWmsLayer(options: ImageLayerOptions): ImageLayer {
+function createWmsLayer(
+  layerService: LayerService,
+  options: ImageLayerOptions
+): ImageLayer {
   options.source = new WMSDataSource(
     options.sourceOptions as WMSDataSourceOptions
   );
-  const layer = new ImageLayer(options);
-  return layer;
+  return layerService.createLayer(options) as ImageLayer;
 }
 
 describe('LayerContextDirective', () => {
@@ -104,8 +109,9 @@ describe('LayerContextDirective', () => {
       ]
     });
 
-    mockWmsLayer = createWmsLayer({ ...imageLayerOptions });
-    mockWmtsLayer = createWmtsLayer({ ...tileLayerOptions });
+    const layerService = TestBed.inject(LayerService);
+    mockWmsLayer = createWmsLayer(layerService, { ...imageLayerOptions });
+    mockWmtsLayer = createWmtsLayer(layerService, { ...tileLayerOptions });
     directive = TestBed.inject(LayerContextDirective);
   });
 

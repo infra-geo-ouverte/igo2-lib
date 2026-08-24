@@ -54,7 +54,7 @@ import {
   tryBindStoreLayer
 } from '../../feature';
 import { DrawControl, ModifyControl } from '../../geometry/shared';
-import { VectorLayer } from '../../layer/shared';
+import { LayerService, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import {
   MeasureAreaUnit,
@@ -106,6 +106,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private storageService = inject(StorageService);
   private document = inject<Document>(DOCUMENT);
+  private layerService = inject(LayerService);
 
   /**
    * Table template
@@ -648,7 +649,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private initStore() {
     const store = this.store();
 
-    let layer = new VectorLayer({
+    let layer = this.layerService.createLayer({
       title: this.languageService.translate.instant(
         'igo.geo.measure.layerTitle'
       ),
@@ -662,7 +663,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       visible: true,
       browsable: false,
       workspace: { enabled: false }
-    });
+    }) as VectorLayer;
     layer = tryBindStoreLayer(store as any, layer);
 
     layer.visible$.subscribe((visible) => {
@@ -687,6 +688,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       store as any,
       new FeatureStoreSelectionStrategy({
+        layerService: this.layerService,
         map: this.map(),
         many: true
       })

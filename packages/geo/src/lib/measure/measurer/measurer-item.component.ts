@@ -5,8 +5,7 @@ import {
   Input,
   OnDestroy,
   input,
-  model,
-  output
+  model
 } from '@angular/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -97,11 +96,6 @@ export class MeasurerItemComponent implements OnDestroy {
   readonly placeholder = input<string>();
 
   /**
-   * Event emitted when the measure unit changes
-   */
-  readonly measureUnitChange = output<MeasureAreaUnit | MeasureLengthUnit>();
-
-  /**
    * Available measure units for the measure type given
    * @internal
    */
@@ -126,7 +120,6 @@ export class MeasurerItemComponent implements OnDestroy {
    */
   onMeasureUnitChange(unit: MeasureAreaUnit | MeasureLengthUnit) {
     this.measureUnit.set(unit);
-    this.measureUnitChange.emit(unit);
   }
 
   private toggleAutoUnit(toggle: boolean) {

@@ -29,7 +29,6 @@ import Style from 'ol/style/Style';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
   FeatureDataSource,
   FeatureDataSourceOptions
@@ -74,7 +73,6 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   private layerService = inject(LayerService);
   private dialog = inject(MatDialog);
-  private dataSourceService = inject(DataSourceService);
   private mediaService = inject(MediaService);
 
   public tooltip$ = new BehaviorSubject<string>(
@@ -442,6 +440,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     tryAddSelectionStrategy(
       activeStore,
       new FeatureStoreSelectionStrategy({
+        layerService: this.layerService,
         map: this.map(),
         motion: FeatureMotion.None,
         many: true

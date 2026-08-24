@@ -1,7 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  inject,
+  runInInjectionContext
+} from '@angular/core';
 
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
 import { StyleFunction } from 'ol/style/Style';
@@ -31,9 +34,7 @@ import {
   XYZDataSource
 } from '../../datasource/shared/datasources';
 import { LayerDB } from '../../offline/layerDB/layerDB';
-import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { clusterOlStyleFunction } from '../../style/shared/style.utils';
-import { StyleService } from '../../style/style.service';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
   AnyLayer,
@@ -58,10 +59,7 @@ import { LayerGroup } from './layers/layer-group';
 })
 export class LayerService {
   private dataSourceService = inject(DataSourceService);
-  private messageService = inject(MessageService);
-  private geoNetworkService = inject(GeoNetworkService, { optional: true });
-  private authInterceptor = inject(AuthInterceptor, { optional: true });
-  private styleService = inject(StyleService, { optional: true });
+  private injector = inject(Injector);
 
   public unavailableLayers: AnyLayerItemOptions[] = [];
 
@@ -176,18 +174,16 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor ?? undefined
+    return runInInjectionContext(
+      this.injector,
+      () => new ImageLayer(layerOptions)
     );
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor ?? undefined
+    return runInInjectionContext(
+      this.injector,
+      () => new TileLayer(layerOptions)
     );
   }
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
@@ -201,25 +197,18 @@ export class LayerService {
         layerOptions.style ?? (clusterOlStyleFunction() as StyleFunction);
     }
 
-    const vectorLayer = new VectorLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor ?? undefined,
-      this.geoNetworkService ?? undefined,
-      this.styleService ?? undefined
+    return runInInjectionContext(
+      this.injector,
+      () => new VectorLayer(layerOptions)
     );
-
-    return vectorLayer;
   }
 
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    return new VectorTileLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor ?? undefined,
-      this.styleService ?? undefined
+    return runInInjectionContext(
+      this.injector,
+      () => new VectorTileLayer(layerOptions)
     );
   }
 

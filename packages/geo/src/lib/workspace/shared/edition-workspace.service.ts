@@ -224,20 +224,25 @@ export class EditionWorkspaceService {
         );
         workspaceLayer.dataSource.ol.refresh();
 
-        wks = new EditionWorkspace(this.configService, this.adding$, {
-          id: layer!.id!,
-          title: layer!.title!,
-          layer: workspaceLayer,
-          map,
-          entityStore: this.createFeatureStore(
-            workspaceLayer,
-            map
-          ) as unknown as EntityStore,
-          actionStore: new ActionStore([]),
-          meta: {
-            tableTemplate: null as unknown as EntityTableTemplate
+        wks = new EditionWorkspace(
+          this.configService,
+          this.adding$,
+          this.layerService,
+          {
+            id: layer!.id!,
+            title: layer!.title!,
+            layer: workspaceLayer,
+            map,
+            entityStore: this.createFeatureStore(
+              workspaceLayer,
+              map
+            ) as unknown as EntityStore,
+            actionStore: new ActionStore([]),
+            meta: {
+              tableTemplate: null as unknown as EntityTableTemplate
+            }
           }
-        });
+        );
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace!.workspaceId = workspaceLayer.id;

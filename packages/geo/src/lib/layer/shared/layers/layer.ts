@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+
 import { AuthInterceptor } from '@igo2/auth';
 import { Message, MessageService } from '@igo2/core/message';
 import { uuid } from '@igo2/utils';
@@ -31,6 +33,11 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   link?: Linked;
   linkMaster?: Linked;
   private resolution$$?: Subscription;
+
+  /** Do not remove those injections, they are needed in the other layer class. Without that they are not injected. */
+  protected messageService = inject(MessageService, { optional: true });
+  protected authInterceptor = inject(AuthInterceptor, { optional: true });
+  protected styleService = inject(StyleService, { optional: true });
 
   get visible() {
     return super.visible;
@@ -79,12 +86,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
     };
   }
 
-  constructor(
-    public options: LayerOptions,
-    protected messageService?: MessageService,
-    protected authInterceptor?: AuthInterceptor,
-    protected styleService?: StyleService
-  ) {
+  constructor(public options: LayerOptions) {
     super(options);
 
     if (!options.id) {
