@@ -677,17 +677,14 @@ export class VectorLayer extends Layer {
     failure: () => void
   ): void {
     const xhr = new XMLHttpRequest();
-    const alteredUrlWithKeyAuth =
-      this.authInterceptor?.alterUrlWithKeyAuth(url);
+    const alteredUrlWithKeyAuth = this.xhrInterceptor?.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
     }
 
     xhr.open('GET', modifiedUrl);
-    if (this.authInterceptor) {
-      this.authInterceptor.interceptXhr(xhr, modifiedUrl);
-    }
+    this.xhrInterceptor?.interceptXhr(xhr, modifiedUrl);
 
     const onError = () => {
       vectorSource.removeLoadedExtent(request.extent);
@@ -811,7 +808,7 @@ export class VectorLayer extends Layer {
     let modifiedUrl = url;
     if (typeof url !== 'function') {
       const alteredUrlWithKeyAuth =
-        this.authInterceptor?.alterUrlWithKeyAuth(url);
+        this.xhrInterceptor?.alterUrlWithKeyAuth(url);
       if (alteredUrlWithKeyAuth) {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
@@ -853,8 +850,8 @@ export class VectorLayer extends Layer {
       if (type === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
-      if (this.authInterceptor) {
-        this.authInterceptor.interceptXhr(xhr, modifiedUrl as string);
+      if (this.xhrInterceptor) {
+        this.xhrInterceptor.interceptXhr(xhr, modifiedUrl as string);
       }
       xhr.onerror = onError;
       xhr.onload = () => {

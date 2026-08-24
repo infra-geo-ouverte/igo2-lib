@@ -5,6 +5,7 @@ import {
   makeEnvironmentProviders
 } from '@angular/core';
 
+import { XHR_INTERCEPTOR } from '@igo2/core/auth';
 import { StorageService } from '@igo2/core/storage';
 
 import {
@@ -22,6 +23,10 @@ export function provideAuthentification(
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: XHR_INTERCEPTOR,
+      useExisting: AuthInterceptor
     },
     {
       provide: StorageService,

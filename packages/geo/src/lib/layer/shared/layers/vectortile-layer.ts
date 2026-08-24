@@ -1,5 +1,10 @@
+import { IXhrInterceptor } from '@igo2/core/auth';
+
 import VectorTile from 'ol/VectorTile';
+import { Extent } from 'ol/extent';
+import FeatureFormat from 'ol/format/Feature';
 import olLayerVectorTile from 'ol/layer/VectorTile';
+import { Projection } from 'ol/proj';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { Feature } from 'ol';
@@ -72,7 +77,7 @@ export class VectorTileLayer extends Layer {
       const loader = this.customLoader(
         url,
         tile.getFormat(),
-        this.authInterceptor,
+        this.xhrInterceptor,
         tile.onLoad.bind(tile)
       );
       if (loader) {
@@ -107,18 +112,24 @@ export class VectorTileLayer extends Layer {
    */
 
   customLoader(
-    url: any,
-    format: any,
-    interceptor: any,
+    url:
+      | string
+      | ((
+          extent: Extent,
+          resolution: number,
+          projection: Projection
+        ) => string),
+    format: FeatureFormat,
+    interceptor: IXhrInterceptor | null,
     success: any,
     failure?: any
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (extent: any, resolution: any, projection: any) => {
+    return (extent: Extent, resolution: number, projection: Projection) => {
       const xhr = new XMLHttpRequest();
-      let modifiedUrl = url;
+      let modifiedUrl: string;
       if (typeof url !== 'function') {
-        const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+        modifiedUrl = url;
+        const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
         if (alteredUrlWithKeyAuth) {
           modifiedUrl = alteredUrlWithKeyAuth;
         }
@@ -126,9 +137,7 @@ export class VectorTileLayer extends Layer {
         modifiedUrl = url(extent, resolution, projection);
       }
       xhr.open('GET', modifiedUrl);
-      if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl);
-      }
+      interceptor?.interceptXhr(xhr, modifiedUrl);
 
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';

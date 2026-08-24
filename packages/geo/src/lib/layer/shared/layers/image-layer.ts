@@ -1,4 +1,4 @@
-import { AuthInterceptor } from '@igo2/auth';
+import { IXhrInterceptor } from '@igo2/core/auth';
 import { MessageService } from '@igo2/core/message';
 
 import olLayerImage from 'ol/layer/Image';
@@ -37,13 +37,13 @@ export class ImageLayer extends Layer {
     });
 
     const image = new olLayerImage(olOptions);
-    if (this.authInterceptor) {
+    if (this.xhrInterceptor) {
       (image.getSource()! as any).setImageLoadFunction(
         (tile: any, src: string) => {
           this.customLoader(
             tile,
             src,
-            this.authInterceptor!,
+            this.xhrInterceptor!,
             this.messageService ?? undefined
           );
         }
@@ -71,7 +71,7 @@ export class ImageLayer extends Layer {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tile: any,
     src: string,
-    interceptor?: AuthInterceptor,
+    interceptor?: IXhrInterceptor,
     messageService?: MessageService
   ) {
     const xhr = new XMLHttpRequest();
