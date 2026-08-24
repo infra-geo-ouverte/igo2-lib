@@ -2,7 +2,6 @@
   display: flex;
   height: 100%;
   width: 100%;
-  min-width: 0;
   &.column {
     flex-direction: column;
   }
@@ -13,12 +12,10 @@
 
   .igo-flexible-main {
     flex: 0 0 auto;
-    min-width: 0;
     overflow: hidden;
   }
 
   .igo-flexible-main.column {
-    width: 100%;
     transition: height 0.25s ease-in;
   }
 
@@ -42,7 +39,6 @@
 
   ::ng-deep .igo-flexible-fill {
     flex: 1 1 auto;
-    min-width: 0;
     overflow: hidden;
     position: relative;
   }
