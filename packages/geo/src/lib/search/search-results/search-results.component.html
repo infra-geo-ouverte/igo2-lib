@@ -1,6 +1,6 @@
 @if (tabsMode() === false) {
   <igo-list [navigation]="true">
-    @for (group of results$ | async; track group) {
+    @for (group of results$ | async; track group.source.getId()) {
       @if (mode() === searchResultMode.Grouped) {
         <igo-collapsible
           [class]="group.source.getId()"
@@ -25,7 +25,7 @@
       }
 
       <ng-template #storeItemTemplate let-results="results">
-        @for (result of results; track result) {
+        @for (result of results; track result.meta.id) {
           <igo-search-results-item
             igoListItem
             color="accent"
@@ -62,7 +62,7 @@
   <igo-list [navigation]="true">
     @if (mode() === searchResultMode.Grouped) {
       <mat-tab-group class="custom-tabs-view" dynamicHeight>
-        @for (group of results$ | async; track group) {
+        @for (group of results$ | async; track group.source.getId()) {
           <mat-tab [label]="computeGroupTitle(group)">
             <ng-container
               *ngTemplateOutlet="
@@ -74,7 +74,7 @@
         }
       </mat-tab-group>
     } @else {
-      @for (group of results$ | async; track group) {
+      @for (group of results$ | async; track group.source.getId()) {
         <ng-container
           *ngTemplateOutlet="storeItemTemplateGroup; context: { group: group }"
         />
@@ -82,7 +82,7 @@
     }
 
     <ng-template #storeItemTemplateGroup let-group="group">
-      @for (result of group.results; track result) {
+      @for (result of group.results; track result.meta.id) {
         <igo-search-results-item
           igoListItem
           color="accent"

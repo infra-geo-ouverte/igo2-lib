@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -21,7 +22,7 @@ import { FlexibleDirection, FlexibleState } from './flexible.type';
   templateUrl: './flexible.component.html',
   styleUrls: ['./flexible.component.scss']
 })
-export class FlexibleComponent implements OnInit, OnDestroy {
+export class FlexibleComponent implements OnInit, AfterViewInit, OnDestroy {
   private el = inject(ElementRef);
   private mediaService = inject(MediaService);
   private cdr = inject(ChangeDetectorRef);
@@ -44,16 +45,16 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   }
   set state(value: FlexibleState) {
     const sizes: Record<string, unknown> = {
-      initial: this.initial,
-      collapsed: this.collapsed,
-      expanded: this.expanded
+      initial: this.initial(),
+      collapsed: this.collapsed(),
+      expanded: this.expanded()
     };
 
     if (this.mediaService.isMobile()) {
       Object.assign(sizes, {
-        initial: this.initialMobile,
-        collapsed: this.collapsedMobile,
-        expanded: this.expandedMobile
+        initial: this.initialMobile(),
+        collapsed: this.collapsedMobile(),
+        expanded: this.expandedMobile()
       });
     }
 
@@ -70,13 +71,17 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   private mediaService$$!: Subscription;
 
   ngOnInit() {
-    this.el.nativeElement.className += this.direction;
+    this.el.nativeElement.classList.add(this.direction());
 
     // Since this component supports different sizes
     // on mobile, force a redraw when the media changes
     this.mediaService$$ = this.mediaService.media$.subscribe(() =>
       this.cdr.markForCheck()
     );
+  }
+
+  ngAfterViewInit() {
+    this.state = this._state;
   }
 
   ngOnDestroy() {

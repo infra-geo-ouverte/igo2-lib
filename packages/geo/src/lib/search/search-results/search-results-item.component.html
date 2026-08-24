@@ -10,7 +10,7 @@
     <span
       matListItemTitle
       class="igo-list-item-with-text-overflow-ellipsis"
-      [innerHtml]="titleHtml"
+      [innerHTML]="titleHtml | sanitizeHtml"
       matTooltipShowDelay="500"
       [matTooltip]="tooltipHtml"
       matTooltipClass="search-result-tooltip"
