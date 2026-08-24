@@ -72,6 +72,10 @@ export const environment: EnvironmentOptions = {
       identifyUser: true
     },
     searchSources: {
+      workspace: {
+        enabled: true,
+        available: true
+      },
       storedqueriesreverse: { enabled: false },
       nominatim: {
         enabled: false

@@ -12,6 +12,8 @@
     }
     <igo-map-browser
       #mapBrowser
+      igoWorkspaceUpdator
+      [workspaceStore]="workspaceState.store"
       [map]="map"
       [view]="view"
       [igoContextMenu]="actionbarMenu"
