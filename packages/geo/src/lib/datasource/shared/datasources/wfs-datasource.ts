@@ -2,13 +2,14 @@ import type { HttpClient } from '@angular/common/http';
 
 import OlFeature from 'ol/Feature';
 import { Extent } from 'ol/extent';
+import { FeatureLoader } from 'ol/featureloader';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
 import * as OlProj from 'ol/proj';
 import olProjection from 'ol/proj/Projection';
 import olSourceVector from 'ol/source/Vector';
 
-import { Observable, catchError, map } from 'rxjs';
+import { Observable, catchError, forkJoin, map } from 'rxjs';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
@@ -18,7 +19,11 @@ import {
 import { OGCFilterService } from '../../../filter/shared/ogc-filter.service';
 import { DataSource } from './datasource';
 import { EventRefresh } from './datasource.interface';
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { VectorSourceLoaderHost } from './vector-source-loader.interface';
+import {
+  WFSDataSourceOptions,
+  WFSDataSourceOptionsParams
+} from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 import {
   buildUrl,
@@ -33,6 +38,21 @@ interface FetchFeatureOptions {
   extent: Extent | undefined;
   projection: olProjection;
   httpClient: HttpClient;
+}
+
+interface WfsRequestContextOptions {
+  extent: Extent | undefined;
+  projection: olProjection;
+  options?: WFSDataSourceOptions;
+  randomParam?: boolean;
+  omitBboxWhenNoExtent?: boolean;
+}
+
+export interface WfsRequestContext {
+  baseUrl: string;
+  paramsWFS: WFSDataSourceOptionsParams;
+  wfsProjection: olProjection;
+  transformedExtent: Extent | undefined;
 }
 
 export class WFSDataSource extends DataSource {
@@ -136,61 +156,118 @@ export class WFSDataSource extends DataSource {
     projection,
     httpClient
   }: FetchFeatureOptions): Observable<OlFeature<OlGeometry>[]> {
-    const paramsWFS = this.options.paramsWFS!;
-    const wfsProj = paramsWFS.srsName
+    const requestContext = this.createRequestContext({
+      extent,
+      projection,
+      omitBboxWhenNoExtent: true
+    });
+    const urls = this.buildRequestUrls(
+      requestContext.baseUrl,
+      requestContext.paramsWFS
+    );
+
+    return forkJoin(
+      urls.map((batchUrl) =>
+        this._fetchFeatures(requestContext.wfsProjection, batchUrl, {
+          extent: requestContext.transformedExtent,
+          projection,
+          httpClient
+        })
+      )
+    ).pipe(map((featureBatches) => featureBatches.flat()));
+  }
+
+  private createRequestContext({
+    extent,
+    projection,
+    options,
+    randomParam,
+    omitBboxWhenNoExtent = false
+  }: WfsRequestContextOptions): WfsRequestContext {
+    const effectiveOptions = options ?? this.options;
+    const paramsWFS = effectiveOptions.paramsWFS!;
+    const wfsProjection = paramsWFS.srsName
       ? new olProjection({ code: paramsWFS.srsName })
       : projection;
-
-    const currentExtent = extent
-      ? OlProj.transformExtent(extent, projection, wfsProj)
+    const transformedExtent = extent
+      ? OlProj.transformExtent(extent, projection, wfsProjection)
       : undefined;
 
     paramsWFS.srsName = paramsWFS.srsName || projection.getCode();
-    let url = buildUrl(this.options, currentExtent, wfsProj);
+    let baseUrl = buildUrl(
+      effectiveOptions,
+      transformedExtent,
+      wfsProjection,
+      randomParam
+    );
 
-    // Exportation want to fetch without extent/bbox restrictions
-    if (!extent && url.includes('bbox')) {
-      const [baseUrl, params] = url.split('?');
+    // Exportation wants to fetch without extent/bbox restrictions.
+    if (omitBboxWhenNoExtent && !extent && baseUrl.includes('bbox')) {
+      const [urlBase, params] = baseUrl.split('?');
       const paramSegments = params.split('&');
       const paramsWithoutBbox = paramSegments.filter(
         (segment) => !segment.includes('bbox')
       );
-      url = `${baseUrl}?${paramsWithoutBbox.join('&')}`;
+      baseUrl = `${urlBase}?${paramsWithoutBbox.join('&')}`;
     }
 
-    let startIndex = 0;
-    if (
+    return {
+      baseUrl,
+      paramsWFS,
+      wfsProjection,
+      transformedExtent
+    };
+  }
+
+  private buildRequestUrls(
+    url: string,
+    paramsWFS: WFSDataSourceOptionsParams
+  ): string[] {
+    if (!this.shouldBatchWfsRequest(paramsWFS)) {
+      return [url];
+    }
+
+    return buildWfsBatchUrls(url, paramsWFS.maxFeatures ?? 0);
+  }
+
+  private shouldBatchWfsRequest(
+    paramsWFS: WFSDataSourceOptionsParams
+  ): boolean {
+    return (
       paramsWFS.version === '2.0.0' &&
-      paramsWFS.maxFeatures !== undefined &&
-      paramsWFS.maxFeatures > defaultMaxFeatures
-    ) {
-      const nbOfFeature = 1000;
-      while (startIndex < paramsWFS.maxFeatures!) {
-        let alteredUrl = url.replace(
-          'count=' + paramsWFS.maxFeatures!,
-          'count=' + nbOfFeature
-        );
-        alteredUrl = alteredUrl.replace('startIndex=0', '0');
-        alteredUrl += '&startIndex=' + startIndex;
-        alteredUrl.replace(/&&/g, '&');
+      (paramsWFS.maxFeatures ?? 0) > defaultMaxFeatures
+    );
+  }
 
-        return this._fetchFeatures(wfsProj, alteredUrl, {
-          extent: currentExtent,
-          projection,
-          httpClient
-        }).pipe(
-          map((res) => {
-            startIndex += nbOfFeature;
-            return res;
-          })
-        );
-      }
-    }
-    return this._fetchFeatures(wfsProj, url, {
-      extent: currentExtent,
-      projection,
-      httpClient
-    });
+  createVectorSourceLoader(
+    host: VectorSourceLoaderHost,
+    options: WFSDataSourceOptions = this.options,
+    randomParam = false
+  ): FeatureLoader {
+    return (extent, resolution, projection, success, failure) => {
+      const requestContext = this.createRequestContext({
+        extent,
+        projection,
+        options: { ...options, ...this.properties.getAll() },
+        randomParam
+      });
+
+      host.execute({
+        source: this.ol,
+        url: requestContext.baseUrl,
+        extent,
+        resolution,
+        projection,
+        readOptions: {
+          dataProjection: requestContext.wfsProjection,
+          featureProjection: projection
+        },
+        resolveUrls: (url) =>
+          this.buildRequestUrls(url, requestContext.paramsWFS),
+        success: success ?? (() => void 0),
+        failure: failure ?? (() => void 0)
+      });
+    };
   }
 
   private _fetchFeatures(
@@ -220,4 +297,44 @@ export class WFSDataSource extends DataSource {
     }) as OlFeature<OlGeometry>[];
     return features;
   }
+}
+
+export function buildWfsBatchUrls(
+  url: string,
+  maxFeatures: number,
+  batchSize = 1000
+): string[] {
+  if (maxFeatures <= batchSize) {
+    return [url];
+  }
+
+  // Dummy base only to satisfy URL() when `url` is relative; discarded below if so.
+  const isProtocolRelativeUrl = url.startsWith('//');
+  const parsedUrl = new URL(
+    isProtocolRelativeUrl ? `http:${url}` : url,
+    'http://igo.local'
+  );
+  const isAbsoluteUrl = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
+  const pathEnd = [url.indexOf('?'), url.indexOf('#')]
+    .filter((index) => index >= 0)
+    .reduce((lowest, index) => Math.min(lowest, index), url.length);
+  const originalPath = url.slice(0, pathEnd);
+  const urls: string[] = [];
+
+  for (let startIndex = 0; startIndex < maxFeatures; startIndex += batchSize) {
+    const batchCount = Math.min(batchSize, maxFeatures - startIndex);
+    parsedUrl.searchParams.set('count', batchCount.toString());
+    parsedUrl.searchParams.set('startIndex', startIndex.toString());
+    parsedUrl.searchParams.delete('maxFeatures');
+
+    urls.push(
+      isAbsoluteUrl
+        ? parsedUrl.toString()
+        : isProtocolRelativeUrl
+          ? `//${parsedUrl.host}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+          : `${originalPath}${parsedUrl.search}${parsedUrl.hash}`
+    );
+  }
+
+  return urls;
 }

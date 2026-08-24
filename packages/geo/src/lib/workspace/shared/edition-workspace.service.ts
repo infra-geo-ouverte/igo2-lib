@@ -20,7 +20,6 @@ import { MessageService } from '@igo2/core/message';
 import { StorageService } from '@igo2/core/storage';
 
 import olFeature from 'ol/Feature';
-import { FeatureLoader } from 'ol/featureloader';
 import GeoJSON from 'ol/format/GeoJSON';
 import WKT from 'ol/format/WKT';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -779,28 +778,7 @@ export class EditionWorkspaceService {
    * WMS params are updated to ensure layer is correctly refreshed
    */
   refreshMap(layer: VectorLayer, map: MapBase) {
-    const wfsOlLayer = layer.dataSource.ol;
-    const loader: FeatureLoader = (
-      extent,
-      resolution,
-      proj,
-      success,
-      failure
-    ) => {
-      layer.customWFSLoader(
-        layer.ol.getSource()!,
-        layer.options.sourceOptions as WFSDataSourceOptions,
-        extent,
-        resolution,
-        proj,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        success as any,
-        failure!,
-        true
-      );
-    };
-    wfsOlLayer.setLoader(loader);
-    wfsOlLayer.refresh();
+    layer.refresh();
 
     const id = String(layer.id);
     for (const lay of map.layerController.all) {

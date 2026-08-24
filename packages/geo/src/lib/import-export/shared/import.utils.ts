@@ -15,12 +15,12 @@ import {
 } from '../../feature/shared/feature.utils';
 import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { randomOlFlatStyle } from '../../style/shared/style.utils';
 
-export function addLayerAndFeaturesToMap(
+function addLayerAndFeaturesToMap(
   features: Feature[],
   map: IgoMap,
   contextUri: string,
@@ -48,7 +48,7 @@ export function addLayerAndFeaturesToMap(
     isIgoInternalLayer: true,
     source,
     style: randomOlFlatStyle(),
-    idbInfo: { storeToIdb, contextUri: contextUri }
+    offline: { enabled: storeToIdb, contextUri }
   } satisfies VectorLayerOptions) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
   map.layerController.add(layer);

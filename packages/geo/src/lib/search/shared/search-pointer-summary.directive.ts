@@ -30,7 +30,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
 import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
+import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { AnyOlStyle } from '../../style/shared/style.interface';

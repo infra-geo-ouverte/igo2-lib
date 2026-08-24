@@ -10,7 +10,7 @@ import { ObjectUtils } from '@igo2/utils';
 import { StyleFunction } from 'ol/style/Style';
 
 import { Observable, combineLatest, of } from 'rxjs';
-import { concatMap, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
@@ -33,7 +33,6 @@ import {
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
-import { LayerDB } from '../../offline/layerDB/layerDB';
 import { clusterOlStyleFunction } from '../../style/shared/style.utils';
 import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
@@ -44,7 +43,6 @@ import {
   ImageLayerOptions,
   Layer,
   LayerGroupOptions,
-  LayerOptions,
   TileLayer,
   TileLayerOptions,
   VectorLayer,
@@ -53,6 +51,10 @@ import {
   VectorTileLayerOptions
 } from './layers';
 import { LayerGroup } from './layers/layer-group';
+import {
+  OFFLINE_LAYER_RESTORE,
+  OfflineLayerRestore
+} from './offline-layer-restore.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,9 @@ import { LayerGroup } from './layers/layer-group';
 export class LayerService {
   private dataSourceService = inject(DataSourceService);
   private injector = inject(Injector);
+  private offlineLayerRestore = inject(OFFLINE_LAYER_RESTORE, {
+    optional: true
+  }) as OfflineLayerRestore | null;
 
   public unavailableLayers: AnyLayerItemOptions[] = [];
 
@@ -212,26 +217,12 @@ export class LayerService {
     );
   }
 
-  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
-    const layerDB = new LayerDB();
-    return layerDB.getAll().pipe(
-      concatMap((res) => {
-        const idbLayers =
-          contextUri !== '*'
-            ? res.filter((l) => l.detailedContextUri === contextUri)
-            : res;
-        const layersOptions: LayerOptions[] = idbLayers.map((idbl) =>
-          Object.assign({}, idbl.layerOptions, {
-            sourceOptions: idbl.sourceOptions
-          })
-        );
-        return combineLatest(
-          layersOptions.map((layerOptions) =>
-            this.createAsyncLayer(layerOptions)
-          )
-        ).pipe(map((ls) => ls.filter(Boolean) as unknown as Layer[]));
-      })
-    );
+  createAsyncOfflineLayers(contextUri = '*'): Observable<Layer[]> {
+    if (!this.offlineLayerRestore) {
+      return of([]);
+    }
+
+    return this.offlineLayerRestore.createAsyncLayers(contextUri);
   }
 
   deleteUnavailableLayers(anyLayerOptions: AnyLayerItemOptions) {

@@ -45,7 +45,7 @@ export class TileLayer extends Layer {
     const tileSource = tileLayer.getSource();
     if (tileSource !== null && 'setTileLoadFunction' in tileSource) {
       tileSource.setTileLoadFunction((tile: Tile, url: string) => {
-        this.customLoader(tile, url, this.xhrInterceptor!);
+        this.customLoader(tile, url, this.xhrInterceptor);
       });
     }
 
@@ -59,8 +59,8 @@ export class TileLayer extends Layer {
    * @param url the url string or function to retrieve the data
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  customLoader(tile: any, url: string, interceptor: IXhrInterceptor) {
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+  customLoader(tile: any, url: string, interceptor?: IXhrInterceptor | null) {
+    const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;

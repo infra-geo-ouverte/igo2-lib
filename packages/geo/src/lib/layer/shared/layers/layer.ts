@@ -120,6 +120,10 @@ export abstract class Layer extends LayerBase<LayerGroup> {
 
   protected abstract createOlLayer(): OlLayer<Source>;
 
+  refresh(): void {
+    this.dataSource.refresh();
+  }
+
   init(map: MapBase): void {
     super.init(map);
 

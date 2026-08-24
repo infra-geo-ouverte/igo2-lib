@@ -215,9 +215,9 @@ export class AppLayerComponent {
         id: 'mandatory_to_retrieve_layerData_in_IDB',
         title: "Aéroport préloadé et chargé dans l'Indexed-db",
         visible: false,
-        idbInfo: { storeToIdb: true },
+        offline: { enabled: true },
+        preload: { bypass: 'all' },
         sourceOptions: {
-          preload: { bypassResolution: true, bypassVisible: true },
           type: 'vector',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=aeroport&srsname=EPSG:4326&outputformat=geojson'
         } satisfies FeatureDataSourceOptions

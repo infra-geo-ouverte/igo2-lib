@@ -13,10 +13,10 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import * as olextent from 'ol/extent';
 
 import type { MapBase } from '../../map/shared/map.abstract';
-import { isIdbLayer } from '../../offline/offline.utils';
 import { LayerListToolService } from '../layer-list-tool';
 import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerController } from '../shared/layer-controller';
+import { LAYER_PERSISTENCE } from '../shared/layer-persistence.interface';
 import type { AnyLayer, LayerGroup } from '../shared/layers';
 import {
   LinkedProperties,
@@ -43,6 +43,7 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 })
 export class LayerViewerBottomActionsComponent {
   private layerListToolService = inject(LayerListToolService);
+  private layerPersistence = inject(LAYER_PERSISTENCE, { optional: true });
 
   orderable = true;
 
@@ -114,11 +115,12 @@ export class LayerViewerBottomActionsComponent {
   }
 
   removeLayers(): void {
-    this.selected
-      .filter((layer) => isIdbLayer(layer))
-      .forEach((layer) => {
-        layer.options.idbInfo!._deleteFromIdb = true;
-      });
+    const layerPersistence = this.layerPersistence;
+    if (layerPersistence) {
+      this.selected
+        .filter((layer) => layerPersistence.isPersistent(layer))
+        .forEach((layer) => layerPersistence.removePersistedData(layer));
+    }
     this.controller().remove(...this.selected);
     this.controller().clearSelection();
   }
