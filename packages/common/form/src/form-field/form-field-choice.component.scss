@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.igo-form-field-choice-list {
+  width: 100%;
+}
+
+.igo-form-field-choice-label {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 1rem;
+  line-height: 1.25rem;
+}
+
+::ng-deep .igo-form-field-choice-list mat-error {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--mat-form-field-subscript-text-font, inherit);
+  font-size: var(--mat-form-field-subscript-text-size, 12px);
+  font-weight: var(--mat-form-field-subscript-text-weight, 400);
+  line-height: var(--mat-form-field-subscript-text-line-height, 20px);
+  letter-spacing: var(--mat-form-field-subscript-text-tracking, normal);
+}
+
+::ng-deep .igo-form-field-choice-list mat-error[hidden] {
+  display: none;
+}
+
+::ng-deep .igo-form-field-choice-list mat-radio-group,
+::ng-deep .igo-form-field-choice-list mat-checkbox {
+  display: block;
+}
+
+::ng-deep .igo-form-field-choice-list mat-radio-button {
+  margin-right: 16px;
+}

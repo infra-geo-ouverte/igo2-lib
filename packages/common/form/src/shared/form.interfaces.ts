@@ -73,7 +73,15 @@ export interface FormFieldSelectInputs extends FormFieldInputs {
   choices: BehaviorSubject<FormFieldSelectChoice[]> | FormFieldSelectChoice[];
 }
 
+export interface FormFieldChoiceInputs extends FormFieldInputs {
+  choices: FormFieldSelectChoice[];
+}
+
+export type FormFieldCheckboxInputs = FormFieldChoiceInputs;
+
+export type FormFieldRadiobuttonInputs = FormFieldChoiceInputs;
+
 export interface FormFieldSelectChoice {
-  value: any;
+  value: unknown;
   title: string;
 }

@@ -86,6 +86,38 @@ export class AppFormComponent implements OnInit, OnDestroy {
         }
       },
       {
+        name: 'interests',
+        title: 'Interests',
+        type: 'checkbox',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          choices: [
+            { value: 'sports', title: 'Sports' },
+            { value: 'music', title: 'Music' },
+            { value: 'travel', title: 'Travel' }
+          ]
+        }
+      },
+      {
+        name: 'contactMode',
+        title: 'Preferred Contact Mode',
+        type: 'radiobutton',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          choices: [
+            { value: 'email', title: 'Email' },
+            { value: 'phone', title: 'Phone' },
+            { value: 'sms', title: 'SMS' }
+          ]
+        }
+      },
+      {
         name: 'datetime',
         title: 'Date',
         type: 'datetime',
@@ -124,8 +156,11 @@ export class AppFormComponent implements OnInit, OnDestroy {
   fillForm(): void {
     this.data$.next({
       id: 1,
+      amount: 42,
       name: 'Bob',
       status: 2,
+      interests: ['music', 'travel'],
+      contactMode: 'email',
       datetime: new Date(2026, 4, 29, 16, 42, 0, 0)
     });
   }
