@@ -45,7 +45,8 @@ describe('AppDialogComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(overlayElement.textContent).toContain('Step 1 of 3');
+    expect(getActiveStepNumber(dialog)).toBe(1);
+    expect(getStepCount(dialog)).toBe(3);
     expect(overlayElement.textContent).toContain('Choose a country');
 
     await selectFirstOption(fixture, overlayElement, 'Canada');
@@ -76,7 +77,8 @@ describe('AppDialogComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(overlayElement.textContent).toContain('Step 3 of 3');
+    expect(getActiveStepNumber(dialog)).toBe(3);
+    expect(getStepCount(dialog)).toBe(3);
     expect(overlayElement.textContent).toContain('Finish the location');
     expect(getActiveFieldTitle(dialog, 'notes')).toBe('Notes for Montreal');
     expect(overlayElement.textContent).toContain('Finish');
@@ -154,4 +156,12 @@ function getActiveField(
     ?.formStepper()
     ?.activeForm()
     .fields.find((activeField) => activeField.name === fieldName);
+}
+
+function getActiveStepNumber(dialog: MatDialog): number | undefined {
+  return dialog.openDialogs[0]?.componentInstance?.formStepper()?.stepNumber();
+}
+
+function getStepCount(dialog: MatDialog): number | undefined {
+  return dialog.openDialogs[0]?.componentInstance?.formStepper()?.stepCount();
 }

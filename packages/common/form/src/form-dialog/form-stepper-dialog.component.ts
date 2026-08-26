@@ -32,9 +32,9 @@ export class FormStepperDialogComponent {
     }
 
     this.data.processButtonText =
-      this.data.processButtonText ?? 'igo.common.formDialog.processButtonText';
+      this.data.processButtonText ?? 'igo.common.formStepper.processButtonText';
     this.data.cancelButtonText =
-      this.data.cancelButtonText ?? 'igo.common.formDialog.cancelButtonText';
+      this.data.cancelButtonText ?? 'igo.common.formStepper.cancelButtonText';
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
     this.data.nextButtonText =
       this.data.nextButtonText ?? 'igo.common.formStepper.nextButtonText';
