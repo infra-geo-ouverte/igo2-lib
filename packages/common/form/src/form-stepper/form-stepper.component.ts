@@ -50,9 +50,11 @@ export class FormStepperComponent {
     'igo.common.formStepper.previousButtonText'
   );
 
-  readonly processButtonText = input('igo.common.formDialog.processButtonText');
+  readonly processButtonText = input(
+    'igo.common.formStepper.processButtonText'
+  );
 
-  readonly cancelButtonText = input('igo.common.formDialog.cancelButtonText');
+  readonly cancelButtonText = input('igo.common.formStepper.cancelButtonText');
 
   readonly showCancelButton = input(true);
 

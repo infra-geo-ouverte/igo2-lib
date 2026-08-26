@@ -15,19 +15,14 @@
           "maxLevel": "The maximum hierarchical level is reached ({{value}})"
         }
       },
-      "selectValueDialog": {
-        "cancelButtonText": "Cancel",
-        "processButtonText": "Select",
-        "multipleTitle": "Please, select values",
-        "title": "Please, select a value",
-        "selectFieldText": "Options"
-      },
       "formDialog": {
         "cancelButtonText": "Cancel",
         "processButtonText": "Submit",
         "title": "Fill the form"
       },
       "formStepper": {
+        "cancelButtonText": "Cancel",
+        "processButtonText": "Submit",
         "nextButtonText": "Next",
         "previousButtonText": "Previous",
         "stepCounter": "Step {{current}} of {{total}}"
