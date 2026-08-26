@@ -157,6 +157,38 @@ export class AppDialogComponent {
             { value: 2, title: 'Married' }
           ]
         }
+      },
+      {
+        name: 'interests',
+        title: 'Interests',
+        type: 'checkbox',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          choices: [
+            { value: 'sports', title: 'Sports' },
+            { value: 'music', title: 'Music' },
+            { value: 'travel', title: 'Travel' }
+          ]
+        }
+      },
+      {
+        name: 'contactMode',
+        title: 'Preferred Contact Mode',
+        type: 'radiobutton',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          choices: [
+            { value: 'email', title: 'Email' },
+            { value: 'phone', title: 'Phone' },
+            { value: 'sms', title: 'SMS' }
+          ]
+        }
       }
     ];
 
