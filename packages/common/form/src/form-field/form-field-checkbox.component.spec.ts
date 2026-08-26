@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { UntypedFormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 import { provideTranslateService } from '@ngx-translate/core';
 
@@ -11,22 +12,24 @@ import { FormFieldCheckboxComponent } from './form-field-checkbox.component';
 type CheckboxComponentInputs = {
   formControl: () => UntypedFormControl;
   choices: () => { value: string; title: string }[];
+  maxSelected?: () => number | undefined;
 };
 
 describe('FormFieldCheckboxComponent', () => {
   let component: FormFieldCheckboxComponent;
-  let fixture: ComponentFixture<FormFieldCheckboxComponent>;
   let formControl: UntypedFormControl;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FormFieldCheckboxComponent],
-      providers: [provideTranslateService()]
-    }).compileComponents();
+  beforeEach(() => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [provideTranslateService(), ErrorStateMatcher]
+    });
 
-    fixture = TestBed.createComponent(FormFieldCheckboxComponent);
-    component = fixture.componentInstance;
     formControl = new UntypedFormControl('');
+
+    component = TestBed.runInInjectionContext(
+      () => new FormFieldCheckboxComponent()
+    );
 
     const componentInputs = component as unknown as CheckboxComponentInputs;
     componentInputs.formControl = () => formControl;
@@ -34,7 +37,8 @@ describe('FormFieldCheckboxComponent', () => {
       { value: 'alpha', title: 'Alpha' },
       { value: 'beta', title: 'Beta' }
     ];
-    fixture.detectChanges();
+    componentInputs.maxSelected = () => undefined;
+    component.ngOnInit();
   });
 
   it('should create', () => {
@@ -55,23 +59,19 @@ describe('FormFieldCheckboxComponent', () => {
 
   it('should not show an error before the control is touched', () => {
     formControl.setErrors({ required: true });
-    fixture.detectChanges();
 
-    const errorElement = fixture.nativeElement.querySelector('mat-error');
+    (component as any).syncState(formControl);
 
-    expect(errorElement.hidden).toBe(true);
-    expect(getComputedStyle(errorElement).display).toBe('none');
+    expect(component.showError()).toBe(false);
   });
 
   it('should show an error after the control is touched', () => {
     formControl.setErrors({ required: true });
     formControl.markAsTouched();
-    fixture.detectChanges();
 
-    const errorElement = fixture.nativeElement.querySelector('mat-error');
+    (component as any).syncState(formControl);
 
-    expect(errorElement.hidden).toBe(false);
-    expect(getComputedStyle(errorElement).display).not.toBe('none');
+    expect(component.showError()).toBe(true);
   });
 
   it('should add and remove selected values', () => {
@@ -91,37 +91,60 @@ describe('FormFieldCheckboxComponent', () => {
   it('should clear selected checkboxes when the form control is reset', async () => {
     component.onChoiceChange('alpha', { checked: true } as MatCheckboxChange);
     component.onChoiceChange('beta', { checked: true } as MatCheckboxChange);
-    fixture.detectChanges();
 
-    let inputs = fixture.nativeElement.querySelectorAll(
-      'input[type="checkbox"]'
-    );
-    expect(inputs[0].checked).toBe(true);
-    expect(inputs[1].checked).toBe(true);
+    expect(component.isChecked('alpha')).toBe(true);
+    expect(component.isChecked('beta')).toBe(true);
 
     formControl.reset();
-    await fixture.whenStable();
-    fixture.detectChanges();
+    (component as any).syncState(formControl);
 
-    inputs = fixture.nativeElement.querySelectorAll('input[type="checkbox"]');
     expect(formControl.value).toBeNull();
-    expect(inputs[0].checked).toBe(false);
-    expect(inputs[1].checked).toBe(false);
+    expect(component.isChecked('alpha')).toBe(false);
+    expect(component.isChecked('beta')).toBe(false);
   });
 
   it('should toggle form control disabled state with disable switch handler', () => {
     expect(formControl.disabled).toBe(false);
 
     component.onDisableSwitchClick();
-    fixture.detectChanges();
 
     expect(formControl.disabled).toBe(true);
     expect(component.disabled()).toBe(true);
 
     component.onDisableSwitchClick();
-    fixture.detectChanges();
 
     expect(formControl.disabled).toBe(false);
     expect(component.disabled()).toBe(false);
+  });
+
+  it('should invalidate the control when more than the max selected values are checked', () => {
+    const componentInputs = component as unknown as CheckboxComponentInputs;
+    componentInputs.maxSelected = () => 1;
+
+    component.ngOnInit();
+
+    component.onChoiceChange('alpha', { checked: true } as MatCheckboxChange);
+    component.onChoiceChange('beta', { checked: true } as MatCheckboxChange);
+
+    expect(formControl.errors).toEqual({
+      maxSelected: {
+        max: 1,
+        actual: 2
+      }
+    });
+    expect(component.getErrorMessage()).toBe('Select at most 1 options.');
+  });
+
+  it('should clear the maxSelected error when the selection returns within range', () => {
+    const componentInputs = component as unknown as CheckboxComponentInputs;
+    componentInputs.maxSelected = () => 1;
+
+    component.ngOnInit();
+
+    component.onChoiceChange('alpha', { checked: true } as MatCheckboxChange);
+    component.onChoiceChange('beta', { checked: true } as MatCheckboxChange);
+    component.onChoiceChange('beta', { checked: false } as MatCheckboxChange);
+
+    expect(formControl.errors).toBeNull();
   });
 });

@@ -9,7 +9,8 @@ import {
 import {
   FormGroupDirective,
   NgForm,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  ValidatorFn
 } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
 import {
@@ -63,6 +64,8 @@ export class FormFieldCheckboxComponent implements OnInit, OnDestroy {
 
   readonly errors = input<Record<string, string>>();
 
+  readonly maxSelected = input<number | undefined>();
+
   readonly disableSwitch = input(false);
 
   get required(): boolean {
@@ -71,11 +74,17 @@ export class FormFieldCheckboxComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const control = this.formControl();
+    const maxSelected = this.maxSelected();
+
+    if (typeof maxSelected === 'number' && Number.isFinite(maxSelected)) {
+      control.addValidators(this.maxSelectedValidator(maxSelected));
+    }
 
     const normalizedValue = this.normalizeValue(control.value);
     control.setValue(normalizedValue, {
       emitEvent: false
     });
+    control.updateValueAndValidity({ emitEvent: false });
     this.syncState(control);
 
     control.events.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -89,6 +98,16 @@ export class FormFieldCheckboxComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(): string {
+    const maxSelectedError = this.formControl().errors?.['maxSelected'] as
+      { max: number; actual: number } | undefined;
+
+    if (maxSelectedError) {
+      return (
+        this.errors()?.['maxSelected'] ||
+        `Select at most ${maxSelectedError.max} options.`
+      );
+    }
+
     return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
@@ -150,5 +169,22 @@ export class FormFieldCheckboxComponent implements OnInit, OnDestroy {
       this.formControl().enable();
     }
     this.disabled.set(disabled);
+  }
+
+  private maxSelectedValidator(maxSelected: number): ValidatorFn {
+    return (control) => {
+      const selectedValues = this.normalizeValue(control.value);
+
+      if (selectedValues.length <= maxSelected) {
+        return null;
+      }
+
+      return {
+        maxSelected: {
+          max: maxSelected,
+          actual: selectedValues.length
+        }
+      };
+    };
   }
 }
