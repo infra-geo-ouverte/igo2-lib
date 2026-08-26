@@ -3,7 +3,6 @@ import { UntypedFormControl } from '@angular/forms';
 
 import { provideTranslateService } from '@ngx-translate/core';
 
-import '../../../src/test';
 import { FormFieldService } from '../shared/form-field.service';
 import { FormFieldRadiobuttonComponent } from './form-field-radiobutton.component';
 

@@ -5,7 +5,6 @@ import { Validators } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
 import { vi } from 'vitest';
 
-import '../../../src/test';
 import { FormStepperComponent } from './form-stepper.component';
 import { FormStepperStepConfig } from './form-stepper.interface';
 

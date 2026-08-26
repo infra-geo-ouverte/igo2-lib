@@ -5,7 +5,6 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { vi } from 'vitest';
 
-import '../../../src/test';
 import { FormStepperDialogComponent } from './form-stepper-dialog.component';
 
 describe('FormStepperDialogComponent', () => {
