@@ -5,7 +5,6 @@ import { ErrorStateMatcher } from '@angular/material/core';
 
 import { provideTranslateService } from '@ngx-translate/core';
 
-import '../../../src/test';
 import { FormFieldService } from '../shared/form-field.service';
 import { FormFieldCheckboxComponent } from './form-field-checkbox.component';
 
