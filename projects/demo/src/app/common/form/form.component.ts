@@ -32,6 +32,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppFormComponent implements OnInit, OnDestroy {
   private formService = inject(FormService);
+  private readonly interestsMaxSelected = 2;
 
   form$ = new BehaviorSubject<Form | undefined>(undefined);
 
@@ -91,9 +92,13 @@ export class AppFormComponent implements OnInit, OnDestroy {
         type: 'checkbox',
         options: {
           cols: 2,
-          validator: Validators.required
+          validator: Validators.required,
+          errors: {
+            maxSelected: `Choose at most ${this.interestsMaxSelected} interests.`
+          }
         },
         inputs: {
+          maxSelected: this.interestsMaxSelected,
           choices: [
             { value: 'sports', title: 'Sports' },
             { value: 'music', title: 'Music' },

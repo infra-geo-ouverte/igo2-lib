@@ -77,7 +77,9 @@ export interface FormFieldChoiceInputs extends FormFieldInputs {
   choices: FormFieldSelectChoice[];
 }
 
-export type FormFieldCheckboxInputs = FormFieldChoiceInputs;
+export interface FormFieldCheckboxInputs extends FormFieldChoiceInputs {
+  maxSelected?: number;
+}
 
 export type FormFieldRadiobuttonInputs = FormFieldChoiceInputs;
 
