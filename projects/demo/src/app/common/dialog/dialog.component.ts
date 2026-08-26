@@ -20,6 +20,10 @@ import {
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+import {
+  LOCATION_STEPPER_TEXT,
+  buildLocationStepperSteps
+} from '../form-stepper/location-stepper-demo';
 
 @Component({
   selector: 'app-dialog',
@@ -211,6 +215,24 @@ export class AppDialogComponent {
             password: '°°°°°°°°°°'
           })
         );
+      });
+  }
+
+  stepper(): void {
+    this.formDialogService
+      .openStepper(
+        { steps: buildLocationStepperSteps() },
+        {
+          title: LOCATION_STEPPER_TEXT.title,
+          nextButtonText: LOCATION_STEPPER_TEXT.nextButtonText,
+          previousButtonText: LOCATION_STEPPER_TEXT.previousButtonText,
+          processButtonText: LOCATION_STEPPER_TEXT.processButtonText
+        }
+      )
+      .subscribe((data?: Record<string, unknown>) => {
+        if (data) {
+          alert(JSON.stringify(data, null, 2));
+        }
       });
   }
 }

@@ -1,6 +1,54 @@
 import { AbstractControl } from '@angular/forms';
 
-import { Form, FormField } from './form.interfaces';
+import {
+  Form,
+  FormField,
+  FormFieldGroup,
+  FormFieldInputs,
+  FormService
+} from '.';
+import { FormStepperFormConfig } from '../form-stepper/form-stepper.interface';
+
+export function buildFormFromConfig(
+  formService: FormService,
+  formConfig?: FormStepperFormConfig
+): Form {
+  const fields: FormField<FormFieldInputs>[] = [];
+  const groups: FormFieldGroup[] = [];
+
+  formConfig?.formFieldConfigs?.forEach((config) => {
+    fields.push(formService.field(config));
+  });
+
+  formConfig?.formGroupsConfigs?.forEach((formGroupsConfig) => {
+    const groupFields = formGroupsConfig.formFieldConfigs?.map((config) =>
+      formService.field(config)
+    );
+
+    groups.push(
+      formService.group({ name: formGroupsConfig.name }, groupFields)
+    );
+  });
+
+  return formService.form(fields, groups);
+}
+
+export function markFormAsTouched(form: Form): void {
+  if (form.groups?.length) {
+    form.groups.forEach((group) => {
+      Object.keys(group.control.controls).forEach((key) => {
+        group.control.controls[key].markAsTouched();
+        group.control.controls[key].updateValueAndValidity();
+      });
+    });
+    return;
+  }
+
+  form.fields.forEach((field) => {
+    field.control.markAsTouched();
+    field.control.updateValueAndValidity();
+  });
+}
 
 export function formControlIsRequired(control: AbstractControl): boolean {
   if (control.validator) {

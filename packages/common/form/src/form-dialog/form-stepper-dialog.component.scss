@@ -1,0 +1,46 @@
+:host {
+  display: block;
+
+  ::ng-deep igo-form-stepper {
+    display: block;
+    padding: 14px;
+    border: 1px solid #d6e1ef;
+    border-radius: 18px;
+    background: #fff;
+  }
+
+  ::ng-deep igo-form-stepper .form-stepper-content {
+    padding-top: 10px;
+  }
+
+  ::ng-deep igo-form-stepper .form-stepper-header {
+    margin-bottom: 10px;
+    padding: 0 0 12px;
+    border: 0;
+    border-bottom: 1px solid #d6e1ef;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  ::ng-deep igo-form-stepper .form-stepper-notice {
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 640px) {
+    ::ng-deep igo-form-stepper {
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    ::ng-deep igo-form-stepper .form-stepper-content {
+      padding-top: 8px;
+    }
+
+    ::ng-deep igo-form-stepper .form-stepper-header {
+      margin-bottom: 8px;
+      padding-bottom: 10px;
+    }
+  }
+}

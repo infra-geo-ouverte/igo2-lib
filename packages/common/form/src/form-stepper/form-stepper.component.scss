@@ -1,0 +1,140 @@
+:host {
+  display: block;
+
+  .form-stepper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-stepper-content {
+    padding-top: 12px;
+  }
+
+  .form-stepper-header {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 14px;
+    border: 1px solid #d6e1ef;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fbfdff 0%, #f4f8fc 100%);
+    box-shadow: 0 10px 24px rgb(19 93 155 / 0.08);
+  }
+
+  .form-stepper-header-main {
+    display: grid;
+    gap: 8px;
+  }
+
+  .form-stepper-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .form-stepper-counter {
+    margin: 0;
+    color: #5d6a7a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .form-stepper-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #d9ebf9;
+    color: #135d9b;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .form-stepper-progress {
+    overflow: hidden;
+    height: 6px;
+    border-radius: 999px;
+    background: #dbe3ef;
+  }
+
+  .form-stepper-progress-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #135d9b 0%, #3f8cc7 100%);
+    transition: width 160ms ease;
+  }
+
+  .form-stepper-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .form-stepper-notice {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-left: 4px solid #3f8cc7;
+    border-radius: 10px;
+    background: #f4f8fc;
+  }
+
+  .form-stepper-actions {
+    margin: 10px 0 0;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .form-dialog-container {
+    width: 100%;
+    padding: 8px 0;
+
+    igo-form-field,
+    igo-form-group {
+      display: block;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .form-stepper-content {
+      padding-top: 8px;
+    }
+
+    .form-stepper-header {
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 14px;
+    }
+
+    .form-stepper-meta {
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    .form-stepper-title {
+      font-size: 1.1rem;
+      line-height: 1.35;
+    }
+
+    .form-stepper-badge {
+      font-size: 0.75rem;
+    }
+
+    .form-stepper-actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+
+    .form-stepper-actions button {
+      width: 100%;
+    }
+  }
+}
