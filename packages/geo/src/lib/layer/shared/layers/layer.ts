@@ -39,7 +39,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   protected xhrInterceptor = inject(XHR_INTERCEPTOR, { optional: true });
   protected styleService = inject(StyleService, { optional: true });
 
-  get visible() {
+  get visible(): boolean {
     return super.visible;
   }
   set visible(value: boolean) {

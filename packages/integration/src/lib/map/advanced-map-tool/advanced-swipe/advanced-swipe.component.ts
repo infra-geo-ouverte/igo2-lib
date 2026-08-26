@@ -45,7 +45,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
 
   public swipe = false;
   public layerList!: AnyLayer[];
-  public userControlledLayerList!: AnyLayer[];
+  public userControlledLayerList: AnyLayer[] | undefined;
   public form!: UntypedFormGroup;
   public layers!: VectorLayer[];
   public res!: DetailedContext;
