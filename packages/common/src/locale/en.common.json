@@ -27,6 +27,11 @@
         "processButtonText": "Submit",
         "title": "Fill the form"
       },
+      "formStepper": {
+        "nextButtonText": "Next",
+        "previousButtonText": "Previous",
+        "stepCounter": "Step {{current}} of {{total}}"
+      },
       "table": {
         "filter": "Filter"
       },

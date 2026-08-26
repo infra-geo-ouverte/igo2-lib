@@ -6,12 +6,12 @@
     [formData]="(data$ | async)!"
     (submitForm)="onSubmit($event)"
   >
-    @if (form.fields.length) {
+    @if (form.fields.length || form.groups.length) {
       <div class="form-dialog-container">
-        @for (field of form.fields; track field) {
+        @for (field of form.fields; track field.name) {
           <igo-form-field [field]="field" />
         }
-        @for (group of form.groups; track group) {
+        @for (group of form.groups; track group.name) {
           <igo-form-group [group]="group" />
         }
       </div>

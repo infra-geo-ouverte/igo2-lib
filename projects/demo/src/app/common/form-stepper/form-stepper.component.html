@@ -1,0 +1,44 @@
+<app-doc-viewer title="Form Stepper" subtitle="Common">
+  <app-example-viewer codeFolder="common/form-stepper">
+    <section class="form-stepper-demo">
+      <div class="form-stepper-demo-main">
+        <igo-form-stepper
+          [steps]="steps"
+          [nextButtonText]="text.nextButtonText"
+          [previousButtonText]="text.previousButtonText"
+          [processButtonText]="text.processButtonText"
+          [showCancelButton]="false"
+          (dataChange)="onChange($event)"
+          (completed)="onCompleted($event)"
+        />
+
+        <div class="form-stepper-demo-actions">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            (click)="restart()"
+          >
+            Restart
+          </button>
+        </div>
+      </div>
+
+      <aside class="form-stepper-demo-side">
+        <section class="form-stepper-panel">
+          <h3>Current</h3>
+          <pre>{{ data() | json }}</pre>
+        </section>
+
+        <section class="form-stepper-panel">
+          <h3>Last submitted result</h3>
+          @if (submittedData(); as submittedData) {
+            <pre>{{ submittedData | json }}</pre>
+          } @else {
+            <p>Complete the final step to see the submitted payload.</p>
+          }
+        </section>
+      </aside>
+    </section>
+  </app-example-viewer>
+</app-doc-viewer>
