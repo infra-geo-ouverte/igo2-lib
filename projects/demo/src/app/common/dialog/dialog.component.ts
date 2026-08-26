@@ -17,12 +17,6 @@ import {
   IgoJsonDialogModule,
   JsonDialogService
 } from '@igo2/common/json-dialog';
-import {
-  Choice,
-  IgoSelectValueDialogModule,
-  SelectValueDialogService,
-  SelectValueDialogType
-} from '@igo2/common/select-value-dialog';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -35,7 +29,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     IgoConfirmDialogModule,
-    IgoSelectValueDialogModule,
     IgoFormDialogModule,
     IgoJsonDialogModule,
     MatButtonModule,
@@ -44,7 +37,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppDialogComponent {
   private confirmDialogService = inject(ConfirmDialogService);
-  private selectValueDialogService = inject(SelectValueDialogService);
   private jsonDialogService = inject(JsonDialogService);
   private formDialogService = inject(FormDialogService);
 
@@ -61,31 +53,6 @@ export class AppDialogComponent {
       .subscribe((r) => {
         alert(`Your choice is: ${r}`);
       });
-  }
-
-  private select(type: SelectValueDialogType): void {
-    const choices: Choice[] = [
-      { value: '1', title: 'Chocolate' },
-      { value: '2', title: 'Candy' },
-      { value: 3, title: 'Cake' }
-    ];
-
-    this.selectValueDialogService.open(choices, { type }).subscribe((r) => {
-      if (r?.choices) {
-        if (r.choices.length > 1) {
-          alert(`Your choice(s) are: ${r.choices}`);
-        } else {
-          alert(`Your choice is: ${r.choices}`);
-        }
-      }
-    });
-  }
-
-  check(): void {
-    this.select(SelectValueDialogType.Checkbox);
-  }
-  radio(): void {
-    this.select(SelectValueDialogType.Radio);
   }
 
   json(): void {
@@ -199,7 +166,7 @@ export class AppDialogComponent {
 
     this.formDialogService
       .open({ formFieldConfigs, formGroupsConfigs }, { minWidth: '50vh' })
-      .subscribe((data: any) => {
+      .subscribe((data?: Record<string, unknown>) => {
         if (data) {
           alert(JSON.stringify(data));
         }
@@ -231,11 +198,19 @@ export class AppDialogComponent {
       }
     ];
 
-    this.formDialogService.open({ formFieldConfigs }).subscribe((data: any) => {
-      if (data) {
-        data.password = '°°°°°°°°°°';
-        alert(JSON.stringify(data));
-      }
-    });
+    this.formDialogService
+      .open({ formFieldConfigs })
+      .subscribe((data?: Record<string, unknown>) => {
+        if (!data) {
+          return;
+        }
+
+        alert(
+          JSON.stringify({
+            ...data,
+            password: '°°°°°°°°°°'
+          })
+        );
+      });
   }
 }
