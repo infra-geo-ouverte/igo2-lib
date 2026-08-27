@@ -10,7 +10,6 @@ import { StorageService } from '@igo2/core/storage';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   Feature,
@@ -47,7 +46,6 @@ export class WfsWorkspaceService {
   private configService = inject(ConfigService);
   private layerService = inject(LayerService);
   private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
-  private capabilitiesService = inject(CapabilitiesService);
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -96,8 +94,7 @@ export class WfsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const geoPropertiesStrategy = new GeoPropertiesStrategy(
       { map },
-      this.propertyTypeDetectorService,
-      this.capabilitiesService
+      this.propertyTypeDetectorService
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});

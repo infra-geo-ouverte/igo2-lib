@@ -29,7 +29,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { LayerService } from '../../layer';
 import { IgoMap } from '../../map';
 import { SearchSelectorComponent } from '../search-selector/search-selector.component';
 import { SearchSettingsComponent } from '../search-settings/search-settings.component';
@@ -62,7 +61,6 @@ import { SearchService } from '../shared/search.service';
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-  private layerService = inject(LayerService);
   private configService = inject(ConfigService);
   private searchService = inject(SearchService);
   private searchSourceService = inject(SearchSourceService);

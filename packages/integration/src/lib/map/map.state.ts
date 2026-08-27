@@ -17,6 +17,7 @@ import {
 })
 export class MapState {
   private mapService = inject(MapService);
+  // eslint-disable-next-line @typescript-eslint/no-unused-private-class-members
   private projectionService = inject(ProjectionService);
   private storageService = inject(StorageService);
   private configService = inject(ConfigService);

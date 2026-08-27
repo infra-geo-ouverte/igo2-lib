@@ -44,6 +44,7 @@ export default defineConfig(
       '@stylistic/semi': ['error', 'always'],
       '@typescript-eslint/array-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-private-class-members': 'error',
       '@typescript-eslint/no-unused-expressions': [
         'error',
         { allowTernary: true }

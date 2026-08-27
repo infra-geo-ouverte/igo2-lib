@@ -46,6 +46,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppLayerComponent {
   private layerService = inject(LayerService);
+  // eslint-disable-next-line @typescript-eslint/no-unused-private-class-members
   private projectionService = inject(ProjectionService);
 
   public map: IgoMap = new IgoMap({
