@@ -302,7 +302,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           ) {
             previousSpecs.push({
               id: layer.id!,
-              visible: layer.visible,
+              visible: layer.visible ?? true,
               opacity: layer.opacity,
               queryable: (layer as any).queryable
             });

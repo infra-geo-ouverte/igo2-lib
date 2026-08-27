@@ -34,13 +34,12 @@ export class WorkspaceButtonComponent implements OnInit {
 
   readonly layer = input<AnyLayer>();
 
+  private readonly layer$ = toObservable(this.layer);
+
   readonly color = input('primary');
 
   ngOnInit(): void {
-    combineLatest([
-      this.workspaceState.workspaceEnabled$,
-      toObservable(this.layer)
-    ])
+    combineLatest([this.workspaceState.workspaceEnabled$, this.layer$])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([enabled, layer]) => {
         const withWorkspace =

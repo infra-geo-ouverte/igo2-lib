@@ -19,7 +19,7 @@ interface ILayerBase {
   ol: BaseLayer;
   id: LayerId | undefined;
   isInResolutionsRange$: Observable<boolean>;
-  visible$: Observable<boolean>;
+  visible$: Observable<boolean | undefined>;
   displayed$: Observable<boolean>;
   addParent(parent?: ILayerGroup): void;
 }
@@ -124,16 +124,16 @@ export abstract class LayerBase<
   }
 
   set visible(value: boolean) {
-    if (value === this.visible) {
+    if (value === this._visible$.value) {
       return;
     }
     this.ol.setVisible(value);
     this._visible$.next(value);
   }
   get visible(): boolean {
-    return this._visible$.value ?? false;
+    return this._visible$.value ?? true; // Default to true if undefined
   }
-  private _visible$ = new BehaviorSubject(false);
+  private _visible$ = new BehaviorSubject<boolean | undefined>(undefined);
   readonly visible$ = this._visible$.asObservable();
 
   get parent(): G | undefined {

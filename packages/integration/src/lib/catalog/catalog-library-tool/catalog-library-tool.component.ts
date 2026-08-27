@@ -345,7 +345,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
     const documentName = this.languageService.translate.instant(
       'igo.integration.catalog.listExport.documentName',
-      { value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US') }
+      { value: formatDate(Date.now(), "yyyy-MM-dd-HH'h'mm", 'en-US') }
     );
     writeExcelFile(workBook, documentName, { compression: true });
   }
