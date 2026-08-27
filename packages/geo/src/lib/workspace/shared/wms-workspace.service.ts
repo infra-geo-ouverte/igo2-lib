@@ -10,7 +10,6 @@ import { StorageService } from '@igo2/core/storage';
 
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
-import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { WMSDataSource } from '../../datasource/shared/datasources';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -54,7 +53,6 @@ import {
 export class WmsWorkspaceService {
   private layerService = inject(LayerService);
   private storageService = inject(StorageService);
-  private capabilitiesService = inject(CapabilitiesService);
   private configService = inject(ConfigService);
   private propertyTypeDetectorService = inject(PropertyTypeDetectorService);
 
@@ -239,8 +237,7 @@ export class WmsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const geoPropertiesStrategy = new GeoPropertiesStrategy(
       { map },
-      this.propertyTypeDetectorService,
-      this.capabilitiesService
+      this.propertyTypeDetectorService
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});

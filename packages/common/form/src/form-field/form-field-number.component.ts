@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
-  inject,
   input,
   signal
 } from '@angular/core';
@@ -41,11 +39,8 @@ import {
   ]
 })
 export class FormFieldNumberComponent implements OnInit {
-  private cdRef = inject(ChangeDetectorRef);
-
   readonly disabled = signal(false);
   hide = true;
-  private lastTimeoutRequest?: number;
 
   /**
    * The field's form control

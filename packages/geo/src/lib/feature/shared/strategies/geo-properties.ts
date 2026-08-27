@@ -3,7 +3,6 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { Subscription, debounceTime, pairwise } from 'rxjs';
 
-import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
 import { AnyLayer } from '../../../layer';
 import { LayerId } from '../../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../../map/shared/map';
@@ -36,8 +35,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
 
   constructor(
     protected options: FeatureStorePropertyTypeStrategyOptions,
-    private propertyTypeDetectorService: PropertyTypeDetectorService,
-    private capabilitiesService: CapabilitiesService
+    private propertyTypeDetectorService: PropertyTypeDetectorService
   ) {
     super(options);
     this.map = options.map;

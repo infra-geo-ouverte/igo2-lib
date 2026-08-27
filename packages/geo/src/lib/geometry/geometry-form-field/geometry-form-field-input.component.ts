@@ -354,6 +354,7 @@ export class GeometryFormFieldInputComponent
   registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-private-class-members
   private onTouched: any = () => {};
 
   /**

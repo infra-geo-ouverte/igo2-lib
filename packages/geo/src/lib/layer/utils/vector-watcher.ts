@@ -1,10 +1,9 @@
-import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
+import { SubjectStatus, Watcher } from '@igo2/utils';
 
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import type { VectorLayer } from '../shared/layers/vector-layer';
 
 export class VectorWatcher extends Watcher {
-  private id: string;
   private loaded = 0;
   private loading = 0;
   private onFeatureLoadStart = () => this.handleLoadStart();
@@ -15,7 +14,6 @@ export class VectorWatcher extends Watcher {
   constructor(layer: VectorLayer) {
     super();
     this.layer = layer;
-    this.id = uuid();
   }
 
   protected watch() {
