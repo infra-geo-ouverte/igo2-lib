@@ -16,17 +16,17 @@ export function tryAddLoadingStrategy(
 ) {
   if (
     store.getStrategyOfType(
-      FeatureStoreLoadingStrategy as unknown as typeof EntityStoreStrategy
+      FeatureStoreLoadingStrategy as typeof EntityStoreStrategy
     ) !== undefined
   ) {
     store.activateStrategyOfType(
-      FeatureStoreLoadingStrategy as unknown as typeof EntityStoreStrategy
+      FeatureStoreLoadingStrategy as typeof EntityStoreStrategy
     );
     return;
   }
 
   strategy = strategy ? strategy : new FeatureStoreLoadingStrategy({});
-  store.addStrategy(strategy as unknown as EntityStoreStrategy);
+  store.addStrategy(strategy);
   strategy.activate();
 }
 
