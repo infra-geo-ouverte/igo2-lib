@@ -2,12 +2,7 @@ import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
-import {
-  IgoMap,
-  MapService,
-  OverlayService,
-  ProjectionService
-} from '@igo2/geo';
+import { IgoMap, MapService, OverlayService } from '@igo2/geo';
 
 /**
  * Service that holds the state of the map module
@@ -17,8 +12,6 @@ import {
 })
 export class MapState {
   private mapService = inject(MapService);
-  // eslint-disable-next-line @typescript-eslint/no-unused-private-class-members
-  private projectionService = inject(ProjectionService);
   private storageService = inject(StorageService);
   private configService = inject(ConfigService);
   private overlayService = inject(OverlayService);

@@ -32,7 +32,12 @@ import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation, withStaticConfig } from '@igo2/core/language';
 import { provideSentryMonitoring } from '@igo2/core/monitoring';
-import { provideStyle, withGeostyler, withMapbox } from '@igo2/geo';
+import {
+  provideProjection,
+  provideStyle,
+  withGeostyler,
+  withMapbox
+} from '@igo2/geo';
 import { provideOffline, withIndexedDb } from '@igo2/geo/offline';
 
 import { environment } from '../environments/environment';
@@ -56,6 +61,7 @@ export const appConfig: ApplicationConfig = {
     provideConfig({
       default: environment.igo
     }),
+    provideProjection(),
     provideTranslation(withStaticConfig(environment.igo.language!)),
     provideAuthentification(),
     provideIcon(),
