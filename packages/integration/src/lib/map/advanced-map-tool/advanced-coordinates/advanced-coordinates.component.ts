@@ -493,8 +493,15 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       const extent = projection.extent;
       const codeMatch = projection.code.match(/\d+/);
       const code = codeMatch?.[0];
+      if (
+        !extent ||
+        !olproj.get(projection.code) ||
+        !olproj.get(this.defaultProj.code)
+      ) {
+        return;
+      }
       const currentExtentWGS = olproj.transformExtent(
-        extent!,
+        extent,
         projection.code,
         this.defaultProj.code
       );
