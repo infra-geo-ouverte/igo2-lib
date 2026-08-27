@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -6,8 +6,16 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 
 import proj4 from 'proj4';
+import { filter, take } from 'rxjs';
 
 import { Projection } from './projection.interfaces';
+
+export interface ProjectionProviderOptions {
+  projections?: Projection[];
+}
+
+export const PROJECTION_PROVIDER_OPTIONS =
+  new InjectionToken<ProjectionProviderOptions>('PROJECTION_PROVIDER_OPTIONS');
 
 /**
  * When injected, this service automatically registers and
@@ -18,15 +26,15 @@ import { Projection } from './projection.interfaces';
   providedIn: 'root'
 })
 export class ProjectionService {
-  private config = inject(ConfigService);
+  private config = inject(ConfigService, { optional: true });
+  private options = inject(PROJECTION_PROVIDER_OPTIONS, { optional: true });
 
   constructor() {
-    const projections: Projection[] =
-      this.config.getConfig('projections') || [];
-    projections.forEach((projection) => {
-      projection.alias = projection.alias ? projection.alias : projection.code;
-      this.registerProjection(projection);
-    });
+    this.registerProjections(this.options?.projections ?? []);
+
+    this.config?.isLoaded$
+      .pipe(filter(Boolean), take(1))
+      .subscribe(() => this.registerConfiguredProjections());
 
     // register all utm zones
     for (let utmZone = 1; utmZone < 61; utmZone++) {
@@ -60,6 +68,19 @@ export class ProjectionService {
       };
       this.registerProjection(proj);
     }
+  }
+
+  private registerConfiguredProjections(): void {
+    const projections: Projection[] =
+      this.config?.getConfig('projections') || [];
+    this.registerProjections(projections);
+  }
+
+  private registerProjections(projections: Projection[]): void {
+    projections.forEach((projection) => {
+      projection.alias = projection.alias ? projection.alias : projection.code;
+      this.registerProjection(projection);
+    });
   }
 
   /**
