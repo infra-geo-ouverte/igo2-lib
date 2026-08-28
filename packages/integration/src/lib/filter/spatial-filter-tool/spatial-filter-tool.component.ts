@@ -37,7 +37,6 @@ import {
   VectorLayerOptions,
   featureToOl,
   isLayerItem,
-  markerOlStyle,
   moveToOlFeatures
 } from '@igo2/geo';
 
@@ -424,8 +423,6 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       }
     }
 
-    const style = markerOlStyle({});
-
     // 🔑 Use zoneIndex to sync layer naming
     const filterLabel = this.languageService.translate.instant(
       'igo.geo.spatialFilter.spatialFilter'
@@ -435,7 +432,6 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       isIgoInternalLayer: true,
       title: `${titleFeature} ${zoneIndex} - ${filterLabel}`,
       visible: true,
-      style,
 
       sourceOptions: {
         type: 'cluster',
