@@ -8,22 +8,24 @@ import type { Observable } from 'rxjs';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
 
+export type DataSourceType =
+  | 'wms'
+  | 'wfs'
+  | 'vector'
+  | 'wmts'
+  | 'xyz'
+  | 'osm'
+  | 'tiledebug'
+  | 'carto'
+  | 'arcgisrest'
+  | 'imagearcgisrest'
+  | 'tilearcgisrest'
+  | 'websocket'
+  | 'mvt'
+  | 'cluster';
+
 export interface DataSourceOptions {
-  type?:
-    | 'wms'
-    | 'wfs'
-    | 'vector'
-    | 'wmts'
-    | 'xyz'
-    | 'osm'
-    | 'tiledebug'
-    | 'carto'
-    | 'arcgisrest'
-    | 'imagearcgisrest'
-    | 'tilearcgisrest'
-    | 'websocket'
-    | 'mvt'
-    | 'cluster';
+  type: DataSourceType;
   optionsFromCapabilities?: boolean;
   optionsFromApi?: boolean;
   _layerOptionsFromSource?: Record<string, string>;

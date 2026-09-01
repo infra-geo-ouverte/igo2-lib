@@ -29,7 +29,7 @@ export class CartoDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
-  get saveableOptions(): Partial<CartoDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

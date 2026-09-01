@@ -29,7 +29,7 @@ export class ImageArcGISRestDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
-  get saveableOptions(): Partial<ArcGISRestImageDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

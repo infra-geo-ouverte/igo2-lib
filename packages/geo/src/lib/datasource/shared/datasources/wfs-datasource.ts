@@ -65,7 +65,7 @@ export class WFSDataSource extends DataSource {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
-  get saveableOptions(): Partial<WFSDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

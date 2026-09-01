@@ -32,14 +32,16 @@ export class LayerUnavailableComponent {
   readonly remove = output<AnyLayerOptions>();
 
   get title(): string | undefined {
-    const sourceOptions = this.layerOptions()?.sourceOptions as Record<
-      string,
-      Record<string, unknown>
-    >;
+    const sourceOptions = this.layerOptions()?.sourceOptions as
+      | {
+          params?: Record<string, unknown>;
+          layer?: string;
+        }
+      | undefined;
     return (this.layerOptions()?.title ??
-      sourceOptions?.['params']?.['LAYERS'] ??
-      sourceOptions?.['params']?.['layers'] ??
-      sourceOptions?.['layer']) as string | undefined;
+      sourceOptions?.params?.['LAYERS'] ??
+      sourceOptions?.params?.['layers'] ??
+      sourceOptions?.layer) as string | undefined;
   }
 
   handleRemove(layerOptions: AnyLayerOptions): void {
