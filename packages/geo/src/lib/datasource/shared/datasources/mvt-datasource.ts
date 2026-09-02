@@ -13,7 +13,7 @@ export class MVTDataSource extends DataSource {
   declare public options: MVTDataSourceOptions;
   declare public ol: olSourceVectorTile;
 
-  get saveableOptions(): Partial<MVTDataSourceOptions> {
+  get saveableOptions() {
     return super.saveableOptions;
   }
 

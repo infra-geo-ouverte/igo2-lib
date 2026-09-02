@@ -30,9 +30,8 @@ export function generateIdFromSourceOptions(
 
     tiledebug: () => 'tiledebug'
   };
-  const generator = options.type
-    ? (generators[options.type as keyof typeof generators] ?? generateId)
-    : generateId;
+  const generator =
+    generators[options.type as keyof typeof generators] ?? generateId;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return generator(options as any);
 }

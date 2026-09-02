@@ -93,7 +93,7 @@ export class DataSourceService {
         break;
       case 'tiledebug':
         dataSource$ = this.createTileDebugDataSource(
-          options as TileDebugDataSource
+          options as TileDebugDataSourceOptions
         );
         break;
       case 'carto':
@@ -344,9 +344,12 @@ export class DataSourceService {
     observables.push(of(options));
     return forkJoin(observables).pipe(
       map((opts) => {
-        const optionsMerged = opts.reduce((a, b) =>
-          ObjectUtils.mergeDeep(a, b)
-        );
+        const [firstOptions, ...remainingOptions] = opts;
+        const optionsMerged =
+          remainingOptions.reduce<ArcGISRestDataSourceOptions>(
+            (a, b) => ObjectUtils.mergeDeep(a, b),
+            firstOptions as ArcGISRestDataSourceOptions
+          );
         return new ArcGISRestDataSource(optionsMerged);
       }),
       catchError(() => {
@@ -401,9 +404,12 @@ export class DataSourceService {
     observables.push(of(options));
     return forkJoin(observables).pipe(
       map((opts) => {
-        const optionsMerged = opts.reduce((a, b) =>
-          ObjectUtils.mergeDeep(a, b)
-        );
+        const [firstOptions, ...remainingOptions] = opts;
+        const optionsMerged =
+          remainingOptions.reduce<ArcGISRestImageDataSourceOptions>(
+            (a, b) => ObjectUtils.mergeDeep(a, b),
+            firstOptions as ArcGISRestImageDataSourceOptions
+          );
         return new ImageArcGISRestDataSource(optionsMerged);
       }),
       catchError(() => {
@@ -457,9 +463,12 @@ export class DataSourceService {
     observables.push(of(options));
     return forkJoin(observables).pipe(
       map((opts) => {
-        const optionsMerged = opts.reduce((a, b) =>
-          ObjectUtils.mergeDeep(a, b)
-        );
+        const [firstOptions, ...remainingOptions] = opts;
+        const optionsMerged =
+          remainingOptions.reduce<TileArcGISRestDataSourceOptions>(
+            (a, b) => ObjectUtils.mergeDeep(a, b),
+            firstOptions as TileArcGISRestDataSourceOptions
+          );
         return new TileArcGISRestDataSource(optionsMerged);
       }),
       catchError(() => {

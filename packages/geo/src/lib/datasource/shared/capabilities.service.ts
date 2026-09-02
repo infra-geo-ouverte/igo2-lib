@@ -562,7 +562,11 @@ export class CapabilitiesService {
       queryTitle: arcgisOptions.displayField
     });
     options['attributions'] = attributions;
-    return ObjectUtils.mergeDeep(options, baseOptions);
+    return ObjectUtils.mergeDeep(
+      options as unknown as
+        TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions,
+      baseOptions
+    );
   }
 
   private findDataSourceInCapabilities(

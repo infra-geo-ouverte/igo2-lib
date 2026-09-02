@@ -36,6 +36,12 @@ import {
 export const ILAYER_SEARCH_SOURCE_OPTIONS =
   new InjectionToken<SearchSourceOptions>('ILayerSearchSourceOptions');
 
+type ILayerDataWithFormat = ILayerData & {
+  properties: ILayerData['properties'] & {
+    format: NonNullable<ILayerData['properties']['format']>;
+  };
+};
+
 @Injectable()
 export class ILayerSearchResultFormatter {
   private languageService = inject(LanguageService);
@@ -308,13 +314,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     response: ILayerServiceResponse,
     term: string
   ): SearchResult<ILayerItemResponse>[] {
-    return response.items.map((data: ILayerData) =>
-      this.dataToResult(data, term, response)
-    );
+    return response.items
+      .filter(
+        (data): data is ILayerDataWithFormat =>
+          data.properties.format !== undefined
+      )
+      .map((data) => this.dataToResult(data, term, response));
   }
 
   private dataToResult(
-    data: ILayerData,
+    data: ILayerDataWithFormat,
     term: string,
     response?: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse> {
@@ -345,9 +354,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private computeLayerOptions(data: ILayerData): ILayerItemResponse {
+  private computeLayerOptions(data: ILayerDataWithFormat): ILayerItemResponse {
     const url = data.properties.url;
-    const queryParams: QueryableDataSourceOptions =
+    const queryParams: Partial<QueryableDataSourceOptions> =
       this.extractQueryParamsFromSourceUrl(url ?? '');
     return ObjectUtils.removeUndefined({
       sourceOptions: {

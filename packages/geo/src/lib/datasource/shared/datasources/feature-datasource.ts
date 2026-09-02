@@ -8,7 +8,11 @@ export class FeatureDataSource extends DataSource {
   declare public options: FeatureDataSourceOptions;
   declare public ol: olSourceVector;
 
-  get saveableOptions(): Partial<FeatureDataSourceOptions> {
+  constructor(options: FeatureDataSourceOptions = { type: 'vector' }) {
+    super(options);
+  }
+
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

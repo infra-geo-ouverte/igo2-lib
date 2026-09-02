@@ -23,7 +23,7 @@ export abstract class DataSource {
   private legend: Legend[] = [];
   private destroyed = false;
 
-  get saveableOptions(): Partial<DataSourceOptions> {
+  get saveableOptions(): DataSourceOptions {
     return {
       id: this.id,
       type: this.options.type,
@@ -36,7 +36,7 @@ export abstract class DataSource {
   properties = new DatasourceProperties();
 
   constructor(
-    public options: DataSourceOptions = {},
+    public options: DataSourceOptions,
     protected dataService?: DataService
   ) {
     this.options = options;

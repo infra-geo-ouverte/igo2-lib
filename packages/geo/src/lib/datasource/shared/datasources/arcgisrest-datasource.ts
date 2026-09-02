@@ -14,7 +14,7 @@ export class ArcGISRestDataSource extends DataSource {
   declare public ol: olSourceVector;
   declare public options: ArcGISRestDataSourceOptions;
 
-  get saveableOptions(): Partial<ArcGISRestDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

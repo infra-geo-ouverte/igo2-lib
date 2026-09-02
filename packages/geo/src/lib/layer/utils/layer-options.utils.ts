@@ -72,6 +72,10 @@ export function mergeLayersOptions(
 }
 
 function handleExternalDataSource(options: AnyLayerItemOptions): void {
+  if (!options.sourceOptions) {
+    return;
+  }
+
   options.sourceOptions = {
     ...options.sourceOptions,
     optionsFromCapabilities: true,

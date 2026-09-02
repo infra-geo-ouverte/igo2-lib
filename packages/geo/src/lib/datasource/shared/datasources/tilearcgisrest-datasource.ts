@@ -30,7 +30,7 @@ export class TileArcGISRestDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
-  get saveableOptions(): Partial<TileArcGISRestDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

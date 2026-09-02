@@ -79,7 +79,7 @@ export class WMSDataSource extends DataSource {
     undefined
   );
 
-  get saveableOptions(): Partial<WMSDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions as WMSDataSourceOptions;
 
     if (

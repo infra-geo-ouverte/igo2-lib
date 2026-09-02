@@ -13,10 +13,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import {
-  WFSDataSourceOptions,
-  WFSDataSourceOptionsParams
-} from '../../datasource/shared/datasources/wfs-datasource.interface';
+import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { Layer } from '../../layer';
@@ -165,18 +162,10 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       firstFieldName =
         includedFields[0].name === undefined ? '' : includedFields[0].name;
     }
-    let fieldNameGeometry;
-    const datasourceOptions = this.datasource
-      .options as WFSDataSourceOptionsParams;
-    if (datasourceOptions.fieldNameGeometry) {
-      fieldNameGeometry = datasourceOptions.fieldNameGeometry;
-    } else if (
-      (this.datasource.options as any).paramsWFS &&
-      (this.datasource.options as any).paramsWFS.fieldNameGeometry
-    ) {
-      fieldNameGeometry = (this.datasource.options as any).paramsWFS
-        .fieldNameGeometry;
-    }
+    const paramsWFS = (this.datasource.options as Partial<WFSDataSourceOptions>)
+      .paramsWFS;
+    const fieldNameGeometry =
+      this.datasource.options.fieldNameGeometry ?? paramsWFS?.fieldNameGeometry;
     const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
       this.datasource.options.sourceFields,
       firstFieldName,
