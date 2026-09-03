@@ -3,7 +3,12 @@
   (mouseleave)="onMouseEvent($event)"
 >
   @if (icon) {
-    <mat-icon matListItemIcon>{{ showIcons() ? icon : 'blank' }}</mat-icon>
+    <mat-icon
+      matListItemIcon
+      [class.igo-search-results-item__icon-hidden]="!showIcons()"
+      [attr.aria-hidden]="!showIcons() ? 'true' : null"
+      >{{ icon }}</mat-icon
+    >
   }
 
   @if (titleHtml) {
