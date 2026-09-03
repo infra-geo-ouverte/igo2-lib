@@ -118,9 +118,6 @@
     "./resizable-bar": {
       "import": "./resizable-bar/src/public_api.ts"
     },
-    "./select-value-dialog": {
-      "import": "./select-value-dialog/src/public_api.ts"
-    },
     "./sidenav": {
       "import": "./sidenav/src/public_api.ts"
     },

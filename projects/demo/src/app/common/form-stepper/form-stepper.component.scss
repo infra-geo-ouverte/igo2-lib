@@ -1,0 +1,60 @@
+.form-stepper-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.form-stepper-demo-main {
+  display: grid;
+  gap: 16px;
+}
+
+.form-stepper-demo-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-stepper-demo-side {
+  display: grid;
+  gap: 12px;
+}
+
+.form-stepper-panel {
+  padding: 16px;
+  border: 1px solid #d6e1ef;
+  border-radius: 16px;
+  background: #f9fbfd;
+}
+
+.form-stepper-panel h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.form-stepper-panel p,
+.form-stepper-panel pre {
+  margin: 0;
+}
+
+.form-stepper-panel pre {
+  overflow: auto;
+  color: #17324d;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 960px) {
+  .form-stepper-demo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .form-stepper-demo-actions {
+    justify-content: stretch;
+  }
+
+  .form-stepper-demo-actions button {
+    width: 100%;
+  }
+}

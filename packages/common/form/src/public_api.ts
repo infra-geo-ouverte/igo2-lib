@@ -3,4 +3,5 @@ export * from './shared';
 export * from './form-group';
 export * from './form-field';
 export * from './form';
+export * from './form-stepper';
 export * from './form-dialog';

@@ -239,7 +239,7 @@ export class SearchSettingsComponent implements OnInit {
     ];
 
     this.formDialogService
-      .open(
+      .open<{ sources: SearchSource[] }>(
         { formFieldConfigs },
         {
           minWidth: '50vw',
@@ -249,7 +249,7 @@ export class SearchSettingsComponent implements OnInit {
       )
       .subscribe((data) => {
         if (data) {
-          data.sources.forEach((source: any) => {
+          data.sources.forEach((source) => {
             source.resetSourceOptions();
             this.searchSourceChange.emit(source);
           });

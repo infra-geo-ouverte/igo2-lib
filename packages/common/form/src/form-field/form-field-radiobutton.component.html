@@ -1,0 +1,32 @@
+<div class="igo-form-field-choice-list">
+  @if (placeholder()) {
+    <div class="igo-form-field-choice-label">
+      {{ placeholder() | translate }}
+    </div>
+  }
+
+  <mat-radio-group
+    class="igo-form-field-choice-options"
+    [formControl]="formControl()"
+    [required]="required"
+  >
+    @for (choice of choices(); track choice.value) {
+      <mat-radio-button [value]="choice.value" [disabled]="disabled()">
+        {{ choice.title }}
+      </mat-radio-button>
+    }
+  </mat-radio-group>
+
+  @if (disableSwitch() === true) {
+    <mat-checkbox
+      class="igo-form-disable-switch"
+      (click)="onDisableSwitchClick()"
+      [checked]="!disabled()"
+      [attr.aria-label]="'Toggle field availability'"
+    />
+  }
+
+  <mat-error [hidden]="!showError()">
+    {{ getErrorMessage() | translate }}
+  </mat-error>
+</div>

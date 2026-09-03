@@ -16,7 +16,6 @@ export {
 } from '@igo2/common/form';
 export { IgoListModule } from '@igo2/common/list';
 export { IgoPanelModule } from '@igo2/common/panel';
-export { IgoSelectValueDialogModule } from '@igo2/common/select-value-dialog';
 export { IgoSidenavModule } from '@igo2/common/sidenav';
 export { IgoSpinnerModule } from '@igo2/common/spinner';
 export { IgoStopPropagationModule } from '@igo2/common/stop-propagation';
