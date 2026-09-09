@@ -230,6 +230,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.term = searchTerm;
         this.debouncedEmpty.set(false);
       } else if (searchTerm === '') {
+        this.clearResultOverlays();
+        this.searchState.clearSelectedResult();
         this.debouncedEmpty.set(true);
       }
     });
@@ -351,8 +353,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    this.searchResultsOverlayFocused.clear();
-    this.searchResultsOverlaySelected.clear();
+    this.clearResultOverlays();
     this.addResultToOverlay(
       result,
       this.searchResultsOverlaySelected,
@@ -423,6 +424,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }
       });
     }, 250);
+  }
+
+  private clearResultOverlays() {
+    this.searchResultsOverlayFocused?.clear();
+    this.searchResultsOverlaySelected?.clear();
   }
 
   computeElementRef() {

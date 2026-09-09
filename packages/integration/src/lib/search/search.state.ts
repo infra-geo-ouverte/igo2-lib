@@ -195,6 +195,10 @@ export class SearchState {
     this.selectedResult$.next(result);
   }
 
+  clearSelectedResult() {
+    this.selectedResult$.next(undefined);
+  }
+
   setSearchResultsGeometryStatus(value: boolean) {
     this.storageService.set('searchResultsGeometryEnabled', value);
     this.searchResultsGeometryEnabled$.next(value);
