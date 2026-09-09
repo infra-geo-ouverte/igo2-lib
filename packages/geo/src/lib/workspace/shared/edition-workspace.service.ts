@@ -662,56 +662,56 @@ export class EditionWorkspaceService {
       workspace.meta!.tableTemplate!.columns
     );
     this.loading = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const baseRequest = (this.http as any)[protocole as any];
-    baseRequest(`${url}`, properties, {
-      headers: headers
-    }).subscribe(
-      () => {
-        this.loading = false;
-        this.cancelEdit(feature, workspace, true);
+    this.http
+      .request(protocole, `${url}`, {
+        body: properties,
+        headers: headers
+      })
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.cancelEdit(feature, workspace, true);
 
-        this.messageService.success('igo.geo.workspace.modifySuccess');
+          this.messageService.success('igo.geo.workspace.modifySuccess');
 
-        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
+          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
 
-        const relationLayers: (ImageLayer | VectorLayer)[] = [];
-        workspace.layer.options.sourceOptions!.relations?.forEach(
-          (relation) => {
-            workspace.map.layerController.all.forEach((layer) => {
-              if (isLayerItem(layer) && layer.title === relation.title) {
-                relationLayers.push(layer as VectorLayer | ImageLayer);
-                layer.dataSource.ol.refresh();
+          const relationLayers: (ImageLayer | VectorLayer)[] = [];
+          workspace.layer.options.sourceOptions!.relations?.forEach(
+            (relation) => {
+              workspace.map.layerController.all.forEach((layer) => {
+                if (isLayerItem(layer) && layer.title === relation.title) {
+                  relationLayers.push(layer as VectorLayer | ImageLayer);
+                  layer.dataSource.ol.refresh();
+                }
+              });
+            }
+          );
+          this.relationLayers$.next(
+            relationLayers as unknown as ImageLayer[] | VectorLayer[]
+          );
+        },
+        error: (error) => {
+          this.loading = false;
+          error.error.caught = true;
+          const messages = dataSourceOptions.edition!.messages;
+          if (messages) {
+            let text;
+            messages.forEach((message) => {
+              const key = Object.keys(message)[0];
+              if (error.error.message.includes(key)) {
+                text = message[key];
+                this.messageService.error(text);
               }
             });
-          }
-        );
-        this.relationLayers$.next(
-          relationLayers as unknown as ImageLayer[] | VectorLayer[]
-        );
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (error: any) => {
-        this.loading = false;
-        error.error.caught = true;
-        const messages = dataSourceOptions.edition!.messages;
-        if (messages) {
-          let text;
-          messages.forEach((message) => {
-            const key = Object.keys(message)[0];
-            if (error.error.message.includes(key)) {
-              text = message[key];
-              this.messageService.error(text);
+            if (!text) {
+              this.messageService.error('igo.geo.workspace.addError');
             }
-          });
-          if (!text) {
+          } else {
             this.messageService.error('igo.geo.workspace.addError');
           }
-        } else {
-          this.messageService.error('igo.geo.workspace.addError');
         }
-      }
-    );
+      });
   }
 
   private cleanFeatureProperties(
