@@ -34,6 +34,7 @@ import { catchError, map } from 'rxjs/operators';
 
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import {
+  AnyDataSourceOptions,
   Legend,
   WMSDataSource,
   WMSDataSourceOptions
@@ -45,6 +46,12 @@ import {
   VectorLayer,
   VectorTileLayer
 } from '../shared/layers';
+
+function isWmsDataSourceOptions(
+  sourceOptions: AnyDataSourceOptions
+): sourceOptions is WMSDataSourceOptions {
+  return sourceOptions.type === 'wms';
+}
 
 @Component({
   selector: 'igo-layer-legend',
@@ -89,14 +96,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * The available styles
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public styles: any;
+  public styles: ItemStyleOptions[] | undefined;
 
   /**
    * The style used to make the legend
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public currentStyle: any;
+  public currentStyle?: string;
 
   /**
    * The extent used to make the legend
@@ -125,12 +130,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   ngOnInit() {
     let lastlLegend = this.layer()!.legend;
     this.styles = this.listStyles();
-    const sourceOptions = this.layer()!.options.source?.options as any;
-    if (sourceOptions && sourceOptions.params && sourceOptions.params.STYLES) {
+    const sourceOptions = this.layer()!.options.source?.options;
+    const wmsSourceOptions =
+      sourceOptions && isWmsDataSourceOptions(sourceOptions)
+        ? sourceOptions
+        : undefined;
+    if (wmsSourceOptions?.params.STYLES) {
       // if a styles is provided into the layers wms params
-      this.currentStyle = this.styles.find(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (style: any) => style.name === sourceOptions.params.STYLES
+      this.currentStyle = this.styles?.find(
+        (style) => style.name === wmsSourceOptions.params.STYLES
       )?.name;
     } else if (!lastlLegend) {
       // if no legend is manually provided
@@ -157,7 +165,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
     if (
       this.updateLegendOnResolutionChange() ||
-      (sourceOptions as WMSDataSourceOptions).contentDependentLegend
+      wmsSourceOptions?.contentDependentLegend
     ) {
       const state$ = layer.map!.viewController.state$;
       this.state$$ = state$.subscribe(() => this.onViewControllerStateChange());
@@ -254,24 +262,29 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     return outLegends;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  computeItemTitle(layerLegend: any): Observable<string> {
-    const layerOptions = this.layer()!.dataSource.options as any;
-    if (layerOptions.type !== 'wms') {
-      return of(layerLegend.title);
+  computeItemTitle(layerLegend: Legend): Observable<string> {
+    const layerLegendTitle = layerLegend.title ?? '';
+    const sourceOptions = this.layer()!.dataSource.options;
+    if (!isWmsDataSourceOptions(sourceOptions)) {
+      return of(layerLegendTitle);
     }
 
-    const layers = layerOptions.params.LAYERS.split(',');
-    const localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
-    localLayerOptions.params.LAYERS = layers.find(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (layer: any) => layer === layerLegend.title
-    );
-    return this.capabilitiesService.getWMSOptions(localLayerOptions).pipe(
-      map((wmsDataSourceOptions) => {
-        return wmsDataSourceOptions._layerOptionsFromSource!.title;
-      })
-    );
+    const layers = sourceOptions.params.LAYERS.split(',');
+    const layersName =
+      layers.find((layer) => layer === layerLegendTitle) ?? layerLegendTitle;
+    return this.capabilitiesService
+      .getWMSOptions({
+        ...sourceOptions,
+        params: {
+          ...sourceOptions.params,
+          LAYERS: layersName
+        }
+      } satisfies WMSDataSourceOptions)
+      .pipe(
+        map((wmsDataSourceOptions) => {
+          return wmsDataSourceOptions._layerOptionsFromSource!.title;
+        })
+      );
   }
 
   /**
