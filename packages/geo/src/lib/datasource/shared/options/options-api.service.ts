@@ -30,9 +30,8 @@ export class OptionsApiService extends OptionsService {
     const options = config.getConfig<OptionsApiOptions>('optionsApi');
 
     super();
-    this.urlApi = options?.url || this.urlApi;
-    this.provideContextUri =
-      options?.provideContextUri || this.provideContextUri;
+    this.urlApi = options?.enabled === false ? undefined : options?.url;
+    this.provideContextUri = options?.provideContextUri ?? false;
   }
 
   getWMSOptions(
