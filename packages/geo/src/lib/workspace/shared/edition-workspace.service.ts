@@ -47,6 +47,7 @@ import {
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { isLayerItem } from '../../layer';
 import {
+  AnyLayerItemOptions,
   GeoWorkspaceOptions,
   ImageLayer,
   Layer,
@@ -159,96 +160,98 @@ export class EditionWorkspaceService {
     layer.createLink();
 
     let wks;
-    this.layerService
-      .createAsyncLayer({
-        title: layer.title,
-        parentId: layer.options.parentId,
-        visible: layer.visible,
-        id: wfsLinkId,
-        linkedLayers: {
-          linkId: wfsLinkId
+    const options: AnyLayerItemOptions = {
+      title: layer.title,
+      parentId: layer.options.parentId,
+      visible: layer.visible,
+      id: wfsLinkId,
+      linkedLayers: {
+        linkId: wfsLinkId
+      },
+      workspace: {
+        srcId: layer.id,
+        workspaceId: undefined,
+        enabled: false,
+        queryOptions: {
+          mapQueryOnOpenTab:
+            layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+          tabQuery: false
         },
-        workspace: {
-          srcId: layer.id,
-          workspaceId: undefined,
-          enabled: false,
-          queryOptions: {
-            mapQueryOnOpenTab:
-              layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
-            tabQuery: false
-          },
-          pageSize: layer.options.workspace?.pageSize,
-          pageSizeOptions: layer.options.workspace?.pageSizeOptions
-        },
-        showInLayerList: false,
-        isIgoInternalLayer: true,
-        opacity: 0,
-        minResolution:
-          layer.options.workspace?.minResolution || layer.minResolution || 0,
-        maxResolution:
-          layer.options.workspace?.maxResolution ||
-          layer.maxResolution ||
-          Infinity,
-        style: nearTransparentOlStyle(),
-        sourceOptions: {
-          download: dataSource.options.download,
-          type: 'wfs',
-          url: dataSource.options.urlWfs || dataSource.options.url,
-          queryable: true,
-          relations: dataSource.options.relations,
-          queryTitle: (dataSource.options as QueryableDataSourceOptions)
-            .queryTitle,
-          params: dataSource.options.paramsWFS,
-          ogcFilters: Object.assign({}, dataSource.ogcFilters, {
-            enabled: hasOgcFilters
-          }),
-          sourceFields: dataSource.options.sourceFields || undefined,
-          edition: dataSource.options.edition
-        } as WFSoptions
-      })
-      .subscribe((layer: Layer | undefined) => {
-        const workspaceLayer = layer as VectorLayer;
-        if (!workspaceLayer) return;
-        map.layerController.add(workspaceLayer);
-        layer!.ol.setProperties(
-          {
-            linkedLayers: {
-              linkId: layer!.options.linkedLayers!.linkId,
-              links: clonedLinks
-            }
-          },
-          false
-        );
-        workspaceLayer.dataSource.ol.refresh();
+        pageSize: layer.options.workspace?.pageSize,
+        pageSizeOptions: layer.options.workspace?.pageSizeOptions
+      },
+      showInLayerList: false,
+      isIgoInternalLayer: true,
+      opacity: 0,
+      minResolution:
+        layer.options.workspace?.minResolution || layer.minResolution || 0,
+      maxResolution:
+        layer.options.workspace?.maxResolution ||
+        layer.maxResolution ||
+        Infinity,
+      style: nearTransparentOlStyle(),
+      sourceOptions: {
+        download: dataSource.options.download,
+        type: 'wfs',
+        url: dataSource.options.urlWfs || dataSource.options.url,
+        queryable: true,
+        relations: dataSource.options.relations,
+        queryTitle: (dataSource.options as QueryableDataSourceOptions)
+          .queryTitle,
+        params: dataSource.options.paramsWFS,
+        ogcFilters: Object.assign({}, dataSource.ogcFilters, {
+          enabled: hasOgcFilters
+        }),
+        sourceFields: dataSource.options.sourceFields || undefined,
+        edition: dataSource.options.edition
+      } as WFSoptions
+    };
 
-        wks = new EditionWorkspace(
-          this.configService,
-          this.adding$,
-          this.layerService,
-          {
-            id: layer!.id!,
-            title: layer!.title!,
-            layer: workspaceLayer,
-            map,
-            entityStore: this.createFeatureStore(
-              workspaceLayer,
-              map
-            ) as unknown as EntityStore,
-            actionStore: new ActionStore([]),
-            meta: {
-              tableTemplate: null as unknown as EntityTableTemplate
-            }
+    this.layerService.createAsyncLayer(options).subscribe((createdLayer) => {
+      if (!createdLayer) return;
+      const workspaceLayer = createdLayer as VectorLayer;
+      map.layerController.add(workspaceLayer);
+      workspaceLayer.ol.setProperties(
+        {
+          linkedLayers: {
+            linkId: workspaceLayer.options.linkedLayers!.linkId,
+            links: clonedLinks
           }
-        );
-        this.createTableTemplate(wks, workspaceLayer);
+        },
+        false
+      );
+      workspaceLayer.dataSource.ol.refresh();
 
-        workspaceLayer.options.workspace!.workspaceId = workspaceLayer.id;
-        layer!.options.workspace = Object.assign({}, layer!.options.workspace, {
-          wksConfig
-        } as GeoWorkspaceOptions);
+      wks = new EditionWorkspace(
+        this.configService,
+        this.adding$,
+        this.layerService,
+        {
+          id: layer.id!,
+          title: workspaceLayer.title!,
+          layer: workspaceLayer,
+          map,
+          entityStore: this.createFeatureStore(
+            workspaceLayer,
+            map
+          ) as unknown as EntityStore,
+          actionStore: new ActionStore([]),
+          meta: {
+            tableTemplate: null as unknown as EntityTableTemplate
+          }
+        }
+      );
+      this.createTableTemplate(wks, workspaceLayer);
 
-        delete dataSource.options.download;
-      });
+      workspaceLayer.options.workspace!.workspaceId = workspaceLayer.id;
+      workspaceLayer.options.workspace = Object.assign(
+        {},
+        workspaceLayer.options.workspace,
+        { wksConfig } as GeoWorkspaceOptions
+      );
+
+      delete dataSource.options.download;
+    });
     return wks;
   }
 
@@ -659,56 +662,56 @@ export class EditionWorkspaceService {
       workspace.meta!.tableTemplate!.columns
     );
     this.loading = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const baseRequest = (this.http as any)[protocole as any];
-    baseRequest(`${url}`, properties, {
-      headers: headers
-    }).subscribe(
-      () => {
-        this.loading = false;
-        this.cancelEdit(feature, workspace, true);
+    this.http
+      .request(protocole, `${url}`, {
+        body: properties,
+        headers: headers
+      })
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.cancelEdit(feature, workspace, true);
 
-        this.messageService.success('igo.geo.workspace.modifySuccess');
+          this.messageService.success('igo.geo.workspace.modifySuccess');
 
-        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
+          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map!);
 
-        const relationLayers: (ImageLayer | VectorLayer)[] = [];
-        workspace.layer.options.sourceOptions!.relations?.forEach(
-          (relation) => {
-            workspace.map.layerController.all.forEach((layer) => {
-              if (isLayerItem(layer) && layer.title === relation.title) {
-                relationLayers.push(layer as VectorLayer | ImageLayer);
-                layer.dataSource.ol.refresh();
+          const relationLayers: (ImageLayer | VectorLayer)[] = [];
+          workspace.layer.options.sourceOptions!.relations?.forEach(
+            (relation) => {
+              workspace.map.layerController.all.forEach((layer) => {
+                if (isLayerItem(layer) && layer.title === relation.title) {
+                  relationLayers.push(layer as VectorLayer | ImageLayer);
+                  layer.dataSource.ol.refresh();
+                }
+              });
+            }
+          );
+          this.relationLayers$.next(
+            relationLayers as unknown as ImageLayer[] | VectorLayer[]
+          );
+        },
+        error: (error) => {
+          this.loading = false;
+          error.error.caught = true;
+          const messages = dataSourceOptions.edition!.messages;
+          if (messages) {
+            let text;
+            messages.forEach((message) => {
+              const key = Object.keys(message)[0];
+              if (error.error.message.includes(key)) {
+                text = message[key];
+                this.messageService.error(text);
               }
             });
-          }
-        );
-        this.relationLayers$.next(
-          relationLayers as unknown as ImageLayer[] | VectorLayer[]
-        );
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (error: any) => {
-        this.loading = false;
-        error.error.caught = true;
-        const messages = dataSourceOptions.edition!.messages;
-        if (messages) {
-          let text;
-          messages.forEach((message) => {
-            const key = Object.keys(message)[0];
-            if (error.error.message.includes(key)) {
-              text = message[key];
-              this.messageService.error(text);
+            if (!text) {
+              this.messageService.error('igo.geo.workspace.addError');
             }
-          });
-          if (!text) {
+          } else {
             this.messageService.error('igo.geo.workspace.addError');
           }
-        } else {
-          this.messageService.error('igo.geo.workspace.addError');
         }
-      }
-    );
+      });
   }
 
   private cleanFeatureProperties(

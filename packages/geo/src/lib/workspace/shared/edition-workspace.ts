@@ -124,8 +124,6 @@ export class EditionWorkspace extends Workspace {
         enabled: false
       }
     }) as VectorLayer;
-
-    this.map.layerController.remove(this.olDrawingLayer);
   }
 
   getDeleteUrl(feature: Feature): string {
