@@ -13,9 +13,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
   /**
    * Subscription to the store's OL source changes
    */
-  private stores$$ = new Map<FeatureStore, string>();
-  private resolution$$: Subscription[] = [];
-  private empty$$!: Subscription;
+  private stores$$ = new Map<FeatureStore, Subscription>();
 
   constructor(protected options: FeatureStoreInMapResolutionStrategyOptions) {
     super(options);
@@ -31,12 +29,6 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
     if (this.active === true) {
       this.watchStore(featureStore);
     }
-    this.empty$$ = featureStore.empty$.subscribe(() =>
-      this.updateEntitiesInResolution(
-        featureStore,
-        featureStore.layer.map!.viewController.getResolution()
-      )
-    );
   }
 
   /**
@@ -45,10 +37,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    */
   unbindStore(store: EntityStore) {
     super.unbindStore(store);
-    const featureStore = store as unknown as FeatureStore;
-    if (this.active === true) {
-      this.unwatchStore(featureStore);
-    }
+    this.unwatchStore(store as FeatureStore);
   }
 
   /**
@@ -56,9 +45,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store) =>
-      this.watchStore(store as unknown as FeatureStore)
-    );
+    this.stores.forEach((store) => this.watchStore(store as FeatureStore));
   }
 
   /**
@@ -80,15 +67,25 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesInResolution(
       store,
-      store.layer.map!.viewController.getResolution()
+      store.map.viewController.getResolution()
     );
-    this.resolution$$.push(
-      store.layer
-        .map!.viewController.resolution$.pipe(debounceTime(250))
+    const subscription = new Subscription();
+    subscription.add(
+      store.map.viewController.resolution$
+        .pipe(debounceTime(250))
         .subscribe((res) => {
           this.updateEntitiesInResolution(store, res);
         })
     );
+    subscription.add(
+      store.empty$.subscribe(() =>
+        this.updateEntitiesInResolution(
+          store,
+          store.map.viewController.getResolution()
+        )
+      )
+    );
+    this.stores$$.set(store, subscription);
   }
 
   private updateEntitiesInResolution(
@@ -110,8 +107,9 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   private unwatchStore(store: FeatureStore) {
-    const key = this.stores$$.get(store);
-    if (key !== undefined) {
+    const subscription = this.stores$$.get(store);
+    if (subscription !== undefined) {
+      subscription.unsubscribe();
       this.stores$$.delete(store);
     }
   }
@@ -120,10 +118,8 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    this.stores$$.clear();
-    this.resolution$$.map((state) => state.unsubscribe());
-    if (this.empty$$) {
-      this.empty$$.unsubscribe();
-    }
+    Array.from(this.stores$$.keys()).forEach((store) =>
+      this.unwatchStore(store)
+    );
   }
 }
