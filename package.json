@@ -106,5 +106,8 @@
         "skipTypeImports": true
       }
     }
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.1"
   }
 }
