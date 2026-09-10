@@ -150,9 +150,12 @@ export class ToastService {
     toastRef.instance.type = type;
     toastRef.instance.message = message;
     toastRef.instance.title = title;
-    toastRef.instance.config = mergedConfig as any;
+    toastRef.instance.config = mergedConfig;
     toastRef.instance.enableHtml = mergedConfig.enableHtml ?? true;
     toastRef.instance.showIcon = mergedConfig.showIcon ?? false;
+    toastRef.instance.removed.subscribe((removedToastId) => {
+      this.removeToast(removedToastId);
+    });
 
     this.toasts.set(toastId, toastRef);
     this.appRef.attachView(toastRef.hostView);
