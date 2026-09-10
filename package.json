@@ -29,7 +29,7 @@
     "build.libs": "node --import tsx scripts/src/build-library.mts",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
     "format.check": "prettier packages projects scripts --check --config .prettierrc",
-    "format": "prettier --write packages projects scripts --check --config .prettierrc",
+    "format": "prettier --write packages projects scripts --config .prettierrc",
     "format.scripts": "prettier --write ./scripts/src/**/*.{mts,ts,js,json}",
     "lint": "ng lint --quiet",
     "lint.fix": "ng lint --fix",

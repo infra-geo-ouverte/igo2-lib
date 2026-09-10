@@ -88,23 +88,19 @@ export function getCommonVectorStyle({
     const fillWithOpacity = ColorAsArray(fillColor).slice(0);
     const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
 
-    if (
-      !(
-        fillWithOpacity.length === 4 &&
-        (typeof fillColor !== 'string' ||
-          /^#[0-9A-F]{8}$/i.test(fillColor as string))
-      )
-    ) {
+    if (!(
+      fillWithOpacity.length === 4 &&
+      (typeof fillColor !== 'string' ||
+        /^#[0-9A-F]{8}$/i.test(fillColor as string))
+    )) {
       fillWithOpacity[3] = fillOpacity;
     }
 
-    if (
-      !(
-        strokeWithOpacity.length === 4 &&
-        (typeof strokeColor !== 'string' ||
-          /^#[0-9A-F]{8}$/i.test(strokeColor as string))
-      )
-    ) {
+    if (!(
+      strokeWithOpacity.length === 4 &&
+      (typeof strokeColor !== 'string' ||
+        /^#[0-9A-F]{8}$/i.test(strokeColor as string))
+    )) {
       strokeWithOpacity[3] = strokeOpacity;
     }
 

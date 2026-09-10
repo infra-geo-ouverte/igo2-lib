@@ -208,8 +208,7 @@ function getLayerParam(layerOptions: LayerOptions): string | undefined {
     case 'imagearcgisrest':
     case 'tilearcgisrest': {
       const { layer, params } = sourceOptions as
-        | ArcGISRestImageDataSourceOptions
-        | TileArcGISRestDataSourceOptions;
+        ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions;
       return layer ?? params?.layer;
     }
 
