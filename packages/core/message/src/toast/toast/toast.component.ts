@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   inject,
+  output,
   signal
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
@@ -13,7 +14,6 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import { ToastConfig, ToastType } from '../toast.interface';
-import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'igo-toast',
@@ -31,9 +31,9 @@ import { ToastService } from '../toast.service';
   }
 })
 export class ToastComponent implements OnInit, OnDestroy {
-  private toastService = inject(ToastService);
   private sanitizer = inject(DomSanitizer);
 
+  readonly removed = output<number>();
   toastId!: number;
   type!: ToastType;
   title = '';
@@ -108,7 +108,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     this.clearTimers();
     this.animationState.set('removed');
     setTimeout(() => {
-      this.toastService.removeToast(this.toastId);
+      this.removed.emit(this.toastId);
     }, 300);
   }
 

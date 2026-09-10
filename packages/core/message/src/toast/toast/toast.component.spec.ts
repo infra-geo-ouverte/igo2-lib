@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DEFAULT_TOAST_CONFIG } from '../toast.interface';
-import { ToastService } from '../toast.service';
 import { ToastComponent } from './toast.component';
 
 describe('ToastComponent', () => {
@@ -60,10 +59,9 @@ describe('ToastComponent', () => {
     expect(comp.animationState()).toBe('active');
   });
 
-  it('sets state to "removed" and calls removeToast after timeOut elapses', async () => {
+  it('sets state to "removed" and emits after timeOut elapses', () => {
     const { componentInstance: comp } = createFixture();
-    const toastService = TestBed.inject(ToastService);
-    const spy = vi.spyOn(toastService, 'removeToast');
+    const spy = vi.spyOn(comp.removed, 'emit');
 
     vi.advanceTimersByTime(DEFAULT_TOAST_CONFIG.timeOut + 300);
     expect(comp.animationState()).toBe('removed');
@@ -111,8 +109,7 @@ describe('ToastComponent', () => {
     const { componentInstance: comp } = createFixture({
       config: { ...DEFAULT_TOAST_CONFIG }
     });
-    const toastService = TestBed.inject(ToastService);
-    const spy = vi.spyOn(toastService, 'removeToast');
+    const spy = vi.spyOn(comp.removed, 'emit');
     // Pause before any timer fires.
     comp.onEnter();
     // Advance well past the original timeout — timer was cleared, so nothing fires.
@@ -122,8 +119,7 @@ describe('ToastComponent', () => {
 
   it('onLeave() resumes dismissal using extendedTimeOut', async () => {
     const { componentInstance: comp } = createFixture();
-    const toastService = TestBed.inject(ToastService);
-    const spy = vi.spyOn(toastService, 'removeToast');
+    const spy = vi.spyOn(comp.removed, 'emit');
     comp.onEnter();
     comp.onLeave();
     vi.advanceTimersByTime(DEFAULT_TOAST_CONFIG.extendedTimeOut + 300);
