@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -15,11 +15,15 @@ import { ActiveToast, IndividualToastConfig, ToastService } from './toast';
 })
 export class MessageService {
   private configService = inject(ConfigService);
-  private languageService = inject(LanguageService);
+  private injector = inject(Injector);
   private toastService = inject(ToastService);
 
   public messages$ = new BehaviorSubject<Message[]>([]);
   private options?: MessageOptions;
+
+  private get languageService(): LanguageService | null {
+    return this.injector.get(LanguageService, null);
+  }
 
   constructor() {
     this.options = this.configService.getConfig('message');
@@ -220,14 +224,18 @@ export class MessageService {
       titleInterpolateParams
     );
 
-    const translatedMessage = this.languageService.translate.instant(
-      text,
-      translatedTextInterpolateParams
-    );
-    const translatedTitle = this.languageService.translate.instant(
-      title,
-      translatedTitleInterpolateParams
-    );
+    const translatedMessage = this.languageService
+      ? this.languageService.translate.instant(
+          text,
+          translatedTextInterpolateParams
+        )
+      : text;
+    const translatedTitle = this.languageService
+      ? this.languageService.translate.instant(
+          title,
+          translatedTitleInterpolateParams
+        )
+      : title;
 
     let activeToast: ActiveToast;
     switch (type) {
@@ -293,7 +301,7 @@ export class MessageService {
       (acc, key) => {
         const value = params[key];
         acc[key] =
-          typeof value === 'string'
+          typeof value === 'string' && this.languageService
             ? this.languageService.translate.instant(value)
             : value;
         return acc;

@@ -1,4 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHandlerFn,
+  HttpInterceptorFn
+} from '@angular/common/http';
 import {
   HttpEvent,
   HttpHandler,
@@ -8,12 +12,12 @@ import {
 import { Injectable, inject } from '@angular/core';
 
 import { IXhrInterceptor } from '@igo2/core/auth';
-import { ConfigService } from '@igo2/core/config';
 
 import { Observable } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
 import {
+  AUTH_OPTIONS,
   AuthByKeyOptions,
   AuthOptions,
   WithCredentialsOptions
@@ -24,7 +28,6 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
-  private config = inject(ConfigService);
   private tokenService = inject(TokenService);
   private http = inject(HttpClient);
 
@@ -35,7 +38,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
   private hostsWithAuthByKey: AuthByKeyOptions[];
 
   constructor() {
-    this.authOptions = this.config.getConfig('auth') as AuthOptions;
+    this.authOptions = inject(AUTH_OPTIONS);
 
     this.trustHosts = this.authOptions?.trustHosts || [];
     this.trustHosts.push(window.location.hostname);
@@ -195,3 +198,12 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     }
   }
 }
+
+export const authInterceptorFn: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+) => {
+  const interceptor = inject(AuthInterceptor);
+  const handler: HttpHandler = { handle: next };
+  return interceptor.intercept(req, handler);
+};
