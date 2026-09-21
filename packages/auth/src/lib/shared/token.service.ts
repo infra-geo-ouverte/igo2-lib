@@ -1,24 +1,19 @@
-import { Injectable, Injector, inject } from '@angular/core';
-
-import { ConfigService } from '@igo2/core/config';
+import { Injectable, inject } from '@angular/core';
 
 import { jwtDecode } from 'jwt-decode';
 
-import { AuthOptions } from './auth.interface';
+import { AUTH_OPTIONS, AuthOptions } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
-  private injector = inject(Injector);
-
   private options?: AuthOptions;
   private tokenKey: string;
 
   constructor() {
-    const config = this.injector.get<ConfigService>(ConfigService);
-    this.options = config.getConfig('auth');
+    this.options = inject(AUTH_OPTIONS);
     this.tokenKey = this.options?.tokenKey ?? '';
   }
 

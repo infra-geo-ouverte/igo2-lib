@@ -1,6 +1,5 @@
-import { ConfigService } from '@igo2/core/config';
-
 import {
+  AUTH_OPTIONS,
   AuthFeature,
   AuthFeatureKind,
   IAuthUserIgoOptions
@@ -13,8 +12,9 @@ export function withUserIgo(): AuthFeature<AuthFeatureKind.User> {
     providers: [
       {
         provide: USER_AUTH_OPTIONS,
-        useFactory: (config: ConfigService) => config.getConfig('auth.user'),
-        deps: [ConfigService]
+        useFactory: (authOptions: { user?: IAuthUserIgoOptions }) =>
+          authOptions.user,
+        deps: [AUTH_OPTIONS]
       },
       {
         provide: UserService,
