@@ -39,6 +39,9 @@ export class DrawingToolComponent {
   get stores(): FeatureStore<FeatureWithDraw>[] {
     return this.drawState.stores;
   }
+  set stores(stores: FeatureStore<FeatureWithDraw>[]) {
+    this.drawState.stores = stores;
+  }
 
   /**
    * Map to measure on
