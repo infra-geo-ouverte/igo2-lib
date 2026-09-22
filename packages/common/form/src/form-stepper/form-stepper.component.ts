@@ -6,18 +6,23 @@ import {
   output,
   signal
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 
 import { IgoCustomHtmlModule } from '@igo2/common/custom-html';
-import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
+import { IgoLanguageModule, labelAttribute } from '@igo2/core/language';
 
 import { IgoFormModule } from '../form.module';
 import { Form, FormService } from '../shared';
 import { buildFormFromConfig, markFormAsTouched } from '../shared/form.utils';
-import { FormStepperStepConfig } from './form-stepper.interface';
-import { resolveFormStepperStepFormConfig } from './form-stepper.utils';
+import {
+  FormStepperLabels,
+  FormStepperStepConfig
+} from './form-stepper.interface';
+import {
+  DEFAULT_FORM_STEPPER_LABELS,
+  resolveFormStepperStepFormConfig
+} from './form-stepper.utils';
 
 @Component({
   selector: 'igo-form-stepper',
@@ -33,10 +38,6 @@ import { resolveFormStepperStepFormConfig } from './form-stepper.utils';
 })
 export class FormStepperComponent {
   private readonly formService = inject(FormService);
-  private readonly languageService = inject(LanguageService);
-  private readonly activeLanguage = toSignal(this.languageService.language$, {
-    initialValue: this.languageService.getLanguage()
-  });
 
   readonly steps = input.required<FormStepperStepConfig[]>();
 
@@ -44,17 +45,7 @@ export class FormStepperComponent {
 
   readonly notice = input<string | undefined>();
 
-  readonly nextButtonText = input('igo.common.formStepper.nextButtonText');
-
-  readonly previousButtonText = input(
-    'igo.common.formStepper.previousButtonText'
-  );
-
-  readonly processButtonText = input(
-    'igo.common.formStepper.processButtonText'
-  );
-
-  readonly cancelButtonText = input('igo.common.formStepper.cancelButtonText');
+  readonly labels = input<Partial<FormStepperLabels>>({});
 
   readonly showCancelButton = input(true);
 
@@ -107,17 +98,19 @@ export class FormStepperComponent {
 
   readonly stepNumber = computed(() => this.stepIndex() + 1);
 
-  readonly stepCounterLabel = computed(() => {
-    this.activeLanguage();
+  readonly resolvedLabels = computed<FormStepperLabels>(
+    () =>
+      labelAttribute(
+        this.labels(),
+        DEFAULT_FORM_STEPPER_LABELS
+      ) as FormStepperLabels
+  );
 
-    return this.languageService.translate.instant(
-      'igo.common.formStepper.stepCounter',
-      {
-        current: this.stepNumber(),
-        total: this.stepCount()
-      }
-    );
-  });
+  readonly stepCounterLabel = computed(() =>
+    this.resolvedLabels()
+      .stepCounter.replace('{{current}}', String(this.stepNumber()))
+      .replace('{{total}}', String(this.stepCount()))
+  );
 
   readonly progressWidth = computed(
     () => `${(this.stepNumber() / this.stepCount()) * 100}%`
@@ -143,7 +136,9 @@ export class FormStepperComponent {
   );
 
   readonly submitButtonText = computed(() =>
-    this.isLastStep() ? this.processButtonText() : this.nextButtonText()
+    this.isLastStep()
+      ? this.resolvedLabels().processButton
+      : this.resolvedLabels().nextButton
   );
 
   onSubmitStep(stepData: Record<string, unknown>): void {

@@ -25,8 +25,8 @@ describe('FormStepperDialogComponent', () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            title: 'Stepper test',
             steps: [{ label: 'Country', form: { formFieldConfigs: [] } }],
+            labels: { cancelButton: 'Skip' },
             data$
           }
         },
@@ -48,13 +48,12 @@ describe('FormStepperDialogComponent', () => {
     expect(data$.value).toEqual({ country: 'canada' });
   });
 
-  it('should default navigation labels to translation keys', () => {
-    expect(component.data.nextButtonText).toBe(
-      'igo.common.formStepper.nextButtonText'
-    );
-    expect(component.data.previousButtonText).toBe(
-      'igo.common.formStepper.previousButtonText'
-    );
+  it('should default the dialog title to a translation key', () => {
+    expect(component.data.title).toBe('igo.common.formDialog.title');
+  });
+
+  it('should pass provided labels through unchanged', () => {
+    expect(component.data.labels).toEqual({ cancelButton: 'Skip' });
   });
 
   it('should close the dialog with the final result', () => {

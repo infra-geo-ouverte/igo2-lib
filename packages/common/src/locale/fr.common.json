@@ -20,13 +20,6 @@
         "processButtonText": "Confirmer",
         "title": "Veuiller remplir le formulaire"
       },
-      "formStepper": {
-        "cancelButtonText": "Annuler",
-        "processButtonText": "Confirmer",
-        "nextButtonText": "Suivant",
-        "previousButtonText": "Précédent",
-        "stepCounter": "Étape {{current}} de {{total}}"
-      },
       "table": {
         "filter": "Filtre"
       },

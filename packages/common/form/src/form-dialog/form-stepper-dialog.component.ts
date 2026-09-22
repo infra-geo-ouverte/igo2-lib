@@ -31,16 +31,7 @@ export class FormStepperDialogComponent {
       throw new Error('Form stepper dialog requires at least one step.');
     }
 
-    this.data.processButtonText =
-      this.data.processButtonText ?? 'igo.common.formStepper.processButtonText';
-    this.data.cancelButtonText =
-      this.data.cancelButtonText ?? 'igo.common.formStepper.cancelButtonText';
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
-    this.data.nextButtonText =
-      this.data.nextButtonText ?? 'igo.common.formStepper.nextButtonText';
-    this.data.previousButtonText =
-      this.data.previousButtonText ??
-      'igo.common.formStepper.previousButtonText';
     this.initialData = { ...(this.data.data$?.value ?? {}) };
   }
 

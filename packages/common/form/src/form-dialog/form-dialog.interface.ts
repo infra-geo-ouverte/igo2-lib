@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   FormStepperConfig,
   FormStepperFormConfig,
+  FormStepperLabels,
   FormStepperStepConfig,
   FormStepperStepContext,
   FormStepperStepFormConfigResolver
@@ -21,8 +22,7 @@ export interface FormDialogData
   extends FormDialogOptions, FormDialogFormConfig {}
 
 export interface FormDialogStepperOptions extends FormDialogOptions {
-  nextButtonText?: string;
-  previousButtonText?: string;
+  labels?: Partial<FormStepperLabels>;
 }
 
 export interface FormDialogStepperData

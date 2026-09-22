@@ -4,9 +4,11 @@ import { FormStepperStepConfig } from '@igo2/common/form';
 
 export const LOCATION_STEPPER_TEXT = {
   title: 'Multi-step location form',
-  nextButtonText: 'Continue',
-  previousButtonText: 'Back',
-  processButtonText: 'Finish'
+  labels: {
+    nextButton: 'Continue',
+    previousButton: 'Back',
+    processButton: 'Finish'
+  }
 } as const;
 
 export function buildLocationStepperSteps(): FormStepperStepConfig[] {

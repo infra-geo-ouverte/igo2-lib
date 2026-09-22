@@ -1,5 +1,14 @@
 import { FormFieldConfig, FormGroupsConfig } from '../shared/form.interfaces';
 
+export interface FormStepperLabels {
+  nextButton: string;
+  previousButton: string;
+  processButton: string;
+  cancelButton: string;
+  /** Supports `{{current}}` and `{{total}}` placeholders. */
+  stepCounter: string;
+}
+
 export interface FormStepperFormConfig {
   formFieldConfigs?: FormFieldConfig[];
   formGroupsConfigs?: FormGroupsConfig[];
