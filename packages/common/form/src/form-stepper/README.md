@@ -281,7 +281,7 @@ Dialog:
 this.formDialogService.openStepper(
   { steps },
   {
-    title: 'igo.common.formDialog.title'
+    title: 'Fill the form'
   }
 );
 ```

@@ -5,16 +5,17 @@ import {
   MatDialogRef
 } from '@angular/material/dialog';
 
-import { IgoLanguageModule } from '@igo2/core/language';
-
 import { FormStepperComponent } from '../form-stepper/form-stepper.component';
 import { FormDialogStepperData } from './form-dialog.interface';
+
+export const DEFAULT_FORM_STEPPER_DIALOG_TITLE =
+  'Veuillez remplir le formulaire';
 
 @Component({
   selector: 'igo-form-stepper-dialog',
   templateUrl: './form-stepper-dialog.component.html',
   styleUrls: ['./form-stepper-dialog.component.scss'],
-  imports: [MatDialogModule, IgoLanguageModule, FormStepperComponent]
+  imports: [MatDialogModule, FormStepperComponent]
 })
 export class FormStepperDialogComponent {
   readonly formStepper = viewChild(FormStepperComponent);
@@ -31,7 +32,7 @@ export class FormStepperDialogComponent {
       throw new Error('Form stepper dialog requires at least one step.');
     }
 
-    this.data.title = this.data.title ?? 'igo.common.formDialog.title';
+    this.data.title = this.data.title ?? DEFAULT_FORM_STEPPER_DIALOG_TITLE;
     this.initialData = { ...(this.data.data$?.value ?? {}) };
   }
 

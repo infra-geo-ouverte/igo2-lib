@@ -48,8 +48,8 @@ describe('FormStepperDialogComponent', () => {
     expect(data$.value).toEqual({ country: 'canada' });
   });
 
-  it('should default the dialog title to a translation key', () => {
-    expect(component.data.title).toBe('igo.common.formDialog.title');
+  it('should default the dialog title to plain text', () => {
+    expect(component.data.title).toBe('Veuillez remplir le formulaire');
   });
 
   it('should pass provided labels through unchanged', () => {
