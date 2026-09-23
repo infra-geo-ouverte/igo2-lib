@@ -224,9 +224,7 @@ export class AppDialogComponent {
         { steps: buildLocationStepperSteps() },
         {
           title: LOCATION_STEPPER_TEXT.title,
-          nextButtonText: LOCATION_STEPPER_TEXT.nextButtonText,
-          previousButtonText: LOCATION_STEPPER_TEXT.previousButtonText,
-          processButtonText: LOCATION_STEPPER_TEXT.processButtonText
+          labels: LOCATION_STEPPER_TEXT.labels
         }
       )
       .subscribe((data?: Record<string, unknown>) => {

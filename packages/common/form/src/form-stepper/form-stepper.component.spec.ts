@@ -76,19 +76,16 @@ describe('FormStepperComponent', () => {
     expect(dataChangeSpy).toHaveBeenCalledWith({ country: 'canada' });
   });
 
-  it('should build the step counter label through the language service', () => {
-    const instantSpy = vi
-      .spyOn((component as any).languageService.translate, 'instant')
-      .mockReturnValue('Step 1 of 3');
+  it('should build the step counter label from the resolved labels', () => {
+    expect(component.stepCounterLabel()).toBe('Étape 1 de 3');
+  });
 
-    expect(component.stepCounterLabel()).toBe('Step 1 of 3');
-    expect(instantSpy).toHaveBeenCalledWith(
-      'igo.common.formStepper.stepCounter',
-      {
-        current: 1,
-        total: 3
-      }
-    );
+  it('should let consumers override labels', () => {
+    Object.assign(component, {
+      labels: signal({ stepCounter: 'Step {{current}} / {{total}}' })
+    });
+
+    expect(component.stepCounterLabel()).toBe('Step 1 / 3');
   });
 
   it('should prevent jumping to a future incomplete step', async () => {

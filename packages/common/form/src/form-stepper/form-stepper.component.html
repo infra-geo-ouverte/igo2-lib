@@ -64,7 +64,7 @@
           color="primary"
           (click)="cancel()"
         >
-          {{ cancelButtonText() | translate }}
+          {{ resolvedLabels().cancelButton }}
         </button>
       }
 
@@ -75,12 +75,12 @@
           color="primary"
           (click)="previous()"
         >
-          {{ previousButtonText() | translate }}
+          {{ resolvedLabels().previousButton }}
         </button>
       }
 
       <button matButton="filled" type="submit" color="primary">
-        {{ submitButtonText() | translate }}
+        {{ isLastStep() ? labels().processButton : labels().nextButton }}
       </button>
     </div>
   </igo-form>

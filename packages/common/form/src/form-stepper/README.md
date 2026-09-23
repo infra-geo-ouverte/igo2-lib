@@ -258,7 +258,7 @@ import { FormStepperComponent } from '@igo2/common/form';
 @Component({
   selector: 'app-example',
   imports: [FormStepperComponent],
-  template: ` <igo-form-stepper [steps]="steps" [initialData]="initialData()" [notice]="notice" [nextButtonText]="'igo.common.formStepper.nextButtonText'" [previousButtonText]="'igo.common.formStepper.previousButtonText'" [processButtonText]="'igo.common.formDialog.processButtonText'" [cancelButtonText]="'igo.common.formDialog.cancelButtonText'" [showCancelButton]="false" (dataChange)="onDataChange($event)" (completed)="onCompleted($event)" /> `
+  template: `<igo-form-stepper [steps]="steps" [initialData]="initialData()" [notice]="notice" [labels]="{ processButton: 'Submit', cancelButton: 'Cancel' }" [showCancelButton]="false" (dataChange)="onDataChange($event)" (completed)="onCompleted($event)" />`
 })
 export class ExampleComponent {
   readonly steps = steps;
@@ -281,7 +281,7 @@ Dialog:
 this.formDialogService.openStepper(
   { steps },
   {
-    title: 'igo.common.formDialog.title'
+    title: 'Fill the form'
   }
 );
 ```
@@ -291,10 +291,7 @@ this.formDialogService.openStepper(
 - `steps`: required array of `FormStepperStepConfig`
 - `initialData`: initial object merged before completed step data
 - `notice`: fallback notice used when the active step does not define one
-- `nextButtonText`: translation key or text for the next button
-- `previousButtonText`: translation key or text for the previous button
-- `processButtonText`: translation key or text for the final submit button
-- `cancelButtonText`: translation key or text for the cancel button
+- `labels`: partial `FormStepperLabels` overriding the button texts and step counter; defaults to French so the component works without the translation module
 - `showCancelButton`: hides or shows the cancel button
 
 ## Component Outputs
@@ -305,10 +302,6 @@ this.formDialogService.openStepper(
 
 ## Translation Notes
 
-The component translates:
+The component itself is agnostic to the translation module: `labels` accepts plain text (already translated by the consumer if needed) and falls back to French defaults. Step labels/titles rendered from `FormStepperStepConfig` still go through the `translate` pipe in the template, so they can remain translation keys.
 
-- step labels and titles in the template
-- button labels when you pass translation keys
-- the step counter through `LanguageService`
-
-Prefer translation keys over hardcoded text for any user-facing label.
+Prefer resolving translation keys to text before passing them to `labels` for any user-facing button label.

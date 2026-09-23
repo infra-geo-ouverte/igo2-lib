@@ -20,13 +20,6 @@
         "processButtonText": "Submit",
         "title": "Fill the form"
       },
-      "formStepper": {
-        "cancelButtonText": "Cancel",
-        "processButtonText": "Submit",
-        "nextButtonText": "Next",
-        "previousButtonText": "Previous",
-        "stepCounter": "Step {{current}} of {{total}}"
-      },
       "table": {
         "filter": "Filter"
       },
