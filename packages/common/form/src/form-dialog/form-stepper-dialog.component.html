@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{ data.title | translate }}</h1>
+
+<igo-form-stepper
+  [steps]="data.steps"
+  [initialData]="initialData"
+  [notice]="data.notice"
+  [nextButtonText]="data.nextButtonText!"
+  [previousButtonText]="data.previousButtonText!"
+  [processButtonText]="data.processButtonText!"
+  [cancelButtonText]="data.cancelButtonText!"
+  (dataChange)="onDataChange($event)"
+  (completed)="onCompleted($event)"
+  (cancelled)="cancel()"
+/>

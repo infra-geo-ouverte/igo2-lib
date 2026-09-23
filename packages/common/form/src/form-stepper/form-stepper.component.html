@@ -1,0 +1,93 @@
+<mat-stepper
+  class="form-stepper"
+  [selectedIndex]="stepIndex()"
+  (selectedIndexChange)="onSelectedIndexChange($event)"
+>
+  @for (step of steps(); track step.label) {
+    <mat-step
+      [completed]="isCompletedStep($index)"
+      [editable]="isEditableStep($index)"
+    >
+      <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
+    </mat-step>
+  }
+</mat-stepper>
+
+<section class="form-stepper-content">
+  <header class="form-stepper-header">
+    <div class="form-stepper-header-main">
+      <div class="form-stepper-meta">
+        <p class="form-stepper-counter">
+          {{ stepCounterLabel() }}
+        </p>
+        <span class="form-stepper-badge">{{
+          activeStep().label | translate
+        }}</span>
+      </div>
+
+      @if (activeStep().title) {
+        <h2 class="form-stepper-title">{{ activeStep().title | translate }}</h2>
+      } @else {
+        <h2 class="form-stepper-title">{{ activeStep().label | translate }}</h2>
+      }
+    </div>
+
+    <div class="form-stepper-progress" aria-hidden="true">
+      <span
+        class="form-stepper-progress-bar"
+        [style.width]="progressWidth()"
+      ></span>
+    </div>
+  </header>
+
+  <igo-form
+    [form]="activeForm()"
+    [formData]="activeFormData()"
+    (submitForm)="onSubmitStep($event)"
+  >
+    @if (activeForm().fields.length || activeForm().groups.length) {
+      <div class="form-dialog-container">
+        @for (field of activeForm().fields; track field.name) {
+          <igo-form-field [field]="field" />
+        }
+        @for (group of activeForm().groups; track group.name) {
+          <igo-form-group [group]="group" />
+        }
+      </div>
+    }
+
+    <div formButtons class="form-stepper-actions">
+      @if (showCancelButton()) {
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="cancel()"
+        >
+          {{ cancelButtonText() | translate }}
+        </button>
+      }
+
+      @if (stepIndex() > 0) {
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="previous()"
+        >
+          {{ previousButtonText() | translate }}
+        </button>
+      }
+
+      <button matButton="filled" type="submit" color="primary">
+        {{ submitButtonText() | translate }}
+      </button>
+    </div>
+  </igo-form>
+</section>
+
+@if (activeNotice()) {
+  <div class="form-stepper-notice" role="note">
+    <igo-custom-html [html]="activeNotice()!" />
+  </div>
+}
