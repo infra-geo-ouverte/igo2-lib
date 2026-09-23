@@ -312,10 +312,14 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.onLayerChange(drawingLayer);
       }
     } else {
-      const drawingLayer = this.activeDrawingLayer();
-      this.activeStore = this.stores().find(
-        (store) => store.layer.id === drawingLayer?.id
-      )!;
+      const activeStore =
+        this.stores().find(
+          (store) => store.layer.id === this.activeDrawingLayer()?.id
+        ) ?? this.stores()[0];
+      this.activeStore = activeStore;
+      const drawingLayer =
+        this.activeDrawingLayer() ?? (activeStore.layer as VectorLayer);
+      this.activeDrawingLayer.set(drawingLayer);
       this.activeDrawControl = this.drawControls()?.find(
         (dc) => dc[0] === drawingLayer?.id
       )?.[1];
@@ -366,16 +370,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Remove the drawing layer and the interactions
+   * Remove drawing interactions while retaining drawing layers between tab visits.
    * @internal
    */
   ngOnDestroy() {
-    if (this.activeStore.count === 0) {
-      const drawingLayer = this.activeDrawingLayer();
-      if (drawingLayer) {
-        this.activeStore.map.layerController.remove(drawingLayer);
-      }
-    }
     this.allLayers.forEach((layer) => (layer.opacity = 1));
     this.activeStore.state.updateAll({ selected: false });
     this.deactivateDrawControl();
@@ -800,56 +798,53 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public setupLayer(isNewLayer?: boolean) {
-    setTimeout(() => {
-      const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
-        disableClose: false
-      });
-      dialogRef.afterClosed().subscribe((label: string) => {
-        if (dialogRef.componentInstance.confirmFlag()) {
-          this.activeStore.state.updateAll({ selected: false });
-          this.activeStore = new FeatureStore<FeatureWithDraw>([], {
-            map: this.map()!
-          });
-          this.activeDrawingLayerSource = new OlVectorSource();
-          const activeDrawingLayer = this.activeDrawingLayer();
-          if (activeDrawingLayer) {
-            activeDrawingLayer.opacity = 0;
-          }
-          this.deactivateDrawControl();
-          this.initStore(label, isNewLayer);
-          this.activeDrawControl = this.createDrawControl(
-            this.fillColor,
-            this.strokeColor,
-            this.strokeWidth
-          );
-          this.activeDrawControl?.setGeometryType(this.currGeometryType);
-          this.toggleDrawControl();
-          this.stores.update((stores) => stores.concat(this.activeStore));
-          if (activeDrawingLayer) {
-            this.drawControls.update((controls) =>
-              controls.concat([
-                [activeDrawingLayer.id!, this.activeDrawControl!]
-              ])
-            );
-            this.drawControlsEvent.emit(this.drawControls());
-            this.layersIDEvent.emit(activeDrawingLayer.id!);
-          }
-          this.isCreatingNewLayer = false;
-          if (!this.labelsAreShown) {
-            this.onToggleLabels();
-          }
-          this.activeLayerChange.emit(activeDrawingLayer);
-        } else {
-          const select = this.select();
-          if (select) {
-            select.value = this.activeDrawingLayer;
-            select.selectionChange.emit(
-              new MatSelectChange(select, this.activeDrawingLayer())
-            );
-          }
+    const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe((label: string) => {
+      if (dialogRef.componentInstance.confirmFlag()) {
+        this.activeStore.state.updateAll({ selected: false });
+        this.activeStore = new FeatureStore<FeatureWithDraw>([], {
+          map: this.map()!
+        });
+        this.activeDrawingLayerSource = new OlVectorSource();
+        const previousDrawingLayer = this.activeDrawingLayer();
+        if (previousDrawingLayer) {
+          previousDrawingLayer.opacity = 0;
         }
-      });
-    }, 250);
+        this.deactivateDrawControl();
+        this.initStore(label, isNewLayer);
+        const drawingLayer = this.activeDrawingLayer();
+        this.activeDrawControl = this.createDrawControl(
+          this.fillColor,
+          this.strokeColor,
+          this.strokeWidth
+        );
+        this.activeDrawControl?.setGeometryType(this.currGeometryType);
+        this.toggleDrawControl();
+        this.stores.update((stores) => stores.concat(this.activeStore));
+        if (drawingLayer) {
+          this.drawControls.update((controls) =>
+            controls.concat([[drawingLayer.id!, this.activeDrawControl!]])
+          );
+          this.drawControlsEvent.emit(this.drawControls());
+          this.layersIDEvent.emit(drawingLayer.id!);
+        }
+        this.isCreatingNewLayer = false;
+        if (!this.labelsAreShown) {
+          this.onToggleLabels();
+        }
+        this.activeLayerChange.emit(drawingLayer);
+      } else {
+        const select = this.select();
+        if (select) {
+          select.value = this.activeDrawingLayer;
+          select.selectionChange.emit(
+            new MatSelectChange(select, this.activeDrawingLayer())
+          );
+        }
+      }
+    });
   }
 
   // HTML user interactions
