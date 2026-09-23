@@ -258,7 +258,7 @@ import { FormStepperComponent } from '@igo2/common/form';
 @Component({
   selector: 'app-example',
   imports: [FormStepperComponent],
-  template: ` <igo-form-stepper [steps]="steps" [initialData]="initialData()" [notice]="notice" [labels]="{ processButton: 'Submit', cancelButton: 'Cancel' }" [showCancelButton]="false" (dataChange)="onDataChange($event)" (completed)="onCompleted($event)" /> `
+  template: `<igo-form-stepper [steps]="steps" [initialData]="initialData()" [notice]="notice" [labels]="{ processButton: 'Submit', cancelButton: 'Cancel' }" [showCancelButton]="false" (dataChange)="onDataChange($event)" (completed)="onCompleted($event)" />`
 })
 export class ExampleComponent {
   readonly steps = steps;

@@ -4,7 +4,7 @@
   [steps]="data.steps"
   [initialData]="initialData"
   [notice]="data.notice"
-  [labels]="data.labels ?? {}"
+  [labels]="data.labels"
   (dataChange)="onDataChange($event)"
   (completed)="onCompleted($event)"
   (cancelled)="cancel()"

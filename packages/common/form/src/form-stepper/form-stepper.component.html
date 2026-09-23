@@ -80,7 +80,7 @@
       }
 
       <button matButton="filled" type="submit" color="primary">
-        {{ submitButtonText() }}
+        {{ isLastStep() ? labels().processButton : labels().nextButton }}
       </button>
     </div>
   </igo-form>

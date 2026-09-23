@@ -45,7 +45,12 @@ export class FormStepperComponent {
 
   readonly notice = input<string | undefined>();
 
-  readonly labels = input<Partial<FormStepperLabels>>({});
+  readonly labels = input<
+    FormStepperLabels,
+    Partial<FormStepperLabels> | undefined
+  >(DEFAULT_FORM_STEPPER_LABELS, {
+    transform: (value) => labelAttribute(value, DEFAULT_FORM_STEPPER_LABELS)
+  });
 
   readonly showCancelButton = input(true);
 
@@ -133,12 +138,6 @@ export class FormStepperComponent {
 
   readonly isLastStep = computed(
     () => this.stepIndex() === this.steps().length - 1
-  );
-
-  readonly submitButtonText = computed(() =>
-    this.isLastStep()
-      ? this.resolvedLabels().processButton
-      : this.resolvedLabels().nextButton
   );
 
   onSubmitStep(stepData: Record<string, unknown>): void {

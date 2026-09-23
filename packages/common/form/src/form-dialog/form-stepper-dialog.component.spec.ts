@@ -25,8 +25,8 @@ describe('FormStepperDialogComponent', () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            steps: [{ label: 'Country', form: { formFieldConfigs: [] } }],
-            labels: { cancelButton: 'Skip' },
+            steps: [{ label: 'Pays', form: { formFieldConfigs: [] } }],
+            labels: { cancelButton: 'Passer' },
             data$
           }
         },
@@ -53,7 +53,7 @@ describe('FormStepperDialogComponent', () => {
   });
 
   it('should pass provided labels through unchanged', () => {
-    expect(component.data.labels).toEqual({ cancelButton: 'Skip' });
+    expect(component.data.labels).toEqual({ cancelButton: 'Passer' });
   });
 
   it('should close the dialog with the final result', () => {
