@@ -1,7 +1,5 @@
 import OlFeature from 'ol/Feature';
 
-import { describe, expect, it } from 'vitest';
-
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { getFeatureTableColumns } from './workspace.utils';
 
