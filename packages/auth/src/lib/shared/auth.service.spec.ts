@@ -1,9 +1,14 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting
+} from '@angular/common/http/testing';
 import { TestBed, inject } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
 import { provideMockTranslation } from '@igo2/core/language';
+
+import { firstValueFrom } from 'rxjs';
 
 import { AUTH_OPTIONS } from './auth.interface';
 import { AuthService } from './auth.service';
@@ -55,4 +60,48 @@ describe('AuthService', () => {
       });
     }
   ));
+});
+
+describe('AuthService without authentication configuration', () => {
+  let service: AuthService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideMockTranslation()
+      ]
+    });
+
+    service = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+    httpMock.verify();
+  });
+
+  it('rejects operations that require an authentication URL', async () => {
+    await expect(
+      firstValueFrom(service.login('user', 'password'))
+    ).rejects.toThrow('Authentication is not configured.');
+    await expect(firstValueFrom(service.refresh())).rejects.toThrow(
+      'Authentication is not configured.'
+    );
+    await expect(firstValueFrom(service.getUserInfo())).rejects.toThrow(
+      'Authentication is not configured.'
+    );
+    await expect(firstValueFrom(service.getProfils())).rejects.toThrow(
+      'Authentication is not configured.'
+    );
+    await expect(firstValueFrom(service.updateUser({}))).rejects.toThrow(
+      'Authentication is not configured.'
+    );
+
+    expect(service.isLogging()).toBe(false);
+  });
 });

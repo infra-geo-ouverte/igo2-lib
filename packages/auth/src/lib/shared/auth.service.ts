@@ -11,7 +11,13 @@ import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 import { Base64 } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, ReplaySubject, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  of,
+  throwError
+} from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
@@ -60,8 +66,8 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     });
   }
 
-  get hasAuthService() {
-    return this.authOptions?.url !== undefined;
+  get hasAuthService(): boolean {
+    return Boolean(this.authOptions.url);
   }
 
   get user(): User | null {
@@ -85,10 +91,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   get isAdmin(): boolean {
-    if (this?.user?.isAdmin) {
-      return true;
-    }
-    return false;
+    return this.user?.isAdmin ?? false;
   }
 
   login(username: string, password: string): Observable<IUser | null> {
@@ -130,7 +133,12 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   refresh(): Observable<IToken> {
-    return this.http.post<IToken>(`${this.authOptions?.url}/refresh`, {}).pipe(
+    const url = this.getAuthenticationUrl('refresh');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
+    return this.http.post<IToken>(url, {}).pipe(
       tap((data) => {
         this.tokenService.set(data.token);
       }),
@@ -146,7 +154,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   logout(): void {
     this.logoutInternal();
-    if (this.authOptions.logoutRedirectRoute) {
+    if (this.authOptions?.logoutRedirectRoute) {
       this.router?.navigate([this.authOptions.logoutRedirectRoute]);
     }
   }
@@ -165,24 +173,36 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     if (!this.router) {
       return;
     }
-    const redirectUrl = this.redirectUrl ?? this.authOptions.homeRoute ?? '/';
+    const redirectUrl = this.redirectUrl ?? this.authOptions?.homeRoute ?? '/';
 
     this.router.navigateByUrl(redirectUrl);
   }
 
   getUserInfo(): Observable<User> {
-    const url = this.authOptions?.url + '/info';
+    const url = this.getAuthenticationUrl('info');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
     return this.http.get<User>(url);
   }
 
   getProfils(): Observable<{ profils: string[] }> {
-    return this.http.get<{ profils: string[] }>(
-      `${this.authOptions?.url}/profils`
-    );
+    const url = this.getAuthenticationUrl('profils');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
+    return this.http.get<{ profils: string[] }>(url);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.patch<User>(this.authOptions?.url, user);
+    const url = this.getAuthenticationUrl();
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
+    return this.http.patch<User>(url, user);
   }
 
   redirectToLogin(
@@ -197,26 +217,42 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   protected loginCall(body: unknown, headers: HttpHeaders) {
-    return this.http
-      .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
-      .pipe(
-        tap((data) => {
-          this.tokenService.set(data.token);
-          const user = this.user;
-          if (!user) {
-            return;
-          }
+    const url = this.getAuthenticationUrl('login');
+    if (!url) {
+      return this.authenticationNotConfigured<IUser | null>();
+    }
 
-          if (user.locale && !this.languageForce) {
-            this.languageService?.setLanguage(user.locale);
-          }
+    return this.http.post<IToken>(url, body, { headers }).pipe(
+      tap((data) => {
+        this.tokenService.set(data.token);
+        const user = this.user;
+        if (!user) {
+          return;
+        }
 
-          if (user.isExpired) {
-            this.messageService.alert('igo.auth.error.intern.Password expired');
-          }
-        }),
-        switchMap(() => this.initializeAuthentication(true))
-      );
+        if (user.locale && !this.languageForce) {
+          this.languageService?.setLanguage(user.locale);
+        }
+
+        if (user.isExpired) {
+          this.messageService.alert('igo.auth.error.intern.Password expired');
+        }
+      }),
+      switchMap(() => this.initializeAuthentication(true))
+    );
+  }
+
+  private getAuthenticationUrl(path?: string): string | undefined {
+    const url = this.authOptions.url;
+    if (!url) {
+      return;
+    }
+
+    return path ? `${url}/${path}` : url;
+  }
+
+  private authenticationNotConfigured<T>(): Observable<T> {
+    return throwError(() => new Error('Authentication is not configured.'));
   }
 
   private logoutInternal(): void {
@@ -248,7 +284,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     }
 
     if (this.userService) {
-      const obs$ = this.authOptions.user?.withSync
+      const obs$ = this.authOptions?.user?.withSync
         ? this.userService.sync()
         : this.userService.getUser();
 

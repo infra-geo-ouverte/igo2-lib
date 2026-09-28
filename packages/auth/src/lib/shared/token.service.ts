@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 
 import { jwtDecode } from 'jwt-decode';
 
-import { AUTH_OPTIONS, AuthOptions } from './auth.interface';
+import { AUTH_OPTIONS } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 
 export type TokenStatus = 'missing' | 'expired' | 'valid' | 'near-expiry';
@@ -11,23 +11,29 @@ export type TokenStatus = 'missing' | 'expired' | 'valid' | 'near-expiry';
   providedIn: 'root'
 })
 export class TokenService {
-  private options?: AuthOptions;
-  private tokenKey: string;
-
-  constructor() {
-    this.options = inject(AUTH_OPTIONS);
-    this.tokenKey = this.options?.tokenKey ?? '';
-  }
+  private tokenKey = inject(AUTH_OPTIONS).tokenKey;
 
   set(token: string) {
+    if (!this.tokenKey) {
+      return;
+    }
+
     localStorage.setItem(this.tokenKey, token);
   }
 
   remove() {
+    if (!this.tokenKey) {
+      return;
+    }
+
     localStorage.removeItem(this.tokenKey);
   }
 
   get(): string | undefined {
+    if (!this.tokenKey) {
+      return;
+    }
+
     return localStorage.getItem(this.tokenKey) ?? undefined;
   }
 
