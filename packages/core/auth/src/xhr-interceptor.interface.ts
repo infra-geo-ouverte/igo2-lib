@@ -6,6 +6,7 @@ import { InjectionToken } from '@angular/core';
  * `HttpClient` and `HTTP_INTERCEPTORS`.
  */
 export interface IXhrInterceptor {
+  prepareXhr?(url: string): Promise<boolean>;
   interceptXhr(xhr: XMLHttpRequest, url: string): boolean;
   alterUrlWithKeyAuth(url: string): string | undefined;
 }
