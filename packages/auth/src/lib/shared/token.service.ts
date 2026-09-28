@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 import { AUTH_OPTIONS, AuthOptions } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 
+export type TokenStatus = 'missing' | 'expired' | 'valid' | 'near-expiry';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -37,12 +39,22 @@ export class TokenService {
     return jwtDecode(token) satisfies IgoJwtPayload;
   }
 
-  isExpired() {
+  getStatus(nearExpirySeconds = 1800): TokenStatus {
     const jwt = this.decode();
-    const currentTime = new Date().getTime() / 1000;
-    if (jwt?.exp && currentTime < jwt.exp) {
-      return false;
+    if (!jwt) {
+      return 'missing';
     }
-    return true;
+
+    const currentTime = Date.now() / 1000;
+    if (jwt.exp === undefined || currentTime >= jwt.exp) {
+      return 'expired';
+    }
+
+    return currentTime > jwt.exp - nearExpirySeconds ? 'near-expiry' : 'valid';
+  }
+
+  isExpired(): boolean {
+    const status = this.getStatus();
+    return status === 'missing' || status === 'expired';
   }
 }

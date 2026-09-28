@@ -11,7 +11,7 @@ import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 import { Base64 } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
@@ -40,6 +40,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   public authenticate$ = new BehaviorSubject<boolean>(false);
   public logged$ = new BehaviorSubject<boolean>(false);
+  public readonly initialized$ = new ReplaySubject<boolean>(1);
   public redirectUrl?: string;
   public languageForce = false;
   public authOptions: T;
@@ -222,6 +223,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
+    this.initialized$.next(false);
   }
 
   private navigateToLogin(queryParams: Record<string, string> = {}): void {
@@ -241,6 +243,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   ): Observable<IUser | null> {
     if (!isAuthenticated) {
       this.authenticate$.next(false);
+      this.initialized$.next(false);
       return of(null);
     }
 
@@ -249,10 +252,21 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
         ? this.userService.sync()
         : this.userService.getUser();
 
-      return obs$.pipe(tap(() => this.authenticate$.next(true)));
+      return obs$.pipe(
+        tap(() => {
+          this.authenticate$.next(true);
+          this.initialized$.next(true);
+        }),
+        catchError(() => {
+          this.authenticate$.next(false);
+          this.initialized$.next(false);
+          return of(null);
+        })
+      );
     }
 
     this.authenticate$.next(true);
+    this.initialized$.next(true);
     return of(null);
   }
 }

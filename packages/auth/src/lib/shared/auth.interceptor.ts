@@ -1,3 +1,4 @@
+import { DOCUMENT, Location } from '@angular/common';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -11,8 +12,14 @@ import { Injectable, Injector, inject } from '@angular/core';
 
 import { IXhrInterceptor } from '@igo2/core/auth';
 
-import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import {
+  EMPTY,
+  MonoTypeOperatorFunction,
+  Observable,
+  firstValueFrom,
+  throwError
+} from 'rxjs';
+import { catchError, finalize, shareReplay, switchMap } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 
 import {
@@ -30,9 +37,11 @@ import { TokenService } from './token.service';
 export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
   private tokenService = inject(TokenService);
   private injector = inject(Injector);
+  private document = inject(DOCUMENT);
+  private location = inject(Location);
 
   private authOptions: AuthOptions;
-  private refreshInProgress = false;
+  private refreshRequest$?: Observable<unknown>;
   private trustHosts: string[];
   private hostsWithCredentials: WithCredentialsOptions[];
   private hostsWithAuthByKey: AuthByKeyOptions[];
@@ -41,7 +50,13 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     this.authOptions = inject(AUTH_OPTIONS);
 
     this.trustHosts = this.authOptions?.trustHosts || [];
-    this.trustHosts.push(window.location.hostname);
+    const applicationUrl = new URL(
+      this.location.prepareExternalUrl('/'),
+      this.document.baseURI
+    );
+    if (!this.trustHosts.includes(applicationUrl.hostname)) {
+      this.trustHosts.push(applicationUrl.hostname);
+    }
 
     this.hostsWithCredentials = this.authOptions?.hostsWithCredentials || [];
     this.hostsWithAuthByKey = this.authOptions?.hostsByKey || [];
@@ -65,9 +80,25 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
       });
       return next.handle(req).pipe(this.catchUnauthorized(req));
     }
-    if (!this.isAuthenticationRequest(req.url)) {
-      this.refreshToken();
+    const isAuthenticationRequest = this.isAuthenticationRequest(req.url);
+    if (isAuthenticationRequest) {
+      return next.handle(req).pipe(this.catchUnauthorized(req));
     }
+
+    const refresh$ = this.isTrustedHost(req.url)
+      ? this.refreshToken()
+      : undefined;
+    if (refresh$) {
+      return refresh$.pipe(switchMap(() => this.forwardRequest(req, next)));
+    }
+
+    return this.forwardRequest(req, next);
+  }
+
+  private forwardRequest(
+    req: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
@@ -96,6 +127,38 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     return next.handle(authReq).pipe(this.catchUnauthorized(authReq));
   }
 
+  async prepareXhr(url: string): Promise<boolean> {
+    if (
+      this.handleHostsWithCredentials(url) ||
+      this.isAuthenticationRequest(url) ||
+      !this.isTrustedHost(url)
+    ) {
+      return true;
+    }
+
+    const status = this.tokenService.getStatus();
+    if (status === 'expired') {
+      this.expireSession();
+      return false;
+    }
+
+    if (status !== 'near-expiry') {
+      return true;
+    }
+
+    const refresh$ = this.refreshToken();
+    if (!refresh$) {
+      return true;
+    }
+
+    try {
+      await firstValueFrom(refresh$);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   interceptXhr(xhr: XMLHttpRequest, url: string): boolean {
     const withCredentials = this.handleHostsWithCredentials(url);
     if (withCredentials) {
@@ -104,7 +167,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     }
 
     if (!this.isAuthenticationRequest(url)) {
-      this.refreshToken();
+      this.refreshToken()?.subscribe({ error: () => undefined });
     }
     const element = document.createElement('a');
     element.href = url;
@@ -183,7 +246,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
         !this.isAuthenticationRequest(req.url) &&
-        this.hasExpiredSession()
+        this.tokenService.isExpired()
       ) {
         this.expireSession();
       }
@@ -192,12 +255,8 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     });
   }
 
-  private hasExpiredSession(): boolean {
-    return !!this.tokenService.get() && this.tokenService.isExpired();
-  }
-
   private isAuthenticationRequest(url: string): boolean {
-    const requestUrl = new URL(url, location.origin);
+    const requestUrl = new URL(url, this.document.baseURI);
     const loginUrl = this.createAuthenticationUrl('login');
     const refreshUrl = this.createAuthenticationUrl('refresh');
 
@@ -210,31 +269,39 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
 
   private createAuthenticationUrl(path: 'login' | 'refresh'): URL {
     const authUrl = this.authOptions.url.replace(/\/+$/, '');
-    return new URL(`${authUrl}/${path}`, location.origin);
+    return new URL(`${authUrl}/${path}`, this.document.baseURI);
+  }
+
+  private isTrustedHost(url: string): boolean {
+    const parsedUrl = new URL(url, this.document.baseURI);
+    return this.trustHosts.includes(parsedUrl.hostname);
   }
 
   private expireSession(): void {
     this.injector.get(AuthService).expireSession();
   }
 
-  refreshToken() {
-    const jwt = this.tokenService.decode();
-    const currentTime = new Date().getTime() / 1000;
+  private refreshToken(): Observable<unknown> | undefined {
+    const status = this.tokenService.getStatus();
 
-    if (
-      !this.refreshInProgress &&
-      jwt?.exp &&
-      currentTime < jwt.exp &&
-      currentTime > jwt.exp - 1800
-    ) {
-      this.refreshInProgress = true;
-
-      return this.injector
-        .get(AuthService)
-        .refresh()
-        .pipe(finalize(() => (this.refreshInProgress = false)))
-        .subscribe({ error: () => undefined });
+    if (status === 'missing' || status === 'valid') {
+      return;
     }
+
+    if (status === 'expired') {
+      this.expireSession();
+      return EMPTY;
+    }
+
+    if (!this.refreshRequest$) {
+      const authService = this.injector.get(AuthService);
+      this.refreshRequest$ = authService.refresh().pipe(
+        finalize(() => (this.refreshRequest$ = undefined)),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+
+    return this.refreshRequest$;
   }
 }
 

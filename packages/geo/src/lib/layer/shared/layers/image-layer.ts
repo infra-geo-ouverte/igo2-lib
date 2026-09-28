@@ -67,7 +67,7 @@ export class ImageLayer extends Layer {
     super.remove();
   }
 
-  private customLoader(
+  private async customLoader(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tile: any,
     src: string,
@@ -81,6 +81,18 @@ export class ImageLayer extends Layer {
     if (alteredUrlWithKeyAuth) {
       url = alteredUrlWithKeyAuth;
     }
+    let prepared: boolean | undefined;
+    try {
+      prepared = await interceptor?.prepareXhr?.(url);
+    } catch {
+      xhr.abort();
+      return;
+    }
+    if (prepared === false) {
+      xhr.abort();
+      return;
+    }
+
     xhr.open('GET', url);
     const intercepted = interceptor?.interceptXhr(xhr, url);
     if (!intercepted) {
