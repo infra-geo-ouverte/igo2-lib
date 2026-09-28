@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 
-import { AuthService, User } from '@igo2/auth';
+import { AuthService, TokenService, User } from '@igo2/auth';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
 
@@ -25,15 +25,20 @@ import { StorageService } from '@igo2/core/storage';
 export class UserDialogComponent {
   dialogRef = inject<MatDialogRef<UserDialogComponent>>(MatDialogRef);
   private auth = inject(AuthService);
+  private tokenService = inject(TokenService);
   private storageService = inject(StorageService);
 
-  public user?: User;
+  public user?: User | null;
   public exp?: string;
 
   constructor() {
-    const decodeToken = this.auth.decodeToken();
-    this.user = decodeToken?.user;
-    this.exp = decodeToken?.exp
+    this.user = this.auth?.user;
+    this.exp = this.expirationTime;
+  }
+
+  get expirationTime(): string | undefined {
+    const decodeToken = this.tokenService.decode();
+    return decodeToken?.exp
       ? new Date(decodeToken.exp * 1000).toLocaleString()
       : undefined;
   }

@@ -16,7 +16,6 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AUTH_OPTIONS, AuthOptions, IInfosUser, User } from './auth.interface';
-import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 import { IUser } from './user/user.interface';
 import { UserService } from './user/user.service';
@@ -49,15 +48,6 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   isLogging = signal(false);
 
-  get hasAuthService() {
-    return this.authOptions?.url !== undefined;
-  }
-
-  get user(): User | null {
-    const decodedToken = this.decodeToken();
-    return decodedToken?.user ? decodedToken.user : null;
-  }
-
   constructor() {
     this.authOptions = inject(AUTH_OPTIONS) as T;
 
@@ -67,6 +57,37 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
       this.logged$.next(authenticated);
       globalCacheBusterNotifier.next();
     });
+  }
+
+  get hasAuthService() {
+    return this.authOptions?.url !== undefined;
+  }
+
+  get user(): User | null {
+    if (!this.isAuthenticated()) {
+      return null;
+    }
+    const decodedToken = this.tokenService.decode();
+    return decodedToken?.user ? decodedToken.user : null;
+  }
+
+  get logged(): boolean {
+    return this.authenticated || this.isAnonymous;
+  }
+
+  get isAnonymous(): boolean {
+    return this.anonymous;
+  }
+
+  get authenticated(): boolean {
+    return this.isAuthenticated();
+  }
+
+  get isAdmin(): boolean {
+    if (this?.user?.isAdmin) {
+      return true;
+    }
+    return false;
   }
 
   login(username: string, password: string): Observable<IUser | null> {
@@ -113,7 +134,10 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
         this.tokenService.set(data.token);
       }),
       catchError((err) => {
-        err.error.caught = true;
+        if (err.error && typeof err.error === 'object') {
+          err.error.caught = true;
+        }
+        this.expireSession();
         throw err;
       })
     );
@@ -126,25 +150,14 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     }
   }
 
-  private logoutInternal(): void {
-    this.anonymous = false;
-    this.tokenService.remove();
-    this.authenticate$.next(false);
+  expireSession(redirectUrl: string = this.router.url): void {
+    this.redirectUrl = redirectUrl;
+    this.logoutInternal();
+    this.navigateToLogin();
   }
 
   isAuthenticated(): boolean {
     return !this.tokenService.isExpired();
-  }
-
-  getToken(): string | undefined {
-    return this.tokenService.get();
-  }
-
-  decodeToken(): IgoJwtPayload | undefined {
-    if (this.isAuthenticated()) {
-      return this.tokenService.decode();
-    }
-    return;
   }
 
   goToRedirectUrl() {
@@ -171,44 +184,15 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     return this.http.patch<User>(this.authOptions?.url, user);
   }
 
-  private encodePassword(password: string) {
-    return Base64.encode(password);
-  }
-
-  // authenticated or anonymous
-  get logged(): boolean {
-    return this.authenticated || this.isAnonymous;
-  }
-
-  get isAnonymous(): boolean {
-    return this.anonymous;
-  }
-
-  get authenticated(): boolean {
-    return this.isAuthenticated();
-  }
-
-  get isAdmin(): boolean {
-    const token = this.decodeToken();
-    if (token?.user?.isAdmin) {
-      return true;
-    }
-    return false;
-  }
-
   redirectToLogin(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): void {
     this.redirectUrl = state.url;
+    const langKey = this.routeService.options.languageKey ?? 'lang';
+    const langValue = route.queryParams[langKey];
 
-    if (this.authOptions?.loginRoute) {
-      const langKey = this.routeService.options.languageKey ?? 'lang';
-      const langValue = route.queryParams[langKey];
-      this.router.navigate([this.authOptions.loginRoute], {
-        queryParams: langValue ? { [langKey]: langValue } : {}
-      });
-    }
+    this.navigateToLogin(langValue ? { [langKey]: langValue } : {});
   }
 
   protected loginCall(body: unknown, headers: HttpHeaders) {
@@ -217,20 +201,39 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
       .pipe(
         tap((data) => {
           this.tokenService.set(data.token);
-          const tokenDecoded = this.decodeToken();
-          if (tokenDecoded?.user) {
-            if (tokenDecoded.user.locale && !this.languageForce) {
-              this.languageService?.setLanguage(tokenDecoded.user.locale);
-            }
-            if (tokenDecoded.user.isExpired) {
-              this.messageService.alert(
-                'igo.auth.error.intern.Password expired'
-              );
-            }
+          const user = this.user;
+          if (!user) {
+            return;
+          }
+
+          if (user.locale && !this.languageForce) {
+            this.languageService?.setLanguage(user.locale);
+          }
+
+          if (user.isExpired) {
+            this.messageService.alert('igo.auth.error.intern.Password expired');
           }
         }),
         switchMap(() => this.initializeAuthentication(true))
       );
+  }
+
+  private logoutInternal(): void {
+    this.anonymous = false;
+    this.tokenService.remove();
+    this.authenticate$.next(false);
+  }
+
+  private navigateToLogin(queryParams: Record<string, string> = {}): void {
+    if (!this.authOptions?.loginRoute) {
+      return;
+    }
+
+    this.router.navigate([this.authOptions.loginRoute], { queryParams });
+  }
+
+  private encodePassword(password: string) {
+    return Base64.encode(password);
   }
 
   private initializeAuthentication(

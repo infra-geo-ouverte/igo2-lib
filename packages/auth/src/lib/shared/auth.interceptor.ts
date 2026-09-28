@@ -1,19 +1,18 @@
 import {
-  HttpClient,
-  HttpHandlerFn,
-  HttpInterceptorFn
-} from '@angular/common/http';
-import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
+  HttpHandlerFn,
   HttpInterceptor,
+  HttpInterceptorFn,
   HttpRequest
 } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { IXhrInterceptor } from '@igo2/core/auth';
 
-import { Observable } from 'rxjs';
+import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 
 import {
@@ -22,6 +21,7 @@ import {
   AuthOptions,
   WithCredentialsOptions
 } from './auth.interface';
+import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -29,7 +29,7 @@ import { TokenService } from './token.service';
 })
 export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
   private tokenService = inject(TokenService);
-  private http = inject(HttpClient);
+  private injector = inject(Injector);
 
   private authOptions: AuthOptions;
   private refreshInProgress = false;
@@ -63,9 +63,11 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
       req = originalReq.clone({
         withCredentials
       });
-      return next.handle(req);
+      return next.handle(req).pipe(this.catchUnauthorized(req));
     }
-    this.refreshToken();
+    if (!this.isAuthenticationRequest(req.url)) {
+      this.refreshToken();
+    }
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
@@ -91,7 +93,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
       });
     }
 
-    return next.handle(authReq);
+    return next.handle(authReq).pipe(this.catchUnauthorized(authReq));
   }
 
   interceptXhr(xhr: XMLHttpRequest, url: string): boolean {
@@ -101,7 +103,9 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
       return true;
     }
 
-    this.refreshToken();
+    if (!this.isAuthenticationRequest(url)) {
+      this.refreshToken();
+    }
     const element = document.createElement('a');
     element.href = url;
 
@@ -171,6 +175,48 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     return hostWithKey;
   }
 
+  private catchUnauthorized(
+    req: HttpRequest<unknown>
+  ): MonoTypeOperatorFunction<HttpEvent<unknown>> {
+    return catchError((error: unknown) => {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 401 &&
+        !this.isAuthenticationRequest(req.url) &&
+        this.hasExpiredSession()
+      ) {
+        this.expireSession();
+      }
+
+      return throwError(() => error);
+    });
+  }
+
+  private hasExpiredSession(): boolean {
+    return !!this.tokenService.get() && this.tokenService.isExpired();
+  }
+
+  private isAuthenticationRequest(url: string): boolean {
+    const requestUrl = new URL(url, location.origin);
+    const loginUrl = this.createAuthenticationUrl('login');
+    const refreshUrl = this.createAuthenticationUrl('refresh');
+
+    return [loginUrl, refreshUrl].some(
+      (authenticationUrl) =>
+        requestUrl.origin === authenticationUrl.origin &&
+        requestUrl.pathname === authenticationUrl.pathname
+    );
+  }
+
+  private createAuthenticationUrl(path: 'login' | 'refresh'): URL {
+    const authUrl = this.authOptions.url.replace(/\/+$/, '');
+    return new URL(`${authUrl}/${path}`, location.origin);
+  }
+
+  private expireSession(): void {
+    this.injector.get(AuthService).expireSession();
+  }
+
   refreshToken() {
     const jwt = this.tokenService.decode();
     const currentTime = new Date().getTime() / 1000;
@@ -183,18 +229,11 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     ) {
       this.refreshInProgress = true;
 
-      const url = this.authOptions?.url;
-      return this.http.post(`${url}/refresh`, {}).subscribe(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (data: any) => {
-          this.tokenService.set(data.token);
-          this.refreshInProgress = false;
-        },
-        (err) => {
-          err.error.caught = true;
-          return err;
-        }
-      );
+      return this.injector
+        .get(AuthService)
+        .refresh()
+        .pipe(finalize(() => (this.refreshInProgress = false)))
+        .subscribe({ error: () => undefined });
     }
   }
 }
