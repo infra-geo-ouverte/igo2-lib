@@ -113,6 +113,42 @@ describe('AuthInterceptor', () => {
     );
   });
 
+  it('should add the token to a trusted relative request', () => {
+    const token = createToken(Math.floor(Date.now() / 1000) + 3600);
+    let forwardedRequest: HttpRequest<unknown> | undefined;
+    const handler: HttpHandler = {
+      handle: (request) => {
+        forwardedRequest = request;
+        return EMPTY;
+      }
+    };
+
+    localStorage.setItem('auth-token', token);
+    interceptor
+      .intercept(new HttpRequest('GET', '/api/data'), handler)
+      .subscribe();
+
+    expect(forwardedRequest?.headers.get('Authorization')).toBe(
+      `Bearer ${token}`
+    );
+  });
+
+  it('should add the token to a trusted relative XHR request', () => {
+    const token = createToken(Math.floor(Date.now() / 1000) + 3600);
+    const xhr = new XMLHttpRequest();
+    const setRequestHeaderSpy = vi
+      .spyOn(xhr, 'setRequestHeader')
+      .mockImplementation(() => undefined);
+
+    localStorage.setItem('auth-token', token);
+
+    expect(interceptor.interceptXhr(xhr, '/api/data')).toBe(true);
+    expect(setRequestHeaderSpy).toHaveBeenCalledWith(
+      'Authorization',
+      `Bearer ${token}`
+    );
+  });
+
   it('should wait for refresh before preparing a trusted XHR request', async () => {
     const refreshedToken = createToken(Math.floor(Date.now() / 1000) + 3600);
     let prepared = false;

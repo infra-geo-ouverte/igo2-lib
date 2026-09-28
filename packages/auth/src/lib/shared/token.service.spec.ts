@@ -68,3 +68,24 @@ describe('TokenService', () => {
     ].join('.');
   }
 });
+
+describe('TokenService without a token key', () => {
+  let service: TokenService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(TokenService);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('does not access local storage', () => {
+    service.set('token');
+    service.remove();
+
+    expect(service.get()).toBeUndefined();
+    expect(localStorage.length).toBe(0);
+  });
+});
