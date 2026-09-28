@@ -116,6 +116,7 @@ export function buildLocationStepperSteps(): FormStepperStepConfig[] {
     {
       label: 'Details',
       title: 'Finish the location',
+      dialogWidth: '50vw',
       notice:
         'District suggestions update from the city selected in the previous step.',
       form: ({ data }) => {

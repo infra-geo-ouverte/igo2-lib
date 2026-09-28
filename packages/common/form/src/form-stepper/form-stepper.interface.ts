@@ -28,6 +28,9 @@ export interface FormStepperStepConfig {
   label: string;
   title?: string;
   notice?: string;
+  dialogWidth?: string;
+  dialogHeight?: string;
+  dialogPanelClass?: string | string[];
   form: FormStepperFormConfig | FormStepperStepFormConfigResolver;
 }
 
