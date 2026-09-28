@@ -216,24 +216,12 @@ export function createTableTemplate(
         take(1)
       )
       .subscribe((entities) => {
-        const ol = (entities[0] as Feature).ol as olFeature<OlGeometry>;
-        const columnsFromFeatures = ol
-          .getKeys()
-          .filter(
-            (col) =>
-              !col.startsWith('_') &&
-              col !== 'geometry' &&
-              col !== ol.getGeometryName() &&
-              !col.match(/boundedby/gi)
-          )
-          .map((key) => {
-            return {
-              name: `properties.${key}`,
-              title: key,
-              renderer: EntityTableColumnRenderer.UnsanitizedHTML
-            };
-          });
-        columnsFromFeatures.unshift(...geoServiceAction);
+        const columnsFromFeatures = getFeatureTableColumns(
+          entities as Feature[]
+        );
+        columnsFromFeatures.unshift(
+          ...(geoServiceAction as EntityTableColumn[])
+        );
         workspace.meta.tableTemplate = {
           selection: true,
           sort: true,
@@ -287,6 +275,34 @@ export function createTableTemplate(
     columns,
     tableHeight: '100%'
   };
+}
+
+export function getFeatureTableColumns(
+  features: Feature[]
+): EntityTableColumn[] {
+  const keys = new Set<string>();
+
+  for (const feature of features) {
+    const ol = feature.ol as olFeature<OlGeometry> | undefined;
+    if (!ol) continue;
+
+    for (const key of ol.getKeys()) {
+      if (
+        !key.startsWith('_') &&
+        key !== 'geometry' &&
+        key !== ol.getGeometryName() &&
+        !key.match(/boundedby/gi)
+      ) {
+        keys.add(key);
+      }
+    }
+  }
+
+  return Array.from(keys, (key) => ({
+    name: `properties.${key}`,
+    title: key,
+    renderer: EntityTableColumnRenderer.UnsanitizedHTML
+  }));
 }
 
 export function createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
