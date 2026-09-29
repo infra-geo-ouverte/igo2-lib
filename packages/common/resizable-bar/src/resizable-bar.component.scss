@@ -40,10 +40,22 @@ $barWidth: 3px;
 }
 
 .resize-container {
+  &.horizontal {
+    cursor: n-resize;
+  }
+
+  &.vertical {
+    cursor: e-resize;
+  }
+
   &:hover {
     .resize-item,
     .expand-btn {
       opacity: 1;
+    }
+
+    .expand-btn {
+      pointer-events: auto;
     }
   }
 }
@@ -76,14 +88,12 @@ $barWidth: 3px;
   position: relative;
 
   &.horizontal {
-    cursor: n-resize;
     width: 100%;
     height: $barHeight;
     bottom: -3px;
   }
 
   &.vertical {
-    cursor: e-resize;
     width: $barWidth;
     height: 100%;
     right: -3px;
@@ -116,6 +126,7 @@ $barWidth: 3px;
   height: 24px;
   line-height: 24px;
   opacity: 0;
+  cursor: inherit;
 
   color: var(--mat-sys-primary);
   background-color: var(--mat-sys-on-primary);
@@ -147,4 +158,18 @@ $barWidth: 3px;
     font-size: 20px;
     transition: color 100ms linear;
   }
+}
+
+.resize-tooltip {
+  position: absolute;
+  transform: translate(12px, -12px);
+  pointer-events: none;
+  z-index: 10;
+  background: rgba(97, 97, 97, 0.9);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
 }

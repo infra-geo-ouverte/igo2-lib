@@ -37,6 +37,9 @@
         "scrollDown": "Défiler vers le bas",
         "icon": "Actions supplémentaires"
       },
+      "resizableBar": {
+        "tooltip": "Enfoncer et glisser pour redimensionner"
+      },
       "interactiveTour": {
         "tooltipTourToolButton": "Aide interactive sur l'outil",
         "disaledTooltipTourToolButton": "Pour avoir accès au tour interactif de cet outil, ajouter des contextes ou des couches",

@@ -2,14 +2,19 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostBinding,
   OnInit,
+  inject,
   input,
   numberAttribute,
-  output
+  output,
+  signal
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
+import { IgoLanguageModule } from '@igo2/core/language';
 
 import { ResizeDirective } from './shared/resize.directive';
 
@@ -23,12 +28,23 @@ export type AlignmentType = (typeof AlignmentType)[number];
   selector: 'igo-resizable-bar',
   templateUrl: './resizable-bar.component.html',
   styleUrls: ['./resizable-bar.component.scss'],
-  imports: [MatIconModule, MatButtonModule, ResizeDirective, NgClass],
+  imports: [
+    MatIconModule,
+    MatButtonModule,
+    ResizeDirective,
+    NgClass,
+    IgoLanguageModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResizableBarComponent implements OnInit {
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
   alignement!: AlignmentType;
   iconRotation!: string;
+
+  readonly tooltipVisible = signal(false);
+  readonly tooltipPosition = signal({ x: 0, y: 0 });
 
   readonly anchor = input<ResizeAnchorType>('right');
 
@@ -54,6 +70,19 @@ export class ResizableBarComponent implements OnInit {
       anchor === 'top' || anchor === 'bottom' ? 'horizontal' : 'vertical';
 
     this.iconRotation = this.alignement === 'vertical' ? 'rotate(90deg)' : '';
+  }
+
+  onContainerMouseMove(event: MouseEvent): void {
+    const rect = this.elementRef.nativeElement.getBoundingClientRect();
+    this.tooltipPosition.set({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    });
+    this.tooltipVisible.set(true);
+  }
+
+  onContainerMouseLeave(): void {
+    this.tooltipVisible.set(false);
   }
 
   onChange(event: MouseEvent): void {

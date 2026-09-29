@@ -1,4 +1,11 @@
-<div igoResize (change)="onChange($event)" class="resize-container">
+<div
+  igoResize
+  (change)="onChange($event)"
+  (mousemove)="onContainerMouseMove($event)"
+  (mouseleave)="onContainerMouseLeave()"
+  class="resize-container"
+  [ngClass]="[alignement]"
+>
   <div class="resize-indicator" [ngClass]="[alignement]"></div>
 
   <div class="resize-bar" [ngClass]="[alignement]">
@@ -8,4 +15,14 @@
   <button mat-mini-fab class="expand-btn" [ngClass]="[alignement, anchor()]">
     <mat-icon [style.transform]="iconRotation">drag_handle</mat-icon>
   </button>
+
+  @if (tooltipVisible()) {
+    <div
+      class="resize-tooltip"
+      [style.left.px]="tooltipPosition().x"
+      [style.top.px]="tooltipPosition().y"
+    >
+      {{ 'igo.common.resizableBar.tooltip' | translate }}
+    </div>
+  }
 </div>

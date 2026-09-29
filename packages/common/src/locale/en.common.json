@@ -37,6 +37,9 @@
         "scrollDown": "Scroll down",
         "icon": "Action list"
       },
+      "resizableBar": {
+        "tooltip": "Hold and drag to resize"
+      },
       "interactiveTour": {
         "tooltipTourToolButton": "Interactive tour of the application",
         "disaledTooltipTourToolButton": "To have access to this tool's tour, add contexts or layers",
