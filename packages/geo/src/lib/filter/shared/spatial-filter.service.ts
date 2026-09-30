@@ -23,7 +23,7 @@ export class SpatialFilterService {
   private languageService = inject(LanguageService);
   private configService = inject(ConfigService);
 
-  public baseUrl = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi';
+  public baseUrl = 'https://terrapi.geo.securite.gouv.qc.ca';
 
   /*
    * Type association with URL
