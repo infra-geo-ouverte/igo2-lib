@@ -61,5 +61,5 @@ function resolveAuthOptions(
 ): AuthOptions {
   const config = inject(ConfigService, { optional: true });
   const configOptions = config?.getConfig<Partial<AuthOptions>>('auth');
-  return { ...configOptions, ...explicitOptions } as AuthOptions;
+  return { ...configOptions, ...explicitOptions };
 }
