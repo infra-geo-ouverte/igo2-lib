@@ -160,7 +160,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     return {
       title: 'igo.geo.search.icherche.name',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
+      searchUrl: 'https://icherche.geo.securite.gouv.qc.ca',
       settings: [
         {
           type: 'checkbox',
@@ -781,7 +781,7 @@ export class IChercheReverseSearchSource
 
     return {
       title: 'igo.geo.search.ichercheReverse.name',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/terrapi',
+      searchUrl: 'https://terrapi.geo.securite.gouv.qc.ca',
       settings: [
         {
           type: 'checkbox',
