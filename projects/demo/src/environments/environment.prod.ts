@@ -29,7 +29,7 @@ export const environment: EnvironmentOptions = {
       activateInteractiveTour: true
     },
     importExport: {
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ogre'
+      url: 'https://ogre.geo.securite.gouv.qc.ca'
     },
     language: {
       prefix: './locale/'
@@ -81,7 +81,7 @@ export const environment: EnvironmentOptions = {
         enabled: false
       },
       icherche: {
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
+        searchUrl: 'https://icherche.geo.securite.gouv.qc.ca',
         order: 2,
         enabled: true,
         params: {
@@ -94,7 +94,7 @@ export const environment: EnvironmentOptions = {
       },
       icherchereverse: {
         showInPointerSummary: true,
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/terrapi',
+        searchUrl: 'https://terrapi.geo.securite.gouv.qc.ca',
         order: 3,
         enabled: true
       },

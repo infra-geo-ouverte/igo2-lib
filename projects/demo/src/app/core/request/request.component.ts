@@ -24,7 +24,7 @@ export class AppRequestComponent {
   languageService = inject(LanguageService);
 
   callHttp() {
-    const url = 'https://geoegl.msp.gouv.qc.ca/apis/icherche/info';
+    const url = 'https://icherche.geo.securite.gouv.qc.ca/info';
     this.http.get(url).subscribe((rep) => {
       console.log(rep);
     });
