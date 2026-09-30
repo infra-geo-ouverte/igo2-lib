@@ -220,6 +220,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "runnerConfig": "packages/auth/vitest.config.ts",
+            "providersFile": "packages/auth/src/test-providers.ts",
             "coverage": true
           }
         },
@@ -501,6 +502,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "runnerConfig": "packages/integration/vitest.config.ts",
+            "providersFile": "packages/integration/src/test-providers.ts",
             "coverage": true
           }
         },

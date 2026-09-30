@@ -1,7 +1,9 @@
 import { AuthOptions, AuthStorageOptions } from '@igo2/auth';
-import { AuthFormOptions } from '@igo2/auth/form';
+import { AnyMicrosoftOptions } from '@igo2/auth/microsoft';
+
+export type AnyAuthOptions = AuthOptions & AnyMicrosoftOptions;
 
 export interface AuthEnvironmentOptions {
-  auth?: AuthOptions & AuthFormOptions;
+  auth?: AnyAuthOptions;
   storage?: AuthStorageOptions;
 }
