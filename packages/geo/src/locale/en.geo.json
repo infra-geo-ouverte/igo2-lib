@@ -240,6 +240,13 @@
           "rename": "Rename group",
           "moreOptions": "Group tools",
           "remove": "Remove this group from the map",
+          "removeOptions": {
+            "title": "Select the deletion logic",
+            "oneGroupOnly": "The group only",
+            "oneGroupAndContent": "The group and its contents",
+            "manyGroupOnly": "The groups only",
+            "manyGroupAndContent": "The groups and their contents"
+          },
           "hide": "Hide group",
           "hideChildren": "Layer hidden by a group",
           "show": "Show group"
