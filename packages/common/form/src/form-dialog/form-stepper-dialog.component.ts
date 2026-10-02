@@ -1,4 +1,4 @@
-import { Component, inject, viewChild } from '@angular/core';
+import { Component, effect, inject, viewChild } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -6,6 +6,7 @@ import {
 } from '@angular/material/dialog';
 
 import { FormStepperComponent } from '../form-stepper/form-stepper.component';
+import { FormStepperStepConfig } from '../form-stepper/form-stepper.interface';
 import { FormDialogStepperData } from './form-dialog.interface';
 
 export const DEFAULT_FORM_STEPPER_DIALOG_TITLE =
@@ -27,6 +28,8 @@ export class FormStepperDialogComponent {
 
   readonly initialData: Record<string, unknown>;
 
+  private appliedPanelClasses: string[] = [];
+
   constructor() {
     if (!this.data.steps?.length) {
       throw new Error('Form stepper dialog requires at least one step.');
@@ -34,6 +37,47 @@ export class FormStepperDialogComponent {
 
     this.data.title = this.data.title ?? DEFAULT_FORM_STEPPER_DIALOG_TITLE;
     this.initialData = { ...(this.data.data$?.value ?? {}) };
+
+    effect(() => {
+      const stepper = this.formStepper();
+      const activeStep = stepper ? this.tryGetActiveStep(stepper) : undefined;
+      const width = activeStep?.dialogWidth ?? this.data.width;
+      const height = activeStep?.dialogHeight ?? this.data.height;
+
+      if (width || height) {
+        this.dialogRef.updateSize(width, height);
+      }
+
+      this.applyPanelClasses(activeStep?.dialogPanelClass);
+    });
+  }
+
+  private tryGetActiveStep(
+    stepper: FormStepperComponent
+  ): FormStepperStepConfig | undefined {
+    try {
+      return stepper.activeStep();
+    } catch {
+      return undefined;
+    }
+  }
+
+  private applyPanelClasses(panelClass: string | string[] | undefined): void {
+    const nextClasses = panelClass
+      ? Array.isArray(panelClass)
+        ? panelClass
+        : [panelClass]
+      : [];
+
+    if (this.appliedPanelClasses.length) {
+      this.dialogRef.removePanelClass(this.appliedPanelClasses);
+    }
+
+    if (nextClasses.length) {
+      this.dialogRef.addPanelClass(nextClasses);
+    }
+
+    this.appliedPanelClasses = nextClasses;
   }
 
   onDataChange(data: Record<string, unknown>): void {

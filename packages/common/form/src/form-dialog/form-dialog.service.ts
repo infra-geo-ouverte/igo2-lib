@@ -41,16 +41,19 @@ export class FormDialogService {
     formDialogStepperConfig: FormStepperConfig,
     options?: FormDialogStepperOptions
   ): Observable<T | undefined> {
+    const resolvedOptions: FormDialogStepperOptions = {
+      width: 'min(92vw, 44rem)',
+      maxWidth: '95vw',
+      ...options
+    };
     const data: FormDialogStepperData = {
       steps: formDialogStepperConfig.steps,
-      ...options
+      ...resolvedOptions
     };
     const dialogRef = this.dialog.open(FormStepperDialogComponent, {
       disableClose: false,
-      width: 'min(92vw, 44rem)',
-      maxWidth: '95vw',
-      data,
-      ...options
+      ...resolvedOptions,
+      data
     });
     return dialogRef.afterClosed() as Observable<T | undefined>;
   }
