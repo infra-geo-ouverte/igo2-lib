@@ -29,7 +29,7 @@ export class TableDataService {
     }
     const columns = sourceFields?.length
       ? await this.getSourceColumns(sourceFields, relations)
-      : this.getRawColumn(features[0]);
+      : this.getRawColumns(features);
 
     return this.transformFeaturesToExportFormat(features, columns);
   }
@@ -47,21 +47,26 @@ export class TableDataService {
     );
   }
 
-  private getRawColumn(feature: OlFeature<OlGeometry>): EntityTableColumn[] {
-    const geometryName = feature.getGeometryName();
-    return feature
-      .getKeys()
-      .filter(
-        (key) =>
+  private getRawColumns(
+    features: OlFeature<OlGeometry>[]
+  ): EntityTableColumn[] {
+    const keys = new Set<string>();
+
+    for (const feature of features) {
+      const geometryName = feature.getGeometryName();
+      for (const key of feature.getKeys()) {
+        if (
           !key.startsWith('_') &&
           key !== 'geometry' &&
           key !== geometryName &&
           !/boundedby/gi.test(key)
-      )
-      .map((key) => ({
-        name: key,
-        title: key
-      }));
+        ) {
+          keys.add(key);
+        }
+      }
+    }
+
+    return Array.from(keys, (key) => ({ name: key, title: key }));
   }
 
   private async buildFromFields(
