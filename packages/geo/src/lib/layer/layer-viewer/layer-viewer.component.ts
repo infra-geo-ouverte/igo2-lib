@@ -20,8 +20,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { BehaviorSubject, EMPTY, Observable, combineLatest, timer } from 'rxjs';
-import { debounce, debounceTime } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import type { MapBase } from '../../map/shared/map.abstract';
 import { LayerListComponent } from '../layer-list';
@@ -109,6 +109,11 @@ export class LayerViewerComponent implements OnInit {
    * @internal
    */
   ngOnInit(): void {
+    const initialKeyword = this.options()?.filterAndSortOptions?.keyword;
+    if (initialKeyword) {
+      this.keyword$.next(initialKeyword);
+    }
+
     const baseObs$: [Observable<AnyLayer[]>, Observable<string | undefined>] = [
       this.layerController.layers$,
       this.keyword$
@@ -141,18 +146,12 @@ export class LayerViewerComponent implements OnInit {
         this.isLoading.set(false);
         this.cdr.markForCheck();
       });
-    this.keyword$
-      .pipe(
-        debounce(() => {
-          return this.layers?.length === 0 ? EMPTY : timer(50);
-        })
-      )
-      .subscribe((keyword) => {
-        this.isDragDropDisabled = !!keyword;
-        this.appliedFilterAndSort.emit({
-          keyword
-        });
+    this.keyword$.subscribe((keyword) => {
+      this.isDragDropDisabled = !!keyword;
+      this.appliedFilterAndSort.emit({
+        keyword
       });
+    });
   }
 
   clearKeyword() {
