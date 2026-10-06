@@ -1,4 +1,4 @@
-import { Component, DebugElement, viewChild } from '@angular/core';
+﻿import { Component, DebugElement, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree, MatTreeModule, MatTreeNode } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
@@ -137,6 +137,38 @@ describe('DragDropTreeDirective', () => {
 
     directive.drop(dropEvent);
     expect(directive.drop).toHaveBeenCalledWith(dropEvent);
+  });
+
+  it('should target the last node when dragging over the empty area of the tree', () => {
+    const hostElement = fixture.debugElement.query(
+      By.directive(TreeDragDropDirective)
+    ).nativeElement;
+    const lastNode = treeNodesDebug.at(-1)!.injector.get(MatTreeNode).data;
+
+    treeNodesDebug[0].nativeElement.dispatchEvent(new DragEvent('dragstart'));
+    const dragOver = vi
+      .spyOn(directive, 'dragOver')
+      .mockImplementation(() => undefined);
+
+    const event = new DragEvent('dragover', {
+      bubbles: true,
+      cancelable: true
+    });
+    hostElement.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(dragOver).toHaveBeenCalledWith(lastNode, event);
+  });
+
+  it('should accept dragenter to avoid the no-drop cursor', () => {
+    const hostElement = fixture.debugElement.query(
+      By.directive(TreeDragDropDirective)
+    ).nativeElement;
+
+    const event = new DragEvent('dragenter', { cancelable: true });
+    hostElement.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
   });
 
   it('should emit onDrop event with correct data', () => {
