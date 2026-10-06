@@ -44,6 +44,7 @@ export interface ITreeConfig<T> {
   selector: '[igoTreeDragDrop]',
   host: {
     '[class.--dragging]': 'dragging()',
+    '(dragenter)': 'hostDragEnter($event)',
     '(dragover)': 'hostDragOver($event)',
     '(dragleave)': 'hostDragLeave($event)',
     '(drop)': 'hostDrop($event)'
@@ -154,8 +155,16 @@ export class TreeDragDropDirective<
     }
   }
 
-  hostDragOver(event: Event): void {
+  hostDragEnter(event: DragEvent): void {
     event.preventDefault();
+  }
+
+  hostDragOver(event: DragEvent): void {
+    event.preventDefault();
+    const lastNode = this.getLastRenderedNode();
+    if (this.dragging() && lastNode) {
+      this.dragOver(lastNode.data, event);
+    }
   }
 
   hostDragLeave(event: DragEvent): void {
@@ -426,6 +435,20 @@ export class TreeDragDropDirective<
         this.tree().expand(node);
       }, 1200);
     }
+  }
+
+  private getLastRenderedNode(): MatTreeNode<T> | undefined {
+    return this.nodes().reduce<MatTreeNode<T> | undefined>((last, node) => {
+      if (!last) {
+        return node;
+      }
+      const lastElement = last['_elementRef'].nativeElement as HTMLElement;
+      const element = node['_elementRef'].nativeElement as HTMLElement;
+      return lastElement.compareDocumentPosition(element) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+        ? node
+        : last;
+    }, undefined);
   }
 
   private getNodeElement(node: T): HTMLElement | undefined {
