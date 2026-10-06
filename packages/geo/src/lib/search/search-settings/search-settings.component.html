@@ -128,6 +128,18 @@
         }
       </mat-menu>
     }
+
+    @if (allowResetSearchSourcesOptions()) {
+      <div mat-menu-item>
+        <button
+          matButton="elevated"
+          class="check-default-button"
+          (click)="resetSourceOptions($event)"
+        >
+          {{ 'igo.geo.search.searchSources.settings.reset.button' | translate }}
+        </button>
+      </div>
+    }
     <mat-divider />
     <span class="pointer-summary-slide-toggle-container">
       @if (hasPointerReverseSearchSource && !isTouchScreen) {
@@ -179,19 +191,6 @@
           {{ 'igo.geo.search.reverseCoordFormat.title' | translate }}
         </mat-slide-toggle>
       </div>
-      @if (allowResetSearchSourcesOptions()) {
-        <div mat-menu-item>
-          <button
-            matButton="elevated"
-            class="check-default-button"
-            (click)="resetSourceOptions($event)"
-          >
-            {{
-              'igo.geo.search.searchSources.settings.reset.button' | translate
-            }}
-          </button>
-        </div>
-      }
     </span>
   </mat-menu>
 </div>

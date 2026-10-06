@@ -156,6 +156,7 @@ export class SearchSource {
 
   resetSourceOptions() {
     this.options = ObjectUtils.copyDeep(this.defaultOptions);
+    this.storageService?.remove(this.getId() + '.options');
   }
 
   setWorkspaces(workspaces: Workspace[]) {
