@@ -224,6 +224,7 @@ export abstract class Layer extends LayerBase<LayerGroup> {
   }
 
   private showMessage(message: Message) {
+    console.log(message);
     this.messageService?.message(message as Message);
   }
 

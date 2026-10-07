@@ -43,7 +43,7 @@ export class DirectionsButtonsComponent {
 
   readonly zoomOnActiveRoute = output<void>();
 
-  public downloadDirectionsBtnDisabled = false;
+  public printDirectionsBtnDisabled = false;
 
   /**
    * Returns the active route from the routesFeatureStore.
@@ -95,16 +95,16 @@ export class DirectionsButtonsComponent {
    * Downloads the directions.
    *
    */
-  downloadDirections(): void {
+  printDirections(): void {
     this.stepsFeatureStore().clear();
-    this.downloadDirectionsBtnDisabled = true;
+    this.printDirectionsBtnDisabled = true;
     this.directionsService
-      .downloadDirections(
+      .printDirections(
         this.routesFeatureStore().map,
         this.activeRoute.properties.directions
       )
       .subscribe(() => {
-        this.downloadDirectionsBtnDisabled = false;
+        this.printDirectionsBtnDisabled = false;
       });
   }
 

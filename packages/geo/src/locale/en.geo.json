@@ -392,7 +392,7 @@
         "buttons": {
           "copyDirections": "Copy directions to clipboard",
           "copyLink": "Copy link to clipboard",
-          "downloadDirections": "Download directions",
+          "printDirections": "Print directions",
           "message": {
             "copyDirections": "Directions copied to clipboard",
             "copyLink": "Link copied to clipboard"
