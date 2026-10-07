@@ -99,18 +99,21 @@
       </div>
     </div>
   }
-  <div class="prefix-actions">
-    <button
-      mat-icon-button
-      [disabled]="
-        (stopsStore().count$ | async) !==
-          (stopsFeatureStore().count$ | async) || stopIsDragged
-      "
-      [matTooltip]="'igo.geo.directions.input.addStop' | translate"
-      color="primary"
-      (click)="addStop()"
-    >
-      <mat-icon>add_location_alt</mat-icon>
-    </button>
+  <div class="stops-actions">
+    <div class="prefix-actions">
+      <button
+        mat-icon-button
+        [disabled]="
+          (stopsStore().count$ | async) !==
+            (stopsFeatureStore().count$ | async) || stopIsDragged
+        "
+        [matTooltip]="'igo.geo.directions.input.addStop' | translate"
+        color="primary"
+        (click)="addStop()"
+      >
+        <mat-icon>add_location_alt</mat-icon>
+      </button>
+    </div>
+    <ng-content />
   </div>
 </div>
