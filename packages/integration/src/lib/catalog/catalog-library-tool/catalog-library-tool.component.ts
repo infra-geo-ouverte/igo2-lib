@@ -26,6 +26,7 @@ import {
   isLayerItemOptions
 } from '@igo2/geo';
 import {
+  ObjectUtils,
   addExcelSheetToWorkBook,
   createExcelWorkBook,
   writeExcelFile
@@ -192,9 +193,22 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Sort items like the catalog browser display does (by title when a direction is set)
+   */
+  private sortItemsForDisplay(
+    items: CatalogItem[],
+    direction?: 'asc' | 'desc'
+  ): CatalogItem[] {
+    if (direction === undefined) {
+      return items;
+    }
+    return [...items].sort((a, b) =>
+      ObjectUtils.naturalCompare(a.title, b.title, direction)
+    );
+  }
+
   private listExportFromCatalogs(): Observable<ListExport[]> {
-    let rank = 1;
-    const finalListExportOutputs: ListExport[] = [];
     return this.store.entities$.pipe(
       switchMap((catalogs) =>
         combineLatest(
@@ -208,35 +222,41 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         )
       ),
       map((catalogsWithItems) => {
-        catalogsWithItems.forEach((catalogAndItems) => {
-          const catalog = catalogAndItems.catalog;
-          const loadedCatalogItems = catalogAndItems.items;
+        let rank = 1;
+        const listExports: ListExport[] = [];
 
-          const catalogListExports = loadedCatalogItems.reduce(
-            (catalogListExports, item) => {
-              if (item.type === CatalogItemType.Group) {
-                const group = item as CatalogItemGroup;
-                group.items?.forEach((item: CatalogItem) => {
-                  const layer = item as CatalogItemLayer;
-                  catalogListExports.push(
-                    this.formatLayer(layer, rank, group.title, catalog.title)
-                  );
-                  rank++;
-                });
-              } else {
-                const layer = item as CatalogItemLayer;
-                catalogListExports.push(
-                  this.formatLayer(layer, rank, '', catalog.title)
-                );
-                rank++;
-              }
-              return catalogListExports;
-            },
-            [] as ListExport[]
-          );
-          finalListExportOutputs.push(...catalogListExports);
-        });
-        return finalListExportOutputs;
+        const collect = (
+          items: CatalogItem[],
+          direction: 'asc' | 'desc' | undefined,
+          groupTitle: string,
+          catalogTitle: string
+        ) => {
+          for (const item of this.sortItemsForDisplay(items, direction)) {
+            if (item.type === CatalogItemType.Group) {
+              const group = item as CatalogItemGroup;
+              collect(
+                group.items ?? [],
+                group.sortDirection,
+                group.title,
+                catalogTitle
+              );
+            } else {
+              listExports.push(
+                this.formatLayer(
+                  item as CatalogItemLayer,
+                  rank++,
+                  groupTitle,
+                  catalogTitle
+                )
+              );
+            }
+          }
+        };
+
+        catalogsWithItems.forEach(({ catalog, items }) =>
+          collect(items, catalog.sortDirection, '', catalog.title)
+        );
+        return listExports;
       })
     );
   }
