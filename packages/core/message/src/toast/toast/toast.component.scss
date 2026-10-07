@@ -45,16 +45,19 @@
   background-color: #51a351;
 }
 .toast-error {
-  background-color: #bd362f;
+  background-color: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
 }
 .toast-info {
-  background-color: #2f96b4;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
 }
 .toast-warning {
   background-color: #f89406;
 }
 .toast-show {
-  background-color: #2f96b4;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
 }
 
 .toast-icon {
