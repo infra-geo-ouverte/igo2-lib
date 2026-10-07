@@ -371,11 +371,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   private transformLayerListControls(
-    value: LayerListControlsOptions | undefined
+    input: LayerListControlsOptions | undefined
   ): LayerListControlsOptions {
-    if (!value) {
+    if (!input) {
       return {};
     }
+    const value = { ...input };
     const stateOptions = this.layerListToolState.getLayerListControls();
     const stateKeyword = stateOptions.keyword;
     const stateOnlyVisible = stateOptions.onlyVisible;
