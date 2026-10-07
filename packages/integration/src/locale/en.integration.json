@@ -23,7 +23,10 @@
         "closestFeature": "Closest feature tool"
       },
       "catalog": {
-        "library.getCatalogList": "Get the catalogs's content list",
+        "library": {
+          "getCatalogList": "Get the catalogs's content list",
+          "getCatalogListTooltip": "Allows you to retrieve an Excel list of the layers shown in the catalog."
+        },
         "listExport": {
           "rank": "Rank",
           "layerTitle": "Layer Title",
