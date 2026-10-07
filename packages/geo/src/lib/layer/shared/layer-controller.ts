@@ -169,7 +169,7 @@ export class LayerController extends LayerSelectionModel {
   }
 
   moveBelow(layerRef: AnyLayer | undefined, ...layers: AnyLayer[]): void {
-    const position = this.getPosition(layerRef!);
+    const position = this.getPosition(layerRef!, 'below');
 
     const movedLayers = this.moveTo(position, ...layers);
     this.handleMove(movedLayers, layerRef?.parent);

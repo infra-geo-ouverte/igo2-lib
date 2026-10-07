@@ -1,3 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+// The tree fills the available space so the empty area below the nodes is a drop target
+mat-tree {
+  flex: 1;
+}
+
 .--not-desktop {
   igo-layer-group,
   igo-layer-item {
