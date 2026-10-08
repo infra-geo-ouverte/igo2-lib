@@ -62,11 +62,11 @@ export class FormStepperDialogComponent {
     }
   }
 
-  private applyPanelClasses(panelClass: string | string[] | undefined): void {
-    const nextClasses = panelClass
-      ? Array.isArray(panelClass)
-        ? panelClass
-        : [panelClass]
+  private applyPanelClasses(panelClasses: string | string[] | undefined): void {
+    const nextClasses = panelClasses
+      ? Array.isArray(panelClasses)
+        ? panelClasses
+        : [panelClasses]
       : [];
 
     if (this.appliedPanelClasses.length) {
