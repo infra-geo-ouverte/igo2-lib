@@ -286,8 +286,12 @@ export class SearchSettingsComponent implements OnInit {
    */
   checkUncheckAllSources(event: Event) {
     event.stopPropagation();
-    this.getSearchSources().map((source) => {
+    this.getSearchSources().forEach((source) => {
       source.enabled = this.searchSourcesAllEnabled;
+      const storage = (this.storageService.get(source.getId() + '.options') ||
+        {}) as SettingOptions;
+      storage.enabled = source.enabled;
+      this.storageService.set(source.getId() + '.options', storage);
       this.searchSourceChange.emit(source);
     });
   }
