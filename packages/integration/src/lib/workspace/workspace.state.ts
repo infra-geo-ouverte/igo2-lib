@@ -17,7 +17,7 @@ import {
 } from '@igo2/geo';
 
 import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import { EditionActionsService } from './shared/edition-actions.service';
 import { FeatureActionsService } from './shared/feature-actions.service';
@@ -111,8 +111,11 @@ export class WorkspaceState implements OnDestroy {
     this._store = new WorkspaceStore([]);
     this._store.stateView
       .firstBy$((record) => record.state.active === true)
-      .subscribe((record) => {
-        const workspace = record ? record.entity : undefined;
+      .pipe(
+        map((record) => (record ? record.entity : undefined)),
+        distinctUntilChanged()
+      )
+      .subscribe((workspace) => {
         this.workspace$.next(workspace);
       });
 
