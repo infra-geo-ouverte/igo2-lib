@@ -11,6 +11,12 @@
     <mat-icon>expand_more</mat-icon>
   </button>
   <mat-menu #searchSettingsMenu="matMenu" class="no-border-radius">
+    <div
+      mat-menu-item
+      disabled
+      aria-hidden="true"
+      class="igo-search-settings-offset-anchor"
+    ></div>
     @if (getSearchSources().length > 4) {
       <div class="checkAllButton">
         <button matButton="elevated" (click)="checkUncheckAllSources($event)">
@@ -31,16 +37,12 @@
           (click)="$event.stopPropagation()"
           (change)="onCheckSearchSource($event, source)"
         />
-        @if (source.settings.length > 0) {
-          <button [matMenuTriggerFor]="sub_menu" mat-menu-item>
-            {{ source.title }}
-          </button>
-        }
-        @if (source.settings.length === 0) {
-          <button mat-menu-item>
-            {{ source.title }}
-          </button>
-        }
+        <button
+          mat-menu-item
+          [matMenuTriggerFor]="source.settings.length > 0 ? sub_menu : null"
+        >
+          {{ source.title }}
+        </button>
       </span>
       <mat-menu #sub_menu="matMenu">
         @for (setting of source.settings; track setting) {
@@ -50,7 +52,7 @@
                 | translate
             }}
           </button>
-          <mat-menu #test_sub_menu="matMenu" yPosition="above">
+          <mat-menu #test_sub_menu="matMenu">
             @switch (setting.type) {
               @case ('radiobutton') {
                 <span>
