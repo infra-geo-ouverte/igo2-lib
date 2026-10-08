@@ -16,6 +16,7 @@ import { Md5 } from 'ts-md5';
 import {
   AuthByKeyOptions,
   AuthOptions,
+  AuthWithHeadersOptions,
   WithCredentialsOptions
 } from './auth.interface';
 import { TokenService } from './token.service';
@@ -33,6 +34,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
   private trustHosts: string[];
   private hostsWithCredentials: WithCredentialsOptions[];
   private hostsWithAuthByKey: AuthByKeyOptions[];
+  private hostsWithHeaders: AuthWithHeadersOptions[];
 
   constructor() {
     this.authOptions = this.config.getConfig('auth') as AuthOptions;
@@ -42,6 +44,7 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
 
     this.hostsWithCredentials = this.authOptions?.hostsWithCredentials || [];
     this.hostsWithAuthByKey = this.authOptions?.hostsByKey || [];
+    this.hostsWithHeaders = this.authOptions?.hostsWithHeaders || [];
   }
 
   intercept(
@@ -54,6 +57,19 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
     if (hostWithKey) {
       req = req.clone({
         params: req.params.set(hostWithKey.key, hostWithKey.value)
+      });
+    }
+    const headersToAppend = this.retrieveHeadersToAppend(originalReq.url);
+    if (headersToAppend) {
+      let headers = req.headers;
+      Object.keys(headersToAppend).forEach((key) => {
+        const value = headersToAppend[key];
+        if (value) {
+          headers = headers?.append(key, value);
+        }
+      });
+      req = req.clone({
+        headers
       });
     }
     if (withCredentials) {
@@ -166,6 +182,16 @@ export class AuthInterceptor implements HttpInterceptor, IXhrInterceptor {
       }
     }
     return hostWithKey;
+  }
+
+  retrieveHeadersToAppend(reqUrl: string): Record<string, string> | undefined {
+    for (const hostsWithHeaders of this.hostsWithHeaders) {
+      const domainRegex = new RegExp(hostsWithHeaders.domainRegFilters);
+      if (domainRegex.test(reqUrl)) {
+        return hostsWithHeaders.headers;
+      }
+    }
+    return;
   }
 
   refreshToken() {

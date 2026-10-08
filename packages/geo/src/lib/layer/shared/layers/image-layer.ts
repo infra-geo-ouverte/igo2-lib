@@ -81,6 +81,16 @@ export class ImageLayer extends Layer {
     if (alteredUrlWithKeyAuth) {
       url = alteredUrlWithKeyAuth;
     }
+    const headersToAppend = interceptor?.retrieveHeadersToAppend(url);
+    if (headersToAppend) {
+      Object.keys(headersToAppend).forEach((key) => {
+        const value = headersToAppend[key];
+        if (value) {
+          xhr.setRequestHeader(key, value);
+        }
+      });
+    }
+
     xhr.open('GET', url);
     const intercepted = interceptor?.interceptXhr(xhr, url);
     if (!intercepted) {

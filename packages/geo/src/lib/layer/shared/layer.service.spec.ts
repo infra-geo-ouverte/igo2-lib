@@ -17,7 +17,8 @@ describe('LayerService', () => {
           provide: XHR_INTERCEPTOR,
           useValue: {
             alterUrlWithKeyAuth: vi.fn(),
-            interceptXhr: vi.fn()
+            interceptXhr: vi.fn(),
+            retrieveHeadersToAppend: vi.fn()
           }
         }
       ]
