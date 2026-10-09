@@ -140,10 +140,10 @@ export class AuthFormComponent implements OnInit {
   }
 
   private getName() {
-    const tokenDecoded = this.auth.decodeToken();
-    if (tokenDecoded) {
+    const user = this.auth.user;
+    if (user) {
       this.user = {
-        name: tokenDecoded.user.firstName || tokenDecoded.user.sourceId
+        name: user.firstName || user.sourceId
       };
     }
   }
