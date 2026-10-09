@@ -136,6 +136,16 @@ export class VectorTileLayer extends Layer {
       } else {
         modifiedUrl = url(extent, resolution, projection);
       }
+      const headersToAppend = interceptor?.retrieveHeadersToAppend(modifiedUrl);
+      if (headersToAppend) {
+        Object.keys(headersToAppend).forEach((key) => {
+          const value = headersToAppend[key];
+          if (value) {
+            xhr.setRequestHeader(key, value);
+          }
+        });
+      }
+
       xhr.open('GET', modifiedUrl);
       interceptor?.interceptXhr(xhr, modifiedUrl);
 

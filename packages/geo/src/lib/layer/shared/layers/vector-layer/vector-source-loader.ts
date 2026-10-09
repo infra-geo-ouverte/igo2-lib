@@ -269,7 +269,16 @@ export class VectorSourceLoader implements VectorSourceLoaderHost {
     const xhr = new XMLHttpRequest();
     const resolvedUrl =
       this.dependencies.xhrInterceptor?.alterUrlWithKeyAuth(url) ?? url;
-
+    const headersToAppend =
+      this.dependencies.xhrInterceptor?.retrieveHeadersToAppend(url);
+    if (headersToAppend) {
+      Object.keys(headersToAppend).forEach((key) => {
+        const value = headersToAppend[key];
+        if (value) {
+          xhr.setRequestHeader(key, value);
+        }
+      });
+    }
     xhr.open('GET', resolvedUrl);
     if (responseType) {
       xhr.responseType = responseType;

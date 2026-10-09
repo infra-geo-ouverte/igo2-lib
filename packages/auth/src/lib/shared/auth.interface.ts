@@ -33,6 +33,7 @@ export interface AuthOptions {
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
   hostsByKey?: AuthByKeyOptions[];
+  hostsWithHeaders?: AuthWithHeadersOptions[];
   intern?: AuthInternOptions;
 }
 
@@ -40,6 +41,11 @@ export interface IAuthUserIgoOptions {
   apiUrl: string;
   // Allow to sync the user. Use it when the user may not exist on the user API system.
   withSync?: boolean;
+}
+
+export interface AuthWithHeadersOptions {
+  domainRegFilters: string;
+  headers: Record<string, string>;
 }
 
 export interface AuthByKeyOptions {

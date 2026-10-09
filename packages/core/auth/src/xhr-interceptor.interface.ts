@@ -8,6 +8,7 @@ import { InjectionToken } from '@angular/core';
 export interface IXhrInterceptor {
   interceptXhr(xhr: XMLHttpRequest, url: string): boolean;
   alterUrlWithKeyAuth(url: string): string | undefined;
+  retrieveHeadersToAppend(url: string): Record<string, string> | undefined;
 }
 
 export const XHR_INTERCEPTOR = new InjectionToken<IXhrInterceptor>(
