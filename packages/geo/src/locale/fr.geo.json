@@ -391,7 +391,7 @@
         "buttons": {
           "copyDirections": "Copier l'itinéraire dans le presse-papier",
           "copyLink": "Copier le lien dans le presse-papier",
-          "downloadDirections": "Télécharger l'itinéraire",
+          "printDirections": "Imprimer l'itinéraire",
           "message": {
             "copyDirections": "Itinéraire copié dans le presse papier",
             "copyLink": "Lien copié dans le presse papier"

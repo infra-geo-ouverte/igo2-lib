@@ -48,13 +48,13 @@ export class DirectionsService {
   }
 
   /**
-   * Downloads directions for a given map and directions object.
+   * Print directions for a given map and directions object.
    *
    * @param {IgoMap} map - The map object to download directions for.
    * @param {Directions} directions - The directions object containing the route information.
    * @return {Observable<SubjectStatus>} An observable that emits the status of the download process.
    */
-  downloadDirections(
+  printDirections(
     map: IgoMap,
     directions: Directions
   ): Observable<SubjectStatus> {
