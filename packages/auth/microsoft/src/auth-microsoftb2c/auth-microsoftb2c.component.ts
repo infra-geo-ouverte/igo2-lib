@@ -8,8 +8,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core/config';
+import { AUTH_OPTIONS, AuthService } from '@igo2/auth';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { MSAL_GUARD_CONFIG } from '@azure/msal-angular';
@@ -25,6 +24,7 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import {
+  AnyMicrosoftOptions,
   AuthMicrosoftb2cOptions,
   MsalGuardConfigurationWithType
 } from '../shared/auth-microsoft.interface';
@@ -41,7 +41,6 @@ import { MsalServiceb2c } from './auth-msalServiceb2c.service';
 })
 export class AuthMicrosoftb2cComponent {
   private authService = inject(AuthService);
-  private config = inject(ConfigService);
   private appRef = inject(ApplicationRef);
   private msalService = inject(MsalServiceb2c);
   private msalGuardConfig =
@@ -53,8 +52,7 @@ export class AuthMicrosoftb2cComponent {
   private broadcastService: MsalBroadcastServiceb2c;
 
   constructor() {
-    this.options = this.config.getConfig('auth.microsoftb2c');
-
+    this.options = (inject(AUTH_OPTIONS) as AnyMicrosoftOptions).microsoftb2c!;
     this.msalService.instance = new PublicClientApplication({
       auth: this.options.browserAuthOptions,
       cache: {
