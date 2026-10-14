@@ -32,7 +32,6 @@ mat-button-toggle {
   width: 142px;
   ::ng-deep .mat-button-toggle-label-content {
     line-height: unset;
-    font-size: small;
     display: block;
   }
   @include media.mobile {

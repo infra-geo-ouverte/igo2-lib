@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+
+@mixin overrides() {
+  @include mat.slide-toggle-overrides(
+    (
+      label-text-font: var(--mat-sys-body-large-font),
+      label-text-size: var(--mat-sys-body-large-size),
+      label-text-line-height: var(--mat-sys-body-large-line-height),
+      label-text-tracking: var(--mat-sys-body-large-tracking),
+      label-text-weight: var(--mat-sys-body-large-weight)
+    )
+  );
+}

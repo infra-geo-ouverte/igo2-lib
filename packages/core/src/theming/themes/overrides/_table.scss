@@ -1,0 +1,11 @@
+@use '@angular/material' as mat;
+
+@mixin overrides() {
+  @include mat.table-overrides(
+    (
+      header-headline-size: var(--mat-sys-body-large-size),
+      row-item-label-text-size: var(--mat-sys-body-large-size),
+      footer-supporting-text-size: var(--mat-sys-body-large-size)
+    )
+  );
+}

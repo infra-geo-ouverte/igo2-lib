@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+
+@mixin overrides() {
+  @include mat.tabs-overrides(
+    (
+      label-text-size: var(--mat-sys-body-large-size),
+      label-text-line-height: var(--mat-sys-body-large-line-height)
+    )
+  );
+}

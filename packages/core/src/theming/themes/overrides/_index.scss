@@ -1,7 +1,13 @@
 @use './button';
 @use './sidenav';
+@use './slide-toggle';
+@use './table';
+@use './tabs';
 
 @mixin overrides() {
   @include button.overrides();
   @include sidenav.overrides();
+  @include slide-toggle.overrides();
+  @include table.overrides();
+  @include tabs.overrides();
 }

@@ -1,6 +1,8 @@
 @use '@angular/material' as mat;
 
 @mixin overrides() {
+  @include label-typography();
+
   .mdc-fab {
     $background: var(--mat-sys-on-primary);
     $foreground: var(--mat-sys-primary);
@@ -16,6 +18,29 @@
   }
 
   @include color-variants-backwards-compatibility();
+}
+
+@mixin label-typography() {
+  @include mat.button-overrides(
+    (
+      filled-label-text-size: var(--mat-sys-body-large-size),
+      outlined-label-text-size: var(--mat-sys-body-large-size),
+      protected-label-text-size: var(--mat-sys-body-large-size),
+      text-label-text-size: var(--mat-sys-body-large-size),
+      tonal-label-text-size: var(--mat-sys-body-large-size)
+    )
+  );
+  @include mat.button-toggle-overrides(
+    (
+      label-text-size: var(--mat-sys-body-large-size),
+      label-text-line-height: var(--mat-sys-body-large-line-height)
+    )
+  );
+  @include mat.fab-overrides(
+    (
+      extended-label-text-size: var(--mat-sys-body-large-size)
+    )
+  );
 }
 
 // Material custom color variants backwards compatibility
