@@ -1,17 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
 
-import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
+import { RouteService } from '@igo2/core/route';
 import { Base64 } from '@igo2/utils';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
-import { AuthOptions, IInfosUser, User } from './auth.interface';
+import { AUTH_OPTIONS, AuthOptions, IInfosUser, User } from './auth.interface';
 import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 import { IUser } from './user/user.interface';
@@ -30,10 +34,10 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   private userService = inject(UserService, {
     optional: true
   });
-  private config = inject(ConfigService);
-  private languageService = inject(LanguageService);
+  private languageService = inject(LanguageService, { optional: true });
   private messageService = inject(MessageService);
-  private router = inject(Router, { optional: true });
+  private router = inject(Router);
+  private routeService = inject(RouteService);
 
   public authenticate$ = new BehaviorSubject<boolean>(false);
   public logged$ = new BehaviorSubject<boolean>(false);
@@ -55,7 +59,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   constructor() {
-    this.authOptions = this.config.getConfig('auth');
+    this.authOptions = inject(AUTH_OPTIONS) as T;
 
     this.initializeAuthentication(this.authenticated).subscribe();
 
@@ -167,23 +171,6 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     return this.http.patch<User>(this.authOptions?.url, user);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  translateError(prefix: string, error: any): Observable<string> {
-    return new Observable((observer) => {
-      try {
-        this.languageService.translate
-          .get(prefix + error.error.message)
-          .subscribe((errorMsg) => {
-            observer.next(errorMsg);
-            observer.complete();
-          });
-      } catch {
-        if (error.error) observer.next(error.error.message);
-        observer.complete();
-      }
-    });
-  }
-
   private encodePassword(password: string) {
     return Base64.encode(password);
   }
@@ -209,6 +196,21 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     return false;
   }
 
+  redirectToLogin(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): void {
+    this.redirectUrl = state.url;
+
+    if (this.authOptions?.loginRoute) {
+      const langKey = this.routeService.options.languageKey ?? 'lang';
+      const langValue = route.queryParams[langKey];
+      this.router.navigate([this.authOptions.loginRoute], {
+        queryParams: langValue ? { [langKey]: langValue } : {}
+      });
+    }
+  }
+
   protected loginCall(body: unknown, headers: HttpHeaders) {
     return this.http
       .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
@@ -218,7 +220,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
           const tokenDecoded = this.decodeToken();
           if (tokenDecoded?.user) {
             if (tokenDecoded.user.locale && !this.languageForce) {
-              this.languageService.setLanguage(tokenDecoded.user.locale);
+              this.languageService?.setLanguage(tokenDecoded.user.locale);
             }
             if (tokenDecoded.user.isExpired) {
               this.messageService.alert(

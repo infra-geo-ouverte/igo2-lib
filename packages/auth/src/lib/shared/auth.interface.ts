@@ -1,4 +1,4 @@
-import { Provider } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
 
 import { BaseUser } from '@igo2/core/user';
 
@@ -63,5 +63,8 @@ export interface AuthFeature<KindT extends AuthFeatureKind> {
 
 export enum AuthFeatureKind {
   Microsoft = 0,
-  User
+  User,
+  Options
 }
+
+export const AUTH_OPTIONS = new InjectionToken<AuthOptions>('AUTH_OPTIONS');

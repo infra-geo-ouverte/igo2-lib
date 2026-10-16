@@ -9,18 +9,16 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
-import { AuthOptions, AuthService } from '@igo2/auth';
+import { AUTH_OPTIONS, AuthOptions, AuthService } from '@igo2/auth';
 import { AuthInternComponent } from '@igo2/auth/internal';
 import {
+  AnyMicrosoftOptions,
   AuthMicrosoftComponent,
   AuthMicrosoftb2cComponent
 } from '@igo2/auth/microsoft';
-import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { filter } from 'rxjs/operators';
-
-import { AuthFormOptions } from '../shared';
 
 @Component({
   selector: 'igo-auth-form',
@@ -37,7 +35,6 @@ import { AuthFormOptions } from '../shared';
 })
 export class AuthFormComponent implements OnInit {
   auth = inject(AuthService);
-  private config = inject(ConfigService);
   private router = inject(Router, { optional: true });
 
   @Input()
@@ -100,7 +97,7 @@ export class AuthFormComponent implements OnInit {
 
   readonly login = output<boolean>();
 
-  public options?: AuthOptions & AuthFormOptions;
+  public options?: AuthOptions & AnyMicrosoftOptions;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public user: any;
 
@@ -109,7 +106,7 @@ export class AuthFormComponent implements OnInit {
   private isLogoutRoute?: boolean;
 
   constructor() {
-    this.options = this.config.getConfig('auth');
+    this.options = inject(AUTH_OPTIONS);
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
   }
 
