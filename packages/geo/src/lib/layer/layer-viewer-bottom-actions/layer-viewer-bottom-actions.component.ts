@@ -1,4 +1,5 @@
 import { Component, inject, input, output } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,16 +7,21 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { FormDialogService } from '@igo2/common/form';
+import { FormDialogFormConfig, FormDialogService } from '@igo2/common/form';
 import { PanelComponent } from '@igo2/common/panel';
-import { IgoLanguageModule } from '@igo2/core/language';
+import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 
 import * as olextent from 'ol/extent';
+
+import { BehaviorSubject, Observable, map, of } from 'rxjs';
 
 import type { MapBase } from '../../map/shared/map.abstract';
 import { LayerListToolService } from '../layer-list-tool';
 import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
-import { LayerController } from '../shared/layer-controller';
+import {
+  LayerController,
+  LayerRemoveOptions
+} from '../shared/layer-controller';
 import { LAYER_PERSISTENCE } from '../shared/layer-persistence.interface';
 import type { AnyLayer, LayerGroup } from '../shared/layers';
 import {
@@ -43,6 +49,8 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 })
 export class LayerViewerBottomActionsComponent {
   private layerListToolService = inject(LayerListToolService);
+  private formDialogService = inject(FormDialogService);
+  private languageService = inject(LanguageService);
   private layerPersistence = inject(LAYER_PERSISTENCE, { optional: true });
 
   orderable = true;
@@ -115,14 +123,42 @@ export class LayerViewerBottomActionsComponent {
   }
 
   removeLayers(): void {
-    const layerPersistence = this.layerPersistence;
-    if (layerPersistence) {
-      this.selected
-        .filter((layer) => layerPersistence.isPersistent(layer))
-        .forEach((layer) => layerPersistence.removePersistedData(layer));
-    }
-    this.controller().remove(...this.selected);
-    this.controller().clearSelection();
+    const groupsWithChildrens = this.selected.filter(
+      (l) => isLayerGroup(l) && l.children.length > 0
+    );
+    console.log(groupsWithChildrens);
+    const options$: Observable<LayerRemoveOptions> =
+      groupsWithChildrens?.length === 0
+        ? of({ keepLayersFromGroup: false })
+        : this.formDialogService
+            .open<{ keepLayersFromGroup: boolean | undefined }>(
+              this.getRemoveGroupFormConfig(groupsWithChildrens.length),
+              {
+                title: 'igo.geo.layer.group.removeOptions.title',
+                minWidth: '25%',
+                data$: new BehaviorSubject<Record<string, unknown>>({
+                  keepLayersFromGroup: false
+                })
+              }
+            )
+            .pipe(map((r) => r as LayerRemoveOptions));
+
+    options$.subscribe((layerRemoveOptions) => {
+      if (layerRemoveOptions) {
+        const layerPersistence = this.layerPersistence;
+        if (layerPersistence) {
+          this.selected
+            .filter((layer) => layerPersistence.isPersistent(layer))
+            .forEach((layer) => layerPersistence.removePersistedData(layer));
+        }
+
+        this.controller().removeWithOptions(
+          layerRemoveOptions,
+          ...this.selected
+        );
+        this.controller().clearSelection();
+      }
+    });
   }
 
   isExtentsValid(): boolean {
@@ -252,5 +288,37 @@ export class LayerViewerBottomActionsComponent {
       return true;
     }
     return layer.options.removable !== false;
+  }
+
+  private getRemoveGroupFormConfig(groupCount: number): FormDialogFormConfig {
+    const prefix = groupCount > 1 ? 'many' : 'one';
+    return {
+      formFieldConfigs: [
+        {
+          name: 'keepLayersFromGroup',
+          title: '',
+          type: 'radiobutton',
+          options: {
+            validator: Validators.required
+          },
+          inputs: {
+            choices: [
+              {
+                value: false,
+                title: this.languageService.translate.instant(
+                  `igo.geo.layer.group.removeOptions.${prefix}GroupAndContent`
+                )
+              },
+              {
+                value: true,
+                title: this.languageService.translate.instant(
+                  `igo.geo.layer.group.removeOptions.${prefix}GroupOnly`
+                )
+              }
+            ]
+          }
+        }
+      ]
+    };
   }
 }

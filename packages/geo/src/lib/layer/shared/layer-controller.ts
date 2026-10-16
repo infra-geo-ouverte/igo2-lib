@@ -17,6 +17,11 @@ import type { Layer } from './layers/layer';
 import type { LayerGroup } from './layers/layer-group';
 import { isLayerLinked } from './layers/linked/linked-layer.utils';
 
+export interface LayerRemoveOptions {
+  /** For a group, move its children into the group's parent instead of removing them */
+  keepLayersFromGroup?: boolean | undefined;
+}
+
 /**
  * We got four kind of layers
  * TreeLayer: all layers to show in the layer manager
@@ -141,9 +146,26 @@ export class LayerController extends LayerSelectionModel {
   }
 
   remove(...layers: AnyLayer[]): void {
+    this.removeLayers(layers);
+  }
+
+  removeWithOptions(
+    options: LayerRemoveOptions = {},
+    ...layers: AnyLayer[]
+  ): void {
+    this.removeLayers(layers, options);
+  }
+
+  private removeLayers(
+    layers: AnyLayer[],
+    options: LayerRemoveOptions = {}
+  ): void {
     const list = layers.reduce((list, layer) => {
       if (this.isSelected(layer)) {
         this.deselect(layer);
+      }
+      if (options.keepLayersFromGroup && isLayerGroup(layer)) {
+        this.releaseChildren(layer);
       }
       const result = this._remove(layer);
       Array.isArray(result) ? list.push(...result) : list.push(result);
@@ -151,7 +173,21 @@ export class LayerController extends LayerSelectionModel {
     }, [] as AnyLayer[]);
     this.tree.remove(...list);
 
+    if (options.keepLayersFromGroup) {
+      this.recalculateZindex();
+    }
     this.notify();
+  }
+
+  /** Move the group's children to the group's position, inside its parent */
+  private releaseChildren(group: LayerGroup): void {
+    const children = [...group.children];
+    if (!children.length) {
+      return;
+    }
+
+    this.tree.moveTo(this.getPosition(group), ...children);
+    children.forEach((child) => child.moveTo(group.parent));
   }
 
   /**
