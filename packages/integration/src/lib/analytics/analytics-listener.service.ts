@@ -39,12 +39,12 @@ export class AnalyticsListenerService {
 
   listenUser() {
     this.authService.authenticate$.subscribe(() => {
-      const tokenDecoded = this.authService.decodeToken();
-      if (tokenDecoded?.user) {
+      const user = this.authService.user;
+      if (user) {
         this.authService
           .getProfils()
           .subscribe((profils) =>
-            this.analyticsService.setUser(tokenDecoded.user, profils.profils)
+            this.analyticsService.setUser(user, profils.profils)
           );
       } else {
         this.analyticsService.setUser(null);

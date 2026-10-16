@@ -11,12 +11,17 @@ import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 import { Base64 } from '@igo2/utils';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  of,
+  throwError
+} from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AUTH_OPTIONS, AuthOptions, IInfosUser, User } from './auth.interface';
-import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 import { IUser } from './user/user.interface';
 import { UserService } from './user/user.service';
@@ -41,6 +46,7 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   public authenticate$ = new BehaviorSubject<boolean>(false);
   public logged$ = new BehaviorSubject<boolean>(false);
+  public readonly initialized$ = new ReplaySubject<boolean>(1);
   public redirectUrl?: string;
   public languageForce = false;
   public authOptions: T;
@@ -48,15 +54,6 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   private anonymous = false;
 
   isLogging = signal(false);
-
-  get hasAuthService() {
-    return this.authOptions?.url !== undefined;
-  }
-
-  get user(): User | null {
-    const decodedToken = this.decodeToken();
-    return decodedToken?.user ? decodedToken.user : null;
-  }
 
   constructor() {
     this.authOptions = inject(AUTH_OPTIONS) as T;
@@ -67,6 +64,34 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
       this.logged$.next(authenticated);
       globalCacheBusterNotifier.next();
     });
+  }
+
+  get hasAuthService(): boolean {
+    return Boolean(this.authOptions.url);
+  }
+
+  get user(): User | null {
+    if (!this.isAuthenticated()) {
+      return null;
+    }
+    const decodedToken = this.tokenService.decode();
+    return decodedToken?.user ? decodedToken.user : null;
+  }
+
+  get logged(): boolean {
+    return this.authenticated || this.isAnonymous;
+  }
+
+  get isAnonymous(): boolean {
+    return this.anonymous;
+  }
+
+  get authenticated(): boolean {
+    return this.isAuthenticated();
+  }
+
+  get isAdmin(): boolean {
+    return this.user?.isAdmin ?? false;
   }
 
   login(username: string, password: string): Observable<IUser | null> {
@@ -108,12 +133,20 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   }
 
   refresh(): Observable<IToken> {
-    return this.http.post<IToken>(`${this.authOptions?.url}/refresh`, {}).pipe(
+    const url = this.getAuthenticationUrl('refresh');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
+    return this.http.post<IToken>(url, {}).pipe(
       tap((data) => {
         this.tokenService.set(data.token);
       }),
       catchError((err) => {
-        err.error.caught = true;
+        if (err.error && typeof err.error === 'object') {
+          err.error.caught = true;
+        }
+        this.expireSession();
         throw err;
       })
     );
@@ -121,79 +154,55 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
 
   logout(): void {
     this.logoutInternal();
-    if (this.authOptions.logoutRedirectRoute) {
+    if (this.authOptions?.logoutRedirectRoute) {
       this.router?.navigate([this.authOptions.logoutRedirectRoute]);
     }
   }
 
-  private logoutInternal(): void {
-    this.anonymous = false;
-    this.tokenService.remove();
-    this.authenticate$.next(false);
+  expireSession(redirectUrl: string = this.router.url): void {
+    this.redirectUrl = redirectUrl;
+    this.logoutInternal();
+    this.navigateToLogin();
   }
 
   isAuthenticated(): boolean {
     return !this.tokenService.isExpired();
   }
 
-  getToken(): string | undefined {
-    return this.tokenService.get();
-  }
-
-  decodeToken(): IgoJwtPayload | undefined {
-    if (this.isAuthenticated()) {
-      return this.tokenService.decode();
-    }
-    return;
-  }
-
   goToRedirectUrl() {
     if (!this.router) {
       return;
     }
-    const redirectUrl = this.redirectUrl ?? this.authOptions.homeRoute ?? '/';
+    const redirectUrl = this.redirectUrl ?? this.authOptions?.homeRoute ?? '/';
 
     this.router.navigateByUrl(redirectUrl);
   }
 
   getUserInfo(): Observable<User> {
-    const url = this.authOptions?.url + '/info';
+    const url = this.getAuthenticationUrl('info');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
     return this.http.get<User>(url);
   }
 
   getProfils(): Observable<{ profils: string[] }> {
-    return this.http.get<{ profils: string[] }>(
-      `${this.authOptions?.url}/profils`
-    );
+    const url = this.getAuthenticationUrl('profils');
+    if (!url) {
+      return this.authenticationNotConfigured();
+    }
+
+    return this.http.get<{ profils: string[] }>(url);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.patch<User>(this.authOptions?.url, user);
-  }
-
-  private encodePassword(password: string) {
-    return Base64.encode(password);
-  }
-
-  // authenticated or anonymous
-  get logged(): boolean {
-    return this.authenticated || this.isAnonymous;
-  }
-
-  get isAnonymous(): boolean {
-    return this.anonymous;
-  }
-
-  get authenticated(): boolean {
-    return this.isAuthenticated();
-  }
-
-  get isAdmin(): boolean {
-    const token = this.decodeToken();
-    if (token?.user?.isAdmin) {
-      return true;
+    const url = this.getAuthenticationUrl();
+    if (!url) {
+      return this.authenticationNotConfigured();
     }
-    return false;
+
+    return this.http.patch<User>(url, user);
   }
 
   redirectToLogin(
@@ -201,36 +210,68 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
     state: RouterStateSnapshot
   ): void {
     this.redirectUrl = state.url;
+    const langKey = this.routeService.options.languageKey ?? 'lang';
+    const langValue = route.queryParams[langKey];
 
-    if (this.authOptions?.loginRoute) {
-      const langKey = this.routeService.options.languageKey ?? 'lang';
-      const langValue = route.queryParams[langKey];
-      this.router.navigate([this.authOptions.loginRoute], {
-        queryParams: langValue ? { [langKey]: langValue } : {}
-      });
-    }
+    this.navigateToLogin(langValue ? { [langKey]: langValue } : {});
   }
 
   protected loginCall(body: unknown, headers: HttpHeaders) {
-    return this.http
-      .post<IToken>(`${this.authOptions?.url}/login`, body, { headers })
-      .pipe(
-        tap((data) => {
-          this.tokenService.set(data.token);
-          const tokenDecoded = this.decodeToken();
-          if (tokenDecoded?.user) {
-            if (tokenDecoded.user.locale && !this.languageForce) {
-              this.languageService?.setLanguage(tokenDecoded.user.locale);
-            }
-            if (tokenDecoded.user.isExpired) {
-              this.messageService.alert(
-                'igo.auth.error.intern.Password expired'
-              );
-            }
-          }
-        }),
-        switchMap(() => this.initializeAuthentication(true))
-      );
+    const url = this.getAuthenticationUrl('login');
+    if (!url) {
+      return this.authenticationNotConfigured<IUser | null>();
+    }
+
+    return this.http.post<IToken>(url, body, { headers }).pipe(
+      tap((data) => {
+        this.tokenService.set(data.token);
+        const user = this.user;
+        if (!user) {
+          return;
+        }
+
+        if (user.locale && !this.languageForce) {
+          this.languageService?.setLanguage(user.locale);
+        }
+
+        if (user.isExpired) {
+          this.messageService.alert('igo.auth.error.intern.Password expired');
+        }
+      }),
+      switchMap(() => this.initializeAuthentication(true))
+    );
+  }
+
+  private getAuthenticationUrl(path?: string): string | undefined {
+    const url = this.authOptions.url;
+    if (!url) {
+      return;
+    }
+
+    return path ? `${url}/${path}` : url;
+  }
+
+  private authenticationNotConfigured<T>(): Observable<T> {
+    return throwError(() => new Error('Authentication is not configured.'));
+  }
+
+  private logoutInternal(): void {
+    this.anonymous = false;
+    this.tokenService.remove();
+    this.authenticate$.next(false);
+    this.initialized$.next(false);
+  }
+
+  private navigateToLogin(queryParams: Record<string, string> = {}): void {
+    if (!this.authOptions?.loginRoute) {
+      return;
+    }
+
+    this.router.navigate([this.authOptions.loginRoute], { queryParams });
+  }
+
+  private encodePassword(password: string) {
+    return Base64.encode(password);
   }
 
   private initializeAuthentication(
@@ -238,18 +279,30 @@ export class AuthService<T extends AuthOptions = AuthOptions> {
   ): Observable<IUser | null> {
     if (!isAuthenticated) {
       this.authenticate$.next(false);
+      this.initialized$.next(false);
       return of(null);
     }
 
     if (this.userService) {
-      const obs$ = this.authOptions.user?.withSync
+      const obs$ = this.authOptions?.user?.withSync
         ? this.userService.sync()
         : this.userService.getUser();
 
-      return obs$.pipe(tap(() => this.authenticate$.next(true)));
+      return obs$.pipe(
+        tap(() => {
+          this.authenticate$.next(true);
+          this.initialized$.next(true);
+        }),
+        catchError(() => {
+          this.authenticate$.next(false);
+          this.initialized$.next(false);
+          return of(null);
+        })
+      );
     }
 
     this.authenticate$.next(true);
+    this.initialized$.next(true);
     return of(null);
   }
 }
