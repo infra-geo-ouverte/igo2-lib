@@ -239,6 +239,7 @@
           "create": "Create group",
           "rename": "Rename group",
           "moreOptions": "Group tools",
+          "remove": "Remove this group from the map",
           "removeMany": "Remove the groups from the map",
           "removeDialog": {
             "singleGroupMessage": "Are you sure you want to delete the group and its contents?",
