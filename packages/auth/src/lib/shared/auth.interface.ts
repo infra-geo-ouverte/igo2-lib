@@ -20,7 +20,7 @@ export interface IInfosUser {
 }
 
 export interface AuthOptions {
-  url: string;
+  url?: string;
   /** User api url is the igo user versus the url is the authentification API */
   user?: IAuthUserIgoOptions;
   tokenKey?: string;
@@ -67,4 +67,7 @@ export enum AuthFeatureKind {
   Options
 }
 
-export const AUTH_OPTIONS = new InjectionToken<AuthOptions>('AUTH_OPTIONS');
+export const AUTH_OPTIONS = new InjectionToken<AuthOptions>('AUTH_OPTIONS', {
+  providedIn: 'root',
+  factory: () => ({})
+});

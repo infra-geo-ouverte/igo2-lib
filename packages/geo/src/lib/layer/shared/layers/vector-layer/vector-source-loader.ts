@@ -243,7 +243,9 @@ export class VectorSourceLoader implements VectorSourceLoaderHost {
     });
   }
 
-  private executeXhrRequest(options: VectorRequestExecutionOptions): void {
+  private async executeXhrRequest(
+    options: VectorRequestExecutionOptions
+  ): Promise<void> {
     const { xhr, resolvedUrl } = this.createConfiguredXhr(
       options.url,
       options.responseType
@@ -255,6 +257,15 @@ export class VectorSourceLoader implements VectorSourceLoaderHost {
 
     this.trackRequest(options.request, xhr);
     try {
+      const prepared =
+        await this.dependencies.xhrInterceptor?.prepareXhr?.(resolvedUrl);
+      if (prepared === false) {
+        onError();
+        return;
+      }
+      if (!this.ongoingRequests.includes(options.request)) {
+        return;
+      }
       this.dependencies.xhrInterceptor?.interceptXhr(xhr, resolvedUrl);
       xhr.send();
     } catch {

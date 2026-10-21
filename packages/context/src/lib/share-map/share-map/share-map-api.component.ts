@@ -56,8 +56,8 @@ export class ShareMapApiComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.authenticate$.subscribe(() => {
-      const decodeToken = this.auth.decodeToken();
-      this.userId = decodeToken?.user?.id?.toString();
+      const user = this.auth.user;
+      this.userId = user?.id?.toString();
       this.buildForm();
     });
   }

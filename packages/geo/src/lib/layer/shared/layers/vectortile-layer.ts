@@ -70,7 +70,7 @@ export class VectorTileLayer extends Layer {
     });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction(((
+    vectorTileSource.setTileLoadFunction((async (
       tile: VectorTile<Feature>,
       url: string
     ) => {
@@ -111,7 +111,7 @@ export class VectorTileLayer extends Layer {
    * @param failure On failure event action to trigger TODO
    */
 
-  customLoader(
+  private customLoader(
     url:
       | string
       | ((
@@ -124,64 +124,78 @@ export class VectorTileLayer extends Layer {
     success: any,
     failure?: any
   ) {
-    return (extent: Extent, resolution: number, projection: Projection) => {
-      const xhr = new XMLHttpRequest();
-      let modifiedUrl: string;
-      if (typeof url !== 'function') {
-        modifiedUrl = url;
-        const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
-        if (alteredUrlWithKeyAuth) {
-          modifiedUrl = alteredUrlWithKeyAuth;
-        }
-      } else {
-        modifiedUrl = url(extent, resolution, projection);
-      }
-      xhr.open('GET', modifiedUrl);
-      interceptor?.interceptXhr(xhr, modifiedUrl);
-
-      if (format.getType() === 'arraybuffer') {
-        xhr.responseType = 'arraybuffer';
-      }
-      xhr.onload = () => {
-        if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
-          const type = format.getType();
-          let source;
-          if (type === 'json' || type === 'text') {
-            source = xhr.responseText;
-          } else if (type === 'xml') {
-            source = xhr.responseXML;
-            if (!source) {
-              source = new DOMParser().parseFromString(
-                xhr.responseText,
-                'application/xml'
-              );
-            }
-          } else if (type === 'arraybuffer') {
-            source = xhr.response;
-          }
-          if (source) {
-            success.call(
-              this,
-              format.readFeatures(source, {
-                extent,
-                featureProjection: projection
-              }),
-              format.readProjection(source)
-            );
-          } else {
-            // TODO
-            failure.call(this);
+    return async (
+      extent: Extent,
+      resolution: number,
+      projection: Projection
+    ) => {
+      try {
+        const xhr = new XMLHttpRequest();
+        let modifiedUrl: string;
+        if (typeof url !== 'function') {
+          modifiedUrl = url;
+          const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
+          if (alteredUrlWithKeyAuth) {
+            modifiedUrl = alteredUrlWithKeyAuth;
           }
         } else {
-          // TODO
-          failure.call(this);
+          modifiedUrl = url(extent, resolution, projection);
         }
-      };
-      xhr.onerror = () => {
-        // TODO
-        failure.call(this);
-      };
-      xhr.send();
+        const prepared = await interceptor?.prepareXhr?.(modifiedUrl);
+        if (prepared === false) {
+          failure?.call(this);
+          return [];
+        }
+
+        xhr.open('GET', modifiedUrl);
+        interceptor?.interceptXhr(xhr, modifiedUrl);
+
+        if (format.getType() === 'arraybuffer') {
+          xhr.responseType = 'arraybuffer';
+        }
+        return await new Promise<Feature[]>((resolve, reject) => {
+          xhr.onload = () => {
+            try {
+              if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
+                const type = format.getType();
+                let source;
+                if (type === 'json' || type === 'text') {
+                  source = xhr.responseText;
+                } else if (type === 'xml') {
+                  source = xhr.responseXML;
+                  if (!source) {
+                    source = new DOMParser().parseFromString(
+                      xhr.responseText,
+                      'application/xml'
+                    );
+                  }
+                } else if (type === 'arraybuffer') {
+                  source = xhr.response;
+                }
+                if (source) {
+                  const features = format.readFeatures(source, {
+                    extent,
+                    featureProjection: projection
+                  });
+                  success.call(this, features, format.readProjection(source));
+                  resolve(features);
+                } else {
+                  reject();
+                }
+              } else {
+                reject();
+              }
+            } catch (error) {
+              reject(error);
+            }
+          };
+          xhr.onerror = () => reject();
+          xhr.send();
+        });
+      } catch {
+        failure?.call(this);
+        return [];
+      }
     };
   }
 
