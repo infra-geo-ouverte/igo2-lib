@@ -544,7 +544,7 @@ export class GeometryFormFieldInputComponent
       featureProjection: this.map()!.projectionCode
     });
     const olFeature = new OlFeature({
-      geometry: olGeometry
+      geometry: olGeometry ?? undefined
     });
     olFeature.setStyle(this.overlayStyle as OlStyle.Style);
     this.olOverlaySource.clear();

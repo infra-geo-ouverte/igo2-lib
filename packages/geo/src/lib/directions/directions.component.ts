@@ -269,6 +269,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       }
     });
     this.selectedRoute.on('select', (evt) => {
+      if (!evt.mapBrowserEvent) {
+        return;
+      }
       if (this.focusOnStop === false) {
         const selectCoordinates: Coordinate = olProj.transform(
           evt.mapBrowserEvent.coordinate,

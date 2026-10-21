@@ -46,8 +46,8 @@ describe('IndexedDbVectorLayerExtension interception', () => {
   };
 
   function createContext(): VectorLayerExtensionContext {
-    const source = new VectorSource({
-      format: new GeoJSON(),
+    const source = new VectorSource<OlFeature>({
+      format: new GeoJSON<OlFeature>(),
       url: 'https://example.com/wfs'
     });
     const layer = new VectorLayer({ source });
@@ -71,8 +71,8 @@ describe('IndexedDbVectorLayerExtension interception', () => {
   }
 
   function createContextWithOfflineOptions(): VectorLayerExtensionContext {
-    const source = new VectorSource({
-      format: new GeoJSON(),
+    const source = new VectorSource<OlFeature>({
+      format: new GeoJSON<OlFeature>(),
       url: 'https://example.com/wfs'
     });
     const layer = new VectorLayer({ source });

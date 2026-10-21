@@ -304,7 +304,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param event OL MapBrowserPointerEvent
    */
   private onDragBoxEnd(event: OlDragBoxEvent) {
-    const exclusive = !ctrlKeyDown(event.mapBrowserEvent);
+    const mapBrowserEvent = event.mapBrowserEvent;
+    const exclusive = !mapBrowserEvent || !ctrlKeyDown(mapBrowserEvent);
     const target = event.target as any;
     const extent = target.getGeometry().getExtent();
     const olFeatures = this.stores.reduce(

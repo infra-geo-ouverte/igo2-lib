@@ -618,7 +618,7 @@ export class QueryService {
 
     const format = new olformat.WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
-    const f = tenPercentWidthGeom.getGeometry() as any;
+    const f = tenPercentWidthGeom!.getGeometry() as any;
 
     const newGeom = {
       type: f.getType(),

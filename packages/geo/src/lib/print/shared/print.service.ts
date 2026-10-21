@@ -254,6 +254,9 @@ export class PrintService {
     ) {
       let canvasOverlayHTMLMeasures;
       const mapOverlayMeasuresHTML = map.ol.getOverlayContainer();
+      if (!mapOverlayMeasuresHTML) {
+        return;
+      }
       await html2canvas(mapOverlayMeasuresHTML, {
         scale: 1,
         backgroundColor: null
@@ -896,7 +899,7 @@ export class PrintService {
     // Get the scale and attribution
     // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
     const mapOverlayHTML = map.ol
-      .getOverlayContainerStopEvent()
+      .getOverlayContainerStopEvent()!
       .cloneNode(true) as HTMLElement;
 
     // set 'OverlayContainer' size to print size

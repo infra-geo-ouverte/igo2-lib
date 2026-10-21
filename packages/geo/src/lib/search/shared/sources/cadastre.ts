@@ -174,11 +174,11 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       featureProjection: 'EPSG:4326'
     });
     return {
-      type: feature.getGeometry()!.getType() as Exclude<
+      type: feature?.getGeometry()!.getType() as Exclude<
         GeoJsonGeometryTypes,
         'GeometryCollection'
       >,
-      coordinates: (feature.getGeometry() as any).getCoordinates()
+      coordinates: (feature?.getGeometry() as any).getCoordinates()
     };
   }
 }
