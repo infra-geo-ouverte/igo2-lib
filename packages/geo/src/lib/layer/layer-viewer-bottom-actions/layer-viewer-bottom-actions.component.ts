@@ -6,6 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { FormDialogService } from '@igo2/common/form';
 import { PanelComponent } from '@igo2/common/panel';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -43,6 +44,7 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 })
 export class LayerViewerBottomActionsComponent {
   private layerListToolService = inject(LayerListToolService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private layerPersistence = inject(LAYER_PERSISTENCE, { optional: true });
 
   orderable = true;
@@ -114,7 +116,41 @@ export class LayerViewerBottomActionsComponent {
     return layers?.every((l) => this.isLayerRemovable(l));
   }
 
-  removeLayers(): void {
+  triggerRemoveLayers(): void {
+    if (this.requiresRemovalConfirmation()) {
+      const messageKey = this.hasMultipleSelection
+        ? 'igo.geo.layer.group.removeDialog.many'
+        : 'igo.geo.layer.group.removeDialog.group';
+      this.confirmDialogService
+        .open(messageKey, {
+          modeYesNo: true,
+          width: '400px'
+        })
+        .subscribe((deletion) => {
+          if (deletion) {
+            this.removeLayers();
+          }
+        });
+    } else {
+      this.removeLayers();
+    }
+  }
+
+  private requiresRemovalConfirmation(): boolean {
+    let singleLayerCount = 0;
+    for (const layer of this.selected) {
+      if (isLayerGroup(layer)) {
+        if (layer.children.length > 0) {
+          return true;
+        }
+      } else if (++singleLayerCount > 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private removeLayers(): void {
     const layerPersistence = this.layerPersistence;
     if (layerPersistence) {
       this.selected
