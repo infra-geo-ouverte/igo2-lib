@@ -6,6 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { FormDialogService } from '@igo2/common/form';
 import { PanelComponent } from '@igo2/common/panel';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -43,6 +44,7 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 })
 export class LayerViewerBottomActionsComponent {
   private layerListToolService = inject(LayerListToolService);
+  private confirmDialogService = inject(ConfirmDialogService);
   private layerPersistence = inject(LAYER_PERSISTENCE, { optional: true });
 
   orderable = true;
@@ -114,7 +116,38 @@ export class LayerViewerBottomActionsComponent {
     return layers?.every((l) => this.isLayerRemovable(l));
   }
 
-  removeLayers(): void {
+  triggerRemoveLayers(): void {
+    const groupsWithChildrens = this.selected.filter(
+      (l) => isLayerGroup(l) && l.children.length > 0
+    );
+
+    if (groupsWithChildrens?.length) {
+      const message =
+        groupsWithChildrens.length > 1
+          ? 'igo.geo.layer.group.removeDialog.manyGroupsMessage'
+          : 'igo.geo.layer.group.removeDialog.singleGroupMessage';
+
+      const title =
+        groupsWithChildrens.length > 1
+          ? 'igo.geo.layer.group.removeMany'
+          : 'igo.geo.layer.group.remove';
+
+      this.confirmDialogService
+        .open(message, {
+          title,
+          modeYesNo: true
+        })
+        .subscribe((deletion) => {
+          if (deletion) {
+            this.removeLayers();
+          }
+        });
+    } else {
+      this.removeLayers();
+    }
+  }
+
+  private removeLayers(): void {
     const layerPersistence = this.layerPersistence;
     if (layerPersistence) {
       this.selected

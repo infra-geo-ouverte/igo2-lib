@@ -240,6 +240,11 @@
           "rename": "Renommer le groupe",
           "moreOptions": "Outils du groupe",
           "remove": "Retirer le groupe de la carte",
+          "removeMany": "Retirer les groupes de la carte",
+          "removeDialog": {
+            "singleGroupMessage": "Êtes-vous certain de vouloir supprimer le groupe et son contenu?",
+            "manyGroupsMessage": "Êtes-vous certain de vouloir supprimer les groupes et leurs contenus?"
+          },
           "hide": "Masquer le groupe",
           "hideChildren": "Couche masquée par un groupe",
           "show": "Afficher le groupe"
