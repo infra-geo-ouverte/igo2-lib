@@ -240,6 +240,10 @@
           "rename": "Rename group",
           "moreOptions": "Group tools",
           "remove": "Remove this group from the map",
+          "removeDialog": {
+            "group": "Are you sure you want to remove the layer group from the map?",
+            "many": "Are you sure you want to remove all selected items from the map?"
+          },
           "hide": "Hide group",
           "hideChildren": "Layer hidden by a group",
           "show": "Show group"
