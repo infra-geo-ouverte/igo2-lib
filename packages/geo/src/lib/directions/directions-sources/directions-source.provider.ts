@@ -1,7 +1,9 @@
 import { DirectionsSource } from './directions-source';
 import {
   DirectionSourceFeature,
-  DirectionSourceKind
+  DirectionSourceKind,
+  OSRM_DIRECTIONS_SOURCE_OPTIONS,
+  OsrmDirectionsSourceOptions
 } from './directions-source.interface';
 import { OsrmDirectionsSource } from './osrm-directions-source';
 
@@ -17,9 +19,16 @@ export function provideOsrmDirectionsSource() {
   };
 }
 
-export function withOsrmSource(): DirectionSourceFeature<DirectionSourceKind.OSRM> {
+export function withOsrmSource(
+  options?: Partial<OsrmDirectionsSourceOptions>
+): DirectionSourceFeature<DirectionSourceKind.OSRM> {
   return {
     kind: DirectionSourceKind.OSRM,
-    providers: [provideOsrmDirectionsSource()]
+    providers: [
+      provideOsrmDirectionsSource(),
+      ...(options
+        ? [{ provide: OSRM_DIRECTIONS_SOURCE_OPTIONS, useValue: options }]
+        : [])
+    ]
   };
 }

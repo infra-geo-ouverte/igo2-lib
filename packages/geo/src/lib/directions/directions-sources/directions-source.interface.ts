@@ -1,4 +1,8 @@
-import { Provider } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
+
+export const OSRM_DIRECTIONS_SOURCE_OPTIONS = new InjectionToken<
+  Partial<OsrmDirectionsSourceOptions>
+>('OsrmDirectionsSourceOptions');
 
 export interface DirectionsSourceOptions {
   osrm?: OsrmDirectionsSourceOptions;
@@ -11,6 +15,7 @@ export type OsrmDirectionsSourceOptions = BaseDirectionsSourceOptions;
 export interface BaseDirectionsSourceOptions {
   id: string;
   baseUrl: string;
+  apiKey?: string;
   name?: string;
   profiles?: BaseDirectionsSourceOptionsProfile[];
 }

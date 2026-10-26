@@ -77,10 +77,18 @@ export class ExportService {
   static noOgreFallbacks: Partial<AnyExportFormat[]> = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
+  private apiKey?: string;
   private aggregateInComment = true;
+
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.apiKey ? { 'x-api-key': this.apiKey } : undefined
+    );
+  }
 
   constructor() {
     this.ogreUrl = this.config.getConfig('importExport.url');
+    this.apiKey = this.config.getConfig('importExport.apiKey');
     const gpxAggregateInComment = this.config.getConfig(
       'importExport.gpxAggregateInComment'
     );
@@ -396,6 +404,7 @@ export class ExportService {
     return this.httpClient
       .post(url, features, {
         params,
+        headers: this.headers,
         responseType: 'blob',
         observe: 'response'
       })

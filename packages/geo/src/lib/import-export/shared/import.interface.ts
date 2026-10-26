@@ -2,6 +2,7 @@ import { ExportFormat } from './export.type';
 
 export interface ImportExportServiceOptions {
   url: string;
+  apiKey?: string;
   clientSideFileSizeMaxMb?: number;
   forceNaming?: boolean;
   formats?: ExportFormat[];

@@ -101,7 +101,11 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get(this.searchUrl, { params, responseType: 'text' })
+      .get(this.searchUrl, {
+        params,
+        headers: this.headers,
+        responseType: 'text'
+      })
       .pipe(map((response: string) => this.extractResults(response, term)));
   }
 

@@ -1,3 +1,5 @@
+import { HttpHeaders } from '@angular/common/http';
+
 import { Workspace } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
@@ -100,6 +102,15 @@ export class SearchSource {
    */
   get searchUrl(): string {
     return this.options.searchUrl!;
+  }
+
+  /**
+   * Search request headers
+   */
+  protected get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.options.apiKey ? { 'x-api-key': this.options.apiKey } : undefined
+    );
   }
 
   /**

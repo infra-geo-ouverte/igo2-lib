@@ -218,38 +218,44 @@ export class StoredQueriesSearchSource
     return new RegExp('.*?gml.*?', 'i').test(
       this.storedQueriesOptions.outputformat ?? ''
     )
-      ? this.http.get(this.searchUrl, { params, responseType: 'text' }).pipe(
-          map((response) => {
-            let resultArray = this.extractResults(
-              this.extractWFSData(response),
-              term
-            );
-            resultArray.sort((a, b) =>
-              (a.meta.score ?? 0) > (b.meta.score ?? 0)
-                ? 1
-                : (a.meta.score ?? 0) === (b.meta.score ?? 0)
-                  ? (a.meta.titleHtml ?? '') < (b.meta.titleHtml ?? '')
-                    ? 1
-                    : -1
-                  : -1
-            );
-            resultArray.reverse();
-            if (resultArray.length > Number(this.options.params?.limit)) {
-              const idxEnd =
-                Number(this.options.params?.limit) *
-                Number(this.options.params?.page);
-              const resultTotLenght = resultArray.length;
-              resultArray = resultArray.slice(0, idxEnd);
-              if (idxEnd < resultTotLenght) {
-                resultArray[resultArray.length - 1]!.meta.nextPage = true;
-              } else {
-                resultArray[resultArray.length - 1]!.meta.nextPage = false;
-              }
-            }
-            return resultArray;
+      ? this.http
+          .get(this.searchUrl, {
+            params,
+            headers: this.headers,
+            responseType: 'text'
           })
-        )
-      : this.http.get(this.searchUrl, { params }).pipe(
+          .pipe(
+            map((response) => {
+              let resultArray = this.extractResults(
+                this.extractWFSData(response),
+                term
+              );
+              resultArray.sort((a, b) =>
+                (a.meta.score ?? 0) > (b.meta.score ?? 0)
+                  ? 1
+                  : (a.meta.score ?? 0) === (b.meta.score ?? 0)
+                    ? (a.meta.titleHtml ?? '') < (b.meta.titleHtml ?? '')
+                      ? 1
+                      : -1
+                    : -1
+              );
+              resultArray.reverse();
+              if (resultArray.length > Number(this.options.params?.limit)) {
+                const idxEnd =
+                  Number(this.options.params?.limit) *
+                  Number(this.options.params?.page);
+                const resultTotLenght = resultArray.length;
+                resultArray = resultArray.slice(0, idxEnd);
+                if (idxEnd < resultTotLenght) {
+                  resultArray[resultArray.length - 1]!.meta.nextPage = true;
+                } else {
+                  resultArray[resultArray.length - 1]!.meta.nextPage = false;
+                }
+              }
+              return resultArray;
+            })
+          )
+      : this.http.get(this.searchUrl, { params, headers: this.headers }).pipe(
           map((response) => {
             return this.extractResults(this.extractWFSData(response), term);
           })
@@ -513,8 +519,12 @@ export class StoredQueriesReverseSearchSource
       this.storedQueriesOptions.outputformat ?? ''
     );
     const request$ = isGml
-      ? this.http.get(this.searchUrl, { params, responseType: 'text' })
-      : this.http.get(this.searchUrl, { params });
+      ? this.http.get(this.searchUrl, {
+          params,
+          headers: this.headers,
+          responseType: 'text'
+        })
+      : this.http.get(this.searchUrl, { params, headers: this.headers });
     return request$.pipe(
       map((response) => {
         return this.extractResults(this.extractWFSData(response));

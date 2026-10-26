@@ -184,7 +184,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get<NominatimData[]>(this.searchUrl, { params })
+      .get<NominatimData[]>(this.searchUrl, { params, headers: this.headers })
       .pipe(map((response) => this.extractResults(response, term)));
   }
 
