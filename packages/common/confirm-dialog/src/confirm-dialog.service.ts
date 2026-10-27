@@ -14,18 +14,20 @@ export class ConfirmDialogService {
     message: string,
     options?: ConfirmDialogOptions
   ): Observable<boolean> {
-    const _options: ConfirmDialogOptions = {
-      title: 'igo.common.confirmDialog.title',
-      modeYesNo: false,
-      ...options
-    };
+    const {
+      title = 'igo.common.confirmDialog.title',
+      modeYesNo = false,
+      ...dialogConfig
+    }: ConfirmDialogOptions = options ?? {};
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      disableClose: false
+      disableClose: false,
+      maxWidth: 'min(80vw, 400px)',
+      ...dialogConfig
     });
     dialogRef.componentInstance.confirmMessage = message;
-    dialogRef.componentInstance.titleKey =
-      _options.title ?? 'igo.common.confirmDialog.title';
-    if (_options.modeYesNo) {
+    dialogRef.componentInstance.titleKey = title;
+    if (modeYesNo) {
       dialogRef.componentInstance.proccessKey = 'igo.common.confirmDialog.yes';
       dialogRef.componentInstance.cancelKey = 'igo.common.confirmDialog.no';
     }
