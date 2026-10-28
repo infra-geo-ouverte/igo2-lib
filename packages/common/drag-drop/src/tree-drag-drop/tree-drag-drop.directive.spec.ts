@@ -250,6 +250,54 @@ describe('DragDropTreeDirective', () => {
       false
     );
   });
+
+  it('should allow dropping a last-child group outside of its parent group', () => {
+    const parentGroup = fixture.componentInstance.dataSource[0]; // Node 1 (level 0)
+    const lastChildGroup = parentGroup.children![0]; // Node 2 (level 1, group)
+
+    directive.tree().expand(parentGroup);
+    directive.tree().expand(lastChildGroup);
+    fixture.detectChanges();
+
+    vi.spyOn(directive as any, 'getPositionType').mockReturnValue('below');
+    vi.spyOn(directive as any, 'getPositionLevel').mockReturnValue(0);
+    vi.spyOn(directive.dropped, 'emit');
+    vi.spyOn(directive.droppedError, 'emit');
+
+    directive.draggedNode = lastChildGroup;
+    directive.dropNodeTarget.set(lastChildGroup);
+    directive.drop(new DragEvent('drop'));
+
+    expect(directive.droppedError.emit).not.toHaveBeenCalled();
+    expect(directive.dropped.emit).toHaveBeenCalledWith({
+      node: lastChildGroup,
+      ref: parentGroup,
+      position: 'below'
+    });
+  });
+
+  it('should prevent dropping a group onto itself at the same level', () => {
+    const parentGroup = fixture.componentInstance.dataSource[0]; // Node 1 (level 0)
+    const lastChildGroup = parentGroup.children![0]; // Node 2 (level 1, group)
+
+    directive.tree().expand(parentGroup);
+    fixture.detectChanges();
+
+    vi.spyOn(directive as any, 'getPositionType').mockReturnValue('below');
+    vi.spyOn(directive as any, 'getPositionLevel').mockReturnValue(1);
+    vi.spyOn(directive.dropped, 'emit');
+    vi.spyOn(directive.droppedError, 'emit');
+
+    directive.draggedNode = lastChildGroup;
+    directive.dropNodeTarget.set(lastChildGroup);
+    directive.drop(new DragEvent('drop'));
+
+    expect(directive.dropped.emit).not.toHaveBeenCalled();
+    expect(directive.droppedError.emit).toHaveBeenCalledWith({
+      canDrop: false,
+      message: 'igo.common.dragDrop.cannot.dropInsideItself'
+    });
+  });
 });
 
 // describe('DragDropTreeDirective - NodeGroup', () => {

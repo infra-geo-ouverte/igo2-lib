@@ -233,13 +233,6 @@ export class TreeDragDropDirective<
     }
 
     const dropPosition: DropPosition = this.getPosition(event, nodeTarget);
-
-    const validation = this.canDropNode(nodeTarget, dropPosition);
-    if (!validation.canDrop) {
-      this.droppedError.emit(validation);
-      return;
-    }
-
     let targetNodeLevel = this.getNodeLevel(nodeTarget);
 
     // Allow to drop a last child outside is group. We refer to it's ancestor for the target
@@ -253,6 +246,12 @@ export class TreeDragDropDirective<
         nodeTarget = ancestor;
         targetNodeLevel = this.getNodeLevel(nodeTarget);
       }
+    }
+
+    const validation = this.canDropNode(nodeTarget, dropPosition);
+    if (!validation.canDrop) {
+      this.droppedError.emit(validation);
+      return;
     }
 
     if (this.isGroup(nodeTarget)) {
@@ -544,11 +543,10 @@ export class TreeDragDropDirective<
 
   private getDescendants(node: T): T[] {
     const children = this.childrenAccessor()(node) ?? [];
-    const descendants: T[] = [...children];
-    children.forEach((child) => {
-      descendants.push(...this.getDescendants(child));
-    });
-    return descendants;
+    return children.reduce<T[]>((descendants, child) => {
+      descendants.push(child, ...this.getDescendants(child));
+      return descendants;
+    }, []);
   }
 
   private isHoverDescendant(id: string | number, _hoveredNode: T): boolean {
@@ -566,10 +564,15 @@ export class TreeDragDropDirective<
     }
 
     let positionType = this.getPositionType(event, hoveredNode);
+    const level = this.getPositionLevel(hoveredNode, positionType, event.x);
 
+    const selfReferencing =
+      this.draggedNode && this.draggedNode.id === hoveredNode.id;
     const bellowOpenedGroup =
       this.isGroup(hoveredNode) &&
+      !selfReferencing &&
       positionType === 'below' &&
+      level === this.getNodeLevel(hoveredNode) &&
       this.tree().isExpanded(hoveredNode);
     if (bellowOpenedGroup) {
       positionType = 'inside';
@@ -578,13 +581,27 @@ export class TreeDragDropDirective<
     return {
       x: event.x,
       y: this.getPositionY(hoveredNode, positionType),
-      level: this.getPositionLevel(hoveredNode, positionType, event.x),
+      level,
       type: positionType
     };
   }
 
   private getPositionY(node: T, type: DropPositionType): number {
-    const element = this.getNodeElement(node);
+    let targetNode = node;
+    if (
+      type === 'below' &&
+      this.isGroup(node) &&
+      this.tree().isExpanded(node)
+    ) {
+      const descendants = this.getDescendants(node);
+      for (let i = descendants.length - 1; i >= 0; i--) {
+        if (this.getNodeElement(descendants[i])) {
+          targetNode = descendants[i];
+          break;
+        }
+      }
+    }
+    const element = this.getNodeElement(targetNode);
     if (!element) return 0;
     const rect = element.getBoundingClientRect();
 
