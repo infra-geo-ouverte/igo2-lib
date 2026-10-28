@@ -164,6 +164,13 @@ export class LayerListComponent implements AfterViewInit {
       nodesToDrop = controller.selected;
     }
 
+    nodesToDrop = nodesToDrop.filter(
+      (nodeDrop) =>
+        nodeDrop === node ||
+        !isLayerGroup(nodeDrop) ||
+        !nodeDrop.isDescendant(ref)
+    );
+
     if (isLayerGroup(node)) {
       nodesToDrop = nodesToDrop.filter(
         (nodeDrop) => !node.isDescendant(nodeDrop)
