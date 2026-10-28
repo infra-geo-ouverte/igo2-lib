@@ -164,21 +164,25 @@ export class LayerListComponent implements AfterViewInit {
       nodesToDrop = controller.selected;
     }
 
-    if (isLayerGroup(node)) {
-      nodesToDrop = nodesToDrop.filter(
-        (nodeDrop) => !node.isDescendant(nodeDrop)
-      );
-    }
+    nodesToDrop = nodesToDrop.filter(
+      (nodeDrop) =>
+        nodeDrop.id !== ref.id &&
+        (!isLayerGroup(nodeDrop) || !nodeDrop.isDescendant(ref))
+    );
 
-    if (isLayerGroup(ref)) {
-      const isSelected = nodesToDrop.some((nodeDrop) => nodeDrop.id === ref.id);
-      if (isSelected) {
-        nodesToDrop = nodesToDrop.filter((nodeDrop) => nodeDrop.id !== ref.id);
-      }
-    }
-
-    if (!nodesToDrop.includes(node)) {
+    if (
+      !nodesToDrop.includes(node) &&
+      (!isLayerGroup(node) || !node.isDescendant(ref))
+    ) {
       nodesToDrop.push(node);
+    }
+
+    const selectedGroups = nodesToDrop.filter(isLayerGroup);
+    if (selectedGroups.length) {
+      nodesToDrop = nodesToDrop.filter(
+        (nodeDrop) =>
+          !selectedGroups.some((group) => group.isDescendant(nodeDrop))
+      );
     }
 
     switch (position) {
