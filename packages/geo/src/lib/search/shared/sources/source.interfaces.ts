@@ -3,6 +3,7 @@ import { Provider } from '@angular/core';
 export interface SearchSourceOptions {
   title?: string;
   searchUrl?: string;
+  apiKey?: string;
   available?: boolean;
   enabled?: boolean;
   order?: number;

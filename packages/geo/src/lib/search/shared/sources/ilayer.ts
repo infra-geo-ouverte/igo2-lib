@@ -259,7 +259,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     return this.http
-      .get<ILayerServiceResponse>(this.searchUrl, { params })
+      .get<ILayerServiceResponse>(this.searchUrl, {
+        params,
+        headers: this.headers
+      })
       .pipe(map((response) => this.extractResults(response, term)));
   }
 

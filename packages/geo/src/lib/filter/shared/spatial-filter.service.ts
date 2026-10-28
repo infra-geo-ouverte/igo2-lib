@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
+import { ObjectUtils } from '@igo2/utils';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,7 +14,11 @@ import {
   SpatialFilterQueryType,
   SpatialFilterType
 } from './spatial-filter.enum';
-import { SpatialFilterThematic } from './spatial-filter.interface';
+import {
+  SPATIAL_FILTER_OPTIONS,
+  SpatialFilterOptions,
+  SpatialFilterThematic
+} from './spatial-filter.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +29,13 @@ export class SpatialFilterService {
   private configService = inject(ConfigService);
 
   public baseUrl = 'https://terrapi.geo.securite.gouv.qc.ca';
+  private apiKey?: string;
+
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.apiKey ? { 'x-api-key': this.apiKey } : undefined
+    );
+  }
 
   /*
    * Type association with URL
@@ -51,8 +63,13 @@ export class SpatialFilterService {
   };
 
   constructor() {
-    this.baseUrl =
-      this.configService.getConfig('spatialFilter.url') || this.baseUrl;
+    const directOptions = inject(SPATIAL_FILTER_OPTIONS, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      this.configService.getConfig<SpatialFilterOptions>('spatialFilter') ?? {},
+      directOptions ?? {}
+    );
+    this.baseUrl = options.url || this.baseUrl;
+    this.apiKey = options.apiKey;
   }
 
   getKeyByValue(object: Record<string, string>, value: string) {
@@ -66,7 +83,9 @@ export class SpatialFilterService {
     return this.http
       .get<{
         features: Feature[];
-      }>(`${this.baseUrl}/${this.urlFilterList[type]}`)
+      }>(`${this.baseUrl}/${this.urlFilterList[type]}`, {
+        headers: this.headers
+      })
       .pipe(
         map((featureCollection) =>
           featureCollection.features.map((f) => {
@@ -85,76 +104,78 @@ export class SpatialFilterService {
   loadThematicsList() {
     const url = 'types';
     const items: SpatialFilterThematic[] = [];
-    return this.http.get<string[]>(`${this.baseUrl}/${url}`).pipe(
-      map((types) => {
-        types.forEach((type) => {
-          if (type.startsWith('lieux')) {
-            const item: SpatialFilterThematic = {
-              name: '',
-              source: type
-            };
-            let substr = type.substring(6, type.length);
-            let name = substr;
-            if (substr.includes('.')) {
-              const index = substr.indexOf('.');
-              name = substr.substring(index + 1, substr.length);
-              substr = substr.substring(0, index);
-            }
-            try {
-              item.name = this.languageService.translate.instant(
-                'igo.geo.terrapi.' + name
-              );
-            } catch {
-              item.name =
-                name.substring(0, 1).toUpperCase() +
-                name.substring(1, name.length - 1);
-            }
-
-            try {
-              item.group = this.languageService.translate.instant(
-                'igo.geo.spatialFilter.group.' + substr
-              );
-            } catch {
-              item.group =
-                substr.substring(0, 1).toUpperCase() +
-                substr.substring(1, name.length - 1);
-            }
-
-            items.push(item);
-          } else {
-            if (this.getKeyByValue(this.urlFilterList, type)) {
+    return this.http
+      .get<string[]>(`${this.baseUrl}/${url}`, { headers: this.headers })
+      .pipe(
+        map((types) => {
+          types.forEach((type) => {
+            if (type.startsWith('lieux')) {
               const item: SpatialFilterThematic = {
                 name: '',
                 source: type
               };
-              const name = this.getKeyByValue(this.urlFilterList, type)!;
+              let substr = type.substring(6, type.length);
+              let name = substr;
+              if (substr.includes('.')) {
+                const index = substr.indexOf('.');
+                name = substr.substring(index + 1, substr.length);
+                substr = substr.substring(0, index);
+              }
               try {
                 item.name = this.languageService.translate.instant(
                   'igo.geo.terrapi.' + name
                 );
               } catch {
                 item.name =
-                  name!.substring(0, 1).toUpperCase() +
-                  name!.substring(1, name!.length - 1);
+                  name.substring(0, 1).toUpperCase() +
+                  name.substring(1, name.length - 1);
               }
-              item.source = type;
 
-              if (name === this.urlFilterList.adresses) {
+              try {
                 item.group = this.languageService.translate.instant(
-                  'igo.geo.spatialFilter.group.addresses'
+                  'igo.geo.spatialFilter.group.' + substr
                 );
-                item.name = this.languageService.translate.instant(
-                  'igo.geo.terrapi.address'
-                );
+              } catch {
+                item.group =
+                  substr.substring(0, 1).toUpperCase() +
+                  substr.substring(1, name.length - 1);
               }
 
               items.push(item);
+            } else {
+              if (this.getKeyByValue(this.urlFilterList, type)) {
+                const item: SpatialFilterThematic = {
+                  name: '',
+                  source: type
+                };
+                const name = this.getKeyByValue(this.urlFilterList, type)!;
+                try {
+                  item.name = this.languageService.translate.instant(
+                    'igo.geo.terrapi.' + name
+                  );
+                } catch {
+                  item.name =
+                    name!.substring(0, 1).toUpperCase() +
+                    name!.substring(1, name!.length - 1);
+                }
+                item.source = type;
+
+                if (name === this.urlFilterList.adresses) {
+                  item.group = this.languageService.translate.instant(
+                    'igo.geo.spatialFilter.group.addresses'
+                  );
+                  item.name = this.languageService.translate.instant(
+                    'igo.geo.terrapi.address'
+                  );
+                }
+
+                items.push(item);
+              }
             }
-          }
-        });
-        return items;
-      })
-    );
+          });
+          return items;
+        })
+      );
   }
 
   /*
@@ -192,7 +213,8 @@ export class SpatialFilterService {
       .get<Feature>(`${this.baseUrl}/${featureType}/${featureCode}`, {
         params: {
           geometry: 'true'
-        }
+        },
+        headers: this.headers
       })
       .pipe(
         map((f) => {
@@ -224,7 +246,8 @@ export class SpatialFilterService {
             params: {
               geometry: '100',
               bufferOutput: buffer!.toString()
-            }
+            },
+            headers: this.headers
           })
           .pipe(
             map((f) => {
@@ -239,10 +262,14 @@ export class SpatialFilterService {
       }
     }
     return this.http
-      .post<Feature>(`${this.baseUrl}/geospatial/buffer?`, {
-        buffer,
-        loc: JSON.stringify(feature)
-      })
+      .post<Feature>(
+        `${this.baseUrl}/geospatial/buffer?`,
+        {
+          buffer,
+          loc: JSON.stringify(feature)
+        },
+        { headers: this.headers }
+      )
       .pipe(
         map((f) => {
           return f;
@@ -261,13 +288,16 @@ export class SpatialFilterService {
 
   private doGet(url: string, buffer: number, mapFn: (f: Feature) => Feature) {
     return this.http
-      .get<{ features: Feature[] }>(url, { params: this.getHttpParams(buffer) })
+      .get<{ features: Feature[] }>(url, {
+        params: this.getHttpParams(buffer),
+        headers: this.headers
+      })
       .pipe(map((fc) => fc.features.map(mapFn)));
   }
 
   private doPost(url: string, body: any, mapFn: (f: Feature) => Feature) {
     return this.http
-      .post<{ features: Feature[] }>(url, body)
+      .post<{ features: Feature[] }>(url, body, { headers: this.headers })
       .pipe(map((fc) => fc.features.map(mapFn)));
   }
 
@@ -370,7 +400,8 @@ export class SpatialFilterService {
               params: {
                 geometry: '100',
                 bufferOutput: buffer!.toString()
-              }
+              },
+              headers: this.headers
             }
           )
           .pipe(
@@ -387,9 +418,13 @@ export class SpatialFilterService {
           );
       }
     }
-    return this.http.post<Feature[]>(`${this.baseUrl}/geospatial/buffer?`, {
-      buffer,
-      loc: JSON.stringify(features)
-    });
+    return this.http.post<Feature[]>(
+      `${this.baseUrl}/geospatial/buffer?`,
+      {
+        buffer,
+        loc: JSON.stringify(features)
+      },
+      { headers: this.headers }
+    );
   }
 }

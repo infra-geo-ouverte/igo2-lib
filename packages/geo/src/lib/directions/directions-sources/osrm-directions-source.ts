@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
-import { uuid } from '@igo2/utils';
+import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Position } from 'geojson';
 import { Observable } from 'rxjs';
@@ -23,6 +23,7 @@ import {
 import { DirectionsSource } from './directions-source';
 import {
   BaseDirectionsSourceOptionsProfile,
+  OSRM_DIRECTIONS_SOURCE_OPTIONS,
   OsrmDirectionsSourceOptions
 } from './directions-source.interface';
 
@@ -77,9 +78,23 @@ export class OsrmDirectionsSource extends DirectionsSource {
 
   private _options: OsrmDirectionsSourceOptions;
 
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this._options?.apiKey ? { 'x-api-key': this._options.apiKey } : undefined
+    );
+  }
+
   constructor() {
     super();
-    this._options = this._config.getConfig('directionsSources.osrm');
+    const directOptions = inject(OSRM_DIRECTIONS_SOURCE_OPTIONS, {
+      optional: true
+    });
+    this._options = ObjectUtils.mergeDeep(
+      this._config.getConfig<OsrmDirectionsSourceOptions>(
+        'directionsSources.osrm'
+      ) ?? {},
+      directOptions ?? {}
+    ) as OsrmDirectionsSourceOptions;
     if (!this.baseUrl) {
       this.baseUrl = '/apis/itineraire/route/v1/';
     }
@@ -135,7 +150,8 @@ export class OsrmDirectionsSource extends DirectionsSource {
     const url: string = this.url;
     return this._http
       .get<OsrmApiResponse>(url + coordinates.join(';'), {
-        params
+        params,
+        headers: this.headers
       })
       .pipe(map((res) => this.extractRoutesData(res)));
   }

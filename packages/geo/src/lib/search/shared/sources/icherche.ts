@@ -444,7 +444,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get<IChercheResponse>(`${this.searchUrl}/geocode`, { params })
+      .get<IChercheResponse>(`${this.searchUrl}/geocode`, {
+        params,
+        headers: this.headers
+      })
       .pipe(
         map((response) => this.extractResults(response, term)),
         catchError((err) => {
@@ -458,7 +461,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
   private getAllowedTypes() {
     return this.http
-      .get<string[]>(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`, { headers: this.headers })
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         typeSetting!.values.forEach((v) => {
@@ -470,7 +473,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               ...new Set(
                 typesMatched
                   .map((t) => t.split('.'))
-                  .reduce((a, b) => a.concat(b))
+                  .reduce((a, b) => a.concat(b), [])
                   .filter((t) => t !== 'lieux')
               )
             ];
@@ -927,7 +930,10 @@ export class IChercheReverseSearchSource
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get<IChercheReverseResponse>(`${this.searchUrl}/locate`, { params })
+      .get<IChercheReverseResponse>(`${this.searchUrl}/locate`, {
+        params,
+        headers: this.headers
+      })
       .pipe(
         map((response) => {
           return this.extractResults(response);
@@ -937,7 +943,7 @@ export class IChercheReverseSearchSource
 
   private getAllowedTypes() {
     return this.http
-      .get<string[]>(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`, { headers: this.headers })
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
         typeSetting!.values.forEach((v) => {

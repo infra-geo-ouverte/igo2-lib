@@ -57,17 +57,25 @@ export class ImportService {
   static allowedExtensions = ['geojson', 'kml', 'gpx', 'json', 'gml', 'zip'];
 
   private ogreUrl: string;
+  private apiKey?: string;
   private clientSideFileSizeMax: number;
+
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.apiKey ? { 'x-api-key': this.apiKey } : undefined
+    );
+  }
 
   constructor() {
     const importConfig = this.config.getConfig(
       'importExport'
     ) as ImportExportServiceOptions;
-    this.ogreUrl = importConfig.url;
-    const configFileSizeMb = importConfig.clientSideFileSizeMaxMb;
+    this.ogreUrl = importConfig?.url;
+    this.apiKey = importConfig?.apiKey;
+    const configFileSizeMb = importConfig?.clientSideFileSizeMaxMb;
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
-    if (importConfig.formats) {
+    if (importConfig?.formats) {
       ImportService.allowedExtensions = importConfig.formats
         .map(
           (format) =>
@@ -196,7 +204,7 @@ export class ImportService {
     formData.append('formatOutput', 'GEOJSON');
     formData.append('skipFailures', '');
 
-    this.http.post(url, formData, { headers: new HttpHeaders() }).subscribe(
+    this.http.post(url, formData, { headers: this.headers }).subscribe(
       (response: { errors?: string[] } | object | null) => {
         if (response === null) {
           observer.error(new ImportUnreadableFileError());
