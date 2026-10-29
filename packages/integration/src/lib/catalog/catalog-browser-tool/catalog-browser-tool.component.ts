@@ -11,6 +11,7 @@ import {
 import { AuthService } from '@igo2/auth';
 import { EntityRecord, EntityStore } from '@igo2/common/entity';
 import { ToolComponent } from '@igo2/common/tool';
+import { StorageScope, StorageService } from '@igo2/core/storage';
 import {
   Catalog,
   CatalogBrowserComponent,
@@ -45,6 +46,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private catalogState = inject(CatalogState);
   private mapState = inject(MapState);
   private authService = inject(AuthService);
+  private storageService = inject(StorageService);
 
   catalog?: Catalog;
 
@@ -102,6 +104,12 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
+    // The selected catalog is only restored for a short delay after leaving the browser
+    this.storageService.set(
+      'selectedCatalogDate',
+      Date.now(),
+      StorageScope.SESSION
+    );
   }
 
   /**
