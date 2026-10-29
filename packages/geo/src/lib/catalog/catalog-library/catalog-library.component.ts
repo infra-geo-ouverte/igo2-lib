@@ -32,6 +32,12 @@ import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 import { CatalogLibraryItemComponent } from './catalog-library-item.component';
 
 /**
+ * Time during which the previously selected catalog is restored
+ * when returning to the catalog library
+ */
+const SELECTED_CATALOG_MAX_AGE_MS = 60000;
+
+/**
  * Component to browse a list of available catalogs
  */
 @Component({
@@ -95,6 +101,11 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   }
   set selectedCatalogId(id) {
     this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
+    this.storageService.set(
+      'selectedCatalogDate',
+      Date.now(),
+      StorageScope.SESSION
+    );
   }
 
   /**
@@ -103,7 +114,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store().state.clear();
 
-    if (this.selectedCatalogId) {
+    if (this.selectedCatalogId && !this.isSelectedCatalogExpired()) {
       const selectedCatalog = this.store()
         .all()
         .find((item) => item.id === this.selectedCatalogId);
@@ -136,6 +147,18 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.store().state.update(catalog, { selected: true, focused: true }, true);
     this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
+  }
+
+  /**
+   * The previous selection is only restored for a short delay
+   * after the catalog was last used
+   */
+  private isSelectedCatalogExpired(): boolean {
+    const date = this.storageService.get(
+      'selectedCatalogDate',
+      StorageScope.SESSION
+    ) as number | undefined;
+    return !date || Date.now() - date > SELECTED_CATALOG_MAX_AGE_MS;
   }
 
   private unsubscribeAddingCatalog() {
