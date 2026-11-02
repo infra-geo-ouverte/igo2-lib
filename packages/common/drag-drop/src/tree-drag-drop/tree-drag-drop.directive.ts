@@ -96,11 +96,6 @@ export class TreeDragDropDirective<
     this.dropped.subscribe(() => this.dragEnd());
 
     effect(() => {
-      const disabled = this.treeDragDropIsDisabled();
-      disabled ? this.removeAllListener() : this.addAllListener();
-    });
-
-    effect(() => {
       const current = this.dropLineTarget();
       const parent = this.elementRef.nativeElement.parentElement;
 
@@ -156,10 +151,16 @@ export class TreeDragDropDirective<
   }
 
   hostDragEnter(event: DragEvent): void {
+    if (this.treeDragDropIsDisabled()) {
+      return;
+    }
     event.preventDefault();
   }
 
   hostDragOver(event: DragEvent): void {
+    if (this.treeDragDropIsDisabled()) {
+      return;
+    }
     event.preventDefault();
     const lastNode = this.getLastRenderedNode();
     if (this.dragging() && lastNode) {
@@ -184,6 +185,10 @@ export class TreeDragDropDirective<
   }
 
   onDragStart(node: T): void {
+    // When disabled, let the native drag run unhandled so the browser shows its "no-drop" cursor
+    if (this.treeDragDropIsDisabled()) {
+      return;
+    }
     this.addDropTargetLine();
 
     this.dragging.set(true);
@@ -208,6 +213,9 @@ export class TreeDragDropDirective<
   }
 
   dragOver(node: T, event: DragEvent): void {
+    if (this.treeDragDropIsDisabled()) {
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
 
@@ -315,9 +323,6 @@ export class TreeDragDropDirective<
   }
 
   private addAllListener(): void {
-    if (this.treeDragDropIsDisabled()) {
-      return;
-    }
     const nodes = this.nodes();
     if (this.nodesListeners) {
       this.removeAllListener();
