@@ -27,8 +27,6 @@ export class Toolbox {
    * Active tool history. Useful for activating the previous tool.
    */
   private activeToolHistory: string[] = [];
-  private previousToolName!: string;
-  private currentToolName!: string;
 
   /**
    * Tool store
@@ -121,10 +119,6 @@ export class Toolbox {
     this.activateTool(previous);
   }
 
-  getCurrentPreviousToolName(): [string, string] {
-    return [this.previousToolName, this.currentToolName];
-  }
-
   /**
    * Activate the tool below, if any
    */
@@ -205,10 +199,6 @@ export class Toolbox {
       this.activeToolHistory = this.activeToolHistory
         .filter((name: string) => name !== tool.name)
         .concat([tool.name]);
-
-      this.previousToolName = this.currentToolName;
-      this.currentToolName =
-        this.activeToolHistory[this.activeToolHistory.length - 1];
     }
   }
 
