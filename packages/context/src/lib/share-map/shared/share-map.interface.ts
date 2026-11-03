@@ -4,6 +4,7 @@ import { LayerGroupOptions, LayerOptions } from '@igo2/geo';
 export const ServiceType = [
   'wms',
   'wmts',
+  'xyz',
   'arcgisrest',
   'imagearcgisrest',
   'tilearcgisrest'
@@ -15,7 +16,8 @@ export enum ServiceTypeEnum {
   wmts = 1,
   arcgisrest = 2,
   imagearcgisrest = 3,
-  tilearcgisrest = 4
+  tilearcgisrest = 4,
+  xyz = 5
 }
 
 const BaseLayerParamsKeys = [
