@@ -194,14 +194,16 @@ function sortLayersOptionsByZIndex(layers: AnyLayerOptions[]): void {
   layers.sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0));
 }
 
-function getLayerParam(layerOptions: LayerOptions): string | undefined {
+export function getLayerParam(layerOptions: LayerOptions): string | undefined {
   const { sourceOptions } = layerOptions;
   if (!sourceOptions) return;
   const { type } = sourceOptions;
 
   switch (type) {
-    case 'wms':
-      return (sourceOptions as WMSDataSourceOptions).params?.LAYERS;
+    case 'wms': {
+      const params = (sourceOptions as WMSDataSourceOptions).params;
+      return params?.LAYERS ?? (params as any)?.layers;
+    }
 
     case 'wmts':
     case 'arcgisrest':

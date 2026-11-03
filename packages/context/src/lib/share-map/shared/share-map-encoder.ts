@@ -11,6 +11,7 @@ import {
   WMSDataSourceOptions,
   findParentId,
   getLayerOptionIdentifier,
+  getLayerParam,
   isLayerGroup,
   isLayerGroupOptions,
   isLayerItem
@@ -156,14 +157,13 @@ export class ShareMapEncoder {
     const ctxLayers = this.getCurrentContext()?.layers || [];
     const ctxFlattened = getFlattenOptions(ctxLayers);
 
-    return new Map(
-      ctxFlattened
-        .map((lctx) => {
-          const identifier = getLayerOptionIdentifier(lctx);
-          return [identifier ?? '', lctx] as const;
-        })
-        .filter(([key]) => key !== '')
-    );
+    const filtered = ctxFlattened
+      .map((lctx) => {
+        const identifier = getLayerOptionIdentifier(lctx);
+        return [identifier ?? '', lctx] as const;
+      })
+      .filter(([key]) => key !== '');
+    return new Map(filtered);
   }
 
   /**
@@ -175,7 +175,7 @@ export class ShareMapEncoder {
     return filteredLayers.filter((layer) => {
       const mapLayerIdentifier = getLayerOptionIdentifier(layer.options);
       if (!mapLayerIdentifier) return false;
-      const ctxLayer = ctxLayersMap.get(mapLayerIdentifier);
+      const ctxLayer = this.findContextLayer(layer.options, ctxLayersMap);
       if (!ctxLayer) return true;
 
       const visibilityChange = layer.visible !== (ctxLayer.visible ?? true);
@@ -205,6 +205,28 @@ export class ShareMapEncoder {
         parentIdChange
       );
     });
+  }
+
+  // Try to retrieve the layer by id or by params identifier for legacy
+  private findContextLayer(
+    options: AnyLayerOptions,
+    ctxLayers: Map<string, AnyLayerOptions>
+  ) {
+    const identifier = getLayerOptionIdentifier(options);
+    if (!identifier) {
+      return null;
+    }
+
+    const ctxLayer = ctxLayers.get(identifier);
+    if (!ctxLayer) {
+      const paramIdentifier = getLayerParam(options);
+      if (!paramIdentifier) {
+        return null;
+      }
+      return ctxLayers.get(paramIdentifier);
+    }
+
+    return ctxLayer;
   }
 
   private getIdsNestedParent(

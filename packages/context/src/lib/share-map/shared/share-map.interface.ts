@@ -44,13 +44,7 @@ export const GroupParamsKeys = [
 ] as const;
 export type GroupParamsKeys = (typeof GroupParamsKeys)[number];
 
-const PositionParamsKeys = [
-  'center',
-  'zoom',
-  'rotation',
-  'projection'
-] as const;
-type PositionParamsKeys = (typeof PositionParamsKeys)[number];
+type PositionParamsKeys = 'center' | 'zoom' | 'rotation' | 'projection';
 
 export interface ShareMapKeysDefinitions {
   urlsKey: string;
