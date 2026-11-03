@@ -14,7 +14,7 @@ import { EntityStore } from '@igo2/common/entity';
 import { ToolComponent } from '@igo2/common/tool';
 import { ContextService } from '@igo2/context';
 import { LanguageService } from '@igo2/core/language';
-import { StorageScope, StorageService } from '@igo2/core/storage';
+import { StorageService } from '@igo2/core/storage';
 import {
   Catalog,
   CatalogItem,
@@ -96,26 +96,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    */
   readonly predefinedCatalogs = input<Catalog[]>([]);
 
-  set selectedCatalogId(id: string | null) {
-    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
-  }
-
-  get currentTool() {
-    return this.toolState.toolbox.getCurrentPreviousToolName()[1];
-  }
-
-  get lastTool() {
-    return this.toolState.toolbox.getCurrentPreviousToolName()[0];
-  }
-
   /**
    * @internal
    */
   ngOnInit() {
-    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
-      this.selectedCatalogId = null;
-    }
-
     if (this.store.count === 0) {
       this.loadCatalogs();
     }

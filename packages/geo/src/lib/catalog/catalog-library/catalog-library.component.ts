@@ -18,7 +18,7 @@ import { EntityStore } from '@igo2/common/entity';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { StorageScope, StorageService } from '@igo2/core/storage';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { EMPTY, Observable, Subscription, catchError } from 'rxjs';
@@ -90,27 +90,12 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
-  get selectedCatalogId() {
-    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
-  }
-  set selectedCatalogId(id) {
-    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
-  }
-
   /**
    * @internal
    */
   ngOnInit() {
     this.store().state.clear();
 
-    if (this.selectedCatalogId) {
-      const selectedCatalog = this.store()
-        .all()
-        .find((item) => item.id === this.selectedCatalogId);
-      if (selectedCatalog) {
-        this.onCatalogSelect(selectedCatalog);
-      }
-    }
     this.predefinedCatalogs.update((catalogs) => {
       return catalogs.map((catalog) => {
         catalog.type = catalog.type ?? 'wms';
@@ -134,7 +119,6 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
    */
   onCatalogSelect(catalog: Catalog) {
     this.store().state.update(catalog, { selected: true, focused: true }, true);
-    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 
