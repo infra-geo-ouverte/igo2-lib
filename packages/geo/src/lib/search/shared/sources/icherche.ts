@@ -51,7 +51,7 @@ export class IChercheSearchResultFormatter {
 
 // Fix the "+" is replaced with space " " in a query string
 // https://github.com/angular/angular/issues/11058
-export class IgoHttpParameterCodec implements HttpParameterCodec {
+class IgoHttpParameterCodec implements HttpParameterCodec {
   encodeKey(key: string): string {
     return encodeURIComponent(key);
   }
