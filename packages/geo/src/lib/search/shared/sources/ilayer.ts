@@ -114,11 +114,14 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     );
 
     super(options, storageService);
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title!)
-      );
-    });
+
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {
