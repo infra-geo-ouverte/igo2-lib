@@ -86,11 +86,14 @@ export class CoordinatesReverseSearchSource
 
     super(options, storageService);
     this.projections = projections;
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title!)
-      );
-    });
+
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {

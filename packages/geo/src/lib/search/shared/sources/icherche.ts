@@ -122,11 +122,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.getAllowedTypes();
     }
 
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title ?? '')
-      );
-    });
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {
@@ -762,11 +764,13 @@ export class IChercheReverseSearchSource
 
     super(options, storageService);
 
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title ?? '')
-      );
-    });
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
 
     if (this.settings.length) {
       this.getAllowedTypes();
