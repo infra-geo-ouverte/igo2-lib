@@ -186,7 +186,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.saveSearchResultInLayer = configService.getConfig(
       'saveSearchResultInLayer'
     );
-    this.handleShowAllResults();
+
     effect(() => {
       this.topPanelStateValue(); // re-run on state change
       const igoList = this.computeElementRef()[0];
@@ -220,6 +220,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       this.searchState.searchOverlayStyle?.base ??
         styleVariant(this.mapState.map.viewController)
     );
+
+    this.handleShowAllResults();
 
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm) => {
       if (
@@ -261,7 +263,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleShowAllResults() {
+  private handleShowAllResults() {
     this.searchResultsOverlayAll$$ = combineLatest([
       this.store.entities$,
       this.searchState.searchResultsGeometryEnabled$
