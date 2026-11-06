@@ -168,6 +168,31 @@ export class OGCFilterService {
     ogcFilterWriter: OgcFilterWriter
   ): string | undefined {
     const { ogcFilters, fieldNameGeometry } = options;
+
+    if (!ogcFilters!.interfaceOgcFilters?.length && ogcFilters!.filters) {
+      // First load (ex: from a context): seed the interface sequence from the
+      // configured filters instead of rebuilding them from an empty sequence,
+      // which would wipe them out.
+      ogcFilters!.filters = ogcFilterWriter.checkIgoFiltersProperties(
+        ogcFilters!.filters,
+        fieldNameGeometry,
+        undefined,
+        true
+      ) as IgoOgcFilterObject;
+      ogcFilters!.interfaceOgcFilters =
+        ogcFilterWriter.defineInterfaceFilterSequence(
+          ogcFilters!.filters,
+          fieldNameGeometry
+        );
+      return ogcFilterWriter.buildFilter(
+        ogcFilters!.filters,
+        undefined,
+        undefined,
+        undefined,
+        options
+      );
+    }
+
     const currentFilters = ogcFilters!.interfaceOgcFilters ?? [];
 
     // Build the sequence using writer
