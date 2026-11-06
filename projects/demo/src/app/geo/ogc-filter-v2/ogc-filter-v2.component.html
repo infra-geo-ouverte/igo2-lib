@@ -1,0 +1,30 @@
+<app-doc-viewer
+  title="Ogc filter V2"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/ogc-filter-v2">
+    <mat-grid-list cols="2" rowHeight="600px" gutterSize="16px">
+      <mat-grid-tile>
+        <igo-map-browser [map]="map" [view]="view">
+          <div class="map-actions --vertical --bottom --right">
+            <igo-zoom-button [map]="map" color="primary" />
+          </div>
+        </igo-map-browser>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="filter-panels">
+          <igo-panel title="Réseau routier — WMS (mode avancé)">
+            <igo-ogc-filter-panel [store]="wmsRouteStore" />
+          </igo-panel>
+          <igo-panel title="Réseau routier — WMS (mode sélecteur)">
+            <igo-ogc-filter-panel [store]="wmsSelectorStore" />
+          </igo-panel>
+          <igo-panel title="Embâcles — WFS (mode avancé)">
+            <igo-ogc-filter-panel [store]="wfsStore" />
+          </igo-panel>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

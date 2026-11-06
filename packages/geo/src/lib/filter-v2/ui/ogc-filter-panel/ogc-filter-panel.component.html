@@ -1,0 +1,38 @@
+<div class="ogc-filter-panel">
+  <div class="panel-header">
+    <mat-slide-toggle
+      [checked]="store().enabled()"
+      (change)="store().enabled.set($event.checked)"
+    >
+      {{ 'igo.geo.filter.filterBy' | translate }}
+    </mat-slide-toggle>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="store().reset()"
+      [matTooltip]="'igo.geo.filter.resetFilters' | translate"
+    >
+      <mat-icon>restart_alt</mat-icon>
+    </button>
+  </div>
+
+  @if (store().mode === 'selector') {
+    <igo-ogc-filter-selector [store]="store()"></igo-ogc-filter-selector>
+  } @else {
+    @for (rule of store().rules(); track rule.id) {
+      <igo-ogc-filter-rule
+        [rule]="rule"
+        [fields]="fields()"
+        [removable]="store().config.editable"
+        (patchRule)="store().updateRule(rule.id, $event)"
+        (removeRule)="store().removeRule(rule.id)"
+      />
+    }
+    @if (store().config.editable) {
+      <button mat-stroked-button type="button" (click)="store().addRule()">
+        <mat-icon>add</mat-icon>
+        {{ 'igo.geo.filter.addFilter' | translate }}
+      </button>
+    }
+  }
+</div>

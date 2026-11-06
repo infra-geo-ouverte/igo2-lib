@@ -10,6 +10,7 @@ import { AppImportExportComponent } from './import-export/import-export.componen
 import { AppLayerComponent } from './layer/layer.component';
 import { AppLegendComponent } from './legend/legend.component';
 import { AppMeasureComponent } from './measure/measure.component';
+import { AppOgcFilterV2Component } from './ogc-filter-v2/ogc-filter-v2.component';
 import { AppOgcFilterComponent } from './ogc-filter/ogc-filter.component';
 import { AppOverlayComponent } from './overlay/overlay.component';
 import { AppPrintComponent } from './print/print.component';
@@ -106,6 +107,11 @@ export const routes: Routes = [
     title: 'OGC Filter',
     path: 'ogc-filter',
     component: AppOgcFilterComponent
+  },
+  {
+    title: 'OGC Filter V2',
+    path: 'ogc-filter-v2',
+    component: AppOgcFilterV2Component
   },
   {
     title: 'Spatial Filter',

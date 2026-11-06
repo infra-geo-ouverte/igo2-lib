@@ -1,0 +1,9 @@
+.filter-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}

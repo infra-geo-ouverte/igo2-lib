@@ -1,0 +1,15 @@
+.selector-bundle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem 0;
+
+  .selector-title {
+    font-weight: 500;
+  }
+
+  mat-radio-group {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,73 @@
+@for (selector of store().selectors(); track selector.id) {
+  <div class="selector-bundle">
+    @if (selector.title) {
+      <span class="selector-title">{{ selector.title }}</span>
+    }
+    @switch (selector.presentation) {
+      @case ('pushButton') {
+        <mat-button-toggle-group
+          [multiple]="selector.multiple ?? false"
+          [value]="enabledTitles(selector)"
+          (change)="onSelectionChange(selector, $event.value)"
+        >
+          @for (item of selector.items; track item.title) {
+            <mat-button-toggle
+              [value]="item.title"
+              [matTooltip]="item.tooltip ?? ''"
+            >
+              {{ item.title }}
+            </mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+      }
+      @case ('checkbox') {
+        @for (item of selector.items; track item.title) {
+          <mat-checkbox
+            [checked]="item.enabled"
+            [matTooltip]="item.tooltip ?? ''"
+            (change)="
+              store().toggleSelectorItem(
+                selector.id,
+                item.title,
+                $event.checked
+              )
+            "
+          >
+            {{ item.title }}
+          </mat-checkbox>
+        }
+      }
+      @case ('radioButton') {
+        <mat-radio-group
+          [value]="enabledTitles(selector)"
+          (change)="onSelectionChange(selector, $event.value)"
+        >
+          @for (item of selector.items; track item.title) {
+            <mat-radio-button
+              [value]="item.title"
+              [matTooltip]="item.tooltip ?? ''"
+            >
+              {{ item.title }}
+            </mat-radio-button>
+          }
+        </mat-radio-group>
+      }
+      @default {
+        <mat-form-field subscriptSizing="dynamic">
+          @if (selector.title) {
+            <mat-label>{{ selector.title }}</mat-label>
+          }
+          <mat-select
+            [multiple]="selector.multiple ?? false"
+            [value]="enabledTitles(selector)"
+            (selectionChange)="onSelectionChange(selector, $event.value)"
+          >
+            @for (item of selector.items; track item.title) {
+              <mat-option [value]="item.title">{{ item.title }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    }
+  </div>
+}

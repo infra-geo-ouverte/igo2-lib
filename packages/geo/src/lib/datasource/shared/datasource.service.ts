@@ -7,6 +7,13 @@ import { ObjectUtils } from '@igo2/utils';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { OgcFilterFacade, OgcFilterTarget } from '../../filter-v2/application';
+import {
+  OgcFilterableV2DataSourceOptions,
+  createWfsOgcFilterTarget,
+  createWmsOgcFilterTarget,
+  normalizeOgcFilterConfig
+} from '../../filter-v2/compat';
 import { OGCFilterService } from '../../filter/shared/ogc-filter.service';
 import { CapabilitiesService } from './capabilities.service';
 import {
@@ -53,6 +60,7 @@ export class DataSourceService {
   private optionsService = inject(OptionsService, { optional: true });
   private wfsDataSourceService = inject(WFSService);
   private ogcFilterService = inject(OGCFilterService);
+  private ogcFilterFacade = inject(OgcFilterFacade);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
 
@@ -64,8 +72,11 @@ export class DataSourceService {
       console.error(options);
       throw new Error('Datasource needs a type');
     }
+    // Normalize the type (ex: 'WMS' from a context) since the rest of the
+    // library relies on case-sensitive comparisons (ex: type === 'wms').
+    options.type = options.type.toLowerCase() as AnyDataSourceOptions['type'];
     let dataSource$: Observable<AnyDataSource>;
-    switch (options.type.toLowerCase()) {
+    switch (options.type) {
       case 'osm':
         dataSource$ = this.createOSMDataSource(options as OSMDataSourceOptions);
         break;
@@ -158,18 +169,43 @@ export class DataSourceService {
     return new Observable((d) => d.next(new WebSocketDataSource(options)));
   }
 
+  /**
+   * Native filter-v2 support: when a datasource declares `ogcFiltersV2`
+   * (ex: from a context), a store is created from the JSON configuration
+   * and kept in sync with the request parameters through the facade. The
+   * store is registered on the facade (keyed by the datasource) so UI
+   * tools can retrieve it with `OgcFilterFacade.getStore`.
+   */
+  private connectOgcFiltersV2(
+    dataSource: WMSDataSource | WFSDataSource,
+    target: OgcFilterTarget
+  ): void {
+    const config = (dataSource.options as OgcFilterableV2DataSourceOptions)
+      .ogcFiltersV2;
+    if (!config) {
+      return;
+    }
+    const store = this.ogcFilterFacade.createStore(
+      normalizeOgcFilterConfig(config)
+    );
+    this.ogcFilterFacade.connect(store, target, dataSource);
+  }
+
   private createWFSDataSource(
     options: WFSDataSourceOptions
   ): Observable<WFSDataSource> {
-    return new Observable((d) =>
-      d.next(
-        new WFSDataSource(
-          options,
-          this.wfsDataSourceService,
-          this.ogcFilterService
-        )
-      )
-    );
+    return new Observable((d) => {
+      const dataSource = new WFSDataSource(
+        options,
+        this.wfsDataSourceService,
+        this.ogcFilterService
+      );
+      this.connectOgcFiltersV2(
+        dataSource,
+        createWfsOgcFilterTarget(dataSource)
+      );
+      d.next(dataSource);
+    });
   }
 
   private createWMSDataSource(
@@ -231,6 +267,13 @@ export class DataSourceService {
           this.wfsDataSourceService,
           this.ogcFilterService
         );
+      }),
+      map((dataSource) => {
+        this.connectOgcFiltersV2(
+          dataSource,
+          createWmsOgcFilterTarget(dataSource)
+        );
+        return dataSource;
       }),
       catchError(() => {
         return of(undefined);

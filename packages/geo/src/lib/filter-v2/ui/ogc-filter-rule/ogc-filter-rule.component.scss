@@ -1,0 +1,17 @@
+.ogc-filter-rule {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+
+  .rule-property,
+  .rule-operator {
+    min-width: 10rem;
+  }
+
+  .rule-value {
+    min-width: 6rem;
+    flex: 1;
+  }
+}

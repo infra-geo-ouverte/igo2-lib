@@ -1,0 +1,109 @@
+<div class="ogc-filter-rule">
+  <mat-slide-toggle
+    class="rule-toggle"
+    [checked]="rule().active"
+    (change)="patchRule.emit({ active: $event.checked })"
+    [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
+  >
+  </mat-slide-toggle>
+
+  <mat-form-field class="rule-property" subscriptSizing="dynamic">
+    <mat-label>{{ 'igo.geo.filter.placeholder' | translate }}</mat-label>
+    @if (fields().length > 0) {
+      <mat-select
+        [value]="propertyName"
+        (selectionChange)="patchRule.emit({ propertyName: $event.value })"
+      >
+        @for (field of fields(); track field.name) {
+          <mat-option [value]="field.name">
+            {{ field.alias || field.name }}
+          </mat-option>
+        }
+      </mat-select>
+    } @else {
+      <input
+        matInput
+        [value]="propertyName"
+        (change)="onPropertyNameInput($event)"
+      />
+    }
+  </mat-form-field>
+
+  <mat-form-field class="rule-operator" subscriptSizing="dynamic">
+    <mat-label>{{ 'igo.geo.filter.selectOperator' | translate }}</mat-label>
+    <mat-select
+      [value]="operator"
+      (selectionChange)="patchRule.emit({ operator: $event.value })"
+    >
+      @for (op of operators; track op) {
+        <mat-option [value]="op">{{ op }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @switch (rule().kind) {
+    @case ('comparison') {
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          [value]="comparisonValue"
+          (change)="onTextPatch('value', $event)"
+        />
+      </mat-form-field>
+    }
+    @case ('like') {
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          [value]="likePattern"
+          (change)="onTextPatch('pattern', $event)"
+        />
+      </mat-form-field>
+    }
+    @case ('between') {
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          type="number"
+          [value]="lowerBoundary"
+          (change)="onNumberPatch('lowerBoundary', $event)"
+        />
+      </mat-form-field>
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          type="number"
+          [value]="upperBoundary"
+          (change)="onNumberPatch('upperBoundary', $event)"
+        />
+      </mat-form-field>
+    }
+    @case ('temporal') {
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          [value]="temporalBegin"
+          (change)="onTextPatch('begin', $event)"
+        />
+      </mat-form-field>
+      <mat-form-field class="rule-value" subscriptSizing="dynamic">
+        <input
+          matInput
+          [value]="temporalEnd"
+          (change)="onTextPatch('end', $event)"
+        />
+      </mat-form-field>
+    }
+  }
+
+  @if (removable()) {
+    <button
+      mat-icon-button
+      type="button"
+      (click)="removeRule.emit()"
+      [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  }
+</div>

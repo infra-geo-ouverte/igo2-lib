@@ -40,6 +40,7 @@ export * from './lib/draw';
 export * from './lib/environment';
 export * from './lib/feature';
 export * from './lib/filter';
+export * from './lib/filter-v2';
 export * from './lib/geometry';
 export * from './lib/import-export';
 export * from './lib/layer';
