@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '@igo2/auth';
 import { EntityStore } from '@igo2/common/entity';
@@ -11,6 +12,7 @@ import { Catalog, CatalogItem } from '@igo2/geo';
   providedIn: 'root'
 })
 export class CatalogState {
+  private destroyRef = inject(DestroyRef);
   /**
    * Store that contains all the catalogs
    */
@@ -29,9 +31,11 @@ export class CatalogState {
 
     this._catalogStore = new EntityStore<Catalog>([]);
 
-    authService.authenticate$.subscribe(() => {
-      this.clearCatalogItemsStores();
-    });
+    authService.authenticate$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.clearCatalogItemsStores();
+      });
   }
 
   /**

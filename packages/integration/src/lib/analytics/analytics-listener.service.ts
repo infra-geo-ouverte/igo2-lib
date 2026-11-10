@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '@igo2/auth';
 import { AnalyticsService } from '@igo2/core/analytics';
@@ -11,7 +12,8 @@ import {
   isLayerGroup
 } from '@igo2/geo';
 
-import { skip } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, skip, switchMap } from 'rxjs/operators';
 
 import { ContextState } from '../context/context.state';
 import { MapState } from '../map/map.state';
@@ -29,6 +31,7 @@ export class AnalyticsListenerService {
   private contextState = inject(ContextState);
   private toolState = inject(ToolState);
   private mapState = inject(MapState);
+  private destroyRef = inject(DestroyRef);
 
   listen() {
     this.listenUser();
@@ -38,18 +41,21 @@ export class AnalyticsListenerService {
   }
 
   listenUser() {
-    this.authService.authenticate$.subscribe(() => {
-      const user = this.authService.user;
-      if (user) {
-        this.authService
-          .getProfils()
-          .subscribe((profils) =>
-            this.analyticsService.setUser(user, profils.profils)
-          );
-      } else {
-        this.analyticsService.setUser(null);
-      }
-    });
+    this.authService.authenticate$
+      .pipe(
+        filter((authenticated) => authenticated != null),
+        switchMap((authenticated) =>
+          authenticated ? this.authService.getProfils() : of(null)
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((profils) => {
+        const user = this.authService.user;
+
+        user && profils
+          ? this.analyticsService.setUser(user, profils.profils)
+          : this.analyticsService.setUser(null);
+      });
   }
 
   listenContext() {

@@ -3,6 +3,7 @@ import { AsyncPipe, KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Input,
   OnDestroy,
   OnInit,
@@ -11,6 +12,7 @@ import {
   model,
   output
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -43,7 +45,7 @@ import { StorageService } from '@igo2/core/storage';
 import { type IgoMap, MapService, isLayerItemOptions } from '@igo2/geo';
 
 import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
-import { debounceTime, switchMap, take, tap } from 'rxjs/operators';
+import { debounceTime, filter, switchMap, take, tap } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
@@ -98,6 +100,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private languageService = inject(LanguageService);
   private storageService = inject(StorageService);
+  private destroyRef = inject(DestroyRef);
 
   public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
@@ -165,7 +168,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  public users: ContextProfils[] = [];
+  public contextProfils: ContextProfils[] = [];
   public permissions: ContextUserPermission[] = [];
 
   public actionStore = new ActionStore([]);
@@ -280,41 +283,37 @@ export class ContextListComponent implements OnInit, OnDestroy {
         if (context) this.setSelected(context);
       });
 
-    this.auth.authenticate$.subscribe((authenticate) => {
-      if (authenticate) {
-        this.contextService.getProfilByUser().subscribe((profils) => {
-          this.users = profils;
-          this.permissions = [];
-          const profilsAcc = this.users.reduce<ContextProfils[]>((acc, cur) => {
-            acc = acc.concat(cur);
-            acc = cur.childs ? acc.concat(cur.childs) : acc;
-            return acc;
-          }, []);
+    this.auth.authenticate$
+      .pipe(
+        filter((authenticate) => !!authenticate),
+        switchMap(() => this.contextService.getProfilByUser()),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((profils) => {
+        this.contextProfils = profils;
 
-          for (const user of profilsAcc) {
-            const permission: ContextUserPermission = {
-              name: user.name,
-              checked: this.storageService.get(
-                'contexts.permissions.' + user.name
-              ) as boolean
-            };
-            if (permission.checked === null) {
-              permission.checked = true;
-            }
-            this.permissions.push(permission);
-          }
+        const profilsAcc = this.contextProfils.flatMap((user) =>
+          user.childs ? [user, ...user.childs] : [user]
+        );
 
-          const permissions = ['none'];
-          for (const p of this.permissions) {
-            if (p.checked === true || p.indeterminate === true) {
-              permissions.push(p.name);
-            }
-          }
-
-          this.contextService.loadContexts(permissions, this.showHidden);
+        this.permissions = profilsAcc.map((profil) => {
+          const storedChecked = this.storageService.get(
+            `contexts.permissions.${profil.name}`
+          );
+          return {
+            name: profil.name,
+            checked: storedChecked === null ? true : (storedChecked as boolean)
+          };
         });
-      }
-    });
+
+        const activePermissionNames = this.permissions
+          .filter((p) => p.checked === true || p.indeterminate === true)
+          .map((p) => p.name);
+
+        const permissions = ['none', ...activePermissionNames];
+
+        this.contextService.loadContexts(permissions, this.showHidden);
+      });
   }
 
   ngOnDestroy() {

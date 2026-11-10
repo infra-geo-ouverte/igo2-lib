@@ -39,7 +39,7 @@
             [stepsFeatureStore]="stepsFeatureStore"
             [routesFeatureStore]="routesFeatureStore"
             [zoomToActiveRoute]="false"
-            [authenticated$]="authenticated$"
+            [authenticated]="authenticated$ | async"
           />
         </div>
       </mat-grid-tile>

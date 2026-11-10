@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '@igo2/auth';
 import { Tool } from '@igo2/common/tool';
@@ -55,6 +56,7 @@ export class ContextService {
   private exportService = inject(ExportService);
   private shareMapService = inject(ShareMapService);
   private route = inject(RouteService, { optional: true });
+  private destroyRef = inject(DestroyRef);
 
   public context$ = new BehaviorSubject<DetailedContext | undefined>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
@@ -100,14 +102,16 @@ export class ContextService {
     this.baseUrl = this.options.url ?? '';
 
     if (this.authService.hasAuthService) {
-      this.authService.logged$.subscribe((logged) => {
-        if (logged) {
-          this.contexts$.pipe(skip(1), first()).subscribe(() => {
-            this.handleContextsChange();
-          });
-          this.loadContexts();
-        }
-      });
+      this.authService.logged$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((logged) => {
+          if (logged) {
+            this.contexts$.pipe(skip(1), first()).subscribe(() => {
+              this.handleContextsChange();
+            });
+            this.loadContexts();
+          }
+        });
     } else {
       this.loadContexts();
       this.handleContextsChange(false);
