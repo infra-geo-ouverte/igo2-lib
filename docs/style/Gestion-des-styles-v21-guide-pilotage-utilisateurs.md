@@ -18,7 +18,6 @@ Vous pouvez utiliser:
 
 Quand l'utilisateur passe la souris sur une entité, IGO ajoute automatiquement l'attribut `_hovered = true` sur une copie de cette entité.
 
-
 Implication pour votre configuration:
 
 - prévoir une règle pour `_hovered = true` (style de survol);
@@ -104,9 +103,7 @@ Implication pour votre configuration:
         {
           "name": "Autoroutes",
           "filter": ["==", "classe", "Autoroute"],
-          "symbolizers": [
-            { "kind": "Line", "color": "#e20a16", "width": 4 }
-          ]
+          "symbolizers": [{ "kind": "Line", "color": "#e20a16", "width": 4 }]
         }
       ]
     }

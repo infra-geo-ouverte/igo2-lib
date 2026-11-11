@@ -38,9 +38,7 @@ Pourquoi :
 
 Ce passage par `LayerService` est aujourd'hui fortement recommandé.
 
-
 ## Gestion du hover (_hovered)
-
 
 Fonctionnement runtime:
 
@@ -84,7 +82,7 @@ style: (feature) => {
         'circle-radius': 5,
         'circle-fill-color': '#007acc'
       };
-}
+};
 ```
 
 ### 3) Hover par règles (_hovered)
@@ -117,7 +115,7 @@ style: [
       'circle-stroke-width': 2
     }
   }
-]
+];
 ```
 
 ### 4) Style Geostyler

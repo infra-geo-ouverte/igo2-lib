@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "21.0.0-next.55",
+  "version": "21.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -164,5 +164,8 @@
   },
   "engines": {
     "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.1"
   }
 }
