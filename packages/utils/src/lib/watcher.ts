@@ -10,23 +10,23 @@ export enum SubjectStatus {
 
 export abstract class Watcher {
   public status$ = new Subject<SubjectStatus>();
-  protected status$$: Subscription;
+  protected status$$!: Subscription;
 
-  get status(): SubjectStatus {
+  get status(): SubjectStatus | undefined {
     return this._status;
   }
   set status(value: SubjectStatus) {
     this._status = value;
     this.status$.next(value);
   }
-  private _status: SubjectStatus;
+  private _status?: SubjectStatus;
 
-  protected abstract watch();
+  protected abstract watch(): void;
 
-  protected abstract unwatch();
+  protected abstract unwatch(): void;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  subscribe(callback: Function, scope?: any) {
+  subscribe(callback: Function, scope?: unknown) {
     this.watch();
 
     this.status$$ = this.status$.pipe(distinctUntilChanged()).subscribe(() => {
@@ -36,10 +36,7 @@ export abstract class Watcher {
 
   unsubscribe() {
     this.unwatch();
-    if (this.status$$ !== undefined) {
-      this.status$$.unsubscribe();
-      this.status$$ = undefined;
-    }
+    this.status$$?.unsubscribe();
     this.status = SubjectStatus.Waiting;
   }
 }

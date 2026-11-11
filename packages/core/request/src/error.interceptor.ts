@@ -12,6 +12,7 @@ import { MessageService } from '@igo2/core/message';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
+type ErrorContainer = { httpError?: HttpErrorResponse };
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     if (interceptError === 'false') {
       return next.handle(req);
     }
-    const errorContainer = { httpError: undefined };
+    const errorContainer: ErrorContainer = { httpError: undefined };
     return next.handle(req).pipe(
       catchError((error) => this.handleError(error, errorContainer)),
       finalize(() => {
@@ -49,7 +50,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private handleError(
     httpError: HttpErrorResponse,
-    errorContainer: { httpError: HttpErrorResponse }
+    errorContainer: ErrorContainer
   ) {
     if (httpError instanceof HttpErrorResponse) {
       const errorObj = httpError.error === 'object' ? httpError.error : {};
@@ -61,7 +62,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         headers: httpError.headers,
         status: httpError.status,
         statusText: httpError.statusText,
-        url: httpError.url
+        url: httpError.url!
       });
     }
 

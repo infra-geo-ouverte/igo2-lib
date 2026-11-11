@@ -29,5 +29,5 @@ import { IgoLanguageModule } from '@igo2/core/language';
 export class PoiDialogComponent {
   dialogRef = inject<MatDialogRef<PoiDialogComponent>>(MatDialogRef);
 
-  public title: string;
+  public title = '';
 }

@@ -3,9 +3,8 @@ import {
   HttpParameterCodec,
   HttpParams
 } from '@angular/common/http';
-import { Injectable, Injector, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
-import { AuthService } from '@igo2/auth';
 import { IconSvg } from '@igo2/common/icon';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -37,6 +36,12 @@ import {
   TextSearchOptions
 } from './source.interfaces';
 
+export const ICHERCHE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('IChercheSearchSourceOptions');
+
+export const ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('IChercheReverseSearchSourceOptions');
+
 @Injectable()
 export class IChercheSearchResultFormatter {
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
@@ -46,7 +51,7 @@ export class IChercheSearchResultFormatter {
 
 // Fix the "+" is replaced with space " " in a query string
 // https://github.com/angular/angular/issues/11058
-export class IgoHttpParameterCodec implements HttpParameterCodec {
+class IgoHttpParameterCodec implements HttpParameterCodec {
   encodeKey(key: string): string {
     return encodeURIComponent(key);
   }
@@ -91,7 +96,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     'lieux'
   ];
 
-  private hashtagsLieuxToKeep = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private hashtagsLieuxToKeep: any[] = [];
 
   get title(): string {
     return this.title$.getValue();
@@ -99,29 +105,30 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig(
-      `searchSources.${IChercheSearchSource.id}`
+    const directOptions = inject(ICHERCHE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${IChercheSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
 
-    const authService = inject(AuthService);
     if (this.settings.length) {
-      if (!authService) {
-        this.getAllowedTypes();
-      } else {
-        authService.authenticate$.subscribe(() => {
-          this.getAllowedTypes();
-        });
-      }
+      this.getAllowedTypes();
     }
 
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title)
-      );
-    });
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {
@@ -408,7 +415,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         } satisfies SearchSourceSettings
-      ].filter(Boolean)
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 
@@ -422,10 +429,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term, options || {});
-    if (!params.get('type').length) {
+    if (!(params.get('type') ?? '').length) {
       return of([]);
     }
-    this.options.params.page = params.get('page') || '1';
+    this.options.params!.page = params.get('page') || '1';
 
     return this.getSearch(term, params);
   }
@@ -438,38 +445,43 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
-    return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
-      map((response: IChercheResponse) => this.extractResults(response, term)),
-      catchError((err) => {
-        err.error.toDisplay = true;
-        err.error.title = this.languageService.translate.instant(
-          this.defaultOptions.title
-        );
-        throw err;
+    return this.http
+      .get<IChercheResponse>(`${this.searchUrl}/geocode`, {
+        params,
+        headers: this.headers
       })
-    );
+      .pipe(
+        map((response) => this.extractResults(response, term)),
+        catchError((err) => {
+          err.error.toDisplay = true;
+          err.error.title = this.languageService.translate.instant(
+            this.defaultOptions.title ?? ''
+          );
+          throw err;
+        })
+      );
   }
   private getAllowedTypes() {
     return this.http
-      .get(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`, { headers: this.headers })
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        typeSetting.values.forEach((v) => {
+        typeSetting!.values.forEach((v) => {
           const regex = new RegExp(`^${v.value}(\\.|$)`);
           const typesMatched = types.filter((value) => regex.test(value));
           v.available = typesMatched.length > 0;
           if (v.value === 'lieux') {
             this.hashtagsLieuxToKeep = [
-              ...(new Set(
+              ...new Set(
                 typesMatched
                   .map((t) => t.split('.'))
-                  .reduce((a, b) => a.concat(b))
+                  .reduce((a, b) => a.concat(b), [])
                   .filter((t) => t !== 'lieux')
-              ) as any)
+              )
             ];
           }
         });
-        this.setParamFromSetting(typeSetting, false);
+        if (typeSetting) this.setParamFromSetting(typeSetting!, false);
       });
   }
 
@@ -477,7 +489,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     options: TextSearchOptions
   ): HttpParams {
-    const queryParams: any = Object.assign(
+    const queryParams = Object.assign(
       {
         geometry: true,
         bbox: true,
@@ -493,7 +505,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     );
 
     if (queryParams.loc === 'true') {
-      const [xMin, yMin, xMax, yMax] = options.extent;
+      const [xMin, yMin, xMax, yMax] = options.extent!;
       queryParams.loc = `${xMin},${yMin};${xMax},${yMin};${xMax},${yMax};${xMin},${yMax};${xMin},${yMin}`;
     } else if (queryParams.loc === 'false') {
       delete queryParams.loc;
@@ -536,7 +548,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       ? '<br><small> ' + data.highlight.title3 + '</small>'
       : '';
 
-    let icon: string | IconSvg = data.icon;
+    let icon: string | IconSvg | undefined = data.icon;
     if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
       icon = ICHERCHE_ICONS[icon];
     }
@@ -563,13 +575,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         score:
           data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
-          response.features.length % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          (response?.features?.length ?? 0) %
+            +(this.options.params?.limit ?? 1) ===
+            0 && +(this.options.params?.page ?? 0) < 10
       }
     };
   }
 
-  private computeProperties(data: IChercheData): Record<string, any> {
+  private computeProperties(data: IChercheData): Record<string, unknown> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       IChercheSearchSource.propertiesBlacklist
@@ -666,8 +679,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   private computeTerm(term: string): string {
     // Keep hashtags for "lieux"
     const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
-    let keep = false;
-    keep = hashtags.some((hashtag) => {
+    const keep = hashtags.some((hashtag) => {
       const hashtagKey = String(hashtag).substring(1);
       return this.hashtagsLieuxToKeep.some(
         (h) =>
@@ -699,7 +711,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): TextSearchOptions {
     const hashtags = super.getHashtagsValid(term, 'type');
-    if (hashtags) {
+    if (hashtags?.length) {
       options.params = Object.assign(options.params || {}, {
         type: hashtags.join(',')
       });
@@ -738,30 +750,30 @@ export class IChercheReverseSearchSource
   }
 
   constructor() {
-    const config = inject(ConfigService);
     const storageService = inject(StorageService);
-    const options = config.getConfig(
-      `searchSources.${IChercheReverseSearchSource.id}`
+    const directOptions = inject(ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${IChercheReverseSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
-    const injector = inject(Injector);
 
     super(options, storageService);
 
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title)
-      );
-    });
-
-    const authService = injector.get(AuthService);
-    if (this.settings.length) {
-      if (!authService) {
-        this.getAllowedTypes();
-      } else {
-        authService.authenticate$.subscribe(() => {
-          this.getAllowedTypes();
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
         });
-      }
+    }
+
+    if (this.settings.length) {
+      this.getAllowedTypes();
     }
   }
 
@@ -908,7 +920,7 @@ export class IChercheReverseSearchSource
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
-    if (!params.get('type').length) {
+    if (!(params.get('type') ?? '').length) {
       return of([]);
     }
     return this.getReverseSearch(params);
@@ -921,22 +933,27 @@ export class IChercheReverseSearchSource
   private getReverseSearch(
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
-    return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
-      map((response: IChercheReverseResponse) => {
-        return this.extractResults(response);
+    return this.http
+      .get<IChercheReverseResponse>(`${this.searchUrl}/locate`, {
+        params,
+        headers: this.headers
       })
-    );
+      .pipe(
+        map((response) => {
+          return this.extractResults(response);
+        })
+      );
   }
 
   private getAllowedTypes() {
     return this.http
-      .get(`${this.searchUrl}/types`)
+      .get<string[]>(`${this.searchUrl}/types`, { headers: this.headers })
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        typeSetting.values.forEach((v) => {
+        typeSetting!.values.forEach((v) => {
           v.available = types.indexOf(v.value as string) > -1;
         });
-        this.setParamFromSetting(typeSetting, false);
+        if (typeSetting) this.setParamFromSetting(typeSetting!, false);
       });
   }
 
@@ -944,10 +961,11 @@ export class IChercheReverseSearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    if (options.distance || this.options.distance) {
-      options.params = Object.assign(options.params || {}, {
-        bufferInput: options.distance || this.options.distance
-      });
+    if (options?.distance || this.options.distance) {
+      if (options)
+        options.params = Object.assign(options.params || {}, {
+          bufferInput: options.distance || this.options.distance
+        });
     }
 
     return new HttpParams({
@@ -959,7 +977,7 @@ export class IChercheReverseSearchSource
           icon: true
         },
         this.params,
-        options.params || {}
+        options?.params || {}
       )
     });
   }
@@ -983,7 +1001,7 @@ export class IChercheReverseSearchSource
         break;
       default: {
         const typeSetting = this.settings.find((s) => s.name === 'type');
-        const type = typeSetting.values.find(
+        const type = typeSetting?.values.find(
           (t) => t.value === data.properties.type
         );
         if (type) {
@@ -1002,7 +1020,7 @@ export class IChercheReverseSearchSource
     const titleHtml = data.properties.nom;
     const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
 
-    let icon: string | IconSvg = data.icon;
+    let icon: string | IconSvg | undefined = data.icon;
     if (typeof icon == 'string' && Object.keys(ICHERCHE_ICONS).includes(icon)) {
       icon = ICHERCHE_ICONS[icon];
     }

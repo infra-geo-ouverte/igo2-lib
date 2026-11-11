@@ -4,6 +4,7 @@ import { LayerGroupOptions, LayerOptions } from '@igo2/geo';
 export const ServiceType = [
   'wms',
   'wmts',
+  'xyz',
   'arcgisrest',
   'imagearcgisrest',
   'tilearcgisrest'
@@ -15,7 +16,8 @@ export enum ServiceTypeEnum {
   wmts = 1,
   arcgisrest = 2,
   imagearcgisrest = 3,
-  tilearcgisrest = 4
+  tilearcgisrest = 4,
+  xyz = 5
 }
 
 const BaseLayerParamsKeys = [
@@ -44,13 +46,7 @@ export const GroupParamsKeys = [
 ] as const;
 export type GroupParamsKeys = (typeof GroupParamsKeys)[number];
 
-const PositionParamsKeys = [
-  'center',
-  'zoom',
-  'rotation',
-  'projection'
-] as const;
-type PositionParamsKeys = (typeof PositionParamsKeys)[number];
+type PositionParamsKeys = 'center' | 'zoom' | 'rotation' | 'projection';
 
 export interface ShareMapKeysDefinitions {
   urlsKey: string;
@@ -73,7 +69,8 @@ export type DefinitionParams<T extends string = string> = Record<
 export interface BaseKeyParams {
   key: string;
   parse?: (value: string) => unknown;
-  stringify?: (value: unknown) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stringify?: (value: any) => string;
 }
 
 export interface PositionParams {

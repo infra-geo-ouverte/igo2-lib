@@ -28,14 +28,17 @@ export class ContextEditComponent {
   readonly submitSuccessed = output<Context>();
 
   onEdit(context: Context) {
-    const id = this.context().id;
+    const id = this.context()?.id;
+    if (!id) {
+      throw new Error('Context id is required to update context');
+    }
     this.contextService.update(id, context).subscribe(() => {
       this.messageService.success(
         'igo.context.contextManager.dialog.saveMsg',
         'igo.context.contextManager.dialog.saveTitle',
         undefined,
         {
-          value: context.title || this.context().title
+          value: context.title || this.context()?.title
         }
       );
       const currentContext = this.contextService.context$.value;

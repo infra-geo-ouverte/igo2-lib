@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { mergeTestConfig } from '../../../test-config';
 import { ResizeDirective } from './resize.directive';
 
 // 1. Define a minimal host component
@@ -15,13 +14,10 @@ class TestHostComponent {}
 describe('ResizeDirective', () => {
   let fixture: ComponentFixture<TestHostComponent>;
 
-  // Set up the testing module
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [TestHostComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [TestHostComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
   });

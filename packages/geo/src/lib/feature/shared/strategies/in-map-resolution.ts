@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common/entity';
+import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
 
 import { Subscription, debounceTime } from 'rxjs';
 
@@ -13,9 +13,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
   /**
    * Subscription to the store's OL source changes
    */
-  private stores$$ = new Map<FeatureStore, string>();
-  private resolution$$: Subscription[] = [];
-  private empty$$: Subscription;
+  private stores$$ = new Map<FeatureStore, Subscription>();
 
   constructor(protected options: FeatureStoreInMapResolutionStrategyOptions) {
     super(options);
@@ -25,28 +23,21 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for Ol source changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     super.bindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.watchStore(store);
+      this.watchStore(featureStore);
     }
-    this.empty$$ = store.empty$.subscribe(() =>
-      this.updateEntitiesInResolution(
-        store,
-        store.layer.map.viewController.getResolution()
-      )
-    );
   }
 
   /**
    * Unbind this strategy from a store and stop watching for Ol source changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     super.unbindStore(store);
-    if (this.active === true) {
-      this.unwatchStore(store);
-    }
+    this.unwatchStore(store as FeatureStore);
   }
 
   /**
@@ -54,7 +45,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    this.stores.forEach((store) => this.watchStore(store as FeatureStore));
   }
 
   /**
@@ -76,21 +67,34 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesInResolution(
       store,
-      store.layer.map.viewController.getResolution()
+      store.map.viewController.getResolution()
     );
-    this.resolution$$.push(
-      store.layer.map.viewController.resolution$
+    const subscription = new Subscription();
+    subscription.add(
+      store.map.viewController.resolution$
         .pipe(debounceTime(250))
         .subscribe((res) => {
           this.updateEntitiesInResolution(store, res);
         })
     );
+    subscription.add(
+      store.empty$.subscribe(() =>
+        this.updateEntitiesInResolution(
+          store,
+          store.map.viewController.getResolution()
+        )
+      )
+    );
+    this.stores$$.set(store, subscription);
   }
 
-  private updateEntitiesInResolution(store, mapResolution: number) {
+  private updateEntitiesInResolution(
+    store: FeatureStore,
+    mapResolution: number | undefined
+  ) {
     if (
-      mapResolution > store.layer.minResolution &&
-      mapResolution < store.layer.maxResolution
+      (mapResolution ?? 0) > store.layer.minResolution &&
+      (mapResolution ?? 0) < store.layer.maxResolution
     ) {
       store.state.updateAll({ inMapResolution: true });
     } else {
@@ -103,8 +107,9 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   private unwatchStore(store: FeatureStore) {
-    const key = this.stores$$.get(store);
-    if (key !== undefined) {
+    const subscription = this.stores$$.get(store);
+    if (subscription !== undefined) {
+      subscription.unsubscribe();
       this.stores$$.delete(store);
     }
   }
@@ -113,10 +118,8 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    this.stores$$.clear();
-    this.resolution$$.map((state) => state.unsubscribe());
-    if (this.empty$$) {
-      this.empty$$.unsubscribe();
-    }
+    Array.from(this.stores$$.keys()).forEach((store) =>
+      this.unwatchStore(store)
+    );
   }
 }

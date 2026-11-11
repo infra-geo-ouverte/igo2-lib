@@ -69,10 +69,10 @@ export class LayerListComponent implements AfterViewInit {
 
   readonly controller = input.required<LayerController>();
   readonly layers = input.required<AnyLayer[]>();
-  readonly isDesktop = input<boolean>(undefined);
-  readonly isDragDropDisabled = input<boolean>(undefined);
-  readonly selectAll = input<boolean>(undefined);
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly isDesktop = input<boolean>();
+  readonly isDragDropDisabled = input<boolean>();
+  readonly selectAll = input<boolean>();
+  readonly viewerOptions = input<LayerViewerOptions>();
 
   readonly activeChange = output<AnyLayer>();
 
@@ -82,7 +82,7 @@ export class LayerListComponent implements AfterViewInit {
     if (isLayerGroup(layer)) {
       return layer.children
         .filter((l) => l.showInLayerList)
-        .sort((a, b) => a.zIndex + b.zIndex);
+        .sort((a, b) => (a.zIndex ?? 0) + (b.zIndex ?? 0));
     }
     return [];
   };
@@ -128,7 +128,7 @@ export class LayerListComponent implements AfterViewInit {
   }
 
   getLayerType(layer: Layer): LayerType | 'measure' | 'draw' {
-    const id = layer.id.toString();
+    const id = layer.id!.toString();
     return layer.type === 'raster'
       ? 'raster'
       : id.includes('measure')
@@ -164,21 +164,25 @@ export class LayerListComponent implements AfterViewInit {
       nodesToDrop = controller.selected;
     }
 
-    if (isLayerGroup(node)) {
-      nodesToDrop = nodesToDrop.filter(
-        (nodeDrop) => !node.isDescendant(nodeDrop)
-      );
-    }
+    nodesToDrop = nodesToDrop.filter(
+      (nodeDrop) =>
+        nodeDrop.id !== ref.id &&
+        (!isLayerGroup(nodeDrop) || !nodeDrop.isDescendant(ref))
+    );
 
-    if (isLayerGroup(ref)) {
-      const isSelected = nodesToDrop.some((nodeDrop) => nodeDrop.id === ref.id);
-      if (isSelected) {
-        nodesToDrop = nodesToDrop.filter((nodeDrop) => nodeDrop.id !== ref.id);
-      }
-    }
-
-    if (!nodesToDrop.includes(node)) {
+    if (
+      !nodesToDrop.includes(node) &&
+      (!isLayerGroup(node) || !node.isDescendant(ref))
+    ) {
       nodesToDrop.push(node);
+    }
+
+    const selectedGroups = nodesToDrop.filter(isLayerGroup);
+    if (selectedGroups.length) {
+      nodesToDrop = nodesToDrop.filter(
+        (nodeDrop) =>
+          !selectedGroups.some((group) => group.isDescendant(nodeDrop))
+      );
     }
 
     switch (position) {
@@ -197,15 +201,15 @@ export class LayerListComponent implements AfterViewInit {
 
   dropNodeError(details: DropPermission): void {
     this.messageService.alert(
-      details.message,
+      details.message!,
       'igo.geo.layer.layer',
-      null,
+      undefined,
       details.params
     );
   }
 
   dragStart(): void {
-    if (this.viewerOptions().mode === 'selection') {
+    if (this.viewerOptions()?.mode === 'selection') {
       return;
     }
 
@@ -218,8 +222,8 @@ export class LayerListComponent implements AfterViewInit {
     }
 
     const tree = this.tree();
-    tree.toggle(node);
-    node.expanded = tree.isExpanded(node);
+    tree!.toggle(node);
+    node.expanded = tree!.isExpanded(node);
   }
 
   private expandGroup(

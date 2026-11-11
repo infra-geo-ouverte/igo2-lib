@@ -30,7 +30,7 @@ export class InteractiveTourService {
   private interactiveTourLoader = inject(InteractiveTourLoader);
   private shepherdService = inject(ShepherdService);
 
-  private previousStep: InteractiveTourStep;
+  private previousStep?: InteractiveTourStep;
 
   constructor() {
     if (this.isAppHaveTour()) {
@@ -60,7 +60,7 @@ export class InteractiveTourService {
   }
 
   public disabledTourButton(toolName: string): boolean {
-    const stepConfig: InteractiveTourOptions =
+    const stepConfig: InteractiveTourOptions | undefined =
       this.interactiveTourLoader.getTourOptionData(toolName);
 
     if (stepConfig?.conditions) {
@@ -154,7 +154,7 @@ export class InteractiveTourService {
   }
 
   private getAction(actionName: string) {
-    const action = {
+    const action: Record<string, string> = {
       click: 'click'
     };
     return action[actionName.toLowerCase()];
@@ -203,7 +203,7 @@ export class InteractiveTourService {
     }, 100);
   }
 
-  private checkNext(index: IIndexTour, tour) {
+  private checkNext(index: IIndexTour, tour: any) {
     if (tour.getCurrentStep()) {
       if (
         tour.getCurrentStep().options.attachTo.element &&
@@ -251,21 +251,28 @@ export class InteractiveTourService {
       return;
     }
 
-    const element: HTMLElement = document.querySelector(
-      actionConfig.element || step.element
-    ) as HTMLElement;
+    const selector = actionConfig.element || step.element;
+    if (!selector) {
+      return;
+    }
+
+    const element: HTMLElement | null = document.querySelector(
+      selector
+    ) as HTMLElement | null;
     const action = this.getAction(actionConfig.action);
     if (element && action) {
-      element[action]();
+      (element as any)[action]();
     }
   }
 
   private executeActionPromise(
-    step: InteractiveTourStep,
-    actionConfig: InteractiveTourAction
+    step: InteractiveTourStep | undefined,
+    actionConfig: InteractiveTourAction | undefined
   ) {
     return new Promise<void>((resolve) => {
-      this.executeAction(step, actionConfig);
+      if (step && actionConfig) {
+        this.executeAction(step, actionConfig);
+      }
       if (!actionConfig || !actionConfig.waitFor) {
         resolve();
         return;
@@ -274,7 +281,7 @@ export class InteractiveTourService {
       const maxTry = actionConfig.maxWait ? actionConfig.maxWait / 100 : 20;
       const checkExist = setInterval(() => {
         nbTry++;
-        if (nbTry > maxTry || document.querySelector(actionConfig.waitFor)) {
+        if (nbTry > maxTry || document.querySelector(actionConfig.waitFor!)) {
           clearInterval(checkExist);
           resolve();
         }
@@ -324,16 +331,20 @@ export class InteractiveTourService {
           ? !step.disableInteraction
           : undefined,
         title: this.languageService.translate.instant(
-          step.title || tourConfig.title
+          step.title || tourConfig.title || ''
         ),
         text: [this.languageService.translate.instant(step.text)],
         when: {
           show: () => {
-            this.executeAction(step, step.onShow);
+            if (step.onShow) {
+              this.executeAction(step, step.onShow);
+            }
           },
           hide: () => {
             this.previousStep = step;
-            this.executeAction(step, step.onHide);
+            if (step.onHide) {
+              this.executeAction(step, step.onHide);
+            }
           }
         }
       } satisfies StepOptions);
@@ -344,8 +355,11 @@ export class InteractiveTourService {
   }
 
   public startTour(toolName: string) {
-    const stepConfig: InteractiveTourOptions =
+    const stepConfig: InteractiveTourOptions | undefined =
       this.interactiveTourLoader.getTourOptionData(toolName);
+    if (!stepConfig) {
+      return;
+    }
 
     this.shepherdService.defaultStepOptions = {
       classes: stepConfig.class,
@@ -364,10 +378,12 @@ export class InteractiveTourService {
     this.shepherdService.confirmCancel = false;
     this.shepherdService.addSteps(shepherdSteps);
 
-    this.shepherdService.tourObject.on('show', this.addProgress);
-    this.shepherdService.tourObject.on('cancel', (index) => {
-      this.checkNext(index, this.shepherdService.tourObject);
-    });
+    if (this.shepherdService.tourObject) {
+      this.shepherdService.tourObject.on('show', this.addProgress);
+      this.shepherdService.tourObject.on('cancel', (index) => {
+        this.checkNext(index, this.shepherdService.tourObject);
+      });
+    }
 
     this.shepherdService.start();
   }

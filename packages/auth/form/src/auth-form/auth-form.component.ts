@@ -9,20 +9,16 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationStart, Router } from '@angular/router';
 
-import { AuthOptions, AuthService } from '@igo2/auth';
-import { AuthFacebookComponent } from '@igo2/auth/facebook';
-import { AuthGoogleComponent } from '@igo2/auth/google';
+import { AUTH_OPTIONS, AuthOptions, AuthService } from '@igo2/auth';
 import { AuthInternComponent } from '@igo2/auth/internal';
 import {
+  AnyMicrosoftOptions,
   AuthMicrosoftComponent,
   AuthMicrosoftb2cComponent
 } from '@igo2/auth/microsoft';
-import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
 import { filter } from 'rxjs/operators';
-
-import { AuthFormOptions } from '../shared';
 
 @Component({
   selector: 'igo-auth-form',
@@ -30,10 +26,8 @@ import { AuthFormOptions } from '../shared';
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
-    AuthGoogleComponent,
     AuthMicrosoftComponent,
     AuthMicrosoftb2cComponent,
-    AuthFacebookComponent,
     AuthInternComponent,
     MatButtonModule,
     IgoLanguageModule
@@ -41,7 +35,6 @@ import { AuthFormOptions } from '../shared';
 })
 export class AuthFormComponent implements OnInit {
   auth = inject(AuthService);
-  private config = inject(ConfigService);
   private router = inject(Router, { optional: true });
 
   @Input()
@@ -99,22 +92,21 @@ export class AuthFormComponent implements OnInit {
   private _showLogoutDiv = false;
 
   get showLoginDiv(): boolean {
-    if (!this.isLogoutRoute) {
-      return true;
-    }
+    return !this.isLogoutRoute ? true : false;
   }
 
   readonly login = output<boolean>();
 
-  public options?: AuthOptions & AuthFormOptions;
-  public user;
+  public options?: AuthOptions & AnyMicrosoftOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public user: any;
 
   public visible = true;
 
-  private isLogoutRoute: boolean;
+  private isLogoutRoute?: boolean;
 
   constructor() {
-    this.options = this.config.getConfig('auth');
+    this.options = inject(AUTH_OPTIONS);
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
   }
 
@@ -148,10 +140,10 @@ export class AuthFormComponent implements OnInit {
   }
 
   private getName() {
-    const tokenDecoded = this.auth.decodeToken();
-    if (tokenDecoded) {
+    const user = this.auth.user;
+    if (user) {
       this.user = {
-        name: tokenDecoded.user.firstName || tokenDecoded.user.sourceId
+        name: user.firstName || user.sourceId
       };
     }
   }

@@ -1,18 +1,12 @@
 import { MessageService } from '@igo2/core/message';
 import {
-  ClusterDataSource,
-  ClusterDataSourceOptions,
-  ClusterParam,
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
+  LayerService,
   QueryableDataSourceOptions,
-  StyleByAttribute,
-  StyleListService,
-  StyleService,
   VectorLayer,
-  featureRandomStyle,
-  featureRandomStyleFunction
+  randomOlFlatStyle
 } from '@igo2/geo';
 
 import OlFeature from 'ol/Feature';
@@ -62,7 +56,10 @@ export function handleFileImportError(
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError
   };
-  errMapping[error.message](file, error, messageService, sizeMb);
+  const handler = errMapping[error.message as keyof typeof errMapping];
+  if (handler) {
+    handler(file, error, messageService, sizeMb);
+  }
 }
 
 export function handleInvalidFileImportError(
@@ -135,11 +132,11 @@ export function addContextToContextList(
   contextService.contexts$.value.ours.unshift(context);
   contextService.contexts$.next(contextService.contexts$.value);
   contextService.importedContext.unshift(context);
-  contextService.loadContext(context.uri);
+  contextService.loadContext(context.uri!);
 }
 
 export function getFileExtension(file: File): string {
-  return file.name.split('.').pop().toLowerCase();
+  return file.name.split('.').pop()?.toLowerCase() ?? '';
 }
 
 export function computeLayerTitleFromFile(file: File): string {
@@ -148,7 +145,8 @@ export function computeLayerTitleFromFile(file: File): string {
 
 export function addImportedFeaturesToMap(
   extraFeatures: ExtraFeatures,
-  map: IgoMap
+  map: IgoMap,
+  layerService: LayerService
 ): VectorLayer {
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
     type: 'vector',
@@ -159,115 +157,14 @@ export function addImportedFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
 
-  let randomStyle;
-  let editable = false;
-  const featureKeys = olFeatures[0]?.getKeys() ?? [];
-  if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
-    randomStyle = featureRandomStyleFunction();
-  } else {
-    randomStyle = featureRandomStyle();
-    editable = true;
-  }
-  const layer = new VectorLayer({
+  const layer = layerService.createLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
     source,
-    igoStyle: { editable },
-    style: randomStyle,
+    style: randomOlFlatStyle(),
     visible: extraFeatures.visible,
     opacity: extraFeatures.opacity
-  });
-  map.layerController.add(layer);
-
-  return layer;
-}
-
-export function addImportedFeaturesStyledToMap(
-  extraFeatures: ExtraFeatures,
-  map: IgoMap,
-  styleListService: StyleListService,
-  styleService: StyleService
-): VectorLayer {
-  let style;
-  let distance: number;
-
-  if (styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')) {
-    const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
-      extraFeatures.name + '.styleByAttribute'
-    );
-
-    style = (feature, resolution) => {
-      return styleService.createStyleByAttribute(
-        feature,
-        styleByAttribute,
-        resolution
-      );
-    };
-  } else if (
-    styleListService.getStyleList(extraFeatures.name + '.clusterStyle')
-  ) {
-    const clusterParam: ClusterParam = styleListService.getStyleList(
-      extraFeatures.name + '.clusterParam'
-    );
-    distance = styleListService.getStyleList(extraFeatures.name + '.distance');
-
-    style = (feature, resolution) => {
-      const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'),
-        feature,
-        resolution
-      );
-      return styleService.createClusterStyle(
-        feature,
-        resolution,
-        clusterParam,
-        baseStyle
-      );
-    };
-  } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
-    style = (feature, resolution) =>
-      styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name + '.style'),
-        feature,
-        resolution
-      );
-  } else {
-    style = (feature, resolution) =>
-      styleService.createStyle(
-        styleListService.getStyleList('default.style'),
-        feature,
-        resolution
-      );
-  }
-  let source;
-  const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
-    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
-      {
-        distance,
-        type: 'cluster',
-        queryable: true
-      };
-    source = new ClusterDataSource(sourceOptions);
-    source.ol.source.addFeatures(olFeatures);
-  } else {
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
-      {
-        type: 'vector',
-        queryable: true
-      };
-    source = new FeatureDataSource(sourceOptions);
-    source.ol.addFeatures(olFeatures);
-  }
-
-  const layer = new VectorLayer({
-    title: extraFeatures.name,
-    isIgoInternalLayer: true,
-    source,
-    style,
-    opacity: extraFeatures.opacity,
-    visible: extraFeatures.visible
-  });
+  }) as VectorLayer;
   map.layerController.add(layer);
 
   return layer;

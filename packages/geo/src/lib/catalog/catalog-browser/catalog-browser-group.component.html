@@ -71,7 +71,7 @@
         [resolution]="resolution()"
         [map]="map()"
         [catalogAllowLegend]="catalogAllowLegend()"
-        [added]="state().get(item).added"
+        [added]="state().get(item).added ?? false"
         (addedLayerIsPreview)="onLayerPreview($event)"
         (addedChange)="onLayerAddedChange($event)"
       />

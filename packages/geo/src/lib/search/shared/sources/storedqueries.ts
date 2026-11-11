@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -32,8 +32,17 @@ import {
   StoredQueriesSearchSourceOptions
 } from './storedqueries.interfaces';
 
+export const STORED_QUERIES_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('StoredQueriesSearchSourceOptions');
+
+export const STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>(
+    'StoredQueriesReverseSearchSourceOptions'
+  );
+
 /**
  * StoredQueries search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
 @Injectable()
 export class StoredQueriesSearchSource
@@ -51,15 +60,21 @@ export class StoredQueriesSearchSource
     'coord_x',
     'coord_y'
   ];
-  public resultTitle: 'title';
-  public storedQueriesOptions: StoredQueriesSearchSourceOptions;
-  public multipleFieldsQuery: boolean;
+  public resultTitle!: string;
+  public storedQueriesOptions!: StoredQueriesSearchSourceOptions;
+  public multipleFieldsQuery!: boolean;
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${StoredQueriesSearchSource.id}`
+    const directOptions = inject(STORED_QUERIES_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${StoredQueriesSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -187,7 +202,7 @@ export class StoredQueriesSearchSource
       storedqueriesParams
     );
     this.options.params = this.options.params ? this.options.params : {};
-    this.options.params.page = options.page ? String(options.page) : '1';
+    this.options.params.page = options?.page ? String(options.page) : '1';
 
     return this.getSearch(term, params);
   }
@@ -201,40 +216,46 @@ export class StoredQueriesSearchSource
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return new RegExp('.*?gml.*?', 'i').test(
-      this.storedQueriesOptions.outputformat
+      this.storedQueriesOptions.outputformat ?? ''
     )
-      ? this.http.get(this.searchUrl, { params, responseType: 'text' }).pipe(
-          map((response) => {
-            let resultArray = this.extractResults(
-              this.extractWFSData(response),
-              term
-            );
-            resultArray.sort((a, b) =>
-              a.meta.score > b.meta.score
-                ? 1
-                : a.meta.score === b.meta.score
-                  ? a.meta.titleHtml < b.meta.titleHtml
-                    ? 1
-                    : -1
-                  : -1
-            );
-            resultArray.reverse();
-            if (resultArray.length > Number(this.options.params.limit)) {
-              const idxEnd =
-                Number(this.options.params.limit) *
-                Number(this.options.params.page);
-              const resultTotLenght = resultArray.length;
-              resultArray = resultArray.slice(0, idxEnd);
-              if (idxEnd < resultTotLenght) {
-                resultArray[resultArray.length - 1].meta.nextPage = true;
-              } else {
-                resultArray[resultArray.length - 1].meta.nextPage = false;
-              }
-            }
-            return resultArray;
+      ? this.http
+          .get(this.searchUrl, {
+            params,
+            headers: this.headers,
+            responseType: 'text'
           })
-        )
-      : this.http.get(this.searchUrl, { params }).pipe(
+          .pipe(
+            map((response) => {
+              let resultArray = this.extractResults(
+                this.extractWFSData(response),
+                term
+              );
+              resultArray.sort((a, b) =>
+                (a.meta.score ?? 0) > (b.meta.score ?? 0)
+                  ? 1
+                  : (a.meta.score ?? 0) === (b.meta.score ?? 0)
+                    ? (a.meta.titleHtml ?? '') < (b.meta.titleHtml ?? '')
+                      ? 1
+                      : -1
+                    : -1
+              );
+              resultArray.reverse();
+              if (resultArray.length > Number(this.options.params?.limit)) {
+                const idxEnd =
+                  Number(this.options.params?.limit) *
+                  Number(this.options.params?.page);
+                const resultTotLenght = resultArray.length;
+                resultArray = resultArray.slice(0, idxEnd);
+                if (idxEnd < resultTotLenght) {
+                  resultArray[resultArray.length - 1]!.meta.nextPage = true;
+                } else {
+                  resultArray[resultArray.length - 1]!.meta.nextPage = false;
+                }
+              }
+              return resultArray;
+            })
+          )
+      : this.http.get(this.searchUrl, { params, headers: this.headers }).pipe(
           map((response) => {
             return this.extractResults(this.extractWFSData(response), term);
           })
@@ -244,7 +265,7 @@ export class StoredQueriesSearchSource
   private getFormatFromOptions() {
     let olFormatCls;
 
-    const outputFormat = this.storedQueriesOptions.outputformat;
+    const outputFormat = this.storedQueriesOptions.outputformat ?? '';
     const patternGml3 = new RegExp('.*?gml.*?', 'i');
     const patternGeojson = new RegExp('.*?json.*?', 'i');
 
@@ -255,10 +276,11 @@ export class StoredQueriesSearchSource
       olFormatCls = olformat.WFS;
     }
 
-    return new olFormatCls();
+    return new olFormatCls!();
   }
 
-  private extractWFSData(res) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private extractWFSData(res: any) {
     const olFormat = this.getFormatFromOptions();
     const geojson = olformat.GeoJSON;
     const wfsfeatures = olFormat.readFeatures(res);
@@ -267,7 +289,8 @@ export class StoredQueriesSearchSource
   }
 
   private termSplitter(term: string, fields: StoredQueriesFields[]) {
-    const splittedTerm = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const splittedTerm: Record<string, any> = {};
     let remainingTerm = term;
     let cnt = 0;
 
@@ -301,7 +324,8 @@ export class StoredQueriesSearchSource
 
   private computeRequestParams(
     options: TextSearchOptions,
-    queryParams
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryParams: any
   ): HttpParams {
     const wfsversion = this.storedQueriesOptions.storedquery_id
       .toLowerCase()
@@ -314,9 +338,9 @@ export class StoredQueriesSearchSource
           service: 'wfs',
           version: wfsversion,
           request: 'GetFeature',
-          storedquery_id: this.storedQueriesOptions.storedquery_id,
-          srsname: this.storedQueriesOptions.srsname,
-          outputformat: this.storedQueriesOptions.outputformat
+          storedquery_id: this.storedQueriesOptions.storedquery_id ?? '',
+          srsname: this.storedQueriesOptions.srsname ?? '',
+          outputformat: this.storedQueriesOptions.outputformat ?? ''
         },
         queryParams,
         this.params,
@@ -340,8 +364,8 @@ export class StoredQueriesSearchSource
   ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
-    const title = data.properties[this.storedQueriesOptions.resultTitle]
-      ? this.storedQueriesOptions.resultTitle
+    const title = data.properties[this.storedQueriesOptions.resultTitle!]
+      ? this.storedQueriesOptions.resultTitle!
       : this.resultTitle;
     return {
       source: this,
@@ -353,23 +377,23 @@ export class StoredQueriesSearchSource
         properties,
         meta: {
           id,
-          title: data.properties[title]
+          title: data.properties[title!]
         }
       },
       meta: {
         dataType: FEATURE,
         id,
         title: data.properties.title,
-        titleHtml: data.properties[title],
+        titleHtml: data.properties[title!],
         icon: 'location_on',
         score: data.properties.title
           ? computeTermSimilarity(term.trim(), data.properties.title)
-          : computeTermSimilarity(term.trim(), data.properties[title])
+          : computeTermSimilarity(term.trim(), data.properties[title!])
       }
     };
   }
 
-  private computeProperties(data: StoredQueriesData): Record<string, any> {
+  private computeProperties(data: StoredQueriesData): Record<string, unknown> {
     const properties = Object.assign(
       {},
       ObjectUtils.removeKeys(
@@ -389,12 +413,8 @@ export class StoredQueriesSearchSource
 
 /**
  * StoredQueriesReverse search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
-
-// EXAMPLE CALLS
-
-// https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
-//
 
 @Injectable()
 export class StoredQueriesReverseSearchSource
@@ -407,15 +427,21 @@ export class StoredQueriesReverseSearchSource
   static id = 'storedqueriesreverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
-  public resultTitle: 'title';
-  public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
-  public multipleFieldsQuery: boolean;
+  public resultTitle!: string;
+  public storedQueriesOptions!: StoredQueriesReverseSearchSourceOptions;
+  public multipleFieldsQuery!: boolean;
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${StoredQueriesReverseSearchSource.id}`
+    const directOptions = inject(STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${StoredQueriesReverseSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -490,11 +516,15 @@ export class StoredQueriesReverseSearchSource
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     const isGml = new RegExp('.*?gml.*?', 'i').test(
-      this.storedQueriesOptions.outputformat
+      this.storedQueriesOptions.outputformat ?? ''
     );
     const request$ = isGml
-      ? this.http.get(this.searchUrl, { params, responseType: 'text' })
-      : this.http.get(this.searchUrl, { params });
+      ? this.http.get(this.searchUrl, {
+          params,
+          headers: this.headers,
+          responseType: 'text'
+        })
+      : this.http.get(this.searchUrl, { params, headers: this.headers });
     return request$.pipe(
       map((response) => {
         return this.extractResults(this.extractWFSData(response));
@@ -505,7 +535,7 @@ export class StoredQueriesReverseSearchSource
   private getFormatFromOptions() {
     let olFormatCls;
 
-    const outputFormat = this.storedQueriesOptions.outputformat;
+    const outputFormat = this.storedQueriesOptions.outputformat ?? '';
     const patternGml3 = new RegExp('.*?gml.*?', 'i');
     const patternGeojson = new RegExp('.*?json.*?', 'i');
 
@@ -516,10 +546,11 @@ export class StoredQueriesReverseSearchSource
       olFormatCls = olformat.WFS;
     }
 
-    return new olFormatCls();
+    return new olFormatCls!();
   }
 
-  private extractWFSData(res) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private extractWFSData(res: any) {
     const olFormat = this.getFormatFromOptions();
     const geojson = olformat.GeoJSON;
     const wfsfeatures = olFormat.readFeatures(res);
@@ -531,9 +562,10 @@ export class StoredQueriesReverseSearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    const longLatParams = {};
-    longLatParams[this.storedQueriesOptions.longField] = lonLat[0];
-    longLatParams[this.storedQueriesOptions.latField] = lonLat[1];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const longLatParams: Record<string, any> = {};
+    longLatParams[this.storedQueriesOptions.longField!] = lonLat[0];
+    longLatParams[this.storedQueriesOptions.latField!] = lonLat[1];
 
     return new HttpParams({
       fromObject: Object.assign(
@@ -541,13 +573,13 @@ export class StoredQueriesReverseSearchSource
           service: 'WFS',
           version: '1.1.0',
           request: 'GetFeature',
-          storedquery_id: this.storedQueriesOptions.storedquery_id,
-          srsname: this.storedQueriesOptions.srsname,
-          outputformat: this.storedQueriesOptions.outputformat
+          storedquery_id: this.storedQueriesOptions.storedquery_id ?? '',
+          srsname: this.storedQueriesOptions.srsname ?? '',
+          outputformat: this.storedQueriesOptions.outputformat ?? ''
         },
         longLatParams,
         this.params,
-        options.params || {}
+        options?.params || {}
       )
     });
   }
@@ -563,8 +595,8 @@ export class StoredQueriesReverseSearchSource
   private dataToResult(data: StoredQueriesReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
-    const title = data.properties[this.storedQueriesOptions.resultTitle]
-      ? this.storedQueriesOptions.resultTitle
+    const title = data.properties[this.storedQueriesOptions.resultTitle!]
+      ? this.storedQueriesOptions.resultTitle!
       : this.resultTitle;
 
     return {
@@ -576,13 +608,13 @@ export class StoredQueriesReverseSearchSource
         properties,
         meta: {
           id,
-          title: data.properties[title]
+          title: data.properties[title!]
         }
       },
       meta: {
         dataType: FEATURE,
         id,
-        title: data.properties[title],
+        title: data.properties[title!],
         icon: 'location_on'
       }
     };
@@ -590,7 +622,7 @@ export class StoredQueriesReverseSearchSource
 
   private computeProperties(
     data: StoredQueriesReverseData
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist

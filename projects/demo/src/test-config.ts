@@ -16,7 +16,6 @@ export const TEST_CONFIG: TestModuleMetadata = {
 export function mergeTestConfig(
   moduleDef: TestModuleMetadata
 ): TestModuleMetadata {
-  console.log();
   return {
     ...moduleDef,
     providers: [...(moduleDef.providers ?? []), ...TEST_CONFIG.providers!]

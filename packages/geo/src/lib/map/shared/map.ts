@@ -8,7 +8,6 @@ import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olinteraction from 'ol/interaction';
 import * as olproj from 'ol/proj';
-import OlProjection from 'ol/proj/Projection';
 import * as olproj4 from 'ol/proj/proj4';
 import { getUid } from 'ol/util';
 
@@ -19,6 +18,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { LayerController } from '../../layer';
 import type { AnyLayer, Layer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
+import type { OverlayService } from '../../overlay/shared/overlay.service';
 import { LayerWatcher, LayerWatcherChange } from '../utils/layer-watcher';
 import { MapGeolocationController } from './controllers/geolocation';
 import { MapViewController } from './controllers/view';
@@ -26,41 +26,36 @@ import type { MapBase } from './map.abstract';
 import {
   MapAttributionOptions,
   MapControlsOptions,
-  MapExtent,
   MapOptions,
   MapScaleLineOptions,
   MapViewOptions
 } from './map.interface';
 
 export class IgoMap implements MapBase {
-  public ol: olMap;
+  public ol!: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
-  public layersAddedByClick$ = new BehaviorSubject<AnyLayer[]>(undefined);
+  public layersAddedByClick$ = new BehaviorSubject<AnyLayer[] | undefined>(
+    undefined
+  );
   public status$: Subject<SubjectStatus>;
-  public propertyChange$: Subject<LayerWatcherChange>;
-  public overlay: Overlay;
-  public queryResultsOverlay: Overlay;
-  public searchResultsOverlay: Overlay;
-  public viewController: MapViewController;
+  public propertyChange$: Subject<LayerWatcherChange | undefined>;
+  public overlay!: Overlay;
+  public viewController!: MapViewController;
   public layerController: LayerController;
-  public geolocationController: MapGeolocationController;
+  public geolocationController!: MapGeolocationController;
   public swipeEnabled$ = new BehaviorSubject<boolean>(false);
   public mapCenter$ = new BehaviorSubject<boolean>(false);
-  public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
+  public selectedFeatures$ = new BehaviorSubject<Layer[] | null>(null);
 
-  public bufferDataSource: FeatureDataSource;
+  public bufferDataSource!: FeatureDataSource;
 
   public layerWatcher: LayerWatcher;
   readonly options: MapOptions;
-  private mapViewOptions: MapViewOptions;
+  private mapViewOptions!: MapViewOptions;
+  private overlayService?: OverlayService;
   private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
-
-  /** @deprecated use projectionCode */
-  get projection(): string {
-    return this.projectionCode;
-  }
 
   get viewProjection(): olproj.Projection {
     return this.viewController.getOlProjection();
@@ -128,12 +123,13 @@ export class IgoMap implements MapBase {
       stateHistory: true
     });
     this.viewController.setOlMap(this.ol);
-    this.overlay = new Overlay(this);
-    this.queryResultsOverlay = new Overlay(this);
-    this.searchResultsOverlay = new Overlay(this);
     this.ol.once('rendercomplete', () => {
+      if (!this.overlayService) {
+        return;
+      }
       this.geolocationController = new MapGeolocationController(
         this,
+        this.overlayService,
         {
           projection: this.viewController.getOlProjection()
         },
@@ -150,7 +146,15 @@ export class IgoMap implements MapBase {
     });
   }
 
-  setTarget(id: string) {
+  initializeOverlays(overlayService: OverlayService): void {
+    if (this.overlayService) {
+      return;
+    }
+    this.overlayService = overlayService;
+    this.overlay = overlayService.create(this);
+  }
+
+  setTarget(id: string | undefined) {
     this.ol.setTarget(id);
     if (id !== undefined) {
       this.layerWatcher.subscribe(() => void 1, null);
@@ -229,31 +233,8 @@ export class IgoMap implements MapBase {
     });
   }
 
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getCenter(projection?: string | OlProjection): [number, number] {
-    return this.viewController.getCenter(projection);
-  }
-
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getExtent(projection?: string | OlProjection): MapExtent {
-    return this.viewController.getExtent(projection);
-  }
-  /**
-   * @deprecated
-   * TODO: Move to ViewController and update every place it's used
-   */
-  getZoom(): number {
-    return this.viewController.getZoom();
-  }
-
   /** @deprecated find a way to remove this method. For now we discourage to use it until we find the way to remove it */
-  getLayerByOlUId(olUId: string): AnyLayer {
+  getLayerByOlUId(olUId: string): AnyLayer | undefined {
     return this.layerController.all.find(
       (layer) => getUid(layer.ol) && getUid(layer.ol) === olUId
     );

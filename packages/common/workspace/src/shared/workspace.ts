@@ -15,7 +15,7 @@ export class Workspace<E extends object = object> {
   /**
    * Observable of the selected widget
    */
-  readonly widget$ = new BehaviorSubject<Widget>(undefined);
+  readonly widget$ = new BehaviorSubject<Widget | undefined>(undefined);
 
   /**
    * Observable of the selected widget's inputs
@@ -32,7 +32,7 @@ export class Workspace<E extends object = object> {
   /**
    * Subscription to the selected entity
    */
-  private entities$$: Subscription;
+  private entities$$?: Subscription;
 
   /**
    * State change that trigger an update of the actions availability
@@ -42,7 +42,7 @@ export class Workspace<E extends object = object> {
   /**
    * Subscription to state changes
    */
-  private change$: Subscription;
+  private change$$?: Subscription;
 
   /**
    * Workspace id
@@ -68,21 +68,21 @@ export class Workspace<E extends object = object> {
   /**
    * Entities store
    */
-  get entityStore(): EntityStore<E> {
-    return this.options.entityStore as EntityStore<E>;
+  get entityStore(): EntityStore<E> | undefined {
+    return this.options.entityStore as EntityStore<E> | undefined;
   }
 
   /**
    * Actions store (some actions activate a widget)
    */
-  get actionStore(): ActionStore {
+  get actionStore(): ActionStore | undefined {
     return this.options.actionStore;
   }
 
   /**
    * Selected widget
    */
-  get widget(): Widget {
+  get widget(): Widget | undefined {
     return this.widget$.value;
   }
 
@@ -131,12 +131,8 @@ export class Workspace<E extends object = object> {
     this.active$.next(false);
     this.deactivateWidget();
 
-    if (this.entities$$ !== undefined) {
-      this.entities$$.unsubscribe();
-    }
-    if (this.change$ !== undefined) {
-      this.change$.unsubscribe();
-    }
+    this.entities$$?.unsubscribe();
+    this.change$$?.unsubscribe();
   }
 
   /**

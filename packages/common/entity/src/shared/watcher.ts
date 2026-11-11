@@ -25,12 +25,12 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * Component change detector
    */
-  private cdRef: ChangeDetectorRef;
+  private cdRef?: ChangeDetectorRef;
 
   /**
    * Entity store
    */
-  private store: EntityStore<E>;
+  private store?: EntityStore<E>;
 
   /**
    * Component inner state
@@ -40,12 +40,12 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * Subscription to the store's entities
    */
-  private entities$$: Subscription;
+  private entities$$?: Subscription;
 
   /**
    * Subscription to the store's state
    */
-  private state$$: Subscription;
+  private state$$?: Subscription;
 
   constructor(store?: EntityStore<E>, cdRef?: ChangeDetectorRef) {
     this.setChangeDetector(cdRef);
@@ -90,11 +90,11 @@ export class EntityStoreWatcher<E extends object> {
   private setupObservers() {
     this.teardownObservers();
 
-    this.entities$$ = this.store.entities$.subscribe(() =>
+    this.entities$$ = this.store?.entities$.subscribe(() =>
       this.onEntitiesChange()
     );
 
-    this.state$$ = this.store.state.change$
+    this.state$$ = this.store?.state.change$
       .pipe(skip(1))
       .subscribe(() => this.onStateChange());
   }
@@ -127,7 +127,9 @@ export class EntityStoreWatcher<E extends object> {
    */
   private onStateChange() {
     let changesDetected = false;
-    const storeIndex = this.store.state.index;
+    const storeIndex = this.store?.state.index;
+    if (!storeIndex) return;
+
     const innerIndex = this.innerStateIndex;
 
     if (storeIndex.size !== innerIndex.size) {
@@ -141,12 +143,12 @@ export class EntityStoreWatcher<E extends object> {
       if (changesDetected === false) {
         if (innerValue === undefined) {
           changesDetected = this.detectChanges();
-        } else if (!ObjectUtils.objectsAreEquivalent(storeValue, innerValue)) {
+        } else if (!ObjectUtils.objectsAreEquivalent(storeValue!, innerValue)) {
           changesDetected = this.detectChanges();
         }
       }
 
-      this.innerStateIndex.set(key, Object.assign({}, storeValue));
+      this.innerStateIndex.set(key, Object.assign({}, storeValue || {}));
     }
   }
 

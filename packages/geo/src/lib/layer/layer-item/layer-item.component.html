@@ -1,6 +1,6 @@
 <div class="igo-layer-list-item">
   <div class="layer-content">
-    @if (viewerOptions().mode === 'selection') {
+    @if (viewerOptions()?.mode === 'selection') {
       <mat-checkbox
         [checked]="selected()"
         [disabled]="selectionDisabled()"
@@ -20,7 +20,7 @@
 
   <div class="list-actions">
     <div class="list-secondary-actions">
-      @if (viewerOptions().mode !== 'selection') {
+      @if (viewerOptions()?.mode !== 'selection') {
         <button
           class="actions-button"
           tooltip-position="below"
@@ -39,7 +39,9 @@
       [layer]="layer()"
       [tooltip]="visibilityTooltip"
       [disabled]="isDisabled"
-      [inResolutionsRange]="layer().isInResolutionsRange$ | async"
+      [inResolutionsRange]="
+        (layer().isInResolutionsRange$ | async) ?? undefined
+      "
       [showQueryBadge]="queryBadgeHidden() === false"
       (visibilityChange)="handleVisibilityChange($event)"
     />
@@ -51,7 +53,7 @@
     <igo-layer-legend
       [layer]="layer()"
       [updateLegendOnResolutionChange]="
-        viewerOptions().legend.updateOnResolutionChange
+        viewerOptions()?.legend?.updateOnResolutionChange ?? false
       "
     />
   </div>

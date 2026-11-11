@@ -38,7 +38,7 @@ export class SearchService {
   private storageService = inject(StorageService);
   private analyticsService = inject(AnalyticsService);
 
-  searchTerm: WritableSignal<string> = signal(null);
+  searchTerm: WritableSignal<string | null> = signal(null);
 
   constructor() {
     const analytics = inject<boolean>('searchAnalytics' as any, {
@@ -54,7 +54,7 @@ export class SearchService {
     effect(() => {
       const term = this.searchTerm();
       if (term != null) {
-        this.analyticsService.trackSearch(term, null);
+        this.analyticsService.trackSearch(term, 0);
       }
     });
   }
@@ -71,7 +71,7 @@ export class SearchService {
 
     this.searchTerm.set(term);
 
-    const proj = this.mapService.getMap()?.projection || 'EPSG:3857';
+    const proj = this.mapService.getMap()?.projectionCode || 'EPSG:3857';
     const response = stringToLonLat(term, proj, {
       forceNA: options.forceNA
     });

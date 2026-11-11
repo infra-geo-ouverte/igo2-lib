@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common/entity';
+import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
 
 import * as olextent from 'ol/extent';
 
@@ -22,7 +22,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, string>();
   private states$$: Subscription[] = [];
-  private empty$$: Subscription;
+  private empty$$!: Subscription;
 
   constructor(protected options: FeatureStoreInMapExtentStrategyOptions) {
     super(options);
@@ -32,24 +32,26 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for Ol source changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     super.bindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.watchStore(store);
+      this.watchStore(featureStore);
     }
-    this.empty$$ = store.empty$
+    this.empty$$ = featureStore.empty$
       .pipe(skipWhile((empty) => !empty))
-      .subscribe(() => this.updateEntitiesInExtent(store));
+      .subscribe(() => this.updateEntitiesInExtent(featureStore));
   }
 
   /**
    * Unbind this strategy from a store and stop watching for Ol source changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     super.unbindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.unwatchStore(store);
+      this.unwatchStore(featureStore);
     }
   }
 
@@ -58,7 +60,9 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    this.stores.forEach((store) =>
+      this.watchStore(store as unknown as FeatureStore)
+    );
   }
 
   /**
@@ -103,7 +107,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     features: Feature<any>[],
     extent: MapExtent
   ): Feature[] {
-    return features.reduce((acc, feature) => {
+    return features.reduce((acc: Feature[], feature) => {
       const geom = feature.ol?.getGeometry();
       if (geom) {
         const featureExtent = geom.getExtent();

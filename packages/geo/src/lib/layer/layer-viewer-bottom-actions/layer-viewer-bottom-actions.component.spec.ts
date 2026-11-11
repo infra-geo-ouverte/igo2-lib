@@ -1,32 +1,45 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { inputBinding } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-// import { TEST_CONFIG } from '../../../test-config';
-// import { IgoMap } from '../../map';
-// import { IgoLayerModule } from '../layer.module';
-// import { LayerController } from '../shared';
-// import { LayerViewerBottomActionsComponent } from './layer-viewer-bottom-actions.component';
+import { OSMDataSource } from '../../datasource/shared/datasources/osm-datasource';
+import { LayerService } from '../../layer/shared/layer.service';
+import { TileLayer } from '../../layer/shared/layers/tile-layer';
+import { IgoMap } from '../../map';
+import { IgoLayerModule } from '../layer.module';
+import { LayerController } from '../shared/layer-controller';
+import { LayerViewerBottomActionsComponent } from './layer-viewer-bottom-actions.component';
 
-// describe('LayerViewerBottomActionsComponent', () => {
-//   let component: LayerViewerBottomActionsComponent;
-//   let fixture: ComponentFixture<LayerViewerBottomActionsComponent>;
+describe('LayerViewerBottomActionsComponent', () => {
+  let component: LayerViewerBottomActionsComponent;
+  let fixture: ComponentFixture<LayerViewerBottomActionsComponent>;
 
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({
-//       ...TEST_CONFIG,
-//       imports: [...TEST_CONFIG.imports, IgoLayerModule],
-//       declarations: [LayerViewerBottomActionsComponent]
-//     });
-//     fixture = TestBed.createComponent(LayerViewerBottomActionsComponent);
-//     component = fixture.componentInstance;
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [IgoLayerModule, LayerViewerBottomActionsComponent]
+    });
 
-//     const map = new IgoMap();
-//     component.map = map;
-//     component.controller = new LayerController(map, []);
-//     component.searchTerm = '';
-//     fixture.detectChanges();
-//   });
+    const map = new IgoMap();
+    const layer = TestBed.inject(LayerService).createLayer({
+      title: 'test',
+      source: new OSMDataSource()
+    }) as TileLayer;
+    const controller = new LayerController(map, [layer]);
+    controller.select(layer);
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
+    fixture = TestBed.createComponent(LayerViewerBottomActionsComponent, {
+      bindings: [
+        inputBinding('map', () => map),
+        inputBinding('controller', () => controller),
+        inputBinding('searchTerm', () => ''),
+        inputBinding('viewerOptions', () => ({}))
+      ]
+    });
+    component = fixture.componentInstance;
+
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

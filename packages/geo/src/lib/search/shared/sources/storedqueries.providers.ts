@@ -1,6 +1,12 @@
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
 import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
+import {
+  STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS,
+  STORED_QUERIES_SEARCH_SOURCE_OPTIONS,
   StoredQueriesReverseSearchSource,
   StoredQueriesSearchSource
 } from './storedqueries';
@@ -15,6 +21,7 @@ export function storedqueriesSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the StoredQueries search source
+ * @deprecated This provider is deprecated and will be removed in a future major version, likely in 23.x+.
  */
 export function provideStoredQueriesSearchSource() {
   return {
@@ -24,10 +31,25 @@ export function provideStoredQueriesSearchSource() {
   };
 }
 
-export function withStoredQueriesSource(): SearchSourceFeature<SearchSourceKind.StoredQueries> {
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
+export function withStoredQueriesSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.StoredQueries> {
   return {
     kind: SearchSourceKind.StoredQueries,
-    providers: [provideStoredQueriesSearchSource()]
+    providers: [
+      provideStoredQueriesSearchSource(),
+      ...(options
+        ? [
+            {
+              provide: STORED_QUERIES_SEARCH_SOURCE_OPTIONS,
+              useValue: options
+            }
+          ]
+        : [])
+    ]
   };
 }
 
@@ -42,6 +64,7 @@ export function storedqueriesReverseSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the StoredQueriesReverse search source
+ * @deprecated This provider is deprecated and will be removed in a future major version, likely in 23.x+.
  */
 export function provideStoredQueriesReverseSearchSource() {
   return {
@@ -51,9 +74,24 @@ export function provideStoredQueriesReverseSearchSource() {
   };
 }
 
-export function withStoredQueriesReverseSource(): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
+export function withStoredQueriesReverseSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.StoredQueriesReverse> {
   return {
     kind: SearchSourceKind.StoredQueriesReverse,
-    providers: [provideStoredQueriesReverseSearchSource()]
+    providers: [
+      provideStoredQueriesReverseSearchSource(),
+      ...(options
+        ? [
+            {
+              provide: STORED_QUERIES_REVERSE_SEARCH_SOURCE_OPTIONS,
+              useValue: options
+            }
+          ]
+        : [])
+    ]
   };
 }

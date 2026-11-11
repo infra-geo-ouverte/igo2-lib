@@ -4,12 +4,12 @@
       [label]="'igo.integration.importExportTool.importExportData' | translate"
     >
       <igo-import-export
-        [contextUri]="(contextState.context$ | async).uri"
+        [contextUri]="(contextState.context$ | async)?.uri"
         [map]="map"
         [selectFirstProj]="selectFirstProj()"
         [projectionsLimitations]="projectionsLimitations()"
         [store]="workspaceStore"
-        [selectedMode]="importExportState.selectedMode$ | async"
+        [selectedMode]="(importExportState.selectedMode$ | async)!"
         (selectMode)="modeChanged($any($event))"
         [exportOptions$]="importExportState.exportOptions$"
         (exportOptionsChange)="exportOptionsChange($event)"
@@ -27,10 +27,10 @@
 
 @if (!importExportShowBothType() && importExportType() === 'layer') {
   <igo-import-export
-    [contextUri]="(contextState.context$ | async).uri"
+    [contextUri]="(contextState.context$ | async)?.uri"
     [map]="map"
     [store]="workspaceStore"
-    [selectedMode]="importExportState.selectedMode$ | async"
+    [selectedMode]="(importExportState.selectedMode$ | async)!"
     (selectMode)="modeChanged($any($event))"
     [exportOptions$]="importExportState.exportOptions$"
     (exportOptionsChange)="exportOptionsChange($event)"

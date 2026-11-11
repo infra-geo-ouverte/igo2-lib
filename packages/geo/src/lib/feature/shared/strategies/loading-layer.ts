@@ -1,4 +1,4 @@
-import { EntityStoreStrategy } from '@igo2/common/entity';
+import { EntityStore, EntityStoreStrategy } from '@igo2/common/entity';
 
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
@@ -26,10 +26,11 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for Ol source changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     super.bindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.watchStore(store);
+      this.watchStore(featureStore);
     }
   }
 
@@ -37,10 +38,11 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Unbind this strategy from a store and stop watching for Ol source changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     super.unbindStore(store);
+    const featureStore = store as unknown as FeatureStore;
     if (this.active === true) {
-      this.unwatchStore(store);
+      this.unwatchStore(featureStore);
     }
   }
 
@@ -49,7 +51,9 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    this.stores.forEach((store) =>
+      this.watchStore(store as unknown as FeatureStore)
+    );
   }
 
   /**
@@ -71,7 +75,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
 
     this.onSourceChanges(store);
     const olSource = store.layer.ol.getSource();
-    olSource.on('change', () => {
+    olSource!.on('change', () => {
       this.onSourceChanges(store);
     });
   }
@@ -100,12 +104,13 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   private onSourceChanges(store: FeatureStore) {
-    let olFeatures = store.layer.ol.getSource().getFeatures();
+    let olFeatures = store.layer.ol.getSource()?.getFeatures();
+    if (olFeatures === undefined) {
+      return;
+    }
 
     if (store.layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
-        cluster.get('features')
-      );
+      olFeatures = olFeatures.flatMap((cluster) => cluster.get('features'));
     }
     if (olFeatures.length === 0) {
       store.clear();

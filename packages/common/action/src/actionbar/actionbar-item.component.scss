@@ -45,13 +45,30 @@
     }
   }
 
-  .item-checkbox ::ng-deep mat-checkbox label {
-    margin-left: 28px;
+  // Same geometry as the avatar items: 48px icon column, text starting 16px after it.
+  mat-list-item.item-checkbox {
+    padding-left: 0;
+    padding-right: 16px;
+
+    ::ng-deep mat-checkbox {
+      .mdc-checkbox {
+        margin: 0 4px;
+      }
+
+      label {
+        margin-left: 16px;
+        padding-left: 0;
+        font-size: var(--mat-sys-body-large-size, 1rem);
+        line-height: var(--mat-sys-body-large-line-height, 1.5rem);
+        letter-spacing: var(--mat-sys-body-large-tracking, normal);
+      }
+    }
   }
 
   .actionbar-item {
     [matline] {
-      padding-left: 16px;
+      padding-left: 0;
+      padding-right: 16px;
     }
   }
 }

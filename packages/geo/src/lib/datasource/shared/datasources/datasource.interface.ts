@@ -8,22 +8,24 @@ import type { Observable } from 'rxjs';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
 
+export type DataSourceType =
+  | 'wms'
+  | 'wfs'
+  | 'vector'
+  | 'wmts'
+  | 'xyz'
+  | 'osm'
+  | 'tiledebug'
+  | 'carto'
+  | 'arcgisrest'
+  | 'imagearcgisrest'
+  | 'tilearcgisrest'
+  | 'websocket'
+  | 'mvt'
+  | 'cluster';
+
 export interface DataSourceOptions {
-  type?:
-    | 'wms'
-    | 'wfs'
-    | 'vector'
-    | 'wmts'
-    | 'xyz'
-    | 'osm'
-    | 'tiledebug'
-    | 'carto'
-    | 'arcgisrest'
-    | 'imagearcgisrest'
-    | 'tilearcgisrest'
-    | 'websocket'
-    | 'mvt'
-    | 'cluster';
+  type: DataSourceType;
   optionsFromCapabilities?: boolean;
   optionsFromApi?: boolean;
   _layerOptionsFromSource?: Record<string, string>;
@@ -54,23 +56,24 @@ export interface SourceFieldsOptionsParams extends Omit<
   step?: number;
   relation?: RelationOptions;
   type?:
-    | 'number'
-    | 'number[]'
     | 'string'
-    | 'string[]'
+    | 'number'
     | 'boolean'
+    | 'number[]'
+    | 'string[]'
     | 'Date'
     | 'list'
-    | 'autocomplete'; // TODO the type need to be analyze
+    | 'autocomplete'
+    | undefined;
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
   multiple?: boolean;
   tooltip?: string;
-  searchIndex?: searchIndexOptions;
+  searchIndex?: SearchIndexOptions;
 }
 
-export interface searchIndexOptions {
+export interface SearchIndexOptions {
   enabled?: boolean;
   preset?: Preset;
   tokenize?: Tokenizer;

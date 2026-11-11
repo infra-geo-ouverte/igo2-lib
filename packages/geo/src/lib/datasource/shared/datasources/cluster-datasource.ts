@@ -9,7 +9,7 @@ export class ClusterDataSource extends FeatureDataSource {
   declare public options: ClusterDataSourceOptions;
   declare public ol: olSourceCluster;
 
-  get saveableOptions(): Partial<ClusterDataSourceOptions> {
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,

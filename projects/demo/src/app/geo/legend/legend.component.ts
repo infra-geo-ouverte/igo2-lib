@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { PanelComponent } from '@igo2/common/panel';
 import {
+  AnyLayer,
   ImageLayerOptions,
   LAYER_DIRECTIVES,
   LayerOptions,
@@ -150,7 +151,11 @@ export class AppLegendComponent {
           }
         }
       ])
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 
   get map() {

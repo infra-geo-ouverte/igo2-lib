@@ -53,8 +53,7 @@ export class ImportExportToolComponent implements OnInit {
   private workspaceState = inject(WorkspaceState);
   contextState = inject(ContextState);
 
-  readonly projectionsLimitations =
-    input<ProjectionsLimitationsOptions>(undefined);
+  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>();
 
   readonly selectFirstProj = input(false);
 
@@ -108,7 +107,7 @@ export class ImportExportToolComponent implements OnInit {
     this.importExportState.setsExportOptions(exportOptions);
   }
 
-  importExportTypeChange(event) {
+  importExportTypeChange(event: { value: ImportExportType }) {
     this.importExportType.set(event.value);
   }
 }

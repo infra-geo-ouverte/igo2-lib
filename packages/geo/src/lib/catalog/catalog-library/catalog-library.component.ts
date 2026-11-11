@@ -18,7 +18,7 @@ import { EntityStore } from '@igo2/common/entity';
 import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
-import { StorageScope, StorageService } from '@igo2/core/storage';
+import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
 
 import { EMPTY, Observable, Subscription, catchError } from 'rxjs';
@@ -26,7 +26,6 @@ import { Md5 } from 'ts-md5';
 
 import { TypeCapabilitiesStrings } from '../../datasource/shared/capabilities.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
@@ -60,12 +59,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
   /**
    * Store holding the catalogs
    */
-  readonly store = input<EntityStore<Catalog>>(undefined);
-
-  /**
-   * Map to add the catalog items to
-   */
-  readonly map = input<IgoMap>(undefined);
+  readonly store = input.required<EntityStore<Catalog>>();
 
   /**
    * Determine if the form to add a catalog is allowed
@@ -87,7 +81,7 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
 
   submitDisabled = true;
 
-  private addingCatalog$$: Subscription;
+  private addingCatalog$$!: Subscription;
 
   get addedCatalogs(): Catalog[] {
     return (this.storageService.get('addedCatalogs') || []) as Catalog[];
@@ -96,27 +90,12 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.storageService.set('addedCatalogs', catalogs);
   }
 
-  get selectedCatalogId() {
-    return this.storageService.get('selectedCatalogId', StorageScope.SESSION);
-  }
-  set selectedCatalogId(id) {
-    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
-  }
-
   /**
    * @internal
    */
   ngOnInit() {
     this.store().state.clear();
 
-    if (this.selectedCatalogId) {
-      const selectedCatalog = this.store()
-        .all()
-        .find((item) => item.id === this.selectedCatalogId);
-      if (selectedCatalog) {
-        this.onCatalogSelect(selectedCatalog);
-      }
-    }
     this.predefinedCatalogs.update((catalogs) => {
       return catalogs.map((catalog) => {
         catalog.type = catalog.type ?? 'wms';
@@ -140,7 +119,6 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
    */
   onCatalogSelect(catalog: Catalog) {
     this.store().state.update(catalog, { selected: true, focused: true }, true);
-    this.selectedCatalogId = catalog.id;
     this.catalogSelectChange.emit({ selected: true, catalog });
   }
 
@@ -227,15 +205,15 @@ export class CatalogLibraryComponent implements OnInit, OnDestroy {
     this.unsubscribeAddingCatalog();
   }
 
-  onCatalogRemove(catalog) {
-    this.store().delete(catalog);
+  onCatalogRemove(catalog: Catalog) {
+    this.store()?.delete(catalog);
     this.addedCatalogs = this.addedCatalogs
       .slice(0)
       .filter((c) => c.id !== catalog.id);
   }
 
   addCatalogDialog(
-    error?,
+    error?: boolean,
     addedCatalog?: Catalog,
     isPredefinedCatalog?: boolean
   ) {

@@ -62,7 +62,7 @@ export function createDrawHoleInteractionStyle(): olstyle.Style {
  * @returns New OL geometries
  */
 export function sliceOlGeometry(
-  olGeometry: OlLineString | OlPolygon,
+  olGeometry: OlGeometry,
   olSlicer: OlLineString
 ): (OlLineString | OlPolygon)[] {
   if (olGeometry instanceof OlPolygon) {
@@ -93,9 +93,9 @@ export function sliceOlPolygon(
 
   const olGeoJSON = new OlGeoJSON();
   const slicer = olGeoJSON.writeGeometryObject(olSlicer) as any;
-  const outerCoordinates = olPolygon.getLinearRing(0).getCoordinates();
+  const outerCoordinates = olPolygon.getLinearRing(0)!.getCoordinates();
 
-  const parts = [[], []];
+  const parts: number[][][] = [[], []];
   let totalIntersectionCount = 0;
   for (let i = 0, ii = outerCoordinates.length - 1; i < ii; i++) {
     const segmentCoordinates = [outerCoordinates[i], outerCoordinates[i + 1]];
@@ -171,5 +171,5 @@ export function bufferOlGeometry(
   const olGeoJSON = new OlGeoJSON();
   const bufferedGeom = olGeoJSON.writeGeometryObject(olGeometry);
   const buffered = buffer(turfFeature(bufferedGeom), dist, { units });
-  return buffered.geometry;
+  return buffered!.geometry as FeatureGeometry;
 }

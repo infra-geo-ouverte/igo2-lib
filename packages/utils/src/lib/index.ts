@@ -19,5 +19,6 @@ export * from './string-utils';
 export * from './theme.utils';
 export * from './tree';
 export * from './type.utils';
+export * from './url.utils';
 export * from './uuid';
 export * from './watcher';

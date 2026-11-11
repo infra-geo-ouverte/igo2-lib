@@ -5,6 +5,7 @@ import { AppDialogComponent } from './dialog/dialog.component';
 import { AppDynamicComponentComponent } from './dynamic-component/dynamic-component.component';
 import { AppEntitySelectorComponent } from './entity-selector/entity-selector.component';
 import { AppEntityTableComponent } from './entity-table/entity-table.component';
+import { AppFormStepperComponent } from './form-stepper/form-stepper.component';
 import { AppFormComponent } from './form/form.component';
 import { AppIconComponent } from './icon/icon.component';
 import { AppTableComponent } from './table/table.component';
@@ -42,6 +43,11 @@ export const routes: Routes = [
     title: 'Form',
     path: 'form',
     component: AppFormComponent
+  },
+  {
+    title: 'Form Stepper',
+    path: 'form-stepper',
+    component: AppFormStepperComponent
   },
   {
     title: 'Icon',

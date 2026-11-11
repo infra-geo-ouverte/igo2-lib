@@ -1,6 +1,14 @@
-import { ILayerSearchResultFormatter, ILayerSearchSource } from './ilayer';
+import {
+  ILAYER_SEARCH_SOURCE_OPTIONS,
+  ILayerSearchResultFormatter,
+  ILayerSearchSource
+} from './ilayer';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * ILayer search result formatter factory
@@ -39,12 +47,17 @@ export function provideILayerSearchSource() {
   };
 }
 
-export function withILayerSource(): SearchSourceFeature<SearchSourceKind.ILayer> {
+export function withILayerSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.ILayer> {
   return {
     kind: SearchSourceKind.ILayer,
     providers: [
       provideILayerSearchSource(),
-      provideILayerSearchResultFormatter()
+      provideILayerSearchResultFormatter(),
+      ...(options
+        ? [{ provide: ILAYER_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
     ]
   };
 }

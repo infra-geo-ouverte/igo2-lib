@@ -4,8 +4,7 @@ import {
   OnInit,
   inject,
   input,
-  model,
-  output
+  model
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,15 +46,10 @@ export class SearchSelectorComponent implements OnInit {
    * List of available search types
    */
   readonly searchTypes = input<string[]>(SEARCH_TYPES);
-  readonly searchType = model<string>(undefined);
-
-  /**
-   * Event emitted when the enabled search type changes
-   */
-  readonly searchTypeChange = output<string>();
+  readonly searchType = model<string>();
 
   ngOnInit() {
-    this.onSetSearchType(this.searchType());
+    this.onSetSearchType(this.searchType()!);
   }
 
   /**
@@ -86,6 +80,5 @@ export class SearchSelectorComponent implements OnInit {
     }
 
     this.searchSourceService.enableSourcesByType(searchType);
-    this.searchTypeChange.emit(searchType);
   }
 }

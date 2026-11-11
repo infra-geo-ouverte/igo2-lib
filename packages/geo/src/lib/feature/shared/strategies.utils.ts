@@ -1,3 +1,5 @@
+import { EntityStoreStrategy } from '@igo2/common/entity';
+
 import { FeatureStore } from './store';
 import { FeatureStoreLoadingStrategy } from './strategies/loading';
 import { FeatureStoreSelectionStrategy } from './strategies/selection';
@@ -12,8 +14,14 @@ export function tryAddLoadingStrategy(
   store: FeatureStore,
   strategy?: FeatureStoreLoadingStrategy
 ) {
-  if (store.getStrategyOfType(FeatureStoreLoadingStrategy) !== undefined) {
-    store.activateStrategyOfType(FeatureStoreLoadingStrategy);
+  if (
+    store.getStrategyOfType(
+      FeatureStoreLoadingStrategy as typeof EntityStoreStrategy
+    ) !== undefined
+  ) {
+    store.activateStrategyOfType(
+      FeatureStoreLoadingStrategy as typeof EntityStoreStrategy
+    );
     return;
   }
 
@@ -30,17 +38,18 @@ export function tryAddLoadingStrategy(
  */
 export function tryAddSelectionStrategy(
   store: FeatureStore,
-  strategy?: FeatureStoreSelectionStrategy
+  strategy: FeatureStoreSelectionStrategy
 ) {
-  if (store.getStrategyOfType(FeatureStoreSelectionStrategy) !== undefined) {
-    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
+  if (
+    store.getStrategyOfType(
+      FeatureStoreSelectionStrategy as typeof EntityStoreStrategy
+    ) !== undefined
+  ) {
+    store.activateStrategyOfType(
+      FeatureStoreSelectionStrategy as typeof EntityStoreStrategy
+    );
     return;
   }
-  strategy = strategy
-    ? strategy
-    : new FeatureStoreSelectionStrategy({
-        map: store.map
-      });
-  store.addStrategy(strategy);
+  store.addStrategy(strategy as EntityStoreStrategy);
   strategy.activate();
 }

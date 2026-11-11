@@ -17,9 +17,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
-import { AuthService } from '@igo2/auth';
-import { LanguageService } from '@igo2/core/language';
-import { IgoLanguageModule } from '@igo2/core/language';
+import { AuthService, translateError } from '@igo2/auth';
+import { IgoLanguageModule, LanguageService } from '@igo2/core/language';
 
 @Component({
   selector: 'igo-auth-intern',
@@ -71,14 +70,12 @@ export class AuthInternComponent {
         this.login.emit(true);
         this.loading = false;
       },
-      (error: any) => {
-        try {
-          this.languageService.translate
-            .get('igo.auth.error.' + error.error.message)
-            .subscribe((errorMsg) => (this.error = errorMsg));
-        } catch {
-          this.error = error.error.message;
-        }
+      (err) => {
+        translateError(
+          'igo.auth.error.intern.',
+          err,
+          this.languageService
+        ).subscribe((translatedErrorMsg) => (this.error = translatedErrorMsg));
         this.loading = false;
       }
     );

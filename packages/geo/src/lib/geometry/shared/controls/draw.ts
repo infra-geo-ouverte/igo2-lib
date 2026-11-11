@@ -69,31 +69,31 @@ export class DrawControl {
    * Observables from predefined radius (defaults to false and undefined)
    */
   ispredefinedRadius$ = new BehaviorSubject<boolean>(false);
-  predefinedRadius$ = new BehaviorSubject<number>(undefined);
-  radiusDrawEnd$ = new BehaviorSubject<number>(undefined);
+  predefinedRadius$ = new BehaviorSubject<number | undefined>(undefined);
+  radiusDrawEnd$ = new BehaviorSubject<number | undefined>(undefined);
 
-  private keyDown$$: Subscription;
+  private keyDown$$!: Subscription;
 
-  private olGeometryType: typeof OlGeometry | undefined | string;
+  private olGeometryType?: typeof OlGeometry | string;
   private olInteractionStyle: OlStyleLike;
-  private olMap: OlMap;
+  private olMap!: OlMap;
   private olDrawingLayer: OlVectorLayer<OlVectorSource>;
-  private olDrawInteraction: OlDraw;
-  private olSelectInteraction: OlSelect;
-  private olModifyInteraction: OlModify;
-  private onDrawStartKey: EventsKey;
-  private onDrawEndKey: EventsKey;
-  private onDrawAbortKey: EventsKey;
-  private onDrawKey: EventsKey;
-  public radius: number;
+  private olDrawInteraction?: OlDraw;
+  private olSelectInteraction?: OlSelect;
+  private olModifyInteraction?: OlModify;
+  private onDrawStartKey!: EventsKey;
+  private onDrawEndKey!: EventsKey;
+  private onDrawAbortKey!: EventsKey;
+  private onDrawKey!: EventsKey;
+  public radius!: number;
 
-  private mousePosition: [number, number];
+  private mousePosition!: [number, number];
 
   /**
    * take the value of radius
    */
   get radiusVal(): number {
-    return this.predefinedRadius$.getValue();
+    return this.predefinedRadius$.getValue() ?? 0;
   }
   set radiusValData(radiusCercle: number) {
     this.predefinedRadius$.next(radiusCercle);
@@ -111,7 +111,7 @@ export class DrawControl {
    * @internal
    */
   get olDrawingLayerSource(): OlVectorSource {
-    return this.olDrawingLayer.getSource();
+    return this.olDrawingLayer.getSource()!;
   }
 
   constructor(private options: DrawControlOptions) {
@@ -119,7 +119,7 @@ export class DrawControl {
       ? options.drawingLayer
       : this.createOlInnerOverlayLayer();
     this.olGeometryType = this.options.geometryType;
-    this.olInteractionStyle = this.options.interactionStyle;
+    this.olInteractionStyle = this.options.interactionStyle!;
   }
 
   /**
@@ -131,7 +131,7 @@ export class DrawControl {
       this.clearOlInnerOverlaySource();
       this.removeOlInnerOverlayLayer();
       this.removeOlInteractions();
-      this.olMap = olMap;
+      this.olMap = olMap as unknown as OlMap;
       return;
     }
 
@@ -147,7 +147,7 @@ export class DrawControl {
     return this.olDrawingLayerSource;
   }
 
-  setOlInteractionStyle(style) {
+  setOlInteractionStyle(style: OlStyleLike) {
     this.olInteractionStyle = style;
   }
 
@@ -310,8 +310,12 @@ export class DrawControl {
     ]);
 
     if (this.olMap) {
-      this.olMap.removeInteraction(this.olDrawInteraction);
-      this.olMap.removeInteraction(this.olModifyInteraction);
+      if (this.olDrawInteraction) {
+        this.olMap.removeInteraction(this.olDrawInteraction);
+      }
+      if (this.olModifyInteraction) {
+        this.olMap.removeInteraction(this.olModifyInteraction);
+      }
     }
 
     this.olDrawInteraction = undefined;
@@ -324,9 +328,9 @@ export class DrawControl {
    */
   private onDrawStart(event: OlDrawEvent) {
     const olGeometry = event.feature.getGeometry();
-    this.start$.next(olGeometry);
+    this.start$.next(olGeometry!);
     this.clearOlInnerOverlaySource();
-    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
+    this.onDrawKey = olGeometry!.on('change', (olGeometryEvent: BasicEvent) => {
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
@@ -338,16 +342,16 @@ export class DrawControl {
    * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
-    if (event.feature.getGeometry().getType() === 'Point') {
+    if (event.feature.getGeometry()?.getType() === 'Point') {
       this.radiusDrawEnd$.next(this.predefinedRadius$.getValue());
     }
     this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
     const olGeometry = event.feature.getGeometry();
-    olGeometry.on('change', () => {
-      this.modify$.next(olGeometry);
+    olGeometry!.on('change', () => {
+      this.modify$.next(olGeometry!);
     });
-    this.end$.next(olGeometry);
+    this.end$.next(olGeometry!);
   }
 
   /**
@@ -365,22 +369,22 @@ export class DrawControl {
    */
   private subscribeKeyDown() {
     this.unsubscribeKeyDown();
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
-      (event: KeyboardEvent) => {
+    this.keyDown$$ = fromEvent<KeyboardEvent>(document, 'keydown').subscribe(
+      (event) => {
         // On Escape or 'c' keydowns, abort the current drawing
         if (event.key === 'Escape') {
-          this.olDrawInteraction.abortDrawing();
+          this.olDrawInteraction?.abortDrawing();
           return;
         }
 
         // On Backspace or 'u' keydowns, remove last vertex of current drawing
         if (event.key === 'Backspace') {
-          this.olDrawInteraction.removeLastPoint();
+          this.olDrawInteraction?.removeLastPoint();
         }
 
         // On Enter or 'f' keydowns, finish current drawing
         if (event.key === 'Enter') {
-          this.olDrawInteraction.finishDrawing();
+          this.olDrawInteraction?.finishDrawing();
         }
 
         // On space bar key down, pan to the current mouse position
@@ -399,9 +403,6 @@ export class DrawControl {
    * Unsubscribe to key down
    */
   private unsubscribeKeyDown() {
-    if (this.keyDown$$) {
-      this.keyDown$$.unsubscribe();
-      this.keyDown$$ = undefined;
-    }
+    this.keyDown$$?.unsubscribe();
   }
 }

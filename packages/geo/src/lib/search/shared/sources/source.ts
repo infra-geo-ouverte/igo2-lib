@@ -1,3 +1,5 @@
+import { HttpHeaders } from '@angular/common/http';
+
 import { Workspace } from '@igo2/common/workspace';
 import { StorageService } from '@igo2/core/storage';
 import { ObjectUtils } from '@igo2/utils';
@@ -65,7 +67,7 @@ export class SearchSource {
    * Search source's title
    */
   get title(): string {
-    return this.options.title;
+    return this.options.title!;
   }
 
   /**
@@ -99,13 +101,22 @@ export class SearchSource {
    * Search url
    */
   get searchUrl(): string {
-    return this.options.searchUrl;
+    return this.options.searchUrl!;
+  }
+
+  /**
+   * Search request headers
+   */
+  protected get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.options.apiKey ? { 'x-api-key': this.options.apiKey } : undefined
+    );
   }
 
   /**
    * Search query params
    */
-  get params(): ISearchSourceParams | null {
+  get params(): ISearchSourceParams | null | undefined {
     return this.options.params;
   }
 
@@ -122,7 +133,7 @@ export class SearchSource {
   get featureStoresWithIndex() {
     return this._featureStoresWithIndex;
   }
-  private _featureStoresWithIndex: FeatureStore[];
+  private _featureStoresWithIndex!: FeatureStore[];
 
   /**
    * Search results display order
@@ -156,6 +167,7 @@ export class SearchSource {
 
   resetSourceOptions() {
     this.options = ObjectUtils.copyDeep(this.defaultOptions);
+    this.storageService?.remove(this.getId() + '.options');
   }
 
   setWorkspaces(workspaces: Workspace[]) {
@@ -167,7 +179,7 @@ export class SearchSource {
     } else {
       this.options.available = false;
     }
-    const values = [];
+    const values: any[] = [];
     this.featureStoresWithIndex = workspaces
       .filter((fw) => (fw.entityStore as FeatureStore).searchDocument)
       .map((fw) => {
@@ -178,11 +190,11 @@ export class SearchSource {
         });
         return fw.entityStore as FeatureStore;
       });
-    const datasets = this.options.settings.find((s) => s.title === 'datasets');
+    const datasets = this.options.settings?.find((s) => s.title === 'datasets');
     if (datasets) {
       datasets.values = values;
     }
-    this.setParamFromSetting(datasets);
+    this.setParamFromSetting(datasets!);
   }
 
   /**
@@ -230,11 +242,14 @@ export class SearchSource {
   getHashtagsValid(term: string, settingsName: string): string[] {
     const hashtags = term.match(/(#[A-Za-zÀ-ÿ-+]+)/g);
     if (!hashtags) {
-      return undefined;
+      return [];
     }
 
     const searchSourceSetting = this.getSettingsValues(settingsName);
-    const hashtagsValid = [];
+    if (!searchSourceSetting) {
+      return [];
+    }
+    const hashtagsValid: string[] = [];
     hashtags.forEach((hashtag) => {
       searchSourceSetting.values.forEach((conf) => {
         const hashtagKey = hashtag.substring(1);
@@ -258,7 +273,7 @@ export class SearchSource {
           conf.hashtags &&
           conf.hashtags.indexOf(hashtagKey.toLowerCase()) !== -1
         ) {
-          hashtagsValid.push(conf.value);
+          hashtagsValid.push(conf.value.toString());
         }
       });
     });
@@ -266,11 +281,9 @@ export class SearchSource {
     return hashtagsValid.filter((a, b) => hashtagsValid.indexOf(a) === b);
   }
 
-  getSettingsValues(search: string): SearchSourceSettings {
-    return this.getEffectiveOptions().settings.find(
-      (value: SearchSourceSettings) => {
-        return value.name === search;
-      }
+  getSettingsValues(search: string): SearchSourceSettings | undefined {
+    return this.getEffectiveOptions().settings?.find(
+      (value) => value.name === search
     );
   }
 }

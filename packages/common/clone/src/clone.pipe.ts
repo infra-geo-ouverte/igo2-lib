@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'clone',
-  standalone: true
+  name: 'clone'
 })
 export class ClonePipe implements PipeTransform {
   transform(value: any): any {

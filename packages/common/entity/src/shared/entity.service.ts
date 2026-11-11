@@ -13,7 +13,6 @@ import { Observable, catchError, map, throwError } from 'rxjs';
 import {
   AnyChoiceEntityField,
   EntityRelation,
-  EntityRelationParam,
   EntityState,
   SelectEntityTableColumn,
   SelectOption
@@ -39,7 +38,7 @@ export class EntityService {
         column.arrayIdentifier[1]
       }`;
     }
-    return ObjectUtils.resolve(state, column.name);
+    return ObjectUtils.resolve(state, column.name) as EntityState | string;
   }
 
   getDomainValues(
@@ -61,7 +60,7 @@ export class EntityService {
 
     const options: { params?: HttpParams } = {};
     if (relation.params && paramsValue) {
-      const parsedParams = {};
+      const parsedParams: Record<string, any> = {};
       Object.keys(paramsValue).forEach((field) => {
         const key = this.getRelationFilterParamName(field, relation);
         parsedParams[key] = paramsValue[field];
@@ -100,12 +99,12 @@ export class EntityService {
 
   private buildUrl(field: AnyChoiceEntityField): string | undefined {
     const relation = field.relation;
-    if (relation.url) return relation.url;
+    if (relation?.url) return relation.url;
     const baseUrl = this.configService.getConfig<string | undefined>(
       'edition.url'
     );
-    if (!relation.table) {
-      return;
+    if (!relation?.table) {
+      return undefined;
     }
     return baseUrl ? baseUrl + relation.table : relation.table;
   }
@@ -117,13 +116,15 @@ export class EntityService {
     const path = relation.choiceList?.path;
 
     const items = path?.list
-      ? ObjectUtils.resolve(options, path.list)
+      ? (ObjectUtils.resolve(options, path.list) as SelectOption[])
       : options;
 
     return items.map((item) => {
-      const id = path?.id ? ObjectUtils.resolve(item, path.id) : item.id;
+      const id = path?.id
+        ? (ObjectUtils.resolve(item, path.id) as SelectOption['id'])
+        : item.id;
       const value = path?.value
-        ? ObjectUtils.resolve(item, path.value)
+        ? (ObjectUtils.resolve(item, path.value) as SelectOption['value'])
         : item.value;
       return { id, value } satisfies SelectOption;
     });
@@ -133,8 +134,8 @@ export class EntityService {
     field: string,
     relation: EntityRelation
   ): string {
-    const param: EntityRelationParam = relation.params;
-    if (param.field !== field) {
+    const param = relation.params;
+    if (param?.field !== field) {
       return field;
     }
     return param?.name ?? field;
@@ -143,7 +144,7 @@ export class EntityService {
   private findDomainValue(
     column: SelectEntityTableColumn,
     id: string | number
-  ): SelectOption {
+  ): SelectOption | undefined {
     return column.domainValues?.find(
       (option) => String(option.id) === String(id)
     );

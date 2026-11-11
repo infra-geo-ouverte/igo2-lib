@@ -14,23 +14,24 @@ import { SubjectStatus, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
 
+import { OverlayService } from '../../overlay/shared/overlay.service';
 import { IgoMap } from '../shared/map';
 import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 
 @Component({
   selector: 'igo-map-browser',
   templateUrl: './map-browser.component.html',
-  styleUrls: ['./map-browser.component.scss'],
-  standalone: true
+  styleUrls: ['./map-browser.component.scss']
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityService = inject(ActivityService);
+  private overlayService = inject(OverlayService);
 
-  private activityId: string;
-  private status$$: Subscription;
+  private activityId?: string;
+  private status$$!: Subscription;
 
-  readonly map = input<IgoMap>(undefined);
-  readonly view = model<MapViewOptions>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly view = model<MapViewOptions>();
 
   get controls(): MapControlsOptions {
     return this._controls;
@@ -43,7 +44,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
       map.updateControls(value);
     }
   }
-  private _controls: MapControlsOptions;
+  private _controls!: MapControlsOptions;
 
   public id = `igo-map-target-${uuid()}`;
 
@@ -57,6 +58,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
   ngOnInit() {
+    this.map().initializeOverlays?.(this.overlayService);
     this.status$$ = this.map().status$.subscribe((status) =>
       this.handleStatusChange(status)
     );
@@ -68,7 +70,9 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.map().setTarget(undefined);
-    this.activityService.unregister(this.activityId);
+    if (this.activityId !== undefined) {
+      this.activityService.unregister(this.activityId);
+    }
     this.status$$.unsubscribe();
   }
 

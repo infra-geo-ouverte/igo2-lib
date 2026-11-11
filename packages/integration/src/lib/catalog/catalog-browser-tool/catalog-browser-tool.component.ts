@@ -46,20 +46,20 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private mapState = inject(MapState);
   private authService = inject(AuthService);
 
-  catalog: Catalog;
+  catalog?: Catalog;
 
   /**
    * Store that contains the catalog items
    * @internal
    */
-  store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(
-    undefined
-  );
+  store$ = new BehaviorSubject<
+    EntityStore<CatalogItem, CatalogItemState> | undefined
+  >(undefined);
 
   /**
    * Subscription to the selected catalog
    */
-  private catalog$$: Subscription;
+  private catalog$$!: Subscription;
 
   /**
    * Whether a group can be toggled when it's collapsed

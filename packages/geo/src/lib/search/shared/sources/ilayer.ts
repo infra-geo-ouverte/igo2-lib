@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
@@ -32,6 +32,15 @@ import {
   SearchSourceSettings,
   TextSearchOptions
 } from './source.interfaces';
+
+export const ILAYER_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('ILayerSearchSourceOptions');
+
+type ILayerDataWithFormat = ILayerData & {
+  properties: ILayerData['properties'] & {
+    format: NonNullable<ILayerData['properties']['format']>;
+  };
+};
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -93,17 +102,26 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${ILayerSearchSource.id}`
+    const directOptions = inject(ILAYER_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${ILayerSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title)
-      );
-    });
+
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {
@@ -214,7 +232,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               }
             ]
           } satisfies SearchSourceSettings)
-      ].filter(Boolean)
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 
@@ -227,12 +245,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
-    const params = this.computeSearchRequestParams(term, options || {});
+    const params = this.computeSearchRequestParams(term ?? '', options || {});
     if (!params.get('q') || !params.get('type')) {
       return of([]);
     }
-    this.options.params.page = params.get('page') || '1';
-    return this.getSearch(term, params);
+    this.options.params!.page = params.get('page') || '1';
+    return this.getSearch(term!, params);
   }
 
   @Cacheable({
@@ -244,12 +262,11 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     return this.http
-      .get(this.searchUrl, { params })
-      .pipe(
-        map((response: ILayerServiceResponse) =>
-          this.extractResults(response, term)
-        )
-      );
+      .get<ILayerServiceResponse>(this.searchUrl, {
+        params,
+        headers: this.headers
+      })
+      .pipe(map((response) => this.extractResults(response, term)));
   }
 
   private computeSearchRequestParams(
@@ -290,7 +307,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): TextSearchOptions {
     const hashtags = super.getHashtagsValid(term, 'type');
-    if (hashtags) {
+    if (hashtags?.length) {
       options.params = Object.assign(options.params || {}, {
         type: hashtags.join(',')
       });
@@ -303,13 +320,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     response: ILayerServiceResponse,
     term: string
   ): SearchResult<ILayerItemResponse>[] {
-    return response.items.map((data: ILayerData) =>
-      this.dataToResult(data, term, response)
-    );
+    return response.items
+      .filter(
+        (data): data is ILayerDataWithFormat =>
+          data.properties.format !== undefined
+      )
+      .map((data) => this.dataToResult(data, term, response));
   }
 
   private dataToResult(
-    data: ILayerData,
+    data: ILayerDataWithFormat,
     term: string,
     response?: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse> {
@@ -331,19 +351,19 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
         score:
           data.score ||
-          computeTermSimilarity(term.trim(), data.properties.name),
+          computeTermSimilarity(term.trim(), data.properties.name ?? ''),
         nextPage:
-          response.items.length % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          response!.items.length % +this.options.params!.limit! === 0 &&
+          +this.options.params!.page! < 10
       },
       data: layerOptions
     };
   }
 
-  private computeLayerOptions(data: ILayerData): ILayerItemResponse {
+  private computeLayerOptions(data: ILayerDataWithFormat): ILayerItemResponse {
     const url = data.properties.url;
-    const queryParams: QueryableDataSourceOptions =
-      this.extractQueryParamsFromSourceUrl(url);
+    const queryParams: Partial<QueryableDataSourceOptions> =
+      this.extractQueryParamsFromSourceUrl(url ?? '');
     return ObjectUtils.removeUndefined({
       sourceOptions: {
         id: data.properties.id,
@@ -373,7 +393,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         abstract: data.properties.abstract || undefined
       },
       properties: this.formatter.formatResult(data).properties
-    });
+    }) as ILayerItemResponse;
   }
 
   private extractQueryParamsFromSourceUrl(url: string): {
@@ -387,15 +407,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       for (const key of Object.keys(formatOpt)) {
         const value = formatOpt[key];
         if (value === '*') {
-          queryFormat = QueryFormat[key.toUpperCase()];
-          break;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryFormat = (QueryFormat as any)[key.toUpperCase()];
         }
 
-        const urls = (value as any as { urls: string[] }).urls;
+        const urls = (value as { urls: string[] }).urls;
         if (Array.isArray(urls)) {
           urls.forEach((urlOpt) => {
             if (url.indexOf(urlOpt) !== -1) {
-              queryFormat = QueryFormat[key.toUpperCase()];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              queryFormat = (QueryFormat as any)[key.toUpperCase()];
             }
           });
           break;
@@ -406,13 +427,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         queryFormat === QueryFormat.HTML ||
         queryFormat === QueryFormat.HTMLGML2
       ) {
-        queryHtmlTarget = 'iframe';
+        queryHtmlTarget = 'iframe' as QueryHtmlTarget;
       }
     }
 
     return {
       queryFormat,
-      queryHtmlTarget
+      queryHtmlTarget: queryHtmlTarget!
     };
   }
 }

@@ -1,7 +1,6 @@
 import { inputBinding } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../../test-config';
 import { IgoIconComponent } from './icon.component';
 
 describe('IconComponent', () => {
@@ -9,11 +8,9 @@ describe('IconComponent', () => {
   let fixture: ComponentFixture<IgoIconComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [IgoIconComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [IgoIconComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(IgoIconComponent, {
       bindings: [inputBinding('icon', () => 'test')]

@@ -1,40 +1,21 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-//
-// import { IgoTestModule } from '../../../test/module';
-// import { IgoSharedModule } from '../../shared';
-// import { OSMDataSource } from '../../datasource';
-// import { MetadataService } from '../../metadata';
-// import { MapService } from '../../map/shared';
-// import { FeatureService } from '../../feature';
-// import { DownloadService } from '../../download';
-//
-// import { TileLayer } from '../shared';
-// import { IgoFilterModule } from '../../filter/shared';
-// import { LayerItemComponent } from './layer-item.component';
-// import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
-//
-// describe('LayerItemComponent', () => {
-//   let component: LayerItemComponent;
-//   let fixture: ComponentFixture<LayerItemComponent>;
-//
-//   beforeEach(async () => {
-//       await TestBed.configureTestingModule({
-//         imports: [IgoTestModule, IgoSharedModule, IgoFilterModule],
-//         declarations: [LayerItemComponent, LayerLegendComponent],
-//         providers: [
-//           MetadataService,
-//           MapService,
-//           FeatureService,
-//           DownloadService
-//         ]
-//       }).compileComponents();
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-//     fixture = TestBed.createComponent(LayerItemComponent);
-//     component = fixture.componentInstance;
-//   });
-//
-//   it('should create', () => {
-//     component.layer = new TileLayer(new OSMDataSource({ title: 'foo' }), {});
-//     expect(component).toBeTruthy();
-//   });
-// });
+import { LayerItemComponent } from './layer-item.component';
+
+describe('LayerItemComponent', () => {
+  let component: LayerItemComponent;
+  let fixture: ComponentFixture<LayerItemComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LayerItemComponent]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LayerItemComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

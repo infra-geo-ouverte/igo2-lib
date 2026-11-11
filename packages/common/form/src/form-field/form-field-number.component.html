@@ -1,0 +1,24 @@
+<mat-form-field>
+  @if (showLabel() === true) {
+    <mat-label>{{ placeholder() | translate }}</mat-label>
+  }
+  <input
+    matInput
+    type="number"
+    [required]="required"
+    [placeholder]="placeholder() | translate"
+    [formControl]="formControl()"
+  />
+  @if (disableSwitch() === true) {
+    <mat-checkbox
+      class="igo-form-disable-switch"
+      (click)="onDisableSwitchClick()"
+      [checked]="!disabled()"
+      matPrefix
+    />
+  }
+
+  @if (formControl().errors) {
+    <mat-error>{{ getErrorMessage() | translate }}</mat-error>
+  }
+</mat-form-field>

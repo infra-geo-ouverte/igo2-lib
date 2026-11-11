@@ -32,8 +32,8 @@ describe('Provide Sentry monitoring', () => {
     const providers = provideSentryMonitoring(options);
 
     expect(providers).toEqual(
-      jasmine.arrayContaining([
-        jasmine.objectContaining({ provide: ErrorHandler })
+      expect.arrayContaining([
+        expect.objectContaining({ provide: ErrorHandler })
       ])
     );
   });
@@ -44,7 +44,7 @@ describe('Provide Sentry monitoring', () => {
       withTracingIntegration({})
     ]);
     const traceServiceProvider: ConstructorProvider = providers.find(
-      (p: ConstructorProvider) => p.provide === TraceService
+      (p) => (p as ConstructorProvider).provide === TraceService
     ) as ConstructorProvider;
     expect(traceServiceProvider).toBeDefined();
     expect(traceServiceProvider.deps).toContain(Router);

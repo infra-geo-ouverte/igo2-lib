@@ -41,14 +41,14 @@ export class AdvancedMapToolComponent {
     return this.mapState.map.geolocationController?.followPosition$;
   }
 
-  toggleTracking(value) {
+  toggleTracking(value: boolean) {
     if (!this.mapState.map.geolocationController) {
       return;
     }
     this.mapState.map.geolocationController.tracking = value;
   }
 
-  toggleFollow(value) {
+  toggleFollow(value: boolean) {
     if (!this.mapState.map.geolocationController) {
       return;
     }

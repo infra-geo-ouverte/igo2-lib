@@ -89,7 +89,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     this.formControl.setValue('');
     this._queryType = queryType;
   }
-  private _queryType: SpatialFilterQueryType;
+  private _queryType!: SpatialFilterQueryType;
 
   readonly bufferChange = output<number>();
   readonly measureUnitChange = output<MeasureLengthUnit>();
@@ -103,8 +103,8 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   public selectedZones: Feature[] = [];
 
   private zonesWithBuffer: Feature[] = [];
-  private formValueChanges$$: Subscription;
-  private bufferValueChanges$$: Subscription;
+  private formValueChanges$$!: Subscription;
+  private bufferValueChanges$$!: Subscription;
   inFlightIds = new Set<string | number>();
 
   autocomplete = viewChild.required(MatAutocomplete);
@@ -118,7 +118,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  filteredEntities$: Observable<Feature[]>;
+  filteredEntities$!: Observable<Feature[]>;
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
@@ -191,7 +191,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
         this.inFlightIds.add(id);
         this.spatialFilterService
           .loadItemById(zone, this.queryType)
-          .pipe(
+          ?.pipe(
             take(1),
             finalize(() => this.inFlightIds.delete(id))
           )
@@ -209,7 +209,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   remove(feature: Feature): void {
     const index = this.selectedZones.findIndex(
-      (item) => item.meta.id === feature.meta.id
+      (item) => item.meta!.id === feature.meta!.id
     );
 
     if (index >= 0) {
@@ -224,7 +224,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
 
   isSelected(entity: Feature): boolean {
-    return this.selectedZones.some((z) => z.meta.id === entity.meta.id);
+    return this.selectedZones.some((z) => z.meta!.id === entity.meta!.id);
   }
 
   private applyBuffer(buffer: number, zone: Feature) {
@@ -243,7 +243,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
       )
       .subscribe((featureGeom: Feature) => {
         const zonesWithBuffer = this.zonesWithBuffer.findIndex(
-          (item) => item.meta.id === featureGeom.meta.id
+          (item) => item.meta!.id === featureGeom.meta!.id
         );
         if (zonesWithBuffer <= 0) {
           this.zonesWithBuffer.push(featureGeom);

@@ -90,31 +90,6 @@ export interface TableRelation {
 }
 
 export type EntityTableColumn = SelectEntityTableColumn | BaseEntityTableColumn;
-/*export interface EntityTableColumn {
-  validation?: EntityTableColumnValidation;
-  name: string;
-  title: string;
-  renderer?: EntityTableColumnRenderer;
-  valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
-  visible?: boolean;
-  linkColumnForce?: string;
-  sort?: boolean;
-  type?: string;
-  multiple?: boolean;
-  domainValues?: SelectOption[];
-  relation?: TableRelation;
-  tooltip?: string;
-  cellClassFunc?: (
-    entity: object,
-    record: EntityRecord<object>
-  ) => Record<string, boolean>;
-  step?: number;
-  icon?: string;
-  onBlur?: (event: Event) => void;
-  onChange?: (event: Event) => void;
-  onClick?: (event: Event) => void;
-  onFocus?: (event: Event) => void;
-}*/
 
 export interface SelectOption {
   id: number;
@@ -122,9 +97,9 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface EntityTableButton {
+export interface EntityTableButton<T extends object> {
   icon: string;
-  click: (entity: object, record: EntityRecord<object>) => void;
+  click: (record: EntityRecord<T>) => void;
   color?: 'primary' | 'accent' | 'warn';
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';

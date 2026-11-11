@@ -4,7 +4,6 @@ import {
   platformBrowserTesting
 } from '@angular/platform-browser/testing';
 
-// First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
   BrowserTestingModule,
   platformBrowserTesting(),

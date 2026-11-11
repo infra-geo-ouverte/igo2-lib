@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../test-config';
 import { SpinnerComponent } from './spinner.component';
 
 describe('SpinnerComponent', () => {
@@ -8,11 +7,9 @@ describe('SpinnerComponent', () => {
   let fixture: ComponentFixture<SpinnerComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [SpinnerComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [SpinnerComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SpinnerComponent);
     component = fixture.componentInstance;

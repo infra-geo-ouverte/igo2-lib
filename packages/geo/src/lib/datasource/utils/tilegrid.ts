@@ -7,7 +7,7 @@ import olTileGridWMTS from 'ol/tilegrid/WMTS';
 
 export function createDefaultTileGrid(epsg?: string): olTileGridWMTS {
   const projection = epsg ? olproj.get(epsg) : olproj.get('EPSG:3857');
-  const projectionExtent = projection.getExtent();
+  const projectionExtent = projection!.getExtent();
   const size = extentGetWidth(projectionExtent) / 256;
   const resolutions = new Array(20);
   const matrixIds = new Array(20);

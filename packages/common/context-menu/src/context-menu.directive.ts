@@ -3,7 +3,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
-  HostListener,
   ViewContainerRef,
   inject,
   input,
@@ -16,17 +15,20 @@ import { filter, take } from 'rxjs/operators';
 
 @Directive({
   selector: '[igoContextMenu]',
-  standalone: true
+  host: {
+    '(longpress)': 'onContextMenu($any($event))',
+    '(contextmenu)': 'onContextMenu($event)'
+  }
 })
 export class ContextMenuDirective {
   overlay = inject(Overlay);
   viewContainerRef = inject(ViewContainerRef);
   private elementRef = inject(ElementRef);
 
-  private overlayRef: OverlayRef | null;
-  private sub: Subscription;
+  private overlayRef: OverlayRef | null = null;
+  private sub?: Subscription;
 
-  readonly menuContext = input<TemplateRef<any>>(undefined, {
+  readonly menuContext = input.required<TemplateRef<any>>({
     alias: 'igoContextMenu'
   });
   readonly menuPosition = output<{
@@ -34,9 +36,7 @@ export class ContextMenuDirective {
     y: number;
   }>();
 
-  @HostListener('longpress', ['$event'])
-  @HostListener('contextmenu', ['$event'])
-  public onContextMenu(e: MouseEvent | TouchEvent): void {
+  onContextMenu(e: MouseEvent | TouchEvent): void {
     let x;
     let y;
     if (e instanceof MouseEvent) {
@@ -96,11 +96,13 @@ export class ContextMenuDirective {
           if (
             clickTarget &&
             !this.elementRef.nativeElement.contains(clickTarget) &&
+            this.overlayRef &&
             !this.overlayRef.overlayElement.contains(clickTarget)
           ) {
             return true;
           } else {
             event.preventDefault();
+            return false;
           }
         }),
         take(1)

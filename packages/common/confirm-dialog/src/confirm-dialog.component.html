@@ -4,11 +4,11 @@
 <div mat-dialog-content>
   {{ confirmMessage | translate }}
 </div>
-<div mat-dialog-actions>
-  <button matButton="elevated" color="primary" (click)="dialogRef.close(true)">
-    {{ proccessKey | translate }}
-  </button>
-  <button matButton="filled" (click)="dialogRef.close(false)">
+<div mat-dialog-actions align="end">
+  <button matButton (click)="dialogRef.close(false)">
     {{ cancelKey | translate }}
+  </button>
+  <button matButton="filled" (click)="dialogRef.close(true)">
+    {{ proccessKey | translate }}
   </button>
 </div>

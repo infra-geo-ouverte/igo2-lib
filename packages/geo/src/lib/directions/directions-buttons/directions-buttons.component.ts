@@ -9,8 +9,6 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
 import { RouteService } from '@igo2/core/route';
 
-import { Coordinate } from 'ol/coordinate';
-
 import { roundCoordTo, roundCoordToString } from '../../map/shared/map.utils';
 import { DirectionsService } from '../shared';
 import { FeatureWithDirections, IgoStep } from '../shared/directions.interface';
@@ -38,14 +36,14 @@ export class DirectionsButtonsComponent {
   private routeService = inject(RouteService, { optional: true });
   private directionsService = inject(DirectionsService);
 
-  readonly contextUri = input.required<string>();
+  readonly contextUri = input<string>();
   readonly stopsStore = input.required<StopsStore>();
   readonly routesFeatureStore = input.required<RoutesFeatureStore>();
   readonly stepsFeatureStore = input.required<StepsFeatureStore>();
 
   readonly zoomOnActiveRoute = output<void>();
 
-  public downloadDirectionsBtnDisabled = false;
+  public printDirectionsBtnDisabled = false;
 
   /**
    * Returns the active route from the routesFeatureStore.
@@ -55,7 +53,7 @@ export class DirectionsButtonsComponent {
   get activeRoute(): FeatureWithDirections {
     return this.routesFeatureStore()
       .all()
-      .find((route) => route.properties.active);
+      .find((route) => route.properties.active)!;
   }
 
   /**
@@ -85,7 +83,7 @@ export class DirectionsButtonsComponent {
    *
    */
   copyLinkToClipboard(): void {
-    const copySuccessful: boolean = this.clipboard.copy(this.getLink());
+    const copySuccessful: boolean = this.clipboard.copy(this.getLink()!);
     if (copySuccessful) {
       this.messageService.success(
         'igo.geo.directions.buttons.message.copyLink'
@@ -97,16 +95,16 @@ export class DirectionsButtonsComponent {
    * Downloads the directions.
    *
    */
-  downloadDirections(): void {
+  printDirections(): void {
     this.stepsFeatureStore().clear();
-    this.downloadDirectionsBtnDisabled = true;
+    this.printDirectionsBtnDisabled = true;
     this.directionsService
-      .downloadDirections(
+      .printDirections(
         this.routesFeatureStore().map,
         this.activeRoute.properties.directions
       )
       .subscribe(() => {
-        this.downloadDirectionsBtnDisabled = false;
+        this.printDirectionsBtnDisabled = false;
       });
   }
 
@@ -128,11 +126,11 @@ export class DirectionsButtonsComponent {
       indent +
       this.activeRoute.properties.directions.title;
 
-    const distance: string = formatDistance(
-      this.activeRoute.properties.directions.distance
+    const distance = formatDistance(
+      this.activeRoute.properties.directions.distance!
     );
-    const duration: string = formatDuration(
-      this.activeRoute.properties.directions.duration
+    const duration = formatDuration(
+      this.activeRoute.properties.directions.duration!
     );
 
     if (distance && duration) {
@@ -153,12 +151,12 @@ export class DirectionsButtonsComponent {
       .view.all()
       .forEach((stop) => {
         let coords = '';
-        let stopText = '';
-        if (stop.text !== roundCoordToString(stop.coordinates, 6).join(', ')) {
-          stopText = stop.text;
-          coords = ` (${roundCoordToString(stop.coordinates, 6).join(', ')})`;
+        let stopText: string;
+        if (stop.text !== roundCoordToString(stop.coordinates!, 6).join(', ')) {
+          stopText = stop.text!;
+          coords = ` (${roundCoordToString(stop.coordinates!, 6).join(', ')})`;
         } else {
-          stopText = roundCoordToString(stop.coordinates, 6).join(', ');
+          stopText = roundCoordToString(stop.coordinates!, 6).join(', ');
         }
 
         stops =
@@ -189,10 +187,10 @@ export class DirectionsButtonsComponent {
       ':' +
       newLine;
 
-    this.activeRoute.properties.directions.steps.forEach(
+    this.activeRoute.properties.directions.steps!.forEach(
       (step, stepIndex, steps) => {
-        const distance: string = formatDistance(step.distance);
-        const duration: string = formatDuration(step.duration);
+        const distance = formatDistance(step.distance!);
+        const duration = formatDuration(step.duration!);
         if ((distance && duration) || stepIndex === steps.length - 1) {
           const instruction: string = this.getFormattedStepInstruction(
             step,
@@ -230,7 +228,7 @@ export class DirectionsButtonsComponent {
     return formatStep(
       step,
       this.languageService,
-      stepIndex === this.activeRoute.properties.directions.steps.length - 1
+      stepIndex === this.activeRoute.properties.directions.steps!.length - 1
     ).instruction;
   }
 
@@ -256,18 +254,15 @@ export class DirectionsButtonsComponent {
       .indexOf(this.activeRoute.properties.id);
     let routingOptions = '';
     if (routeIndex !== 0) {
-      const routingOptionsKey: string | boolean =
-        this.routeService.options.directionsOptionsKey;
+      const routingOptionsKey = this.routeService.options.directionsOptionsKey;
       routingOptions = `&${routingOptionsKey}=result:${routeIndex}`;
     }
-    const directionsKey: string | boolean =
-      this.routeService.options.directionsCoordKey;
-    const stopsCoordinates: Coordinate[] = this.stopsStore()
+    const directionsKey = this.routeService.options.directionsCoordKey;
+    const stopsCoordinates = this.stopsStore()
       .view.all()
-      .map((stop) => roundCoordTo(stop.coordinates, 6));
-    let directionsUrl = '';
+      .map((stop) => roundCoordTo(stop.coordinates!, 6));
     if (stopsCoordinates.length >= 2) {
-      directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
+      const directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
       return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;

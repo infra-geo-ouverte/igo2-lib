@@ -31,35 +31,35 @@ export class WidgetOutletComponent implements OnDestroy {
    * Widget subscribers to 'cancel' and 'complete'
    * @internal
    */
-  private baseSubscribers = {
-    cancel: (event: any) => this.onCancel(event),
-    complete: (event: any) => this.onComplete(event)
+  private baseSubscribers: Record<string, (event: string) => void> = {
+    cancel: (event: string) => this.onCancel(event),
+    complete: (event: string) => this.onComplete(event)
   };
 
   /**
    * Widget
    */
-  readonly widget = model<DynamicComponent<WidgetComponent>>(undefined);
+  readonly widget = model<DynamicComponent<WidgetComponent>>();
 
   /**
    * Widget inputs
    */
-  readonly inputs = input<Record<string, any>>(undefined);
+  readonly inputs = input.required<Record<string, unknown> | undefined>();
 
   /**
    * Widget subscribers
    */
-  readonly subscribers = input<Record<string, (event: any) => void>>({});
+  readonly subscribers = input<Record<string, (event: string) => void>>({});
 
   /**
    * Event emitted when the widget emits 'complete'
    */
-  readonly complete = output<any>();
+  readonly complete = output<string>();
 
   /**
    * Event emitted when the widget emits 'cancel'
    */
-  readonly cancel = output<any>();
+  readonly cancel = output<string>();
 
   /**
    * Destroy the current widget and all it's inner subscriptions
@@ -75,7 +75,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * @returns Combined subscribers
    * @internal
    */
-  getEffectiveSubscribers(): Record<string, (event: any) => void> {
+  getEffectiveSubscribers(): Record<string, (event: string) => void> {
     const subscribers = Object.assign({}, this.subscribers());
 
     // Base subscribers
@@ -83,7 +83,7 @@ export class WidgetOutletComponent implements OnDestroy {
       const subscriber = subscribers[key];
       const baseSubscriber = this.baseSubscribers[key];
       if (subscriber !== undefined) {
-        subscribers[key] = (event: any) => {
+        subscribers[key] = (event: string) => {
           subscriber(event);
           baseSubscriber(event);
         };
@@ -99,7 +99,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * When the widget emits 'cancel', propagate that event and destroy
    * the widget
    */
-  private onCancel(event: any) {
+  private onCancel(event: string) {
     this.cancel.emit(event);
     this.destroyWidget();
   }
@@ -108,7 +108,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * When the widget emits 'complete', propagate that event and destroy
    * the widget
    */
-  private onComplete(event: any) {
+  private onComplete(event: string) {
     this.complete.emit(event);
     this.destroyWidget();
   }

@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -32,7 +31,6 @@ const EYE_CLOSE_BY_GROUP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox=
   styleUrls: ['./layer-visibility-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
     MatBadgeModule,
     MatButtonModule,
     MatIconModule,
@@ -52,10 +50,10 @@ export class LayerVisibilityButtonComponent {
     svg: EYE_CLOSE_BY_GROUP_SVG
   };
   readonly layer = input.required<AnyLayer>();
-  readonly tooltip = input<string>(undefined);
-  readonly disabled = input<boolean>(undefined);
-  readonly showQueryBadge = input<boolean>(undefined);
-  readonly inResolutionsRange = input<boolean>(undefined);
+  readonly tooltip = input<string>();
+  readonly disabled = input<boolean>();
+  readonly showQueryBadge = input<boolean>();
+  readonly inResolutionsRange = input<boolean>();
 
   readonly parentDisplayed = toSignal(
     toObservable(this.layer).pipe(

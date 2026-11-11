@@ -1,13 +1,13 @@
 <igo-geometry-form-field-input
   [formControl]="formControl"
-  [map]="map"
+  [map]="map()"
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
-  [drawStyle]="drawStyle$ | async"
-  [overlayStyle]="overlayStyle$ | async"
+  [drawStyle]="$any(drawStyle$ | async)"
+  [overlayStyle]="$any(overlayStyle$ | async)"
   [radius]="radius"
   [predefinedRadius]="$any(predefinedRadius)"
 />
@@ -194,7 +194,7 @@
   <button
     matButton="elevated"
     class="remove-button"
-    [disabled]="allLayers.length === 0"
+    [disabled]="allLayers().length === 0"
     (click)="clearButton()"
   >
     {{ 'igo.geo.spatialFilter.removeLayer' | translate }}
@@ -237,7 +237,7 @@
     <igo-entity-table
       class="results-list"
       [template]="tableTemplate"
-      [store]="store"
+      [store]="$any(store)"
       (entitySelectChange)="entityChange.emit($event)"
     />
   </div>

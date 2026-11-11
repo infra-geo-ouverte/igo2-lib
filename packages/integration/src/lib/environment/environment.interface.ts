@@ -5,10 +5,7 @@ import {
   BaseEnvironmentOptions,
   EnvironmentOptions as CoreEnvironmentOptions
 } from '@igo2/core/environment';
-import {
-  EnvironmentOptions as GeoEnvironmentOptions,
-  IOfflineOptions
-} from '@igo2/geo';
+import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
 
 export type AllEnvironmentOptions = AuthEnvironmentOptions &
   CommonEnvironmentOptions &
@@ -23,7 +20,6 @@ export interface EnvironmentOptions extends BaseEnvironmentOptions {
 
 interface IntegrationEnvironmentOptions {
   app?: AppOptions;
-  hasFeatureEmphasisOnSelection?: boolean;
   saveSearchResultInLayer?: boolean;
 }
 
@@ -38,5 +34,7 @@ export interface AppOptions {
     enabled?: boolean;
     path?: string;
   };
-  offline?: IOfflineOptions;
+  offline?: {
+    enabled?: boolean;
+  };
 }

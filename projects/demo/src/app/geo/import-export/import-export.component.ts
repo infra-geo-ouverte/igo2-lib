@@ -8,8 +8,7 @@ import {
   LayerOptions,
   LayerService,
   MAP_DIRECTIVES,
-  MapViewOptions,
-  TileLayer
+  MapViewOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -55,6 +54,8 @@ export class AppImportExportComponent {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
   }
 }

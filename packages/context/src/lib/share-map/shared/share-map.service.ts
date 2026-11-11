@@ -83,16 +83,18 @@ export class ShareMapService {
   }
 
   getContext(params: Params): string | undefined {
+    const legacyKey = this.optionsLegacy.contextKey;
     return (
-      params[this.options.context] ?? params[this.optionsLegacy.contextKey]
+      params[this.options.context] ??
+      (legacyKey ? params[legacyKey] : undefined)
     );
   }
 
   getZoom(params: Params): number | undefined {
-    return this.parsePosition(params).zoom;
+    return this.parsePosition(params)?.zoom;
   }
 
-  getUrlWithApi(formValues) {
+  getUrlWithApi(formValues: Record<string, string>) {
     const loc = this.document.location;
     const origin = loc.origin;
     const pathname = loc.pathname;
@@ -112,10 +114,10 @@ export class ShareMapService {
 
     return Boolean(
       params[pos.key] ||
-      params[projectionKey] ||
-      params[rotationKey] ||
-      params[zoomKey] ||
-      params[centerKey]
+      (projectionKey && params[projectionKey]) ||
+      (rotationKey && params[rotationKey]) ||
+      (zoomKey && params[zoomKey]) ||
+      (centerKey && params[centerKey])
     );
   }
 }

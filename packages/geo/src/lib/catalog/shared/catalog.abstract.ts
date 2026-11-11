@@ -4,16 +4,17 @@ import { TimeFilterOptions } from '../../filter/shared/time-filter.interface';
 import { TooltipType } from '../../layer/shared/layers/layer.interface';
 import { QueryFormat, QueryHtmlTarget } from '../../query/shared/query.enums';
 import { TypeCatalogStrings } from './catalog.enum';
+import { ForcedProperty, ICompositeCatalog } from './catalog.interface';
 import { CatalogItem, CatalogItemGroup, ICatalog } from './catalog.interface';
 
 export abstract class Catalog implements ICatalog {
-  id: string;
-  title: string;
-  url: string;
+  id!: string;
+  title!: string;
+  url!: string;
   removable?: boolean;
   externalProvider?: boolean;
   abstract?: string;
-  forcedProperties?: any[];
+  forcedProperties?: ForcedProperty[];
   items?: CatalogItem[];
   /** Default to wms */
   type?: TypeCatalogStrings;
@@ -35,7 +36,7 @@ export abstract class Catalog implements ICatalog {
   showLegend?: boolean;
   profils?: string[];
 
-  constructor(options: Catalog) {
+  constructor(options: ICatalog | ICompositeCatalog) {
     Object.assign(this, options);
   }
 

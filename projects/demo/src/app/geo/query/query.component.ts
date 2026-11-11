@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
@@ -13,7 +13,6 @@ import {
   FeatureMotion,
   IgoMap,
   IgoQueryModule,
-  ImageLayer,
   ImageLayerOptions,
   LayerOptions,
   LayerService,
@@ -21,12 +20,13 @@ import {
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
+  Overlay,
+  OverlayService,
   QueryFormat,
   QueryHtmlTarget,
   QueryableDataSourceOptions,
   SearchResult,
   VectorLayerOptions,
-  VectorTileLayer,
   VectorTileLayerOptions
 } from '@igo2/geo';
 
@@ -55,9 +55,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     AsyncPipe
   ]
 })
-export class AppQueryComponent {
+export class AppQueryComponent implements OnInit {
   private dataSourceService = inject(DataSourceService);
   private layerService = inject(LayerService);
+  private overlayService = inject(OverlayService);
 
   public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
     []
@@ -75,17 +76,18 @@ export class AppQueryComponent {
     center: [-73, 47.2],
     zoom: 6
   };
+  public queryResultsOverlayAll!: Overlay;
 
   constructor() {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       } satisfies OSMDataSourceOptions)
-      .subscribe((dataSource: OSMDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource,
+            source: dataSource as OSMDataSource,
             baseLayer: true,
             visible: true
           } satisfies LayerOptions)
@@ -153,7 +155,9 @@ export class AppQueryComponent {
           }
         }
       } as ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -164,14 +168,14 @@ export class AppQueryComponent {
           { name: 'description', alias: 'Alias description' }
         ]
       } as FeatureDataSourceOptions)
-      .subscribe((dataSource: FeatureDataSource) => {
+      .subscribe((dataSource) => {
         this.map.layerController.add(
           this.layerService.createLayer({
             title: 'Vector layer',
-            source: dataSource
+            source: dataSource as FeatureDataSource
           } satisfies VectorLayerOptions)
         );
-        this.addFeatures(dataSource);
+        this.addFeatures(dataSource as FeatureDataSource);
       });
 
     this.layerService
@@ -190,14 +194,20 @@ export class AppQueryComponent {
           ],
           queryLayerFeatures: false
         },
-        mapboxStyle: {
-          url: 'mapboxStyleExample-vectortile.json',
-          source: 'ahocevar'
+        style: {
+          type: 'Mapbox',
+          style: {
+            url: 'mapboxStyleExample-vectortile.json',
+            source: 'ahocevar'
+          }
         }
       } as VectorTileLayerOptions)
-      .subscribe((layer: VectorTileLayer) =>
-        this.map.layerController.add(layer)
-      );
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
+  }
+  ngOnInit(): void {
+    this.queryResultsOverlayAll = this.overlayService.create(this.map);
   }
 
   addFeatures(dataSource: FeatureDataSource): void {
@@ -235,7 +245,7 @@ export class AppQueryComponent {
     const features: Feature[] = results.features;
     if (features.length && features[0]) {
       this.features$.next(features);
-      this.map.queryResultsOverlay.setFeatures(features, FeatureMotion.None);
+      this.queryResultsOverlayAll.setFeatures(features, FeatureMotion.None);
     }
   }
 

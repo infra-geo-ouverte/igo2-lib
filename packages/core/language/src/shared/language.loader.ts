@@ -16,12 +16,16 @@ import {
   tap
 } from 'rxjs';
 
-import { LanguageLoaderBase, LanguageOptions } from './language.interface';
+import {
+  LanguageLoaderBase,
+  LanguageOptions,
+  TranslationObject
+} from './language.interface';
 
 export class LanguageLoader implements LanguageLoaderBase {
   private httpClient: HttpClient;
 
-  private _isLoaded$ = new BehaviorSubject<boolean>(null);
+  private _isLoaded$ = new BehaviorSubject(false);
   isLoaded$ = this._isLoaded$.asObservable();
 
   suffix = '.json';
@@ -46,8 +50,10 @@ export class LanguageLoader implements LanguageLoaderBase {
     return origin.endsWith('/') ? origin : origin + '/';
   }
 
-  public getTranslation(lang: string): Observable<any> {
-    const igoLocale$ = this.httpClient.get(
+  public getTranslation(
+    lang: string
+  ): Observable<TranslationObject | undefined> {
+    const igoLocale$ = this.httpClient.get<Record<string, unknown>>(
       `${this.baseUrl}locale/libs_locale/${lang}.json`
     );
     if (!this.prefix) {
@@ -61,7 +67,9 @@ export class LanguageLoader implements LanguageLoaderBase {
     }
 
     const appLocale$ = (this.prefix as string[]).map((prefix) =>
-      this.httpClient.get(`${this.baseUrl}${prefix}${lang}${this.suffix}`)
+      this.httpClient.get<Record<string, unknown>>(
+        `${this.baseUrl}${prefix}${lang}${this.suffix}`
+      )
     );
 
     const locale$ = [...appLocale$];
@@ -91,7 +99,7 @@ export class LanguageLoaderWithAsyncConfig extends LanguageLoader {
     prefix?: string | string[],
     suffix = '.json'
   ) {
-    super(handler, undefined);
+    super(handler, {});
     this.prefix = prefix;
     this.suffix = suffix;
   }

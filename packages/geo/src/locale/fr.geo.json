@@ -24,7 +24,7 @@
         "library.cancel": "Annuler",
         "library.add": "Ajouter le catalogue",
         "library.predefined": "Liste prédéfinie",
-        "library.custom": "Configuration avancées",
+        "library.custom": "Configuration avancée",
         "library.remove": "Retirer ce catalogue de la liste",
         "library.inlist": {
           "title": "Catalogue déjà contenu",
@@ -240,6 +240,10 @@
           "rename": "Renommer le groupe",
           "moreOptions": "Outils du groupe",
           "remove": "Retirer le groupe de la carte",
+          "removeDialog": {
+            "group": "Êtes-vous certain de vouloir retirer le groupe de couche de la carte?",
+            "many": "Êtes-vous certain de vouloir retirer tous les éléments sélectionnés de la carte?"
+          },
           "hide": "Masquer le groupe",
           "hideChildren": "Couche masquée par un groupe",
           "show": "Afficher le groupe"
@@ -313,6 +317,9 @@
         "cancel": "Annuler",
         "fill": "Remplissage",
         "stroke": "Contour",
+        "strokeWidth": "Épaisseur du contour",
+        "label": "Étiquette",
+        "radius": "Rayon",
         "fontSize": "Taille de police",
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
@@ -388,7 +395,7 @@
         "buttons": {
           "copyDirections": "Copier l'itinéraire dans le presse-papier",
           "copyLink": "Copier le lien dans le presse-papier",
-          "downloadDirections": "Télécharger l'itinéraire",
+          "printDirections": "Imprimer l'itinéraire",
           "message": {
             "copyDirections": "Itinéraire copié dans le presse papier",
             "copyLink": "Lien copié dans le presse papier"
@@ -471,6 +478,8 @@
             }
           },
           "routeOptions": "Choix d'itinéraires",
+          "routingSource": "Source d'itinéraire",
+          "routingSourceTooltip": "Changer de source recalcule immédiatement l'itinéraire",
           "stepTitleTooltip": "Cadrer sur le lieu"
         },
         "toggle": {

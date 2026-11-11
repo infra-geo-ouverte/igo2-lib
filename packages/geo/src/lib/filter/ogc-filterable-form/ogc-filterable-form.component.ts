@@ -30,19 +30,19 @@ import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
   ]
 })
 export class OgcFilterableFormComponent {
-  readonly datasource = input<OgcFilterableDataSource>(undefined);
+  readonly datasource = input<OgcFilterableDataSource>();
 
-  readonly map = input<MapBase>(undefined);
+  readonly map = input<MapBase>();
 
-  readonly refreshFilters = input<() => void>(undefined);
+  readonly refreshFilters = input<() => void>();
 
   get refreshFunc() {
     return this.refreshFilters();
   }
 
-  get advancedOgcFilters(): boolean {
+  get advancedOgcFilters(): boolean | undefined {
     const datasource = this.datasource();
-    if (datasource.options.ogcFilters) {
+    if (datasource?.options.ogcFilters) {
       return datasource.options.ogcFilters.advancedOgcFilters;
     }
     return;
@@ -50,7 +50,7 @@ export class OgcFilterableFormComponent {
 
   get currentFilter(): any {
     const datasource = this.datasource();
-    return datasource.options.ogcFilters.interfaceOgcFilters
+    return datasource?.options.ogcFilters?.interfaceOgcFilters
       ? datasource.options.ogcFilters.interfaceOgcFilters[0]
       : undefined;
   }

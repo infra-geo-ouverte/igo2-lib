@@ -10,7 +10,7 @@ import { StorageOptions } from './storage.interface';
 })
 export class StorageService extends BaseStorage<StorageOptions> {
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     super(config);
   }
 }

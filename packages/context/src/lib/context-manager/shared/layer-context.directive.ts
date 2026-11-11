@@ -13,8 +13,6 @@ import {
   ID_GROUP_PREFIX,
   LayerService,
   MapBrowserComponent,
-  StyleListService,
-  StyleService,
   isLayerGroupOptions,
   mergeLayersOptions,
   sortLayersByZindex
@@ -25,10 +23,7 @@ import { ObjectUtils, uuid } from '@igo2/utils';
 import { Subscription } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
-import {
-  addImportedFeaturesStyledToMap,
-  addImportedFeaturesToMap
-} from '../../context-import-export/shared/context-import.utils';
+import { addImportedFeaturesToMap } from '../../context-import-export/shared/context-import.utils';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
@@ -41,12 +36,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private contextService = inject(ContextService);
   private layerService = inject(LayerService);
   private configService = inject(ConfigService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private shareMapService = inject(ShareMapService);
 
-  private context$$: Subscription;
-  private queryParams: Params;
+  private context$$!: Subscription;
+  private queryParams!: Params;
 
   private contextLayers: AnyLayer[] = [];
 
@@ -72,7 +65,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.context$$.unsubscribe();
+    this.context$$?.unsubscribe();
   }
 
   private handleContextChange(context: DetailedContext) {
@@ -99,9 +92,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
     this.contextLayers = [];
     this.layerService.unavailableLayers = [];
-
-    const importExportOptions = this.configService.getConfig('importExport');
-
     this.layerService
       .createLayers(contextLayers, context.uri)
       .subscribe((layers) => {
@@ -109,16 +99,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            if (!importExportOptions?.importWithStyle) {
-              addImportedFeaturesToMap(featureCollection, this.map);
-            } else {
-              addImportedFeaturesStyledToMap(
-                featureCollection,
-                this.map,
-                this.styleListService,
-                this.styleService
-              );
-            }
+            addImportedFeaturesToMap(
+              featureCollection,
+              this.map,
+              this.layerService
+            );
           });
         }
 
@@ -126,7 +111,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       });
     if (this.configService.getConfig('importExport.allowToStoreLayer', false)) {
       this.layerService
-        .createAsyncIdbLayers(context.uri)
+        .createAsyncOfflineLayers(context.uri)
         .pipe(debounceTime(500))
         .subscribe((layers) => this.handleAddLayers(layers));
     }
@@ -134,7 +119,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private handleAddLayers(layers: (AnyLayer | undefined)[]) {
     const layersFiltrered = layers
-      .filter((layer) => layer)
+      .filter((layer): layer is AnyLayer => !!layer)
       .map((layer) => {
         layer.visible = this.computeLayerVisibilityFromUrl(layer);
         return layer;
@@ -147,7 +132,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private computeLayerVisibilityFromUrl(layer: AnyLayer): boolean {
     const params = this.queryParams;
-    const currentContext = this.contextService.context$.value.uri;
+    const currentContext = this.contextService.context$.value?.uri;
     const currentLayerid = layer.id;
 
     let visible = layer.visible;
@@ -159,13 +144,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
-      let visiblelayers: LayerId[] = [];
-      let invisiblelayers: LayerId[] = [];
       const visibleOnLayers =
-        params[this.shareMapService.routeService.options.visibleOnLayersKey];
+        params[this.shareMapService.routeService.options.visibleOnLayersKey!];
 
       const visibleOffLayers =
-        params[this.shareMapService.routeService.options.visibleOffLayersKey];
+        params[this.shareMapService.routeService.options.visibleOffLayersKey!];
 
       if (visibleOnLayers) {
         visibleOnLayersParams = visibleOnLayers;
@@ -184,8 +167,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       }
 
       // After, managing named layer by id (context.json OR id from datasource)
-      visiblelayers = visibleOnLayersParams.split(',');
-      invisiblelayers = visibleOffLayersParams.split(',');
+      const visiblelayers: LayerId[] = visibleOnLayersParams.split(',');
+      const invisiblelayers: LayerId[] = visibleOffLayersParams.split(',');
       if (
         visiblelayers.indexOf(currentLayerid) > -1 ||
         visiblelayers.indexOf(currentLayerid.toString()) > -1
@@ -207,7 +190,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     context: DetailedContext
   ): AnyLayerOptions[] {
     if (!this.queryParams) {
-      return context.layers;
+      return context.layers ?? [];
     }
 
     const { layers, uri } = context;
@@ -215,11 +198,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     if (!contextValue || contextValue === uri) {
       const layersOptions = this.shareMapService.parseLayers(this.queryParams);
-      if (layersOptions.length) {
-        return mergeLayersOptions([...layers], layersOptions);
+      if (layersOptions && layersOptions.length) {
+        return mergeLayersOptions([...(layers ?? [])], layersOptions);
       }
     }
-    return layers;
+    return layers ?? [];
   }
 }
 

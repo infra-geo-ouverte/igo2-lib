@@ -1,9 +1,7 @@
-import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -23,7 +21,10 @@ import { ListItemDirective } from './list-item.directive';
   selector: 'igo-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  imports: [MatListModule, ClickoutDirective, NgClass]
+  imports: [MatListModule, ClickoutDirective],
+  host: {
+    '(document:keydown)': 'handleKeyboardEvent($event)'
+  }
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private el = inject(ElementRef);
@@ -41,7 +42,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   get selection() {
     return this._selection;
   }
-  set selection(value: boolean) {
+  set selection(value) {
     this._selection = value;
   }
   private _selection = true;
@@ -49,21 +50,21 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   get selectedItem() {
     return this._selectedItem;
   }
-  set selectedItem(value: ListItemDirective) {
+  set selectedItem(value) {
     this.focusedItem = value;
     this._selectedItem = value;
   }
-  private _selectedItem: ListItemDirective;
+  private _selectedItem?: ListItemDirective;
 
   get focusedItem() {
     return this._focusedItem;
   }
-  set focusedItem(value: ListItemDirective) {
+  set focusedItem(value) {
     this._focusedItem = value;
   }
-  private _focusedItem: ListItemDirective;
+  private _focusedItem?: ListItemDirective;
 
-  private navigationEnabled: boolean;
+  private navigationEnabled = true;
   // Accept both rxjs Subscription and Angular signal OutputRefSubscription
   private subscriptions: { unsubscribe: () => void }[] = [];
   private listItemsEffect = effect(() => {
@@ -75,8 +76,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     descendants: true
   });
 
-  @HostListener('document:keydown', ['$event'])
-  @HostListener('document:enter', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     // It would be nice to be able to unsubscribe to the event
     // completely but until ES7 this won't be possible because
@@ -86,7 +85,9 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
         event.preventDefault();
         this.navigate(event.key);
       } else if (event.key === 'Enter') {
-        this.select(this.focusedItem);
+        if (this.focusedItem) {
+          this.select(this.focusedItem);
+        }
       }
     }
   }
@@ -106,7 +107,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribe();
     if (this.listItemsEffect) {
       this.listItemsEffect.destroy();
-      this.listItemsEffect = undefined;
     }
   }
 
@@ -134,7 +134,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   focusNext() {
     const items = this.listItems();
-    let item;
+    let item: ListItemDirective | undefined;
     const igoList = this.el.nativeElement;
     let disabled = true;
     let index = this.getFocusedIndex();
@@ -145,7 +145,9 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     while (disabled && index < items.length - 1) {
       index += 1;
       item = items[index];
-      disabled = item.disabled;
+      if (item) {
+        disabled = item.disabled;
+      }
     }
 
     if (item !== undefined) {
@@ -167,7 +169,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   focusPrevious() {
     const items = this.listItems();
-    let item: ListItemDirective;
+    let item: ListItemDirective | undefined;
     const igoList = this.el.nativeElement;
     let disabled = true;
     let index = this.getFocusedIndex();
@@ -175,14 +177,16 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     while (disabled && index > 0) {
       index -= 1;
       item = items[index];
-      disabled = item.disabled;
+      if (item) {
+        disabled = item.disabled;
+      }
     }
 
     if (item !== undefined) {
       this.focus(item);
     }
 
-    if (!items[index - 1]) {
+    if (index > 0 && !items[index - 1]) {
       igoList.scrollTop = 0;
       return;
     }
@@ -229,13 +233,13 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.el.nativeElement.scrollTop = item.getOffsetTop();
   }
 
-  isScrolledIntoView(elem) {
+  isScrolledIntoView(elem: HTMLElement) {
     const docViewTop =
       this.el.nativeElement.scrollTop + this.el.nativeElement.offsetTop;
     const docViewBottom = docViewTop + this.el.nativeElement.clientHeight;
 
     const elemTop = elem.offsetTop;
-    const elemBottom = elemTop + elem.children[0].offsetHeight;
+    const elemBottom = elemTop + (elem.children[0] as HTMLElement).offsetHeight;
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
   }
 

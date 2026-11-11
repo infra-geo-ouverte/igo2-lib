@@ -21,9 +21,9 @@ const SRC_PATH =
   ]
 })
 export class ExampleViewerComponent {
-  readonly title = input<string>(undefined);
-  readonly codeFolder = input<string>(undefined);
-  readonly configFolder = input<string>(undefined);
+  readonly title = input<string>();
+  readonly codeFolder = input<string>();
+  readonly configFolder = input<string>();
 
   get codeUrl() {
     return `${SRC_PATH}/app/${this.codeFolder()}`;

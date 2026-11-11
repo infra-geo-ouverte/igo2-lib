@@ -1,18 +1,11 @@
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localeEnCa from '@angular/common/locales/en-CA';
 import localeFrCa from '@angular/common/locales/fr-CA';
-import { LOCALE_ID, Renderer2 } from '@angular/core';
+import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TimeFrame } from '@igo2/utils';
 
-import { mergeTestConfig } from '../../test-config';
 import { DatepickerComponent } from './datepicker.component';
 
 describe('DatepickerComponent', () => {
@@ -23,25 +16,10 @@ describe('DatepickerComponent', () => {
     registerLocaleData(localeFrCa);
     registerLocaleData(localeEnCa);
 
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [
-          FormsModule,
-          DatepickerComponent,
-          ReactiveFormsModule,
-          MatDatepickerModule,
-          MatNativeDateModule,
-          MatFormFieldModule,
-          MatInputModule,
-          BrowserAnimationsModule
-        ],
-        providers: [
-          DatePipe,
-          Renderer2,
-          { provide: LOCALE_ID, useValue: 'fr-CA' }
-        ]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [DatepickerComponent],
+      providers: [{ provide: LOCALE_ID, useValue: 'fr-CA' }]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DatepickerComponent);
     component = fixture.componentInstance;

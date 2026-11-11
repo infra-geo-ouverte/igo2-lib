@@ -25,12 +25,12 @@ export class FormGroupComponent {
   /**
    * Form field group
    */
-  readonly group = input<FormFieldGroup>(undefined);
+  readonly group = input.required<FormFieldGroup>();
 
   /**
    * Field placeholder
    */
-  readonly errors = input<Record<string, string>>(undefined);
+  readonly errors = input<Record<string, string>>();
 
   /**
    * Form group control

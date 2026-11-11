@@ -5,25 +5,18 @@ import {
   Input,
   Renderer2,
   inject,
+  input,
   output
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoCollapse]',
-  standalone: true
+  selector: '[igoCollapse]'
 })
 export class CollapseDirective {
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
 
-  @Input()
-  get target() {
-    return this._target;
-  }
-  set target(value: Element) {
-    this._target = value;
-  }
-  private _target: Element;
+  target = input<Element>();
 
   @Input()
   get collapsed(): boolean {
@@ -44,12 +37,12 @@ export class CollapseDirective {
   }
 
   private collapseTarget() {
-    this.renderer.addClass(this.target, 'igo-collapsed');
+    this.renderer.addClass(this.target(), 'igo-collapsed');
     this.renderer.addClass(this.el.nativeElement, 'collapsed');
   }
 
   private expandTarget() {
-    this.renderer.removeClass(this.target, 'igo-collapsed');
+    this.renderer.removeClass(this.target(), 'igo-collapsed');
     this.renderer.removeClass(this.el.nativeElement, 'collapsed');
   }
 }

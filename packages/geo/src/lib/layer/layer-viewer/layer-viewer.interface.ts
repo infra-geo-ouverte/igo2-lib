@@ -16,7 +16,7 @@ export interface LayerViewerOptions extends LayerConfig {
   filterAndSortOptions?: LayerListControlsOptions;
 }
 
-interface ViewerLegendOptions {
+export interface ViewerLegendOptions {
   showOnVisibilityChange: boolean;
   updateOnResolutionChange: boolean;
   showForVisibleLayers: boolean;

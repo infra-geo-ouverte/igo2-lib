@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import {
   FormsModule,
@@ -54,11 +55,9 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   private cdRef = inject(ChangeDetectorRef);
-  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(
-    undefined
-  );
+  readonly value$ = new BehaviorSubject<GeoJSONGeometry | undefined>(undefined);
 
-  private value$$: Subscription;
+  private value$$!: Subscription;
 
   set drawControlIsActive(value: boolean) {
     this._drawControlIsActive = value;
@@ -83,38 +82,36 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * The field's form control
    */
-  @Input() formControl: UntypedFormControl;
+  readonly formControl = input<UntypedFormControl>();
 
   /**
    * The map to draw the geometry on
    */
-  @Input() map: IgoMap;
+  readonly map = input.required<IgoMap>();
 
   @Input()
   set geometryType(value: Type) {
     this.geometryType$.next(value);
   }
   get geometryType(): Type {
-    return this.geometryType$.value;
+    return this.geometryType$.value!;
   }
-  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(
-    undefined
-  );
+  readonly geometryType$ = new BehaviorSubject<Type | undefined>(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
    */
-  @Input() geometryTypeField: boolean = false;
+  readonly geometryTypeField = input<boolean>(false);
 
   /**
    * Available geometry types
    */
-  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
+  readonly geometryTypes = input<string[]>(['Point', 'LineString', 'Polygon']);
 
   /**
    * Whether a draw guide field should be displayed
    */
-  @Input() drawGuideField: boolean = false;
+  readonly drawGuideField = input<boolean>(false);
 
   /**
    * The drawGuide around the mouse pointer to help drawing
@@ -131,38 +128,39 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Draw guide placeholder
    */
-  @Input() drawGuidePlaceholder: string = '';
+  readonly drawGuidePlaceholder = input<string>('');
 
   /**
    * Whether a measure tooltip should be displayed
    */
-  @Input() measure: boolean = false;
+  readonly measure = input<boolean>(false);
 
   /**
    * Control options
    */
-  @Input() controlOptions: { [key: string]: any } = {};
+  readonly controlOptions = input<{
+    [key: string]: any;
+  }>({});
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() drawStyle: OlStyleLike;
+  readonly drawStyle = input<OlStyleLike>();
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyleLike;
+  readonly overlayStyle = input<OlStyleLike>();
 
   /**
    * Set up a value stream
    * @internal
    */
   ngOnInit() {
-    this.value$.next(
-      this.formControl.value ? this.formControl.value : undefined
-    );
-    this.value$$ = this.formControl.valueChanges.subscribe(
+    const formControl = this.formControl()!;
+    this.value$.next(formControl.value ? formControl.value : undefined);
+    this.value$$ = formControl.valueChanges.subscribe(
       (value: GeoJSONGeometry) => {
         this.value$.next(value ? value : undefined);
       }

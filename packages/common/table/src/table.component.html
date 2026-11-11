@@ -12,7 +12,7 @@
   }
 
   <div class="table-container">
-    <table mat-table #table [dataSource]="dataSource" matSort>
+    <table mat-table #table [dataSource]="dataSource()" matSort>
       <!-- Checkbox Column -->
       <ng-container matColumnDef="selectionCheckbox">
         <th mat-header-cell *matHeaderCellDef>
@@ -46,9 +46,7 @@
               mat-cell
               *matCellDef="let row"
               class="mat-cell-text"
-              [ngClass]="
-                model().cellClassFunc ? model().cellClassFunc(row, column) : {}
-              "
+              [ngClass]="model().cellClassFunc?.(row, column)"
             >
               {{ getValue(row, column.name) }}
             </td>
@@ -57,9 +55,7 @@
               mat-cell
               *matCellDef="let row"
               class="mat-cell-text"
-              [ngClass]="
-                model().cellClassFunc ? model().cellClassFunc(row, column) : {}
-              "
+              [ngClass]="model().cellClassFunc?.(row, column)"
               [innerHTML]="getValue(row, column.name)"
             ></td>
           }
@@ -73,7 +69,7 @@
           @for (action of model().actions; track action) {
             <button
               mat-mini-fab
-              [color]="getActionColor(action.color)"
+              [color]="getActionColor(action.color!)"
               (click)="handleClickAction($event, action, row)"
             >
               <mat-icon>{{ action.icon }}</mat-icon>
@@ -82,11 +78,11 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
       <tr
         mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        [ngClass]="model().rowClassFunc ? model().rowClassFunc(row) : {}"
+        *matRowDef="let row; columns: displayedColumns()"
+        [ngClass]="model().rowClassFunc?.(row)"
         (click)="selection.toggle(row)"
       ></tr>
     </table>

@@ -55,27 +55,27 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   showLegend = signal(true);
   inResolutionRange = true;
   queryBadgeHidden = signal(true);
-  tooltipText: string;
-  state: ConnectionState;
+  tooltipText!: string;
+  state!: ConnectionState;
 
-  private resolution$$: Subscription;
-  private network$$: Subscription;
+  private resolution$$!: Subscription;
+  private network$$!: Subscription;
 
   readonly layer = input.required<Layer>();
 
   /** Pass the visibility to trigger change detection */
   readonly visible = input.required<boolean>();
 
-  readonly selected = input<boolean>(undefined);
-  readonly selectionDisabled = input<boolean>(undefined);
+  readonly selected = input<boolean>();
+  readonly selectionDisabled = input<boolean>();
 
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>();
 
   readonly action = output<Layer>();
   readonly selectChange = output<boolean>();
   readonly visibilityChange = output<Event>();
 
-  @HostBinding('class.disabled') isDisabled: boolean;
+  @HostBinding('class.disabled') isDisabled!: boolean;
 
   get opacity() {
     return this.layer().opacity * 100;
@@ -85,7 +85,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   get visibilityTooltip() {
-    if (this.viewerOptions().mode !== 'selection' && !this.inResolutionRange) {
+    if (this.viewerOptions()?.mode !== 'selection' && !this.inResolutionRange) {
       return this.layer().visible
         ? this.isDisabled
           ? 'igo.geo.layer.notInResolution'
@@ -116,7 +116,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.toggleLegend(layer.legendCollapsed);
     this.updateQueryBadge();
 
-    const resolution$ = layer.map.viewController.resolution$;
+    const resolution$ = layer.map!.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
       this.onResolutionChange();
     });
@@ -147,7 +147,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   handleVisibilityChange(event: Event) {
     event.stopPropagation();
 
-    if (this.viewerOptions().legend?.showOnVisibilityChange) {
+    if (this.viewerOptions()?.legend?.showOnVisibilityChange) {
       this.toggleLegend(!this.layer().visible);
     }
     this.updateQueryBadge();
@@ -158,27 +158,27 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   computeTooltip(): string {
     const layerOptions = this.layer().options;
     if (!layerOptions.tooltip) {
-      return this.layer().title;
+      return this.layer().title ?? '';
     }
     const layerTooltip = layerOptions.tooltip;
     const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
     switch (layerOptions.tooltip.type) {
       case TooltipType.TITLE:
-        return this.layer().title;
+        return this.layer().title ?? '';
       case TooltipType.ABSTRACT:
         if (layerMetadata && layerMetadata.abstract) {
           return layerMetadata.abstract;
         } else {
-          return this.layer().title;
+          return this.layer().title ?? '';
         }
       case TooltipType.CUSTOM:
         if (layerTooltip && layerTooltip.text) {
           return layerTooltip.text;
         } else {
-          return this.layer().title;
+          return this.layer().title ?? '';
         }
       default:
-        return this.layer().title;
+        return this.layer().title ?? '';
     }
   }
 
@@ -186,7 +186,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     const inResolutionRange = this.layer().isInResolutionsRange;
     if (
       inResolutionRange === false &&
-      this.viewerOptions().legend.updateOnResolutionChange === true
+      this.viewerOptions()?.legend?.updateOnResolutionChange === true
     ) {
       this.toggleLegend(true);
     }
@@ -196,7 +196,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   private updateQueryBadge() {
     const layer = this.layer();
     const hidden =
-      this.viewerOptions().queryBadge === false ||
+      this.viewerOptions()?.queryBadge === false ||
       layer.visible === false ||
       !layerIsQueryable(layer);
     this.queryBadgeHidden.set(hidden);

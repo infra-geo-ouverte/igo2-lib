@@ -1,12 +1,18 @@
 import { Provider } from '@angular/core';
 
 import {
+  ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS,
+  ICHERCHE_SEARCH_SOURCE_OPTIONS,
   IChercheReverseSearchSource,
   IChercheSearchResultFormatter,
   IChercheSearchSource
 } from './icherche';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * ICherche search result formatter factory
@@ -45,12 +51,17 @@ export function provideIChercheSearchSource(): Provider {
   };
 }
 
-export function withIChercheSource(): SearchSourceFeature<SearchSourceKind.ICherche> {
+export function withIChercheSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.ICherche> {
   return {
     kind: SearchSourceKind.ICherche,
     providers: [
       provideIChercheSearchSource(),
-      provideDefaultIChercheSearchResultFormatter()
+      provideDefaultIChercheSearchResultFormatter(),
+      ...(options
+        ? [{ provide: ICHERCHE_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
     ]
   };
 }
@@ -74,12 +85,22 @@ export function provideIChercheReverseSearchSource() {
   };
 }
 
-export function withIChercheReverseSource(): SearchSourceFeature<SearchSourceKind.IChercheReverse> {
+export function withIChercheReverseSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.IChercheReverse> {
   return {
     kind: SearchSourceKind.IChercheReverse,
     providers: [
       provideIChercheReverseSearchSource(),
-      provideDefaultIChercheSearchResultFormatter()
+      provideDefaultIChercheSearchResultFormatter(),
+      ...(options
+        ? [
+            {
+              provide: ICHERCHE_REVERSE_SEARCH_SOURCE_OPTIONS,
+              useValue: options
+            }
+          ]
+        : [])
     ]
   };
 }

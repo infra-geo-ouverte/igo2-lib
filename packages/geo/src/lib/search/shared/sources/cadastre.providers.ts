@@ -1,6 +1,13 @@
-import { CadastreSearchSource } from './cadastre';
+import {
+  CADASTRE_SEARCH_SOURCE_OPTIONS,
+  CadastreSearchSource
+} from './cadastre';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * Cadastre search source factory
@@ -12,6 +19,7 @@ export function cadastreSearchSourceFactory() {
 
 /**
  * Function that returns a provider for the Cadastre search source
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+. As an alternative, provide iCherche. Within icherche, you could use the "cadastre type"
  */
 export function provideCadastreSearchSource() {
   return {
@@ -21,9 +29,19 @@ export function provideCadastreSearchSource() {
   };
 }
 
-export function withCadastreSource(): SearchSourceFeature<SearchSourceKind.Cadastre> {
+/**
+ * @deprecated This search source is deprecated and will be removed in a future major version, likely in 23.x+.
+ */
+export function withCadastreSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.Cadastre> {
   return {
     kind: SearchSourceKind.Cadastre,
-    providers: [provideCadastreSearchSource()]
+    providers: [
+      provideCadastreSearchSource(),
+      ...(options
+        ? [{ provide: CADASTRE_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
+    ]
   };
 }

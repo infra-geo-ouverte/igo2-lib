@@ -14,10 +14,11 @@ export class DOMService {
 
   async getDomValuesFromURL(domOptions: DOMOptions): Promise<DOMValue[]> {
     const url = domOptions.url;
-    let result: DOMValue[];
+    if (!url) return [];
+    let result: DOMValue[] = [];
 
     await this.http
-      .get<any>(url)
+      .get<DOMValue[]>(url)
       .pipe(
         map((response) => {
           result = response;

@@ -10,7 +10,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  inject
+  inject,
+  input,
+  model
 } from '@angular/core';
 import {
   FormsModule,
@@ -40,6 +42,7 @@ import {
 import { LanguageService } from '@igo2/core/language';
 import { IgoLanguageModule } from '@igo2/core/language';
 import { MessageService } from '@igo2/core/message';
+import { uuid } from '@igo2/utils';
 
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -55,7 +58,7 @@ import { GeometryType } from '../../../draw';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { AnyLayer, VectorLayer } from '../../../layer/shared';
+import { AnyLayer, LayerService, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
@@ -101,8 +104,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private spatialFilterService = inject(SpatialFilterService);
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
+  private layerService = inject(LayerService);
 
-  @Input({ required: true }) map: IgoMap;
+  readonly map = input.required<IgoMap>();
 
   @Input()
   get type(): SpatialFilterType {
@@ -118,6 +122,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.radius = undefined;
     this.drawGuide$.next(null);
     this.drawStyle$.next(undefined);
+    this.overlayStyle$.next(undefined);
 
     // Necessary to keep reference to the geometry form field input
     if (this.type === SpatialFilterType.Predefined) {
@@ -139,13 +144,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(
           geom.getCoordinates(),
-          this.map.projection,
+          this.map().projectionCode,
           'EPSG:4326'
         );
         return new olStyle.Style({
           image: new olStyle.Circle({
             radius:
-              this.radius /
+              this.radius! /
               Math.cos((Math.PI / 180) * coordinates[1]) /
               resolution, // Latitude correction
             stroke: new olStyle.Stroke({
@@ -201,13 +206,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
-  private _type: SpatialFilterType;
+  private _type!: SpatialFilterType;
 
-  @Input() queryType: SpatialFilterQueryType;
+  readonly queryType = input<SpatialFilterQueryType>();
 
-  @Input() zones: Feature[];
+  readonly zones = input<Feature[]>();
 
-  @Input() loading;
+  readonly loading = model<boolean>();
 
   @Input({ required: true })
   get store(): EntityStore<Feature> {
@@ -219,7 +224,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.cdRef.detectChanges();
     });
   }
-  private _store: EntityStore<Feature>;
+  private _store!: EntityStore<Feature>;
 
   /**
    * Available measure units for the measure type given
@@ -229,9 +234,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: AnyLayer[] = [];
+  readonly layers = input<AnyLayer[]>([]);
 
-  @Input() allLayers: AnyLayer[] = [];
+  readonly allLayers = input<AnyLayer[]>([]);
 
   @Input()
   get thematicLength(): number {
@@ -240,7 +245,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   set thematicLength(value: number) {
     this._thematicLength = value;
   }
-  private _thematicLength: number;
+  private _thematicLength!: number;
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -269,7 +274,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public selectedItemType: SpatialFilterItemType =
     SpatialFilterItemType.Thematics;
-  public selectedSourceAddress;
+  public selectedSourceAddress?: string;
 
   treeControl: NestedTreeControl<SpatialFilterThematic> =
     new NestedTreeControl<SpatialFilterThematic>((node) => node.children);
@@ -286,48 +291,64 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   );
 
   // For geometry form field input
-  value$ = new BehaviorSubject<GeoJSONGeometry>(undefined);
-  drawGuide$ = new BehaviorSubject<number>(null);
+
+  value$ = new BehaviorSubject<GeoJSONGeometry | undefined>(undefined);
+  drawGuide$ = new BehaviorSubject<number | null>(null);
+
   overlayStyle$ = new BehaviorSubject<
-    olStyle.Style | ((feature, resolution) => olStyle.Style)
-  >(undefined);
-  drawStyle$ = new BehaviorSubject<
-    olStyle.Style | ((feature, resolution) => olStyle.Style)
+    | olStyle.Style
+    | ((feature: any, resolution: any) => olStyle.Style)
+    | undefined
   >(undefined);
 
-  private value$$: Subscription;
-  private radiusChanges$$: Subscription;
-  private bufferChanges$$: Subscription;
+  drawStyle$ = new BehaviorSubject<
+    | olStyle.Style
+    | ((feature: any, resolution: any) => olStyle.Style)
+    | undefined
+  >(undefined);
+
+  private value$$!: Subscription;
+  private radiusChanges$$!: Subscription;
+  private bufferChanges$$!: Subscription;
 
   public formControl = new UntypedFormControl();
-  public geometryType: GeometryType;
+  public geometryType!: GeometryType;
   public geometryTypeField = false;
   public geometryTypes: GeometryType[] = [
     GeometryType.Point,
     GeometryType.Polygon
   ];
   public drawGuideField = false;
-  public drawGuide: number = null;
+  public drawGuide: number | null = null;
   public drawGuidePlaceholder = '';
   public measure = false;
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
-  public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
-  public drawZone: Feature;
-  public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
-  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
-  public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
-  public radius: number;
+  public drawStyle!:
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
+  public drawZone?: Feature;
+
+  public overlayStyle!:
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
+
+  public PointStyle!:
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
+
+  public PolyStyle!:
+    olStyle.Style | ((feature: any, resolution: any) => olStyle.Style);
+
+  public radius?: number;
   public buffer = 0;
   public radiusFormControl = new UntypedFormControl();
   public bufferFormControl = new UntypedFormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-  public zoneWithBuffer;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public zoneWithBuffer: any;
 
   public listIsVisible = true;
-  public tableTemplate: EntityTableTemplate;
+  public tableTemplate?: EntityTableTemplate;
 
   ngOnInit() {
     this.spatialFilterService
@@ -429,7 +450,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.thematics.forEach((thematic) => {
           for (const child of this.childrens) {
             if (child.group === thematic.name) {
-              thematic.children.push(child);
+              thematic.children!.push(child);
             }
           }
         });
@@ -453,7 +474,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           }
         } else {
           this.value$.next(undefined);
-          this.drawZone = undefined;
+          this.drawZone = undefined as unknown as Feature;
         }
       }
     );
@@ -478,12 +499,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         ) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.spatialFilterService
-            .loadBufferGeometry(this.drawZone, SpatialFilterType.Polygon, value)
-            .subscribe((featureGeom: Feature) => {
-              this.zoneWithBuffer = featureGeom;
-              this.zonesWithBufferChange.emit(this.zoneWithBuffer);
-            });
+          if (this.drawZone) {
+            this.spatialFilterService
+              .loadBufferGeometry(
+                this.drawZone,
+                SpatialFilterType.Polygon,
+                value
+              )
+              .subscribe((featureGeom: Feature) => {
+                this.zoneWithBuffer = featureGeom;
+                this.zonesWithBufferChange.emit(this.zoneWithBuffer);
+              });
+          }
         } else if (
           this.measureUnit === MeasureLengthUnit.Kilometers &&
           value > 0 &&
@@ -491,16 +518,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         ) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.spatialFilterService
-            .loadBufferGeometry(
-              this.drawZone,
-              SpatialFilterType.Polygon,
-              value * 1000
-            )
-            .subscribe((featureGeom: Feature) => {
-              this.zoneWithBuffer = featureGeom;
-              this.zonesWithBufferChange.emit(this.zoneWithBuffer);
-            });
+          if (this.drawZone) {
+            this.spatialFilterService
+              .loadBufferGeometry(
+                this.drawZone,
+                SpatialFilterType.Polygon,
+                value * 1000
+              )
+              .subscribe((featureGeom: Feature) => {
+                this.zoneWithBuffer = featureGeom;
+                this.zonesWithBufferChange.emit(this.zoneWithBuffer);
+              });
+          }
         } else if (value === 0) {
           this.buffer = value;
           this.bufferEvent.emit(value);
@@ -521,15 +550,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      layer: new VectorLayer({
+      layer: this.layerService.createLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: undefined,
         showInLayerList: false,
         exportable: false,
         browsable: false
-      }),
-      map: this.map,
+      }) as VectorLayer,
+      map: this.map(),
       hitTolerance: 15,
       motion: FeatureMotion.Default,
       many: true,
@@ -557,7 +586,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
   }
 
-  onItemTypeChange(event) {
+  onItemTypeChange(event: any) {
     this.selectedItemType = event.value;
     this.itemTypeChange.emit(this.selectedItemType);
   }
@@ -602,7 +631,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   hasChild(_: number, node: SpatialFilterThematic) {
     if (node.children) {
-      return node.children.length;
+      return node.children!.length;
     }
     return false;
   }
@@ -633,8 +662,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       });
     } else {
-      numSelected = node.children.length;
-      node.children.forEach((children) => {
+      numSelected = node.children!.length;
+      node.children!.forEach((children) => {
         if (
           this.selectedThematics.selected.find(
             (thematic) => thematic === children
@@ -654,7 +683,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   hasChildrenSelected(node: SpatialFilterThematic) {
     let bool = false;
-    node.children.forEach((child) => {
+    node.children!.forEach((child) => {
       if (
         this.selectedThematics.selected.find(
           (thematic) => thematic.source === child.source
@@ -711,7 +740,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       });
     } else {
       if (this.hasChild(0, node)) {
-        node.children.forEach((children) =>
+        node.children!.forEach((children) =>
           this.selectedThematics.select(children)
         );
       }
@@ -720,7 +749,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   childrensToggle(node: SpatialFilterThematic) {
     this.isAllSelected(node)
-      ? node.children.forEach((child) => this.selectedThematics.deselect(child))
+      ? node.children!.forEach((child) =>
+          this.selectedThematics.deselect(child)
+        )
       : this.selectAll(node);
 
     const selectedThematicsName: SpatialFilterThematic[] = [];
@@ -793,7 +824,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (!this.isPredefined()) {
       if (this.buffer > 0) {
         this.zoneWithBuffer.meta = {
-          id: undefined,
+          id: uuid(),
           title: 'Zone'
         };
         this.zoneWithBuffer.properties = {
@@ -802,8 +833,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         };
         this.drawZoneEvent.emit(this.zoneWithBuffer);
       } else {
+        if (!this.drawZone) {
+          return;
+        }
         this.drawZone.meta = {
-          id: undefined,
+          id: uuid(),
           title: 'Zone'
         };
         this.drawZone.properties = {
@@ -820,7 +854,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     this.toggleSearch.emit();
     this.store.entities$.pipe(debounceTime(500)).subscribe((value) => {
-      if (value.length && this.layers.length === this.thematicLength + 1) {
+      if (value.length && this.layers().length === this.thematicLength + 1) {
         this.openWorkspace.emit();
         this.createTableTemplate();
       }
@@ -831,7 +865,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Launch clear button (clear store and map layers)
    */
   clearButton() {
-    this.loading = true;
+    this.loading.set(true);
     if (this.store) {
       this.store.clear();
     }
@@ -843,7 +877,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.buffer = 0;
     this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
-    this.loading = false;
+    this.loading.set(false);
     this.tableTemplate = undefined;
   }
 
@@ -870,18 +904,19 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   disableSearchButton(): boolean {
     if (this.type === SpatialFilterType.Predefined) {
+      const queryType = this.queryType();
       if (this.selectedItemType === SpatialFilterItemType.Address) {
-        if (this.queryType !== undefined && this.zones.length > 0) {
-          return this.loading;
+        if (queryType !== undefined && this.zones()!.length > 0) {
+          return this.loading() ?? false;
         }
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
-          this.queryType !== undefined &&
-          this.zones.length > 0 &&
+          queryType !== undefined &&
+          this.zones()!.length > 0 &&
           this.selectedThematics.selected.length > 0
         ) {
-          return this.loading;
+          return this.loading() ?? false;
         }
       }
     }
@@ -893,14 +928,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.selectedItemType === SpatialFilterItemType.Address &&
         this.formControl.value !== null
       ) {
-        return this.loading;
+        return this.loading() ?? false;
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
         if (
           this.selectedThematics.selected.length > 0 &&
           this.formControl.value !== null
         ) {
-          return this.loading;
+          return this.loading() ?? false;
         }
       }
     }
@@ -908,11 +943,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   disabledClearSearch() {
-    let disable = true;
+    let disable: boolean;
     this.selectedItemType === SpatialFilterItemType.Address
-      ? (disable = this.queryType === undefined)
+      ? (disable = this.queryType() === undefined)
       : (disable =
-          this.queryType === undefined &&
+          this.queryType() === undefined &&
           this.selectedThematics.selected.length === 0);
 
     return disable;
@@ -969,7 +1004,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
       if (this.measureUnit === MeasureLengthUnit.Meters) {
         this.radius = this.radiusFormControl.value;
-        this.drawGuide$.next(this.radius);
+        this.drawGuide$.next(this.radius ?? null);
       } else {
         this.radius = this.radiusFormControl.value * 1000;
         this.drawGuide$.next(this.radius * 1000);

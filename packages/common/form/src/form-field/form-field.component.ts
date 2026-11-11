@@ -33,17 +33,17 @@ export class FormFieldComponent {
   /**
    * Field configuration
    */
-  readonly field = input<FormField>(undefined);
+  readonly field = input.required<FormField<FormFieldInputs>>();
 
   /**
    * Field inputs cache
    */
-  private fieldInputs: FormFieldInputs = undefined;
+  private fieldInputs?: FormFieldInputs;
 
   /**
    * Field subscribers cache
    */
-  private fieldSubscribers: FormFieldSubscribers = undefined;
+  private fieldSubscribers?: FormFieldSubscribers;
 
   get fieldOptions(): FormFieldOptions {
     return this.field().options || {};

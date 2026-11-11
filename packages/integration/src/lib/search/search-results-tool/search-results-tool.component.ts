@@ -4,12 +4,14 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input,
-  signal
+  linkedSignal,
+  signal,
+  viewChild
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -18,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { SanitizeHtmlPipe } from '@igo2/common/custom-html';
-import { EntityState, EntityStore, getEntityTitle } from '@igo2/common/entity';
+import { EntityStore, getEntityTitle } from '@igo2/common/entity';
 import { FlexibleComponent, FlexibleState } from '@igo2/common/flexible';
 import { PanelComponent } from '@igo2/common/panel';
 import { ToolComponent } from '@igo2/common/tool';
@@ -31,26 +33,22 @@ import {
   FeatureMotion,
   FeatureStore,
   IgoMap,
+  Overlay,
+  OverlayService,
   Research,
   SearchResult,
   SearchResultAddButtonComponent,
   SearchResultsComponent,
   computeOlFeaturesExtent,
-  featureFromOl,
   featureToOl,
   featuresAreOutOfView,
-  featuresAreTooDeepInView,
-  getCommonVectorSelectedStyle,
-  getCommonVectorStyle,
   moveToOlFeatures,
-  roundCoordTo
+  roundCoordTo,
+  styleVariant
 } from '@igo2/geo';
 
-import olFeature from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -109,6 +107,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private elRef = inject(ElementRef);
   toolState = inject(ToolState);
   private directionState = inject(DirectionState);
+  private overlayService = inject(OverlayService);
 
   /**
    * to show hide results icons
@@ -120,20 +119,21 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    */
   readonly topPanelStateDefault = input('expanded');
 
-  private hasFeatureEmphasisOnSelection = false;
+  private searchResultsOverlayAll$$!: Subscription;
+
   public saveSearchResultInLayer = false;
 
-  private showResultsGeometries$$: Subscription;
-  private getRoute$$: Subscription;
-  private shownResultsGeometries: Feature[] = [];
-  private shownResultsEmphasisGeometries: Feature[] = [];
-  private focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
+  private searchResultsOverlayFocused!: Overlay;
+  private searchResultsOverlaySelected!: Overlay;
+  private searchResultsOverlayAll!: Overlay;
+
+  private getRoute$$?: Subscription;
   public isSelectedResultOutOfView$ = new BehaviorSubject(false);
-  private isSelectedResultOutOfView$$: Subscription;
-  private abstractFocusedResult: Feature;
-  private abstractSelectedResult: Feature;
+  private isSelectedResultOutOfView$$!: Subscription;
   private destroyRef = inject(DestroyRef);
   public debouncedEmpty = signal(true);
+
+  private searchResult = viewChild(SearchResultsComponent);
 
   /**
    * Store holding the search results
@@ -151,27 +151,24 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  get featureTitle(): string {
-    return this.feature() ? getEntityTitle(this.feature()) : undefined;
+  get featureTitle(): string | undefined {
+    return this.feature() ? getEntityTitle(this.feature()!) : undefined;
   }
 
-  feature = signal<Feature>(undefined);
+  feature = signal<Feature | undefined>(undefined);
 
   public term = '';
-  private searchTerm$$: Subscription;
+  private searchTerm$$!: Subscription;
 
-  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+  readonly topPanelState = input<FlexibleState>();
 
-  public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
-  private topPanelState$$: Subscription;
-
-  @Input()
-  set topPanelState(value: FlexibleState) {
-    this.topPanelState$.next(value);
-  }
-  get topPanelState(): FlexibleState {
-    return this.topPanelState$.value;
-  }
+  public topPanelStateValue = linkedSignal<
+    FlexibleState | undefined,
+    FlexibleState
+  >({
+    source: this.topPanelState,
+    computation: (v, previous) => v ?? previous?.value ?? 'initial'
+  });
 
   get termSplitter(): string {
     return this.searchState.searchTermSplitter$.value;
@@ -186,41 +183,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   constructor() {
     const configService = inject(ConfigService);
 
-    this.hasFeatureEmphasisOnSelection = configService.getConfig(
-      'hasFeatureEmphasisOnSelection'
-    );
     this.saveSearchResultInLayer = configService.getConfig(
       'saveSearchResultInLayer'
     );
-  }
 
-  ngOnInit() {
-    this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
-      (searchTerm: string) => {
-        if (
-          searchTerm !== undefined &&
-          searchTerm !== null &&
-          searchTerm !== ''
-        ) {
-          this.term = searchTerm;
-          this.debouncedEmpty.set(false);
-        } else if (searchTerm === '') {
-          this.debouncedEmpty.set(true);
-        }
-      }
-    );
-
-    for (const res of this.store.stateView.all$().value) {
-      if (this.store.state.get(res.entity).selected === true) {
-        this.topPanelState = 'expanded';
-      }
-    }
-
-    this.searchState.searchSettingsChange$.subscribe(() => {
-      this.settingsChange$.next(true);
-    });
-
-    this.topPanelState$$ = this.topPanelState$.subscribe(() => {
+    effect(() => {
+      this.topPanelStateValue(); // re-run on state change
       const igoList = this.computeElementRef()[0];
       const selected = this.computeElementRef()[1];
       if (selected) {
@@ -232,90 +200,55 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }, FlexibleComponent.transitionTime + 50);
       }
     });
+  }
 
-    if (this.hasFeatureEmphasisOnSelection) {
-      if (!this.searchState.focusedOrResolution$$) {
-        this.searchState.focusedOrResolution$$ = combineLatest([
-          this.focusedResult$,
-          this.map.viewController.resolution$
-        ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
-          this.buildResultEmphasis(bunch[0], 'focused')
-        );
+  ngOnInit() {
+    this.searchResultsOverlayFocused = this.overlayService.create(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.focus ??
+        styleVariant(this.mapState.map.viewController, 'focus')
+    );
+
+    this.searchResultsOverlaySelected = this.overlayService.create(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.selection ??
+        styleVariant(this.mapState.map.viewController, 'selection')
+    );
+
+    this.searchResultsOverlayAll = this.overlayService.create(
+      this.mapState.map,
+      this.searchState.searchOverlayStyle?.base ??
+        styleVariant(this.mapState.map.viewController)
+    );
+
+    this.handleShowAllResults();
+
+    this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm) => {
+      if (
+        searchTerm !== undefined &&
+        searchTerm !== null &&
+        searchTerm !== ''
+      ) {
+        this.term = searchTerm;
+        this.debouncedEmpty.set(false);
+      } else if (searchTerm === '') {
+        this.clearResultOverlays();
+        this.searchState.clearSelectedResult();
+        this.debouncedEmpty.set(true);
       }
+    });
 
-      if (!this.searchState.selectedOrResolution$$) {
-        this.searchState.selectedOrResolution$$ = combineLatest([
-          this.searchState.selectedResult$,
-          this.map.viewController.resolution$
-        ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
-          this.buildResultEmphasis(bunch[0], 'selected')
-        );
+    for (const res of this.store.stateView.all$().value) {
+      if (this.store.state.get(res.entity).selected === true) {
+        this.topPanelStateValue.set('expanded');
       }
     }
+
+    this.searchState.searchSettingsChange$.subscribe(() => {
+      this.searchResult()?.resetPage();
+    });
+
     this.monitorResultOutOfView();
-
-    this.showResultsGeometries$$ = combineLatest([
-      this.searchState.searchResultsGeometryEnabled$,
-      this.store.stateView.all$(),
-      this.focusedResult$,
-      this.searchState.selectedResult$,
-      this.searchState.searchTerm$,
-      this.map.viewController.resolution$
-    ]).subscribe(
-      (
-        bunch: [
-          boolean,
-          { entity: SearchResult; state: EntityState }[],
-          SearchResult,
-          SearchResult,
-          string,
-          number
-        ]
-      ) => {
-        const searchResultsGeometryEnabled = bunch[0];
-        const searchResults = bunch[1];
-
-        if (this.hasFeatureEmphasisOnSelection) {
-          this.clearFeatureEmphasis('shown');
-        }
-        this.shownResultsGeometries.map((result) =>
-          this.map.queryResultsOverlay.removeFeature(result)
-        );
-        const featureToHandleGeom = searchResults.filter(
-          (result) =>
-            result.entity.meta.dataType === FEATURE &&
-            result.entity.data.geometry &&
-            !result.state.selected &&
-            !result.state.focused
-        );
-
-        featureToHandleGeom.map((result) => {
-          if (searchResultsGeometryEnabled) {
-            result.entity.data.meta.style = getCommonVectorStyle(
-              Object.assign(
-                {},
-                {
-                  feature: result.entity.data as Feature | olFeature<OlGeometry>
-                },
-                this.searchState.searchOverlayStyle,
-                result.entity.style?.base ? result.entity.style.base : {}
-              )
-            );
-            this.shownResultsGeometries.push(result.entity.data as Feature);
-            this.map.queryResultsOverlay.addFeature(
-              result.entity.data as Feature,
-              FeatureMotion.None
-            );
-            if (this.hasFeatureEmphasisOnSelection) {
-              this.buildResultEmphasis(
-                result.entity as SearchResult<Feature>,
-                'shown'
-              );
-            }
-          }
-        });
-      }
-    );
 
     this.store.stateView.empty$
       .pipe(debounceTime(1500), takeUntilDestroyed(this.destroyRef))
@@ -328,6 +261,25 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         const feature = element ? (element.entity.data as Feature) : undefined;
         this.feature.set(feature);
       });
+  }
+
+  private handleShowAllResults() {
+    this.searchResultsOverlayAll$$ = combineLatest([
+      this.store.entities$,
+      this.searchState.searchResultsGeometryEnabled$
+    ]).subscribe((bunch) => {
+      const searchResults = bunch[0];
+      const enabled = bunch[1];
+      const features = searchResults
+        .filter((sr) => sr.meta.dataType === FEATURE)
+        .map((sr) => sr.data as Feature);
+      if (enabled && features.length) {
+        this.searchResultsOverlayAll.setFeatures(features, FeatureMotion.None);
+      } else {
+        this.searchResultsOverlayFocused?.clear();
+        this.searchResultsOverlayAll?.clear();
+      }
+    });
   }
 
   private monitorResultOutOfView() {
@@ -345,129 +297,29 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         if (selectedResult.data.geometry) {
           const selectedOlFeature = featureToOl(
             selectedResult.data,
-            this.map.projection
+            this.map.projectionCode
           );
           const selectedOlFeatureExtent = computeOlFeaturesExtent(
             [selectedOlFeature],
             this.map.viewController.getOlProjection()
           );
           this.isSelectedResultOutOfView$.next(
-            featuresAreOutOfView(this.map.getExtent(), selectedOlFeatureExtent)
+            featuresAreOutOfView(
+              this.map.viewController.getExtent(),
+              selectedOlFeatureExtent
+            )
           );
         }
       });
   }
 
-  private buildResultEmphasis(
-    result: SearchResult<Feature>,
-    trigger: 'selected' | 'focused' | 'shown' | undefined
-  ) {
-    if (trigger !== 'shown') {
-      this.clearFeatureEmphasis(trigger);
-    }
-    if (!result || !result.data.geometry) {
-      return;
-    }
-    const myOlFeature = featureToOl(result.data, this.map.projection);
-    const olGeometry = myOlFeature.getGeometry();
-    if (
-      featuresAreTooDeepInView(
-        this.map.viewController,
-        olGeometry.getExtent() as [number, number, number, number],
-        0.0025
-      )
-    ) {
-      const extent = olGeometry.getExtent();
-      const x = extent[0] + (extent[2] - extent[0]) / 2;
-      const y = extent[1] + (extent[3] - extent[1]) / 2;
-      const feature1 = new olFeature({
-        name: `${trigger}AbstractResult'`,
-        geometry: new olPoint([x, y])
-      });
-      const abstractResult = featureFromOl(feature1, this.map.projection);
-
-      let computedStyle;
-      let zIndexOffset = 0;
-
-      switch (trigger) {
-        case 'focused':
-          computedStyle = getCommonVectorSelectedStyle(
-            Object.assign(
-              {},
-              { feature: abstractResult },
-              this.searchState.searchOverlayStyleFocus,
-              result.style?.focus ? result.style.focus : {}
-            )
-          );
-          zIndexOffset = 2;
-          break;
-        case 'shown':
-          computedStyle = getCommonVectorStyle(
-            Object.assign(
-              {},
-              { feature: abstractResult },
-              this.searchState.searchOverlayStyle,
-              result.style?.base ? result.style.base : {}
-            )
-          );
-          break;
-        case 'selected':
-          computedStyle = getCommonVectorSelectedStyle(
-            Object.assign(
-              {},
-              { feature: abstractResult },
-              this.searchState.searchOverlayStyleSelection,
-              result.style?.selection ? result.style.selection : {}
-            )
-          );
-          zIndexOffset = 1;
-          break;
-      }
-      abstractResult.meta.style = computedStyle;
-      abstractResult.meta.style.setZIndex(2000 + zIndexOffset);
-      this.map.searchResultsOverlay.addFeature(
-        abstractResult,
-        this.searchState.featureMotion.focus
-      );
-      if (trigger === 'focused') {
-        this.abstractFocusedResult = abstractResult;
-      }
-      if (trigger === 'selected') {
-        this.abstractSelectedResult = abstractResult;
-      }
-      if (trigger === 'shown') {
-        this.shownResultsEmphasisGeometries.push(abstractResult);
-      }
-    } else {
-      this.clearFeatureEmphasis(trigger);
-    }
-  }
-
-  private clearFeatureEmphasis(trigger: 'selected' | 'focused' | 'shown') {
-    if (trigger === 'focused' && this.abstractFocusedResult) {
-      this.map.searchResultsOverlay.removeFeature(this.abstractFocusedResult);
-      this.abstractFocusedResult = undefined;
-    }
-    if (trigger === 'selected' && this.abstractSelectedResult) {
-      this.map.searchResultsOverlay.removeFeature(this.abstractSelectedResult);
-      this.abstractSelectedResult = undefined;
-    }
-    if (trigger === 'shown') {
-      this.shownResultsEmphasisGeometries.map((shownResult) =>
-        this.map.searchResultsOverlay.removeFeature(shownResult)
-      );
-      this.shownResultsEmphasisGeometries = [];
-    }
-  }
-
   ngOnDestroy() {
-    this.topPanelState$$.unsubscribe();
     this.searchTerm$$.unsubscribe();
     if (this.isSelectedResultOutOfView$$) {
       this.isSelectedResultOutOfView$$.unsubscribe();
     }
-    if (this.showResultsGeometries$$) {
-      this.showResultsGeometries$$.unsubscribe();
+    if (this.searchResultsOverlayAll$$) {
+      this.searchResultsOverlayAll$$.unsubscribe();
     }
     if (this.getRoute$$) {
       this.getRoute$$.unsubscribe();
@@ -480,57 +332,21 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
-    this.focusedResult$.next(result);
-    if (result.meta.dataType === FEATURE && result.data.geometry) {
-      result.data.meta.style = getCommonVectorSelectedStyle(
-        Object.assign(
-          {},
-          { feature: result.data as Feature | olFeature<OlGeometry> },
-          this.searchState.searchOverlayStyleFocus,
-          result.style?.focus ? result.style.focus : {}
-        )
-      );
-
-      const feature =
-        this.map.searchResultsOverlay.dataSource.ol.getFeatureById(
-          result.meta.id
-        );
-      if (feature) {
-        feature.setStyle(result.data.meta.style);
-        return;
-      }
-      this.map.searchResultsOverlay.addFeature(
-        result.data as Feature,
+    if (this.store.state.get(result).selected) {
+      this.searchResultsOverlayFocused.clear();
+    } else {
+      this.addResultToOverlay(
+        result,
+        this.searchResultsOverlayFocused,
         this.searchState.featureMotion.focus
       );
     }
   }
 
   onResultUnfocus(result: SearchResult) {
-    this.focusedResult$.next(undefined);
-    if (result.meta.dataType !== FEATURE) {
-      return;
+    if (!this.store.state.get(result).selected) {
+      this.searchResultsOverlayFocused.clear();
     }
-
-    if (this.store.state.get(result).selected === true) {
-      const feature =
-        this.map.searchResultsOverlay.dataSource.ol.getFeatureById(
-          result.meta.id
-        );
-      if (feature) {
-        const style = getCommonVectorSelectedStyle(
-          Object.assign(
-            {},
-            { feature: result.data as Feature | olFeature<OlGeometry> },
-            this.searchState.searchOverlayStyleFocus,
-            result.style?.focus ? result.style.focus : {}
-          )
-        );
-        feature.setStyle(style);
-      }
-      return;
-    }
-    this.map.searchResultsOverlay.removeFeature(result.data as Feature);
   }
 
   /**
@@ -539,19 +355,23 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    this.map.searchResultsOverlay.dataSource.ol.clear();
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
+    this.clearResultOverlays();
+    this.addResultToOverlay(
+      result,
+      this.searchResultsOverlaySelected,
+      this.searchState.featureMotion.selected
+    );
     this.searchState.setSelectedResult(result);
 
-    if (this.topPanelState === 'initial') {
+    if (this.topPanelStateValue() === 'initial') {
       if (this.topPanelStateDefault() !== 'collapsed') {
-        this.topPanelState = 'expanded';
+        this.topPanelStateValue.set('expanded');
       } else {
-        this.topPanelState = 'collapsed';
+        this.topPanelStateValue.set('collapsed');
       }
     }
 
-    if (this.topPanelState === 'expanded') {
+    if (this.topPanelStateValue() === 'expanded') {
       const igoList = this.computeElementRef()[0];
       const selected = this.computeElementRef()[1];
       if (!this.isScrolledIntoView(igoList, selected)) {
@@ -608,6 +428,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }, 250);
   }
 
+  private clearResultOverlays() {
+    this.searchResultsOverlayFocused?.clear();
+    this.searchResultsOverlaySelected?.clear();
+  }
+
   computeElementRef() {
     const items = document.getElementsByTagName('igo-search-results-item');
     const igoList =
@@ -622,12 +447,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return [igoList, selectedItem];
   }
 
-  adjustTopPanel(elemSource, elem) {
+  adjustTopPanel(elemSource: HTMLElement, elem: HTMLElement) {
     if (!this.isScrolledIntoView(elemSource, elem)) {
+      const firstChild = elem.children[0];
+      const childHeight =
+        firstChild instanceof HTMLElement ? firstChild.offsetHeight : 0;
       elemSource.scrollTop =
-        elem.offsetTop +
-        elem.children[0].offsetHeight -
-        elemSource.clientHeight;
+        elem.offsetTop + childHeight - elemSource.clientHeight;
     }
   }
 
@@ -635,10 +461,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (event && (event.target as any)?.className !== 'igo-panel-title') {
       return;
     } else {
-      if (this.topPanelState === 'expanded') {
-        this.topPanelState = 'collapsed';
+      if (this.topPanelStateValue() === 'expanded') {
+        this.topPanelStateValue.set('collapsed');
       } else {
-        this.topPanelState = 'expanded';
+        this.topPanelStateValue.set('expanded');
       }
     }
   }
@@ -663,8 +489,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    * @param motion A FeatureMotion to trigger when adding the searchresult to the map search overlay
    */
-  private tryAddFeatureToMap(
+  private addResultToOverlay(
     result: SearchResult,
+    overlay: Overlay,
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     if (result.meta.dataType !== FEATURE) {
@@ -672,24 +499,19 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     const feature = (result as SearchResult<Feature>).data;
 
-    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    // Sometimes features have no geometry. It happens with some GetFeatureInfo
     if (!feature.geometry) {
       return;
     }
 
-    feature.meta.style = getCommonVectorSelectedStyle(
-      Object.assign(
-        {},
-        { feature },
-        this.searchState.searchOverlayStyleSelection,
-        result.style?.selection ? result.style.selection : {}
-      )
-    );
+    if (!feature.meta) {
+      return;
+    }
 
-    this.map.searchResultsOverlay.addFeature(feature, motion);
+    overlay.setFeatures([feature], motion);
   }
 
-  isScrolledIntoView(elemSource, elem) {
+  isScrolledIntoView(elemSource: HTMLElement, elem: HTMLElement) {
     const padding = 6;
     const docViewTop = elemSource.scrollTop;
     const docViewBottom = docViewTop + elemSource.clientHeight;
@@ -733,9 +555,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 ];
               }
             }
-            stop.text = this.featureTitle;
-            stop.coordinates = coord;
-            this.directionState.stopsStore.update(stop);
+            if (stop) {
+              stop.text = this.featureTitle ?? '';
+              stop.coordinates = coord;
+              this.directionState.stopsStore.update(stop);
+            }
             if (this.map.geolocationController.position$.value) {
               const currentPos = this.map.geolocationController.position$.value;
               const stop = this.directionState.stopsStore
@@ -750,9 +574,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                 [currentCoord[0], currentCoord[1]],
                 6
               );
-              stop.text = coord.join(',');
-              stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
+              if (stop) {
+                stop.text = coord.join(',');
+                stop.coordinates = coord;
+                this.directionState.stopsStore.update(stop);
+              }
             }
           }
         });

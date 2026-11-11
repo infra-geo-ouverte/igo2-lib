@@ -1,0 +1,39 @@
+import { FormFieldConfig, FormGroupsConfig } from '../shared/form.interfaces';
+
+export interface FormStepperLabels {
+  nextButton: string;
+  previousButton: string;
+  processButton: string;
+  cancelButton: string;
+  /** Supports `{{current}}` and `{{total}}` placeholders. */
+  stepCounter: string;
+}
+
+export interface FormStepperFormConfig {
+  formFieldConfigs?: FormFieldConfig[];
+  formGroupsConfigs?: FormGroupsConfig[];
+}
+
+export interface FormStepperStepContext {
+  data: Readonly<Record<string, unknown>>;
+  stepIndex: number;
+  steps: readonly FormStepperStepConfig[];
+}
+
+export type FormStepperStepFormConfigResolver = (
+  context: FormStepperStepContext
+) => FormStepperFormConfig;
+
+export interface FormStepperStepConfig {
+  label: string;
+  title?: string;
+  notice?: string;
+  dialogWidth?: string;
+  dialogHeight?: string;
+  dialogPanelClass?: string | string[];
+  form: FormStepperFormConfig | FormStepperStepFormConfigResolver;
+}
+
+export interface FormStepperConfig {
+  steps: FormStepperStepConfig[];
+}

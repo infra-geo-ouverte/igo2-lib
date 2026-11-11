@@ -32,16 +32,15 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppFormComponent implements OnInit, OnDestroy {
   private formService = inject(FormService);
+  private readonly interestsMaxSelected = 2;
 
-  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
+  form$ = new BehaviorSubject<Form | undefined>(undefined);
 
-  data$: BehaviorSubject<object> = new BehaviorSubject<Record<string, any>>(
-    undefined
-  );
+  data$ = new BehaviorSubject<Record<string, unknown> | undefined>(undefined);
 
   submitDisabled = true;
 
-  private valueChanges$$: Subscription;
+  private valueChanges$$!: Subscription;
 
   ngOnInit() {
     const fieldConfigs: FormFieldConfig[] = [
@@ -50,6 +49,17 @@ export class AppFormComponent implements OnInit, OnDestroy {
         title: 'ID',
         options: {
           cols: 1,
+          validator: Validators.required
+        },
+        inputs: {
+          showLabel: true
+        }
+      },
+      {
+        name: 'amount',
+        title: 'Amout (number)',
+        type: 'number',
+        options: {
           validator: Validators.required
         }
       },
@@ -69,10 +79,62 @@ export class AppFormComponent implements OnInit, OnDestroy {
           cols: 2
         },
         inputs: {
+          showLabel: true,
           choices: [
             { value: 1, title: 'Single' },
             { value: 2, title: 'Married' }
           ]
+        }
+      },
+      {
+        name: 'interests',
+        title: 'Interests',
+        type: 'checkbox',
+        options: {
+          cols: 2,
+          validator: Validators.required,
+          errors: {
+            maxSelected: `Choose at most ${this.interestsMaxSelected} interests.`
+          }
+        },
+        inputs: {
+          maxSelected: this.interestsMaxSelected,
+          choices: [
+            { value: 'sports', title: 'Sports' },
+            { value: 'music', title: 'Music' },
+            { value: 'travel', title: 'Travel' }
+          ]
+        }
+      },
+      {
+        name: 'contactMode',
+        title: 'Preferred Contact Mode',
+        type: 'radiobutton',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          choices: [
+            { value: 'email', title: 'Email' },
+            { value: 'phone', title: 'Phone' },
+            { value: 'sms', title: 'SMS' }
+          ]
+        }
+      },
+      {
+        name: 'datetime',
+        title: 'Date',
+        type: 'datetime',
+        options: {
+          cols: 2,
+          validator: Validators.required
+        },
+        inputs: {
+          showLabel: true,
+          placeholder: 'Date',
+          timePlaceholder: 'Time',
+          interval: '20m'
         }
       }
     ];
@@ -99,16 +161,59 @@ export class AppFormComponent implements OnInit, OnDestroy {
   fillForm(): void {
     this.data$.next({
       id: 1,
+      amount: 42,
       name: 'Bob',
-      status: 2
+      status: 2,
+      interests: ['music', 'travel'],
+      contactMode: 'email',
+      datetime: new Date(2026, 4, 29, 16, 42, 0, 0)
     });
   }
 
   clearForm(): void {
-    this.form$.value.control.reset();
+    this.form$.value?.control.reset();
   }
 
   onSubmit(data: object): void {
-    alert(JSON.stringify(data));
+    const submitted = data as Record<string, unknown>;
+    const localDatetime = this.toDateValue(submitted['datetime']);
+
+    alert(
+      JSON.stringify(
+        {
+          ...submitted,
+          localDatetimeIsoLike: localDatetime
+            ? this.formatLocalDateTime(localDatetime)
+            : null,
+          localDatetimeToString: localDatetime ? localDatetime.toString() : null
+        },
+        null,
+        2
+      )
+    );
+  }
+
+  private toDateValue(value: unknown): Date | null {
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+  }
+
+  private formatLocalDateTime(date: Date): string {
+    const pad = (value: number): string => String(value).padStart(2, '0');
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 }

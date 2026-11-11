@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "20.3.3",
+  "version": "21.0.0-next.55",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -22,6 +22,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint common",
     "lint.fix": "ng lint common --fix",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit && tsc -p ./tsconfig.spec.json --noEmit",
     "test": "ng test common --watch=false",
     "test.watch": "ng test common",
     "watch": "ng build common --watch"
@@ -69,6 +70,9 @@
     "./custom-html": {
       "import": "./custom-html/src/public_api.ts"
     },
+    "./datepicker": {
+      "import": "./datepicker/src/public_api.ts"
+    },
     "./dom": {
       "import": "./dom/src/public_api.ts"
     },
@@ -111,8 +115,8 @@
     "./panel": {
       "import": "./panel/src/public_api.ts"
     },
-    "./select-value-dialog": {
-      "import": "./select-value-dialog/src/public_api.ts"
+    "./resizable-bar": {
+      "import": "./resizable-bar/src/public_api.ts"
     },
     "./sidenav": {
       "import": "./sidenav/src/public_api.ts"
@@ -125,6 +129,9 @@
     },
     "./table": {
       "import": "./table/src/public_api.ts"
+    },
+    "./timepicker": {
+      "import": "./timepicker/src/public_api.ts"
     },
     "./tool": {
       "import": "./tool/src/public_api.ts"
@@ -140,17 +147,17 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/material-moment-adapter": "^20.0.0",
-    "@angular/material": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/material-moment-adapter": "^21.0.0",
+    "@angular/material": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
     "@floating-ui/utils": "^0.2.0",
     "@igo2/core": "*",
     "@igo2/utils": "*",
-    "angular-shepherd": "^20.0.0",
-    "ngx-color": "^10.0.0",
+    "angular-shepherd": "^22.0.0",
+    "ngx-color": "^10.1.0",
     "scroll-into-view-if-needed": "^3.1.0",
     "tinycolor2": "^1.6.0",
     "typy": "^3.3.0"

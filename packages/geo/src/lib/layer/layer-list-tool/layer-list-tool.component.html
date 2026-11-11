@@ -26,7 +26,7 @@
   @if (viewerOptions()?.group?.canCreate) {
     <button
       mat-icon-button
-      [disabled]="!viewerOptions().group.enable"
+      [disabled]="!viewerOptions()?.group?.enable"
       [matTooltip]="'igo.geo.layer.group.create' | translate"
       matTooltipShowDelay="500"
       type="button"

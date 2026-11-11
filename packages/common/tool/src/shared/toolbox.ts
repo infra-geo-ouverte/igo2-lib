@@ -1,4 +1,4 @@
-import { EntityRecord, EntityStore } from '@igo2/common/entity';
+import { EntityStore } from '@igo2/common/entity';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -11,7 +11,7 @@ export class Toolbox {
   /**
    * Observable of the active tool
    */
-  activeTool$ = new BehaviorSubject<Tool>(undefined);
+  activeTool$ = new BehaviorSubject<Tool | undefined>(undefined);
 
   /**
    * Ordered list of tool names to display in a toolbar
@@ -21,14 +21,12 @@ export class Toolbox {
   /**
    * Observable of the active tool
    */
-  private activeTool$$: Subscription;
+  private activeTool$$!: Subscription;
 
   /**
    * Active tool history. Useful for activating the previous tool.
    */
   private activeToolHistory: string[] = [];
-  private previousToolName: string;
-  private currentToolName: string;
 
   /**
    * Tool store
@@ -41,8 +39,8 @@ export class Toolbox {
     return this.store.entities$;
   }
 
-  constructor(private options: ToolboxOptions = {}) {
-    this.setToolbar(options.toolbar);
+  constructor(options: ToolboxOptions = {}) {
+    this.setToolbar(options.toolbar || []);
     this.initStore();
   }
 
@@ -50,7 +48,7 @@ export class Toolbox {
    * Destroy the toolbox
    */
   destroy() {
-    this.activeTool$$.unsubscribe();
+    this.activeTool$$?.unsubscribe();
     this.store.destroy();
   }
 
@@ -59,7 +57,7 @@ export class Toolbox {
    * @param name Tool name
    * @returns tool Tool
    */
-  getTool(name: string): Tool {
+  getTool(name: string): Tool | undefined {
     return this.store.get(name);
   }
 
@@ -121,44 +119,6 @@ export class Toolbox {
     this.activateTool(previous);
   }
 
-  getCurrentPreviousToolName(): [string, string] {
-    return [this.previousToolName, this.currentToolName];
-  }
-
-  /**
-   * Activate the tool below, if any
-   */
-  /* activateBelowTool() {
-    const arrayTools = this.getToolbar();
-    const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
-    if (arrayTools[index + 1] !== undefined) {
-      this.deactivateTool();
-      const below = arrayTools[index + 1];
-      this.activateTool(below);
-    } else {
-      this.deactivateTool();
-      const below = arrayTools[0];
-      this.activateTool(below);
-    }
-  } */
-
-  /**
-   * Activate the tool above, if any
-   */
-  /* activateAboveTool() {
-    const arrayTools = this.getToolbar();
-    const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
-    if (arrayTools[index - 1] !== undefined) {
-      this.deactivateTool();
-      const above = arrayTools[index - 1];
-      this.activateTool(above);
-    } else {
-      this.deactivateTool();
-      const above = arrayTools[arrayTools.length - 1];
-      this.activateTool(above);
-    }
-  } */
-
   /**
    * Deactivate the active tool
    */
@@ -176,8 +136,8 @@ export class Toolbox {
     });
 
     this.activeTool$$ = this.store.stateView
-      .firstBy$((record: EntityRecord<Tool>) => record.state.active === true)
-      .subscribe((record: EntityRecord<Tool>) => {
+      .firstBy$((record) => record?.state?.active === true)
+      .subscribe((record) => {
         if (record === undefined) {
           this.setActiveTool(undefined);
           return;
@@ -205,10 +165,6 @@ export class Toolbox {
       this.activeToolHistory = this.activeToolHistory
         .filter((name: string) => name !== tool.name)
         .concat([tool.name]);
-
-      this.previousToolName = this.currentToolName;
-      this.currentToolName =
-        this.activeToolHistory[this.activeToolHistory.length - 1];
     }
   }
 

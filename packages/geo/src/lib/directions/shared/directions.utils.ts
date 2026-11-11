@@ -2,11 +2,11 @@ import { LanguageService } from '@igo2/core/language';
 import { NumberUtils, uuid } from '@igo2/utils';
 
 import olFeature from 'ol/Feature';
-import { Coordinate } from 'ol/coordinate';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olGeom from 'ol/geom';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olProj from 'ol/proj';
+import RenderFeature from 'ol/render/Feature';
 import * as olStyle from 'ol/style';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -15,10 +15,11 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { FeatureStore } from '../../feature/shared/store';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
+import { LayerService, VectorLayer } from '../../layer/shared';
+import { markerOlStyle } from '../../style/shared/style.utils';
 import {
   DirectionRelativePositionType,
   DirectionsType,
@@ -49,11 +50,11 @@ import {
 export function updateStoreSorting(
   stopsStore: StopsStore,
   direction: 'asc' | 'desc' = 'asc',
-  field = 'position'
+  field: keyof Stop = 'position'
 ): void {
   stopsStore.view.sort({
     direction,
-    valueAccessor: (entity: Stop) => entity[field]
+    valueAccessor: (entity) => entity[field] as any
   });
 }
 
@@ -122,7 +123,7 @@ export function addStopToStore(stopsStore: StopsStore): Stop {
   });
 
   updateStoreSorting(stopsStore);
-  return stopsStore.get(id);
+  return stopsStore.get(id)!;
 }
 
 /**
@@ -142,11 +143,12 @@ export function removeStopFromStore(stopsStore: StopsStore, stop: Stop): void {
  * @returns OL style function
  */
 export function directionsStyle(
-  feature: olFeature<OlGeometry>
-): olStyle.Style | olStyle.Style[] {
+  feature: olFeature<OlGeometry> | RenderFeature
+): olStyle.Style | olStyle.Style[] | undefined {
+  const olFeat = feature as olFeature<OlGeometry>;
   const stepStyle = [
     new olStyle.Style({
-      geometry: feature.getGeometry(),
+      geometry: olFeat.getGeometry(),
       image: new olStyle.Circle({
         radius: 7,
         stroke: new olStyle.Stroke({ color: '#FF0000', width: 3 })
@@ -154,11 +156,9 @@ export function directionsStyle(
     })
   ];
 
-  const stopStyle: olStyle.Style = createOverlayMarkerStyle({
+  const stopStyle: olStyle.Style = markerOlStyle({
     text: feature.get('stopText'),
-    opacity: feature.get('stopOpacity'),
-    markerColor: feature.get('stopColor'),
-    markerOutlineColor: [255, 255, 255]
+    markerColor: feature.get('stopColor')
   });
 
   const routeStyle: olStyle.Style[] = [
@@ -195,14 +195,15 @@ export function directionsStyle(
  */
 export function initStopsFeatureStore(
   stopsFeatureStore: StopsFeatureStore,
-  languageService: LanguageService
+  languageService: LanguageService,
+  layerService: LayerService
 ): void {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const stopsLayer: VectorLayer = new VectorLayer({
+  const stopsLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-stops-layer',
     title: languageService.translate.instant('igo.geo.directions.layer.stops'),
@@ -226,9 +227,12 @@ export function initStopsFeatureStore(
     exportable: true,
     browsable: false,
     style: directionsStyle
-  });
-  tryBindStoreLayer(stopsFeatureStore, stopsLayer);
-  tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
+  }) as VectorLayer;
+  tryBindStoreLayer(stopsFeatureStore as unknown as FeatureStore, stopsLayer);
+  tryAddLoadingStrategy(
+    stopsFeatureStore as unknown as FeatureStore,
+    loadingStrategy
+  );
 }
 
 /**
@@ -239,14 +243,15 @@ export function initStopsFeatureStore(
  */
 export function initRoutesFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
-  languageService: LanguageService
+  languageService: LanguageService,
+  layerService: LayerService
 ): void {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const routeLayer: VectorLayer = new VectorLayer({
+  const routeLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-route-layer',
     title: languageService.translate.instant('igo.geo.directions.layer.route'),
@@ -263,9 +268,12 @@ export function initRoutesFeatureStore(
     exportable: true,
     browsable: false,
     style: directionsStyle
-  });
-  tryBindStoreLayer(routesFeatureStore, routeLayer);
-  tryAddLoadingStrategy(routesFeatureStore, loadingStrategy);
+  }) as VectorLayer;
+  tryBindStoreLayer(routesFeatureStore as unknown as FeatureStore, routeLayer);
+  tryAddLoadingStrategy(
+    routesFeatureStore as unknown as FeatureStore,
+    loadingStrategy
+  );
 }
 
 /**
@@ -273,13 +281,16 @@ export function initRoutesFeatureStore(
  *
  * @param {StopsFeatureStore} stepsFeatureStore - The steps feature store to initialize.
  */
-export function initStepsFeatureStore(stepsFeatureStore: StepsFeatureStore) {
+export function initStepsFeatureStore(
+  stepsFeatureStore: StepsFeatureStore,
+  layerService: LayerService
+) {
   const loadingStrategy: FeatureStoreLoadingStrategy =
     new FeatureStoreLoadingStrategy({
       motion: FeatureMotion.None
     });
 
-  const stepLayer: VectorLayer = new VectorLayer({
+  const stepLayer = layerService.createLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-step-layer',
     title: '',
@@ -296,9 +307,12 @@ export function initStepsFeatureStore(stepsFeatureStore: StepsFeatureStore) {
     exportable: false,
     browsable: false,
     style: directionsStyle
-  });
-  tryBindStoreLayer(stepsFeatureStore, stepLayer);
-  tryAddLoadingStrategy(stepsFeatureStore, loadingStrategy);
+  }) as VectorLayer;
+  tryBindStoreLayer(stepsFeatureStore as unknown as FeatureStore, stepLayer);
+  tryAddLoadingStrategy(
+    stepsFeatureStore as unknown as FeatureStore,
+    loadingStrategy
+  );
 }
 
 /**
@@ -344,7 +358,7 @@ export function addStopToStopsFeatureStore(
 
   const point: olGeom.Point = new olGeom.Point(
     olProj.transform(
-      stop.coordinates,
+      stop.coordinates!,
       projection,
       stopsFeatureStore.map.projectionCode
     )
@@ -358,9 +372,9 @@ export function addStopToStopsFeatureStore(
     }
   ) as FeatureGeometry;
 
-  const previousStop: FeatureWithStop = stopsFeatureStore.get(stop.id);
+  const previousStop: FeatureWithStop = stopsFeatureStore.get(stop.id)!;
   const previousStopRevision: number = previousStop
-    ? previousStop.meta.revision
+    ? (previousStop.meta?.revision ?? 0)
     : 0;
 
   const stopFeatureStore: FeatureWithStop = {
@@ -372,7 +386,6 @@ export function addStopToStopsFeatureStore(
       type: DirectionsType.Stop,
       stopText,
       stopColor,
-      stopOpacity: 1,
       stop
     },
     meta: {
@@ -398,15 +411,27 @@ export function addRouteToRoutesFeatureStore(
   projection: string,
   active = false
 ): void {
-  const coordinate: Coordinate = directions.geometry.coordinates;
-  const linestring4326: olGeom.LineString = new olGeom.LineString(coordinate);
-  const linestringStore: olGeom.LineString = linestring4326.transform(
+  const geometry = directions.geometry;
+  if (!geometry) {
+    return;
+  }
+
+  const coordinate = geometry.coordinates;
+  let directionGeom: olGeom.LineString | olGeom.MultiLineString;
+  if (geometry.type === 'LineString') {
+    directionGeom = new olGeom.LineString(coordinate);
+  } else if (geometry.type === 'MultiLineString') {
+    directionGeom = new olGeom.MultiLineString(coordinate);
+  } else {
+    return;
+  }
+  const directionGeomInMapProjection = directionGeom.transform(
     projection,
     routesFeatureStore.map.projectionCode
   );
 
   const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(
-    linestringStore,
+    directionGeomInMapProjection,
     {
       featureProjection: routesFeatureStore.map.projectionCode,
       dataProjection: routesFeatureStore.map.projectionCode
@@ -415,9 +440,9 @@ export function addRouteToRoutesFeatureStore(
 
   const previousRoute: FeatureWithDirections = routesFeatureStore.get(
     directions.id
-  );
+  )!;
   const previousRouteRevision: number = previousRoute
-    ? previousRoute.meta.revision
+    ? (previousRoute.meta?.revision ?? 0)
     : 0;
 
   const routeFeatureStore: FeatureWithDirections = {
@@ -434,7 +459,7 @@ export function addRouteToRoutesFeatureStore(
       id: directions.id,
       revision: previousRouteRevision + 1
     },
-    ol: new olFeature({ linestringStore })
+    ol: new olFeature({ geometry: directionGeomInMapProjection })
   };
   routesFeatureStore.update(routeFeatureStore);
 }
@@ -445,7 +470,7 @@ export function addRouteToRoutesFeatureStore(
  * @param {number} meters - The distance in meters to be formatted.
  * @return {string | undefined} The formatted distance string.
  */
-export function formatDistance(meters: number): string {
+export function formatDistance(meters: number): string | undefined {
   if (meters === 0) {
     return undefined;
   }
@@ -489,20 +514,18 @@ export function formatStep(
   languageService: LanguageService,
   lastStep = false
 ) {
-  const maneuverType: ManeuverType = step.maneuver.type;
-  const maneuverModifier: ManeuverModifier = step.maneuver.modifier;
-  const name: string = step.name;
-  const maneuverBearingAfter: number = step.maneuver.bearing_after;
+  const maneuverType = step.maneuver!.type!;
+  const maneuverModifier = step.maneuver!.modifier!;
+  const name = step.name;
+  const maneuverBearingAfter = step.maneuver!.bearing_after!;
 
   const translate: TranslateService = languageService.translate;
   const translatedManeuverBearingAfter: string = translateManeuverBearing(
     maneuverBearingAfter,
     languageService
   );
-  const translatedManeuverModifier: string = translateManeuverModifier(
-    maneuverModifier,
-    languageService
-  );
+  const translatedManeuverModifier: string | undefined =
+    translateManeuverModifier(maneuverModifier, languageService);
 
   let iconName = 'straight'; // arrow point up by default
   let instruction = '';
@@ -682,7 +705,7 @@ export function formatStep(
 export function translateManeuverModifier(
   maneuverModifier: ManeuverModifier,
   languageService: LanguageService
-): string {
+): string | undefined {
   const translate = languageService.translate;
   return maneuverModifier
     ? translate.instant(

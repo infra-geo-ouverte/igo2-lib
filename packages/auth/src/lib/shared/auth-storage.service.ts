@@ -99,7 +99,7 @@ export class AuthStorageService
       this.preferencesChanged$.next();
     }
 
-    let token: string;
+    let token: string | undefined;
     if (scope === StorageScope.LOCAL) {
       token = this.tokenService.get();
     }

@@ -3,13 +3,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
   IgoMap,
-  ImageLayer,
   ImageLayerOptions,
   LayerService,
   MAP_DIRECTIVES,
   MapViewOptions,
   PrintComponent,
-  TileLayer,
   TileLayerOptions
 } from '@igo2/geo';
 
@@ -56,7 +54,9 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies TileLayerOptions)
-      .subscribe((layer: TileLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.layerService
       .createAsyncLayer({
@@ -71,7 +71,9 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.layerService
       .createAsyncLayer({
@@ -86,7 +88,9 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.layerService
       .createAsyncLayer({
@@ -101,6 +105,8 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       } satisfies ImageLayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
   }
 }

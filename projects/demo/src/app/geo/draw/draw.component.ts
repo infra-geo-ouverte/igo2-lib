@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import {
+  AnyLayer,
   AnyLayerOptions,
   DrawComponent,
   FeatureStore,
@@ -65,6 +66,10 @@ export class AppDrawComponent {
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 }

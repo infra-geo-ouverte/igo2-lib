@@ -64,12 +64,12 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     isPredefinedCatalog: boolean;
   }>(MAT_DIALOG_DATA);
 
-  predefinedForm$ = new BehaviorSubject<Form>(undefined);
-  customForm$ = new BehaviorSubject<Form>(undefined);
-  data$ = new BehaviorSubject<Catalog>(undefined);
-  customData$ = new BehaviorSubject<Catalog>(undefined);
-  emailAddress: string;
-  private storeViewAll$$: Subscription;
+  predefinedForm$ = new BehaviorSubject<Form | undefined>(undefined);
+  customForm$ = new BehaviorSubject<Form | undefined>(undefined);
+  data$ = new BehaviorSubject<Catalog | undefined>(undefined);
+  customData$ = new BehaviorSubject<Catalog | undefined>(undefined);
+  emailAddress!: string;
+  private storeViewAll$$!: Subscription;
 
   ngOnInit() {
     if (this.data.addedCatalog) {
@@ -165,8 +165,10 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     this.storeViewAll$$?.unsubscribe();
   }
 
-  checkFieldsValidity(form$: BehaviorSubject<Form>): boolean {
-    const fields = form$.getValue().fields;
+  checkFieldsValidity(form$: BehaviorSubject<Form | undefined>): boolean {
+    const form = form$.getValue();
+    if (!form) return false;
+    const fields = form.fields;
     return fields
       .map((field) => {
         if (field.control.invalid) {

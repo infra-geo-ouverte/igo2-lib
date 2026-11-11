@@ -18,9 +18,11 @@
       igoMatBadgeBackgroundColor="none"
       [igoMatBadgeInverseColor]="true"
       [matBadgeHidden]="
-        ((inRange$ | async) && (isVisible$ | async) === true) ||
-        ((inRange$ | async) && !added()) ||
-        ((inRange$ | async) && (isPreview$ | async))
+        !!(
+          ((inRange$ | async) && (isVisible$ | async) === true) ||
+          ((inRange$ | async) && !added()) ||
+          ((inRange$ | async) && (isPreview$ | async))
+        )
       "
       [matBadgeDisabled]="(inRange$ | async) === false"
       matBadgeSize="small"
@@ -45,7 +47,7 @@
       matBadge="icon"
       igoMatBadgeIcon="visibility_off"
       [igoMatBadgeInverseColor]="true"
-      [matBadgeHidden]="inRange$ | async"
+      [matBadgeHidden]="!!(inRange$ | async)"
       [matBadgeDisabled]="true"
       matBadgeSize="small"
       matBadgePosition="after"

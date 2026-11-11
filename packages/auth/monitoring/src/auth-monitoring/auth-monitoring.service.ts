@@ -38,13 +38,13 @@ export class AuthMonitoringService {
         })
       )
       .subscribe((isAuthenticated) => {
-        const user = isAuthenticated ? this.authService.user : null;
+        const user = isAuthenticated ? this.authService!.user : null;
         this._identifyUser(user);
       });
   }
 
   private _identifyUser(user: User | null): void {
-    switch (this.monitoringOptions.provider) {
+    switch (this.monitoringOptions?.provider) {
       case 'sentry':
         identifySentryUser(user);
         break;

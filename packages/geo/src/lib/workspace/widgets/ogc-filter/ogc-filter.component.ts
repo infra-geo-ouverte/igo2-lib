@@ -24,9 +24,9 @@ import { IgoMap } from '../../../map/shared/map';
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   private cdRef = inject(ChangeDetectorRef);
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input<Layer>();
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
   /**
    * Event emitted on complete

@@ -1,19 +1,17 @@
-import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
-
-import { Subscription } from 'rxjs';
+import { DestroyRef, Directive, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MapService } from '../../map/shared/map.service';
 import { TimeFilterListComponent } from './time-filter-list.component';
 
 @Directive({
-  selector: '[igoTimeFilterListBinding]',
-  standalone: true
+  selector: '[igoTimeFilterListBinding]'
 })
-export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
+export class TimeFilterListBindingDirective implements OnInit {
   private mapService = inject(MapService);
+  private destroyRef = inject(DestroyRef);
 
   private component: TimeFilterListComponent;
-  private layers$$: Subscription;
 
   constructor() {
     const component = inject(TimeFilterListComponent, { self: true });
@@ -25,14 +23,11 @@ export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
     // Override input layers
     this.component.layers.set([]);
 
-    this.layers$$ = this.mapService
+    this.mapService
       .getMap()
-      .layerController.all$.subscribe((layers) => {
+      ?.layerController.all$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((layers) => {
         this.component.layers.set(layers);
       });
-  }
-
-  ngOnDestroy() {
-    this.layers$$.unsubscribe();
   }
 }

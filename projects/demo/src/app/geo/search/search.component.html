@@ -12,6 +12,8 @@
     }
     <igo-map-browser
       #mapBrowser
+      igoWorkspaceUpdator
+      [workspaceStore]="workspaceState.store"
       [map]="map"
       [view]="view"
       [igoContextMenu]="actionbarMenu"
@@ -28,7 +30,7 @@
 
     <igo-panel title="Search">
       <igo-search-bar
-        [term]="term"
+        [term]="term!"
         (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
         [searchSettings]="true"
         [store]="searchStore"
@@ -37,6 +39,9 @@
         (search)="onSearch($event)"
         (clearFeature)="removeFeatureFromMap()"
         (searchSettingsChange)="onSearchSettingsChange()"
+        (searchResultsGeometryStatus)="
+          onSearchResultsGeometryStatusChange($event)
+        "
         [reverseSearchCoordsFormatEnabled]="igoReverseSearchCoordsFormatEnabled"
         (reverseSearchCoordsFormatStatus)="
           onReverseCoordsFormatStatusChange($event)
@@ -45,10 +50,10 @@
 
       <igo-search-results
         [store]="searchStore"
-        [term]="term"
+        [term]="term!"
         [termSplitter]="termSplitter"
+        [showIcons]="true"
         placeholder="false"
-        [settingsChange$]="settingsChange$"
         (resultFocus)="onResultFocus($any($event))"
         (resultSelect)="onResultSelect($any($event))"
         (moreResults)="onSearch($event)"

@@ -24,7 +24,7 @@ export class AppAuthFormComponent implements OnInit, OnDestroy {
   private _authService = inject(AuthService);
 
   public logged = false;
-  public logged$$: Subscription;
+  public logged$$!: Subscription;
 
   ngOnInit() {
     this.logged$$ = this._authService.logged$.subscribe((logged: boolean) => {

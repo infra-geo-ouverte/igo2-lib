@@ -1,3 +1,4 @@
+export * from './extension';
 export * from './linked';
 export * from './layer';
 export * from './layer-base';
@@ -8,7 +9,6 @@ export * from './image-layer.interface';
 export * from './tile-layer';
 export * from './tile-layer.interface';
 export * from './vector-layer';
-export * from './vector-layer.interface';
 export * from './vectortile-layer';
 export * from './vectortile-layer.interface';
 export * from './any-layer';

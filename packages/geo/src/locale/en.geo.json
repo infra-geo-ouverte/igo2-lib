@@ -240,6 +240,10 @@
           "rename": "Rename group",
           "moreOptions": "Group tools",
           "remove": "Remove this group from the map",
+          "removeDialog": {
+            "group": "Are you sure you want to remove the layer group from the map?",
+            "many": "Are you sure you want to remove all selected items from the map?"
+          },
           "hide": "Hide group",
           "hideChildren": "Layer hidden by a group",
           "show": "Show group"
@@ -314,6 +318,9 @@
         "cancel": "Cancel",
         "fill": "Fill",
         "stroke": "Stroke",
+        "strokeWidth": "Stroke width",
+        "label": "Label",
+        "radius": "Radius",
         "fontSize": "Font size",
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
@@ -389,7 +396,7 @@
         "buttons": {
           "copyDirections": "Copy directions to clipboard",
           "copyLink": "Copy link to clipboard",
-          "downloadDirections": "Download directions",
+          "printDirections": "Print directions",
           "message": {
             "copyDirections": "Directions copied to clipboard",
             "copyLink": "Link copied to clipboard"
@@ -472,6 +479,8 @@
             }
           },
           "routeOptions": "Route options",
+          "routingSource": "Routing source",
+          "routingSourceTooltip": "Changing source recalculates the route immediately",
           "stepTitleTooltip": "Zoom on location"
         },
         "toggle": {

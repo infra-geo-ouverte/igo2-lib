@@ -75,21 +75,21 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Catalog
    */
-  readonly catalog = input<Catalog>(undefined);
+  readonly catalog = input.required<Catalog>();
 
   /**
    * Catalog group
    */
-  readonly group = input<CatalogItemGroup>(undefined);
+  readonly group = input.required<CatalogItemGroup>();
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   /**
    * Whether the group is collapsed
    */
   readonly collapsed = model(true);
 
-  readonly resolution = input<number>(undefined);
+  readonly resolution = input<number>();
 
   readonly catalogAllowLegend = input(false);
 
@@ -106,7 +106,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * This could be useful to display some layer info before adding it, for example.
    */
   readonly state =
-    input<EntityStateManager<CatalogItem, CatalogItemState>>(undefined);
+    input.required<EntityStateManager<CatalogItem, CatalogItemState>>();
 
   /**
    * Event emitted when the add/remove button of the group is clicked
@@ -130,7 +130,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     const group = this.group();
-    this.store.load(group.items);
+    this.store.load(group.items ?? []);
     this.evaluateAdded();
     this.evaluateDisabled(this.collapsed());
     if (group.sortDirection !== undefined) {
@@ -211,7 +211,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     });
   }
 
-  onLayerPreview(event) {
+  onLayerPreview(event: boolean) {
     this.preview$.next(event);
   }
 

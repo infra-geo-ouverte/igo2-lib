@@ -15,7 +15,6 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { EntityRecord } from '../shared/entity.interfaces';
 import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
@@ -38,13 +37,13 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * The selected entity
    * @internal
    */
-  readonly selected$ = new BehaviorSubject<object>(undefined);
+  readonly selected$ = new BehaviorSubject<object | undefined>(undefined);
 
   /**
    * The current multi select option text
    * @internal
    */
-  readonly multiText$ = new BehaviorSubject<string>(undefined);
+  readonly multiText$ = new BehaviorSubject<string | undefined>(undefined);
 
   readonly multiSelectValue = { id: 'IGO_MULTI_SELECT' };
 
@@ -53,27 +52,27 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the selected entity
    */
-  private selected$$: Subscription;
+  private selected$$!: Subscription;
 
   /**
    * Store watcher
    */
-  private watcher: EntityStoreWatcher<object>;
+  private watcher!: EntityStoreWatcher<object>;
 
   /**
    * Entity store
    */
-  readonly store = input<EntityStore<object>>(undefined);
+  readonly store = input<EntityStore<any>>();
 
   /**
    * Title accessor
    */
-  readonly titleAccessor = input<(object) => string>(getEntityTitle);
+  readonly titleAccessor = input<(arg0: any) => string>(getEntityTitle);
 
   /**
    * Text to display when nothing is selected
    */
-  readonly emptyText = input<string>(undefined);
+  readonly emptyText = input<string>();
 
   /**
    * Wheter selecting many entities is allowed
@@ -93,7 +92,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Field placeholder
    */
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
   /**
    * Wheter the selector is disabled or not
@@ -110,18 +109,17 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
+    const store = this.store();
+    if (store) {
+      this.watcher = new EntityStoreWatcher(store, this.cdRef);
 
-    this.selected$$ = this.store()
-      .stateView.manyBy$(
-        (record: EntityRecord<object>) => record.state.selected === true
-      )
-      .subscribe((records: EntityRecord<object>[]) => {
-        const entities = records.map(
-          (record: EntityRecord<object>) => record.entity
-        );
-        this.onSelectFromStore(entities);
-      });
+      this.selected$$ = store.stateView
+        .manyBy$((record) => record.state.selected === true)
+        .subscribe((records) => {
+          const entities = records.map((record) => record.entity);
+          this.onSelectFromStore(entities);
+        });
+    }
   }
 
   /**
@@ -147,7 +145,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
       (_value: object) => _value !== this.multiSelectValue
     );
     const store = this.store();
-    if (multiSelect !== undefined) {
+    if (store && multiSelect !== undefined) {
       if (entities.length === store.count) {
         entities = [];
       } else if (entities.length < store.count) {
@@ -156,10 +154,12 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
     }
 
     entities = entities.filter((entity: object) => entity !== this.emptyValue);
-    if (entities.length === 0) {
-      store.state.updateAll({ selected: false });
-    } else {
-      store.state.updateMany(entities, { selected: true }, true);
+    if (store) {
+      if (entities.length === 0) {
+        store.state.updateAll({ selected: false });
+      } else {
+        store.state.updateMany(entities, { selected: true }, true);
+      }
     }
 
     const value = this.multi() ? entities : event.value;
@@ -179,15 +179,18 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
 
   private updateMultiToggleWithEntities(entities: object[]) {
     const store = this.store();
+    if (!store) {
+      return;
+    }
     const multiNoneText = this.multiNoneText();
     const multiAllText = this.multiAllText();
     if (
-      entities.length === store.count &&
+      entities.length === store!.count &&
       this.multiText$.value !== multiNoneText
     ) {
       this.multiText$.next(multiNoneText);
     } else if (
-      entities.length < store.count &&
+      entities.length < store!.count &&
       this.multiText$.value !== multiAllText
     ) {
       this.multiText$.next(multiAllText);

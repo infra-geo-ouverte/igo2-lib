@@ -9,8 +9,10 @@ import { Media, MediaOrientation } from './media.enum';
   providedIn: 'root'
 })
 export class MediaService {
-  public media$ = new BehaviorSubject<Media>(undefined);
-  public orientation$ = new BehaviorSubject<MediaOrientation>(undefined);
+  public media$ = new BehaviorSubject<Media | undefined>(undefined);
+  public orientation$ = new BehaviorSubject<MediaOrientation | undefined>(
+    undefined
+  );
 
   constructor() {
     const breakpointObserver = inject(BreakpointObserver);
@@ -66,11 +68,11 @@ export class MediaService {
     });
   }
 
-  getMedia(): Media {
+  getMedia(): Media | undefined {
     return this.media$.value;
   }
 
-  getOrientation(): MediaOrientation {
+  getOrientation(): MediaOrientation | undefined {
     return this.orientation$.value;
   }
 

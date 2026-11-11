@@ -29,7 +29,7 @@ export class LayerListToolService {
 
   createGroup(): Observable<LayerGroup | undefined> {
     return this.formDialogService
-      .open(FORM_GROUP_CONFIG, {
+      .open<{ name: string }>(FORM_GROUP_CONFIG, {
         title: 'igo.geo.layer.group.create',
         minWidth: '25%'
       })
@@ -47,13 +47,13 @@ export class LayerListToolService {
 
   renameGroup(group: LayerGroup): Observable<string | undefined> {
     const config = { ...FORM_GROUP_CONFIG };
-    const field = config.formFieldConfigs.find(
+    const field = config.formFieldConfigs!.find(
       (field) => field.name === 'name'
     );
-    field.options.initialValue = group.title;
+    field!.options!.initialValue = group.title;
 
     return this.formDialogService
-      .open(config, {
+      .open<{ name: string }>(config, {
         title: 'igo.geo.layer.group.rename',
         minWidth: '25%'
       })

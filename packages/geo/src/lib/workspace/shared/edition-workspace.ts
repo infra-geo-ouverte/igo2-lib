@@ -1,6 +1,8 @@
-import { MatDialog } from '@angular/material/dialog';
-
-import { EntityRecord } from '@igo2/common/entity';
+import {
+  EntityRecord,
+  EntityTableTemplate,
+  getColumnKeyWithoutPropertiesTag
+} from '@igo2/common/entity';
 import { Workspace, WorkspaceOptions } from '@igo2/common/workspace';
 import { ConfigService } from '@igo2/core/config';
 
@@ -13,19 +15,24 @@ import OlModify from 'ol/interaction/Modify';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Geometry } from 'geojson';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
+import { FeatureDataSource } from '../../datasource/shared';
 import { GeometryType, createInteractionStyle } from '../../draw/shared';
-import { featureToOl } from '../../feature/shared';
+import { Feature, FeatureGeometry, featureToOl } from '../../feature/shared';
 import { DrawControl } from '../../geometry/shared';
-import { ImageLayer, VectorLayer } from '../../layer/shared';
+import { ImageLayer, LayerService, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
-import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
+import { EditionFeature } from './edition-workspace.interface';
 
-export interface EditionWorkspaceOptions extends WorkspaceOptions {
+export interface EditionWorkspaceOptions extends WorkspaceOptions<EditionWorkspaceMeta> {
   layer: ImageLayer | VectorLayer;
   map: IgoMap;
+}
+
+interface EditionWorkspaceMeta {
+  tableTemplate: EntityTableTemplate;
 }
 
 export class EditionWorkspace extends Workspace {
@@ -39,12 +46,18 @@ export class EditionWorkspace extends Workspace {
     return this.options.map;
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore override return type
+  get meta(): EditionWorkspaceMeta | undefined {
+    return this.options.meta ?? undefined;
+  }
+
   private drawControl: DrawControl;
-  private drawEnd$$: Subscription;
+  private drawEnd$$!: Subscription;
   private olDrawingLayerSource = new OlVectorSource();
   private olDrawingLayer: VectorLayer;
   public geometryType = GeometryType; // Reference to the GeometryType enum
-  public modify; // Reference to the ol interaction
+  public modify?: OlModify; // Reference to the ol interaction
 
   public modifyStyle = new OlStyle.Style({
     stroke: new OlStyle.Stroke({
@@ -74,22 +87,21 @@ export class EditionWorkspace extends Workspace {
     return record.state.edit === true;
   };
 
-  public fillColor: string;
-  public strokeColor: string;
-  public strokeWidth: number;
+  public fillColor!: string;
+  public strokeColor!: string;
+  public strokeWidth!: number;
 
   constructor(
-    private dialog: MatDialog,
     private configService: ConfigService,
     private adding$: BehaviorSubject<boolean>,
-    private getDomainValues: (relation: RelationOptions) => Observable<any>,
+    private layerService: LayerService,
     protected options: EditionWorkspaceOptions
   ) {
     super(options);
     this.map.viewController.resolution$.subscribe((mapResolution) => {
       if (
-        mapResolution > this.layer.minResolution &&
-        mapResolution < this.layer.maxResolution
+        (mapResolution ?? 0) > this.layer.minResolution &&
+        (mapResolution ?? 0) < this.layer.maxResolution
       ) {
         this.inResolutionRange$.next(true);
       } else {
@@ -98,13 +110,9 @@ export class EditionWorkspace extends Workspace {
     });
 
     this.drawControl = this.createDrawControl();
-    this.drawControl.setGeometryType(this.geometryType.Point as any);
+    this.drawControl.setGeometryType(this.geometryType.Point);
 
-    if (this.olDrawingLayer) {
-      this.map.layerController.remove(this.olDrawingLayer);
-    }
-
-    this.olDrawingLayer = new VectorLayer({
+    this.olDrawingLayer = this.layerService.createLayer({
       id: 'igo-draw-layer',
       title: 'edition',
       zIndex: 300,
@@ -115,110 +123,78 @@ export class EditionWorkspace extends Workspace {
       workspace: {
         enabled: false
       }
-    });
+    }) as VectorLayer;
   }
 
-  deleteFeature(feature, workspace) {
-    setTimeout(() => {
-      const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
-        disableClose: false,
-        data: { type: 'delete' }
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === false) {
-          let id, url;
-          const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
-          const deleteUrl =
-            workspace.layer.dataSource.options.edition.deleteUrl;
-          if (baseUrl.length) {
-            url = this.configService.getConfig('edition.url')
-              ? this.configService.getConfig('edition.url') +
-                baseUrl +
-                '?' +
-                deleteUrl
-              : baseUrl + '?' + deleteUrl;
-          } else {
-            url = this.configService.getConfig('edition.url')
-              ? this.configService.getConfig('edition.url') + deleteUrl
-              : deleteUrl;
-          }
-
-          for (const column of workspace.meta.tableTemplate.columns) {
-            for (const property in feature.properties) {
-              let columnName = column.name;
-              if (columnName.includes('properties.')) {
-                columnName = columnName.split('.')[1];
-              }
-              if (columnName === property && column.primary === true) {
-                id = feature.properties[property];
-              }
-            }
-          }
-          if (url) {
-            url += id;
-            this.deleteFeature(workspace, url);
-          }
-        }
-      });
-    }, 250);
-  }
-
-  editFeature(feature, workspace: EditionWorkspace) {
-    feature.edition = true;
-    let id;
-    let find = false;
-    const editionOpt = workspace.layer.dataSource.options.edition;
-    for (const column of workspace.meta.tableTemplate.columns) {
-      // Update domain list
-      if (column.type === 'list' || column.type === 'autocomplete') {
-        this.getDomainValues(column.relation).subscribe((result) => {
-          column.domainValues = result;
-        });
-      }
-      if (find === false) {
-        for (const property in feature.properties) {
-          let columnName = column.name;
-          if (columnName.includes('properties.')) {
-            columnName = columnName.split('.')[1];
-          }
-          if (columnName === property && column.primary === true) {
-            id = feature.properties[property];
-            find = true;
-            break;
-          }
-        }
-      }
+  getDeleteUrl(feature: Feature): string {
+    let url: string | undefined;
+    const baseUrl = this.layer.dataSource.options.edition?.baseUrl;
+    const deleteUrl = this.layer.dataSource.options.edition?.deleteUrl;
+    if (baseUrl?.length) {
+      url = this.configService.getConfig('edition.url')
+        ? this.configService.getConfig('edition.url') +
+          baseUrl +
+          '?' +
+          deleteUrl
+        : baseUrl + '?' + deleteUrl;
+    } else {
+      url = this.configService.getConfig('edition.url')
+        ? this.configService.getConfig('edition.url') + deleteUrl
+        : deleteUrl;
     }
+
+    const id = this.findFeatureId(feature);
+    if (url) {
+      url += id;
+    }
+    return url ?? '';
+  }
+
+  editFeature(feature: EditionFeature) {
+    feature.edition = true;
+    const editionOpt = this.layer.dataSource.options.edition;
+    const id = this.findFeatureId(feature);
     if (id) {
       feature.original_properties = JSON.parse(
         JSON.stringify(feature.properties)
       );
       feature.original_geometry = feature.geometry;
       feature.idkey = id;
-      workspace.entityStore.state.updateAll({ edit: false });
-      workspace.entityStore.stateView.filter(this.editFeaturefilterClauseFunc);
-      this.addFeatureToStore(feature, workspace);
+      this.entityStore!.state.updateAll({ edit: false });
+      this.entityStore!.stateView.filter(this.editFeaturefilterClauseFunc);
+      this.addFeatureToStore(feature);
     } else {
       // Only for edition with it's own geometry
-      if (!feature.newFeature && editionOpt.geomType) {
+      if (!feature.newFeature && editionOpt?.geomType) {
         feature.newFeature = true;
         this.adding$.next(true);
-        workspace.entityStore.state.updateAll({ newFeature: false });
-        workspace.entityStore.stateView.filter(this.newFeaturefilterClauseFunc);
-        if (editionOpt.addWithDraw) {
-          const geometryType = editionOpt.geomType;
-          this.onGeometryTypeChange(geometryType, feature, workspace);
+        this.entityStore!.state.updateAll({ newFeature: false });
+        this.entityStore!.stateView.filter(this.newFeaturefilterClauseFunc);
+        if (editionOpt?.addWithDraw) {
+          const geometryType = editionOpt?.geomType;
+          this.onGeometryTypeChange(geometryType, feature);
         } else {
-          workspace.entityStore.insert(feature);
-          workspace.entityStore.state.update(
-            feature,
-            { newFeature: true },
-            true
-          );
+          this.entityStore!.insert(feature);
+          this.entityStore!.state.update(feature, { newFeature: true }, true);
         }
       }
     }
+  }
+
+  private findFeatureId(feature: Feature): string | null {
+    const primaryColumn = this.meta?.tableTemplate?.columns
+      .filter((column) => column.primary)
+      .find((column) => {
+        const key = getColumnKeyWithoutPropertiesTag(column.name);
+        return feature.properties[key] != null;
+      });
+
+    if (!primaryColumn) {
+      return null;
+    }
+
+    const key = getColumnKeyWithoutPropertiesTag(primaryColumn.name);
+    return feature.properties[key] as string | null;
   }
 
   /**
@@ -234,7 +210,7 @@ export class EditionWorkspace extends Workspace {
     strokeWidth?: number
   ) {
     const drawControl = new DrawControl({
-      geometryType: undefined,
+      geometryType: undefined as unknown as string,
       drawingLayerSource: this.olDrawingLayerSource,
       drawingLayerStyle: new OlStyle.Style({}),
       interactionStyle: createInteractionStyle(
@@ -251,21 +227,17 @@ export class EditionWorkspace extends Workspace {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(
-    geometryType: Type,
-    feature,
-    workspace: EditionWorkspace
-  ) {
+  onGeometryTypeChange(geometryType: Type, feature: Feature) {
     this.drawControl.setGeometryType(geometryType);
-    this.toggleDrawControl(feature, workspace);
+    this.toggleDrawControl(feature);
   }
 
   /**
    * Activate the correct control
    */
-  private toggleDrawControl(feature, workspace: EditionWorkspace) {
+  private toggleDrawControl(feature: Feature) {
     this.deactivateDrawControl();
-    this.activateDrawControl(feature, workspace);
+    this.activateDrawControl(feature);
   }
 
   /**
@@ -286,10 +258,10 @@ export class EditionWorkspace extends Workspace {
   /**
    * Activate a given control
    */
-  private activateDrawControl(feature, workspace: EditionWorkspace) {
+  private activateDrawControl(feature: Feature) {
     this.drawEnd$$ = this.drawControl.end$.subscribe(
       (olGeometry: OlGeometry) => {
-        this.addFeatureToStore(feature, workspace, olGeometry);
+        this.addFeatureToStore(feature, olGeometry);
       }
     );
 
@@ -301,26 +273,22 @@ export class EditionWorkspace extends Workspace {
    * will trigger and add the feature to the workspace store.
    * @internal
    */
-  private addFeatureToStore(
-    feature,
-    workspace: EditionWorkspace,
-    olGeometry?: OlGeometry
-  ) {
+  private addFeatureToStore(feature: Feature, olGeometry?: OlGeometry) {
     const projection = this.map.ol.getView().getProjection();
-    let geometry = feature.geometry;
+    let geometry: Geometry;
 
     // If an olGeometry is passed, it means that it is a new feature
     if (olGeometry) {
-      workspace.entityStore.insert(feature);
-      workspace.entityStore.state.update(feature, { newFeature: true }, true);
+      this.entityStore!.insert(feature);
+      this.entityStore!.state.update(feature, { newFeature: true }, true);
       geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
         featureProjection: projection,
         dataProjection: 'EPSG:4326'
-      }) as any;
+      });
 
-      feature.geometry = geometry;
+      feature.geometry = geometry as FeatureGeometry;
     } else {
-      workspace.entityStore.state.update(feature, { edit: true }, true);
+      this.entityStore!.state.update(feature, { edit: true }, true);
     }
 
     feature.projection = 'EPSG:4326';
@@ -332,7 +300,10 @@ export class EditionWorkspace extends Workspace {
     this.map.layerController.add(this.olDrawingLayer);
 
     this.deactivateDrawControl();
-    this.createModifyInteraction(featureOl, feature, workspace);
+
+    if (this.layer.dataSource.options.edition?.addWithDraw) {
+      this.createModifyInteraction(featureOl, feature);
+    }
   }
 
   /**
@@ -342,18 +313,18 @@ export class EditionWorkspace extends Workspace {
   deleteDrawings() {
     this.map.layerController.remove(this.olDrawingLayer);
     this.olDrawingLayerSource.clear();
-    this.map.ol.removeInteraction(this.modify);
+    if (this.modify) {
+      this.map.ol.removeInteraction(this.modify);
+    }
   }
 
   /**
    * Create a modify interaction to allow a geometry change one feature at the time (drag and drop)
    */
-  createModifyInteraction(
-    olFeature: OlFeature<OlGeometry>,
-    feature,
-    workspace: EditionWorkspace
-  ) {
-    this.map.ol.removeInteraction(this.modify);
+  createModifyInteraction(olFeature: OlFeature<OlGeometry>, feature: Feature) {
+    if (this.modify) {
+      this.map.ol.removeInteraction(this.modify);
+    }
     const olCollection = new Collection([olFeature], { unique: true });
     this.modify = new OlModify({
       features: olCollection
@@ -367,7 +338,7 @@ export class EditionWorkspace extends Workspace {
     this.modify.on('modifyend', (event) => {
       const olGeometry = event.features.getArray()[0]?.getGeometry();
       if (olGeometry) {
-        this.addFeatureToStore(feature, workspace, olGeometry);
+        this.addFeatureToStore(feature, olGeometry);
       }
     });
   }

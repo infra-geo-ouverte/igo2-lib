@@ -27,8 +27,8 @@ export type AlignmentType = (typeof AlignmentType)[number];
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResizableBarComponent implements OnInit {
-  alignement: AlignmentType;
-  iconRotation: string;
+  alignement!: AlignmentType;
+  iconRotation!: string;
 
   readonly anchor = input<ResizeAnchorType>('right');
 

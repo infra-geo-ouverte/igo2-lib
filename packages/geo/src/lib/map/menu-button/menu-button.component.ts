@@ -30,13 +30,13 @@ export class MenuButtonComponent {
     this._sidenavOpenend = value;
     this.getClassMenuButton();
   }
-  private _sidenavOpenend: boolean;
+  private _sidenavOpenend!: boolean;
 
   readonly openSidenav = output();
 
   public useThemeColor: boolean;
 
-  public menuButtonClass;
+  public menuButtonClass?: Record<string, boolean>;
 
   constructor() {
     const configValue = this.configService.getConfig(

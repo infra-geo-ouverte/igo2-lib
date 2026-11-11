@@ -57,26 +57,26 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$ = new BehaviorSubject<boolean>(true);
   public isPreview$ = new BehaviorSubject<boolean>(false);
   public isVisible$ = new BehaviorSubject<boolean>(false);
-  private isPreview$$: Subscription;
-  private resolution$$: Subscription;
-  private layers$$: Subscription;
-  private lastTimeoutRequest;
+  private isPreview$$!: Subscription;
+  private resolution$$!: Subscription;
+  private layers$$!: Subscription;
+  private lastTimeoutRequest?: ReturnType<typeof setTimeout>;
 
   public layerLegendShown$ = new BehaviorSubject(false);
-  public igoLayer$ = new BehaviorSubject<Layer>(undefined);
+  public igoLayer$ = new BehaviorSubject<Layer | undefined>(undefined);
 
   private mouseInsideAdd = false;
 
-  readonly resolution = input<number>(undefined);
+  readonly resolution = input<number>();
 
   readonly catalogAllowLegend = input(false);
 
   /**
    * Catalog layer
    */
-  readonly layer = input<CatalogItemLayer>(undefined);
+  readonly layer = input.required<CatalogItemLayer>();
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   /**
    * Whether the layer is already added to the map
@@ -115,7 +115,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
     this.resolution$$ = this.map().viewController.resolution$.subscribe(
       (resolution) => {
-        this.isInResolutionsRange(resolution);
+        this.isInResolutionsRange(resolution ?? 0);
         this.isVisible();
       }
     );
@@ -158,7 +158,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
    * On mouse event, mouseenter /mouseleave
    * @internal
    */
-  onMouseEvent(event) {
+  onMouseEvent(event: MouseEvent) {
     this.onToggleClick(event);
   }
 
@@ -174,7 +174,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
    * On toggle button click, emit the added change event
    * @internal
    */
-  onToggleClick(event) {
+  onToggleClick(event: MouseEvent | Event) {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
@@ -258,7 +258,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     const layerValue = this.layer();
     if (layerValue?.id) {
       const layer = this.map().layerController.getById(layerValue?.id);
-      this.isVisible$.next(layer?.displayed);
+      this.isVisible$.next(layer?.displayed ?? false);
     }
   }
 

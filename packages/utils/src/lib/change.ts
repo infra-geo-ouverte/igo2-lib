@@ -1,4 +1,5 @@
-import { ChangeType, GroupingChanges } from './change.interface';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ChangeType, GroupingChanges, KeyChange } from './change.interface';
 import { StringUtils } from './string-utils';
 
 export class ChangeUtils {
@@ -17,8 +18,8 @@ export class ChangeUtils {
       return items;
     }
 
-    const obj1Clone: any = [...obj1];
-    const obj2Clone: any = [...obj2];
+    const obj1Clone: Record<string, unknown>[] = [...obj1];
+    const obj2Clone: Record<string, unknown>[] = [...obj2];
 
     for (const fromItem of obj1Clone) {
       const index = obj2Clone.findIndex((s) => s.id === fromItem.id);
@@ -65,15 +66,20 @@ export class ChangeUtils {
     return items;
   }
 
-  private static compareObject(fromItem, toItem, baseKey?, ignoreKeys = []) {
+  private static compareObject(
+    fromItem: any,
+    toItem: any,
+    baseKey?: string,
+    ignoreKeys: string[] = []
+  ): KeyChange[] {
     const fromItemClone = JSON.parse(JSON.stringify(fromItem));
     const toItemClone = JSON.parse(JSON.stringify(toItem));
 
-    const keys: any = new Set([
+    const keys: Set<string> = new Set([
       ...Object.keys(fromItem),
       ...Object.keys(toItem)
     ]);
-    let keysChanged = [];
+    let keysChanged: KeyChange[] = [];
     keys.forEach((key) => {
       const keyString = baseKey ? `${baseKey}.${key}` : key;
       if (ignoreKeys.indexOf(keyString) !== -1) {

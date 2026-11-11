@@ -48,84 +48,16 @@
       <igo-layer-legend-list
         igoLayerLegendListBinding
         [allowShowAllLegends]="allowShowAllLegends()"
-        [showAllLegendsValue]="showAllLegendsValue$ | async"
+        [showAllLegendsValue]="!!(showAllLegendsValue$ | async)"
         (allLegendsShown)="onShowAllLegends($event)"
         [excludeBaseLayers]="excludeBaseLayers"
         [updateLegendOnResolutionChange]="updateLegendOnResolutionChange()"
       />
     }
-    @if ((layers$ | async).length !== 0) {
+    @if ((layers$ | async)?.length !== 0) {
     } @else {
-      @if (delayedShowEmptyMapContent) {
-        <mat-list>
-          <p class="map-empty">
-            {{ 'igo.integration.mapTool.empty' | translate }}
-          </p>
-          @if (
-            layerAdditionAllowed() &&
-            (searchToolInToolbar ||
-              catalogToolInToolbar ||
-              contextToolInToolbar)
-          ) {
-            <p class="map-empty">
-              {{ 'igo.integration.mapTool.customize' | translate }}
-            </p>
-          }
-          @if (layerAdditionAllowed() && searchToolInToolbar) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>search</mat-icon>
-              <span matListItemTitle class="search-tool" (click)="searchEmit()">
-                {{ 'igo.integration.mapTool.search-tool' | translate }}
-              </span>
-            </mat-list-item>
-          }
-          @if (layerAdditionAllowed() && catalogToolInToolbar) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>library_add</mat-icon>
-              <span
-                matListItemTitle
-                class="catalog-tool"
-                (click)="catalogEmit()"
-              >
-                {{ 'igo.integration.mapTool.catalog-tool' | translate }}
-              </span>
-            </mat-list-item>
-          }
-          @if (layerAdditionAllowed() && contextToolInToolbar) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>star</mat-icon>
-              <span
-                matListItemTitle
-                class="context-tool"
-                (click)="contextEmit()"
-              >
-                {{ 'igo.integration.mapTool.context-tool' | translate }}
-              </span>
-            </mat-list-item>
-          }
-        </mat-list>
-      }
-    }
-
-    @if (
-      !allowShowAllLegends() &&
-      (layers$ | async).length !== 0 &&
-      (visibleOrInRangeLayers$ | async).length === 0
-    ) {
-      <p class="map-empty">
-        {{
-          (visibleLayers$ | async).length
-            ? ('igo.integration.mapTool.noLayersInRange' | translate)
-            : ('igo.integration.mapTool.noLayersVisible' | translate)
-        }}
-      </p>
-    }
-  </mat-tab>
-
-  <ng-template #emptyLayers>
-    @if (delayedShowEmptyMapContent) {
       <mat-list>
-        <p class="map-empty">
+        <p class="map-empty mat-typography">
           {{ 'igo.integration.mapTool.empty' | translate }}
         </p>
         @if (
@@ -162,5 +94,60 @@
         }
       </mat-list>
     }
+
+    @if (
+      !allowShowAllLegends() &&
+      (layers$ | async)?.length !== 0 &&
+      (visibleOrInRangeLayers$ | async)?.length === 0
+    ) {
+      <p class="map-empty">
+        {{
+          (visibleLayers$ | async)?.length
+            ? ('igo.integration.mapTool.noLayersInRange' | translate)
+            : ('igo.integration.mapTool.noLayersVisible' | translate)
+        }}
+      </p>
+    }
+  </mat-tab>
+
+  <ng-template #emptyLayers>
+    <mat-list>
+      <p class="map-empty mat-typography">
+        {{ 'igo.integration.mapTool.empty' | translate }}
+      </p>
+      @if (
+        layerAdditionAllowed() &&
+        (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)
+      ) {
+        <p class="map-empty">
+          {{ 'igo.integration.mapTool.customize' | translate }}
+        </p>
+      }
+
+      @if (layerAdditionAllowed() && searchToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>search</mat-icon>
+          <span matListItemTitle class="search-tool" (click)="searchEmit()">
+            {{ 'igo.integration.mapTool.search-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+      @if (layerAdditionAllowed() && catalogToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>library_add</mat-icon>
+          <span matListItemTitle class="catalog-tool" (click)="catalogEmit()">
+            {{ 'igo.integration.mapTool.catalog-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+      @if (layerAdditionAllowed() && contextToolInToolbar) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>star</mat-icon>
+          <span matListItemTitle class="context-tool" (click)="contextEmit()">
+            {{ 'igo.integration.mapTool.context-tool' | translate }}
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
   </ng-template>
 </mat-tab-group>

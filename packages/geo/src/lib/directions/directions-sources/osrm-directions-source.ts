@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
-import { uuid } from '@igo2/utils';
+import { ObjectUtils, uuid } from '@igo2/utils';
 
 import { Position } from 'geojson';
 import { Observable } from 'rxjs';
@@ -12,10 +12,18 @@ import {
   DirectionsFormat,
   SourceDirectionsType
 } from '../shared/directions.enum';
-import { DirectionOptions, Directions } from '../shared/directions.interface';
+import {
+  DirectionOptions,
+  Directions,
+  IgoStep,
+  OsrmApiResponse,
+  OsrmRawRoute,
+  OsrmWaypoint
+} from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
 import {
   BaseDirectionsSourceOptionsProfile,
+  OSRM_DIRECTIONS_SOURCE_OPTIONS,
   OsrmDirectionsSourceOptions
 } from './directions-source.interface';
 
@@ -33,15 +41,23 @@ export class OsrmDirectionsSource extends DirectionsSource {
   }
 
   get sourceName(): string {
-    return this._options.name;
+    return this._options.name!;
   }
 
   set sourceName(value: string) {
     this._options.name = value;
   }
 
+  get sourceId(): string {
+    return this._options.id;
+  }
+
+  set sourceId(value: string) {
+    this._options.id = value;
+  }
+
   get baseUrl(): string {
-    return this._options.baseUrl;
+    return this._options.baseUrl!;
   }
 
   set baseUrl(value: string) {
@@ -53,7 +69,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
   }
 
   get profiles(): BaseDirectionsSourceOptionsProfile[] {
-    return this._options.profiles;
+    return this._options.profiles!;
   }
 
   set profiles(value: BaseDirectionsSourceOptionsProfile[]) {
@@ -62,11 +78,28 @@ export class OsrmDirectionsSource extends DirectionsSource {
 
   private _options: OsrmDirectionsSourceOptions;
 
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this._options?.apiKey ? { 'x-api-key': this._options.apiKey } : undefined
+    );
+  }
+
   constructor() {
     super();
-    this._options = this._config.getConfig('directionsSources.osrm');
+    const directOptions = inject(OSRM_DIRECTIONS_SOURCE_OPTIONS, {
+      optional: true
+    });
+    this._options = ObjectUtils.mergeDeep(
+      this._config.getConfig<OsrmDirectionsSourceOptions>(
+        'directionsSources.osrm'
+      ) ?? {},
+      directOptions ?? {}
+    ) as OsrmDirectionsSourceOptions;
     if (!this.baseUrl) {
       this.baseUrl = '/apis/itineraire/route/v1/';
+    }
+    if (!this.sourceId) {
+      this.sourceId = 'osrmQc';
     }
 
     if (!this.sourceName) {
@@ -86,16 +119,20 @@ export class OsrmDirectionsSource extends DirectionsSource {
     }
   }
 
+  getSourceId(): string {
+    return this.sourceId;
+  }
+
   getSourceName(): string {
-    return this.sourceName;
+    return this.sourceName ?? this.sourceId;
   }
 
   getEnabledProfile(): BaseDirectionsSourceOptionsProfile {
-    return this.profiles.find((profile) => profile.enabled);
+    return this.profiles.find((profile) => profile.enabled)!;
   }
 
   getProfileWithAuthorization(): BaseDirectionsSourceOptionsProfile {
-    return this.profiles.find((profile) => profile.authorization);
+    return this.profiles.find((profile) => profile.authorization)!;
   }
 
   route(
@@ -112,14 +149,15 @@ export class OsrmDirectionsSource extends DirectionsSource {
   ): Observable<Directions[]> {
     const url: string = this.url;
     return this._http
-      .get<JSON[]>(url + coordinates.join(';'), {
-        params
+      .get<OsrmApiResponse>(url + coordinates.join(';'), {
+        params,
+        headers: this.headers
       })
       .pipe(map((res) => this.extractRoutesData(res)));
   }
 
-  private extractRoutesData(response): Directions[] {
-    const routeResponse = [];
+  private extractRoutesData(response: OsrmApiResponse): Directions[] {
+    const routeResponse: Directions[] = [];
     response.routes.forEach((route) => {
       routeResponse.push(this.formatRoute(route, response.waypoints));
     });
@@ -161,10 +199,13 @@ export class OsrmDirectionsSource extends DirectionsSource {
     });
   }
 
-  private formatRoute(roadNetworkRoute: any, waypoints: any): Directions {
-    const stepsUI = [];
+  private formatRoute(
+    roadNetworkRoute: OsrmRawRoute,
+    waypoints: OsrmWaypoint[]
+  ): Directions {
+    const stepsUI: IgoStep[] = [];
     roadNetworkRoute.legs.forEach((leg) => {
-      leg.steps.forEach((step) => {
+      leg.steps?.forEach((step) => {
         stepsUI.push(step);
       });
     });

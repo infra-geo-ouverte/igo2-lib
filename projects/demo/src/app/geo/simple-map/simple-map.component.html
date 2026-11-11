@@ -11,7 +11,9 @@
       [pointerPositionDelay]="pointerCoordDelay"
       (pointerPositionCoord)="onPointerMove($event)"
     >
-      <igo-info-section [infoContent]="pointerCoord?.toString()" />
+      @if (pointerCoord) {
+        <igo-info-section [infoContent]="pointerCoord.toString()" />
+      }
       <div class="map-actions --vertical --top --right">
         <div class="spinner-spacer"></div>
         <igo-rotation-button

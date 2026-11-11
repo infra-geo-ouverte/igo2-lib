@@ -6,6 +6,7 @@ export const environment: EnvironmentOptions = {
   igo: {
     directionsSources: {
       osrm: {
+        id: 'osrmQc',
         name: 'OSRM Québec',
         baseUrl: '/apis/itineraire/route/v1/',
         profiles: [
@@ -23,14 +24,6 @@ export const environment: EnvironmentOptions = {
         extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
       }
     ],
-    auth: {
-      url: '',
-      tokenKey: 'testIgo2Lib',
-      intern: {
-        enabled: true
-      },
-      allowAnonymous: true
-    },
     interactiveTour: {
       tourInMobile: true,
       activateInteractiveTour: true
@@ -79,6 +72,10 @@ export const environment: EnvironmentOptions = {
       identifyUser: true
     },
     searchSources: {
+      workspace: {
+        enabled: true,
+        available: true
+      },
       storedqueriesreverse: { enabled: false },
       nominatim: {
         enabled: false

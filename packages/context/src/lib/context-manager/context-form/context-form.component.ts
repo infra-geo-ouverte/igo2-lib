@@ -38,10 +38,10 @@ export class ContextFormComponent {
   private formBuilder = inject(UntypedFormBuilder);
   private messageService = inject(MessageService);
 
-  public prefix: string;
+  public prefix = '';
 
   readonly btnSubmitText = input<string>();
-  readonly context = input<Context>();
+  readonly context = input.required<Context | undefined>();
   readonly disabled = input(false);
 
   readonly submitForm = output<unknown>();
@@ -56,7 +56,7 @@ export class ContextFormComponent {
     }
   });
 
-  public handleFormSubmit(value) {
+  public handleFormSubmit(value: Record<string, string>) {
     let inputs = Object.assign({}, value);
     inputs = ObjectUtils.removeNull(inputs);
     inputs.uri = inputs.uri.replace(' ', '');
@@ -69,7 +69,7 @@ export class ContextFormComponent {
   }
 
   public copyTextToClipboard() {
-    const text = this.prefix + '-' + this.form().value.uri.replace(' ', '');
+    const text = this.prefix + '-' + this.form()!.value.uri.replace(' ', '');
     const successful = this.clipboard.copy(text);
     if (successful) {
       this.messageService.success(
@@ -80,8 +80,8 @@ export class ContextFormComponent {
   }
 
   private buildForm(context: Context): FormGroup {
-    const uriSplit = context.uri.split('-');
-    this.prefix = uriSplit.shift();
+    const uriSplit = context.uri!.split('-');
+    this.prefix = uriSplit.shift() ?? '';
     const uri = uriSplit.join('-');
 
     return this.formBuilder.group({

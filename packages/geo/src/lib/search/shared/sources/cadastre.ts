@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
-import { customCacheHasher } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';
 
@@ -23,8 +23,12 @@ import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
+export const CADASTRE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('CadastreSearchSourceOptions');
+
 /**
  * Cadastre search source
+ * @deprecated This is a deprecated source. This type is available in ICherche. This search source will be deleted in in few next majors versions, likely in 23x+.
  */
 @Injectable()
 export class CadastreSearchSource extends SearchSource implements TextSearch {
@@ -36,9 +40,13 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig(
-      `searchSources.${CadastreSearchSource.id}`
+    const directOptions = inject(CADASTRE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig(`searchSources.${CadastreSearchSource.id}`) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -71,13 +79,14 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    if (!term) return of([]);
     term = term.replace(/ /g, '');
     term = term.replace(/,+/g, ',');
     term = term.endsWith(',') ? term.slice(0, -1) : term;
     term = term.startsWith(',') ? term.substr(1) : term;
 
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
+    if (!params.get('numero') || !params.get('numero')!.match(/^[0-9,]+$/g)) {
       return of([]);
     }
     return this.getCadastre(term, params);
@@ -92,7 +101,11 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get(this.searchUrl, { params, responseType: 'text' })
+      .get(this.searchUrl, {
+        params,
+        headers: this.headers,
+        responseType: 'text'
+      })
       .pipe(map((response: string) => this.extractResults(response, term)));
   }
 
@@ -165,11 +178,11 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       featureProjection: 'EPSG:4326'
     });
     return {
-      type: feature.getGeometry().getType() as Exclude<
+      type: feature?.getGeometry()!.getType() as Exclude<
         GeoJsonGeometryTypes,
         'GeometryCollection'
       >,
-      coordinates: (feature.getGeometry() as any).getCoordinates()
+      coordinates: (feature?.getGeometry() as any).getCoordinates()
     };
   }
 }

@@ -6,6 +6,12 @@
   padding: 10px 5px;
   box-sizing: border-box;
 
+  .igo-form-group-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .igo-form-field-colspan-2 {
     width: 100%;
   }

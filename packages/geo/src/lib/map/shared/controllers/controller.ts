@@ -9,7 +9,7 @@ export class MapController {
   /**
    * OL Map
    */
-  protected olMap: OlMap;
+  protected olMap!: OlMap;
 
   /**
    * Array of observer keys
@@ -35,7 +35,7 @@ export class MapController {
 
     if (olMap === undefined) {
       this.teardownObservers();
-      this.olMap = olMap;
+      this.olMap = olMap as unknown as OlMap;
       return;
     }
 

@@ -25,7 +25,7 @@ import { ListComponent, ListItemDirective } from '@igo2/common/list';
 import { ConfigService } from '@igo2/core/config';
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
+import { EMPTY, Observable, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
@@ -39,6 +39,8 @@ export enum SearchResultMode {
   Grouped = 'grouped',
   Flat = 'flat'
 }
+
+type Result = { source: SearchSource; results: SearchResult[] | undefined };
 
 /**
  * List of search results with focus and selection capabilities.
@@ -76,25 +78,23 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   /**
    * Search results store watcher
    */
-  private watcher: EntityStoreWatcher<SearchResult>;
+  private watcher?: EntityStoreWatcher<SearchResult>;
 
-  private settingsChange$$: Subscription;
+  public pageIterator: Record<string, number> = {};
 
-  public pageIterator: { sourceId: string }[] = [];
+  public collapsed: Record<string, boolean> = {};
 
-  public collapsed: { sourceId: string }[] = [];
-
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
   /**
    * Search results store
    */
-  readonly store = input<EntityStore<SearchResult>>(undefined);
+  readonly store = input.required<EntityStore<SearchResult>>();
 
   /**
    * to show hide results icons
    */
-  readonly showIcons = input<boolean>(undefined);
+  readonly showIcons = input<boolean>();
 
   /**
    * Search results display mode
@@ -120,11 +120,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
   set term(value: string) {
     this._term = value;
-    this.pageIterator = [];
+    this.pageIterator = {};
   }
-  public _term: string;
-
-  readonly settingsChange$ = input(new BehaviorSubject<boolean>(undefined));
+  public _term: string = '';
 
   readonly termSplitter = input('|');
 
@@ -157,21 +155,17 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   readonly resultMouseenter = output<SearchResult>();
   readonly resultMouseleave = output<SearchResult>();
 
-  readonly templateSearchToolbar = contentChild<TemplateRef<any>>(
+  readonly templateSearchToolbar = contentChild<TemplateRef<unknown>>(
     'igoSearchItemToolbar'
   );
 
-  get results$(): Observable<
-    { source: SearchSource; results: SearchResult[] }[]
-  > {
+  get results$(): Observable<Result[]> | undefined {
     if (this._results$ === undefined) {
       this._results$ = this.liftResults();
     }
     return this._results$;
   }
-  private _results$: Observable<
-    { source: SearchSource; results: SearchResult[] }[]
-  >;
+  private _results$?: Observable<Result[]>;
 
   /**
    * Bind the search results store to the watcher
@@ -179,10 +173,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store(), this.cdRef);
-
-    this.settingsChange$$ = this.settingsChange$().subscribe(() => {
-      this.pageIterator = [];
-    });
 
     if (
       this.configService.getConfig('searchSources.showResultsCount') === false
@@ -196,8 +186,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    this.watcher.destroy();
-    this.settingsChange$$.unsubscribe();
+    this.watcher?.destroy();
+  }
+
+  resetPage(): void {
+    this.pageIterator = {};
   }
 
   /**
@@ -206,12 +199,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Group title
    * @internal
    */
-  computeGroupTitle(group: {
-    source: SearchSource;
-    results: SearchResult[];
-  }): string {
+  computeGroupTitle(group: Result): string {
     const parts = [group.source.title];
-    const count = group.results.length;
+    const count = group.results?.length ?? 0;
     if (count > 1 && this.showResultsCount) {
       parts.push(`(${count})`);
     }
@@ -226,12 +216,14 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   onResultSelect(result: SearchResult) {
     const store = this.store();
-    if (store.state.get(result)) {
-      if (store.state.get(result).selected === true) {
-        return;
+    if (store) {
+      if (store.state.get(result)) {
+        if (store.state.get(result).selected === true) {
+          return;
+        }
       }
+      store.state.update(result, { focused: true, selected: true }, true);
     }
-    store.state.update(result, { focused: true, selected: true }, true);
     this.resultSelect.emit(result);
   }
 
@@ -240,11 +232,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Observable of grouped search results
    * @internal
    */
-  private liftResults(): Observable<
-    { source: SearchSource; results: SearchResult[] }[]
-  > {
+  private liftResults(): Observable<Result[]> | undefined {
     return this.store()
-      .stateView.all$()
+      ?.stateView.all$()
       .pipe(
         debounce((results: { entity: SearchResult; state: EntityState }[]) => {
           return results.length === 0 ? EMPTY : timer(200);
@@ -271,9 +261,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param results Search results from all sources
    * @returns Search results grouped by source
    */
-  private groupResults(
-    results: SearchResult[]
-  ): { source: SearchSource; results: SearchResult[] }[] {
+  private groupResults(results: SearchResult[]): Result[] {
     const grouped = new Map<SearchSource, SearchResult[]>();
     results.forEach((result: SearchResult) => {
       const source = result.source;
@@ -293,8 +281,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
   }
 
-  isMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
-    const stategy = this.store().getStrategyOfType(
+  isMoreResults(group: Result) {
+    const stategy = this.store()?.getStrategyOfType(
       EntityStoreFilterCustomFuncStrategy
     );
     const active = stategy?.active || false;
@@ -305,13 +293,13 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       );
     } else {
       return (
-        group.results?.length % +group.source.params.limit === 0 &&
-        +group.source.params.page < 30
+        (group.results?.length ?? 0) % +(group.source.params?.limit ?? 0) ===
+          0 && +(group.source.params?.page ?? 0) < 30
       );
     }
   }
 
-  displayMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
+  displayMoreResults(group: Result) {
     const sourceId = group.source.getId();
     if (this.pageIterator[sourceId] === undefined) {
       this.pageIterator[sourceId] = 1;
@@ -336,7 +324,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
     researches.map((research) => {
       research.request.subscribe((results: SearchResult[]) => {
-        const newResults = group.results.concat(results);
+        const newResults = group.results?.concat(results) ?? [];
         if (!results.length) {
           newResults[newResults.length - 1].meta.nextPage = false;
         }

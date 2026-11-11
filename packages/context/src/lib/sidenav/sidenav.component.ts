@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -40,78 +40,36 @@ export class SidenavComponent {
   titleService = inject(Title);
 
   private format = new olFormatGeoJSON();
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-  @Input()
-  get opened(): boolean {
-    return this._opened;
-  }
-  set opened(value: boolean) {
-    this._opened = value;
-  }
-  private _opened: boolean;
 
-  @Input()
-  get feature(): Feature {
-    return this._feature;
-  }
-  set feature(value: Feature) {
-    this._feature = value;
-  }
-  private _feature: Feature;
-
-  @Input()
-  get tool(): Tool {
-    return this._tool;
-  }
-  set tool(value: Tool) {
-    this._tool = value;
-  }
-  private _tool: Tool;
-
-  @Input()
-  get media(): Media {
-    return this._media;
-  }
-  set media(value: Media) {
-    this._media = value;
-  }
-  private _media: Media;
-
-  @Input()
-  get title(): string {
-    return this._title;
-  }
-  set title(value: string) {
-    if (value) {
-      this._title = value;
-    }
-  }
-  private _title: string;
+  readonly map = input.required<IgoMap>();
+  readonly opened = input<boolean>(false);
+  readonly feature = input.required<Feature>();
+  readonly tool = input<Tool>();
+  readonly media = input<Media>();
+  readonly title = input<string>('');
 
   public topPanelState: FlexibleState = 'initial';
 
-  get featureTitle(): string {
-    return this.feature ? getEntityTitle(this.feature) : undefined;
-  }
+  private readonly _defaultTitle = this.titleService.getTitle();
+  readonly displayTitle = computed(() => this.title() || this._defaultTitle);
 
-  constructor() {
-    this._title = this.titleService.getTitle();
+  get featureTitle(): string | undefined {
+    const feature = this.feature();
+    return feature ? getEntityTitle(feature) : undefined;
   }
 
   zoomToFeatureExtent() {
-    if (this.feature.geometry) {
-      const olFeature = this.format.readFeature(this.feature, {
-        dataProjection: this.feature.projection,
-        featureProjection: this.map.viewProjection
+    const feature = this.feature();
+    if (feature?.geometry) {
+      const olFeature = this.format.readFeature(feature, {
+        dataProjection: feature.projection,
+        featureProjection: this.map().viewProjection
       });
-      moveToOlFeatures(this.map.viewController, olFeature, FeatureMotion.Zoom);
+      moveToOlFeatures(
+        this.map().viewController,
+        olFeature,
+        FeatureMotion.Zoom
+      );
     }
   }
 

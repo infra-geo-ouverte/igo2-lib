@@ -1,6 +1,13 @@
-import { NominatimSearchSource } from './nominatim';
+import {
+  NOMINATIM_SEARCH_SOURCE_OPTIONS,
+  NominatimSearchSource
+} from './nominatim';
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
 
 /**
  * Nominatim search source factory
@@ -21,9 +28,16 @@ export function provideNominatimSearchSource() {
   };
 }
 
-export function withNominatimSource(): SearchSourceFeature<SearchSourceKind.Nominatim> {
+export function withNominatimSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.Nominatim> {
   return {
     kind: SearchSourceKind.Nominatim,
-    providers: [provideNominatimSearchSource()]
+    providers: [
+      provideNominatimSearchSource(),
+      ...(options
+        ? [{ provide: NOMINATIM_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
+    ]
   };
 }

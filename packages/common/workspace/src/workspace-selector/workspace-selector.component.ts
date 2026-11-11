@@ -28,12 +28,12 @@ export class WorkspaceSelectorComponent {
   /**
    * Store that holds the available workspaces.
    */
-  readonly store = input<WorkspaceStore>(undefined);
+  readonly store = input.required<WorkspaceStore>();
 
   /**
    * Wheither the selector must be disabled or not.
    */
-  readonly disabled = input<boolean>(undefined);
+  readonly disabled = input<boolean>(false);
 
   /**
    * Event emitted when an workspace is selected or unselected

@@ -13,8 +13,10 @@ import OlRenderFeature from 'ol/render/Feature';
 import { Geometry } from 'geojson';
 
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources';
+import type { LayerService } from '../../layer/shared/layer.service';
 import type { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { IgoMap } from '../../map/shared/map';
+import type { AnyOlStyle } from '../../style/shared/style.interface';
 import { FeatureMotion } from './feature.enums';
 
 export interface Feature<P = Record<string, any>> {
@@ -35,7 +37,7 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
-  style?: Record<string, any>;
+  style?: AnyOlStyle;
   alias?: Record<string, string>;
   revision?: number;
   excludeAttribute?: string[];
@@ -61,7 +63,7 @@ export interface FeatureStoreStrategyOptions extends EntityStoreStrategyOptions 
 }
 
 export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
-  getFeatureId?: (Feature) => EntityKey;
+  getFeatureId?: (feature: Feature) => EntityKey;
   motion?: FeatureMotion;
 }
 
@@ -86,15 +88,27 @@ export interface FeatureStoreSearchIndexStrategyOptions extends EntityStoreStrat
   percentDistinctValueRatio?: number;
 }
 
-export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrategyOptions {
+interface FeatureStoreSelectionStrategyBaseOptions extends FeatureStoreStrategyOptions {
   map: IgoMap;
-  getFeatureId?: (Feature) => EntityKey;
+  getFeatureId?: (feature: Feature) => EntityKey;
   motion?: FeatureMotion;
-  layer?: VectorLayer;
   many?: boolean;
   hitTolerance?: number;
   dragBox?: boolean;
 }
+
+export type FeatureStoreSelectionStrategyOptions =
+  FeatureStoreSelectionStrategyBaseOptions &
+    (
+      | {
+          layerService: LayerService;
+          layer?: never;
+        }
+      | {
+          layer: VectorLayer;
+          layerService?: never;
+        }
+    );
 
 export interface FeatureFormSubmitEvent {
   form: UntypedFormGroup;

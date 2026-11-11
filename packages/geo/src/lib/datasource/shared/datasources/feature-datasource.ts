@@ -8,7 +8,11 @@ export class FeatureDataSource extends DataSource {
   declare public options: FeatureDataSourceOptions;
   declare public ol: olSourceVector;
 
-  get saveableOptions(): Partial<FeatureDataSourceOptions> {
+  constructor(options: FeatureDataSourceOptions = { type: 'vector' }) {
+    super(options);
+  }
+
+  get saveableOptions() {
     const baseOptions = super.saveableOptions;
     return {
       ...baseOptions,
@@ -33,7 +37,7 @@ export class FeatureDataSource extends DataSource {
     if (!formatType) {
       olFormatCls = olformat.GeoJSON;
     } else {
-      olFormatCls = olformat[formatType];
+      olFormatCls = (olformat as any)[formatType];
       if (olFormatCls === undefined) {
         throw new Error('Invalid vector source format ${formatType}.');
       }

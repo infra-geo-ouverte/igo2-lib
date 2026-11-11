@@ -6,6 +6,7 @@ export const environment: EnvironmentOptions = {
   igo: {
     directionsSources: {
       osrm: {
+        id: 'osrmQc',
         name: 'OSRM Québec',
         baseUrl: '/apis/itineraire/route/v1/',
         profiles: [
@@ -15,7 +16,6 @@ export const environment: EnvironmentOptions = {
         ]
       }
     },
-    importWithStyle: true,
     projections: [
       {
         code: 'EPSG:32198',
@@ -41,8 +41,7 @@ export const environment: EnvironmentOptions = {
     },
     importExport: {
       url: '/apis/ogre',
-      gpxAggregateInComment: true,
-      importWithStyle: true
+      gpxAggregateInComment: true
     },
     catalog: {
       sources: [
@@ -293,6 +292,10 @@ export const environment: EnvironmentOptions = {
       logErrors: true
     },
     searchSources: {
+      workspace: {
+        enabled: true,
+        available: true
+      },
       storedqueriesreverse: { enabled: false },
       storedqueries: {
         available: true,

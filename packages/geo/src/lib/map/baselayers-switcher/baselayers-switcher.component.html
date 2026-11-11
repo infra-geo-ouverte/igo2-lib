@@ -1,7 +1,7 @@
 @if (baseLayers.length > 0) {
   <div
     class="igo-baselayers-switcher-container"
-    [ngClass]="{ 'container-expand': expand }"
+    [class.container-expand]="expand"
     [@baseLayerSwitcherState]="
       expand ? 'expand' : useStaticIcon() ? 'collapseIcon' : 'collapseMap'
     "

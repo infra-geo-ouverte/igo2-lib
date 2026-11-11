@@ -3,7 +3,7 @@
     [disabled]="disabled()"
     [value]="selected$ | async"
     [multiple]="multi()"
-    [placeholder]="placeholder()"
+    [placeholder]="placeholder() ?? ''"
     (selectionChange)="onSelectionChange($event)"
   >
     @if (emptyText() !== undefined && multi() === false) {
@@ -14,7 +14,7 @@
         multiText$ | async
       }}</mat-option>
     }
-    @for (record of store().stateView.all$() | async; track record) {
+    @for (record of store()?.stateView?.all$() | async; track record) {
       <mat-option [value]="record.entity">
         {{ titleAccessor()(record.entity) }}
       </mat-option>

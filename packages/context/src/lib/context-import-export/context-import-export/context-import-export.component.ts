@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -62,19 +62,19 @@ export class ContextImportExportComponent implements OnInit {
   private config = inject(ConfigService);
   private contextService = inject(ContextService);
 
-  public form: UntypedFormGroup;
-  public layers: VectorLayer[];
+  public form!: UntypedFormGroup;
+  public layers!: VectorLayer[];
   public inputProj = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
-  public layerList: AnyLayer[];
-  public userControlledLayerList: readonly AnyLayer[];
-  public res: DetailedContext;
-  private clientSideFileSizeMax: number;
-  public fileSizeMb: number;
+  public layerList!: AnyLayer[];
+  public userControlledLayerList!: readonly AnyLayer[];
+  public res!: DetailedContext;
+  private clientSideFileSizeMax!: number;
+  public fileSizeMb!: number;
   public activeImportExport = 'import';
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input.required<IgoMap>();
 
   constructor() {
     this.buildForm();
@@ -108,7 +108,7 @@ export class ContextImportExportComponent implements OnInit {
     }
   }
 
-  handleExportFormSubmit(contextOptions) {
+  handleExportFormSubmit(contextOptions: { layers: AnyLayer[]; name: string }) {
     this.loading$.next(true);
     this.res = this.contextService.getContextFromLayers(
       this.map(),
@@ -159,17 +159,15 @@ export class ContextImportExportComponent implements OnInit {
     handleFileExportSuccess(this.messageService);
   }
 
-  selectAll(e) {
-    if (e._selected) {
+  selectAll(e: MatOption) {
+    if (e.selected) {
       this.form.controls.layers.setValue(this.userControlledLayerList);
-      e._selected = true;
-    }
-    if (e._selected === false) {
+    } else {
       this.form.controls.layers.setValue([]);
     }
   }
 
-  onImportExportChange(event) {
+  onImportExportChange(event: { value: string }) {
     this.activeImportExport = event.value;
   }
 }

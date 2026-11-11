@@ -14,8 +14,9 @@ import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 
+/** @deprecated */
 @Component({
-  selector: 'igo-toast',
+  selector: 'igo-feature-details-panel',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
   imports: [
@@ -26,7 +27,7 @@ import { IgoMap } from '../map/shared/map';
     FeatureDetailsComponent
   ]
 })
-export class ToastComponent {
+export class FeatureDetailsPanelComponent {
   static SWIPE_ACTION = {
     UP: 'swipeup',
     DOWN: 'swipedown'
@@ -39,7 +40,7 @@ export class ToastComponent {
   readonly opened = output<boolean>();
 
   public state = computed<FlexibleState>(() =>
-    this.expanded ? 'expanded' : 'collapsed'
+    this.expanded() ? 'expanded' : 'collapsed'
   );
 
   /**
@@ -51,28 +52,28 @@ export class ToastComponent {
 
   toggle() {
     this.expanded.update((previous) => !previous);
-    this.opened.emit(this.expanded());
+    this.opened.emit(this.expanded() ?? false);
   }
 
   zoomToFeatureExtent() {
     const feature = this.feature();
     const map = this.map();
-    if (feature?.geometry) {
+    if (feature?.geometry && map) {
       const olFeature = this.format.readFeature(this.feature, {
         dataProjection: feature?.projection,
-        featureProjection: map?.projection
+        featureProjection: map?.projectionCode
       });
       moveToOlFeatures(map?.viewController, olFeature, FeatureMotion.Zoom);
     }
   }
 
   swipe(action: string) {
-    if (action === ToastComponent.SWIPE_ACTION.UP) {
-      if (!this.expanded) {
+    if (action === FeatureDetailsPanelComponent.SWIPE_ACTION.UP) {
+      if (!this.expanded()) {
         this.toggle();
       }
-    } else if (action === ToastComponent.SWIPE_ACTION.DOWN) {
-      if (this.expanded) {
+    } else if (action === FeatureDetailsPanelComponent.SWIPE_ACTION.DOWN) {
+      if (this.expanded()) {
         this.toggle();
       }
     }

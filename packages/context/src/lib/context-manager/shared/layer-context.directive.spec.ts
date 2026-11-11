@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { Params } from '@angular/router';
 
-import { ConfigService } from '@igo2/core/config';
 import { RouteServiceOptions } from '@igo2/core/route';
 import {
   AnyLayer,
   ImageLayer,
   ImageLayerOptions,
+  LayerService,
   MapBrowserComponent,
   TileLayer,
   TileLayerOptions,
@@ -15,12 +15,9 @@ import {
   WMTSDataSource,
   WMTSDataSourceOptions
 } from '@igo2/geo';
-import { LayerService } from '@igo2/geo';
-import { StyleListService, StyleService } from '@igo2/geo';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { mergeTestConfig } from '../../../../test-config';
 import { ShareMapService } from '../../share-map/shared/share-map.service';
 import { ContextService } from './context.service';
 import { LayerContextDirective } from './layer-context.directive';
@@ -44,12 +41,14 @@ const tileLayerOptions: TileLayerOptions = {
   }
 };
 
-function createWmtsLayer(options: TileLayerOptions): TileLayer {
+function createWmtsLayer(
+  layerService: LayerService,
+  options: TileLayerOptions
+): TileLayer {
   options.source = new WMTSDataSource(
     options.sourceOptions as WMTSDataSourceOptions
   );
-  const layer = new TileLayer(options);
-  return layer;
+  return layerService.createLayer(options) as TileLayer;
 }
 
 const imageLayerOptions: ImageLayerOptions = {
@@ -68,60 +67,51 @@ const imageLayerOptions: ImageLayerOptions = {
   }
 };
 
-function createWmsLayer(options: ImageLayerOptions): ImageLayer {
+function createWmsLayer(
+  layerService: LayerService,
+  options: ImageLayerOptions
+): ImageLayer {
   options.source = new WMSDataSource(
     options.sourceOptions as WMSDataSourceOptions
   );
-  const layer = new ImageLayer(options);
-  return layer;
+  return layerService.createLayer(options) as ImageLayer;
 }
 
 describe('LayerContextDirective', () => {
   let directive: LayerContextDirective;
-  let mockContextService: jasmine.SpyObj<ContextService>;
-  let mockShareMapService: jasmine.SpyObj<ShareMapService>;
+  let mockContextService: ContextService;
+  let mockShareMapService: ShareMapService;
   let mockWmsLayer: AnyLayer;
   let mockWmtsLayer: AnyLayer;
-
+  const queryParams$ = new BehaviorSubject<Params>({});
   beforeEach(() => {
-    const mockRouteService = jasmine.createSpyObj(
-      'RouteService',
-      ['queryParams'],
-      {
-        options: ROUTE_OPTION_MOCK
-      }
-    );
-    mockContextService = jasmine.createSpyObj('ContextService', [], {
+    const mockRouteService = {
+      queryParams: queryParams$,
+      options: ROUTE_OPTION_MOCK // Simple property assignment
+    };
+    mockContextService = {
       context$: new BehaviorSubject({ uri: 'mockContextUri' })
+    } as ContextService;
+
+    mockShareMapService = {
+      getContext: vi.fn().mockReturnValue('mockContextUri'),
+      optionsLegacy: {},
+      keysDefinitions: {},
+      routeService: mockRouteService
+    } as unknown as ShareMapService;
+
+    TestBed.configureTestingModule({
+      providers: [
+        LayerContextDirective,
+        { provide: MapBrowserComponent, useValue: {} },
+        { provide: ContextService, useValue: mockContextService },
+        { provide: ShareMapService, useValue: mockShareMapService }
+      ]
     });
-    mockShareMapService = jasmine.createSpyObj(
-      'ShareMapService',
-      ['getContext'],
-      {
-        optionsLegacy: {},
-        keysDefinitions: {},
-        routeService: mockRouteService
-      }
-    );
-    mockShareMapService.getContext.and.returnValue('mockContextUri');
 
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        providers: [
-          LayerContextDirective,
-          { provide: MapBrowserComponent, useValue: {} },
-          { provide: ContextService, useValue: mockContextService },
-          { provide: LayerService, useValue: {} },
-          { provide: ConfigService, useValue: {} },
-          { provide: StyleListService, useValue: {} },
-          { provide: StyleService, useValue: {} },
-          { provide: ShareMapService, useValue: mockShareMapService }
-        ]
-      })
-    );
-
-    mockWmsLayer = createWmsLayer(imageLayerOptions);
-    mockWmtsLayer = createWmtsLayer(tileLayerOptions);
+    const layerService = TestBed.inject(LayerService);
+    mockWmsLayer = createWmsLayer(layerService, { ...imageLayerOptions });
+    mockWmtsLayer = createWmtsLayer(layerService, { ...tileLayerOptions });
     directive = TestBed.inject(LayerContextDirective);
   });
 
@@ -138,7 +128,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to true if visibleOnLayersKey is "*"', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: '*'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: '*'
       } as Params;
       const result = directive['computeLayerVisibilityFromUrl'](mockWmsLayer);
       expect(result).toBe(true);
@@ -146,7 +136,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to false if visibleOffLayersKey is "*"', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: '*'
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: '*'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmsLayer);
       expect(result).toBe(false);
@@ -154,7 +144,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to true if layer id is in visibleOnLayersKey', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: 'carte_gouv_qc_ro'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmtsLayer);
       expect(result).toBe(true);
@@ -162,7 +152,7 @@ describe('LayerContextDirective', () => {
 
     it('should set visibility to false if layer id is in visibleOffLayersKey', () => {
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: 'carte_gouv_qc_ro'
       };
       const result = directive['computeLayerVisibilityFromUrl'](mockWmtsLayer);
       expect(result).toBe(false);
@@ -171,8 +161,8 @@ describe('LayerContextDirective', () => {
     it('should prioritize visibleOffLayersKey over visibleOnLayersKey', () => {
       const layers = [mockWmtsLayer, mockWmsLayer];
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]: 'etablissement_mtq',
-        [ROUTE_OPTION_MOCK.visibleOffLayersKey]: 'carte_gouv_qc_ro'
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]: 'etablissement_mtq',
+        [ROUTE_OPTION_MOCK.visibleOffLayersKey!]: 'carte_gouv_qc_ro'
       };
 
       const result = layers
@@ -189,7 +179,7 @@ describe('LayerContextDirective', () => {
     it('the visibility of both layers must be true', () => {
       const layers = [mockWmtsLayer, mockWmsLayer];
       directive['queryParams'] = {
-        [ROUTE_OPTION_MOCK.visibleOnLayersKey]:
+        [ROUTE_OPTION_MOCK.visibleOnLayersKey!]:
           'etablissement_mtq,carte_gouv_qc_ro'
       };
 

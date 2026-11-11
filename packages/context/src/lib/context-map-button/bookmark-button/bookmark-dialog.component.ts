@@ -29,5 +29,5 @@ import { IgoLanguageModule } from '@igo2/core/language';
 export class BookmarkDialogComponent {
   dialogRef = inject<MatDialogRef<BookmarkDialogComponent>>(MatDialogRef);
 
-  public title: string;
+  public title = '';
 }

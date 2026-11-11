@@ -18,6 +18,12 @@ export function provideDirection(
     provideDirectionsSourceService()
   ];
 
+  if (sources?.length === 0) {
+    throw new Error(
+      'You must at least provide 1 direction source. Ex: provideDirection(withOsrmSource())'
+    );
+  }
+
   for (const source of sources) {
     providers.push(...source.providers);
   }

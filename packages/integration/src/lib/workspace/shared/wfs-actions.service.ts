@@ -4,11 +4,7 @@ import { Action } from '@igo2/common/action';
 import { Widget } from '@igo2/common/widget';
 import { LanguageService } from '@igo2/core/language';
 import { MediaService } from '@igo2/core/media';
-import {
-  StorageService,
-  StorageServiceEvent,
-  StorageServiceEventEnum
-} from '@igo2/core/storage';
+import { StorageService, StorageServiceEventEnum } from '@igo2/core/storage';
 import {
   InteractiveSelectionFormWidget,
   OgcFilterWidget,
@@ -41,7 +37,7 @@ export class WfsActionsService implements OnDestroy {
   selectOnlyCheckCondition$ = new BehaviorSubject<boolean>(false);
   // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$ = new BehaviorSubject<boolean>(false);
-  private storageChange$$: Subscription;
+  private storageChange$$?: Subscription;
 
   get storageService(): StorageService {
     return this.storageState.storageService;
@@ -73,7 +69,7 @@ export class WfsActionsService implements OnDestroy {
       rowsInMapExtentCheckCondition$,
       selectOnlyCheckCondition$
     );
-    workspace.actionStore.load(actions);
+    workspace.actionStore!.load(actions);
   }
 
   buildActions(
@@ -85,7 +81,7 @@ export class WfsActionsService implements OnDestroy {
     this.storageChange$$ = this.storageService.storageChange$
       .pipe(
         skipWhile(
-          (storageChange: StorageServiceEvent) =>
+          (storageChange) =>
             storageChange?.key !== 'zoomAuto' ||
             storageChange?.event === StorageServiceEventEnum.CLEARED
         )
@@ -98,14 +94,14 @@ export class WfsActionsService implements OnDestroy {
       workspace,
       rowsInMapExtentCheckCondition$,
       selectOnlyCheckCondition$,
-      this.ogcFilterWidget,
+      this.ogcFilterWidget!,
       this.zoomAuto$,
       this.maximize$,
       this.storageService,
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.interactiveSelectionFormWidget
+      this.interactiveSelectionFormWidget ?? undefined
     );
   }
 }

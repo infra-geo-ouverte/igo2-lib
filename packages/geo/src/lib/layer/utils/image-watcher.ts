@@ -3,9 +3,13 @@ import { Optional } from '@angular/core';
 import { MessageService } from '@igo2/core/message';
 import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
-import olSourceImage from 'ol/source/Image';
+import olSourceImage, { ImageSourceEvent } from 'ol/source/Image';
 
 import type { ImageLayer } from '../shared/layers/image-layer';
+
+type ImageSourceEventWithWatchers = ImageSourceEvent & {
+  image: { __watchers__?: string[] };
+};
 
 export class ImageWatcher extends Watcher {
   protected id: string;
@@ -19,7 +23,7 @@ export class ImageWatcher extends Watcher {
     @Optional() private messageService?: MessageService
   ) {
     super();
-    this.source = layer.options.source.ol;
+    this.source = layer.options.source!.ol;
     this.id = uuid();
   }
 
@@ -37,7 +41,7 @@ export class ImageWatcher extends Watcher {
     this.source.un(`imageloaderror`, (e) => this.handleLoadError(e));
   }
 
-  private handleLoadStart(event: any) {
+  private handleLoadStart(event: ImageSourceEventWithWatchers) {
     if (!event.image.__watchers__) {
       event.image.__watchers__ = [];
     }
@@ -47,7 +51,7 @@ export class ImageWatcher extends Watcher {
     this.status = SubjectStatus.Working;
   }
 
-  private handleLoadEnd(event) {
+  private handleLoadEnd(event: ImageSourceEventWithWatchers) {
     if (!event.image.__watchers__) {
       return;
     }
@@ -70,7 +74,7 @@ export class ImageWatcher extends Watcher {
     }
   }
 
-  private handleLoadError(event) {
+  private handleLoadError(event: ImageSourceEventWithWatchers) {
     if (!event.image.__watchers__) {
       return;
     }

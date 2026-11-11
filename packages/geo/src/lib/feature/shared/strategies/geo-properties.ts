@@ -3,8 +3,8 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { Subscription, debounceTime, pairwise } from 'rxjs';
 
-import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
 import { AnyLayer } from '../../../layer';
+import { LayerId } from '../../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../../map/shared/map';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { GeoServiceDefinition } from '../../../utils/propertyTypeDetector/propertyTypeDetector.interface';
@@ -26,7 +26,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, string>();
   private states$$: Subscription[] = [];
-  private empty$$: Subscription;
+  private empty$$!: Subscription;
 
   /**
    * The map the layer is bound to
@@ -35,8 +35,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
 
   constructor(
     protected options: FeatureStorePropertyTypeStrategyOptions,
-    private propertyTypeDetectorService: PropertyTypeDetectorService,
-    private capabilitiesService: CapabilitiesService
+    private propertyTypeDetectorService: PropertyTypeDetectorService
   ) {
     super(options);
     this.map = options.map;
@@ -46,7 +45,8 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
    * Bind this strategy to a store and start watching for Ol source changes
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bindStore(store: any) {
     super.bindStore(store);
     if (this.active === true) {
       this.watchStore(store);
@@ -57,7 +57,8 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
    * Unbind this strategy from a store and stop watching for Ol source changes
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  unbindStore(store: any) {
     super.unbindStore(store);
     if (this.active === true) {
       this.unwatchStore(store);
@@ -69,7 +70,9 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doActivate() {
-    this.stores.forEach((store: FeatureStore) => this.watchStore(store));
+    (this.stores as FeatureStore[]).forEach((store: FeatureStore) =>
+      this.watchStore(store)
+    );
   }
 
   /**
@@ -94,12 +97,12 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
       this.map.layerController.all$
         .pipe(debounceTime(250), pairwise())
         .subscribe(([prevLayers, currentLayers]) => {
-          let prevLayersId;
+          let prevLayersId: (LayerId | undefined)[] | undefined;
           if (prevLayers) {
             prevLayersId = prevLayers.map((l) => l.id);
           }
           const layers = currentLayers.filter(
-            (l) => !prevLayersId.includes(l.id)
+            (l) => !(prevLayersId ?? []).includes(l.id)
           );
           this.updateEntitiesPropertiesState(store, layers);
         })
@@ -130,19 +133,22 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
     }
     const sampling = entities.length >= 250 ? 250 : entities.length;
     const firstN = entities.slice(0, sampling);
-    let allKeys = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let allKeys: any[] = [];
     firstN.map((e) => {
       allKeys = allKeys.concat(Object.keys(e.properties || {}));
     });
     allKeys = [...new Set(allKeys)];
-    const distinctValues = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const distinctValues: Record<string, any[]> = {};
     allKeys.map((k) => {
       distinctValues[k] = [
         ...new Set(entities.map((item) => item.properties[k]))
       ];
     });
-    const containGeoServices = {};
-    Object.entries(distinctValues).forEach((entry: [string, []]) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const containGeoServices: Record<string, any[]> = {};
+    Object.entries(distinctValues).forEach((entry) => {
       const [key, values] = entry;
       const valuedAreGeoservices = values.filter((value) =>
         this.propertyTypeDetectorService.isGeoService(value)
@@ -158,7 +164,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
       geoService: GeoServiceDefinition;
     }
     const geoServiceAssociations: GeoServiceAssociation[] = [];
-    Object.entries(containGeoServices).forEach((entry: [string, []]) => {
+    Object.entries(containGeoServices).forEach((entry) => {
       const [key, values] = entry;
       values.map((value) => {
         const geoService = this.propertyTypeDetectorService.getGeoService(
@@ -192,7 +198,8 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
       const url = geoServiceAssociation.url;
       const type = geoServiceAssociation.geoService.type || 'wms';
       distinctValues[geoServiceAssociation.layerNameProperty].map(
-        (layerName) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (layerName: any) => {
           let appliedLayerName = layerName;
           let arcgisLayerName = undefined;
           if (

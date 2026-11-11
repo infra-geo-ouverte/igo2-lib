@@ -10,7 +10,6 @@ import {
 } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import type { MapBase } from '../../map/shared/map.abstract';
-import { createOverlayLayer } from './overlay.utils';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -22,12 +21,12 @@ export class Overlay<T extends MapBase = MapBase> {
   /**
    * The map to add the layer to
    */
-  private map: T;
+  private map!: T;
 
   /**
    * Overlay layer
    */
-  private layer: VectorLayer;
+  public layer: VectorLayer;
 
   /**
    * Overlay layer's data source
@@ -36,9 +35,9 @@ export class Overlay<T extends MapBase = MapBase> {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map?: T) {
-    this.layer = createOverlayLayer();
-    this.setMap(map);
+  constructor(map: T, layer: VectorLayer) {
+    this.layer = layer;
+    this.setMap(map as T);
   }
 
   /**
@@ -97,9 +96,9 @@ export class Overlay<T extends MapBase = MapBase> {
     features: Feature[],
     motion: FeatureMotion = FeatureMotion.Default
   ) {
-    const olFeatures = [];
+    const olFeatures: OlFeature<OlGeometry>[] = [];
     features.forEach((feature: Feature) => {
-      const olFeature = featureToOl(feature, this.map.projection);
+      const olFeature = featureToOl(feature, this.map.projectionCode);
       const olGeometry = olFeature.getGeometry();
       if (olGeometry === null) {
         return;
@@ -150,10 +149,9 @@ export class Overlay<T extends MapBase = MapBase> {
   removeFeatures(features: Feature[]) {
     features.forEach((feature: Feature) => {
       if (feature.meta) {
-        if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
-          this.removeOlFeature(
-            this.dataSource.ol.getFeatureById(feature.meta.id)
-          );
+        const olFeature = this.dataSource.ol.getFeatureById(feature.meta.id);
+        if (olFeature) {
+          this.removeOlFeature(olFeature);
         }
       }
     });

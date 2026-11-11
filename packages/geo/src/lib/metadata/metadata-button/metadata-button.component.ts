@@ -43,7 +43,7 @@ export class MetadataButtonComponent {
   private metadataService = inject(MetadataService);
   private dialog = inject(MatDialog);
 
-  readonly layer = input<Layer>(undefined);
+  readonly layer = input.required<Layer>();
 
   readonly color = input('primary');
 
@@ -73,9 +73,6 @@ export class MetadataButtonComponent {
 
   get options(): MetadataLayerOptions {
     const layer = this.layer();
-    if (!layer) {
-      return;
-    }
     return layer.options;
   }
 }

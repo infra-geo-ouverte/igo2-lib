@@ -150,7 +150,7 @@
       [max]="endYear"
       [color]="color"
       thumbLabel
-      [disabled]="!enabled() || !layer().visible"
+      [disabled]="!enabled() || !layer()?.visible"
       #ngSlider
       ><input
         matSliderThumb
@@ -186,10 +186,10 @@
     <mat-slider
       id="time-slider"
       [step]="step"
-      [min]="dateToNumber(min)"
-      [max]="dateToNumber(max)"
+      [min]="dateToNumber(min!)"
+      [max]="dateToNumber(max!)"
       thumbLabel
-      [disabled]="!options().enabled || !layer().visible"
+      [disabled]="!options()?.enabled || !layer()?.visible"
       (selectionChange)="handleSliderDateChange($event)"
       #ngSlider
       ><input
@@ -220,10 +220,10 @@
       [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
       [color]="color"
       [checked]="enabled()"
-      [disabled]="!layer().visible"
+      [disabled]="!layer()?.visible"
     />
     <button
-      [disabled]="!enabled() || !layer().visible"
+      [disabled]="!enabled() || !layer()?.visible"
       mat-icon-button
       color="primary"
       (click)="play()"
@@ -231,7 +231,7 @@
       <mat-icon>{{ playIcon }}</mat-icon>
     </button>
     <button
-      [disabled]="!enabled() || !layer().visible"
+      [disabled]="!enabled() || !layer()?.visible"
       mat-icon-button
       color="primary"
       (click)="resetFilter()"

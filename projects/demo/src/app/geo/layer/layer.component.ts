@@ -3,6 +3,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PanelComponent } from '@igo2/common/panel';
 import {
+  AnyLayer,
   AnyLayerOptions,
   DownloadButtonComponent,
   FILTER_DIRECTIVES,
@@ -17,8 +18,8 @@ import {
   MAP_DIRECTIVES,
   METADATA_DIRECTIVES,
   MapViewOptions,
-  ProjectionService,
   VectorLayerOptions,
+  VectorTileLayerOptions,
   WFSDataSourceOptions
 } from '@igo2/geo';
 
@@ -44,7 +45,6 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppLayerComponent {
   private layerService = inject(LayerService);
-  private projectionService = inject(ProjectionService);
 
   public map: IgoMap = new IgoMap({
     controls: {
@@ -213,17 +213,269 @@ export class AppLayerComponent {
         id: 'mandatory_to_retrieve_layerData_in_IDB',
         title: "Aéroport préloadé et chargé dans l'Indexed-db",
         visible: false,
-        idbInfo: { storeToIdb: true },
+        offline: { enabled: true },
+        preload: { bypass: 'all' },
         sourceOptions: {
-          preload: { bypassResolution: true, bypassVisible: true },
           type: 'vector',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=getfeature&typename=aeroport&srsname=EPSG:4326&outputformat=geojson'
         } satisfies FeatureDataSourceOptions
-      } satisfies VectorLayerOptions
+      } satisfies VectorLayerOptions,
+      {
+        title: 'Lines - MVT',
+        id: 'mvtsbap',
+        visible: false,
+        maxResolution: 1500,
+        sourceOptions: {
+          featureClass: 'feature',
+          type: 'mvt',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?mode=tile&tilemode=gmap&tile={x}+{y}+{z}&layers=bgr_v_sous_route_res_sup_act&map.imagetype=mvt'
+        },
+        style: {
+          type: 'Geostyler',
+          style: {
+            name: '',
+            rules: [
+              {
+                name: 'Autoroute MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#e20a16',
+                    width: 5,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#ffd80c',
+                    width: 3,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Autoroute'],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Autoroute (Gestion fédérale ou PPP)',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#e20a16',
+                    width: 5,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#ffebbe',
+                    width: 3,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Autoroute'],
+                  ['!=', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Nationale (Gestion fédérale ou PPP',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#ab595d',
+                    width: 4,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#ed8186',
+                    width: 2,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Nationale'],
+                  ['!=', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Nationale MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#62050a',
+                    width: 4,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#f00000',
+                    width: 2,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Nationale'],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Régionale MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#000000',
+                    width: 4,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#e7971d',
+                    width: 3,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Régionale'],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Collectrice MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#861c24',
+                    width: 3,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#e7641d',
+                    width: 2.5,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  ['==', 'des_clasf_', 'Collectrice'],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Accès aux ressources et accès aux localités isolées MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#5f5d5c',
+                    width: 2,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#d2d2d2',
+                    width: 1,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  [
+                    '||',
+                    ['==', 'des_clasf_', 'Accès aux ressources'],
+                    [
+                      '==',
+                      'des_clasf_',
+                      'Accès aux ressources et aux localités isolées'
+                    ]
+                  ],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              },
+              {
+                name: 'Local 1-2-3 MTQ',
+                symbolizers: [
+                  {
+                    kind: 'Line',
+                    color: '#5f5d5c',
+                    width: 2,
+                    visibility: true,
+                    join: 'round',
+                    opacity: 0.5,
+                    cap: 'butt'
+                  },
+                  {
+                    kind: 'Line',
+                    color: '#d2d2d2',
+                    width: 1,
+                    visibility: true,
+                    cap: 'butt',
+                    join: 'round'
+                  }
+                ],
+                filter: [
+                  '&&',
+                  [
+                    '||',
+                    ['==', 'des_clasf_', 'Local 1'],
+                    ['==', 'des_clasf_', 'Local 2'],
+                    ['==', 'des_clasf_', 'Local 3']
+                  ],
+                  ['==', 'nom_orgns_', 'MTQ']
+                ]
+              }
+            ]
+          }
+        }
+      } satisfies VectorTileLayerOptions
     ];
 
     this.layerService
       .createLayers(layers)
-      .subscribe((layers) => this.map.layerController.add(...layers));
+      .subscribe((layers) =>
+        this.map.layerController.add(
+          ...layers.filter((l): l is AnyLayer => l != null)
+        )
+      );
   }
 }

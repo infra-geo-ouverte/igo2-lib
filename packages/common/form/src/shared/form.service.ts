@@ -51,7 +51,7 @@ export class FormService {
     const options = config.options || {};
     const state: FormControlState<unknown> = {
       value: options.initialValue ?? '',
-      disabled: options.disabled
+      disabled: options.disabled || false
     };
     const control = this.formBuilder.control(state);
 
@@ -103,11 +103,11 @@ export class FormService {
     const match = validatorStr.match(re);
 
     if (!match) {
-      return Validators[validatorStr];
+      return Validators[validatorStr as keyof typeof Validators] as ValidatorFn;
     }
 
     const name = match[1];
     const args = match[2];
-    return Validators[name](args);
+    return (Validators as any)[name](args);
   }
 }

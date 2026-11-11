@@ -26,11 +26,12 @@ interface DemoEntity {
   ]
 })
 export class AppEntitySelectorComponent implements OnInit, OnDestroy {
-  public store: EntityStore = new EntityStore([]);
+  public store = new EntityStore<DemoEntity>([]);
 
-  public selectedEntity$: BehaviorSubject<DemoEntity> =
-    new BehaviorSubject<DemoEntity>(undefined);
-  public entityIsSelected: boolean;
+  public selectedEntity$ = new BehaviorSubject<DemoEntity | undefined>(
+    undefined
+  );
+  public entityIsSelected = false;
 
   ngOnInit(): void {
     this.store.load([

@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
   inject,
@@ -37,6 +36,8 @@ import {
   TimeFilterButtonComponent,
   TrackFeatureButtonComponent,
   VectorLayer,
+  VectorTileLayer,
+  isOlFlatStyleLike,
   sourceCanSearch
 } from '@igo2/geo';
 
@@ -94,13 +95,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   mediaService = inject(MediaService);
   private cdr = inject(ChangeDetectorRef);
 
-  isDesktop: boolean;
+  isDesktop = false;
   layers$ = new BehaviorSubject<AnyLayer[]>([]);
   showAllLegendsValue$ = new BehaviorSubject<boolean>(false);
 
-  private resolution$$: Subscription;
-  private visibleOrInRangeLayers$$: Subscription;
-  public delayedShowEmptyMapContent = false;
+  private resolution$$?: Subscription;
+  private visibleOrInRangeLayers$$?: Subscription;
 
   readonly allowShowAllLegends = input(false);
 
@@ -112,7 +112,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   readonly updateLegendOnResolutionChange = input(false);
 
-  readonly selectedTabAtOpening = input<string>(undefined);
+  readonly selectedTabAtOpening = input<string>();
 
   readonly ogcButton = input(true);
 
@@ -120,29 +120,10 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   readonly layerAdditionAllowed = input(true);
 
-  @Input()
-  get layerListControls(): LayerListControlsOptions {
-    return this._layerListControls;
-  }
-  set layerListControls(value: LayerListControlsOptions) {
-    const stateOptions = this.layerListToolState.getLayerListControls();
-    const stateKeyword = stateOptions.keyword;
-    const stateOnlyVisible = stateOptions.onlyVisible;
-    const stateSortAlpha = stateOptions.sortAlpha;
-
-    value.keyword = stateKeyword !== '' ? stateKeyword : value.keyword;
-    value.onlyVisible =
-      stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;
-    value.sortAlpha =
-      stateSortAlpha !== undefined ? stateSortAlpha : value.sortAlpha;
-
-    value.onlyVisible =
-      value.onlyVisible === undefined ? false : value.onlyVisible;
-    value.sortAlpha = value.sortAlpha === undefined ? false : value.sortAlpha;
-
-    this._layerListControls = value;
-  }
-  private _layerListControls = {};
+  readonly layerListControls = input<
+    LayerListControlsOptions,
+    LayerListControlsOptions
+  >({}, { transform: (value) => this.transformLayerListControls(value) });
 
   get map(): IgoMap {
     return this.mapState.map;
@@ -163,7 +144,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   get excludeBaseLayers(): boolean {
-    return this.layerListControls.excludeBaseLayers || false;
+    return this.layerListControls().excludeBaseLayers || false;
   }
 
   get layerFilterAndSortOptions(): LayerListControlsOptions {
@@ -171,10 +152,10 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       {
         showToolbar: LayerListControlsEnum.default
       },
-      this.layerListControls
+      this.layerListControls()
     );
 
-    switch (this.layerListControls.showToolbar) {
+    switch (this.layerListControls().showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
         break;
@@ -246,19 +227,14 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     } else {
       this.showAllLegendsValue$.next(false);
     }
-
-    // prevent message to be shown too quickly. Waiting for layers
-    setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
   }
 
   ngOnDestroy(): void {
-    this.resolution$$.unsubscribe();
-    if (this.visibleOrInRangeLayers$$) {
-      this.visibleOrInRangeLayers$$.unsubscribe();
-    }
+    this.resolution$$?.unsubscribe();
+    this.visibleOrInRangeLayers$$?.unsubscribe();
   }
 
-  onShowAllLegends(event) {
+  onShowAllLegends(event: boolean) {
     this.mapState.showAllLegendsValue = event;
     this.showAllLegendsValue$.next(event);
   }
@@ -282,7 +258,9 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   onLayerListChange(appliedFilters: LayerListControlsOptions) {
-    this.layerListToolState.setKeyword(appliedFilters.keyword);
+    if (appliedFilters.keyword !== undefined) {
+      this.layerListToolState.setKeyword(appliedFilters.keyword);
+    }
     this.layerListToolState.setSortAlpha(appliedFilters.sortAlpha);
     this.layerListToolState.setOnlyVisible(appliedFilters.onlyVisible);
   }
@@ -341,13 +319,17 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     this.toolState.toolbox.activateTool('contextManager');
   }
 
-  isTimeFilterButton(layer): boolean {
-    const options = layer.dataSource.options;
+  isTimeFilterButton(layer: AnyLayer): boolean {
+    if (!layer.dataSource) return false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const options = layer.dataSource.options as any;
     return this.timeButton() && options.timeFilterable && options.timeFilter;
   }
 
-  isOGCFilterButton(layer): boolean {
-    const options = layer.dataSource.options;
+  isOGCFilterButton(layer: AnyLayer): boolean {
+    if (!layer.dataSource) return false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const options = layer.dataSource.options as any;
     return (
       this.ogcButton() &&
       options.ogcFilters &&
@@ -375,10 +357,8 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   isStyleEditButton(layer: Layer): boolean {
-    if (layer instanceof VectorLayer) {
-      if ((layer as VectorLayer).options?.igoStyle?.editable) {
-        return true;
-      }
+    if (layer instanceof VectorLayer || layer instanceof VectorTileLayer) {
+      return layer.visible && isOlFlatStyleLike(layer.style);
     }
     return false;
   }
@@ -388,5 +368,30 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.isDesktop = result === Media.Desktop;
       this.cdr.detectChanges();
     });
+  }
+
+  private transformLayerListControls(
+    input: LayerListControlsOptions | undefined
+  ): LayerListControlsOptions {
+    if (!input) {
+      return {};
+    }
+    const value = { ...input };
+    const stateOptions = this.layerListToolState.getLayerListControls();
+    const stateKeyword = stateOptions.keyword;
+    const stateOnlyVisible = stateOptions.onlyVisible;
+    const stateSortAlpha = stateOptions.sortAlpha;
+
+    value.keyword = stateKeyword !== '' ? stateKeyword : value.keyword;
+    value.onlyVisible =
+      stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;
+    value.sortAlpha =
+      stateSortAlpha !== undefined ? stateSortAlpha : value.sortAlpha;
+
+    value.onlyVisible =
+      value.onlyVisible === undefined ? false : value.onlyVisible;
+    value.sortAlpha = value.sortAlpha === undefined ? false : value.sortAlpha;
+
+    return value;
   }
 }

@@ -1,25 +1,17 @@
-import {
-  provideHttpClient,
-  withInterceptorsFromDi
-} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { mergeTestConfig } from '../../../test-config';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [TranslateModule.forRoot()],
-        providers: [provideHttpClient(withInterceptorsFromDi())]
-      })
-    );
+    TestBed.configureTestingModule({
+      imports: [TranslateModule.forRoot()]
+    });
   });
 
-  it('should ...', inject([LanguageService], (service: LanguageService) => {
+  it('should create', inject([LanguageService], (service: LanguageService) => {
     expect(service).toBeTruthy();
   }));
 });

@@ -9,12 +9,11 @@ import {
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
 import {
-  CommonVectorStyleOptions,
+  ConfigurableStylesOptions,
   Feature,
   FeatureMotion,
   FeatureStore,
   FeatureWorkspace,
-  OverlayStyleOptions,
   SearchResult,
   SearchSource,
   SearchSourceService
@@ -45,12 +44,9 @@ export class SearchState {
   private mapState = inject(MapState);
 
   public searchLayerStores: FeatureStore<Feature>[] = [];
-  public searchOverlayStyle: CommonVectorStyleOptions = {};
-  public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
-  public searchOverlayStyleFocus: CommonVectorStyleOptions = {};
 
-  public focusedOrResolution$$: Subscription;
-  public selectedOrResolution$$: Subscription;
+  public focusedOrResolution$$?: Subscription;
+  public selectedOrResolution$$?: Subscription;
 
   /**
    * Default feature motion are:
@@ -64,22 +60,27 @@ export class SearchState {
 
   readonly searchTermSplitter$ = new BehaviorSubject<string>('|');
 
-  readonly searchTerm$ = new BehaviorSubject<string>(undefined);
+  readonly searchTerm$ = new BehaviorSubject<string | undefined>(undefined);
 
-  readonly searchType$ = new BehaviorSubject<string>(undefined);
+  readonly searchType$ = new BehaviorSubject<string | undefined>(undefined);
 
   readonly searchDisabled$ = new BehaviorSubject<boolean>(false);
 
   readonly searchResultsGeometryEnabled$ = new BehaviorSubject<boolean>(false);
 
-  readonly searchSettingsChange$ = new BehaviorSubject<boolean>(undefined);
+  readonly searchSettingsChange$ = new BehaviorSubject<boolean | undefined>(
+    undefined
+  );
 
-  readonly selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
+  readonly selectedResult$ = new BehaviorSubject<SearchResult | undefined>(
+    undefined
+  );
 
   /**
    * Store that holds the search results
    */
   readonly store = new EntityStore<SearchResult>([]);
+  public searchOverlayStyle: ConfigurableStylesOptions = {};
 
   /**
    * Search types currently enabled in the search source service
@@ -91,13 +92,10 @@ export class SearchState {
   }
 
   constructor() {
-    const searchOverlayStyle: OverlayStyleOptions =
-      this.configService.getConfig('searchOverlayStyle');
-    if (searchOverlayStyle) {
-      this.searchOverlayStyle = searchOverlayStyle.base;
-      this.searchOverlayStyleSelection = searchOverlayStyle.selection;
-      this.searchOverlayStyleFocus = searchOverlayStyle.focus;
-    }
+    this.searchOverlayStyle = this.configService.getConfig(
+      'searchOverlayStyle',
+      {}
+    );
 
     const searchResultsGeometryEnabled = this.storageService.get(
       'searchResultsGeometryEnabled'
@@ -115,7 +113,7 @@ export class SearchState {
         const searchableWks = e.filter(
           (fw) =>
             fw instanceof FeatureWorkspace &&
-            fw.layer.options.workspace.searchIndexEnabled
+            fw.layer.options.workspace?.searchIndexEnabled
         );
         this.searchSourceService.setWorkspaces(wksSource, searchableWks);
       });
@@ -178,12 +176,14 @@ export class SearchState {
     this.searchDisabled$.next(true);
   }
 
-  setSearchTerm(searchTerm: string) {
+  setSearchTerm(searchTerm: string | undefined) {
     this.searchTerm$.next(searchTerm);
   }
 
-  setSearchType(searchType: string) {
-    this.searchSourceService.enableSourcesByType(searchType);
+  setSearchType(searchType: string | undefined) {
+    if (searchType) {
+      this.searchSourceService.enableSourcesByType(searchType);
+    }
     this.searchType$.next(searchType);
   }
 
@@ -195,7 +195,11 @@ export class SearchState {
     this.selectedResult$.next(result);
   }
 
-  setSearchResultsGeometryStatus(value) {
+  clearSelectedResult() {
+    this.selectedResult$.next(undefined);
+  }
+
+  setSearchResultsGeometryStatus(value: boolean) {
     this.storageService.set('searchResultsGeometryEnabled', value);
     this.searchResultsGeometryEnabled$.next(value);
   }

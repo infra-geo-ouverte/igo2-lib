@@ -45,7 +45,6 @@ export interface FeatureWithStopProperties {
   type: DirectionsType;
   stopText: string;
   stopColor: string;
-  stopOpacity: 1;
 }
 
 export interface Stop {
@@ -160,4 +159,18 @@ export interface OsrmWaypoint {
   hint?: string;
   location: [number, number];
   name?: string;
+}
+
+export interface OsrmApiResponse {
+  routes: OsrmRawRoute[];
+  waypoints: OsrmWaypoint[];
+}
+
+export interface OsrmRawRoute {
+  legs: OsrmRouteLeg[];
+  distance: number;
+  duration: number;
+  geometry: DirectionsGeometry;
+  weight: number;
+  weight_name: string;
 }

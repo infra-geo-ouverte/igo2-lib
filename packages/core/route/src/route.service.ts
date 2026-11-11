@@ -51,11 +51,14 @@ export class RouteService {
         .slice(1)
         .split('&')
         .map((p) => p.split('='))
-        .reduce((obj, pair) => {
-          const [key, value] = pair.map(decodeURIComponent);
-          obj[key] = value;
-          return obj;
-        }, {});
+        .reduce(
+          (obj, pair) => {
+            const [key, value] = pair.map(decodeURIComponent);
+            obj[key] = value;
+            return obj;
+          },
+          {} as Record<string, string>
+        );
       this.router.navigate([], { queryParams });
     }
     return this.route.queryParams;

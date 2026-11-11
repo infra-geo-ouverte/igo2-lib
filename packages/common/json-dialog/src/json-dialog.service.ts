@@ -9,7 +9,11 @@ import { JsonDialogComponent } from './json-dialog.component';
 export class JsonDialogService {
   private dialog = inject(MatDialog);
 
-  public open(title: any, data, ignoreKeys?: string[]): Observable<any> {
+  public open(
+    title: string,
+    data: any,
+    ignoreKeys?: string[]
+  ): Observable<any> {
     const dialogRef = this.dialog.open(JsonDialogComponent, {
       disableClose: false
     });

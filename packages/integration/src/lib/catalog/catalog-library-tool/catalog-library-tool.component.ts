@@ -14,9 +14,10 @@ import { EntityStore } from '@igo2/common/entity';
 import { ToolComponent } from '@igo2/common/tool';
 import { ContextService } from '@igo2/context';
 import { LanguageService } from '@igo2/core/language';
-import { StorageScope, StorageService } from '@igo2/core/storage';
+import { StorageService } from '@igo2/core/storage';
 import {
   Catalog,
+  CatalogItem,
   CatalogItemGroup,
   CatalogItemLayer,
   CatalogItemType,
@@ -25,6 +26,7 @@ import {
   isLayerItemOptions
 } from '@igo2/geo';
 import {
+  ObjectUtils,
   addExcelSheetToWorkBook,
   createExcelWorkBook,
   writeExcelFile
@@ -55,7 +57,6 @@ import { getInfoFromSourceOptions } from './catalog-library-tool.utils';
   templateUrl: './catalog-library-tool.component.html',
   styleUrls: ['./catalog-library-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CatalogLibraryComponent,
     MatButtonModule,
@@ -71,7 +72,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   private storageService = inject(StorageService);
   private languageService = inject(LanguageService);
 
-  private generatelist$$: Subscription;
+  private generatelist$$?: Subscription;
   /**
    * Store that contains the catalogs
    * @internal
@@ -95,26 +96,10 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    */
   readonly predefinedCatalogs = input<Catalog[]>([]);
 
-  set selectedCatalogId(id) {
-    this.storageService.set('selectedCatalogId', id, StorageScope.SESSION);
-  }
-
-  get currentTool() {
-    return this.toolState.toolbox.getCurrentPreviousToolName()[1];
-  }
-
-  get lastTool() {
-    return this.toolState.toolbox.getCurrentPreviousToolName()[0];
-  }
-
   /**
    * @internal
    */
   ngOnInit() {
-    if (this.lastTool === 'catalogBrowser' && this.currentTool === 'catalog') {
-      this.selectedCatalogId = null;
-    }
-
     if (this.store.count === 0) {
       this.loadCatalogs();
     }
@@ -158,13 +143,13 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
    * Get the item abstract for getCatalogList
    */
   private getMetadataAbstract(item: CatalogItemLayer): string {
-    return item.options.metadata.abstract?.replaceAll('\n', '') ?? '';
+    return item.options.metadata?.abstract?.replaceAll('\n', '') ?? '';
   }
   /**
    * Get the item url metadata for getCatalogList
    */
-  private getMetadataUrl(item: CatalogItemLayer): string {
-    return item.options.metadata.url;
+  private getMetadataUrl(item: CatalogItemLayer): string | undefined {
+    return item.options.metadata?.url;
   }
 
   private layersInfoFromContexts(): Observable<InfoFromSourceOptions[]> {
@@ -172,18 +157,18 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
       switchMap((contextsList) =>
         forkJoin(
           contextsList.ours.map((context) =>
-            this.contextService.getLocalContext(context.uri)
+            this.contextService.getLocalContext(context.uri!)
           )
         )
       ),
       concatAll(),
       map((detailedContext) => {
-        return detailedContext.layers
+        return (detailedContext.layers ?? [])
           .filter((layer) => isLayerItemOptions(layer))
           .map((layer) =>
             getInfoFromSourceOptions(
-              layer.sourceOptions,
-              detailedContext.title ?? detailedContext.uri
+              layer.sourceOptions!,
+              detailedContext.title ?? detailedContext.uri ?? ''
             )
           );
       }),
@@ -192,9 +177,22 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Sort items like the catalog browser display does (by title when a direction is set)
+   */
+  private sortItemsForDisplay(
+    items: CatalogItem[],
+    direction?: 'asc' | 'desc'
+  ): CatalogItem[] {
+    if (direction === undefined) {
+      return items;
+    }
+    return [...items].sort((a, b) =>
+      ObjectUtils.naturalCompare(a.title, b.title, direction)
+    );
+  }
+
   private listExportFromCatalogs(): Observable<ListExport[]> {
-    let rank = 1;
-    const finalListExportOutputs: ListExport[] = [];
     return this.store.entities$.pipe(
       switchMap((catalogs) =>
         combineLatest(
@@ -208,34 +206,41 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
         )
       ),
       map((catalogsWithItems) => {
-        catalogsWithItems.forEach((catalogAndItems) => {
-          const catalog = catalogAndItems.catalog;
-          const loadedCatalogItems = catalogAndItems.items;
+        let rank = 1;
+        const listExports: ListExport[] = [];
 
-          const catalogListExports = loadedCatalogItems.reduce(
-            (catalogListExports, item) => {
-              if (item.type === CatalogItemType.Group) {
-                const group = item as CatalogItemGroup;
-                group.items.forEach((layer: CatalogItemLayer) => {
-                  catalogListExports.push(
-                    this.formatLayer(layer, rank, group.title, catalog.title)
-                  );
-                  rank++;
-                });
-              } else {
-                const layer = item as CatalogItemLayer;
-                catalogListExports.push(
-                  this.formatLayer(layer, rank, '', catalog.title)
-                );
-                rank++;
-              }
-              return catalogListExports;
-            },
-            [] as ListExport[]
-          );
-          finalListExportOutputs.push(...catalogListExports);
-        });
-        return finalListExportOutputs;
+        const collect = (
+          items: CatalogItem[],
+          direction: 'asc' | 'desc' | undefined,
+          groupTitle: string,
+          catalogTitle: string
+        ) => {
+          for (const item of this.sortItemsForDisplay(items, direction)) {
+            if (item.type === CatalogItemType.Group) {
+              const group = item as CatalogItemGroup;
+              collect(
+                group.items ?? [],
+                group.sortDirection,
+                group.title,
+                catalogTitle
+              );
+            } else {
+              listExports.push(
+                this.formatLayer(
+                  item as CatalogItemLayer,
+                  rank++,
+                  groupTitle,
+                  catalogTitle
+                )
+              );
+            }
+          }
+        };
+
+        catalogsWithItems.forEach(({ catalog, items }) =>
+          collect(items, catalog.sortDirection, '', catalog.title)
+        );
+        return listExports;
       })
     );
   }
@@ -255,30 +260,30 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
   }
 
   private formatLayer(
-    layer: CatalogItemLayer,
+    catalogItem: CatalogItemLayer,
     rank: number,
     groupTitle: string,
     catalogTitle: string
   ): ListExport {
-    const infos = getInfoFromSourceOptions(
-      layer.options.sourceOptions,
-      layer.id
-    );
+    const sourceOptions = catalogItem.options.sourceOptions;
+    const infos = sourceOptions
+      ? getInfoFromSourceOptions(sourceOptions, catalogItem.id)
+      : undefined;
     const t = this.languageService.translate;
     return {
-      id: infos.id,
+      id: infos?.id ?? catalogItem.options.id!,
       rank: rank.toString(),
-      layerTitle: layer.title,
+      layerTitle: catalogItem.title,
       layerGroup: groupTitle,
       catalog: catalogTitle,
-      provider: layer.externalProvider
+      provider: catalogItem.externalProvider
         ? t.instant('igo.integration.catalog.listExport.external')
         : t.instant('igo.integration.catalog.listExport.internal'),
-      url: infos.url,
-      layerName: infos.layerName,
+      url: infos?.url,
+      layerName: infos?.layerName,
       context: '',
-      metadataAbstract: this.getMetadataAbstract(layer),
-      metadataUrl: this.getMetadataUrl(layer)
+      metadataAbstract: this.getMetadataAbstract(catalogItem),
+      metadataUrl: this.getMetadataUrl(catalogItem)
     };
   }
 
@@ -332,7 +337,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
     });
 
     const catalogOutput = catalogOutputs.map((catalogOutput) => {
-      delete catalogOutput.id;
+      delete (catalogOutput as Partial<typeof catalogOutput>).id;
       return catalogOutput;
     });
 
@@ -344,7 +349,7 @@ export class CatalogLibraryToolComponent implements OnInit, OnDestroy {
 
     const documentName = this.languageService.translate.instant(
       'igo.integration.catalog.listExport.documentName',
-      { value: formatDate(Date.now(), 'YYYY-MM-dd-H_mm', 'en-US') }
+      { value: formatDate(Date.now(), "yyyy-MM-dd-HH'h'mm", 'en-US') }
     );
     writeExcelFile(workBook, documentName, { compression: true });
   }

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,23 +31,8 @@ export class UserButtonComponent {
   private config = inject(ConfigService);
   auth = inject(AuthService);
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
+  readonly map = input.required<IgoMap>();
+  readonly color = input<string>();
 
   public expand = false;
   public visible = false;

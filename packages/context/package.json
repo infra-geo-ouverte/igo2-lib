@@ -1,6 +1,6 @@
 {
   "name": "@igo2/context",
-  "version": "20.3.3",
+  "version": "21.0.0-next.55",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -22,7 +22,7 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint context",
     "lint.fix": "ng lint context --fix",
-    "types": "tsc --project ./tsconfig.lib.json --noEmit",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit && tsc -p ./tsconfig.spec.json --noEmit",
     "test": "ng test context --watch=false",
     "test.watch": "ng test context",
     "watch": "ng build context --watch"
@@ -36,12 +36,12 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/animations": "^20.0.0",
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/material": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/material": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
     "@igo2/auth": "*",
     "@igo2/common": "*",
     "@igo2/core": "*",

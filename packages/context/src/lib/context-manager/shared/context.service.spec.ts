@@ -1,28 +1,24 @@
-// import { TestBed, inject } from '@angular/core/testing';
-// import { HttpClientModule } from '@angular/common/http';
-//
-// import { IgoCoreModule } from '../../core';
-// import { IgoAuthModule } from '../../auth';
-// import { ToolService } from '../../tool';
-// import { ContextService } from './context.service';
-//
-//
-// describe('ContextService', () => {
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({
-//       imports: [
-//         HttpClientModule,
-//         IgoCoreModule.forRoot(),
-//         IgoAuthModule.forRoot()
-//       ],
-//       providers: [
-//         ContextService,
-//         ToolService
-//       ]
-//     });
-//   });
-//
-//   it('should ...', inject([ContextService], (service: ContextService) => {
-//     expect(service).toBeTruthy();
-//   }));
-// });
+import { HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { ContextService } from './context.service';
+
+describe('ContextService', () => {
+  let service: ContextService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    service = TestBed.inject(ContextService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('should create', () => {
+    const req = httpMock.expectOne('contexts/_contexts.json');
+    req.flush([]);
+    expect(service).toBeTruthy();
+  });
+});

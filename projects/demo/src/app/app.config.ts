@@ -32,7 +32,13 @@ import { IgoCoreModule } from '@igo2/core';
 import { provideConfig } from '@igo2/core/config';
 import { provideTranslation, withStaticConfig } from '@igo2/core/language';
 import { provideSentryMonitoring } from '@igo2/core/monitoring';
-import { provideOffline } from '@igo2/geo';
+import {
+  provideProjection,
+  provideStyle,
+  withGeostyler,
+  withMapbox
+} from '@igo2/geo';
+import { provideOffline, withIndexedDb } from '@igo2/geo/offline';
 
 import { environment } from '../environments/environment';
 import { routes } from './app.routing';
@@ -55,12 +61,14 @@ export const appConfig: ApplicationConfig = {
     provideConfig({
       default: environment.igo
     }),
-    provideTranslation(withStaticConfig(environment.igo.language)),
+    provideProjection(),
+    provideTranslation(withStaticConfig(environment.igo.language!)),
     provideAuthentification(),
     provideIcon(),
-    provideSentryMonitoring(environment.igo.monitoring),
-    provideAuthUserMonitoring(environment.igo.monitoring),
-    provideOffline({ enable: true }),
+    provideSentryMonitoring(environment.igo.monitoring!),
+    provideAuthUserMonitoring(environment.igo.monitoring ?? null),
+    provideOffline(withIndexedDb()),
+    provideStyle(withGeostyler(), withMapbox()),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' } satisfies MatFormFieldDefaultOptions

@@ -28,8 +28,8 @@ export class AppActionComponent implements OnInit, OnDestroy {
   private added$ = new BehaviorSubject<boolean>(false);
 
   get actionbarMode(): ActionbarMode {
-    const media: Media = this.mediaService.media$.value;
-    const orientation: MediaOrientation = this.mediaService.orientation$.value;
+    const media = this.mediaService.media$.value;
+    const orientation = this.mediaService.orientation$.value;
     if (media === Media.Desktop && orientation === MediaOrientation.Landscape) {
       return ActionbarMode.Dock;
     }

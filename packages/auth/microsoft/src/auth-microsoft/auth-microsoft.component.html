@@ -7,7 +7,7 @@
       />
     </svg>
   </mat-icon>
-  {{ 'igo.auth.microsoft.login' | translate }}
+  {{ signInButtonLabel() }}
 </button>
 @if (error) {
   <mat-error>{{ error }}</mat-error>

@@ -24,7 +24,7 @@ import { IgoLanguageModule } from '@igo2/core/language';
 export class ConfirmDialogComponent {
   dialogRef = inject<MatDialogRef<ConfirmDialogComponent>>(MatDialogRef);
 
-  public confirmMessage: string;
+  public confirmMessage?: string;
   public titleKey = 'igo.common.confirmDialog.title';
   public proccessKey = 'igo.common.confirmDialog.confirmBtn';
   public cancelKey = 'igo.common.confirmDialog.cancelBtn';

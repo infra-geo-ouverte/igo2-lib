@@ -4,8 +4,7 @@ import type {
   AnyLayerOptions,
   Layer,
   LayerGroup,
-  LayerGroupOptions,
-  VectorTileLayerOptions
+  LayerGroupOptions
 } from '../shared/layers';
 
 type SortDirection = 'asc' | 'desc';
@@ -31,24 +30,11 @@ export function isLayerItem(layer: AnyLayer): layer is Layer {
 }
 
 export function isBaseLayer(layer: AnyLayer): layer is Layer {
-  return isLayerItem(layer) && layer.baseLayer;
+  return isLayerItem(layer) && (layer.baseLayer ?? false);
 }
 
 function isInternalLayer(layer: AnyLayer): boolean {
   return layer.isIgoInternalLayer;
-}
-
-export function computeMVTOptionsOnHover(layerOptions: AnyLayerItemOptions) {
-  const vectorTileLayerOptions = layerOptions as VectorTileLayerOptions;
-  if (
-    vectorTileLayerOptions.sourceOptions?.type === 'mvt' &&
-    (vectorTileLayerOptions.igoStyle?.styleByAttribute?.hoverStyle ||
-      vectorTileLayerOptions.igoStyle?.hoverStyle)
-  ) {
-    const fc = vectorTileLayerOptions.sourceOptions.featureClass;
-    vectorTileLayerOptions.sourceOptions.featureClass = fc ? fc : 'feature';
-  }
-  return layerOptions;
 }
 
 export function isSaveableLayer(layer: Layer): boolean {
@@ -63,6 +49,7 @@ export function isSaveableLayer(layer: Layer): boolean {
   if (layer.options.sourceOptions?.type) {
     return true;
   }
+  return false;
 }
 
 /** Recursive */
@@ -81,9 +68,9 @@ export function sortLayersByZindex(
 }
 
 function sortLayerByZIndexDesc(layer1: AnyLayer, layer2: AnyLayer) {
-  return layer2.zIndex - layer1.zIndex;
+  return (layer2.zIndex ?? 0) - (layer1.zIndex ?? 0);
 }
 
 function sortLayerByZIndexAsc(layer1: AnyLayer, layer2: AnyLayer) {
-  return layer1.zIndex - layer2.zIndex;
+  return (layer1.zIndex ?? 0) - (layer2.zIndex ?? 0);
 }

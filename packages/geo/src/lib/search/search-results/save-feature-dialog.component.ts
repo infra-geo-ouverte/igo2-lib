@@ -64,10 +64,10 @@ export class SaveFeatureDialogComponent implements OnInit {
     layers: Layer[];
   }>(MAT_DIALOG_DATA, { optional: true });
 
-  public form: UntypedFormGroup;
-  feature: SearchResult;
+  public form!: UntypedFormGroup;
+  feature!: SearchResult;
   layers: Layer[] = [];
-  filteredLayers$: Observable<Layer[]>;
+  filteredLayers$!: Observable<Layer[]>;
 
   constructor() {
     this.form = this.formBuilder.group({
@@ -76,17 +76,17 @@ export class SaveFeatureDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.feature = this.data.feature;
-    this.layers = this.data.layers;
+    this.feature = this.data!.feature;
+    this.layers = this.data!.layers;
     this.filteredLayers$ = this.form.controls['layerName'].valueChanges.pipe(
       startWith(''),
       map((val) => this.filter(val))
     );
   }
 
-  private filter(val): Layer[] {
+  private filter(val: string): Layer[] {
     if (typeof val !== 'string') {
-      return;
+      return [];
     }
     return this.layers
       .map((l) => l)

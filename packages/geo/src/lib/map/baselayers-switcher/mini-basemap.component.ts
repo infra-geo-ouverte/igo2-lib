@@ -33,11 +33,12 @@ export class MiniBaseMapComponent implements AfterViewInit {
   private layerService = inject(LayerService);
   private appRef = inject(ApplicationRef);
 
-  readonly map = input<IgoMap>(undefined);
-  readonly disabled = input<boolean>(undefined);
-  readonly title = input<string>(undefined);
-  readonly display = input<boolean>(undefined);
-  readonly baseLayer = input<Layer>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly baseLayer = input.required<Layer>();
+
+  readonly disabled = input<boolean>();
+  readonly title = input<string>();
+  readonly display = input<boolean>();
 
   public basemap = new IgoMap({
     controls: {},
@@ -63,7 +64,7 @@ export class MiniBaseMapComponent implements AfterViewInit {
 
     mainView.on(['change:center', 'change:resolution'], () => {
       this.basemap.ol.getView().setCenter(mainView.getCenter());
-      this.basemap.ol.getView().setZoom(mainView.getZoom());
+      this.basemap.ol.getView().setZoom(mainView.getZoom()!);
     });
   }
 
@@ -75,7 +76,7 @@ export class MiniBaseMapComponent implements AfterViewInit {
     this.appRef.tick();
   }
 
-  private handleBaseLayerChanged(baselayer: Layer) {
+  private handleBaseLayerChanged(baselayer: Layer): void {
     this.basemap.layerController.reset();
 
     const options: AnyLayerOptions = Object.assign(
@@ -93,16 +94,16 @@ export class MiniBaseMapComponent implements AfterViewInit {
   }
 
   private handleLinkedBaseLayer(baselayer: Layer): void {
-    const linkedLayers: LayersLink = baselayer.options.linkedLayers;
+    const linkedLayers: LayersLink = baselayer.options.linkedLayers!;
     if (!linkedLayers) {
       return;
     }
-    const links: LayersLinkProperties[] = linkedLayers.links;
+    const links: LayersLinkProperties[] = linkedLayers.links!;
     const isParentLayer: boolean = links ? true : false;
     if (isParentLayer) {
       // search for child layers
       links.map((link: LayersLinkProperties) => {
-        link.linkedIds.map((linkedId: string) => {
+        link.linkedIds.map((linkedId) => {
           const layerToApply = this.map().layerController.all.find(
             (layer) =>
               isLayerItem(layer) &&

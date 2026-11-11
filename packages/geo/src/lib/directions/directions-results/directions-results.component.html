@@ -12,9 +12,9 @@
           @for (route of routes; track route; let routeIndex = $index) {
             <mat-option [value]="route">
               Option {{ routeIndex + 1 }}: {{ route.title }} ({{
-                formatDistance(route.distance)
+                formatDistance(route.distance ?? 0)
               }}
-              - {{ formatDuration(route.duration) }})
+              - {{ formatDuration(route.duration ?? 0) }})
             </mat-option>
           }
         </mat-select>
@@ -27,8 +27,9 @@
     <mat-list (mouseleave)="onLeaveList()">
       @for (step of activeRoute.steps; track step; let stepIndex = $index) {
         @if (
-          (formatDistance(step.distance) && formatDuration(step.duration)) ||
-          stepIndex === activeRoute.steps.length - 1
+          (formatDistance(step.distance ?? 0) &&
+            formatDuration(step.duration ?? 0)) ||
+          stepIndex === activeRoute.steps!.length - 1
         ) {
           <mat-list-item
             matListItem
@@ -50,10 +51,10 @@
             >
               {{ getFormattedStep(step, stepIndex).instruction }}
             </span>
-            @if (stepIndex !== activeRoute.steps.length - 1) {
+            @if (stepIndex !== activeRoute.steps!.length - 1) {
               <span matListItemLine>
-                {{ formatDistance(step.distance) }} -
-                {{ formatDuration(step.duration) }}
+                {{ formatDistance(step.distance ?? 0) }} -
+                {{ formatDuration(step.duration ?? 0) }}
               </span>
             }
           </mat-list-item>

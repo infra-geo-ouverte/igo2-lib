@@ -13,14 +13,14 @@ export class MVTDataSource extends DataSource {
   declare public options: MVTDataSourceOptions;
   declare public ol: olSourceVectorTile;
 
-  get saveableOptions(): Partial<MVTDataSourceOptions> {
+  get saveableOptions() {
     return super.saveableOptions;
   }
 
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
     if (this.options.featureClass === 'feature') {
-      mvtFormat = new olFormatMVT({ featureClass: feature } as any);
+      mvtFormat = new olFormatMVT<feature>({ featureClass: feature });
     } else {
       mvtFormat = new olFormatMVT();
     }

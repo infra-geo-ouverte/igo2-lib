@@ -1,30 +1,9 @@
-import { Provider } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
 
 import { BaseUser } from '@igo2/core/user';
 
 export interface AuthInternOptions {
   enabled?: boolean;
-}
-
-export interface AuthFacebookOptions {
-  enabled?: boolean;
-  appId: string;
-}
-
-export interface AuthGoogleOptions {
-  enabled?: boolean;
-  apiKey: string;
-  clientId: string;
-}
-
-export interface AuthByKeyOptions {
-  domainRegFilters?: string;
-  keyProperty?: string;
-  keyValue?: string;
-}
-export interface WithCredentialsOptions {
-  withCredentials?: boolean;
-  domainRegFilters?: string;
 }
 
 export interface User extends BaseUser {
@@ -41,7 +20,7 @@ export interface IInfosUser {
 }
 
 export interface AuthOptions {
-  url: string;
+  url?: string;
   /** User api url is the igo user versus the url is the authentification API */
   user?: IAuthUserIgoOptions;
   tokenKey?: string;
@@ -65,8 +44,8 @@ export interface IAuthUserIgoOptions {
 
 export interface AuthByKeyOptions {
   domainRegFilters?: string;
-  keyProperty?: string;
-  keyValue?: string;
+  keyProperty: string;
+  keyValue: string;
 }
 export interface WithCredentialsOptions {
   withCredentials?: boolean;
@@ -84,5 +63,11 @@ export interface AuthFeature<KindT extends AuthFeatureKind> {
 
 export enum AuthFeatureKind {
   Microsoft = 0,
-  User
+  User,
+  Options
 }
+
+export const AUTH_OPTIONS = new InjectionToken<AuthOptions>('AUTH_OPTIONS', {
+  providedIn: 'root',
+  factory: () => ({})
+});

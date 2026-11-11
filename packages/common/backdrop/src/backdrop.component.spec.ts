@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../test-config';
 import { BackdropComponent } from './backdrop.component';
 
 describe('BackdropComponent', () => {
@@ -8,11 +7,9 @@ describe('BackdropComponent', () => {
   let fixture: ComponentFixture<BackdropComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [BackdropComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackdropComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BackdropComponent);
     component = fixture.componentInstance;

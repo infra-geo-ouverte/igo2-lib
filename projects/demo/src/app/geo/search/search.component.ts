@@ -30,21 +30,27 @@ import {
   MapBrowserComponent,
   MapService,
   MapViewOptions,
+  Overlay,
+  OverlayService,
   Research,
   SEARCH_RESULTS_DIRECTIVES,
   SearchResult,
+  SearchResultsComponent,
+  VectorLayerOptions,
+  WorkspaceUpdatorDirective,
   ZoomButtonComponent,
   provideSearch,
+  styleVariant,
   withIChercheSource,
   withWorkspaceSource
 } from '@igo2/geo';
-import { SearchState } from '@igo2/integration';
+import { SearchState, WorkspaceState } from '@igo2/integration';
 
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import * as proj from 'ol/proj';
 
-import { BehaviorSubject } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -63,7 +69,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     PanelComponent,
     SEARCH_RESULTS_DIRECTIVES,
     ActionbarComponent,
-    FeatureDetailsComponent
+    FeatureDetailsComponent,
+    WorkspaceUpdatorDirective
   ],
   providers: [
     provideSearch([withIChercheSource(), withWorkspaceSource()], {
@@ -75,9 +82,15 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 export class AppSearchComponent implements OnInit, OnDestroy {
   private mapService = inject(MapService);
   private layerService = inject(LayerService);
+  private overlayService = inject(OverlayService);
   private searchState = inject(SearchState);
   private mediaService = inject(MediaService);
   private storageService = inject(StorageService);
+  public searchResultsOverlayFocused: Overlay;
+  public searchResultsOverlaySelected: Overlay;
+  public searchResultsOverlayAll: Overlay;
+  private searchResultsOverlayAll$$!: Subscription;
+  workspaceState = inject(WorkspaceState);
 
   public store: ActionStore = new ActionStore([]);
   actionBarMode = ActionbarMode.Context;
@@ -101,12 +114,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   readonly mapBrowser = viewChild('mapBrowser', { read: ElementRef });
 
-  public lonlat: Coordinate;
-  public mapProjection: string;
-  public term: string;
-
-  public settingsChange$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(undefined);
+  public lonlat?: Coordinate;
+  public mapProjection?: string;
+  public term?: string;
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
@@ -116,11 +126,27 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.mediaService.isTouchScreen();
   }
 
-  public selectedFeature: Feature;
+  public selectedFeature?: Feature;
   public igoReverseSearchCoordsFormatEnabled: boolean;
+
+  private searchResult = viewChild(SearchResultsComponent);
 
   constructor() {
     this.mapService.setMap(this.map);
+    this.searchResultsOverlayFocused = this.overlayService.create(
+      this.map,
+      styleVariant(this.map.viewController, 'focus')
+    );
+
+    this.searchResultsOverlaySelected = this.overlayService.create(
+      this.map,
+      styleVariant(this.map.viewController, 'selection')
+    );
+
+    this.searchResultsOverlayAll = this.overlayService.create(
+      this.map,
+      styleVariant(this.map.viewController)
+    );
 
     this.layerService
       .createAsyncLayer({
@@ -131,11 +157,81 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer) => this.map.layerController.add(layer));
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Vector dataSource',
+        visible: true,
+        workspace: {
+          enabled: true,
+          searchIndexEnabled: true
+        },
+        sourceOptions: {
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=WFS&request=GetFeature&version=1.1.0&typename=aeroport_piste&outputFormat=geojson',
+          type: 'vector',
+          sourceFields: [
+            { name: 'longpiste2' },
+            {
+              name: 'idobj',
+              searchIndex: { enabled: true, tokenize: 'strict' }
+            },
+            { name: 'codeindic', searchIndex: { enabled: true } },
+            { name: 'nomnavcana', searchIndex: { enabled: true } },
+            { name: 'nbrpiste' },
+            { name: 'indicpiste' },
+            { name: 'surface' },
+            { name: 'province' },
+            { name: 'datdebappt' },
+            { name: 'datmodif' },
+            { name: 'version' },
+            { name: 'source', searchIndex: { enabled: true } },
+            { name: 'remarque', searchIndex: { enabled: true } },
+            { name: 'objectid' }
+          ]
+        }
+      } satisfies VectorLayerOptions)
+      .subscribe((layer) => {
+        if (layer) this.map.layerController.add(layer);
+      });
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||
       false;
+
+    this.handleShowAllResults();
+  }
+
+  handleShowAllResults() {
+    this.searchResultsOverlayAll$$ = combineLatest([
+      this.searchStore.entities$,
+      this.searchState.searchResultsGeometryEnabled$
+    ]).subscribe((bunch) => {
+      const searchResults = bunch[0];
+      const enabled = bunch[1];
+      const features = searchResults
+        .filter((sr) => sr.meta.dataType === FEATURE)
+        .map((sr) => sr.data as Feature);
+      if (features.length) {
+        if (enabled) {
+          this.searchResultsOverlayAll.setFeatures(
+            features,
+            FeatureMotion.None
+          );
+        }
+      } else {
+        this.searchResultsOverlayFocused.clear();
+        this.searchResultsOverlaySelected.clear();
+        this.searchResultsOverlayAll.clear();
+      }
+    });
+  }
+
+  onSearchResultsGeometryStatusChange(value: boolean): void {
+    this.storageService.set('searchResultsGeometryEnabled', value);
+    this.searchState.searchResultsGeometryEnabled$.next(value);
   }
 
   onPointerSummaryStatusChange(value: boolean): void {
@@ -145,7 +241,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   onSearchTermChange(term?: string): void {
     this.term = term;
     this.searchState.setSearchTerm(term);
-    const termWithoutHashtag: string = term.replace(/(#[^\s]*)/g, '').trim();
+    const termWithoutHashtag = (term ?? '').replace(/(#[^\s]*)/g, '').trim();
     if (termWithoutHashtag.length < 2) {
       this.searchStore.clear();
       this.selectedFeature = undefined;
@@ -167,7 +263,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearchSettingsChange(): void {
-    this.settingsChange$.next(true);
+    this.searchResult()?.resetPage();
   }
 
   /**
@@ -176,7 +272,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion.focus);
+    this.addResultToOverlay(
+      result,
+      this.searchResultsOverlayFocused,
+      this.searchState.featureMotion.focus
+    );
     this.selectedFeature = result.data;
   }
   /**
@@ -185,7 +285,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultSelect(result: SearchResult<Feature>): void {
-    this.tryAddFeatureToMap(result, this.searchState.featureMotion.selected);
+    this.searchResultsOverlayFocused.clear();
+    this.searchResultsOverlaySelected.clear();
+    this.addResultToOverlay(
+      result,
+      this.searchResultsOverlaySelected,
+      this.searchState.featureMotion.selected
+    );
     this.selectedFeature = result.data;
   }
 
@@ -193,20 +299,20 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(
+  private addResultToOverlay(
     layer: SearchResult<Feature>,
+    overlay: Overlay,
     motion: FeatureMotion = FeatureMotion.Default
   ): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
 
-    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    // Sometimes features have no geometry. It happens with some GetFeatureInfo
     if (layer.data.geometry === undefined) {
       return;
     }
-
-    this.map.searchResultsOverlay.setFeatures([layer.data], motion);
+    overlay.setFeatures([layer.data], motion);
   }
 
   ngOnInit(): void {
@@ -231,21 +337,24 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.destroy();
+    if (this.searchResultsOverlayAll$$) {
+      this.searchResultsOverlayAll$$.unsubscribe();
+    }
   }
 
   /*
    * Remove a feature to the map overlay
    */
   removeFeatureFromMap(): void {
-    this.map.searchResultsOverlay.clear();
+    this.searchStore.clear();
   }
 
   onContextMenuOpen(event: { x: number; y: number }): void {
     const position: Pixel = this.mapPosition(event);
     const coord: Coordinate = this.mapService
-      .getMap()
+      .getMap()!
       .ol.getCoordinateFromPixel(position);
-    this.mapProjection = this.mapService.getMap().projectionCode;
+    this.mapProjection = this.mapService.getMap()!.projectionCode;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
 
@@ -253,31 +362,33 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     const contextmenuPoint: { x: number; y: number } = event;
     contextmenuPoint.y =
       contextmenuPoint.y -
-      this.mapBrowser().nativeElement.getBoundingClientRect().top +
+      this.mapBrowser()!.nativeElement.getBoundingClientRect().top +
       window.scrollY;
     contextmenuPoint.x =
       contextmenuPoint.x -
-      this.mapBrowser().nativeElement.getBoundingClientRect().left +
+      this.mapBrowser()!.nativeElement.getBoundingClientRect().left +
       window.scrollX;
     const position: Pixel = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
   }
 
-  searchCoordinate(lonlat: Coordinate): void {
+  searchCoordinate(lonlat: Coordinate | undefined): void {
     this.searchStore.clear();
     this.term = !this.igoReverseSearchCoordsFormatEnabled
-      ? lonlat.map((c: number) => c.toFixed(6)).join(', ')
+      ? lonlat?.map((c: number) => c.toFixed(6)).join(', ')
       : lonlat
-          .reverse()
+          ?.reverse()
           .map((c: number) => c.toFixed(6))
           .join(', ');
   }
 
-  openGoogleMaps(lonlat: Coordinate): void {
+  openGoogleMaps(lonlat: Coordinate | undefined): void {
+    if (!lonlat) return;
     window.open(GoogleLinks.getGoogleMapsCoordLink(lonlat[0], lonlat[1]));
   }
 
-  openGoogleStreetView(lonlat: Coordinate): void {
+  openGoogleStreetView(lonlat: Coordinate | undefined): void {
+    if (!lonlat) return;
     window.open(GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1]));
   }
 }

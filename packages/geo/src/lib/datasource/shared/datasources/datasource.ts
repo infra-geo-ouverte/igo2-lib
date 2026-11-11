@@ -20,9 +20,10 @@ import {
 export abstract class DataSource {
   public id: string;
   public ol: olSource | olVectorSource | olClusterSource;
-  private legend: Legend[];
+  private legend: Legend[] = [];
+  private destroyed = false;
 
-  get saveableOptions(): Partial<DataSourceOptions> {
+  get saveableOptions(): DataSourceOptions {
     return {
       id: this.id,
       type: this.options.type,
@@ -35,7 +36,7 @@ export abstract class DataSource {
   properties = new DatasourceProperties();
 
   constructor(
-    public options: DataSourceOptions = {},
+    public options: DataSourceOptions,
     protected dataService?: DataService
   ) {
     this.options = options;
@@ -91,12 +92,16 @@ export abstract class DataSource {
   }
 
   public destroy(): void {
-    this.events.forEach((listener) => {
-      listener.unsubscribe();
-    });
+    if (this.destroyed) {
+      return;
+    }
+
+    this.destroyed = true;
+    this.removeEvents();
+    this.onUnwatch();
   }
 
-  protected abstract onUnwatch();
+  public abstract onUnwatch(): void;
 }
 
 class DatasourceProperties {

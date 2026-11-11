@@ -1,14 +1,20 @@
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
+import { IXhrInterceptor } from '@igo2/core/auth';
 
 import VectorTile from 'ol/VectorTile';
+import { Extent } from 'ol/extent';
+import FeatureFormat from 'ol/format/Feature';
 import olLayerVectorTile from 'ol/layer/VectorTile';
+import { Projection } from 'ol/proj';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { Feature } from 'ol';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
+import { Legend } from '../../../datasource/shared/datasources/datasource.interface';
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 import type { MapBase } from '../../../map/shared/map.abstract';
+import { AnyStyle } from '../../../style/shared';
+import { isAnyOlStyle } from '../../../style/shared/style-ol.utils';
 import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { LayerType } from './layer.interface';
@@ -22,39 +28,77 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
-  constructor(
-    options: VectorTileLayerOptions,
-    public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
-  ) {
-    super(options, messageService, authInterceptor);
+  get style(): AnyStyle | undefined {
+    return this._style$.getValue();
+  }
+  set style(value: AnyStyle | undefined) {
+    this._style$.next(value);
+    this.setStyle(value);
+  }
+  private _style$ = new BehaviorSubject<AnyStyle | undefined>(undefined);
+  public readonly style$ = this._style$.asObservable();
+
+  constructor(options: VectorTileLayerOptions) {
+    super(options);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
+    this.style = this.options.style;
+  }
+
+  async getLegend(value: AnyStyle): Promise<Legend[] | undefined> {
+    const styleLegend = await this.styleService?.getLegend(value);
+    if (styleLegend) {
+      return [
+        {
+          html: styleLegend
+        }
+      ];
+    }
+
+    return this.dataSource.getLegend();
   }
 
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVectorTile
+      source: this.options.source!.ol as olSourceVectorTile
     });
-
-    const vectorTile = new olLayerVectorTile(olOptions);
+    const layerStyle = this.options.style;
+    const isOlStyle = isAnyOlStyle(layerStyle);
+    const vectorTile = new olLayerVectorTile({
+      ...olOptions,
+      style: isOlStyle ? layerStyle : undefined
+    });
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction(
-      (tile: VectorTile<Feature>, url: string) => {
-        const loader = this.customLoader(
-          url,
-          tile.getFormat(),
-          this.authInterceptor,
-          tile.onLoad.bind(tile)
-        );
-        if (loader) {
-          tile.setLoader(loader);
-        }
+    vectorTileSource.setTileLoadFunction((async (
+      tile: VectorTile<Feature>,
+      url: string
+    ) => {
+      const loader = this.customLoader(
+        url,
+        tile.getFormat(),
+        this.xhrInterceptor,
+        tile.onLoad.bind(tile)
+      );
+      if (loader) {
+        tile.setLoader(loader);
       }
-    );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any);
 
     return vectorTile;
+  }
+
+  private async setStyle(value: AnyStyle | undefined): Promise<void> {
+    if (!value) {
+      this.ol.setStyle(undefined);
+    } else if (this.styleService) {
+      const olStyle = await this.styleService.getStyle(value, this.ol);
+      this.ol.setStyle(olStyle);
+    } else if (isAnyOlStyle(value)) {
+      this.ol.setStyle(value);
+    }
+    // else: no service and non-OL style — silently ignore
   }
 
   /**
@@ -66,72 +110,99 @@ export class VectorTileLayer extends Layer {
    * @param success On success event action to trigger
    * @param failure On failure event action to trigger TODO
    */
-  customLoader(url, format, interceptor, success, failure?) {
-    return (extent, resolution, projection) => {
-      const xhr = new XMLHttpRequest();
-      let modifiedUrl = url;
-      if (typeof url !== 'function') {
-        const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
-        if (alteredUrlWithKeyAuth) {
-          modifiedUrl = alteredUrlWithKeyAuth;
-        }
-      } else {
-        modifiedUrl = url(extent, resolution, projection);
-      }
-      xhr.open('GET', modifiedUrl);
-      if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl);
-      }
 
-      if (format.getType() === 'arraybuffer') {
-        xhr.responseType = 'arraybuffer';
-      }
-      xhr.onload = () => {
-        if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
-          const type = format.getType();
-          let source;
-          if (type === 'json' || type === 'text') {
-            source = xhr.responseText;
-          } else if (type === 'xml') {
-            source = xhr.responseXML;
-            if (!source) {
-              source = new DOMParser().parseFromString(
-                xhr.responseText,
-                'application/xml'
-              );
-            }
-          } else if (type === 'arraybuffer') {
-            source = xhr.response;
-          }
-          if (source) {
-            success.call(
-              this,
-              format.readFeatures(source, {
-                extent,
-                featureProjection: projection
-              }),
-              format.readProjection(source)
-            );
-          } else {
-            // TODO
-            failure.call(this);
+  private customLoader(
+    url:
+      | string
+      | ((
+          extent: Extent,
+          resolution: number,
+          projection: Projection
+        ) => string),
+    format: FeatureFormat,
+    interceptor: IXhrInterceptor | null,
+    success: any,
+    failure?: any
+  ) {
+    return async (
+      extent: Extent,
+      resolution: number,
+      projection: Projection
+    ) => {
+      try {
+        const xhr = new XMLHttpRequest();
+        let modifiedUrl: string;
+        if (typeof url !== 'function') {
+          modifiedUrl = url;
+          const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
+          if (alteredUrlWithKeyAuth) {
+            modifiedUrl = alteredUrlWithKeyAuth;
           }
         } else {
-          // TODO
-          failure.call(this);
+          modifiedUrl = url(extent, resolution, projection);
         }
-      };
-      xhr.onerror = () => {
-        // TODO
-        failure.call(this);
-      };
-      xhr.send();
+        const prepared = await interceptor?.prepareXhr?.(modifiedUrl);
+        if (prepared === false) {
+          failure?.call(this);
+          return [];
+        }
+
+        xhr.open('GET', modifiedUrl);
+        interceptor?.interceptXhr(xhr, modifiedUrl);
+
+        if (format.getType() === 'arraybuffer') {
+          xhr.responseType = 'arraybuffer';
+        }
+        return await new Promise<Feature[]>((resolve, reject) => {
+          xhr.onload = () => {
+            try {
+              if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
+                const type = format.getType();
+                let source;
+                if (type === 'json' || type === 'text') {
+                  source = xhr.responseText;
+                } else if (type === 'xml') {
+                  source = xhr.responseXML;
+                  if (!source) {
+                    source = new DOMParser().parseFromString(
+                      xhr.responseText,
+                      'application/xml'
+                    );
+                  }
+                } else if (type === 'arraybuffer') {
+                  source = xhr.response;
+                }
+                if (source) {
+                  const features = format.readFeatures(source, {
+                    extent,
+                    featureProjection: projection
+                  });
+                  success.call(this, features, format.readProjection(source));
+                  resolve(features);
+                } else {
+                  reject();
+                }
+              } else {
+                reject();
+              }
+            } catch (error) {
+              reject(error);
+            }
+          };
+          xhr.onerror = () => reject();
+          xhr.send();
+        });
+      } catch {
+        failure?.call(this);
+        return [];
+      }
     };
   }
 
   public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
+      return;
     } else {
       this.watcher.subscribe(() => void 1);
     }

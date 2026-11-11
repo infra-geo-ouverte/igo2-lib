@@ -1,18 +1,16 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  inject,
+  runInInjectionContext
+} from '@angular/core';
 
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
 import { ObjectUtils } from '@igo2/utils';
 
-import olLayerVectorTile from 'ol/layer/VectorTile';
-import { Style } from 'ol/style';
-import * as olStyle from 'ol/style';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import { StyleFunction } from 'ol/style/Style';
 
-import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
-import { concatMap, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
@@ -35,13 +33,8 @@ import {
   WebSocketDataSource,
   XYZDataSource
 } from '../../datasource/shared/datasources';
-import { LayerDB } from '../../offline/layerDB/layerDB';
-import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { StyleService } from '../../style/style-service/style.service';
-import {
-  computeMVTOptionsOnHover,
-  isLayerGroupOptions
-} from '../utils/layer.utils';
+import { clusterOlStyleFunction } from '../../style/shared/style.utils';
+import { isLayerGroupOptions } from '../utils/layer.utils';
 import {
   AnyLayer,
   AnyLayerItemOptions,
@@ -50,7 +43,6 @@ import {
   ImageLayerOptions,
   Layer,
   LayerGroupOptions,
-  LayerOptions,
   TileLayer,
   TileLayerOptions,
   VectorLayer,
@@ -59,17 +51,20 @@ import {
   VectorTileLayerOptions
 } from './layers';
 import { LayerGroup } from './layers/layer-group';
+import {
+  OFFLINE_LAYER_RESTORE,
+  OfflineLayerRestore
+} from './offline-layer-restore.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LayerService {
-  private http = inject(HttpClient);
-  private styleService = inject(StyleService);
   private dataSourceService = inject(DataSourceService);
-  private messageService = inject(MessageService);
-  private geoNetworkService = inject(GeoNetworkService, { optional: true });
-  private authInterceptor = inject(AuthInterceptor, { optional: true });
+  private injector = inject(Injector);
+  private offlineLayerRestore = inject(OFFLINE_LAYER_RESTORE, {
+    optional: true
+  }) as OfflineLayerRestore | null;
 
   public unavailableLayers: AnyLayerItemOptions[] = [];
 
@@ -94,8 +89,8 @@ export class LayerService {
       );
     }
 
-    let layer: Layer;
-    switch (layerOptions.source.constructor) {
+    let layer: Layer | undefined;
+    switch (layerOptions.source?.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
@@ -116,9 +111,8 @@ export class LayerService {
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
       case MVTDataSource: {
-        const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
-          _layerOptions as VectorTileLayerOptions
+          layerOptions as VectorTileLayerOptions
         );
         break;
       }
@@ -126,7 +120,7 @@ export class LayerService {
         break;
     }
 
-    return layer;
+    return layer!;
   }
 
   createAsyncLayer(
@@ -135,13 +129,15 @@ export class LayerService {
   ): Observable<Layer | undefined> {
     const optionsCloned = { ...options };
 
-    computeMVTOptionsOnHover(optionsCloned);
     if (optionsCloned.source) {
       return new Observable((d) => d.next(this.createLayer(optionsCloned)));
     }
 
     return this.dataSourceService
-      .createAsyncDataSource(optionsCloned.sourceOptions, detailedContextUri)
+      .createAsyncDataSource(
+        optionsCloned.sourceOptions as any,
+        detailedContextUri
+      )
       .pipe(
         map((source) => {
           if (source === undefined) {
@@ -164,11 +160,13 @@ export class LayerService {
     detailedContextUri?: string
   ): Observable<LayerGroup> {
     if (!options.children?.length) {
-      return of(this.createGroup(null, options));
+      return of(this.createGroup([] as AnyLayer[], options));
     }
 
     return this.createLayers(options.children, detailedContextUri).pipe(
-      map((layers) => this.createGroup(layers.filter(Boolean), options))
+      map((layers) =>
+        this.createGroup(layers.filter(Boolean) as AnyLayer[], options)
+      )
     );
   }
 
@@ -181,267 +179,50 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor
+    return runInInjectionContext(
+      this.injector,
+      () => new ImageLayer(layerOptions)
     );
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(
-      layerOptions,
-      this.messageService,
-      this.authInterceptor
+    return runInInjectionContext(
+      this.injector,
+      () => new TileLayer(layerOptions)
     );
   }
-
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style[] | Style | OlStyleLike = layerOptions.style;
-    let igoLayer: VectorLayer;
-
-    if (!layerOptions.igoStyle) {
-      layerOptions.igoStyle = {};
-    }
-    const legacyStyleOptions = [
-      'styleByAttribute',
-      'hoverStyle',
-      'mapboxStyle',
-      'clusterBaseStyle',
-      'style'
-    ];
-    // handling legacy property.
-    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-    if (
-      layerOptions.igoStyle.igoStyleObject &&
-      !layerOptions.idbInfo?.storeToIdb
-    ) {
-      style = (feature, resolution) =>
-        this.styleService.createStyle(
-          layerOptions.igoStyle.igoStyleObject,
-          feature,
-          resolution
-        );
-    } else if (
-      layerOptions.igoStyle.igoStyleObject &&
-      layerOptions.idbInfo?.storeToIdb
-    ) {
-      style = this.styleService.parseStyle(
-        'style',
-        layerOptions.igoStyle.igoStyleObject
-      );
-    }
-
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
-      style = source.options.params.style;
-    } else if (layerOptions.igoStyle?.styleByAttribute) {
-      const serviceStyle = this.styleService;
-      layerOptions.style = (feature, resolution) => {
-        return serviceStyle.createStyleByAttribute(
-          feature,
-          layerOptions.igoStyle.styleByAttribute,
-          resolution
-        );
-      };
-
-      igoLayer = new VectorLayer(
-        layerOptions,
-        this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
-      );
+      layerOptions.style = source.options.params?.style;
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
-      const serviceStyle = this.styleService;
-      const baseStyle = layerOptions.igoStyle.clusterBaseStyle;
-      layerOptions.style = (feature, resolution) => {
-        return serviceStyle.createClusterStyle(
-          feature,
-          resolution,
-          layerOptions.clusterParam,
-          baseStyle
-        );
-      };
-
-      igoLayer = new VectorLayer(
-        layerOptions,
-        this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
-      );
+      layerOptions.style =
+        layerOptions.style ?? (clusterOlStyleFunction() as StyleFunction);
     }
 
-    const layerOptionsOl = Object.assign({}, layerOptions, {
-      style
-    });
-
-    if (!igoLayer) {
-      igoLayer = new VectorLayer(
-        layerOptionsOl,
-        this.messageService,
-        this.authInterceptor,
-        this.geoNetworkService
-      );
-    }
-
-    this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
-
-    return igoLayer;
-  }
-
-  private handleLegacyStyles(layerOptions, legacyStyleOptions: string[]) {
-    legacyStyleOptions.map((legacyOption) => {
-      if (layerOptions[legacyOption]) {
-        let newKey = legacyOption;
-        if (legacyOption === 'style') {
-          if (layerOptions[legacyOption] instanceof olStyle.Style) {
-            return;
-          }
-          if (typeof layerOptions[legacyOption] === 'object') {
-            newKey = 'igoStyleObject';
-          } else {
-            return;
-          }
-        }
-        layerOptions.igoStyle[newKey] = layerOptions[legacyOption];
-        delete layerOptions[legacyOption];
-        console.warn(`
-        The location of this style option (${legacyOption}) is deprecated.
-        Please move this property within igoStyle property.
-        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${newKey}: {...} }
-        This legacy conversion will be deleted in 2024.
-        `);
-      }
-    });
+    return runInInjectionContext(
+      this.injector,
+      () => new VectorLayer(layerOptions)
+    );
   }
 
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style[] | Style | OlStyleLike;
-    let igoLayer: VectorTileLayer;
-
-    if (!layerOptions.igoStyle) {
-      layerOptions.igoStyle = {};
-    }
-    const legacyStyleOptions = [
-      'styleByAttribute',
-      'hoverStyle',
-      'mapboxStyle',
-      'style'
-    ];
-    // handling legacy property.
-    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-
-    if (layerOptions.igoStyle.igoStyleObject) {
-      style = (feature, resolution) =>
-        this.styleService.createStyle(
-          layerOptions.igoStyle.igoStyleObject,
-          feature,
-          resolution
-        );
-    }
-
-    if (layerOptions.igoStyle.styleByAttribute) {
-      const serviceStyle = this.styleService;
-      layerOptions.style = (feature, resolution) => {
-        return serviceStyle.createStyleByAttribute(
-          feature,
-          layerOptions.igoStyle.styleByAttribute,
-          resolution
-        );
-      };
-      igoLayer = new VectorTileLayer(
-        layerOptions,
-        this.messageService,
-        this.authInterceptor
-      );
-    }
-
-    const layerOptionsOl = Object.assign({}, layerOptions, {
-      style
-    });
-
-    if (!igoLayer) {
-      igoLayer = new VectorTileLayer(
-        layerOptionsOl,
-        this.messageService,
-        this.authInterceptor
-      );
-    }
-
-    this.applyMapboxStyle(igoLayer, layerOptionsOl);
-    return igoLayer;
-  }
-
-  private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
-    if (layerOptions.igoStyle?.mapboxStyle) {
-      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe((res) => {
-        if (res.sprite) {
-          const url = this.getAbsoluteUrl(
-            layerOptions.igoStyle.mapboxStyle.url,
-            res.sprite
-          );
-          this.getStuff(url + '.json').subscribe((res2) => {
-            stylefunction(
-              layer.ol as olLayerVectorTile,
-              res,
-              layerOptions.igoStyle.mapboxStyle.source,
-              undefined,
-              res2,
-              url + '.png'
-            );
-          });
-        } else {
-          stylefunction(
-            layer.ol as olLayerVectorTile,
-            res,
-            layerOptions.igoStyle.mapboxStyle.source
-          );
-        }
-      });
-    }
-  }
-
-  private getStuff(url: string) {
-    return this.http.get<any>(url);
-  }
-
-  private getAbsoluteUrl(source, url) {
-    const r = new RegExp('^http|//', 'i');
-    if (r.test(url)) {
-      return url;
-    } else {
-      if (source.substr(source.length - 1) === '/') {
-        return source + url;
-      } else {
-        return source + '/' + url;
-      }
-    }
-  }
-
-  createAsyncIdbLayers(contextUri = '*'): Observable<Layer[]> {
-    const layerDB = new LayerDB();
-    return layerDB.getAll().pipe(
-      concatMap((res) => {
-        const idbLayers =
-          contextUri !== '*'
-            ? res.filter((l) => l.detailedContextUri === contextUri)
-            : res;
-        const layersOptions: LayerOptions[] = idbLayers.map((idbl) =>
-          Object.assign({}, idbl.layerOptions, {
-            sourceOptions: idbl.sourceOptions
-          })
-        );
-        return combineLatest(
-          layersOptions.map((layerOptions) =>
-            this.createAsyncLayer(layerOptions)
-          )
-        );
-      })
+    return runInInjectionContext(
+      this.injector,
+      () => new VectorTileLayer(layerOptions)
     );
+  }
+
+  createAsyncOfflineLayers(contextUri = '*'): Observable<Layer[]> {
+    if (!this.offlineLayerRestore) {
+      return of([]);
+    }
+
+    return this.offlineLayerRestore.createAsyncLayers(contextUri);
   }
 
   deleteUnavailableLayers(anyLayerOptions: AnyLayerItemOptions) {
@@ -449,18 +230,21 @@ export class LayerService {
     const index = this.unavailableLayers.findIndex((item) => {
       const baseSourceOptions = item.sourceOptions;
       if (
-        this.sourceOptionsWithParams(baseSourceOptions) &&
-        this.sourceOptionsWithParams(anyLayerSourceOptions)
+        this.sourceOptionsWithParams(baseSourceOptions as any) &&
+        this.sourceOptionsWithParams(anyLayerSourceOptions as any)
       ) {
         return (
-          baseSourceOptions.params.LAYERS ===
-          anyLayerSourceOptions.params.LAYERS
+          (baseSourceOptions as any).params.LAYERS ===
+          (anyLayerSourceOptions as any).params.LAYERS
         );
       } else if (
-        this.sourceOptionsWithLayer(baseSourceOptions) &&
-        this.sourceOptionsWithLayer(anyLayerSourceOptions)
+        this.sourceOptionsWithLayer(baseSourceOptions as any) &&
+        this.sourceOptionsWithLayer(anyLayerSourceOptions as any)
       ) {
-        return baseSourceOptions.layer === anyLayerSourceOptions.layer;
+        return (
+          (baseSourceOptions as any)?.layer ===
+          (anyLayerSourceOptions as any)?.layer
+        );
       }
     });
     this.unavailableLayers.splice(index, index >= 0 ? 1 : 0);

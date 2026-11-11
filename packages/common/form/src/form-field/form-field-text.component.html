@@ -1,4 +1,7 @@
 <mat-form-field>
+  @if (showLabel() === true) {
+    <mat-label>{{ placeholder() | translate }}</mat-label>
+  }
   <input
     matInput
     (blur)="delayedHide(0)"
@@ -9,14 +12,12 @@
     (change)="delayedHide()"
   />
   @if (disableSwitch() === true) {
-    <mat-icon
+    <mat-checkbox
       class="igo-form-disable-switch"
       (click)="onDisableSwitchClick()"
+      [checked]="!disabled()"
       matPrefix
-      >{{
-        (disabled$ | async) === true ? 'check_box_outline_blank' : 'check_box'
-      }}
-    </mat-icon>
+    />
   }
 
   @if (isPassword()) {

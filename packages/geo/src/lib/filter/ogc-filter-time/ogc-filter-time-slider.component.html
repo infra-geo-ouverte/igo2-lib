@@ -10,13 +10,7 @@
     ><input
       [(ngModel)]="sliderValue"
       matSliderThumb
-      (input)="
-        handleSliderInput({
-          source: ngSliderThumb,
-          parent: ngSlider,
-          value: ngSliderThumb.value
-        })
-      "
+      (input)="handleSliderInput(ngSliderThumb.value)"
       #ngSliderThumb="matSliderThumb"
     />
   </mat-slider>

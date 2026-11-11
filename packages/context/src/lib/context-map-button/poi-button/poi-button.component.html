@@ -31,7 +31,7 @@
   </mat-option>
   <mat-divider />
   @for (poi of pois; track poi) {
-    <mat-option class="poi-option" [value]="poi" (click)="zoomOnPoi(poi.id)">
+    <mat-option class="poi-option" [value]="poi" (click)="zoomOnPoi(poi.id!)">
       <div class="poi-option-row">
         <div
           class="poi-option-text"

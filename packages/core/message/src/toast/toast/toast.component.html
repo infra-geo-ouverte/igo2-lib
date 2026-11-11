@@ -1,0 +1,44 @@
+<div
+  class="igo-toast"
+  [ngClass]="'toast-' + type"
+  [attr.tabindex]="config.tapToDismiss ? '0' : null"
+  (click)="onTap()"
+  (keydown.enter)="onTap()"
+>
+  @if (showIcon) {
+    <mat-icon class="toast-icon">
+      @switch (type) {
+        @case ('success') {
+          check_circle
+        }
+        @case ('error') {
+          error
+        }
+        @case ('warning') {
+          warning
+        }
+        @default {
+          info
+        }
+      }
+    </mat-icon>
+  }
+  <div class="toast-content">
+    @if (title) {
+      <header class="toast-title">{{ title }}</header>
+    }
+    @if (!enableHtml) {
+      <p class="toast-message">{{ message }}</p>
+    } @else {
+      <p class="toast-message" [innerHTML]="safeMessage"></p>
+    }
+  </div>
+  @if (config.closeButton) {
+    <button matIconButton class="toast-close-button" (click)="close($event)">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+  @if (config.progressBar && !config.disableTimeOut) {
+    <mat-progress-bar mode="determinate" [value]="progress()" />
+  }
+</div>

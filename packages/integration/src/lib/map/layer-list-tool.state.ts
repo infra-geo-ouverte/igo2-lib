@@ -12,19 +12,19 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LayerListToolState {
   readonly keyword$ = new BehaviorSubject<string>('');
-  readonly sortAlpha$ = new BehaviorSubject<boolean>(undefined);
-  readonly onlyVisible$ = new BehaviorSubject<boolean>(undefined);
-  readonly selectedTab$ = new BehaviorSubject<number>(undefined);
+  readonly sortAlpha$ = new BehaviorSubject<boolean | undefined>(undefined);
+  readonly onlyVisible$ = new BehaviorSubject<boolean | undefined>(undefined);
+  readonly selectedTab$ = new BehaviorSubject<number | undefined>(undefined);
 
   setKeyword(keyword: string) {
     this.keyword$.next(keyword);
   }
 
-  setSortAlpha(sort: boolean) {
+  setSortAlpha(sort: boolean | undefined) {
     this.sortAlpha$.next(sort);
   }
 
-  setOnlyVisible(onlyVisible: boolean) {
+  setOnlyVisible(onlyVisible: boolean | undefined) {
     this.onlyVisible$.next(onlyVisible);
   }
 

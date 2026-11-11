@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 
@@ -6,8 +6,16 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 
 import proj4 from 'proj4';
+import { filter, take } from 'rxjs';
 
 import { Projection } from './projection.interfaces';
+
+export interface ProjectionProviderOptions {
+  projections?: Projection[];
+}
+
+export const PROJECTION_PROVIDER_OPTIONS =
+  new InjectionToken<ProjectionProviderOptions>('PROJECTION_PROVIDER_OPTIONS');
 
 /**
  * When injected, this service automatically registers and
@@ -18,21 +26,25 @@ import { Projection } from './projection.interfaces';
   providedIn: 'root'
 })
 export class ProjectionService {
-  private config = inject(ConfigService);
+  private config = inject(ConfigService, { optional: true });
+  private options = inject(PROJECTION_PROVIDER_OPTIONS, { optional: true });
 
   constructor() {
-    const projections: Projection[] =
-      this.config.getConfig('projections') || [];
-    projections.forEach((projection) => {
-      projection.alias = projection.alias ? projection.alias : projection.code;
-      this.registerProjection(projection);
-    });
+    this.registerProjections(this.options?.projections ?? []);
+
+    this.config?.isLoaded$
+      .pipe(filter(Boolean), take(1))
+      .subscribe(() => this.registerConfiguredProjections());
 
     // register all utm zones
     for (let utmZone = 1; utmZone < 61; utmZone++) {
       const code = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
       const def = `+proj=utm +zone=${utmZone} +datum=WGS84 +units=m +no_defs`;
-      const proj: Projection = { code, def, extent: undefined };
+      const proj: Projection = {
+        code,
+        def,
+        extent: undefined
+      };
       this.registerProjection(proj);
     }
 
@@ -49,9 +61,26 @@ export class ProjectionService {
         lon0 = -49.5 - Number(mtmZone) * 3;
       }
       const def = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"`;
-      const proj: Projection = { code, def, extent: undefined };
+      const proj: Projection = {
+        code,
+        def,
+        extent: undefined
+      };
       this.registerProjection(proj);
     }
+  }
+
+  private registerConfiguredProjections(): void {
+    const projections: Projection[] =
+      this.config?.getConfig('projections') || [];
+    this.registerProjections(projections);
+  }
+
+  private registerProjections(projections: Projection[]): void {
+    projections.forEach((projection) => {
+      projection.alias = projection.alias ? projection.alias : projection.code;
+      this.registerProjection(projection);
+    });
   }
 
   /**
@@ -59,10 +88,10 @@ export class ProjectionService {
    * @param projection Projection
    */
   registerProjection(projection: Projection) {
-    proj4.defs(projection.code, projection.def);
+    proj4.defs(projection.code, projection.def!);
     olproj4.register(proj4);
     if (projection.extent) {
-      olproj.get(projection.code).setExtent(projection.extent);
+      olproj.get(projection.code)!.setExtent(projection.extent);
     }
   }
 }

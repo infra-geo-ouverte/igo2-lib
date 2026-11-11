@@ -39,7 +39,7 @@ export class EntityTransaction {
   /**
    * Method to get an entity's id
    */
-  readonly getKey: (E) => EntityKey;
+  readonly getKey: (arg0: object) => EntityKey;
 
   /**
    * Whether there are pending operations
@@ -120,7 +120,9 @@ export class EntityTransaction {
         this.doInsert(current, store, meta);
         return;
       } else if (existingOperation.type === EntityOperationType.Update) {
-        previous = existingOperation.previous;
+        if (existingOperation.previous) {
+          previous = existingOperation.previous;
+        }
       }
     }
 
@@ -270,7 +272,7 @@ export class EntityTransaction {
    * @param entity Entity
    * @returns Either an insert, update or delete operation
    */
-  getOperationByEntity(entity: object): EntityOperation {
+  getOperationByEntity(entity: object): EntityOperation | undefined {
     return this.operations.get(this.getKey(entity));
   }
 

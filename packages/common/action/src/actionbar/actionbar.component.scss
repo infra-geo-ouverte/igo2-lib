@@ -30,8 +30,27 @@ $igo-actionbar-item-icon-padding: 8px;
   }
 
   .context-menu-card {
-    padding: 8px 3px;
+    padding: 0;
     margin: 10px;
+
+    mat-list {
+      padding: 8px 0;
+    }
+
+    igo-actionbar-item {
+      display: block;
+    }
+
+    ::ng-deep {
+      mat-list-item.actionbar-item {
+        padding: 0 16px;
+
+        [matline] {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    }
   }
 
   #topChevron {

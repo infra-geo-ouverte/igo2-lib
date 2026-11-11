@@ -8,13 +8,16 @@ import { OgcFilterableDataSource } from './ogc-filter.interface';
 export class OGCFilterTimeService {
   readonly defaultStepMillisecond = 60000;
 
-  step(datasource: OgcFilterableDataSource, currentFilter): string {
+  step(datasource: OgcFilterableDataSource, currentFilter: any): string {
     return datasource.options.stepDate
       ? datasource.options.stepDate
       : currentFilter.step;
   }
 
-  stepMillisecond(dataSource: OgcFilterableDataSource, currentFilter): number {
+  stepMillisecond(
+    dataSource: OgcFilterableDataSource,
+    currentFilter: any
+  ): number {
     const step = moment
       .duration(this.step(dataSource, currentFilter))
       .asMilliseconds();
@@ -77,11 +80,11 @@ export class OGCFilterTimeService {
     return newDate.getTime();
   }
 
-  public addStep(value, stepMillisecond) {
+  public addStep(value: moment.MomentInput, stepMillisecond: number) {
     return moment(value).add(stepMillisecond, 'milliseconds').toDate();
   }
 
-  public subtractStep(value, stepMillisecond) {
+  public subtractStep(value: moment.MomentInput, stepMillisecond: number) {
     return moment(value).subtract(stepMillisecond, 'milliseconds').toDate();
   }
 }

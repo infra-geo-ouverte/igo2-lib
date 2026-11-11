@@ -1,10 +1,10 @@
 import { Params } from '@angular/router';
 
 import { RouteServiceOptions } from '@igo2/core/route';
-import {
-  type AnyLayerOptions,
-  type LayerGroupOptions,
-  type LayerOptions
+import type {
+  AnyLayerOptions,
+  LayerGroupOptions,
+  LayerOptions
 } from '@igo2/geo';
 import { ObjectUtils, OptionalRequired } from '@igo2/utils';
 
@@ -28,8 +28,10 @@ type BaseLayerOptionsParsed = Pick<
 > &
   Partial<Pick<LayerOptions, 'id'>>;
 
-type LayerOptionsParsed = BaseLayerOptionsParsed &
-  Pick<LayerOptions, 'sourceOptions'>;
+type LayerOptionsParsed = BaseLayerOptionsParsed & {
+  id: string | undefined;
+  sourceOptions: LayerOptions['sourceOptions'] | undefined;
+};
 
 type LayerGroupOptionsParserd = BaseLayerOptionsParsed &
   Pick<LayerGroupOptions, 'id' | 'title' | 'expanded' | 'type'>;
@@ -44,7 +46,7 @@ export class ShareMapParser {
     this.legacy = new ShareMapLegacyParser(legacyOptions);
   }
 
-  parseLayers(params: Params): AnyLayerOptions[] | undefined {
+  parseLayers(params: Params): AnyLayerOptions[] {
     if (
       !hasModernShareParams(params, this.keysDefinitions) &&
       hasLegacyParams(params, this.legacyOptions)
@@ -71,7 +73,7 @@ export class ShareMapParser {
     const groupsOptions = groupsArray.map((layer) => this.parseGroup(layer));
     const layersOptions = layersArray
       .map((layer) => this.parseLayer(layer, urlsArray))
-      .filter(Boolean);
+      .filter((l): l is LayerOptionsParsed => !!l);
     return [...groupsOptions, ...layersOptions];
   }
 
@@ -89,11 +91,17 @@ export class ShareMapParser {
       this.keysDefinitions.pos.params;
 
     return ObjectUtils.removeUndefined({
-      center: center.parse(position) as [number, number],
-      zoom: zoom.parse(position) as number,
-      rotation: rotation.parse(position) as number,
-      projection: projection.parse(position) as string
-    } satisfies OptionalRequired<PositionParams>);
+      center: center?.parse
+        ? (center.parse(position) as [number, number])
+        : undefined,
+      zoom: zoom?.parse ? (zoom.parse(position) as number) : undefined,
+      rotation: rotation?.parse
+        ? (rotation.parse(position) as number)
+        : undefined,
+      projection: projection?.parse
+        ? (projection.parse(position) as string)
+        : undefined
+    } as OptionalRequired<PositionParams>);
   }
 
   private parseLayer(
@@ -144,24 +152,25 @@ export class ShareMapParser {
   private parseGroup(properties: string): LayerGroupOptionsParserd {
     const { params } = this.keysDefinitions.groups;
     return ObjectUtils.removeUndefined({
-      id: params.id.parse(properties) as string,
-      title: params.title.parse(properties) as string,
-      zIndex: params.zIndex.parse(properties) as number,
-      visible: params.visible.parse(properties) as boolean,
-      opacity: params.opacity.parse(properties) as number,
-      parentId: params.parentId.parse(properties) as string,
-      expanded: params.expanded.parse(properties) as boolean,
+      id: params.id!.parse!(properties) as string,
+      title: params.title!.parse!(properties) as string,
+      zIndex: params.zIndex!.parse!(properties) as number,
+      visible: params.visible!.parse!(properties) as boolean,
+      opacity: params.opacity!.parse!(properties) as number,
+      parentId: params.parentId!.parse!(properties) as string,
+      expanded: params.expanded!.parse!(properties) as boolean,
       type: 'group'
     } satisfies OptionalRequired<LayerGroupOptionsParserd>);
   }
 
   private extractVersionFromUrl(url: string): string | undefined {
     const versionDef = this.keysDefinitions.layers.params.version;
-    return versionDef.parse(url) as string;
+    return versionDef?.parse ? (versionDef.parse(url) as string) : undefined;
   }
 
   private extractLayerId(layer: string): string | undefined {
-    const { id } = this.keysDefinitions.layers.params;
+    const id = this.keysDefinitions.layers.params.id;
+    if (!id) return undefined;
     const regex = new RegExp(`([a-zA-Z0-9_]+)${id.key}\\b`);
     const match = layer.match(regex);
     return match ? match[1] : undefined;
@@ -175,7 +184,8 @@ export class ShareMapParser {
   }
 
   private extractLayerNames(layer: string): string[] | undefined {
-    const { names } = this.keysDefinitions.layers.params;
+    const names = this.keysDefinitions.layers.params.names;
+    if (!names) return undefined;
     const pattern = new RegExp(`\\[.*?\\]${names.key}`, 'g');
 
     const matches = layer.match(pattern);
@@ -192,11 +202,11 @@ export class ShareMapParser {
   private extractLayerProperties(properties: string): LayerProperties {
     const { params } = this.keysDefinitions.layers;
     return {
-      zIndex: params.zIndex.parse(properties) as number,
-      visibility: params.visible.parse(properties) as boolean,
-      type: params.type.parse(properties) as ServiceType,
-      opacity: params.opacity.parse(properties) as number,
-      parentId: params.parentId.parse(properties) as string
+      zIndex: params.zIndex!.parse!(properties) as number,
+      visibility: params.visible!.parse!(properties) as boolean,
+      type: params.type!.parse!(properties) as ServiceType,
+      opacity: params.opacity!.parse!(properties) as number,
+      parentId: params.parentId!.parse!(properties) as string
     } satisfies OptionalRequired<LayerProperties>;
   }
 }

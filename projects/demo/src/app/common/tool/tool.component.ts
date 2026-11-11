@@ -35,13 +35,12 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 @Component({
   selector: 'app-salutation-tool',
   template: ` <p>Hello, my name is {{ name() }}.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
   private cdRef = inject(ChangeDetectorRef);
 
-  readonly name = input<string>(undefined);
+  readonly name = input<string>();
 
   onUpdateInputs() {
     this.cdRef.detectChanges();
@@ -56,8 +55,7 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 @Component({
   selector: 'app-about-tool',
   template: ` <p>I'm a tool inside a toolbox.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppAboutToolComponent {}
 
@@ -80,12 +78,12 @@ export class AppToolComponent implements OnInit, OnDestroy {
 
   toolbox: Toolbox = new Toolbox();
 
-  get activeTool$(): BehaviorSubject<Tool> {
+  get activeTool$(): BehaviorSubject<Tool | undefined> {
     return this.toolbox.activeTool$;
   }
 
   get panelTitle(): string {
-    return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
+    return this.activeTool$.value?.title ?? 'Toolbox';
   }
 
   ngOnInit(): void {

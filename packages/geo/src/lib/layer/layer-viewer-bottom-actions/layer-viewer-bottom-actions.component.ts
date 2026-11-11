@@ -6,6 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { ConfirmDialogService } from '@igo2/common/confirm-dialog';
 import { FormDialogService } from '@igo2/common/form';
 import { PanelComponent } from '@igo2/common/panel';
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -13,10 +14,10 @@ import { IgoLanguageModule } from '@igo2/core/language';
 import * as olextent from 'ol/extent';
 
 import type { MapBase } from '../../map/shared/map.abstract';
-import { isIdbLayer } from '../../offline/offline.utils';
 import { LayerListToolService } from '../layer-list-tool';
 import { LayerViewerOptions } from '../layer-viewer/layer-viewer.interface';
 import { LayerController } from '../shared/layer-controller';
+import { LAYER_PERSISTENCE } from '../shared/layer-persistence.interface';
 import type { AnyLayer, LayerGroup } from '../shared/layers';
 import {
   LinkedProperties,
@@ -43,13 +44,15 @@ import { isBaseLayer, isLayerGroup, isLayerItem } from '../utils/layer.utils';
 })
 export class LayerViewerBottomActionsComponent {
   private layerListToolService = inject(LayerListToolService);
+  private confirmDialogService = inject(ConfirmDialogService);
+  private layerPersistence = inject(LAYER_PERSISTENCE, { optional: true });
 
   orderable = true;
 
   readonly map = input.required<MapBase>();
   readonly controller = input.required<LayerController>();
   readonly searchTerm = input.required<string>();
-  readonly viewerOptions = input<LayerViewerOptions>(undefined);
+  readonly viewerOptions = input<LayerViewerOptions>();
 
   readonly layerChange = output();
 
@@ -84,7 +87,7 @@ export class LayerViewerBottomActionsComponent {
   }
 
   get canRename(): boolean {
-    if (!this.viewerOptions().group?.canRename || this.selected.length > 1) {
+    if (!this.viewerOptions()?.group?.canRename || this.selected.length > 1) {
       return false;
     }
 
@@ -113,12 +116,47 @@ export class LayerViewerBottomActionsComponent {
     return layers?.every((l) => this.isLayerRemovable(l));
   }
 
-  removeLayers(): void {
-    this.selected
-      .filter((layer) => isIdbLayer(layer))
-      .forEach((layer) => {
-        layer.options.idbInfo._deleteFromIdb = true;
-      });
+  triggerRemoveLayers(): void {
+    if (this.requiresRemovalConfirmation()) {
+      const messageKey = this.hasMultipleSelection
+        ? 'igo.geo.layer.group.removeDialog.many'
+        : 'igo.geo.layer.group.removeDialog.group';
+      this.confirmDialogService
+        .open(messageKey, {
+          modeYesNo: true,
+          width: '400px'
+        })
+        .subscribe((deletion) => {
+          if (deletion) {
+            this.removeLayers();
+          }
+        });
+    } else {
+      this.removeLayers();
+    }
+  }
+
+  private requiresRemovalConfirmation(): boolean {
+    let singleLayerCount = 0;
+    for (const layer of this.selected) {
+      if (isLayerGroup(layer)) {
+        if (layer.children.length > 0) {
+          return true;
+        }
+      } else if (++singleLayerCount > 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private removeLayers(): void {
+    const layerPersistence = this.layerPersistence;
+    if (layerPersistence) {
+      this.selected
+        .filter((layer) => layerPersistence.isPersistent(layer))
+        .forEach((layer) => layerPersistence.removePersistedData(layer));
+    }
     this.controller().remove(...this.selected);
     this.controller().clearSelection();
   }

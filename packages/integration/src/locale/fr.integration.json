@@ -23,7 +23,10 @@
         "closestFeature": "Entités à proximité"
       },
       "catalog": {
-        "library.getCatalogList": "Obtenir la liste du contenu des catalogues",
+        "library": {
+          "getCatalogList": "Obtenir la liste du contenu des catalogues",
+          "getCatalogListTooltip": "Permet de récupérer une liste Excel des couches présentées dans le catalogue"
+        },
         "listExport": {
           "rank": "Rang",
           "layerTitle": "Titre de la couche",
@@ -31,7 +34,7 @@
           "catalog": "Catalogue",
           "externalProvider": "Fournisseur",
           "url": "URL",
-          "layerName": "Nom système de la couche d'informaiton",
+          "layerName": "Nom système de la couche d'informations",
           "context": "Contexte/Thématique",
           "dataDescription": "Description de la donnée",
           "metadataAbstract": "Description de la donnée",

@@ -181,7 +181,7 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should use parser for on the fly layer params without legacy', () => {
-    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+    vi.spyOn(shareMapParseUrl.legacy, 'parseUrl').mockReturnValue([]);
 
     shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY);
 
@@ -189,7 +189,7 @@ describe('ShareMapParseUrl', () => {
   });
 
   it('should use legacy parser for on the fly layer params', () => {
-    spyOn(shareMapParseUrl.legacy, 'parseUrl').and.returnValue([]);
+    vi.spyOn(shareMapParseUrl.legacy, 'parseUrl').mockReturnValue([]);
 
     shareMapParseUrl.parseLayers(MOCK_LAYER_ON_THE_FLY_LEGACY);
 

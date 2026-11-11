@@ -7,7 +7,7 @@ import { Component, input } from '@angular/core';
   imports: []
 })
 export class DocViewerComponent {
-  readonly title = input<string>(undefined);
-  readonly subtitle = input<string>(undefined);
-  readonly dependencies = input<string[]>(undefined);
+  readonly title = input<string>();
+  readonly subtitle = input<string>();
+  readonly dependencies = input<string[]>();
 }

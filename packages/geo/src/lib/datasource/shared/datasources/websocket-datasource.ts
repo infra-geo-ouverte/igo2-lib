@@ -5,7 +5,7 @@ import { FeatureDataSource } from './feature-datasource';
 import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
 
 export class WebSocketDataSource extends FeatureDataSource {
-  public ws: WebSocket;
+  public ws?: WebSocket;
   declare public options: WebSocketDataSourceOptions;
 
   protected createOlSource(): olSourceVector {
@@ -15,7 +15,7 @@ export class WebSocketDataSource extends FeatureDataSource {
   }
 
   private createWebSocket() {
-    this.ws = new WebSocket(this.options.url);
+    this.ws = new WebSocket(this.options.url!);
     this.ws.onmessage = this.onMessage.bind(this);
 
     if (this.options.onclose) {
@@ -31,15 +31,15 @@ export class WebSocketDataSource extends FeatureDataSource {
     }
   }
 
-  onMessage(event) {
-    const featureAdded = this.options.format.readFeature(
+  onMessage(event: MessageEvent) {
+    const featureAdded = this.options.format!.readFeature(
       event.data
     ) as olFeature;
 
     switch (this.options.onmessage) {
       case 'update': {
         // ol don't add if same ID
-        const featureToRemove = this.ol.getFeatureById(featureAdded.getId());
+        const featureToRemove = this.ol.getFeatureById(featureAdded.getId()!);
         if (featureToRemove) {
           this.ol.removeFeature(featureToRemove);
         }
@@ -69,6 +69,6 @@ export class WebSocketDataSource extends FeatureDataSource {
   }
 
   public onUnwatch() {
-    this.ws.close();
+    this.ws?.close();
   }
 }

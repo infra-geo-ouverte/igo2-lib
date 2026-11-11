@@ -15,9 +15,9 @@ import type { IgoMap } from './map';
   providedIn: 'root'
 })
 export class MapService {
-  private map: IgoMap;
+  private map?: IgoMap;
 
-  getMap(): IgoMap {
+  getMap(): IgoMap | undefined {
     return this.map;
   }
 

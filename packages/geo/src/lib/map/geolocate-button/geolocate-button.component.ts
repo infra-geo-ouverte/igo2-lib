@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   AfterContentInit,
   Component,
-  Input,
   OnDestroy,
-  inject
+  inject,
+  input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,29 +32,16 @@ import { IgoMap } from '../shared/map';
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private configService = inject(ConfigService);
 
-  private tracking$$: Subscription;
+  private tracking$$!: Subscription;
   readonly icon$ = new BehaviorSubject<string>('my_location');
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  map = input.required<IgoMap>();
+  color = input<string>();
 
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
   ngAfterContentInit(): void {
-    this.map.ol.once('rendercomplete', () => {
-      this.tracking$$ = this.map.geolocationController.tracking$.subscribe(
+    const map = this.map();
+    map.ol.once('rendercomplete', () => {
+      this.tracking$$ = map.geolocationController.tracking$.subscribe(
         (tracking) => {
           if (tracking) {
             this.icon$.next('my_location');
@@ -77,7 +64,8 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   }
 
   onGeolocationClick() {
-    const tracking = this.map.geolocationController.tracking;
-    this.map.geolocationController.tracking = tracking ? false : true;
+    const map = this.map();
+    const tracking = map.geolocationController.tracking;
+    map.geolocationController.tracking = tracking ? false : true;
   }
 }

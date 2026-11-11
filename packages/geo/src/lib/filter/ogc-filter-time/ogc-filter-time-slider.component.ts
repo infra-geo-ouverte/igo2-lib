@@ -28,14 +28,14 @@ import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 export class OgcFilterTimeSliderComponent implements OnInit {
   ogcFilterTimeService = inject(OGCFilterTimeService);
 
-  readonly currentFilter = input<any>(undefined);
-  readonly begin = input<any>(undefined);
-  readonly max = input<any>(undefined);
-  readonly datasource = input<any>(undefined);
+  readonly currentFilter = input<any>();
+  readonly begin = input<any>();
+  readonly max = input<any>();
+  readonly datasource = input<any>();
   readonly changeProperty = output<any>();
   readonly slider = viewChild(MatSlider);
 
-  interval;
+  interval?: number;
   sliderValue = signal(1);
   calculatedStep = 0;
   readonly _defaultDisplayFormat: string = 'DD/MM/YYYY HH:mm A';
@@ -80,10 +80,10 @@ export class OgcFilterTimeSliderComponent implements OnInit {
 
   ngOnInit() {
     this.calculateStep();
-    this.handleSliderInput({ value: 1 });
+    this.handleSliderInput(1);
   }
 
-  sliderDisplayWith = (value) => {
+  sliderDisplayWith = (value: number) => {
     let dateTmp = new Date(
       this.beginMillisecond + (value - 1) * this.stepMillisecond
     );
@@ -125,9 +125,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
       this.interval = setInterval(
         () => {
           if (this.sliderValue() < this.calculatedStep) {
-            this.handleSliderInput({
-              value: this.sliderValue()
-            });
+            this.handleSliderInput(this.sliderValue());
             this.sliderValue.update((value) => value + this.sliderInterval);
           } else {
             this.stopFilter();
@@ -156,8 +154,8 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     this.sliderValue.set(1);
   }
 
-  handleSliderInput(matSliderChange) {
-    if (matSliderChange) {
+  handleSliderInput(value: number) {
+    if (value != null) {
       const currentFilter = this.currentFilter();
       const datasource = this.datasource();
       if (
@@ -169,7 +167,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
           .duration(this.ogcFilterTimeService.step(datasource, currentFilter))
           .years();
         const dateBeginTmp = moment(this.beginMillisecond)
-          .add((matSliderChange.value - 1) * toAdd, 'year')
+          .add((value - 1) * toAdd, 'year')
           .toDate();
         const dateEndTmp = moment(dateBeginTmp).add(toAdd, 'year').toDate();
         this.changeProperty.emit({
@@ -191,7 +189,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
           .duration(this.ogcFilterTimeService.step(datasource, currentFilter))
           .months();
         const dateBeginTmp = moment(this.beginMillisecond)
-          .add((matSliderChange.value - 1) * toAdd, 'month')
+          .add((value - 1) * toAdd, 'month')
           .toDate();
         const dateEndTmp = moment(dateBeginTmp).add(toAdd, 'month').toDate();
         this.changeProperty.emit({
@@ -216,8 +214,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
         )
       ) {
         const dateTmp = new Date(
-          this.beginMillisecond +
-            this.stepMillisecond * (matSliderChange.value - 1)
+          this.beginMillisecond + this.stepMillisecond * (value - 1)
         );
         this.changeProperty.emit({
           value: dateTmp.toISOString(),

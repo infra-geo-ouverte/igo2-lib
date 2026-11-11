@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   OnDestroy,
@@ -57,8 +57,6 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { IgoMap } from '../../map/shared/map';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { StyleService } from '../../style/style-service/style.service';
 import {
   ExportOptions,
   GeometryCollection,
@@ -99,7 +97,6 @@ type SelectMode = 'import' | 'export';
     MatButtonModule,
     SpinnerComponent,
     CustomHtmlComponent,
-    NgClass,
     MatSlideToggleModule,
     MatInputModule,
     AsyncPipe,
@@ -112,8 +109,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private exportService = inject(ExportService);
   private languageService = inject(LanguageService);
   private messageService = inject(MessageService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private formBuilder = inject(UntypedFormBuilder);
   private config = inject(ConfigService);
   private storageService = inject(StorageService);
@@ -121,9 +116,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private layerService = inject(LayerService);
   private confirmDialogService = inject(ConfirmDialogService);
 
-  public form: UntypedFormGroup;
-  public importForm: UntypedFormGroup;
-  public formats$ = new BehaviorSubject<ExportFormat[]>(undefined);
+  public form!: UntypedFormGroup;
+  public importForm!: UntypedFormGroup;
+  public formats$ = new BehaviorSubject<ExportFormat[] | undefined>(undefined);
   public exportableLayers$ = new BehaviorSubject<Layer[]>([]);
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
@@ -132,66 +127,65 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   csvSeparators = CsvSeparator;
   isCsvExport = isCsvExport;
 
-  private layers$$: Subscription;
-  private exportableLayers$$: Subscription;
-  private formats$$: Subscription;
-  private formLayer$$: Subscription;
-  private exportOptions$$: Subscription;
+  private layers$$!: Subscription;
+  private exportableLayers$$!: Subscription;
+  private formats$$!: Subscription;
+  private formLayer$$!: Subscription;
+  private exportOptions$$!: Subscription;
 
   public importHtmlClarifications: string;
   public exportHtmlClarifications: string;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
-  private clientSideFileSizeMax: number;
-  public fileSizeMb: number;
+  private clientSideFileSizeMax!: number;
+  public fileSizeMb!: number;
 
-  public projections$: BehaviorSubject<InputProjections[]> =
-    new BehaviorSubject([]);
+  public projections$ = new BehaviorSubject<InputProjections[]>([]);
 
   public popupChecked = false;
-  private configFormats: AnyExportFormat[];
+  private configFormats!: AnyExportFormat[];
 
   private previousLayerSpecs$ = new BehaviorSubject<
-    {
-      id: LayerId;
-      visible: boolean;
-      opacity: number;
-      queryable: boolean;
-    }[]
+    | {
+        id: LayerId;
+        visible: boolean;
+        opacity: number;
+        queryable: boolean;
+      }[]
+    | undefined
   >(undefined);
 
   readonly selectFirstProj = input(false);
 
-  readonly map = input<IgoMap>(undefined);
+  readonly map = input<IgoMap>();
 
-  readonly contextUri = input<string>(undefined);
-  readonly projectionsLimitations =
-    input<ProjectionsLimitationsOptions>(undefined);
+  readonly contextUri = input<string>();
+  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>();
 
   /**
    * Store that holds the available workspaces.
    */
-  readonly store = input<WorkspaceStore>(undefined);
+  readonly store = input<WorkspaceStore>();
 
   readonly selectedMode = model<SelectMode>('import');
 
   readonly selectMode = output<SelectMode>();
 
   readonly exportOptions$ = input(
-    new BehaviorSubject<ExportOptions>(undefined)
+    new BehaviorSubject<ExportOptions | undefined>(undefined)
   );
 
   readonly exportOptionsChange = output<ExportOptions>();
 
   get layers() {
-    return this.form.get('layers').value;
+    return this.form.get('layers')!.value;
   }
   set layers(value) {
     this.form.patchValue({ layers: value });
   }
 
   get inputProj() {
-    return this.importForm.get('inputProj').value;
+    return this.importForm.get('inputProj')!.value;
   }
   set inputProj(value) {
     this.importForm.patchValue({ inputProj: value });
@@ -224,7 +218,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     );
     this.projections$.next(projections);
 
-    this.layers$$ = this.map().layerController.all$.subscribe((layers) => {
+    this.layers$$ = this.map()!.layerController.all$.subscribe((layers) => {
       const exportableLayers = layers.filter((layer) => {
         if (isLayerGroup(layer)) {
           return false;
@@ -252,21 +246,24 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.exportOptions$$ = this.exportOptions$()
       .pipe(skipWhile((exportOptions) => !exportOptions))
       .subscribe((exportOptions) => {
+        if (!exportOptions) {
+          return;
+        }
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layers) {
           this.computeFormats(
-            exportOptions.layers.map((l) =>
-              this.map().layerController.getById(l)
-            )
+            exportOptions.layers
+              .map((l) => this.map()!.layerController.getById(l))
+              .filter(Boolean) as AnyLayer[]
           );
         }
       });
     this.formLayer$$ = this.form
-      .get('format')
+      .get('format')!
       .valueChanges.subscribe((format) => {
         if (
           !this.popupChecked &&
-          this.form.get('layers').value?.length > 1 &&
+          this.form.get('layers')!.value?.length > 1 &&
           this.isOgreOrLink(format)
         ) {
           if (!this.handlePopup(true)) {
@@ -276,18 +273,18 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       });
 
     this.formLayer$$ = this.form
-      .get('layers')
+      .get('layers')!
       .valueChanges.subscribe((layersId) => {
         this.handlePreviousLayerSpecs();
         const selectedLayers =
           layersId instanceof Array ? layersId : [layersId];
         this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
         const layers = selectedLayers.map((l) =>
-          this.map().layerController.getById(l)
+          this.map()!.layerController.getById(l)
         );
-        this.computeFormats(layers);
+        this.computeFormats(layers.filter(Boolean) as AnyLayer[]);
 
-        if (this.formats$.value.indexOf(this.form.value.format) === -1) {
+        if (this.formats$.value?.indexOf(this.form.value.format) === -1) {
           this.form.patchValue({ format: undefined });
         }
 
@@ -304,8 +301,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             layer.dataSource.ol.getFeatures().length === 0
           ) {
             previousSpecs.push({
-              id: layer.id,
-              visible: layer.visible,
+              id: layer.id!,
+              visible: layer.visible ?? true,
               opacity: layer.opacity,
               queryable: (layer as any).queryable
             });
@@ -323,6 +320,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.formats$$ = this.formats$
       .pipe(skipWhile((formats) => !formats))
       .subscribe((formats) => {
+        if (!formats) {
+          return;
+        }
         if (formats.length === 1) {
           this.form.patchValue({ format: formats[0] });
         }
@@ -332,7 +332,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .pipe(skipWhile((layers) => !layers))
       .subscribe((layers) => {
         if (layers.length === 1) {
-          this.form.patchValue({ layers: layers[0].id });
+          this.form.patchValue({ layers: layers[0].id! });
         }
       });
 
@@ -354,23 +354,24 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  public getLayerTitleById(id): string {
-    return this.map().layerController.getById(id)?.title;
+  public getLayerTitleById(id: string): string {
+    return this.map()!.layerController.getById(id)?.title ?? '';
   }
 
   layerHasSelectedFeatures(layer: Layer): boolean {
     const wksFromLayer = this.exportService.getWorkspaceByLayerId(
-      layer.id,
-      this.store()
+      layer.id!,
+      this.store()!
     );
     if (wksFromLayer) {
-      const recs = wksFromLayer.entityStore.stateView.firstBy(
-        (record: EntityRecord<Feature>) => {
-          return record.state.selected === true;
-        }
-      );
+      const recs = wksFromLayer.entityStore!.stateView.firstBy(((
+        record: EntityRecord<Feature>
+      ) => {
+        return record.state.selected === true;
+      }) as any);
       return recs ? true : false;
     }
+    return false;
   }
 
   public onlySelected(event: MatSlideToggleChange, id: LayerId) {
@@ -379,21 +380,21 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       layersWithSelection.push(id);
     } else {
       layersWithSelection = layersWithSelection.filter(
-        (layerId) => layerId !== id
+        (layerId: string) => layerId !== id
       );
     }
     this.form.patchValue({ layersWithSelection });
   }
 
-  public onlySelectedClick(event, id: LayerId) {
-    if (this.form.value.layers.find((layerId) => layerId === id)) {
+  public onlySelectedClick(event: Event, id: LayerId) {
+    if (this.form.value.layers.find((layerId: string) => layerId === id)) {
       event.stopPropagation();
     }
   }
 
   public inLayersIdToExportSelectionOnly(layer: Layer): boolean {
     return this.form.value.layersWithSelection.find(
-      (layerId) => layerId === layer.id
+      (layerId: string) => layerId === layer.id
     )
       ? true
       : false;
@@ -415,13 +416,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const previousSpecs = this.previousLayerSpecs$.value;
     if (previousSpecs && previousSpecs.length) {
       previousSpecs.forEach((specs) => {
-        const previousLayer = this.map().layerController.getById(specs.id);
-        previousLayer.visible = specs.visible;
-        previousLayer.opacity = specs.opacity;
+        const previousLayer = this.map()!.layerController.getById(specs.id);
+        previousLayer!.visible = specs.visible;
+        previousLayer!.opacity = specs.opacity;
         (previousLayer as any).queryable = specs.queryable;
       });
     }
-    this.previousLayerSpecs$.next(undefined);
+    this.previousLayerSpecs$.next(undefined as any);
   }
 
   importFiles(files: File[]) {
@@ -444,7 +445,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   handlePopup(preCheck = true): boolean {
     const p1 = window.open('', 'popup', 'width=1, height=1');
-    p1.close();
+    p1?.close();
     const p2 = window.open('', 'popup', 'width=1, height=1');
     if (!p2 || p2.closed || typeof p2.closed === 'undefined' || p2 === null) {
       this.onPopupBlockedError(preCheck);
@@ -457,7 +458,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return this.popupAllowed;
   }
 
-  private isOgreOrLink(format: AnyExportFormat | null): boolean {
+  private isOgreOrLink(format: AnyExportFormat | null | undefined): boolean {
+    if (!format) {
+      return false;
+    }
     const ogreFormats = Object.keys(ExportService.ogreFormats);
     return ogreFormats.indexOf(format) >= 0 || format === 'URL';
   }
@@ -474,15 +478,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.handlePopup();
     }
 
-    const isCSV = isCsvExport(data.format);
+    const isCSV = isCsvExport(data.format!);
 
     if (data.format === 'Excel') {
       try {
-        await this.exportService.exportExcel(this.map(), this.store(), data);
+        await this.exportService.exportExcel(this.map()!, this.store()!, data);
         this.loading$.next(false);
         return this.onFileExportSuccess();
       } catch (error) {
-        this.onFileExportError(error);
+        this.onFileExportError(error as Error);
         throw error;
       }
     }
@@ -491,14 +495,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const layerId of data.layers) {
       this.loading$.next(true);
-      const layer = this.map().layerController.getById(layerId);
-      if (isLayerGroup(layer)) {
+      const layer = this.map()!.layerController.getById(layerId);
+      if (!layer || isLayerGroup(layer)) {
         continue;
       }
       const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map(), layer, data, this.store())
+        this.exportService.getFeatures(this.map()!, layer, data, this.store()!)
       ).catch((error) => {
-        this.onFileExportError(error);
+        this.onFileExportError(error as Error);
         throw error;
       });
       const transformedFeatures =
@@ -512,7 +516,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         data.format
       );
       if (!isCSV || !data.combineLayers || data.layers.length === 1) {
-        fileName = layer.title;
+        fileName = layer.title ?? '';
         if (data.name) {
           fileName = data.name;
         }
@@ -556,10 +560,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private handleUrlExport(layer: Layer): void {
-    const { download = null }: DataSourceOptions = layer.dataSource.options;
+    const { download = undefined }: DataSourceOptions =
+      layer.dataSource.options;
     if (download?.url || download?.dynamicUrl) {
       setTimeout(() => {
-        const url = download.url ?? download.dynamicUrl;
+        const url = download!.url ?? download!.dynamicUrl;
         url.match(/service=wfs/gi)
           ? this.downloadService.open(layer)
           : window.open(url, '_blank');
@@ -572,7 +577,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private validateGpxExport(geomTypes: GeometryCollection[]): void {
     const gpxFeatureCnt = geomTypes.length;
     geomTypes = geomTypes.filter((geomType) =>
-      ['LineString', 'Point'].includes(geomType.type)
+      ['LineString', 'Point'].includes(geomType.type ?? '')
     );
     const gpxFeatureCntPointOrPoly = geomTypes.length;
     if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
@@ -585,10 +590,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private async handleCsvExport(data: ExportOptions, fileName: string) {
-    const featuresCSV = [];
+    const featuresCSV: any[] = [];
 
     if (data.combineLayers) {
-      let previousFeature = undefined;
+      let previousFeature: any;
       const geomTypes = await this.getAllLayerGeomTypes(data);
       geomTypes.forEach((geomType) => {
         geomType.features.forEach((currentFeature) => {
@@ -629,7 +634,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     fileName: string
   ) {
     this.exportService
-      .export(features, options, fileName, this.map().projectionCode)
+      .export(features, options, fileName, this.map()!.projectionCode)
       .subscribe({
         error: (error: Error) => this.onFileExportError(error),
         complete: () => {
@@ -647,32 +652,41 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private async getAllLayerGeomTypes(
     data: ExportOptions
   ): Promise<GeometryCollection[]> {
-    return data.layers.reduce(async (typesPromise, layerId) => {
-      const types = await typesPromise;
-      const layer = this.map().layerController.getById(layerId);
-      if (isLayerGroup(layer)) {
-        return typesPromise;
-      }
-      const features = await lastValueFrom(
-        this.exportService.getFeatures(this.map(), layer, data, this.store())
-      ).catch((error) => {
-        this.onFileExportError(error);
-        throw error;
-      });
-      const transformedFeatures =
-        await this.exportService.transformFeaturesToExportFormat(
-          features,
-          layer
+    return data.layers.reduce(
+      async (typesPromise, layerId) => {
+        const types = await typesPromise;
+        const layer = this.map()!.layerController.getById(layerId);
+        if (!layer || isLayerGroup(layer)) {
+          return typesPromise;
+        }
+        const features = await lastValueFrom(
+          this.exportService.getFeatures(
+            this.map()!,
+            layer,
+            data,
+            this.store()!
+          )
+        ).catch((error) => {
+          this.onFileExportError(error as Error);
+          throw error;
+        });
+        const transformedFeatures =
+          await this.exportService.transformFeaturesToExportFormat(
+            features,
+            layer
+          );
+        const geomTypes = this.exportService.getGeomTypes(
+          transformedFeatures,
+          data.format
         );
-      const geomTypes = this.exportService.getGeomTypes(
-        transformedFeatures,
-        data.format
-      );
-      return types.concat(geomTypes);
-    }, Promise.resolve([]));
+        return types.concat(geomTypes);
+      },
+      Promise.resolve([] as GeometryCollection[])
+    );
   }
 
-  private createTitleEmptyRows(previousFeature, currentFeature) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private createTitleEmptyRows(previousFeature: any, currentFeature: any) {
     const titleRow = currentFeature.clone();
     const headerRow = currentFeature.clone();
     const emptyRow = currentFeature.clone();
@@ -788,7 +802,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
 
     form
-      .get('format')
+      .get('format')!
       .valueChanges.subscribe((format: ExportFormat) =>
         this.handleCsvForm(form, format)
       );
@@ -812,29 +826,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    if (!importExportOptions?.importWithStyle) {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map(),
-        this.contextUri(),
-        this.messageService,
-        this.layerService,
-        confirmDialogService
-      );
-    } else {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map(),
-        this.contextUri(),
-        this.messageService,
-        this.layerService,
-        confirmDialogService,
-        this.styleListService,
-        this.styleService
-      );
-    }
+
+    handleFileImportSuccess(
+      file,
+      features,
+      this.map()!,
+      this.contextUri() ?? '',
+      this.messageService,
+      this.layerService,
+      confirmDialogService
+    );
   }
 
   private onFileImportError(file: File, error: Error) {
@@ -884,7 +885,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       vectorAndUrl: false,
       customList: false
     };
-    const customList = [];
+    const customList: any[] = [];
     if (layers?.length) {
       layers.forEach((layer) => {
         if (!layer || isLayerGroup(layer)) {
@@ -914,7 +915,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           formatsType.onlyVector = true;
         }
       });
-      const hasUrl = this.formats$.value.includes('URL');
+      const hasUrl = this.formats$.value?.includes('URL') ?? false;
 
       if (formatsType.onlyUrl === true && formatsType.onlyVector === false) {
         appliedformats = ['URL'];
@@ -924,7 +925,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       ) {
         this.computeFormats(); // reset
         if (hasUrl) {
-          appliedformats = [...this.formats$.value].filter(
+          appliedformats = [...(this.formats$.value ?? [])].filter(
             (key) => key !== 'URL'
           );
         }
@@ -935,7 +936,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       ) {
         this.computeFormats(); // reset
         if (!hasUrl) {
-          const keys = [...this.formats$.value];
+          const keys = [...(this.formats$.value ?? [])];
           keys.push('URL');
           appliedformats = keys;
         }
@@ -946,16 +947,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     if (formatsType.customList) {
       let commonFormats;
-      const layersWithCustomFormats = [];
+      const layersWithCustomFormats: any[] = [];
       let previousCustomListFormats = customList[0].formats;
       customList.map((list) => {
         layersWithCustomFormats.push(list.layer);
-        commonFormats = list.formats.filter((value) =>
+        commonFormats = list.formats.filter((value: any) =>
           previousCustomListFormats.includes(value)
         );
         previousCustomListFormats = list.formats;
       });
-      const finalFormats = commonFormats.filter((value) =>
+      const finalFormats = commonFormats!.filter((value: any) =>
         appliedformats.includes(value)
       );
       if (finalFormats.length > 0) {
@@ -1000,10 +1001,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     );
 
     return formats
-      .filter((format) => {
+      .filter((format): format is ExportFormat => {
         if (allUppercaseFormats.includes(format.toUpperCase())) {
-          return format;
+          return true;
         }
+        return false;
       })
       .map((format) => {
         const csvFormats: string[] = (
@@ -1026,6 +1028,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         } else if (this.compareString<ExportFormat>('URL', format)) {
           return 'URL';
         }
+        return format;
       });
   }
 
@@ -1041,7 +1044,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     handleFileExportSuccess(this.messageService);
   }
 
-  onImportExportChange(event) {
+  onImportExportChange(event: any) {
     this.selectedMode.set(event.value);
   }
 }

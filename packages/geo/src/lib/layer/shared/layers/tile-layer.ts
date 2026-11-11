@@ -1,5 +1,4 @@
-import { AuthInterceptor } from '@igo2/auth';
-import { MessageService } from '@igo2/core/message';
+import { IXhrInterceptor } from '@igo2/core/auth';
 
 import Tile from 'ol/Tile';
 import olLayerTile from 'ol/layer/Tile';
@@ -31,12 +30,8 @@ export class TileLayer extends Layer {
 
   private watcher: TileWatcher;
 
-  constructor(
-    options: TileLayerOptions,
-    public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
-  ) {
-    super(options, messageService);
+  constructor(options: TileLayerOptions) {
+    super(options);
 
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
@@ -44,13 +39,13 @@ export class TileLayer extends Layer {
 
   protected createOlLayer(): olLayerTile<olSourceTile> {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol
+      source: this.options.source!.ol
     });
     const tileLayer = new olLayerTile(olOptions);
     const tileSource = tileLayer.getSource();
-    if ('setTileLoadFunction' in tileSource) {
+    if (tileSource !== null && 'setTileLoadFunction' in tileSource) {
       tileSource.setTileLoadFunction((tile: Tile, url: string) => {
-        this.customLoader(tile, url, this.authInterceptor);
+        this.customLoader(tile, url, this.xhrInterceptor);
       });
     }
 
@@ -63,8 +58,9 @@ export class TileLayer extends Layer {
    * @param tile the current tile
    * @param url the url string or function to retrieve the data
    */
-  customLoader(tile, url: string, interceptor: AuthInterceptor) {
-    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customLoader(tile: any, url: string, interceptor?: IXhrInterceptor | null) {
+    const alteredUrlWithKeyAuth = interceptor?.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {
       modifiedUrl = alteredUrlWithKeyAuth;
@@ -75,6 +71,7 @@ export class TileLayer extends Layer {
   public init(map: MapBase | undefined) {
     if (map === undefined) {
       this.watcher.unsubscribe();
+      return;
     } else {
       this.watcher.subscribe(() => void 1);
     }

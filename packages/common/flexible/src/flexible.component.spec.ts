@@ -1,8 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MediaService } from '@igo2/core/media';
-
-import { mergeTestConfig } from '../../test-config';
 import { FlexibleComponent } from './flexible.component';
 
 describe('FlexibleComponent', () => {
@@ -10,12 +7,9 @@ describe('FlexibleComponent', () => {
   let fixture: ComponentFixture<FlexibleComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        imports: [FlexibleComponent],
-        providers: [MediaService]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [FlexibleComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FlexibleComponent);
     component = fixture.componentInstance;

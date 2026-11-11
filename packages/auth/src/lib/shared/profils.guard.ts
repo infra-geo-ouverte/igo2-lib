@@ -1,15 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Router,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-import { ConfigService } from '@igo2/core/config';
-
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AuthOptions } from './auth.interface';
+import { AUTH_OPTIONS } from './auth.interface';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -17,26 +12,33 @@ import { AuthService } from './auth.service';
 })
 export class ProfilsGuard {
   private authService = inject(AuthService);
-  private config = inject(ConfigService);
-  private router = inject(Router);
+  private authOptions = inject(AUTH_OPTIONS);
 
-  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
+    if (
+      !this.authService.hasAuthService ||
+      !this.authOptions.profilsGuard?.length
+    ) {
+      this.authService.redirectToLogin(route, state);
+      return of(false);
+    }
+
     return this.authService.getProfils().pipe(
       map((profils: { profils: string[] }) => {
-        const authConfig = this.config.getConfig('auth') as AuthOptions;
         if (
-          profils &&
-          profils.profils &&
-          profils.profils.some((v) => authConfig.profilsGuard.indexOf(v) !== -1)
+          profils.profils.some((profil) =>
+            this.authOptions.profilsGuard?.includes(profil)
+          )
         ) {
           return true;
         }
 
         this.authService.redirectUrl = state.url;
 
-        if (authConfig?.loginRoute) {
-          this.router.navigateByUrl(authConfig.loginRoute);
-        }
+        this.authService.redirectToLogin(route, state);
 
         return false;
       })

@@ -14,10 +14,8 @@ import { Observable, Subject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintService } from '../../print/shared/print.service';
-import { DirectionsSource } from '../directions-sources/directions-source';
 import { DirectionOptions, Directions } from '../shared/directions.interface';
 import { DirectionsSourceService } from './directions-source.service';
-import { FormattedStep, IgoStep } from './directions.interface';
 import { formatDistance, formatDuration, formatStep } from './directions.utils';
 
 @Injectable()
@@ -40,23 +38,23 @@ export class DirectionsService {
   route(
     coordinates: Position[],
     directionsOptions: DirectionOptions = {}
-  ): Observable<Directions[]> {
+  ): Observable<Directions[]> | undefined {
     if (coordinates.length === 0) {
       return;
     }
-    const source: DirectionsSource = this.directionsSourceService.sources[0];
+    const source = this.directionsSourceService.activeSource;
     const request = source.route(coordinates, directionsOptions);
     return request;
   }
 
   /**
-   * Downloads directions for a given map and directions object.
+   * Print directions for a given map and directions object.
    *
    * @param {IgoMap} map - The map object to download directions for.
    * @param {Directions} directions - The directions object containing the route information.
    * @return {Observable<SubjectStatus>} An observable that emits the status of the download process.
    */
-  downloadDirections(
+  printDirections(
     map: IgoMap,
     directions: Directions
   ): Observable<SubjectStatus> {
@@ -77,13 +75,13 @@ export class DirectionsService {
     const zoneHeight: number = pageSize.getHeight() - margins[0] - margins[2];
     const imageDimensions: [number, number] = [zoneWidth, zoneHeight];
 
-    const distance: string = formatDistance(directions.distance);
-    const duration: string = formatDuration(directions.duration);
+    const distance = formatDistance(directions.distance!);
+    const duration = formatDuration(directions.duration!);
 
-    const title: string =
+    const title =
       distance && duration
         ? `${directions.title} (${distance} - ${duration})`
-        : directions.title;
+        : (directions.title ?? '');
 
     doc.text(title, pageSize.getWidth() / 2, 25, {
       align: 'center'
@@ -190,24 +188,29 @@ export class DirectionsService {
       icon: string;
       distanceDuration: string;
     }[] = [];
-    for (let stepIndex = 0; stepIndex < directions.steps.length; stepIndex++) {
-      const step: IgoStep = directions.steps[stepIndex];
-      const formattedStep: FormattedStep = formatStep(
+    for (let stepIndex = 0; stepIndex < directions.steps!.length; stepIndex++) {
+      const step = directions.steps?.[stepIndex];
+      if (!step) {
+        continue;
+      }
+      const formattedStep = formatStep(
         step,
         this.languageService,
-        stepIndex === directions.steps.length - 1
+        stepIndex === directions.steps!.length - 1
       );
 
-      const formattedDistance: string = formatDistance(step.distance);
-      const formattedDuration: string = formatDuration(step.duration);
+      const formattedDistance = formatDistance(step.distance!);
+      const formattedDuration = formatDuration(step.duration!);
 
       if (
         (formattedDistance && formattedDuration) ||
-        stepIndex === directions.steps.length - 1
+        stepIndex === directions.steps!.length - 1
       ) {
         formattedSteps.push({
           instruction: `${formattedStep.instruction}`,
-          icon: icons.find((icon) => icon.name === formattedStep.iconName).icon,
+          icon:
+            icons.find((icon) => icon.name === formattedStep.iconName)?.icon ??
+            '',
           distanceDuration:
             formattedDistance && formattedDuration
               ? `(${formattedDistance} - ${formattedDuration})`

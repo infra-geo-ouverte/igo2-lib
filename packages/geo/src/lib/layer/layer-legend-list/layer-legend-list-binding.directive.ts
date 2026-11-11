@@ -10,8 +10,7 @@ import { isLayerItem } from '../utils';
 import { LayerLegendListComponent } from './layer-legend-list.component';
 
 @Directive({
-  selector: '[igoLayerLegendListBinding]',
-  standalone: true
+  selector: '[igoLayerLegendListBinding]'
 })
 export class LayerLegendListBindingDirective implements OnInit {
   private readonly mapService = inject(MapService);
@@ -20,6 +19,9 @@ export class LayerLegendListBindingDirective implements OnInit {
 
   ngOnInit() {
     const mapInstance = this.mapService.getMap();
+    if (!mapInstance) {
+      return;
+    }
     combineLatest([
       mapInstance.layerController.all$,
       mapInstance.viewController.resolution$

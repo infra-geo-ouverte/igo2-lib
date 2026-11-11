@@ -70,7 +70,7 @@ export class MapToolComponent implements OnInit {
   mediaService = inject(MediaService);
   private cdr = inject(ChangeDetectorRef);
 
-  isDesktop: boolean;
+  isDesktop?: boolean;
 
   readonly toggleLegendOnVisibilityChange = input(false);
 

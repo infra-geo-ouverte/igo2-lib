@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { StorageService } from '@igo2/core/storage';
-import { customCacheHasher } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -20,6 +20,9 @@ import { NominatimData } from './nominatim.interfaces';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
+export const NOMINATIM_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('NominatimSearchSourceOptions');
+
 /**
  * Nominatim search source
  */
@@ -31,10 +34,16 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   static type = FEATURE;
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${NominatimSearchSource.id}`
+    const directOptions = inject(NOMINATIM_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${NominatimSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
@@ -121,7 +130,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
             },
             {
               title: 'igo.geo.search.nominatim.country.all',
-              value: null,
+              value: null as any,
               enabled: false
             }
           ]
@@ -156,6 +165,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    if (!term) {
+      return of([]);
+    }
     const params = this.computeSearchRequestParams(term, options || {});
     if (!params.get('q')) {
       return of([]);
@@ -172,10 +184,8 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     params: HttpParams
   ): Observable<SearchResult<Feature>[]> {
     return this.http
-      .get(this.searchUrl, { params })
-      .pipe(
-        map((response: NominatimData[]) => this.extractResults(response, term))
-      );
+      .get<NominatimData[]>(this.searchUrl, { params, headers: this.headers })
+      .pipe(map((response) => this.extractResults(response, term)));
   }
 
   private computeSearchRequestParams(
@@ -259,7 +269,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     ];
   }
 
-  private computeTerm(term: string): string {
+  private computeTerm(term: string): string | null {
     return this.computeTermTags(term);
   }
 
@@ -267,9 +277,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * Add hashtag from query in Nominatim's format (+[])
    * @param term Query with hashtag
    */
-  private computeTermTags(term: string): string {
+  private computeTermTags(term: string): string | null {
     const hashtags = super.getHashtagsValid(term, 'amenity');
-    if (!hashtags) {
+    if (hashtags?.length) {
       return this.computeTermSettings(term);
     }
 
@@ -290,7 +300,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Query
    */
   private computeTermSettings(term: string): string {
-    this.options.settings.forEach((settings) => {
+    this.options.settings?.forEach((settings) => {
       if (settings.name === 'amenity') {
         settings.values.forEach((conf) => {
           if (conf.enabled && typeof conf.value === 'string') {

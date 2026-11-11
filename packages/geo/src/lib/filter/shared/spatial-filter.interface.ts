@@ -1,3 +1,9 @@
+import { InjectionToken } from '@angular/core';
+
+export const SPATIAL_FILTER_OPTIONS = new InjectionToken<SpatialFilterOptions>(
+  'SpatialFilterOptions'
+);
+
 export interface SpatialFilterThematic {
   name: string;
   children?: SpatialFilterThematic[];
@@ -8,4 +14,5 @@ export interface SpatialFilterThematic {
 
 export interface SpatialFilterOptions {
   url?: string;
+  apiKey?: string;
 }

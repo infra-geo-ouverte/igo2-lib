@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, JsonPipe, KeyValuePipe, NgStyle } from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValuePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -37,7 +37,6 @@ import { Feature } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
-    NgStyle,
     ImageErrorDirective,
     AsyncPipe,
     JsonPipe,
@@ -56,14 +55,14 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private configService = inject(ConfigService);
 
-  private state: ConnectionState;
+  private state!: ConnectionState;
   private unsubscribe$ = new Subject<void>();
   ready = false;
 
-  readonly source = input<SearchSource>(undefined);
-  readonly map = input<IgoMap>(undefined);
-  readonly toolbox = input<Toolbox>(undefined);
-  readonly feature = input<Feature>(undefined);
+  readonly source = input<SearchSource>();
+  readonly map = input<IgoMap>();
+  readonly toolbox = input<Toolbox>();
+  readonly feature = input<Feature>();
 
   readonly routeEvent = output<boolean>();
   readonly selectFeature = output<boolean>();
@@ -101,15 +100,16 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  urlSanitizer(value): SafeResourceUrl {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  urlSanitizer(value: any): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
   isHtmlDisplay(): boolean {
     if (
       this.feature &&
-      this.isObject(this.feature().properties) &&
-      this.feature().properties.target === 'iframe'
+      this.isObject(this.feature()!.properties) &&
+      this.feature()!.properties.target === 'iframe'
     ) {
       this.htmlDisplayEvent.emit(true);
       return true;
@@ -119,7 +119,8 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  htmlSanitizer(value): SafeResourceUrl {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  htmlSanitizer(value: any): SafeResourceUrl | undefined {
     if (!value.body) {
       return;
     }
@@ -135,11 +136,13 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustHtml(value.body);
   }
 
-  isObject(value) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isObject(value: any): boolean {
     return typeof value === 'object';
   }
 
-  openSecureUrl(value) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  openSecureUrl(value: any): void {
     let url: string;
     const regexDepot = new RegExp(
       this.configService?.getConfig('depot.url') + '.*?(?="|$)'
@@ -181,6 +184,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
       const regex = /^https?:\/\//;
       return regex.test(value);
     }
+    return false;
   }
 
   isDoc(value: unknown): boolean {
@@ -192,6 +196,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         return false;
       }
     }
+    return false;
   }
 
   isImg(value: unknown): boolean {
@@ -203,6 +208,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         return false;
       }
     }
+    return false;
   }
 
   hasEmbeddedLinks(value: unknown): boolean {
@@ -219,18 +225,26 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  getEmbeddedLinkText(value) {
-    const regex = /(?:>).*?(?=<|$)/;
-    let text = value.match(regex)[0] as string;
-    text = text.replace(/>/g, '');
+  getEmbeddedLinks(value: string): string[] {
+    const links: string[] = [];
+    const regex = /<a[^>]*>.*?<\/a>/g;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(value)) !== null) {
+      links.push(match[0]);
+    }
+    return links;
+  }
+
+  getEmbeddedLinkText(value: string): string {
+    const regex = />([^<]+)</;
+    const match = value.match(regex);
+    const text = match![1];
     return text;
   }
 
-  filterFeatureProperties(feature): Record<string, any> {
+  filterFeatureProperties(feature: any): Record<string, any> {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
-    let offlineButtonState;
-
     const toolbox = this.toolbox();
     if (
       feature.properties &&
@@ -243,38 +257,10 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
     if (allowedFieldsAndAlias) {
       Object.keys(allowedFieldsAndAlias).forEach((field) => {
-        properties[allowedFieldsAndAlias[field]] = feature.properties[field];
+        (properties as Record<string, unknown>)[allowedFieldsAndAlias[field]] =
+          feature.properties[field];
       });
       return properties;
-    } else if (offlineButtonState !== undefined) {
-      if (!offlineButtonState) {
-        if (
-          this.state.connection &&
-          feature.meta &&
-          feature.meta.excludeAttribute
-        ) {
-          const excludeAttribute = feature.meta.excludeAttribute;
-          excludeAttribute.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        } else if (
-          !this.state.connection &&
-          feature.meta &&
-          feature.meta.excludeAttributeOffline
-        ) {
-          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        }
-      } else {
-        if (feature.meta && feature.meta.excludeAttributeOffline) {
-          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach((attribute) => {
-            delete feature.properties[attribute];
-          });
-        }
-      }
     } else {
       if (
         this.state.connection &&
@@ -282,7 +268,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         feature.meta.excludeAttribute
       ) {
         const excludeAttribute = feature.meta.excludeAttribute;
-        excludeAttribute.forEach((attribute) => {
+        excludeAttribute.forEach((attribute: string) => {
           delete feature.properties[attribute];
         });
       } else if (
@@ -291,7 +277,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         feature.meta.excludeAttributeOffline
       ) {
         const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-        excludeAttributeOffline.forEach((attribute) => {
+        excludeAttributeOffline.forEach((attribute: string) => {
           delete feature.properties[attribute];
         });
       }

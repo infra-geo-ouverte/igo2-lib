@@ -22,7 +22,7 @@ export class DrawState {
   public stores: FeatureStore<FeatureWithDraw>[] = [];
   public layersID: LayerId[] = [];
   public drawControls: [LayerId, DrawControl][] = [];
-  public activeDrawingLayer: VectorLayer;
+  public activeDrawingLayer?: VectorLayer;
 
   constructor() {
     this.mapState.map.layerController.all$.subscribe(() => {

@@ -3,14 +3,19 @@
   (mouseleave)="onMouseEvent($event)"
 >
   @if (icon) {
-    <mat-icon matListItemIcon>{{ showIcons() ? icon : 'blank' }}</mat-icon>
+    <mat-icon
+      matListItemIcon
+      [class.igo-search-results-item__icon-hidden]="!showIcons()"
+      [attr.aria-hidden]="!showIcons() ? 'true' : null"
+      >{{ icon }}</mat-icon
+    >
   }
 
   @if (titleHtml) {
     <span
       matListItemTitle
       class="igo-list-item-with-text-overflow-ellipsis"
-      [innerHtml]="titleHtml"
+      [innerHTML]="titleHtml | sanitizeHtml"
       matTooltipShowDelay="500"
       [matTooltip]="tooltipHtml"
       matTooltipClass="search-result-tooltip"

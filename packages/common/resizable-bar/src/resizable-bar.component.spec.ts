@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { mergeTestConfig } from '../../test-config';
 import { ResizableBarComponent } from './resizable-bar.component';
 
 describe('ResizableBarComponent', () => {
@@ -8,12 +7,10 @@ describe('ResizableBarComponent', () => {
   let fixture: ComponentFixture<ResizableBarComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule(
-      mergeTestConfig({
-        declarations: [],
-        imports: [ResizableBarComponent]
-      })
-    ).compileComponents();
+    await TestBed.configureTestingModule({
+      declarations: [],
+      imports: [ResizableBarComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ResizableBarComponent);
     component = fixture.componentInstance;

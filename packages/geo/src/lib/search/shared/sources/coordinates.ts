@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
+import { ObjectUtils } from '@igo2/utils';
 
 import * as olformat from 'ol/format';
 import OlCircle from 'ol/geom/Circle';
@@ -28,6 +29,15 @@ import { OsmLinks } from '../../../utils/osmLinks';
 import { ReverseSearch, SearchResult } from '../search.interfaces';
 import { SearchSource } from './source';
 import { ReverseSearchOptions, SearchSourceOptions } from './source.interfaces';
+
+export const COORDINATES_REVERSE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>(
+    'CoordinatesReverseSearchSourceOptions'
+  );
+
+export const COORDINATES_REVERSE_SEARCH_SOURCE_PROJECTIONS = new InjectionToken<
+  Projection[]
+>('CoordinatesReverseSearchSourceProjections');
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -57,20 +67,33 @@ export class CoordinatesReverseSearchSource
   }
 
   constructor() {
-    const config = inject(ConfigService);
+    const config = inject(ConfigService, { optional: true });
     const storageService = inject(StorageService);
-    const options = config.getConfig(
-      `searchSources.${CoordinatesReverseSearchSource.id}`
+    const directOptions = inject(COORDINATES_REVERSE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const directProjections = inject(
+      COORDINATES_REVERSE_SEARCH_SOURCE_PROJECTIONS,
+      { optional: true }
     );
-    const projections = config.getConfig<Projection[]>('projections') ?? [];
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`) ??
+        {},
+      directOptions ?? {}
+    );
+    const projections =
+      directProjections ?? config?.getConfig<Projection[]>('projections') ?? [];
 
     super(options, storageService);
     this.projections = projections;
-    this.languageService.language$.subscribe(() => {
-      this.title$.next(
-        this.languageService.translate.instant(this.options.title)
-      );
-    });
+
+    if (this.options.title) {
+      this.languageService.translate
+        .get(this.options.title)
+        .subscribe((title) => {
+          this.title$.next(title);
+        });
+    }
   }
 
   getId(): string {
@@ -104,7 +127,7 @@ export class CoordinatesReverseSearchSource
     reverseSearchCoordsFormatEnabled?: boolean
   ): Observable<SearchResult<Feature>[]> {
     return of([
-      this.dataToResult(lonLat, options, reverseSearchCoordsFormatEnabled)
+      this.dataToResult(lonLat, options!, reverseSearchCoordsFormatEnabled!)
     ]);
   }
 
@@ -117,7 +140,7 @@ export class CoordinatesReverseSearchSource
     const convertedCoord = lonLatConversion(data, this.projections);
     const coords = convertedCoord.reduce(
       (obj, item) => ((obj[item.alias] = item.igo2CoordFormat), obj),
-      {}
+      {} as Record<string, unknown>
     );
 
     const roundedCoordString = !reverseSearchCoordsFormatEnabled
@@ -133,7 +156,7 @@ export class CoordinatesReverseSearchSource
       coordinates: [data[0], data[1]]
     };
 
-    const properties = {};
+    const properties: Record<string, unknown> = {};
     let subtitleHtml = '';
     if (options.distance) {
       const radiusKey = this.languageService.translate.instant(

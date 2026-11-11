@@ -23,8 +23,6 @@ import { ProjectionsLimitationsOptions } from '../../map/';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 import { detectFileEPSG } from '../../map/shared/projection.utils';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { StyleService } from '../../style/style-service/style.service';
 import { EpsgSelectorModalComponent } from '../epsg-selector-modal/epsg-selector-modal.component';
 import {
   handleFileImportError,
@@ -34,8 +32,7 @@ import { ImportExportServiceOptions } from './import.interface';
 import { ImportService } from './import.service';
 
 @Directive({
-  selector: '[igoDropGeoFile]',
-  standalone: true
+  selector: '[igoDropGeoFile]'
 })
 export class DropGeoFileDirective
   extends DragAndDropDirective
@@ -43,8 +40,6 @@ export class DropGeoFileDirective
 {
   private component = inject(MapBrowserComponent);
   private importService = inject(ImportService);
-  private styleListService = inject(StyleListService);
-  private styleService = inject(StyleService);
   private config = inject(ConfigService);
   private messageService = inject(MessageService);
   private layerService = inject(LayerService);
@@ -52,15 +47,14 @@ export class DropGeoFileDirective
   private dialog = inject(MatDialog);
 
   private epsgCode$$: Subscription[] = [];
-  private filesDropped$$: OutputRefSubscription;
+  private filesDropped$$!: OutputRefSubscription;
 
   get map(): IgoMap {
-    return this.component.map();
+    return this.component.map()!;
   }
 
-  readonly contextUri = input<string>(undefined);
-  readonly projectionsLimitations =
-    input<ProjectionsLimitationsOptions>(undefined);
+  readonly contextUri = input<string>();
+  readonly projectionsLimitations = input<ProjectionsLimitationsOptions>();
 
   ngOnInit() {
     this.filesDropped$$ = this.filesDropped.subscribe((files) => {
@@ -74,17 +68,17 @@ export class DropGeoFileDirective
   }
 
   @HostListener('dragover', ['$event'])
-  public onDragOver(evt) {
+  public onDragOver(evt: DragEvent) {
     super.onDragOver(evt);
   }
 
   @HostListener('dragleave', ['$event'])
-  public onDragLeave(evt) {
+  public onDragLeave(evt: DragEvent) {
     super.onDragLeave(evt);
   }
 
   @HostListener('drop', ['$event'])
-  public onDrop(evt) {
+  public onDrop(evt: DragEvent) {
     super.onDrop(evt);
   }
 
@@ -123,29 +117,15 @@ export class DropGeoFileDirective
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    if (!importExportOptions?.importWithStyle) {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map,
-        this.contextUri(),
-        this.messageService,
-        this.layerService,
-        confirmDialogService
-      );
-    } else {
-      handleFileImportSuccess(
-        file,
-        features,
-        this.map,
-        this.contextUri(),
-        this.messageService,
-        this.layerService,
-        confirmDialogService,
-        this.styleListService,
-        this.styleService
-      );
-    }
+    handleFileImportSuccess(
+      file,
+      features,
+      this.map,
+      this.contextUri()!,
+      this.messageService,
+      this.layerService,
+      confirmDialogService
+    );
   }
 
   private onFileImportError(file: File, error: Error) {
@@ -157,13 +137,13 @@ export class DropGeoFileDirective
     );
   }
 
-  private openEPSGModal(file): Observable<string> {
+  private openEPSGModal(file: File): Observable<string> {
     const dialogRef = this.dialog.open(EpsgSelectorModalComponent, {
       width: '600px',
       data: {
         fileName: file.name,
         projections: this.importService.computeProjections(
-          this.projectionsLimitations()
+          this.projectionsLimitations()!
         )
       }
     });

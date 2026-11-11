@@ -7,7 +7,7 @@ export function handleFileExportError(
   messageService: MessageService
 ) {
   if (error instanceof ExportNothingToExportError) {
-    this.handleNothingToExportError(messageService);
+    handleNothingToExportError(messageService);
     return;
   }
   messageService.error(

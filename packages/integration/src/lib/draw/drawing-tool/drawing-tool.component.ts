@@ -39,6 +39,9 @@ export class DrawingToolComponent {
   get stores(): FeatureStore<FeatureWithDraw>[] {
     return this.drawState.stores;
   }
+  set stores(stores: FeatureStore<FeatureWithDraw>[]) {
+    this.drawState.stores = stores;
+  }
 
   /**
    * Map to measure on
@@ -59,10 +62,10 @@ export class DrawingToolComponent {
     this.drawState.drawControls = dc;
   }
 
-  get activeDrawingLayer(): VectorLayer {
+  get activeDrawingLayer(): VectorLayer | undefined {
     return this.drawState.activeDrawingLayer;
   }
-  set activeDrawingLayer(value: VectorLayer) {
+  set activeDrawingLayer(value: VectorLayer | undefined) {
     this.drawState.activeDrawingLayer = value;
   }
 

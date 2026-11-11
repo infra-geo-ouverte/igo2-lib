@@ -1,8 +1,8 @@
 <igo-layer-list-tool
   floatLabel="auto"
-  [viewerOptions]="layerViewerOptions"
+  [viewerOptions]="layerViewerOptions()"
   [term]="options()?.filterAndSortOptions?.keyword"
-  [mode]="mode"
+  [mode]="mode!"
   (addedLayer)="createGroup($event)"
   (modeChange)="toggleSelectionMode($event)"
   (searchChange)="onSearchChange($event)"
@@ -33,19 +33,19 @@
 <mat-divider />
 
 <div class="layer-view">
-  @if (
-    layers?.length > 0 ||
-    unavailableLayers?.length > 0 ||
-    baselayers?.length > 0
-  ) {
+  @if (isLoading()) {
+    <div class="layer-view-spinner-container">
+      <mat-spinner diameter="24" />
+    </div>
+  } @else if (hasLayers()) {
     <div class="layer-list-container">
-      @if (unavailableLayers?.length) {
+      @if (unavailableLayers.length) {
         <igo-layer-unavailable-list [layersOptions]="unavailableLayers" />
       }
       <igo-layer-list
         [controller]="map().layerController"
         [layers]="layers"
-        [viewerOptions]="layerViewerOptions"
+        [viewerOptions]="layerViewerOptions()"
         [isDragDropDisabled]="isDragDropDisabled"
         [isDesktop]="isDesktop()"
       />
@@ -54,8 +54,8 @@
           <mat-divider />
           <igo-layer-list
             [controller]="map().layerController"
-            [layers]="baselayers"
-            [viewerOptions]="layerViewerOptions"
+            [layers]="baselayers ?? []"
+            [viewerOptions]="layerViewerOptions()"
             [isDragDropDisabled]="true"
             [isDesktop]="isDesktop()"
           />
@@ -70,9 +70,9 @@
 @if (layerController.hasSelection) {
   <igo-layer-viewer-bottom-actions
     [map]="map()"
-    [viewerOptions]="layerViewerOptions"
+    [viewerOptions]="layerViewerOptions()"
     [controller]="layerController"
-    [searchTerm]="keyword$.value"
+    [searchTerm]="keyword$.value ?? ''"
     (layerChange)="onLayerChange()"
   >
     @if (

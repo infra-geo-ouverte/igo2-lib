@@ -57,19 +57,32 @@ export class ImportService {
   static allowedExtensions = ['geojson', 'kml', 'gpx', 'json', 'gml', 'zip'];
 
   private ogreUrl: string;
+  private apiKey?: string;
   private clientSideFileSizeMax: number;
+
+  private get headers(): HttpHeaders {
+    return new HttpHeaders(
+      this.apiKey ? { 'x-api-key': this.apiKey } : undefined
+    );
+  }
 
   constructor() {
     const importConfig = this.config.getConfig(
       'importExport'
     ) as ImportExportServiceOptions;
-    this.ogreUrl = importConfig.url;
-    const configFileSizeMb = importConfig.clientSideFileSizeMaxMb;
+    this.ogreUrl = importConfig?.url;
+    this.apiKey = importConfig?.apiKey;
+    const configFileSizeMb = importConfig?.clientSideFileSizeMaxMb;
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
-    if (importConfig.formats) {
+    if (importConfig?.formats) {
       ImportService.allowedExtensions = importConfig.formats
-        .map((format) => ImportService.formatExtensionAssociation[format])
+        .map(
+          (format) =>
+            ImportService.formatExtensionAssociation[
+              format as keyof typeof ImportService.formatExtensionAssociation
+            ]
+        )
         .filter((e) => e);
       if (ImportService.allowedExtensions.includes('geojson')) {
         ImportService.allowedExtensions.push('json');
@@ -87,15 +100,17 @@ export class ImportService {
 
   private getFileImporter(
     file: File
-  ): (
-    file: File,
-    observer: Observer<Feature[]>,
-    projectionIn: string,
-    projectionOut: string
-  ) => void {
+  ):
+    | ((
+        file: File,
+        observer: Observer<Feature[]>,
+        projectionIn: string,
+        projectionOut: string
+      ) => void)
+    | undefined {
     const extension = getFileExtension(file);
     const allowedExtensions = ImportService.allowedExtensions;
-    let zipMimeTypes = [];
+    let zipMimeTypes: string[] = [];
     if (allowedExtensions.includes('zip')) {
       zipMimeTypes = ImportService.allowedZipMimeTypes;
     }
@@ -189,7 +204,7 @@ export class ImportService {
     formData.append('formatOutput', 'GEOJSON');
     formData.append('skipFailures', '');
 
-    this.http.post(url, formData, { headers: new HttpHeaders() }).subscribe(
+    this.http.post(url, formData, { headers: this.headers }).subscribe(
       (response: { errors?: string[] } | object | null) => {
         if (response === null) {
           observer.error(new ImportUnreadableFileError());
@@ -277,7 +292,7 @@ export class ImportService {
       });
     });
 
-    return features;
+    return features as Feature[];
   }
 
   private parseFeaturesFromGeoJSON(
@@ -341,8 +356,8 @@ export class ImportService {
 
     if (projectionsConstraints.mtm) {
       // all mtm zones
-      const minZone = projectionsConstraints.mtmZone.minZone;
-      const maxZone = projectionsConstraints.mtmZone.maxZone;
+      const minZone = projectionsConstraints.mtmZone!.minZone ?? 1;
+      const maxZone = projectionsConstraints.mtmZone!.maxZone ?? 16;
 
       for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
         const code =
@@ -360,8 +375,8 @@ export class ImportService {
 
     if (projectionsConstraints.utm) {
       // all utm zones
-      const minZone = projectionsConstraints.utmZone.minZone;
-      const maxZone = projectionsConstraints.utmZone.maxZone;
+      const minZone = projectionsConstraints.utmZone!.minZone ?? 1;
+      const maxZone = projectionsConstraints.utmZone!.maxZone ?? 60;
 
       for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
         const code =

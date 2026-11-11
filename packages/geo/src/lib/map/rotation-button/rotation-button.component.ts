@@ -1,4 +1,4 @@
-import { AsyncPipe, NgStyle } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AfterContentInit, Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,6 @@ import { IgoMap } from '../shared/map';
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
-    NgStyle,
     AsyncPipe,
     IgoLanguageModule
   ]
@@ -32,9 +31,9 @@ export class RotationButtonComponent implements AfterContentInit {
     transform: 'rotate(0rad)'
   });
 
-  readonly map = input<IgoMap>(undefined);
-  readonly showIfNoRotation = input<boolean>(undefined);
-  readonly color = input<string>(undefined);
+  readonly map = input.required<IgoMap>();
+  readonly showIfNoRotation = input<boolean>();
+  readonly color = input<string>();
 
   ngAfterContentInit() {
     this.map().viewController.rotation$.subscribe((r) => {

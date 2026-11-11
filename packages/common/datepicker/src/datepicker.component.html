@@ -17,20 +17,20 @@
   />
   <!-- Hidden input for the actual datepicker -->
   <input
-    [matDatepicker]="picker"
+    [matDatepicker]="this.picker()"
     hidden="true"
     name="date"
     [formControl]="dateFormControl"
-    [min]="resolveDate(minDate())"
-    [max]="resolveDate(maxDate())"
+    [min]="minDate() ? resolveDate(minDate()!) : null"
+    [max]="maxDate() ? resolveDate(maxDate()!) : null"
     [matDatepickerFilter]="datepickerFilter()"
   />
 
   <mat-datepicker-toggle matIconSuffix [for]="picker" [disabled]="disabled" />
   <mat-datepicker
     #picker
-    [startView]="startView()"
-    [startAt]="resolveDate(startAt())"
+    [startView]="startView()!"
+    [startAt]="resolveDate(startAt()!)"
     [panelClass]="panelClassName"
   >
     @if (showActions) {

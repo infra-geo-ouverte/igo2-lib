@@ -7,8 +7,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[igoDragAndDrop]',
-  standalone: true
+  selector: '[igoDragAndDrop]'
 })
 export class DragAndDropDirective {
   readonly allowedExtensions = input<string[]>([]);
@@ -17,24 +16,24 @@ export class DragAndDropDirective {
 
   protected readonly filesInvalid = output<File[]>();
 
-  @HostBinding('style.background') private background = 'inherit';
+  @HostBinding('style.background') background = 'inherit';
 
   @HostListener('dragover', ['$event'])
-  public onDragOver(evt) {
+  public onDragOver(evt: DragEvent) {
     evt.preventDefault();
     evt.stopPropagation();
     this.background = '#999';
   }
 
   @HostListener('dragleave', ['$event'])
-  public onDragLeave(evt) {
+  public onDragLeave(evt: DragEvent) {
     evt.preventDefault();
     evt.stopPropagation();
     this.background = 'inherit';
   }
 
   @HostListener('drop', ['$event'])
-  public onDrop(evt) {
+  public onDrop(evt: DragEvent & { alreadyFired?: boolean }) {
     evt.preventDefault();
     evt.stopPropagation();
     if (evt.alreadyFired) {
@@ -52,14 +51,15 @@ export class DragAndDropDirective {
     }
   }
 
-  private validExtensions(evt) {
-    const files = evt.dataTransfer.files;
-    const filesObj = {
+  private validExtensions(evt: DragEvent) {
+    const files = evt.dataTransfer?.files;
+    const filesObj: { valid: File[]; invalid: File[] } = {
       valid: [],
       invalid: []
     };
-    if (files.length > 0) {
-      for (const file of files) {
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         const ext = file.name.split('.')[file.name.split('.').length - 1];
         const allowedExtensions = this.allowedExtensions();
         if (

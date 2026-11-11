@@ -1,7 +1,7 @@
 @let hiddenByParent = this.parentDisplayed() === false ? true : false;
 <button
   mat-icon-button
-  [ngClass]="{
+  [class]="{
     disabled: disabled(),
     'out-of-range': !inResolutionsRange(),
     'visibility-hidden': !visible()

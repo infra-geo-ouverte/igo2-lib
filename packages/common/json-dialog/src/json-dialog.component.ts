@@ -23,15 +23,15 @@ import {
 export class JsonDialogComponent {
   dialogRef = inject<MatDialogRef<JsonDialogComponent>>(MatDialogRef);
 
-  public title: string;
+  public title?: string;
   public data: any;
-  public ignoreKeys: string[];
+  public ignoreKeys?: string[];
 
-  isObject(val) {
+  isObject(val: any) {
     return typeof val === 'object' && !Array.isArray(val);
   }
 
-  getKey(baseKey, key) {
+  getKey(baseKey: string, key: string) {
     return (baseKey ? baseKey + '.' : '') + key;
   }
 }

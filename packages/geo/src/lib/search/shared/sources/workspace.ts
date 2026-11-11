@@ -1,8 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 
+import { EntityKey } from '@igo2/common/entity';
 import { ConfigService } from '@igo2/core/config';
 import { LanguageService } from '@igo2/core/language';
 import { StorageService } from '@igo2/core/storage';
+import { ObjectUtils } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -16,6 +18,21 @@ import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { WorkspaceData } from './workspace.interfaces';
+
+type WorkspaceSearchMatch = {
+  field?: string;
+  result: EntityKey[];
+};
+
+type WorkspaceResultProperties = Record<string, unknown> & {
+  type: string;
+  GoogleMaps?: string;
+  GoogleStreetView?: string;
+  Route?: string;
+};
+
+export const WORKSPACE_SEARCH_SOURCE_OPTIONS =
+  new InjectionToken<SearchSourceOptions>('WorkspaceSearchSourceOptions');
 
 /**
  * Workspace search source
@@ -34,15 +51,21 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
 
   constructor() {
     const storageService = inject(StorageService);
-    const config = inject(ConfigService);
-    const options = config.getConfig<SearchSourceOptions>(
-      `searchSources.${WorkspaceSearchSource.id}`
+    const directOptions = inject(WORKSPACE_SEARCH_SOURCE_OPTIONS, {
+      optional: true
+    });
+    const config = inject(ConfigService, { optional: true });
+    const options = ObjectUtils.mergeDeep(
+      config?.getConfig<SearchSourceOptions>(
+        `searchSources.${WorkspaceSearchSource.id}`
+      ) ?? {},
+      directOptions ?? {}
     );
 
     super(options, storageService);
 
     this.languageService.translate
-      .get(this.options.title)
+      .get(this.options.title!)
       .subscribe((title) => this.title$.next(title));
   }
 
@@ -94,39 +117,54 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
   ): Observable<SearchResult<Feature>[]> {
     const limitSetting = this.settings.find((s) => s.name === 'limit');
     const limitValue =
-      (limitSetting.values.find((v) => v.enabled).value as number) || 5;
-    this.options.params.limit = limitValue.toLocaleString();
+      (limitSetting?.values.find((v) => v.enabled)?.value as number) || 5;
     const results: WorkspaceData[] = [];
-    this.options.params.page = (options.page || 1).toLocaleString();
-    const page = options.page || 1;
-    const datasets = this.options.params.datasets.split(',');
+    if (this.options.params) {
+      this.options.params.limit = limitValue.toLocaleString();
+      this.options.params.page = (options?.page || 1).toLocaleString();
+    }
+    const page = options?.page || 1;
+    const datasets = (this.options.params?.datasets ?? '').split(',');
     this.featureStoresWithIndex
       .filter(
-        (fswi) => fswi.searchDocument && datasets.includes(fswi.layer.title)
+        (fswi) =>
+          fswi.searchDocument && datasets.includes(fswi.layer.title ?? '')
       )
-      .map((fswi) => {
+      .forEach((fswi) => {
         const termToUse = term;
-        fswi.searchDocument
-          .search(termToUse, { limit: page * limitValue })
-          .map((foundIn) => {
-            const field = foundIn.field;
-            foundIn.result.map((index) => {
-              const feature = fswi.index.get(index);
-              const score = computeTermSimilarity(
-                termToUse.trim(),
-                feature.properties[field]
-              );
-              results.push({ index, feature, layer: fswi.layer, field, score });
-            });
+        const searchResults = fswi.searchDocument.search(termToUse, {
+          limit: page * limitValue
+        }) as WorkspaceSearchMatch[];
+
+        searchResults.forEach((foundIn) => {
+          const field = foundIn.field;
+
+          if (field === undefined) {
+            return;
+          }
+
+          foundIn.result.forEach((index) => {
+            const feature = fswi.index.get(index);
+
+            if (!feature) {
+              return;
+            }
+
+            const score = computeTermSimilarity(
+              termToUse.trim(),
+              feature.properties[field]
+            );
+            results.push({ index, feature, layer: fswi.layer, field, score });
           });
+        });
       });
 
     results.sort((a, b) => (a.score > b.score ? -1 : 1));
-    const gettedIndex = [];
+    const gettedIndex = new Set<EntityKey>();
     const sortedResultToProcess: WorkspaceData[] = [];
-    results.map((r) => {
-      if (!gettedIndex.includes(r.index)) {
-        gettedIndex.push(r.index);
+    results.forEach((r) => {
+      if (!gettedIndex.has(r.index)) {
+        gettedIndex.add(r.index);
         sortedResultToProcess.push(r);
       }
     });
@@ -170,33 +208,37 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
       meta: {
         dataType: FEATURE,
         id,
-        title: data.feature.meta.title,
+        title: data.feature.meta?.title,
         titleHtml: titleHtml + subtitleHtml2,
         icon: 'location_on',
         score: data.score,
         nextPage:
-          resultsCnt % +this.options.params.limit === 0 &&
-          +this.options.params.page < 10
+          resultsCnt % +(this.options.params?.limit ?? 10) === 0 &&
+          +(this.options.params?.page ?? 1) < 10
       }
     } as SearchResult<Feature>;
   }
 
-  private getAllowedFieldsAndAlias(layer: Layer) {
-    let allowedFieldsAndAlias;
+  private getAllowedFieldsAndAlias(
+    layer: Layer
+  ): Record<string, string> | undefined {
     if (
       layer.options?.source?.options?.sourceFields &&
       layer.options.source.options.sourceFields.length >= 1
     ) {
-      allowedFieldsAndAlias = {};
+      const allowedFieldsAndAlias: Record<string, string> = {};
       layer.options.source.options.sourceFields.forEach((sourceField) => {
         const alias = sourceField.alias ? sourceField.alias : sourceField.name;
         allowedFieldsAndAlias[sourceField.name] = alias;
       });
+
+      return allowedFieldsAndAlias;
     }
-    return allowedFieldsAndAlias;
+
+    return undefined;
   }
 
-  private computeProperties(data: WorkspaceData): Record<string, any> {
+  private computeProperties(data: WorkspaceData): WorkspaceResultProperties {
     if (!data.feature.geometry) {
       return Object.assign(
         { type: data.layer.title + '.' + data.field },
@@ -209,7 +251,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     } = {
       GoogleMaps: ''
     };
-    let googleMaps;
+    let googleMaps: string;
     if (data.feature.geometry.type === 'Point') {
       googleMaps = GoogleLinks.getGoogleMapsCoordLink(
         data.feature.geometry.coordinates[0],
@@ -244,7 +286,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
         '</u> </span>'
     };
     return Object.assign(
-      { type: data.feature.sourceId },
+      { type: data.feature.sourceId ?? data.layer.title ?? '' },
       data.feature.properties,
       googleLinksProperties,
       routing

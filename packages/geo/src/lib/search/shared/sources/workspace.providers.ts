@@ -1,6 +1,13 @@
 import { SearchSource } from './source';
-import { SearchSourceFeature, SearchSourceKind } from './source.interfaces';
-import { WorkspaceSearchSource } from './workspace';
+import {
+  SearchSourceFeature,
+  SearchSourceKind,
+  SearchSourceOptions
+} from './source.interfaces';
+import {
+  WORKSPACE_SEARCH_SOURCE_OPTIONS,
+  WorkspaceSearchSource
+} from './workspace';
 
 /**
  * Workspace search source factory
@@ -21,9 +28,16 @@ export function provideWorkspaceSearchSource() {
   };
 }
 
-export function withWorkspaceSource(): SearchSourceFeature<SearchSourceKind.Workspace> {
+export function withWorkspaceSource(
+  options?: SearchSourceOptions
+): SearchSourceFeature<SearchSourceKind.Workspace> {
   return {
     kind: SearchSourceKind.Workspace,
-    providers: [provideWorkspaceSearchSource()]
+    providers: [
+      provideWorkspaceSearchSource(),
+      ...(options
+        ? [{ provide: WORKSPACE_SEARCH_SOURCE_OPTIONS, useValue: options }]
+        : [])
+    ]
   };
 }

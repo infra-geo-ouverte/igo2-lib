@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,23 +24,8 @@ export class BookmarkButtonComponent {
   private contextService = inject(ContextService);
   private messageService = inject(MessageService);
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
+  readonly map = input.required<IgoMap>();
+  readonly color = input<string>();
 
   createContext() {
     this.dialog
@@ -49,7 +34,7 @@ export class BookmarkButtonComponent {
       .pipe(take(1))
       .subscribe((title) => {
         if (title) {
-          const context = this.contextService.getContextFromMap(this.map);
+          const context = this.contextService.getContextFromMap(this.map());
           context.title = title;
           this.contextService.create(context).subscribe(() => {
             this.messageService.success(
@@ -58,7 +43,7 @@ export class BookmarkButtonComponent {
               undefined,
               { value: context.title }
             );
-            this.contextService.loadContext(context.uri);
+            this.contextService.loadContext(context.uri!);
           });
         }
       });

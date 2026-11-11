@@ -1,10 +1,4 @@
-import {
-  Directive,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  inject
-} from '@angular/core';
+import { Directive, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { SearchBarComponent } from '@igo2/geo';
 
@@ -14,42 +8,41 @@ import { SearchState } from '../search.state';
 
 @Directive({
   selector: '[igoSearchBarBinding]',
-  standalone: true
+  host: {
+    '(searchTermChange)': 'onSearchTermChange($any($event))',
+    '(searchTypeChange)': 'onSearchTypeChange($any($event))'
+  }
 })
 export class SearchBarBindingDirective implements OnInit, OnDestroy {
   private component = inject(SearchBarComponent, { self: true });
   private searchState = inject(SearchState);
 
-  get searchTerm(): string {
+  get searchTerm(): string | undefined {
     return this.searchState.searchTerm$.value;
   }
-  get searchType(): string {
+  get searchType(): string | undefined {
     return this.searchState.searchType$.value;
   }
 
-  private searchTerm$$: Subscription;
-  private searchType$$: Subscription;
-  private searchDisabled$$: Subscription;
+  private searchTerm$$!: Subscription;
+  private searchType$$!: Subscription;
+  private searchDisabled$$!: Subscription;
 
   ngOnInit() {
-    this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
-      (searchTerm: string) => {
-        if (searchTerm !== undefined && searchTerm !== null) {
-          this.component.setTerm(searchTerm);
-        }
+    this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm) => {
+      if (searchTerm !== undefined && searchTerm !== null) {
+        this.component.setTerm(searchTerm);
       }
-    );
+    });
 
-    this.searchType$$ = this.searchState.searchType$.subscribe(
-      (searchType: string) => {
-        if (searchType !== undefined && searchType !== null) {
-          this.component.setSearchType(searchType);
-        }
+    this.searchType$$ = this.searchState.searchType$.subscribe((searchType) => {
+      if (searchType !== undefined && searchType !== null) {
+        this.component.setSearchType(searchType);
       }
-    );
+    });
 
     this.searchDisabled$$ = this.searchState.searchDisabled$.subscribe(
-      (searchDisabled: boolean) => {
+      (searchDisabled) => {
         this.component.disabled = searchDisabled;
       }
     );
@@ -61,14 +54,12 @@ export class SearchBarBindingDirective implements OnInit, OnDestroy {
     this.searchDisabled$$.unsubscribe();
   }
 
-  @HostListener('searchTermChange', ['$event'])
   onSearchTermChange(searchTerm?: string) {
     if (searchTerm !== this.searchTerm) {
       this.searchState.setSearchTerm(searchTerm);
     }
   }
 
-  @HostListener('searchTypeChange', ['$event'])
   onSearchTypeChange(searchType?: string) {
     if (searchType !== this.searchType) {
       this.searchState.setSearchType(searchType);

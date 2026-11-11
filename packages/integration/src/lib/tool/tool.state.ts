@@ -24,7 +24,7 @@ export class ToolState {
     return this.toolService.toolbox;
   }
 
-  public openSidenav$ = new BehaviorSubject<boolean>(undefined);
+  public openSidenav$ = new BehaviorSubject<boolean | undefined>(undefined);
 
   toolToActivateFromOptions(toolToActivate: {
     tool: string;
@@ -34,7 +34,7 @@ export class ToolState {
       return;
     }
     if (toolToActivate.tool === 'importExport') {
-      let exportOptions: ExportOptions =
+      let exportOptions: ExportOptions | undefined =
         this.importExportState.exportOptions$.value;
       if (!exportOptions) {
         exportOptions = {

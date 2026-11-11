@@ -25,10 +25,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   selector: 'app-salutation-widget',
   template: `
     <p>Hello, my name is {{ name() }}.</p>
-    <button mat-flat-button (click)="complete.emit(name())">
+    <button mat-flat-button (click)="complete.emit(name()!)">
       Nice to meet you
     </button>
-    <button mat-flat-button (click)="cancel.emit(name())">Dismiss</button>
+    <button mat-flat-button (click)="cancel.emit(name()!)">Dismiss</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule]
@@ -38,7 +38,7 @@ export class AppSalutationWidgetComponent
 {
   private cdRef = inject(ChangeDetectorRef);
 
-  readonly name = input<string>(undefined);
+  readonly name = input<string>();
   readonly complete = output<string>();
   readonly cancel = output<string>();
 

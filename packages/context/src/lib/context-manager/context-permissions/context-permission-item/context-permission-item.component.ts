@@ -31,39 +31,24 @@ export class ContextPermissionItemComponent {
 
   type = computed(() => {
     const permission = this.permission();
-    return isContextPermissionUser(permission)
-      ? this.isUserExtranet(permission)
-        ? 'Extranet'
-        : 'Intranet'
-      : 'Profil';
+    return isContextPermissionUser(permission) ? 'Intranet' : 'Profil';
   });
   icon = computed(() => {
     const permission = this.permission();
-    return permission.profilType === 'user'
-      ? this.isUserExtranet(permission)
-        ? 'person'
-        : 'person_shield'
-      : 'badge';
+    return permission.profilType === 'user' ? 'person_shield' : 'badge';
   });
   canDelete = computed(() => {
     const permission = this.permission();
     return (
       this.canWrite() ||
       (isContextPermissionUser(permission) &&
-        permission.user.externalId === this.user().id)
+        permission.user.externalId === this.user()?.id)
     );
   });
 
   delete = output<IAnyContextPermission>();
 
   isContextPermissionUser = isContextPermissionUser;
-
-  isUserExtranet(permission: IAnyContextPermission): boolean {
-    return (
-      isContextPermissionUser(permission) &&
-      permission.userSource.includes('extranet')
-    );
-  }
 
   onDelete(): void {
     this.delete.emit(this.permission());

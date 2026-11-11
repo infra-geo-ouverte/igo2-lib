@@ -1,4 +1,12 @@
-import { Component, OnInit, input, output } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  input,
+  output
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -11,7 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core/language';
 
-import { debounceTime } from 'rxjs';
+import { debounce, of, timer } from 'rxjs';
 
 @Component({
   selector: 'igo-layer-search',
@@ -28,12 +36,14 @@ import { debounceTime } from 'rxjs';
   ]
 })
 export class LayerSearchComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   control = new FormControl();
 
-  readonly initialValue = input<string>(undefined);
-  readonly floatLabel = input<FloatLabelType>(undefined);
-  readonly placeholder = input<string>(undefined);
-  readonly tooltip = input<string>(undefined);
+  readonly initialValue = input<string>();
+  readonly floatLabel = input<FloatLabelType>('auto');
+  readonly placeholder = input<string>();
+  readonly tooltip = input<string>();
 
   readonly searchChange = output<string | undefined>();
 
@@ -45,9 +55,14 @@ export class LayerSearchComponent implements OnInit {
       });
     }
 
-    this.control.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
-      this.searchChange.emit(value);
-    });
+    this.control.valueChanges
+      .pipe(
+        debounce((value) => (value ? timer(300) : of(0))),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value) => {
+        this.searchChange.emit(value);
+      });
   }
 
   clearTerm(): void {

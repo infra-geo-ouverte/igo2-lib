@@ -7,8 +7,7 @@ import { Directive, HostListener, input, output } from '@angular/core';
  * @param iOSOnly define if longpress is triggered only for iOS, default value = true
  */
 @Directive({
-  selector: '[igoLongPress]',
-  standalone: true
+  selector: '[igoLongPress]'
 })
 export class LongPressDirective {
   private touchTimeout: any;

@@ -13,5 +13,17 @@ export interface ArcGISRestDataSourceOptionsParams {
   style?: any;
   timefilter?: any;
   timeExtent?: string;
+  time?: string;
   attributions?: string | string[];
+}
+
+export interface ArcGISSymbol {
+  type?: string;
+  style?: string;
+  color?: number[];
+  width?: number;
+  outline?: { color: number[]; width: number };
+  size?: number;
+  contentType?: string;
+  imageData?: string;
 }

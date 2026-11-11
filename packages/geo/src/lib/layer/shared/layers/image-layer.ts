@@ -1,6 +1,4 @@
-import { Optional } from '@angular/core';
-
-import { AuthInterceptor } from '@igo2/auth';
+import { IXhrInterceptor } from '@igo2/core/auth';
 import { MessageService } from '@igo2/core/message';
 
 import olLayerImage from 'ol/layer/Image';
@@ -22,13 +20,9 @@ export class ImageLayer extends Layer {
 
   private watcher: ImageWatcher;
 
-  constructor(
-    options: ImageLayerOptions,
-    @Optional() public messageService?: MessageService,
-    @Optional() public authInterceptor?: AuthInterceptor
-  ) {
-    super(options, messageService, authInterceptor);
-    this.watcher = new ImageWatcher(this, this.messageService);
+  constructor(options: ImageLayerOptions) {
+    super(options);
+    this.watcher = new ImageWatcher(this, this.messageService ?? undefined);
     this.status$ = this.watcher.status$;
     this.status$.subscribe((valStatus) => {
       if (valStatus === 0) {
@@ -39,14 +33,21 @@ export class ImageLayer extends Layer {
 
   protected createOlLayer(): olLayerImage<olSourceImage> {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceImage
+      source: this.options.source!.ol as olSourceImage
     });
 
     const image = new olLayerImage(olOptions);
-    if (this.authInterceptor) {
-      (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, this.authInterceptor, this.messageService);
-      });
+    if (this.xhrInterceptor) {
+      (image.getSource()! as any).setImageLoadFunction(
+        (tile: any, src: string) => {
+          this.customLoader(
+            tile,
+            src,
+            this.xhrInterceptor!,
+            this.messageService ?? undefined
+          );
+        }
+      );
     }
 
     return image;
@@ -58,7 +59,7 @@ export class ImageLayer extends Layer {
     } else {
       this.watcher.subscribe(() => void 1);
     }
-    super.init(map);
+    super.init(map as MapBase);
   }
 
   remove(): void {
@@ -66,10 +67,11 @@ export class ImageLayer extends Layer {
     super.remove();
   }
 
-  private customLoader(
-    tile,
+  private async customLoader(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tile: any,
     src: string,
-    interceptor?: AuthInterceptor,
+    interceptor?: IXhrInterceptor,
     messageService?: MessageService
   ) {
     const xhr = new XMLHttpRequest();
@@ -79,6 +81,18 @@ export class ImageLayer extends Layer {
     if (alteredUrlWithKeyAuth) {
       url = alteredUrlWithKeyAuth;
     }
+    let prepared: boolean | undefined;
+    try {
+      prepared = await interceptor?.prepareXhr?.(url);
+    } catch {
+      xhr.abort();
+      return;
+    }
+    if (prepared === false) {
+      xhr.abort();
+      return;
+    }
+
     xhr.open('GET', url);
     const intercepted = interceptor?.interceptXhr(xhr, url);
     if (!intercepted) {

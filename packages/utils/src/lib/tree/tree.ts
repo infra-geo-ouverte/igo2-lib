@@ -63,13 +63,17 @@ export class Tree<T> {
    * @param node
    * @param beforeTo The position of index into the tree. If -1 move at the end
    */
-  moveTo(beforeTo: number[], ...nodes: T[]): T[] {
+  moveTo(beforeTo: number[], ...nodes: T[]): T[] | undefined {
     const clonedBeforeTo = [...beforeTo];
-    const lastIndex = clonedBeforeTo.pop();
+    const lastIndex = clonedBeforeTo.pop()!;
     const recipient = this.getAncestorAtPosition(clonedBeforeTo);
+    if (!recipient) {
+      return;
+    }
+
     const beforeId =
       lastIndex === -1 || lastIndex >= recipient.length
-        ? null
+        ? undefined
         : this.getId(recipient[lastIndex]);
 
     const nodesToMove = nodes.filter((node) => beforeId !== this.getId(node));
@@ -101,12 +105,12 @@ export class Tree<T> {
     return nodes.reduce((acc: T[], node) => {
       const ancestor = this.getNodeAncestor(node);
       if (!ancestor) {
-        return;
+        return acc;
       }
 
       const index = this.getIndex(this.getId(node), ancestor);
       if (index === -1) {
-        return;
+        return acc;
       }
       ancestor.splice(index, 1);
 
@@ -156,7 +160,7 @@ export class Tree<T> {
 
       return false;
     });
-    return indexList;
+    return indexList!;
   }
 
   private getAncestorAtPosition(position: number[]) {
@@ -164,6 +168,9 @@ export class Tree<T> {
       return this._data;
     }
     const node = this.getNodeByPosition(position);
+    if (!node) {
+      return;
+    }
     return this.getChildren(node);
   }
 
@@ -184,8 +191,8 @@ export class Tree<T> {
   }
 
   /** Recursive */
-  private _getNodeById(id: string, data = this._data): T {
-    let node: T;
+  private _getNodeById(id: string, data = this._data): T | undefined {
+    let node: T | undefined;
     data.some((item) => {
       if (this.getId(item) === id) {
         node = item;
@@ -205,14 +212,14 @@ export class Tree<T> {
     return node;
   }
 
-  getNodeByPosition(indexes: number[]): T {
+  getNodeByPosition(indexes: number[]): T | undefined {
     if (indexes.length > 1) {
-      return indexes.reduce((previousValue: T, index) => {
+      return indexes.reduce((previousValue: T | undefined, index) => {
         const ancestor = previousValue
           ? this.getChildren(previousValue)
           : this._data;
-        return this._getByIndex(index, ancestor);
-      }, null);
+        return this._getByIndex(index, ancestor ?? undefined);
+      }, undefined);
     } else {
       return this._getByIndex(indexes[0]);
     }
@@ -222,14 +229,14 @@ export class Tree<T> {
     return ancestor[index];
   }
 
-  private getNodeAncestor(node: T): T[] {
+  private getNodeAncestor(node: T): T[] | undefined {
     const id = this.getId(node);
     return this.getAncestorById(id);
   }
 
   /** Recursive */
   private getAncestorById(id: TreeId, data = this._data): T[] | undefined {
-    let ancestor: T[];
+    let ancestor: T[] | undefined;
     data.some((item) => {
       if (this.getId(item) === id) {
         ancestor = data;

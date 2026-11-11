@@ -1,41 +1,31 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AuthService } from '@igo2/auth';
-import { IgoAuthFormModule } from '@igo2/auth/form';
 import { ConfigService } from '@igo2/core/config';
 import { provideMockTranslation } from '@igo2/core/language';
-import { MessageService } from '@igo2/core/message';
 import {
   AnyMonitoringOptions,
   MOCK_MONITORING_OPTIONS,
   MONITORING_OPTIONS
 } from '@igo2/core/monitoring';
 
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-
-import { mergeTestConfig } from '../../../test-config';
 import { AuthMonitoringService } from './auth-monitoring.service';
 
 const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
 ) => {
-  TestBed.configureTestingModule(
-    mergeTestConfig({
-      imports: [IgoAuthFormModule, ToastrModule],
-      providers: [
-        { provide: MONITORING_OPTIONS, useValue: options },
-        ToastrService,
-        MessageService,
-        provideMockTranslation()
-      ]
-    })
-  );
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: MONITORING_OPTIONS, useValue: options },
+      provideMockTranslation()
+    ]
+  });
 
   const configService = TestBed.inject(ConfigService);
   const authService = TestBed.inject(AuthService);
   const authMonitoringService = TestBed.inject(AuthMonitoringService);
 
-  spyOn<any>(authMonitoringService, '_identifyUser');
+  vi.spyOn(authMonitoringService as any, '_identifyUser');
 
   configService.load({});
 

@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "20.3.3",
+  "version": "21.0.0-next.55",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -22,7 +22,8 @@
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint integration",
     "lint.fix": "ng lint integration --fix",
-    "test": "",
+    "types": "tsc -p ./tsconfig.lib.json --noEmit && tsc -p ./tsconfig.spec.json --noEmit",
+    "test": "ng test integration --watch=false",
     "watch": "ng build integration --watch"
   },
   "exports": {
@@ -34,13 +35,13 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
     "@igo2/auth": "*",
     "@igo2/context": "*",
     "@igo2/geo": "*",
-    "@turf/point-on-feature": "^7.2.0",
-    "jspdf": "^4.0.0",
+    "@turf/point-on-feature": "^7.3.0",
+    "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.0",
     "rxjs": "^7.8.0"
   },

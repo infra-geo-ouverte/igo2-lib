@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { UntypedFormControl } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { IgoLanguageModule } from '@igo2/core/language';
@@ -35,7 +35,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     MatOptionModule,
-    MatIconModule,
+    MatCheckboxModule,
     IgoLanguageModule
   ]
 })
@@ -55,17 +55,22 @@ export class FormFieldSelectComponent implements OnInit {
   /**
    * The field's form control
    */
-  readonly formControl = input<UntypedFormControl>(undefined);
+  readonly formControl = input.required<UntypedFormControl>();
+
+  /**
+   * Field showLabel
+   */
+  readonly showLabel = input<boolean>(false);
 
   /**
    * Field placeholder
    */
-  readonly placeholder = input<string>(undefined);
+  readonly placeholder = input<string>();
 
   /**
    * Field placeholder
    */
-  readonly errors = input<Record<string, string>>(undefined);
+  readonly errors = input<Record<string, string>>();
 
   /**
    * Wheter a disable switch should be available
@@ -87,7 +92,7 @@ export class FormFieldSelectComponent implements OnInit {
    * Get error message
    */
   getErrorMessage(): string {
-    return getControlErrorMessage(this.formControl(), this.errors());
+    return getControlErrorMessage(this.formControl(), this.errors() || {});
   }
 
   onDisableSwitchClick() {

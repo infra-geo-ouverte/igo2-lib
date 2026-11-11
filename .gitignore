@@ -30,6 +30,7 @@ node_modules
 /.angular/cache
 /.sass-cache
 /connect.lock
+/skills-lock.json
 /coverage
 /libpeerconnection.log
 npm-debug.log
