@@ -125,6 +125,11 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     LayerListControlsOptions
   >({}, { transform: (value) => this.transformLayerListControls(value) });
 
+  readonly legendTabEnabled = this.configService.getConfig(
+    'sidenav.maptools.legendTabEnabled',
+    true
+  );
+
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -241,14 +246,16 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   private selectedTab() {
     const userSelectedTab = this.layerListToolState.selectedTab$.value;
+    if (!this.legendTabEnabled) {
+      this.layerListToolState.setSelectedTab(0);
+      return;
+    }
     if (userSelectedTab !== undefined) {
       this.layerListToolState.setSelectedTab(userSelectedTab);
     } else {
-      if (this.selectedTabAtOpening() === 'legend') {
-        this.layerListToolState.setSelectedTab(1);
-      } else {
-        this.layerListToolState.setSelectedTab(0);
-      }
+      this.layerListToolState.setSelectedTab(
+        this.selectedTabAtOpening() === 'legend' ? 1 : 0
+      );
     }
   }
 
