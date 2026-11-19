@@ -27,7 +27,9 @@ export interface ContextMenuPosition {
 
 @Directive({
   selector: '[igoContextMenu]',
-  hostDirectives: [LongPressDirective],
+  hostDirectives: [
+    { directive: LongPressDirective, inputs: ['touchDuration'] }
+  ],
   host: {
     '(contextmenu)': 'onContextMenu($event)'
   }

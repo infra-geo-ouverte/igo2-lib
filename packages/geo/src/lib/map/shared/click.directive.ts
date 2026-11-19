@@ -35,8 +35,7 @@ import {
 import { roundCoordTo } from './map.utils';
 
 @Directive({
-  selector: '[igoMapClick]',
-  hostDirectives: [{ directive: LongPressDirective, inputs: ['touchDuration'] }]
+  selector: '[igoMapClick]'
 })
 export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   /**
@@ -48,11 +47,20 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   private component = inject(MapBrowserComponent, { self: true });
   private overlayService = inject(OverlayService);
   private document = inject(DOCUMENT);
-  private longPress = inject(LongPressDirective, { self: true });
+  /**
+   * Long press provider, when present on the element: hosted by
+   * igoContextMenu (e.g. via igoMapContextMenu) or applied
+   * explicitly with the igoLongPress attribute. Without it, the
+   * `longpress` trigger is unavailable.
+   */
+  private longPress = inject(LongPressDirective, {
+    self: true,
+    optional: true
+  });
   public overlay: Overlay | undefined;
 
   constructor() {
-    this.longPress.longpress.subscribe((domEvent: TouchEvent) =>
+    this.longPress?.longpress.subscribe((domEvent: TouchEvent) =>
       this.onLongPress(domEvent)
     );
   }

@@ -58,7 +58,7 @@ describe('ContextMenuDirective', () => {
     ).toBeTruthy();
   });
 
-  it('should open the menu on a touch long press (igoLongPress host directive)', () => {
+  it('should open the menu on a touch long press (igoLongPress hosted)', () => {
     vi.useFakeTimers();
     const touchEvent = new TouchEvent('touchstart');
     Object.defineProperty(touchEvent, 'touches', {

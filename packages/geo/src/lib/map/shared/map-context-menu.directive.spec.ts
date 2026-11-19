@@ -14,6 +14,8 @@ import { vi } from 'vitest';
 import { LayerController } from '../../layer';
 import { IgoMap } from '../../map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { OverlayService } from '../../overlay/shared/overlay.service';
+import { MapClickDirective } from './click.directive';
 import {
   MapContextMenuAction,
   MapContextMenuDirective
@@ -24,6 +26,8 @@ function createMapMock(): IgoMap {
   ol.getInteractions = () => ({ getArray: () => [] });
   ol.addInteraction = vi.fn();
   ol.removeInteraction = vi.fn();
+  const viewport = document.createElement('div');
+  ol.getViewport = () => viewport;
   // Echo the client position as the map coordinate
   ol.getEventPixel = (event: MouseEvent | TouchEvent) => {
     const position =
@@ -64,13 +68,31 @@ class HostComponent {
   onCoordinate = vi.fn();
 }
 
+@Component({
+  template: `
+    <igo-map-browser
+      [map]="map"
+      igoMapClick
+      [igoMapContextMenu]="actions"
+    ></igo-map-browser>
+  `,
+  imports: [MapBrowserComponent, MapClickDirective, MapContextMenuDirective]
+})
+class ComboHostComponent {
+  readonly map = createMapMock() as any;
+  readonly actions: MapContextMenuAction[] = [
+    { id: 'combo', title: 'Combo', handler: vi.fn() }
+  ];
+}
+
 describe('MapContextMenuDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
   let element: HTMLElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HostComponent]
+      imports: [HostComponent, ComboHostComponent],
+      providers: [{ provide: OverlayService, useValue: { create: vi.fn() } }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(HostComponent);
@@ -217,5 +239,46 @@ describe('MapContextMenuDirective', () => {
     expect(
       fixture.componentInstance.onCoordinate
     ).toHaveBeenCalledExactlyOnceWith([-71.5, 46.5]);
+  });
+
+  it('should coexist with igoMapClick on the same element (no NG0309)', () => {
+    vi.useFakeTimers();
+    const comboFixture = TestBed.createComponent(ComboHostComponent);
+
+    expect(() => comboFixture.detectChanges()).not.toThrow();
+
+    // The single long press instance (hosted by igoContextMenu) opens
+    // the menu and feeds igoMapClick's longpress trigger
+    const comboDebugElement = comboFixture.debugElement.query(
+      By.directive(MapContextMenuDirective)
+    );
+    const host: HTMLElement = comboDebugElement.nativeElement;
+    const mapClick = comboDebugElement.injector.get(MapClickDirective);
+    const emitted = vi.fn();
+    mapClick.mapClick.subscribe(emitted);
+    const touch = new Touch({
+      identifier: 1,
+      target: host,
+      clientX: -71.5,
+      clientY: 46.5,
+      pageX: -71.5,
+      pageY: 46.5
+    });
+    host.dispatchEvent(
+      new TouchEvent('touchstart', {
+        touches: [touch],
+        changedTouches: [touch]
+      })
+    );
+    vi.advanceTimersByTime(400);
+
+    expect(
+      TestBed.inject(OverlayContainer)
+        .getContainerElement()
+        .querySelector('igo-actionbar')
+    ).toBeTruthy();
+    expect(emitted).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ trigger: 'longpress' })
+    );
   });
 });
