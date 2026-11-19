@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '@igo2/auth';
@@ -22,14 +29,17 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppAuthFormComponent implements OnInit, OnDestroy {
   private _authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   public logged = false;
   public logged$$!: Subscription;
 
   ngOnInit() {
-    this.logged$$ = this._authService.logged$.subscribe((logged: boolean) => {
-      this.logged = logged;
-    });
+    this.logged$$ = this._authService.logged$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((logged: boolean) => {
+        this.logged = logged;
+      });
   }
 
   logout() {
