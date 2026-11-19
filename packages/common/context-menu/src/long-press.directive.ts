@@ -4,15 +4,13 @@ import { Directive, HostListener, input, output } from '@angular/core';
  * IgoLongPress trigger longpress event after a define duration.
  * This directive exist to patch the unavailable contextmenu event on iOS.
  * @param touchDuration touch duration in ms, default value is 400ms
- * @param iOSOnly define if longpress is triggered only for iOS, default value = true
  */
 @Directive({
   selector: '[igoLongPress]'
 })
 export class LongPressDirective {
-  private touchTimeout: any;
+  private touchTimeout: ReturnType<typeof setTimeout> | undefined;
   readonly touchDuration = input(400);
-  readonly onlyIOS = input(true);
   readonly longpress = output<TouchEvent>();
 
   @HostListener('touchstart', ['$event'])

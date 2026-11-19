@@ -13,10 +13,12 @@ import type { TemplateRef } from '@angular/core';
 import { Subscription, fromEvent } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
+import { LongPressDirective } from './long-press.directive';
+
 @Directive({
   selector: '[igoContextMenu]',
+  hostDirectives: [LongPressDirective],
   host: {
-    '(longpress)': 'onContextMenu($any($event))',
     '(contextmenu)': 'onContextMenu($event)'
   }
 })
@@ -24,6 +26,7 @@ export class ContextMenuDirective {
   overlay = inject(Overlay);
   viewContainerRef = inject(ViewContainerRef);
   private elementRef = inject(ElementRef);
+  private longPress = inject(LongPressDirective, { self: true });
 
   private overlayRef: OverlayRef | null = null;
   private sub?: Subscription;
@@ -36,13 +39,20 @@ export class ContextMenuDirective {
     y: number;
   }>();
 
+  constructor() {
+    // Open the menu on touch long press (iOS fires no contextmenu event)
+    this.longPress.longpress.subscribe((event: TouchEvent) =>
+      this.onContextMenu(event)
+    );
+  }
+
   onContextMenu(e: MouseEvent | TouchEvent): void {
     let x;
     let y;
     if (e instanceof MouseEvent) {
       x = e.x;
       y = e.y;
-    } else if (e instanceof TouchEvent) {
+    } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
       x = e.touches[0].pageX;
       y = e.touches[0].pageY;
     }
