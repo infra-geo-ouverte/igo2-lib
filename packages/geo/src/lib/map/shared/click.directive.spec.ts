@@ -23,6 +23,16 @@ function createMapMock(): IgoMap {
   ol.getInteractions = () => ({ getArray: () => [] });
   ol.addInteraction = vi.fn();
   ol.removeInteraction = vi.fn();
+  const viewport = document.createElement('div');
+  ol.getViewport = () => viewport;
+  // Echo the client position as the map coordinate
+  ol.getEventCoordinate = (event: MouseEvent) => [event.clientX, event.clientY];
+  ol.getEventPixel = (event: MouseEvent | TouchEvent) => {
+    const position =
+      'changedTouches' in event ? event.changedTouches[0] : event;
+    return [position.clientX, position.clientY];
+  };
+  ol.getCoordinateFromPixel = (pixel: [number, number]) => pixel;
 
   return {
     ol,
@@ -80,6 +90,41 @@ describe('MapClickDirective', () => {
     });
   };
 
+  const getViewport = (): HTMLElement =>
+    fixture.componentInstance.map.ol.getViewport();
+
+  const dispatchContextMenu = (coordinate: [number, number]): MouseEvent => {
+    const domEvent = new MouseEvent('contextmenu', {
+      clientX: coordinate[0],
+      clientY: coordinate[1],
+      cancelable: true
+    });
+    getViewport().dispatchEvent(domEvent);
+    return domEvent;
+  };
+
+  const dispatchTouch = (
+    type: 'touchstart' | 'touchmove' | 'touchend',
+    coordinate: [number, number]
+  ) => {
+    // igoLongPress listens on the host element, not the viewport
+    const host: HTMLElement = fixture.debugElement.query(
+      By.directive(MapClickDirective)
+    ).nativeElement;
+    const touch = new Touch({
+      identifier: 1,
+      target: host,
+      clientX: coordinate[0],
+      clientY: coordinate[1]
+    });
+    host.dispatchEvent(
+      new TouchEvent(type, {
+        touches: type === 'touchend' ? [] : [touch],
+        changedTouches: [touch]
+      })
+    );
+  };
+
   beforeEach(async () => {
     overlayMock = createOverlayMock();
     overlayService = { create: vi.fn(() => overlayMock) };
@@ -98,7 +143,7 @@ describe('MapClickDirective', () => {
     expect(getDirective()).toBeTruthy();
   });
 
-  it('should create the overlay on init by default', () => {
+  it('should create the overlay when withClickOverlay is true', () => {
     fixture.detectChanges();
 
     expect(overlayService.create).toHaveBeenCalledWith(
@@ -123,6 +168,7 @@ describe('MapClickDirective', () => {
     dispatchSingleClick([-71.123456789, 46.987654321]);
 
     expect(emitted).toHaveBeenCalledExactlyOnceWith({
+      trigger: 'click',
       longitude: -71.123457,
       latitude: 46.987654,
       timestamp: expect.any(Number)
@@ -171,24 +217,150 @@ describe('MapClickDirective', () => {
     );
   });
 
+  describe('secondary click (right click / long press)', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should emit mapClick and prevent the native menu on contextmenu', () => {
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      // Integer values: MouseEvent client coordinates are WebIDL longs
+      const domEvent = dispatchContextMenu([-71, 46]);
+
+      expect(domEvent.defaultPrevented).toBe(true);
+      expect(emitted).toHaveBeenCalledExactlyOnceWith({
+        trigger: 'contextmenu',
+        longitude: -71,
+        latitude: 46,
+        timestamp: expect.any(Number)
+      });
+    });
+
+    it('should not touch the overlay on a secondary click', () => {
+      fixture.detectChanges();
+
+      dispatchContextMenu([-71, 46]);
+
+      expect(overlayMock.clear).not.toHaveBeenCalled();
+      expect(overlayMock.addFeature).not.toHaveBeenCalled();
+    });
+
+    it('should emit mapClick on touch long press (igoLongPress)', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      // Float32-exact values: Touch coordinates are stored as float32
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      vi.advanceTimersByTime(400);
+
+      expect(emitted).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ trigger: 'longpress', longitude: -71.5 })
+      );
+    });
+
+    it('should not emit twice when contextmenu follows the long press', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      vi.advanceTimersByTime(400);
+      dispatchContextMenu([-71.5, 46.5]);
+
+      expect(emitted).toHaveBeenCalledOnce();
+    });
+
+    it('should cancel the long press when the touch moves', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      dispatchTouch('touchmove', [-71.5 + 20, 46.5]);
+      vi.advanceTimersByTime(400);
+
+      expect(emitted).not.toHaveBeenCalled();
+    });
+
+    it('should cancel the long press on touchend', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      dispatchTouch('touchend', [-71.5, 46.5]);
+      vi.advanceTimersByTime(400);
+
+      expect(emitted).not.toHaveBeenCalled();
+    });
+
+    it('should not emit a click when OL fires singleclick after a long press release', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      vi.advanceTimersByTime(400);
+      // OL fires a singleclick when the finger is released
+      dispatchSingleClick([-71.5, 46.5]);
+
+      expect(emitted).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ trigger: 'longpress' })
+      );
+    });
+
+    it('should emit clicks again on the next gesture after a long press', () => {
+      vi.useFakeTimers();
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      dispatchTouch('touchstart', [-71.5, 46.5]);
+      vi.advanceTimersByTime(400);
+      // New gesture: pointerdown resets the suppression
+      getViewport().dispatchEvent(new PointerEvent('pointerdown'));
+      dispatchSingleClick([-71.5, 46.5]);
+
+      expect(emitted).toHaveBeenCalledTimes(2);
+      expect(emitted).toHaveBeenLastCalledWith(
+        expect.objectContaining({ trigger: 'click' })
+      );
+    });
+
+    it('should stop handling secondary clicks on destroy', () => {
+      fixture.detectChanges();
+      const emitted = vi.fn();
+      getDirective().mapClick.subscribe(emitted);
+
+      fixture.destroy();
+      dispatchContextMenu([-71.2, 46.8]);
+
+      expect(emitted).not.toHaveBeenCalled();
+    });
+  });
+
   describe('parent frame messaging', () => {
-    // `self` and `parent` are [Replaceable] own properties of `window`:
-    // assignment shadows them, so keep the originals to restore them
-    const mutableWindow = window as unknown as Record<
-      'self' | 'parent',
-      unknown
-    >;
-    const originalSelf = window.self;
+    // `parent` is a [Replaceable] own property of `window`: assignment
+    // shadows it, so keep the original to restore it
+    const mutableWindow = window as unknown as Record<'parent', unknown>;
     const originalParent = window.parent;
 
     afterEach(() => {
-      mutableWindow.self = originalSelf;
       mutableWindow.parent = originalParent;
     });
 
     const fakeIframeContext = () => {
       const postMessage = vi.fn();
-      mutableWindow.self = {};
+      // Embedded: the parent differs from the window itself
       mutableWindow.parent = { postMessage };
       return postMessage;
     };
@@ -203,6 +375,7 @@ describe('MapClickDirective', () => {
         {
           type: MAP_CLICK_MESSAGE_TYPE,
           data: {
+            trigger: 'click',
             longitude: -71.2,
             latitude: 46.8,
             timestamp: expect.any(Number)
@@ -227,11 +400,9 @@ describe('MapClickDirective', () => {
 
     it('should not post any message when not embedded', () => {
       fixture.detectChanges();
-      const postMessage = vi.fn();
-      // The vitest browser runner itself runs in an iframe, so simulate
-      // a top-level window by making `self === top`
-      mutableWindow.self = window.top;
-      mutableWindow.parent = { postMessage };
+      // Top-level window: it is its own parent
+      mutableWindow.parent = window;
+      const postMessage = vi.spyOn(window, 'postMessage');
 
       dispatchSingleClick([-71.2, 46.8]);
 
