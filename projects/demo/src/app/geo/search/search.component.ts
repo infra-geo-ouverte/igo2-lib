@@ -12,7 +12,7 @@ import {
   ActionbarComponent,
   ActionbarMode
 } from '@igo2/common/action';
-import { CONTEXT_MENU_DIRECTIVES } from '@igo2/common/context-menu';
+import { ContextMenuDirective } from '@igo2/common/context-menu';
 import { EntityStore } from '@igo2/common/entity';
 import { PanelComponent } from '@igo2/common/panel';
 import { MediaService } from '@igo2/core/media';
@@ -64,7 +64,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MapBrowserComponent,
     ZoomButtonComponent,
-    CONTEXT_MENU_DIRECTIVES,
+    ContextMenuDirective,
     IgoSearchModule,
     PanelComponent,
     SEARCH_RESULTS_DIRECTIVES,
