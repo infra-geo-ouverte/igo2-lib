@@ -7,6 +7,7 @@ import {
   inject,
   input
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -23,7 +24,7 @@ import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
 import * as olProj from 'ol/proj';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
@@ -111,7 +112,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   readonly length = input(2);
   readonly coordRoundedDecimals = input(6);
   readonly zoomToActiveRoute = input.required<boolean>();
-  readonly authenticated$ = input.required<BehaviorSubject<boolean>>();
+  readonly authenticated = input<boolean | null>();
+
+  readonly authenticated$ = toObservable(this.authenticated);
 
   /**
    * Wheter one of the direction control is active

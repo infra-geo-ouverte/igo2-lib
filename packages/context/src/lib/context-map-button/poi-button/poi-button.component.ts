@@ -1,4 +1,12 @@
-import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  OnDestroy,
+  OnInit,
+  inject,
+  input
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -49,6 +57,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private languageService = inject(LanguageService);
   private confirmDialogService = inject(ConfirmDialogService);
+  private destroyRef = inject(DestroyRef);
   selected?: Poi;
 
   readonly map = input.required<IgoMap>();
@@ -58,11 +67,13 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private authenticate$$!: Subscription;
 
   ngOnInit() {
-    this.authenticate$$ = this.authService.authenticate$.subscribe((auth) => {
-      if (auth) {
-        this.getPois();
-      }
-    });
+    this.authenticate$$ = this.authService.authenticate$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((auth) => {
+        if (auth) {
+          this.getPois();
+        }
+      });
   }
 
   ngOnDestroy() {

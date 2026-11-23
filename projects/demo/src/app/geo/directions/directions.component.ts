@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
@@ -22,8 +23,6 @@ import {
   withOsrmSource
 } from '@igo2/geo';
 
-import { BehaviorSubject } from 'rxjs';
-
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
@@ -36,7 +35,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MatGridListModule,
     MAP_DIRECTIVES,
-    DirectionsComponent
+    DirectionsComponent,
+    AsyncPipe
   ],
   providers: [
     provideDirection(withOsrmSource()),
@@ -73,10 +73,11 @@ export class AppDirectionsComponent {
     map: this.map
   });
 
-  public authenticated$: BehaviorSubject<boolean>;
+  get authenticated$() {
+    return this.authService.authenticate$;
+  }
 
   constructor() {
-    this.authenticated$ = this.authService.authenticate$;
     this.mapService.setMap(this.map);
 
     const layers: AnyLayerOptions[] = [

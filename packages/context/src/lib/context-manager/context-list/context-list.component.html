@@ -68,16 +68,16 @@
         </button>
       }
       <mat-menu #accountMenu="matMenu">
-        @for (user of users; track user.name) {
-          @if (!user.childs) {
+        @for (profil of contextProfils; track profil.name) {
+          @if (!profil.childs) {
             <button mat-menu-item class="profil-menu">
               <mat-checkbox
-                [checked]="getPermission(user)?.checked ?? false"
-                [indeterminate]="getPermission(user)?.indeterminate ?? false"
+                [checked]="getPermission(profil)?.checked ?? false"
+                [indeterminate]="getPermission(profil)?.indeterminate ?? false"
                 (click)="$event.stopPropagation()"
-                (change)="handleToggleCategory(user)"
+                (change)="handleToggleCategory(profil)"
               />
-              <span>{{ user.title }}</span>
+              <span>{{ profil.title }}</span>
             </button>
           } @else {
             <button
@@ -86,20 +86,20 @@
               class="profil-menu"
             >
               <mat-checkbox
-                [checked]="getPermission(user)?.checked ?? false"
-                [indeterminate]="getPermission(user)?.indeterminate ?? false"
+                [checked]="getPermission(profil)?.checked ?? false"
+                [indeterminate]="getPermission(profil)?.indeterminate ?? false"
                 (click)="$event.stopPropagation()"
-                (change)="handleToggleCategory(user)"
+                (change)="handleToggleCategory(profil)"
               />
-              <span>{{ user.title }}</span>
+              <span>{{ profil.title }}</span>
             </button>
             <mat-menu #subAccountMenu="matMenu">
-              @for (child of user.childs; track child.name) {
+              @for (child of profil.childs; track child.name) {
                 <button mat-menu-item class="profil-menu">
                   <mat-checkbox
                     [checked]="getPermission(child)?.checked ?? false"
                     (click)="$event.stopPropagation()"
-                    (change)="handleToggleCategory(child, user)"
+                    (change)="handleToggleCategory(child, profil)"
                   >
                     {{ child.title }}
                   </mat-checkbox>

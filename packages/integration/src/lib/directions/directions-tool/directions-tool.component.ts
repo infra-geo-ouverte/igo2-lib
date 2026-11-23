@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -25,14 +26,14 @@ import { DirectionState } from '../directions.state';
 @Component({
   selector: 'igo-directions-tool',
   templateUrl: './directions-tool.component.html',
-  imports: [IgoDirectionsModule]
+  imports: [IgoDirectionsModule, AsyncPipe]
 })
 export class DirectionsToolComponent implements OnInit {
   private directionState = inject(DirectionState);
   private mapState = inject(MapState);
   private messageService = inject(MessageService);
   private storageService = inject(StorageService);
-  contextState = inject(ContextState);
+  private contextState = inject(ContextState);
   private authService = inject(AuthService);
 
   public currentContextUri?: string;
