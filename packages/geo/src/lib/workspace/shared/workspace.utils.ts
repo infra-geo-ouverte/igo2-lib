@@ -29,8 +29,10 @@ import {
 } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
+import { EditionWorkspace } from './edition-workspace';
 import { FeatureWorkspace } from './feature-workspace';
 import { WfsWorkspace } from './wfs-workspace';
+import { AnyWorkspace } from './workspace.interface';
 
 export function getRowsInMapExtent(
   layerId: string,
@@ -314,4 +316,12 @@ export function createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilter
   return new EntityStoreFilterCustomFuncStrategy({
     filterClauseFunc
   } as EntityStoreStrategyFuncOptions);
+}
+
+export function isAnyWorkspace(workspace: unknown): workspace is AnyWorkspace {
+  return (
+    workspace instanceof WfsWorkspace ||
+    workspace instanceof FeatureWorkspace ||
+    workspace instanceof EditionWorkspace
+  );
 }
