@@ -207,8 +207,8 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
    */
   private listenToSecondaryClick() {
     const viewport = this.map.ol.getViewport();
-    viewport.addEventListener('contextmenu', this.onContextMenu);
-    viewport.addEventListener('pointerdown', this.onPointerDown);
+    viewport?.addEventListener('contextmenu', this.onContextMenu);
+    viewport?.addEventListener('pointerdown', this.onPointerDown);
   }
 
   /**
@@ -216,8 +216,8 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
    */
   private unlistenToSecondaryClick() {
     const viewport = this.map.ol.getViewport();
-    viewport.removeEventListener('contextmenu', this.onContextMenu);
-    viewport.removeEventListener('pointerdown', this.onPointerDown);
+    viewport?.removeEventListener('contextmenu', this.onContextMenu);
+    viewport?.removeEventListener('pointerdown', this.onPointerDown);
   }
 
   /**
