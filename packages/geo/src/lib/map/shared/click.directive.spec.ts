@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { LongPressDirective } from '@igo2/common/context-menu';
 import { SubjectStatus } from '@igo2/utils';
 
 import OlObservable from 'ol/Observable';
@@ -62,10 +63,11 @@ function createOverlayMock(): Overlay {
   template: `<igo-map-browser
     [map]="map"
     igoMapClick
+    igoLongPress
     [withClickOverlay]="withClickOverlay"
     [parentMessageOrigin]="parentMessageOrigin"
   ></igo-map-browser>`,
-  imports: [MapBrowserComponent, MapClickDirective]
+  imports: [MapBrowserComponent, MapClickDirective, LongPressDirective]
 })
 class HostComponent {
   readonly map = createMapMock() as any;
