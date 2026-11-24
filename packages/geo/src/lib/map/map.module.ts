@@ -12,6 +12,7 @@ import { OfflineButtonComponent } from './offline-button/offline-button.componen
 import { RotationButtonComponent } from './rotation-button/rotation-button.component';
 import { MapClickDirective } from './shared/click.directive';
 import { HoverFeatureDirective } from './shared/hover-feature.directive';
+import { MapContextMenuDirective } from './shared/map-context-menu.directive';
 import { PointerPositionDirective } from './shared/map-pointer-position.directive';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
@@ -32,6 +33,7 @@ export const MAP_DIRECTIVES = [
   OfflineButtonComponent,
   PointerPositionDirective,
   MapClickDirective,
+  MapContextMenuDirective,
   RotationButtonComponent,
   SwipeControlComponent,
   WakeLockButtonComponent,

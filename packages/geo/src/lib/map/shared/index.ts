@@ -9,6 +9,8 @@ export * from './map-pointer-position.directive';
 export * from './hover-feature.directive';
 export * from './click.directive';
 export * from './click.interface';
+export * from './map-context-menu.directive';
+export * from './map-context-menu-content.component';
 export * from './projection.interfaces';
 export * from './projection.provider';
 export * from './projection.service';

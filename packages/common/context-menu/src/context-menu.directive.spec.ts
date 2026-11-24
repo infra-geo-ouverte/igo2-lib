@@ -52,7 +52,7 @@ describe('ContextMenuDirective', () => {
     expect(domEvent.defaultPrevented).toBe(true);
     expect(
       fixture.componentInstance.onMenuPosition
-    ).toHaveBeenCalledExactlyOnceWith({ x: 5, y: 6 });
+    ).toHaveBeenCalledExactlyOnceWith({ x: 5, y: 6, event: domEvent });
     expect(
       overlayContainer.getContainerElement().querySelector('.menu-item')
     ).toBeTruthy();
@@ -71,7 +71,7 @@ describe('ContextMenuDirective', () => {
 
     expect(
       fixture.componentInstance.onMenuPosition
-    ).toHaveBeenCalledExactlyOnceWith({ x: 30, y: 40 });
+    ).toHaveBeenCalledExactlyOnceWith({ x: 30, y: 40, event: touchEvent });
     expect(
       overlayContainer.getContainerElement().querySelector('.menu-item')
     ).toBeTruthy();
