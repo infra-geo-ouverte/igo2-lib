@@ -1,4 +1,13 @@
+/**
+ * The user interaction that triggered the click event:
+ * - `click`: left click or tap
+ * - `contextmenu`: right click (desktop)
+ * - `longpress`: touch long press
+ */
+export type MapClickTrigger = 'click' | 'contextmenu' | 'longpress';
+
 export interface MapClickEvent {
+  trigger: MapClickTrigger;
   longitude: number;
   latitude: number;
   /** Unix epoch in milliseconds */
