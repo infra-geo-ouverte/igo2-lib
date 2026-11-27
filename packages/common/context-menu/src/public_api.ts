@@ -4,6 +4,7 @@ import { LongPressDirective } from './long-press.directive';
 export * from './context-menu.module';
 export * from './context-menu.directive';
 export * from './long-press.directive';
+export * from './long-press.utils';
 
 export const CONTEXT_MENU_DIRECTIVES = [
   ContextMenuDirective,
