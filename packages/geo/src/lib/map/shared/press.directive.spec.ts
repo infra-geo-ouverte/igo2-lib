@@ -16,8 +16,8 @@ import { IgoMap } from '../../map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Overlay } from '../../overlay/shared/overlay';
 import { OverlayService } from '../../overlay/shared/overlay.service';
-import { MapClickDirective } from './click.directive';
-import { MAP_CLICK_MESSAGE_TYPE } from './click.interface';
+import { MapPressDirective } from './press.directive';
+import { MAP_PRESS_MESSAGE_TYPE } from './press.interface';
 
 function createMapMock(): IgoMap {
   const ol = new OlObservable() as any;
@@ -62,28 +62,28 @@ function createOverlayMock(): Overlay {
 @Component({
   template: `<igo-map-browser
     [map]="map"
-    igoMapClick
+    igoMapPress
     igoLongPress
-    [withClickOverlay]="withClickOverlay"
+    [withPressOverlay]="withPressOverlay"
     [parentMessageOrigin]="parentMessageOrigin"
   ></igo-map-browser>`,
-  imports: [MapBrowserComponent, MapClickDirective, LongPressDirective]
+  imports: [MapBrowserComponent, MapPressDirective, LongPressDirective]
 })
 class HostComponent {
   readonly map = createMapMock() as any;
-  withClickOverlay = true;
+  withPressOverlay = true;
   parentMessageOrigin = '*';
 }
 
-describe('MapClickDirective', () => {
+describe('MapPressDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
   let overlayMock: Overlay;
   let overlayService: { create: ReturnType<typeof vi.fn> };
 
-  const getDirective = (): MapClickDirective =>
+  const getDirective = (): MapPressDirective =>
     fixture.debugElement
-      .query(By.directive(MapClickDirective))
-      .injector.get(MapClickDirective);
+      .query(By.directive(MapPressDirective))
+      .injector.get(MapPressDirective);
 
   const dispatchSingleClick = (coordinate: [number, number]) => {
     fixture.componentInstance.map.ol.dispatchEvent({
@@ -111,7 +111,7 @@ describe('MapClickDirective', () => {
   ) => {
     // igoLongPress listens on the host element, not the viewport
     const host: HTMLElement = fixture.debugElement.query(
-      By.directive(MapClickDirective)
+      By.directive(MapPressDirective)
     ).nativeElement;
     const touch = new Touch({
       identifier: 1,
@@ -145,7 +145,7 @@ describe('MapClickDirective', () => {
     expect(getDirective()).toBeTruthy();
   });
 
-  it('should create the overlay when withClickOverlay is true', () => {
+  it('should create the overlay when withPressOverlay is true', () => {
     fixture.detectChanges();
 
     expect(overlayService.create).toHaveBeenCalledWith(
@@ -154,18 +154,18 @@ describe('MapClickDirective', () => {
     expect(getDirective().overlay).toBe(overlayMock);
   });
 
-  it('should not create the overlay when withClickOverlay is false', () => {
-    fixture.componentInstance.withClickOverlay = false;
+  it('should not create the overlay when withPressOverlay is false', () => {
+    fixture.componentInstance.withPressOverlay = false;
     fixture.detectChanges();
 
     expect(overlayService.create).not.toHaveBeenCalled();
     expect(getDirective().overlay).toBeUndefined();
   });
 
-  it('should emit mapClick with rounded coordinates on singleclick', () => {
+  it('should emit mapPress with rounded coordinates on singleclick', () => {
     fixture.detectChanges();
     const emitted = vi.fn();
-    getDirective().mapClick.subscribe(emitted);
+    getDirective().mapPress.subscribe(emitted);
 
     dispatchSingleClick([-71.123456789, 46.987654321]);
 
@@ -192,11 +192,11 @@ describe('MapClickDirective', () => {
     );
   });
 
-  it('should still emit mapClick without an overlay', () => {
-    fixture.componentInstance.withClickOverlay = false;
+  it('should still emit mapPress without an overlay', () => {
+    fixture.componentInstance.withPressOverlay = false;
     fixture.detectChanges();
     const emitted = vi.fn();
-    getDirective().mapClick.subscribe(emitted);
+    getDirective().mapPress.subscribe(emitted);
 
     dispatchSingleClick([-71.2, 46.8]);
 
@@ -207,7 +207,7 @@ describe('MapClickDirective', () => {
   it('should stop listening and remove the overlay layer on destroy', () => {
     fixture.detectChanges();
     const emitted = vi.fn();
-    getDirective().mapClick.subscribe(emitted);
+    getDirective().mapPress.subscribe(emitted);
     const map = fixture.componentInstance.map;
 
     fixture.destroy();
@@ -224,10 +224,10 @@ describe('MapClickDirective', () => {
       vi.useRealTimers();
     });
 
-    it('should emit mapClick and prevent the native menu on contextmenu', () => {
+    it('should emit mapPress and prevent the native menu on contextmenu', () => {
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       // Integer values: MouseEvent client coordinates are WebIDL longs
       const domEvent = dispatchContextMenu([-71, 46]);
@@ -250,11 +250,11 @@ describe('MapClickDirective', () => {
       expect(overlayMock.addFeature).not.toHaveBeenCalled();
     });
 
-    it('should emit mapClick on touch long press (igoLongPress)', () => {
+    it('should emit mapPress on touch long press (igoLongPress)', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       // Float32-exact values: Touch coordinates are stored as float32
       dispatchTouch('touchstart', [-71.5, 46.5]);
@@ -269,7 +269,7 @@ describe('MapClickDirective', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       dispatchTouch('touchstart', [-71.5, 46.5]);
       vi.advanceTimersByTime(400);
@@ -282,7 +282,7 @@ describe('MapClickDirective', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       dispatchTouch('touchstart', [-71.5, 46.5]);
       dispatchTouch('touchmove', [-71.5 + 20, 46.5]);
@@ -295,7 +295,7 @@ describe('MapClickDirective', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       dispatchTouch('touchstart', [-71.5, 46.5]);
       dispatchTouch('touchend', [-71.5, 46.5]);
@@ -308,7 +308,7 @@ describe('MapClickDirective', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       dispatchTouch('touchstart', [-71.5, 46.5]);
       vi.advanceTimersByTime(400);
@@ -324,7 +324,7 @@ describe('MapClickDirective', () => {
       vi.useFakeTimers();
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       dispatchTouch('touchstart', [-71.5, 46.5]);
       vi.advanceTimersByTime(400);
@@ -341,7 +341,7 @@ describe('MapClickDirective', () => {
     it('should stop handling secondary clicks on destroy', () => {
       fixture.detectChanges();
       const emitted = vi.fn();
-      getDirective().mapClick.subscribe(emitted);
+      getDirective().mapPress.subscribe(emitted);
 
       fixture.destroy();
       dispatchContextMenu([-71.2, 46.8]);
@@ -375,7 +375,7 @@ describe('MapClickDirective', () => {
 
       expect(postMessage).toHaveBeenCalledExactlyOnceWith(
         {
-          type: MAP_CLICK_MESSAGE_TYPE,
+          type: MAP_PRESS_MESSAGE_TYPE,
           data: {
             trigger: 'click',
             longitude: -71.2,
@@ -395,7 +395,7 @@ describe('MapClickDirective', () => {
       dispatchSingleClick([-71.2, 46.8]);
 
       expect(postMessage).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ type: MAP_CLICK_MESSAGE_TYPE }),
+        expect.objectContaining({ type: MAP_PRESS_MESSAGE_TYPE }),
         'https://parent.example'
       );
     });

@@ -3,6 +3,7 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
+  OnDestroy,
   ViewContainerRef,
   inject,
   input,
@@ -28,31 +29,29 @@ export interface ContextMenuPosition {
 @Directive({
   selector: '[igoContextMenu]',
   hostDirectives: [
-    { directive: LongPressDirective, inputs: ['touchDuration'] }
+    {
+      directive: LongPressDirective,
+      inputs: ['touchDuration'],
+      outputs: ['longpress']
+    }
   ],
   host: {
     '(contextmenu)': 'onContextMenu($event)'
   }
 })
-export class ContextMenuDirective {
-  overlay = inject(Overlay);
-  viewContainerRef = inject(ViewContainerRef);
-  private elementRef = inject(ElementRef);
-  private longPress = inject(LongPressDirective, { self: true });
-
-  private overlayRef: OverlayRef | null = null;
-  private sub?: Subscription;
-
+export class ContextMenuDirective implements OnDestroy {
   readonly menuContext = input<TemplateRef<any> | undefined>(undefined, {
     alias: 'igoContextMenu'
   });
   readonly menuPosition = output<ContextMenuPosition>();
 
-  /**
-   * Menu template registered programmatically, used when no
-   * `igoContextMenu` template is bound (e.g. by a composing
-   * directive providing a default menu)
-   */
+  readonly overlay = inject(Overlay);
+  readonly viewContainerRef = inject(ViewContainerRef);
+
+  private elementRef = inject(ElementRef);
+  private longPress = inject(LongPressDirective, { self: true });
+  private overlayRef: OverlayRef | null = null;
+  private subscriptions = new Subscription();
   private fallbackMenuContext?: TemplateRef<any>;
 
   constructor() {
@@ -60,6 +59,10 @@ export class ContextMenuDirective {
     this.longPress.longpress.subscribe((event: TouchEvent) =>
       this.onContextMenu(event)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.close();
   }
 
   /**
@@ -75,16 +78,19 @@ export class ContextMenuDirective {
     if (!menuContext) {
       return;
     }
-    let x;
-    let y;
+    let x: number | undefined;
+    let y: number | undefined;
     if (e instanceof MouseEvent) {
-      x = e.x;
-      y = e.y;
+      x = e.clientX;
+      y = e.clientY;
     } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
-      x = e.touches[0].pageX;
-      y = e.touches[0].pageY;
+      const touch = e.touches[0] ?? e.changedTouches[0];
+      if (touch) {
+        x = touch.clientX;
+        y = touch.clientY;
+      }
     }
-    if (!x || !y) {
+    if (x === undefined || y === undefined) {
       return;
     }
 
@@ -113,39 +119,33 @@ export class ContextMenuDirective {
       })
     );
 
-    this.sub = fromEvent<MouseEvent>(document, 'click')
-      .pipe(
-        filter((event) => {
-          const clickTarget = event.target as HTMLElement;
-          this.close();
-          return (
-            !!this.overlayRef &&
-            !this.overlayRef.overlayElement.contains(clickTarget)
-          );
-        }),
-        take(1)
-      )
-      .subscribe(() => this.close());
+    this.subscriptions.add(
+      fromEvent<MouseEvent>(document, 'click')
+        .pipe(take(1))
+        .subscribe(() => this.close())
+    );
 
-    this.sub = fromEvent<MouseEvent>(document, 'contextmenu')
-      .pipe(
-        filter((event) => {
-          const clickTarget = event.target as HTMLElement;
-          if (
-            clickTarget &&
-            !this.elementRef.nativeElement.contains(clickTarget) &&
-            this.overlayRef &&
-            !this.overlayRef.overlayElement.contains(clickTarget)
-          ) {
-            return true;
-          } else {
-            event.preventDefault();
-            return false;
-          }
-        }),
-        take(1)
-      )
-      .subscribe(() => this.close());
+    this.subscriptions.add(
+      fromEvent<MouseEvent>(document, 'contextmenu')
+        .pipe(
+          filter((event) => {
+            const clickTarget = event.target as HTMLElement;
+            if (
+              clickTarget &&
+              !this.elementRef.nativeElement.contains(clickTarget) &&
+              this.overlayRef &&
+              !this.overlayRef.overlayElement.contains(clickTarget)
+            ) {
+              return true;
+            } else {
+              event.preventDefault();
+              return false;
+            }
+          }),
+          take(1)
+        )
+        .subscribe(() => this.close())
+    );
   }
 
   close() {
@@ -153,8 +153,7 @@ export class ContextMenuDirective {
       this.overlayRef.dispose();
       this.overlayRef = null;
     }
-    if (this.sub) {
-      this.sub.unsubscribe();
-    }
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Subscription();
   }
 }

@@ -48,10 +48,6 @@ export interface MapContextMenuAction extends Omit<Action, 'handler'> {
   ]
 })
 export class MapContextMenuDirective implements OnChanges {
-  private component = inject(MapBrowserComponent, { self: true });
-  private contextMenu = inject(ContextMenuDirective, { self: true });
-  private viewContainerRef = inject(ViewContainerRef);
-
   /**
    * Actions of the default actionbar menu, or an ActionStore to
    * manage them manually
@@ -65,6 +61,10 @@ export class MapContextMenuDirective implements OnChanges {
    * [longitude, latitude], rounded to 6 decimals
    */
   menuCoordinate = output<[number, number]>();
+
+  private component = inject(MapBrowserComponent, { self: true });
+  private contextMenu = inject(ContextMenuDirective, { self: true });
+  private viewContainerRef = inject(ViewContainerRef);
 
   /**
    * Coordinate of the last menu opening, provided to the action

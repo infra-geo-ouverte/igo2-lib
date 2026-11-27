@@ -58,11 +58,60 @@ describe('ContextMenuDirective', () => {
     ).toBeTruthy();
   });
 
+  it('should accept an origin at zero coordinates', () => {
+    const domEvent = new MouseEvent('contextmenu', {
+      clientX: 0,
+      clientY: 0,
+      cancelable: true
+    });
+
+    element.dispatchEvent(domEvent);
+
+    expect(
+      fixture.componentInstance.onMenuPosition
+    ).toHaveBeenCalledExactlyOnceWith({ x: 0, y: 0, event: domEvent });
+  });
+
+  it('should close the menu when an item is clicked', () => {
+    element.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        clientX: 5,
+        clientY: 6,
+        cancelable: true
+      })
+    );
+
+    overlayContainer
+      .getContainerElement()
+      .querySelector<HTMLElement>('.menu-item')!
+      .click();
+
+    expect(
+      overlayContainer.getContainerElement().querySelector('.menu-item')
+    ).toBeNull();
+  });
+
+  it('should close the menu when clicking outside it', () => {
+    element.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        clientX: 5,
+        clientY: 6,
+        cancelable: true
+      })
+    );
+
+    element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(
+      overlayContainer.getContainerElement().querySelector('.menu-item')
+    ).toBeNull();
+  });
+
   it('should open the menu on a touch long press (igoLongPress hosted)', () => {
     vi.useFakeTimers();
     const touchEvent = new TouchEvent('touchstart');
     Object.defineProperty(touchEvent, 'touches', {
-      value: [{ pageX: 30, pageY: 40 }]
+      value: [{ clientX: 30, clientY: 40, pageX: 30, pageY: 40 }]
     });
 
     element.dispatchEvent(touchEvent);

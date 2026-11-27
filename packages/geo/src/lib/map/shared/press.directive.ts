@@ -26,18 +26,30 @@ import { MapBrowserComponent } from '../../map/map-browser/map-browser.component
 import { IgoMap } from '../../map/shared/map';
 import { Overlay } from '../../overlay/shared/overlay';
 import { OverlayService } from '../../overlay/shared/overlay.service';
-import {
-  MAP_CLICK_MESSAGE_TYPE,
-  MapClickEvent,
-  MapClickMessage,
-  MapClickTrigger
-} from './click.interface';
 import { roundCoordTo } from './map.utils';
+import {
+  MAP_PRESS_MESSAGE_TYPE,
+  MapPressEvent,
+  MapPressMessage,
+  MapPressTrigger
+} from './press.interface';
 
 @Directive({
-  selector: '[igoMapClick]'
+  selector: '[igoMapPress]'
 })
-export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
+export class MapPressDirective implements OnInit, AfterViewInit, OnDestroy {
+  readonly withPressOverlay = input(false, { transform: booleanAttribute });
+  readonly parentMessageOrigin = input('*');
+
+  /**
+   * Structured press event, emitted on every map interaction:
+   * left press/tap, right press and touch long press. Use the
+   * `trigger` field to discriminate them.
+   */
+  readonly mapPress = output<MapPressEvent>();
+
+  public overlay: Overlay | undefined;
+
   /**
    * How long a contextmenu fired right after a long press is
    * considered a duplicate of it (e.g. Android Chrome fires both)
@@ -57,29 +69,11 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
     self: true,
     optional: true
   });
-  public overlay: Overlay | undefined;
-
-  constructor() {
-    this.longPress?.longpress.subscribe((domEvent: TouchEvent) =>
-      this.onLongPress(domEvent)
-    );
-  }
-
-  withClickOverlay = input(false, { transform: booleanAttribute });
-
-  parentMessageOrigin = input('*');
 
   /**
-   * Structured click event, emitted on every map interaction:
-   * left click/tap, right click and touch long press. Use the
-   * `trigger` field to discriminate them.
+   * Listener to the map press event
    */
-  mapClick = output<MapClickEvent>();
-
-  /**
-   * Listener to the map click event
-   */
-  private mapClickListener: EventsKey | undefined;
+  private mapPressListener: EventsKey | undefined;
 
   /**
    * Contextmenu events are ignored until this epoch, to dedupe the
@@ -88,12 +82,18 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   private suppressContextMenuUntil = 0;
 
   /**
-   * When true, the next OL singleclick is ignored: OL fires a click
-   * on pointer release regardless of the press duration, so a long
-   * press would otherwise also emit a `click` event. Reset on every
-   * new gesture (pointerdown) so a legit click is never swallowed.
+   * When true, the next OL singleclick interaction is ignored: OL fires
+   * a single press on pointer release regardless of the press duration,
+   * so a long press would otherwise also emit a `click` trigger. Reset
+   * on every new gesture (pointerdown) so a legit press is never swallowed.
    */
   private suppressNextSingleClick = false;
+
+  constructor() {
+    this.longPress?.longpress.subscribe((domEvent: TouchEvent) =>
+      this.onLongPress(domEvent)
+    );
+  }
 
   /**
    * IGO map
@@ -108,26 +108,26 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    if (this.withClickOverlay()) {
+    if (this.withPressOverlay()) {
       this.overlay = this.overlayService.create(this.map);
     }
   }
 
   /**
-   * Start listening to click and drag box events
+   * Start listening to press and drag box events
    * @internal
    */
   ngAfterViewInit() {
-    this.listenToMapClick();
+    this.listenToMapPress();
     this.listenToSecondaryClick();
   }
 
   /**
-   * Stop listening to click and drag box events and cancel ongoind requests
+   * Stop listening to press and drag box events and cancel ongoind requests
    * @internal
    */
   ngOnDestroy() {
-    this.unlistenToMapClick();
+    this.unlistenToMapPress();
     this.unlistenToSecondaryClick();
     if (this.overlay) {
       this.map.layerController.remove(this.overlay.layer);
@@ -136,22 +136,22 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * On map click, issue queries
+   * On map press
    */
-  private listenToMapClick() {
-    this.mapClickListener = this.map.ol.on(
+  private listenToMapPress() {
+    this.mapPressListener = this.map.ol.on(
       'singleclick',
       (event: OlMapBrowserEvent) => this.onMapEvent(event)
     );
   }
 
   /**
-   * Stop listening for map clicks
+   * Stop listening for map press
    */
-  private unlistenToMapClick() {
-    if (this.mapClickListener) {
-      unByKey(this.mapClickListener);
-      this.mapClickListener = undefined;
+  private unlistenToMapPress() {
+    if (this.mapPressListener) {
+      unByKey(this.mapPressListener);
+      this.mapPressListener = undefined;
     }
   }
 
@@ -164,44 +164,44 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
       this.suppressNextSingleClick = false;
       return;
     }
-    this.handleClick(event.coordinate, 'click');
+    this.handlePress(event.coordinate, 'click');
   }
 
   /**
-   * Shared click pipeline: emit the output, relay to the
+   * Shared press pipeline: emit the output, relay to the
    * parent frame and update the overlay
    */
-  private handleClick(coordinate: Coordinate, trigger: MapClickTrigger) {
+  private handlePress(coordinate: Coordinate, trigger: MapPressTrigger) {
     if (trigger !== 'click') {
-      // OL fires a (single)click when the pointer is released after
+      // OL fires a single-click interaction when the pointer is released after
       // a long press; ignore it
       this.suppressNextSingleClick = true;
     }
     const epsgCode = 'EPSG:4326';
     const lonlat = transform(coordinate, this.map.projectionCode, epsgCode);
-    const click = this.buildClickEvent(lonlat, trigger);
-    this.mapClick.emit(click);
-    this.postMessageToParent(click);
+    const press = this.buildPressEvent(lonlat, trigger);
+    this.mapPress.emit(press);
+    this.postMessageToParent(press);
     if (!this.overlay) {
       return;
     }
     if (trigger === 'click') {
       this.overlay.clear();
 
-      const clickFeature = featureFromOl(
+      const pressFeature = featureFromOl(
         new olFeature<Point>({
           geometry: new Point(lonlat)
         }),
         epsgCode
       );
 
-      this.overlay.addFeature(clickFeature, FeatureMotion.None);
+      this.overlay.addFeature(pressFeature, FeatureMotion.None);
     }
   }
 
   /**
-   * Listen to secondary clicks on the map viewport: `contextmenu`
-   * covers the desktop right click (and the Android long press),
+   * Listen to secondary presses on the map viewport: `contextmenu`
+   * covers the desktop right press (and the Android long press),
    * while the igoLongPress host directive covers the touch long
    * press on devices that don't fire `contextmenu` (e.g. iOS Safari)
    */
@@ -212,7 +212,7 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Stop listening for secondary clicks
+   * Stop listening for secondary presses
    */
   private unlistenToSecondaryClick() {
     const viewport = this.map.ol.getViewport();
@@ -221,7 +221,7 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * A new gesture starts: stop suppressing the OL singleclick
+   * A new gesture starts: stop suppressing the OL single-click interaction
    */
   private onPointerDown = () => {
     this.suppressNextSingleClick = false;
@@ -234,32 +234,32 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
     }
     // Some browsers fire the long-press contextmenu as a touch
     // PointerEvent; report the actual trigger in that case
-    const trigger: MapClickTrigger =
+    const trigger: MapPressTrigger =
       domEvent instanceof PointerEvent && domEvent.pointerType === 'touch'
         ? 'longpress'
         : 'contextmenu';
-    this.handleClick(this.map.ol.getEventCoordinate(domEvent), trigger);
+    this.handlePress(this.map.ol.getEventCoordinate(domEvent), trigger);
   };
 
   /**
-   * Handle the igoLongPress event as a long-press click
+   * Handle the igoLongPress event as a long press
    */
   private onLongPress(domEvent: TouchEvent) {
     // Some browsers (e.g. Android Chrome) also fire a contextmenu
-    // on long press; suppress it so the click isn't emitted twice
+    // on long press; suppress it so the press isn't emitted twice
     this.suppressContextMenuUntil =
-      Date.now() + MapClickDirective.CONTEXT_MENU_SUPPRESS_MS;
+      Date.now() + MapPressDirective.CONTEXT_MENU_SUPPRESS_MS;
     const pixel = this.map.ol.getEventPixel(domEvent);
-    this.handleClick(this.map.ol.getCoordinateFromPixel(pixel), 'longpress');
+    this.handlePress(this.map.ol.getCoordinateFromPixel(pixel), 'longpress');
   }
 
   /**
-   * Build a structured, self-sufficient payload from the click position
+   * Build a structured, self-sufficient payload from the press position
    */
-  private buildClickEvent(
+  private buildPressEvent(
     lonLat: Coordinate,
-    trigger: MapClickTrigger
-  ): MapClickEvent {
+    trigger: MapPressTrigger
+  ): MapPressEvent {
     const coords = roundCoordTo(lonLat, 6);
     return {
       trigger,
@@ -270,17 +270,17 @@ export class MapClickDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Relay the click event to the parent window when the app
+   * Relay the press event to the parent window when the app
    * is embedded in an iframe
    */
-  private postMessageToParent(event: MapClickEvent) {
+  private postMessageToParent(event: MapPressEvent) {
     const win = this.document.defaultView;
     // Not embedded in an iframe: a top-level window is its own parent
     if (!win || win.parent === win) {
       return;
     }
-    const message: MapClickMessage = {
-      type: MAP_CLICK_MESSAGE_TYPE,
+    const message: MapPressMessage = {
+      type: MAP_PRESS_MESSAGE_TYPE,
       data: event
     };
     win.parent.postMessage(message, this.parentMessageOrigin());

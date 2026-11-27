@@ -10,11 +10,11 @@ import { MapCenterComponent } from './map-center/map-center.component';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
 import { OfflineButtonComponent } from './offline-button/offline-button.component';
 import { RotationButtonComponent } from './rotation-button/rotation-button.component';
-import { MapClickDirective } from './shared/click.directive';
 import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { MapContextMenuDirective } from './shared/map-context-menu.directive';
 import { PointerPositionDirective } from './shared/map-pointer-position.directive';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
+import { MapPressDirective } from './shared/press.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
@@ -32,7 +32,7 @@ export const MAP_DIRECTIVES = [
   MiniBaseMapComponent,
   OfflineButtonComponent,
   PointerPositionDirective,
-  MapClickDirective,
+  MapPressDirective,
   MapContextMenuDirective,
   RotationButtonComponent,
   SwipeControlComponent,

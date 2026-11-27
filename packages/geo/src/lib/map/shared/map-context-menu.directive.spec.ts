@@ -15,11 +15,11 @@ import { LayerController } from '../../layer';
 import { IgoMap } from '../../map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { OverlayService } from '../../overlay/shared/overlay.service';
-import { MapClickDirective } from './click.directive';
 import {
   MapContextMenuAction,
   MapContextMenuDirective
 } from './map-context-menu.directive';
+import { MapPressDirective } from './press.directive';
 
 function createMapMock(): IgoMap {
   const ol = new OlObservable() as any;
@@ -72,11 +72,11 @@ class HostComponent {
   template: `
     <igo-map-browser
       [map]="map"
-      igoMapClick
+      igoMapPress
       [igoMapContextMenu]="actions"
     ></igo-map-browser>
   `,
-  imports: [MapBrowserComponent, MapClickDirective, MapContextMenuDirective]
+  imports: [MapBrowserComponent, MapPressDirective, MapContextMenuDirective]
 })
 class ComboHostComponent {
   readonly map = createMapMock() as any;
@@ -241,21 +241,21 @@ describe('MapContextMenuDirective', () => {
     ).toHaveBeenCalledExactlyOnceWith([-71.5, 46.5]);
   });
 
-  it('should coexist with igoMapClick on the same element (no NG0309)', () => {
+  it('should coexist with igoMapPress on the same element (no NG0309)', () => {
     vi.useFakeTimers();
     const comboFixture = TestBed.createComponent(ComboHostComponent);
 
     expect(() => comboFixture.detectChanges()).not.toThrow();
 
     // The single long press instance (hosted by igoContextMenu) opens
-    // the menu and feeds igoMapClick's longpress trigger
+    // the menu and feeds igoMapPress's longpress trigger
     const comboDebugElement = comboFixture.debugElement.query(
       By.directive(MapContextMenuDirective)
     );
     const host: HTMLElement = comboDebugElement.nativeElement;
-    const mapClick = comboDebugElement.injector.get(MapClickDirective);
+    const mapPress = comboDebugElement.injector.get(MapPressDirective);
     const emitted = vi.fn();
-    mapClick.mapClick.subscribe(emitted);
+    mapPress.mapPress.subscribe(emitted);
     const touch = new Touch({
       identifier: 1,
       target: host,
